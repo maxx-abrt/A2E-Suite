@@ -2,6 +2,9 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { type Application } from 'cloudflare/resources/zero-trust/access/applications/applications';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+
+import { ADD_WORKSPACE_TEMPLATE_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-39/add-workspace-template-to-workspace-upgrade-command-name.constant';
+import { WorkspaceTemplate } from 'src/engine/core-modules/onboarding/enums/workspace-template.enum';
 import {
   Check,
   Column,
@@ -370,4 +373,12 @@ export class WorkspaceEntity {
     onDelete: 'CASCADE',
   })
   applications: Relation<Application[]>;
+
+  @Field(() => WorkspaceTemplate, { nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_WORKSPACE_TEMPLATE_TO_WORKSPACE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'varchar', nullable: true, default: null })
+  workspaceTemplate: WorkspaceTemplate | null;
 }

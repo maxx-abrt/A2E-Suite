@@ -104,6 +104,7 @@ type InstallAppsContentProps = {
   onToggleApp: (universalIdentifier: string) => void;
   onInstall: () => void;
   onSkip: () => void;
+  templatePicker?: React.ReactNode;
 };
 
 export const InstallAppsContent = ({
@@ -114,6 +115,7 @@ export const InstallAppsContent = ({
   onToggleApp,
   onInstall,
   onSkip,
+  templatePicker,
 }: InstallAppsContentProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -147,6 +149,12 @@ export const InstallAppsContent = ({
           </OnboardingStepAnimatedItem>
         )}
       </StyledOnboardingStepHeading>
+
+      {isDefined(templatePicker) && (
+        <OnboardingStepAnimatedItem index={3}>
+          {templatePicker}
+        </OnboardingStepAnimatedItem>
+      )}
 
       {hasApps && (
         <OnboardingStepAnimatedItem index={3}>

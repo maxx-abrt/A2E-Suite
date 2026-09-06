@@ -8,6 +8,7 @@ export enum OnboardingExceptionCode {
   NO_PREVIOUS_ONBOARDING_STEP = 'NO_PREVIOUS_ONBOARDING_STEP',
   MISSING_TRANSACTION_QUERY_RUNNER = 'MISSING_TRANSACTION_QUERY_RUNNER',
   INSTALL_APPS_JOB_ENQUEUE_FAILED = 'INSTALL_APPS_JOB_ENQUEUE_FAILED',
+  TEMPLATE_APPLICATION_FAILED = 'TEMPLATE_APPLICATION_FAILED',
 }
 
 const getOnboardingExceptionUserFriendlyMessage = (
@@ -20,6 +21,8 @@ const getOnboardingExceptionUserFriendlyMessage = (
       return msg`Something went wrong while saving your onboarding progress.`;
     case OnboardingExceptionCode.INSTALL_APPS_JOB_ENQUEUE_FAILED:
       return msg`Something went wrong while starting the app installation. Please try again.`;
+    case OnboardingExceptionCode.TEMPLATE_APPLICATION_FAILED:
+      return msg`Something went wrong while applying the workspace template. Please try again.`;
     default:
       assertUnreachable(code);
   }

@@ -1,0 +1,2 @@
+export const ADD_WORKSPACE_TEMPLATE_TO_WORKSPACE_UPGRADE_COMMAND_NAME =
+  '2.39.0_AddWorkspaceTemplateToWorkspaceFastInstanceCommand_1788716868602';

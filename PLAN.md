@@ -108,15 +108,15 @@ persona, and the conventions every later phase relies on.
       behavior; no extension needed — see phase report)
 
 ### P1.3 Onboarding presets
-- [ ] Server: preset definitions (`individual`, `student`, `team`,
+- [x] Server: preset definitions (`individual`, `student`, `team`,
       `nonProfit`, `smallBusiness`, `crm`) as data (apps to install, nav
       order, sample content flag)
-- [ ] Onboarding flow: template picker step (skippable, defaults `crm` to
+- [x] Onboarding flow: template picker step (skippable, defaults `crm` to
       preserve current behavior)
-- [ ] Settings → General: "Change workspace template" (re-runnable, additive)
-- [ ] Preset application logic-function (install apps, order nav, seed
+- [x] Settings → General: "Change workspace template" (re-runnable, additive)
+- [x] Preset application logic-function (install apps, order nav, seed
       samples)
-- [ ] e2e: create workspace with `individual` preset → CRM nav hidden,
+- [x] e2e: create workspace with `individual` preset → CRM nav hidden,
       Documents nav present
 
 ### P1.4 Search federation skeleton

@@ -1,3 +1,5 @@
+import { A2eWorkspaceTemplatePicker } from '@/a2e-workspace/components/A2eWorkspaceTemplatePicker';
+import { A2E_WORKSPACE_TEMPLATE_OPTIONS } from '@/a2e-workspace/constants/A2eWorkspaceTemplates';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useMarketplaceApps } from '@/marketplace/hooks/useMarketplaceApps';
 import { ONBOARDING_INSTALLABLE_APPS } from '@/onboarding/constants/OnboardingInstallableApps';
@@ -68,6 +70,9 @@ export const InstallApps = () => {
       onToggleApp={toggleApp}
       onInstall={installSelectedAppsAndContinue}
       onSkip={skip}
+      templatePicker={
+        <A2eWorkspaceTemplatePicker options={A2E_WORKSPACE_TEMPLATE_OPTIONS} />
+      }
     />
   );
 };

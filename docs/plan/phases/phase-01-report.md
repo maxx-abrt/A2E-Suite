@@ -153,3 +153,92 @@ as each app is created. Do not trust `nx typecheck` for twenty-front until
 the twenty-ui baseline is fixed; use in-package tsgo and diff against the
 4304 baseline. Scratch-workspace install/uninstall e2e deferred to P3
 acceptance (a2e-documents has no objects yet).
+
+## 2026-09-06 19:15 UTC — Code agent (GLM-5.3-Flash)
+**Task(s):** P1.3 — Onboarding presets (all five PLAN.md items, lines 110–121)
+**Status:** done (sample-content seeding intentionally deferred to P3 — no
+seeder target exists yet; e2e spec written but not executed — needs a live
+server, see Verification)
+**What I did:**
+- Server preset data:
+  `enums/workspace-template.enum.ts` (GraphQL enum CRM/INDIVIDUAL/STUDENT/
+  TEAM/NON_PROFIT/SMALL_BUSINESS),
+  `constants/workspace-template-definitions.constant.ts` (apps to install =
+  a2e-documents UUID; hidden standard nav rows for CRM-off presets —
+  companies/people/opportunities; sample-content flag), and
+  `utils/get-workspace-template-definition.util.ts`.
+- Application service `workspace-template.service.ts`: installs template
+  apps via ApplicationRegistrationService + ApplicationInstallService
+  (skip-and-log when the app is not registered on the server), applies nav
+  visibility by deleting standard rows / restoring them via
+  `createStandardNavigationMenuItemFlatMetadata` +
+  `WorkspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration`
+  (same pattern as `2-25-remove-message-campaign-navigation-menu-item`), and
+  records `workspaceTemplate` on the workspace row.
+- Persistence: `WorkspaceEntity.workspaceTemplate` varchar nullable column +
+  `@WasIntroducedInUpgrade`; new fast instance command
+  `2-39-instance-command-fast-1788716868602-add-workspace-template-to-workspace.ts`
+  (up + down), name constant, registered in
+  `instance-commands.constant.ts` (timestamp strictly greater than the
+  previous max 1788639976437).
+- GraphQL: `applyWorkspaceTemplate(input: ApplyWorkspaceTemplateInput!)`
+  mutation on OnboardingResolver (WorkspaceAuthGuard+UserAuthGuard via class
+  decorators, NoPermissionGuard like sibling mutations); new
+  `TEMPLATE_APPLICATION_FAILED` exception code with Lingui-friendly message.
+- Front `a2e-workspace` module: `constants/A2eWorkspaceTemplates.ts`
+  (6 Lingui msg options with canonical icon-dictionary icons: User, Book,
+  Users, Heart, Briefcase, BuildingSkyscraper), `useApplyWorkspaceTemplate`
+  hook (snackbar feedback), shared `A2eWorkspaceTemplatePicker` (Linaria,
+  theme tokens only), `SettingsA2eWorkspaceTemplateSection`.
+- Onboarding: picker hosted inside the existing install-apps step
+  (`InstallApps.tsx`/`InstallAppsContent.tsx` new optional `templatePicker`
+  prop) — no new route, no OnboardingStatus change, skip keeps the CRM
+  default (zero regression surface for the existing step machine).
+- Settings → General: "Workspace template" section (re-runnable).
+- Tests: `workspace-template.service.spec.ts` (4 cases) +
+  `useApplyWorkspaceTemplate.test.tsx` (2 cases).
+- e2e: `twenty-e2e-testing/tests/authentication/workspace-template-preset.spec.ts`
+  (signup → onboarding skip → apply `individual` from Settings → CRM nav
+  hidden).
+**Decisions & trade-offs:**
+- Template picker lives on the install-apps step instead of a new onboarding
+  route: the PLAN asks for a skippable picker step; grafting it onto the
+  existing skippable step avoids touching the server step machine
+  (`OnboardingStatus` enum, `usePageChangeEffectNavigateLocation`,
+  `ONBOARDING_PATHS`) and cannot regress existing onboarding e2e.
+- Nav hiding = DELETE of the workspace-wide standard row, restoring =
+  recreate via the standard flat-metadata util (Twenty's own upgrade-command
+  pattern). This makes "CRM-off" survive nav sync while staying uninstall-safe.
+- Sample content: `sampleContentEnabled` is part of the preset data contract
+  but false for every preset today; service logs a warning when set. Real
+  seeding lands in P3 when a2e-documents has objects to seed.
+- Front mutation document is hand-written (schema on running servers only);
+  run `npx nx run twenty-front:graphql:generate` against an updated server
+  and swap to the generated document.
+**Verification:**
+- `npx jest .../workspace-template.service.spec.ts --config=packages/twenty-server/jest.config.mjs` → 4 passed.
+- `npx jest src/modules/a2e-workspace --config=packages/twenty-front/jest.config.mjs` → 6 passed (incl. pre-existing hook tests).
+- Regression: all 5 server onboarding suites (40 tests) + front onboarding
+  hooks/pages suites pass; `BookCall.test.tsx` suite failure reproduced on a
+  stashed pristine tree (pre-existing environment baseline, not this diff).
+- oxlint --type-aware: 0 errors (front 14 files, server onboarding+2-39 46
+  files); oxfmt --check clean.
+- In-package tsgo: twenty-server 13 errors (baseline on pristine tree: 14;
+  12 are `twenty-emails`/SDK-artifact TS2307s, none in my files).
+  twenty-front 4311 vs documented 4304 baseline: +7, all pre-existing-class
+  `twenty-ui/*` TS2307 module-resolution in the new files (jest/oxlint both
+  resolve fine; needs the same environment fix as the baseline).
+- Environment repair this session: built `twenty-client-sdk` dist — the
+  missing `twenty-client-sdk/generate` artifact broke jest module resolution
+  for any spec importing ApplicationInstallService, incl. the pre-existing
+  `install-onboarding-apps.job.spec.ts`. After `cd packages/twenty-client-sdk
+  && yarn build`, that spec runs again.
+- e2e NOT executed (requires running front+server+DB); spec follows the
+  proven `onboarding.spec.ts` signup flow.
+**For the next agent:** next = P1.4 first task (search provider interface in
+the `search` core module). Gotchas: (1) the graphql:generate swap noted
+above; (2) when a2e-documents gains objects in P3, add real sample-content
+seeding behind `sampleContentEnabled`; (3) new A2E app UUIDs must be added to
+BOTH `twenty-front/.../A2eSuiteApplicationUniversalIdentifiers.ts` and
+`workspace-template-definitions.constant.ts`; (4) if `yarn install` is ever
+re-run, `twenty-client-sdk` dist must be rebuilt or server jest breaks again.
