@@ -40,8 +40,8 @@ export const SidePanelSearchRecordsPage = () => {
   const { sidePanelSearch, searchResultItems, loading, noResults } =
     useSidePanelSearchRecords();
   const { appSearchResultItems } = useAppSearchResultItems({
-    searchInput: sidePanelSearch.trim(),
-    skip: loading && searchResultItems.length === 0,
+    searchInput: sidePanelSearch,
+    skip: false,
   });
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { closeCommandMenu } = useCloseCommandMenu();
@@ -127,7 +127,7 @@ export const SidePanelSearchRecordsPage = () => {
                     <CommandMenuItem
                       id={item.id}
                       label={item.label}
-                      description={item.objectLabel}
+                      description={item.description ?? item.objectLabel}
                       onClick={handleClick}
                       LeftComponent={
                         <Avatar

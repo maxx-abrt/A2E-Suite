@@ -1,6 +1,5 @@
 import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 import {
   FindManyApplicationsDocument,
@@ -67,9 +66,10 @@ export const useAppSearchResultItems = ({
         objectNameSingular: '',
         recordId: record.recordId,
         imageUrl: record.imageUrl ?? undefined,
-        objectLabel: isDefined(record.description)
-          ? record.description
-          : undefined,
+        objectLabel:
+          appNameByUniversalIdentifier.get(group.appUniversalIdentifier) ??
+          group.appUniversalIdentifier,
+        description: record.description ?? undefined,
         groupKey: `app:${group.appUniversalIdentifier}`,
         groupHeading:
           appNameByUniversalIdentifier.get(group.appUniversalIdentifier) ??

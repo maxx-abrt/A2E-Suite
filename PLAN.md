@@ -123,7 +123,7 @@ persona, and the conventions every later phase relies on.
 - [x] Server: search provider interface in `search` core module +
       registry (keyed by app id)
 - [x] Front: Cmd+K grouped results structure (group headers, frecency store)
-- [ ] Consume providers dynamically; core object search unchanged
+- [x] Consume providers dynamically; core object search unchanged
 
 ### P1.5 AI registry seed (pre-work for P9)
 - [ ] Audit `tool`/`tool-provider` modules; write short design note in phase

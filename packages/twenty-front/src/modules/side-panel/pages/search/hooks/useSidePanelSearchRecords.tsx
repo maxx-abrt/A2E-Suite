@@ -17,6 +17,7 @@ export type SearchResultItem = {
   imageUrl?: string | null;
   objectLabel: string;
   avatarType: 'squared' | 'rounded';
+  description?: string;
 };
 
 export const useSidePanelSearchRecords = () => {
