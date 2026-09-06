@@ -308,3 +308,9 @@ re-run, `twenty-client-sdk` dist must be rebuilt or server jest breaks again.
 - `graphql:generate` NOT run (introspects a live server; none running). Front document is hand-written per the P1.3 precedent — run `npx nx run twenty-front:graphql:generate` against an updated server and swap to the generated document.
 - twenty-shared untouched; no entity changed (no migration/upgrade command needed).
 **For the next agent:** P1.4 is complete; P1.5 ("AI registry seed") is the next phase task. Gotchas: (1) the graphql:generate swap above; (2) when the first real provider ships (P3+ documents), register it with `@RegisteredSearchProvider({ appUniversalIdentifier })` on a Nest provider — the registry picks it up automatically; (3) CommandMenu storybook `Search` msw mock can be extended with a `searchAppRecords` handler for visual testing; (4) `SidePanelSearchRecordPreviewCard` tooltip preview does not cover app results (they have `path`, not object metadata) — selection preview simply finds no match for now, acceptable until P2.5 wire-up.
+
+## 2026-09-06 20:42 UTC — Zoo (GLM-5.3-Flash) — STATE REPAIR note
+**Task(s):** none (bookkeeping)
+**Status:** done
+**What I did:** None (state note only): commit `f4b4a72b "p1.4/5"` (authored outside this session, 22:37 +02:00) contains this session's in-progress P1.4b server/front files plus environment-repair changes to `twenty-emails`/`twenty-ui` vite configs and `yarn.lock` — which is why the twenty-front tsgo baseline improved from 4311 to 3055 within this session. All P1.4b code is committed there; my follow-up commit `3569b08b` adds the page wiring, PLAN.md tick and report entry. Working tree clean.
+**For the next agent:** treat 3055 as the current twenty-front tsgo baseline (twenty-ui TS2307 class) and 1 for twenty-server (workspaceTemplate TS2322). P1.4 fully ticked; next task = P1.5 (AI registry seed, PLAN.md).
