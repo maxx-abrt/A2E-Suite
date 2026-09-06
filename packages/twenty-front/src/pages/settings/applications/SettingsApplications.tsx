@@ -15,6 +15,7 @@ import {
 } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { SettingsA2eSuiteSection } from '~/modules/a2e-workspace/components/SettingsA2eSuiteSection';
 import coverDark from '~/pages/settings/applications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/applications/assets/cover-light.png';
 import { SettingsApplicationsClaimErrorTabEffect } from '~/pages/settings/applications/components/SettingsApplicationsClaimErrorTabEffect';
@@ -99,6 +100,7 @@ export const SettingsApplications = () => {
             playButtonAriaLabel={t`Watch apps demo`}
           />
         </Section>
+        <SettingsA2eSuiteSection />
         {renderActiveTabContent()}
       </SettingsPageContainer>
     </SettingsPageLayout>
