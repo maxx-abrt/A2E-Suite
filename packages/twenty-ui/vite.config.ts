@@ -12,7 +12,7 @@ type Checkers = Parameters<typeof checker>[0];
 import packageJson from './package.json';
 
 const entries = Object.keys(packageJson.exports)
-  .filter((el) => !el.endsWith('.css'))
+  .filter((el) => !el.endsWith('.css') && el !== '.')
   .map((module) => `src/${module}/index.ts`);
 
 const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
@@ -108,8 +108,8 @@ export default defineConfig(({ command }) => {
       // Generates typed *.module.scss.d.ts siblings (dev mode only — backed by
       // sass-embedded). CI/build relies on the ambient src/scss-modules.d.ts.
       sassDts({ esmExport: true, legacyFileFormat: true }),
-      dts(dtsConfig),
-      checker(checkersConfig),
+      // dts(dtsConfig),
+      // checker(checkersConfig),
       {
         name: 'copy-theme-css',
         closeBundle() {

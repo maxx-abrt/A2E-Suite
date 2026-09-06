@@ -11,6 +11,9 @@ export type SearchResultGroup = {
 export type GroupableSearchResultItem = SearchResultItem & {
   groupKey: string;
   groupHeading: string;
+  // Present on app-provider results only: server-resolved deep link opened
+  // through the router instead of the standard record page navigation.
+  path?: string;
 };
 
 // Sorts by frecency rank (stable: equal ranks keep the server's relevance

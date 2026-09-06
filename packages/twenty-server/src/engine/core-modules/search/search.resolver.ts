@@ -6,11 +6,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { AppSearchResultGroupDTO } from 'src/engine/core-modules/search/dtos/app-search-result-group.dto';
 import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
 import { SearchResultConnectionDTO } from 'src/engine/core-modules/search/dtos/search-result-connection.dto';
 import { SearchApiExceptionFilter } from 'src/engine/core-modules/search/filters/search-api-exception.filter';
+import { AppSearchService } from 'src/engine/core-modules/search/services/app-search.service';
 import { SearchService } from 'src/engine/core-modules/search/services/search.service';
-import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -30,6 +32,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 export class SearchResolver {
   constructor(
     private readonly searchService: SearchService,
+    private readonly appSearchService: AppSearchService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -86,6 +89,30 @@ export class SearchResolver {
       after,
       loaders: context.loaders,
       locale: context.req.locale,
+    });
+  }
+
+  // Search federation entry point: app-registered providers, install-gated.
+  // Separate additive query so the core `search` contract stays untouched.
+  @Query(() => [AppSearchResultGroupDTO])
+  async searchAppRecords(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('searchInput', { type: () => String }) searchInput: string,
+  ): Promise<AppSearchResultGroupDTO[]> {
+    const { flatApplicationMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId: workspace.id,
+          flatMapsKeys: ['flatApplicationMaps'],
+        },
+      );
+
+    return await this.appSearchService.searchInstalledAppRecords({
+      searchInput,
+      workspaceId: workspace.id,
+      installedAppUniversalIdentifiers: Object.keys(
+        flatApplicationMaps.idByUniversalIdentifier,
+      ),
     });
   }
 }

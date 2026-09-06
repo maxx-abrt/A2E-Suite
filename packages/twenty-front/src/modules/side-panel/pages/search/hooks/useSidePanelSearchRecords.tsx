@@ -64,6 +64,7 @@ export const useSidePanelSearchRecords = () => {
   }, [searchRecords, readableObjectMetadataItems]);
 
   return {
+    sidePanelSearch: trimmedSidePanelSearch,
     loading,
     noResults: !searchResultItems.length,
     searchResultItems,

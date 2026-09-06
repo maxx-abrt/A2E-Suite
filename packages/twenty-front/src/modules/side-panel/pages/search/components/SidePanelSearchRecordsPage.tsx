@@ -5,6 +5,7 @@ import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { SidePanelSearchRecordPreviewCard } from '@/side-panel/pages/search/components/SidePanelSearchRecordPreviewCard';
 import { SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH } from '@/side-panel/pages/search/constants/SidePanelSearchRecordPreviewWidth';
+import { useAppSearchResultItems } from '@/side-panel/pages/search/hooks/useAppSearchResultItems';
 import { useRecordSearchObjectUsage } from '@/side-panel/pages/search/hooks/useRecordSearchObjectUsage';
 import { useSidePanelSearchRecordPreviewItem } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecordPreviewItem';
 import { useSidePanelSearchRecords } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecords';
@@ -36,7 +37,12 @@ const previewTooltipClass = css`
 `;
 
 export const SidePanelSearchRecordsPage = () => {
-  const { searchResultItems, loading, noResults } = useSidePanelSearchRecords();
+  const { sidePanelSearch, searchResultItems, loading, noResults } =
+    useSidePanelSearchRecords();
+  const { appSearchResultItems } = useAppSearchResultItems({
+    searchInput: sidePanelSearch.trim(),
+    skip: loading && searchResultItems.length === 0,
+  });
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { closeCommandMenu } = useCloseCommandMenu();
   const { recordSearchObjectUsage } = useRecordSearchObjectUsage();
@@ -59,10 +65,10 @@ export const SidePanelSearchRecordsPage = () => {
     );
 
     return groupSearchResultItems({
-      items: searchResultItems,
+      items: [...searchResultItems, ...appSearchResultItems],
       frecencyRankByGroupKey,
     });
-  }, [searchRecordsFrecencyByObject, searchResultItems]);
+  }, [searchRecordsFrecencyByObject, searchResultItems, appSearchResultItems]);
 
   const selectableItemIds = useMemo(
     () => orderedItems.map((item) => item.id),
@@ -91,7 +97,10 @@ export const SidePanelSearchRecordsPage = () => {
               const handleClick = () => {
                 recordSearchObjectUsage(item.groupKey);
 
-                if (isTaskOrNote) {
+                if (isDefined(item.path)) {
+                  closeCommandMenu();
+                  navigate(item.path);
+                } else if (isTaskOrNote) {
                   openRecordInSidePanel({
                     recordId: item.recordId,
                     objectNameSingular:

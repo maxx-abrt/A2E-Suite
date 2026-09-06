@@ -40,7 +40,6 @@ export default defineConfig({
   cacheDir: '../../node_modules/.vite/packages/twenty-emails',
 
   resolve: {
-    tsconfigPaths: true,
     alias: {
       '@/': path.resolve(__dirname, 'src') + '/',
       'src/': path.resolve(__dirname, 'src') + '/',
