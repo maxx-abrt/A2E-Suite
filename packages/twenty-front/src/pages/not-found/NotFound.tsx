@@ -1,18 +1,16 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { lazy, Suspense } from 'react';
+import { AppPath } from 'twenty-shared/types';
 
 const BackgroundMockPage = lazy(() =>
   import('@/sign-in-background-mock/components/BackgroundMockPage').then(
     (module) => ({ default: module.BackgroundMockPage }),
   ),
 );
-import { AppPath } from 'twenty-shared/types';
 
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { styled } from '@linaria/react';
-import { MainButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyTextContainer,
@@ -20,7 +18,9 @@ import {
   AnimatedPlaceholderErrorSubTitle,
   AnimatedPlaceholderErrorTitle,
 } from 'twenty-ui/feedback';
+import { MainButton } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledBackDrop = styled.div`
   align-items: center;
@@ -46,7 +46,7 @@ export const NotFound = () => {
 
   return (
     <>
-      <PageTitle title={t`Page Not Found | Twenty`} />
+      <PageTitle title={t`Page Not Found | A2E Suite`} />
       <StyledBackDrop>
         <AnimatedPlaceholderErrorContainer>
           <AnimatedPlaceholder type="error404" />

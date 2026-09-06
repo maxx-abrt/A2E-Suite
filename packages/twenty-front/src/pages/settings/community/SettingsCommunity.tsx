@@ -1,27 +1,27 @@
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsLabContent } from '@/settings/lab/components/SettingsLabContent';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import {
   IconBrandX,
   IconBriefcase,
   IconTransform,
-  type IconComponent,
   useIcons,
+  type IconComponent,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
 import coverDark from '~/pages/settings/community/assets/cover-dark.png';
 import coverLight from '~/pages/settings/community/assets/cover-light.png';
 
@@ -127,7 +127,7 @@ export const SettingsCommunity = () => {
         <Section>
           <H2Title
             title={t`Partners`}
-            description={t`Hire a partner to help you implement and customize Twenty.`}
+            description={t`Hire a partner to help you implement and customize A2E Suite.`}
           />
           <StyledCardLink
             href="https://twenty.com/partners/list"

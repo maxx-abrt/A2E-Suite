@@ -16,14 +16,14 @@ import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGl
 import { SignInUpStandardContent } from '@/auth/sign-in-up/components/SignInUpStandardContent';
 import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
 import { SignInUpSsoIdentityProviderSelection } from '@/auth/sign-in-up/components/internal/SignInUpSsoIdentityProviderSelection';
-import { OnboardingLayout } from '@/onboarding/components/OnboardingLayout';
-import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
 import { SignInUpWorkspaceCreationForm } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm';
 import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceScopeFormEffect';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
+import { OnboardingLayout } from '@/onboarding/components/OnboardingLayout';
+import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
 import { useMemo } from 'react';
 
 import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpGlobalScopeFormEffect';
@@ -32,11 +32,11 @@ import { SignInUpTwoFactorAuthenticationProvision } from '@/auth/sign-in-up/comp
 import { SignInUpTOTPVerification } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { ModalContent } from 'twenty-ui/surfaces';
 import { useLingui } from '@lingui/react/macro';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
+import { ModalContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledLoaderContainer = styled.div`
@@ -117,7 +117,7 @@ export const SignInUp = () => {
     }
 
     if (isGlobalScope) {
-      return t`Welcome to Twenty`;
+      return t`Welcome to A2E Suite`;
     }
 
     const workspaceName = workspacePublicData?.displayName;

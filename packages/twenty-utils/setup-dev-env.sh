@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# Twenty CRM — Development Environment Setup
+# A2E Suite — Development Environment Setup
 # =============================================================================
 # Single entry point for setting up a dev environment. Idempotent.
 #

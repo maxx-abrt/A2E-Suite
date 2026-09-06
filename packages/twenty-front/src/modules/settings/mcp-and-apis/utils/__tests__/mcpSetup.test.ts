@@ -5,8 +5,8 @@ import {
   buildLmStudioInstallLink,
   buildMcpConfig,
   buildMcpServerUrl,
-  buildReplitInstallLink,
   buildRemoteMcpServerConfig,
+  buildReplitInstallLink,
   buildVsCodeInstallLink,
   isHttpsUrl,
 } from '@/settings/mcp-and-apis/utils/mcpSetup';
@@ -129,7 +129,7 @@ describe('buildReplitInstallLink', () => {
 
     expect(link.startsWith('https://replit.com/integrations?')).toBe(true);
     expect(decodeBase64JsonParam(link, 'mcp')).toEqual({
-      displayName: 'Twenty',
+      displayName: 'A2E Suite',
       baseUrl: mcpServerUrl,
       headers: [
         {

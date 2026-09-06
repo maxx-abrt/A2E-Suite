@@ -6,7 +6,7 @@
 #   docker compose -f docker-compose.dev.yml down       # stop
 #   docker compose -f docker-compose.dev.yml down -v    # stop + wipe data
 
-name: twenty-dev
+name: a2e-suite-dev
 
 services:
   db:

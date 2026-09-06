@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Twenty is an open-source CRM — an Nx / Yarn 4 monorepo. Main packages: `twenty-front` (React 18, Jotai, Linaria, Vite), `twenty-server` (NestJS, TypeORM, PostgreSQL, Redis, GraphQL), `twenty-shared` (isomorphic types/utils), `twenty-ui`, `twenty-sdk` (application SDK + CLI), `twenty-e2e-testing` (Playwright).
+A2E Suite is an open-source CRM (a fork of Twenty) — an Nx / Yarn 4 monorepo. Main packages: `twenty-front` (React 18, Jotai, Linaria, Vite), `twenty-server` (NestJS, TypeORM, PostgreSQL, Redis, GraphQL), `twenty-shared` (isomorphic types/utils), `twenty-ui`, `twenty-sdk` (application SDK + CLI), `twenty-e2e-testing` (Playwright). Package directory names and npm names are kept as `twenty-*` intentionally; only user-facing brand strings are renamed to "A2E Suite".
 
 Match the surrounding code — the adjacent files in the directory you are editing beat any written rule, including for file naming, which varies by area.
 

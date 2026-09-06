@@ -4,7 +4,7 @@
   </a>
 </p>
 
-<h2 align="center">The #1 Open-Source CRM</h2>
+<h2 align="center">A2E Suite — The #1 Open-Source CRM</h2>
 
 <p align="center"><a href="https://twenty.com"><img src="./packages/twenty-website/public/images/readme/globe-icon.svg" width="12" height="12"/> Website</a> · <a href="https://docs.twenty.com"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="12" height="12"/> Documentation</a> · <a href="https://github.com/orgs/twentyhq/projects/1"><img src="./packages/twenty-website/public/images/readme/map-icon.svg" width="12" height="12"/> Roadmap </a> · <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-website/public/images/readme/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="./packages/twenty-website/public/images/readme/figma-icon.webp"  width="12" height="12"/>  Figma</a></p>
 
@@ -20,11 +20,11 @@
 
 <br />
 
-# Why Twenty
+# Why A2E Suite
 
-Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves. Twenty is the CRM you build, ship, and version like the rest of your stack.
+A2E Suite gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves. A2E Suite is the CRM you build, ship, and version like the rest of your stack.
 
-<a href="https://twenty.com/resources/why-twenty"><img src="./packages/twenty-website/public/images/readme/star-icon.svg" width="14" height="14"/> Learn more about why we built Twenty</a>
+<a href="https://twenty.com/resources/why-twenty"><img src="./packages/twenty-website/public/images/readme/star-icon.svg" width="14" height="14"/> Learn more about why we built A2E Suite</a>
 
 <br />
 
@@ -36,7 +36,7 @@ The fastest way to get started. Sign up at [twenty.com](https://twenty.com) and 
 
 ### <img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="14" height="14"/> Build an app
 
-Scaffold a new app with the Twenty CLI:
+Scaffold a new app with the A2E Suite CLI:
 
 ```bash
 npx create-twenty-app my-app
@@ -70,14 +70,14 @@ See the [app development guide](https://docs.twenty.com/developers/extend/apps/g
 
 ### <img src="./packages/twenty-website/public/images/readme/rocket-icon.svg" width="14" height="14"/> Self-hosting
 
-Run Twenty on your own infrastructure with [Docker Compose](https://docs.twenty.com/developers/self-host/capabilities/docker-compose), or contribute locally via the [local setup guide](https://docs.twenty.com/developers/contribute/capabilities/local-setup).
+Run A2E Suite on your own infrastructure with [Docker Compose](https://docs.twenty.com/developers/self-host/capabilities/docker-compose), or contribute locally via the [local setup guide](https://docs.twenty.com/developers/contribute/capabilities/local-setup).
 
 <br />
 <br />
 
 # Everything you need
 
-Twenty gives you the building blocks of a modern CRM (objects, views, workflows, and agents) and lets you extend them as code. Here's a tour of what's in the box.
+A2E Suite gives you the building blocks of a modern CRM (objects, views, workflows, and agents) and lets you extend them as code. Here's a tour of what's in the box.
 
 Want to go deeper? Read the <a href="https://docs.twenty.com/user-guide/introduction"><img src="./packages/twenty-website/public/images/readme/planner-icon.svg" width="14" height="14"/> User Guide</a> for product walkthroughs, or the <a href="https://docs.twenty.com"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="14" height="14"/> Documentation</a> for developer reference.
 

@@ -1,4 +1,4 @@
-name: twenty
+name: a2e-suite
 
 services:
   server:
