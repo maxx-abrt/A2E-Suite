@@ -261,3 +261,28 @@ re-run, `twenty-client-sdk` dist must be rebuilt or server jest breaks again.
 - In-package `npx tsgo -p tsconfig.json --noEmit` → 13 errors, identical to the documented P1.3 baseline (12 `twenty-emails`/SDK TS2307s + pre-existing `workspaceTemplate` TS2322 in `from-workspace-entity-to-flat.util.ts`); none in new files.
 - oxlint --type-aware on the 5 touched files → 0 warnings/errors; oxfmt --check clean. `npx nx lint:diff-with-main twenty-server` passes (pre-existing committed diff).
 **For the next agent:** next = P1.4 front task (Cmd+K grouped results: group headers + frecency store) then "consume providers dynamically". When wiring consumption, call `searchProviderRegistryService.getAllSearchProviders()` alongside `SearchService` in `SearchResolver` (or a new sibling query — additive) and gate per app via application install state; remember `path` must be resolved against the front router. Registry test file lives under `search/services/__tests__/` (search module has no `__tests__` sibling convention yet — I started one next to the service).
+
+## 2026-09-06 20:25 UTC — Zoo (GLM-5.3-Flash)
+**Task(s):** P1.4 front task — Cmd+K grouped results structure (group headers, frecency store) (PLAN.md line 125)
+**Status:** done
+**What I did:**
+- `side-panel/pages/search/states/searchRecordsFrecencyByObjectState.ts`: localStorage-backed jotai atom `{[objectNameSingular]: {lastUsedAtTimestamp, useCount}}` with `validateInitFn` guard, capped at 100 entries.
+- `utils/computeSearchRecordObjectFrecencyRank.ts`: classic frecency = useCount / (hoursSinceLastUse + 2); 0 for unused; clock-skew-safe.
+- `utils/groupSearchResultItems.ts`: sorts by group frecency rank (stable, server relevance order preserved inside a group), folds into `SearchResultGroup[]` + flat `orderedItems`.
+- `utils/pruneSearchRecordObjectFrecency.ts`: LRU-style cap.
+- `hooks/useRecordSearchObjectUsage.ts`: records a use on result click.
+- `hooks/useSidePanelSearchRecords.tsx`: items now carry `groupKey` (raw object name, locale-stable) + `groupHeading` (translated label).
+- `components/SidePanelSearchRecordsPage.tsx`: renders one `SidePanelGroup` per object (header = object label) instead of a single "Results" group; click records usage; ordering = frecency.
+- Tests: `utils/__tests__/` 3 suites, 10 cases (ordering, in-group stability, tie behavior, prune, frecency math).
+**Decisions & trade-offs:**
+- Frecency is per object-name group (Bureau "grouped by app with frecency" pattern; today the groups are core objects, P1.4 task 2 adds app groups with the same mechanism — group key simply becomes the app id).
+- Group key = `objectNameSingular` (not translated label) so stored frecency survives locale switches.
+- `useCount`/`lastUsedAtTimestamp` payload validated on hydration; invalid localStorage falls back to `{}` via `createAtomState`.
+- Only records opened *from search results* count toward frecency (no passive tracking).
+**Verification:**
+- `npx jest src/modules/side-panel/pages/search --config=jest.config.mjs` (cwd packages/twenty-front) → 10 passed.
+- oxlint --type-aware on the search folder → 0 warnings/0 errors (fixed a real `matching-state-variable` rule hit: jotai state vars must be named after the state).
+- oxfmt --check clean.
+- In-package tsgo: 4313 total vs 4311 documented baseline; +2 are pre-existing TS2339/TS2741 in untouched `SidePanelSearchRecordPreviewCard.tsx` (baseline class, file not in my diff); 0 errors in new/modified files (only documented TS2307 module-resolution class remains there).
+- No GraphQL schema change (core `search` query untouched); twenty-shared untouched.
+**For the next agent:** next = P1.4 last task ("Consume providers dynamically; core object search unchanged"). Server side: extend `SearchResolver` (or additive sibling query) to run `SearchProviderRegistryService.getAllSearchProviders()` gated per app via `flatApplicationMaps` (workspace-flat-application-map-cache.service provides `idByUniversalIdentifier` — only run a provider when its appUniversalIdentifier is installed); reuse `SearchProviderResultItem` incl. required `path`. Front side: add a second query in the search page, render each app's items as its own `SidePanelGroup` (the grouping/frecency infra from this task takes any `groupKey`), deep-link via `navigate(path)`; CommandMenu story has an msw `Search` mock to extend for the new query. Do NOT reuse the object-name frecency bucket for app groups unless you intend shared ranking.

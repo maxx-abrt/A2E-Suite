@@ -5,13 +5,17 @@ import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { SidePanelSearchRecordPreviewCard } from '@/side-panel/pages/search/components/SidePanelSearchRecordPreviewCard';
 import { SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH } from '@/side-panel/pages/search/constants/SidePanelSearchRecordPreviewWidth';
+import { useRecordSearchObjectUsage } from '@/side-panel/pages/search/hooks/useRecordSearchObjectUsage';
 import { useSidePanelSearchRecordPreviewItem } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecordPreviewItem';
 import { useSidePanelSearchRecords } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecords';
+import { searchRecordsFrecencyByObjectState } from '@/side-panel/pages/search/states/searchRecordsFrecencyByObjectState';
+import { computeSearchRecordObjectFrecencyRank } from '@/side-panel/pages/search/utils/computeSearchRecordObjectFrecencyRank';
 import { getSidePanelSearchResultAnchorId } from '@/side-panel/pages/search/utils/getSidePanelSearchResultAnchorId';
+import { groupSearchResultItems } from '@/side-panel/pages/search/utils/groupSearchResultItems';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { css } from '@linaria/core';
-import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
@@ -32,19 +36,40 @@ const previewTooltipClass = css`
 `;
 
 export const SidePanelSearchRecordsPage = () => {
-  const { t } = useLingui();
   const { searchResultItems, loading, noResults } = useSidePanelSearchRecords();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { closeCommandMenu } = useCloseCommandMenu();
+  const { recordSearchObjectUsage } = useRecordSearchObjectUsage();
+  const searchRecordsFrecencyByObject = useAtomStateValue(
+    searchRecordsFrecencyByObjectState,
+  );
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
+  const { groups, orderedItems } = useMemo(() => {
+    const nowTimestamp = Date.now();
+
+    const frecencyRankByGroupKey = Object.fromEntries(
+      Object.entries(searchRecordsFrecencyByObject).map(
+        ([objectKey, frecency]) => [
+          objectKey,
+          computeSearchRecordObjectFrecencyRank({ frecency, nowTimestamp }),
+        ],
+      ),
+    );
+
+    return groupSearchResultItems({
+      items: searchResultItems,
+      frecencyRankByGroupKey,
+    });
+  }, [searchRecordsFrecencyByObject, searchResultItems]);
+
   const selectableItemIds = useMemo(
-    () => searchResultItems.map((item) => item.id),
-    [searchResultItems],
+    () => orderedItems.map((item) => item.id),
+    [orderedItems],
   );
 
-  const previewedItem = useSidePanelSearchRecordPreviewItem(searchResultItems);
+  const previewedItem = useSidePanelSearchRecordPreviewItem(orderedItems);
 
   const shouldDisplayPreview = !isMobile && isDefined(previewedItem);
 
@@ -55,15 +80,17 @@ export const SidePanelSearchRecordsPage = () => {
         loading={loading}
         noResults={noResults}
       >
-        {searchResultItems.length > 0 && (
-          <SidePanelGroup heading={t`Results`}>
-            {searchResultItems.map((item) => {
+        {groups.map(({ groupKey, heading, items }) => (
+          <SidePanelGroup key={groupKey} heading={heading}>
+            {items.map((item) => {
               const isTaskOrNote = [
                 CoreObjectNameSingular.Task,
                 CoreObjectNameSingular.Note,
               ].includes(item.objectNameSingular as CoreObjectNameSingular);
 
               const handleClick = () => {
+                recordSearchObjectUsage(item.groupKey);
+
                 if (isTaskOrNote) {
                   openRecordInSidePanel({
                     recordId: item.recordId,
@@ -107,7 +134,7 @@ export const SidePanelSearchRecordsPage = () => {
               );
             })}
           </SidePanelGroup>
-        )}
+        ))}
       </SidePanelList>
 
       {shouldDisplayPreview && (
