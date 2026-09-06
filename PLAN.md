@@ -120,7 +120,7 @@ persona, and the conventions every later phase relies on.
       Documents nav present
 
 ### P1.4 Search federation skeleton
-- [ ] Server: search provider interface in `search` core module +
+- [x] Server: search provider interface in `search` core module +
       registry (keyed by app id)
 - [ ] Front: Cmd+K grouped results structure (group headers, frecency store)
 - [ ] Consume providers dynamically; core object search unchanged

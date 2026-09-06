@@ -242,3 +242,22 @@ seeding behind `sampleContentEnabled`; (3) new A2E app UUIDs must be added to
 BOTH `twenty-front/.../A2eSuiteApplicationUniversalIdentifiers.ts` and
 `workspace-template-definitions.constant.ts`; (4) if `yarn install` is ever
 re-run, `twenty-client-sdk` dist must be rebuilt or server jest breaks again.
+
+## 2026-09-06 19:40 UTC — Zoo (GLM-5.3-Flash)
+**Task(s):** P1.4 server task — search provider interface in `search` core module + registry keyed by app id (PLAN.md P1.4 first checkbox)
+**Status:** done
+**What I did:**
+- `search/types/search-provider.type.ts`: `SearchProviderParams` (searchInput, limit, workspaceId), `SearchProviderResultItem` (recordId, label, optional description/imageUrl, required stable `path` deep link per blueprint §6), `SearchProviderResult`, `SearchProvider`.
+- `search/decorators/registered-search-provider.decorator.ts`: `@RegisteredSearchProvider({ appUniversalIdentifier })` + metadata getter — mirrors `registered-instance-command.decorator.ts` (Injectable + Reflect.defineMetadata).
+- `search/services/search-provider-registry.service.ts`: `SearchProviderRegistryService` — `DiscoveryService`-based scan on `onModuleInit`, providers stored per app universal identifier (`Map<string, RegisteredSearchProvider[]>`), accessors `getSearchProvidersByAppUniversalIdentifier` + `getAllSearchProviders`.
+- `search.module.ts`: added `DiscoveryModule` import + registry provider (additive; resolver/service untouched).
+- Test: `search/services/__tests__/search-provider-registry.service.spec.ts` (discovery keyed by app id, unknown app → [], getAll, delegation contract).
+**Decisions & trade-offs:**
+- Registry uses the decorator + `DiscoveryService` pattern proven by `UpgradeCommandRegistryService` rather than a Nest multi-provider token: it survives module import order, needs no registration list, and gives per-app keying for free (blueprint §6 "apps register their provider at install").
+- No GraphQL surface yet: consumption is the separate P1.4 task ("consume providers dynamically"); this commit only adds the interface + registry so no schema regen is needed.
+- `path` is a required provider output (not computed by core): keeps deep-link policy per app (page routes vs `/object/<name>/<id>`) as blueprint §6 requires.
+**Verification:**
+- `npx jest .../search-provider-registry.service.spec.ts --config=packages/twenty-server/jest.config.mjs` → 4 passed.
+- In-package `npx tsgo -p tsconfig.json --noEmit` → 13 errors, identical to the documented P1.3 baseline (12 `twenty-emails`/SDK TS2307s + pre-existing `workspaceTemplate` TS2322 in `from-workspace-entity-to-flat.util.ts`); none in new files.
+- oxlint --type-aware on the 5 touched files → 0 warnings/errors; oxfmt --check clean. `npx nx lint:diff-with-main twenty-server` passes (pre-existing committed diff).
+**For the next agent:** next = P1.4 front task (Cmd+K grouped results: group headers + frecency store) then "consume providers dynamically". When wiring consumption, call `searchProviderRegistryService.getAllSearchProviders()` alongside `SearchService` in `SearchResolver` (or a new sibling query — additive) and gate per app via application install state; remember `path` must be resolved against the front router. Registry test file lives under `search/services/__tests__/` (search module has no `__tests__` sibling convention yet — I started one next to the service).
