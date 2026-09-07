@@ -126,9 +126,9 @@ persona, and the conventions every later phase relies on.
 - [x] Consume providers dynamically; core object search unchanged
 
 ### P1.5 AI registry seed (pre-work for P9)
-- [ ] Audit `tool`/`tool-provider` modules; write short design note in phase
+- [x] Audit `tool`/`tool-provider` modules; write short design note in phase
       report for `registerAiTools(appId, tools)` extension
-- [ ] Data model for app-registered AI tools (additive table or metadata)
+- [x] Data model for app-registered AI tools (additive table or metadata)
 
 **Acceptance.** Scratch workspace toggles apps on/off; presets install
 correctly; search returns grouped results (core only); no regressions in
