@@ -142,23 +142,23 @@ existing onboarding e2e.
 grade) and the calm, predictable workbench chrome. See blueprint §4–§6.
 
 ### P2.1 Realtime gateway (server)
-- [ ] Core module `realtime-gateway`: ws server on `/realtime`, cookie-auth
+- [x] Core module `realtime-gateway`: ws server on `/realtime`, cookie-auth
       on upgrade, topic subscription protocol (`subscribe/unsubscribe`,
       envelope `{topic, seq, type, payload}`)
-- [ ] Redis pub/sub fan-out (`a2e:rt:*` channels) via redis-client;
+- [x] Redis pub/sub fan-out (`a2e:rt:*` channels) via redis-client;
       multi-instance safe
-- [ ] Topic ACL map: workspace membership required; per-topic checks
+- [x] Topic ACL map: workspace membership required; per-topic checks
       (workspace/user/record scoping)
-- [ ] Heartbeat/ping-pong, dead-socket cleanup, metrics counters
-- [ ] Integration tests: auth rejection, topic isolation across workspaces,
+- [x] Heartbeat/ping-pong, dead-socket cleanup, metrics counters
+- [x] Integration tests: auth rejection, topic isolation across workspaces,
       reconnect seq catch-up contract
-- [ ] Unit tests for topic auth + envelope serialization
+- [x] Unit tests for topic auth + envelope serialization
 
 ### P2.2 Realtime client (front)
-- [ ] `realtime` front module: connection manager (single socket, backoff
+- [x] `realtime` front module: connection manager (single socket, backoff
       reconnect), `useRealtimeTopic(topic)` hook, status atom
-- [ ] Reconnect banner + offline composer queue primitives (used by P5/P8)
-- [ ] Storybook/test harness with a mock server
+- [x] Reconnect banner + offline composer queue primitives (used by P5/P8)
+- [x] Storybook/test harness with a mock server
 
 ### P2.3 Presence
 - [ ] Server: Redis TTL presence keys, join/leave/typing events on

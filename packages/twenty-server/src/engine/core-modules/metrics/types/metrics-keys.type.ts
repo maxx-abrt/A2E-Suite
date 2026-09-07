@@ -94,4 +94,7 @@ export enum MetricsKeys {
   WorkspaceMigrationActionCount = 'workspace-migration/action-count',
   OrmV2ReadPathUsed = 'orm-v2/read-path-used',
   OrmV2WritePathUsed = 'orm-v2/write-path-used',
+  RealtimeSocketConnected = 'realtime/socket/connected',
+  RealtimeSocketDisconnected = 'realtime/socket/disconnected',
+  RealtimeMessagePublished = 'realtime/message/published',
 }
