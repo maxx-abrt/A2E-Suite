@@ -51,7 +51,8 @@ jobs:
           # Shared runner IPs exhaust Docker Hub's anonymous pull rate limit
           # within minutes; route base image pulls through Google's mirror
           # (upstream CI does the same in ci-test-docker-compose.yaml).
-          config: |
+          # config-inline (not config) takes inline TOML content.
+          config-inline: |
             [registry."docker.io"]
               mirrors = ["mirror.gcr.io"]
 
