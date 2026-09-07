@@ -56,10 +56,19 @@ cache). Watch it under **Actions → CD Docker image**. The image appears at
 
 1. Coolify → **New resource** → **Docker Compose** (empty / "Docker Compose
    Empty").
-2. At the top, set the **Docker Compose custom path** (or paste the file):
-   - *Git source*: repo `maxx-abrt/A2E-Suite`, branch `main`, compose path
-     `packages/twenty-docker/docker-compose.coolify.yml`
-   - or paste the file content directly.
+2. On the Coolify "Repository configuration" screen, set exactly:
+   - Repository URL: `https://github.com/maxx-abrt/A2E-Suite.git`
+   - Branch: `main`
+   - Build pack: `Docker Compose`
+   - **Base directory: leave the field completely empty** (not `/`, not `.`).
+     With `/` Coolify resolves the file as `null/...` and refuses to continue.
+   - Compose file: `packages/twenty-docker/docker-compose.coolify.yml`
+     The header must then show the resolved path without a `null/` prefix.
+   - The repo is private: install the Coolify GitHub App first
+     (Coolify → **Sources** → **GitHub** → install), or Coolify cannot clone.
+   - Alternative: build pack **Docker Compose** with pasted content — no clone
+     needed at deploy time, but redeploys won't pick up compose-file changes
+     from git.
 3. Coolify may warn that it wants to build the services — leave **"Build
    server"** unchecked everywhere; the `image:` field is used as-is.
 
