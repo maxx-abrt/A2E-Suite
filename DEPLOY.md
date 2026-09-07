@@ -80,6 +80,26 @@ Coolify asks "build these services?" — answer **no / skip** everywhere. The
 compose file only references a prebuilt `image:`; nothing is compiled on the
 server.
 
+### Plan B — paste the compose (bypasses the repository screen entirely)
+
+If the repository screen keeps showing `Resolved file: null/...` after
+clearing Base directory, skip git cloning completely (the stack is 100%
+image-based and both the repo and the GHCR package are public):
+
+1. Coolify → **+ New Resource** → **Docker Compose** → choose **Empty**
+   (creates the resource without any git source).
+2. On the resource page, **Docker Compose** section → **Edit Compose File**
+   → paste the full content of
+   [`packages/twenty-docker/docker-compose.coolify.yml`](packages/twenty-docker/docker-compose.coolify.yml)
+   → **Save**.
+3. Continue with Part 4 (env vars) and Part 5 (domain) below. Coolify never
+   needs to clone the repo for this method.
+
+For the git screen itself, the null fix stays: Base directory truly empty
+(not `/`), Compose file exactly
+`packages/twenty-docker/docker-compose.coolify.yml`, no trailing spaces in
+either field.
+
 ## Part 4 — In Coolify: the 3 required env vars
 
 Resource page → tab **Environment Variables** → add:
