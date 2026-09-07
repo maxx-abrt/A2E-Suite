@@ -108,7 +108,10 @@ export default defineConfig(({ command }) => {
       // Generates typed *.module.scss.d.ts siblings (dev mode only — backed by
       // sass-embedded). CI/build relies on the ambient src/scss-modules.d.ts.
       sassDts({ esmExport: true, legacyFileFormat: true }),
-      // dts(dtsConfig),
+      // dts() emits dist/**/*.d.ts; without it, consumers type-checking
+      // against the built package (twenty-front-component-renderer:build)
+      // fail with TS7016 on every twenty-ui/* subpath export.
+      dts(dtsConfig),
       // checker(checkersConfig),
       {
         name: 'copy-theme-css',
