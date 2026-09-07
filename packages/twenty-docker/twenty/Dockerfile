@@ -17,7 +17,7 @@ COPY ./packages/twenty-front-component-renderer/package.json /app/packages/twent
 COPY ./packages/twenty-sdk/package.json /app/packages/twenty-sdk/
 COPY ./packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 
-RUN yarn workspaces focus twenty twenty-front twenty-front-component-renderer twenty-ui twenty-shared twenty-sdk twenty-client-sdk && yarn cache clean && npx nx reset
+RUN yarn workspaces focus a2e-suite twenty-front twenty-front-component-renderer twenty-ui twenty-shared twenty-sdk twenty-client-sdk && yarn cache clean && npx nx reset
 
 
 FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491f4857e25e35a36ba7995 AS server-deps
@@ -34,7 +34,7 @@ COPY ./packages/twenty-server/patches /app/packages/twenty-server/patches
 COPY ./packages/twenty-shared/package.json /app/packages/twenty-shared/
 COPY ./packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 
-RUN yarn workspaces focus twenty twenty-server twenty-emails twenty-shared twenty-client-sdk && yarn cache clean && npx nx reset
+RUN yarn workspaces focus a2e-suite twenty-server twenty-emails twenty-shared twenty-client-sdk && yarn cache clean && npx nx reset
 
 
 FROM server-deps AS twenty-server-build
@@ -130,7 +130,7 @@ COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-emails/dist /a
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-client-sdk/dist /app/packages/twenty-client-sdk/dist
 
-LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
+LABEL org.opencontainers.image.source=https://github.com/maxx-abrt/A2E-Suite
 LABEL org.opencontainers.image.description="Twenty server image (no frontend)."
 
 # Remove unused, unpatchable components the scanner flags (none are executed at
@@ -296,7 +296,7 @@ ENV PG_DATABASE_URL=postgres://twenty:twenty@localhost:5432/default \
 EXPOSE 2020
 VOLUME ["/data/postgres", "/app/packages/twenty-server/.local-storage"]
 
-LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
+LABEL org.opencontainers.image.source=https://github.com/maxx-abrt/A2E-Suite
 LABEL org.opencontainers.image.description="All-in-one Twenty image for local development and SDK usage. Includes PostgreSQL, Redis, server, and worker."
 
 ENTRYPOINT ["/init"]
