@@ -5,8 +5,8 @@ import {
   FindManyApplicationsDocument,
   type FindManyApplicationsQuery,
 } from '~/generated-metadata/graphql';
-import { SEARCH_APP_RECORDS_QUERY } from '~/side-panel/pages/search/graphql/queries/searchAppRecords';
-import { type GroupableSearchResultItem } from '~/side-panel/pages/search/utils/groupSearchResultItems';
+import { SEARCH_APP_RECORDS_QUERY } from '~/modules/side-panel/pages/search/graphql/queries/searchAppRecords';
+import { type GroupableSearchResultItem } from '~/modules/side-panel/pages/search/utils/groupSearchResultItems';
 
 type AppSearchRecord = {
   recordId: string;
