@@ -30,7 +30,9 @@ services:
       STORAGE_TYPE: ${STORAGE_TYPE:-local}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:?required}
       FALLBACK_ENCRYPTION_KEY: ${FALLBACK_ENCRYPTION_KEY}
-      APP_SECRET: ${APP_SECRET:-}
+      # APP_SECRET falls back to ENCRYPTION_KEY when unset or empty; an empty
+      # value reaching the server makes JWT app-secret derivation throw at runtime
+      APP_SECRET: ${APP_SECRET:-${ENCRYPTION_KEY}}
       # STORAGE_S3_REGION: ${STORAGE_S3_REGION}
       # STORAGE_S3_NAME: ${STORAGE_S3_NAME}
       # STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
@@ -76,7 +78,9 @@ services:
       STORAGE_TYPE: ${STORAGE_TYPE:-local}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:?required}
       FALLBACK_ENCRYPTION_KEY: ${FALLBACK_ENCRYPTION_KEY}
-      APP_SECRET: ${APP_SECRET:-}
+      # APP_SECRET falls back to ENCRYPTION_KEY when unset or empty; an empty
+      # value reaching the server makes JWT app-secret derivation throw at runtime
+      APP_SECRET: ${APP_SECRET:-${ENCRYPTION_KEY}}
       # STORAGE_S3_REGION: ${STORAGE_S3_REGION}
       # STORAGE_S3_NAME: ${STORAGE_S3_NAME}
       # STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}

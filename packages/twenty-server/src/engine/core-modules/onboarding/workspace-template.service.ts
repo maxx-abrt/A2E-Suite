@@ -1,4 +1,5 @@
-import { Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { randomUUID } from 'crypto';
@@ -23,6 +24,11 @@ import { createStandardNavigationMenuItemFlatMetadata } from 'src/engine/workspa
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
+// ApplicationInstallModule must NOT be imported into OnboardingModule: it would
+// close an import cycle with the GraphQL query-runner modules and crash boot
+// with "WorkspaceQueryHookModule before initialization". Resolve the service
+// lazily through ModuleRef instead.
+@Injectable()
 export class WorkspaceTemplateService {
   private readonly logger = new Logger(WorkspaceTemplateService.name);
 
@@ -30,11 +36,15 @@ export class WorkspaceTemplateService {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
-    private readonly applicationInstallService: ApplicationInstallService,
+    private readonly moduleRef: ModuleRef,
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {}
+
+  private get applicationInstallService(): ApplicationInstallService {
+    return this.moduleRef.get(ApplicationInstallService, { strict: false });
+  }
 
   async applyWorkspaceTemplate({
     workspaceId,

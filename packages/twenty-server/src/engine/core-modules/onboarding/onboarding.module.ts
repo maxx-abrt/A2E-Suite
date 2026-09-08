@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -18,7 +17,6 @@ import { OnboardingInviteSuggestionsModule } from 'src/modules/onboarding-invite
 @Module({
   imports: [
     ApplicationModule,
-    ApplicationInstallModule,
     ApplicationRegistrationModule,
     BillingModule,
     UserVarsModule,

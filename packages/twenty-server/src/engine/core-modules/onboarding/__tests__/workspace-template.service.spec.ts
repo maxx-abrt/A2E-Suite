@@ -1,3 +1,4 @@
+import { ModuleRef } from '@nestjs/core';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -39,7 +40,17 @@ describe('WorkspaceTemplateService', () => {
     .fn()
     .mockResolvedValue({ status: 'success' });
 
+  const moduleRefGet = jest.fn();
+
   beforeEach(async () => {
+    moduleRefGet.mockImplementation((token: unknown) => {
+      if (token === ApplicationInstallService) {
+        return { installApplication };
+      }
+
+      throw new Error(`Unexpected ModuleRef.get token: ${String(token)}`);
+    });
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkspaceTemplateService,
@@ -52,8 +63,8 @@ describe('WorkspaceTemplateService', () => {
           useValue: { findOneByUniversalIdentifierGlobal },
         },
         {
-          provide: ApplicationInstallService,
-          useValue: { installApplication },
+          provide: ModuleRef,
+          useValue: { get: moduleRefGet },
         },
         {
           provide: ApplicationService,
