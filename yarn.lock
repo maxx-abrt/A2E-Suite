@@ -21791,7 +21791,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ws@npm:^8.18.1, @types/ws@npm:^8.5.12":
+"@types/ws@npm:^8.18.1, @types/ws@npm:^8.5.12, @types/ws@npm:^8.5.4":
   version: 8.18.1
   resolution: "@types/ws@npm:8.18.1"
   dependencies:
@@ -50443,6 +50443,7 @@ __metadata:
     "@types/supertest": "npm:^2.0.11"
     "@types/unzipper": "npm:^0"
     "@types/uuid": "npm:^9.0.2"
+    "@types/ws": "npm:^8.5.4"
     addressparser: "npm:1.0.1"
     ai: "npm:6.0.97"
     archiver: "npm:7.0.1"
@@ -50551,6 +50552,7 @@ __metadata:
     typeorm: "patch:typeorm@0.3.31#./patches/typeorm+0.3.31.patch"
     unzipper: "npm:^0.12.3"
     uuid: "npm:^11.1.1"
+    ws: "npm:^8.21.0"
     zod: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
