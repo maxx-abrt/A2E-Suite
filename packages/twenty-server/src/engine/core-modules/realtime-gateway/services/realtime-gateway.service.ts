@@ -53,7 +53,18 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
   ) {}
 
   onModuleInit(): void {
-    const httpServer = this.httpAdapterHost.httpAdapter.getHttpServer();
+    // CLI commands and the queue worker boot via createApplicationContext,
+    // where httpAdapter itself is null — without this guard every
+    // command:prod / worker:prod boot dies here before doing any work.
+    const httpAdapter = this.httpAdapterHost.httpAdapter;
+
+    if (!isDefined(httpAdapter)) {
+      this.logger.warn('No HTTP adapter available; realtime gateway disabled');
+
+      return;
+    }
+
+    const httpServer = httpAdapter.getHttpServer();
 
     if (!isDefined(httpServer)) {
       this.logger.warn('No HTTP server available; realtime gateway disabled');
