@@ -184,6 +184,8 @@ export {
   jsonRelationFilterValueSchema,
 } from './filter/utils/validation-schemas/jsonRelationFilterValueSchema';
 export { formatToShortNumber } from './format/formatToShortNumber';
+export type { FractionalIndexBounds } from './fractional-indexing/generateFractionalIndexBetween.util';
+export { generateFractionalIndexBetween } from './fractional-indexing/generateFractionalIndexBetween.util';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';
 export { getUrlSafely } from './getUrlSafely';

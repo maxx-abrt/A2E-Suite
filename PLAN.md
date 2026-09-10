@@ -198,17 +198,17 @@ pages render unchanged (no layout regressions).
 App: `a2e-documents`.
 
 ### P3.1 Document object model
-- [ ] Spike (report only): extend `note` vs new `document` object — decision
+- [x] Spike (report only): extend `note` vs new `document` object — decision
       criteria: note is polymorphic-target CRM surface; documents are
       first-class tree entities. Expected: keep `note` for record-attached
       notes; add `document` object for the workspace tree, sharing rich-text
       stack. Record decision + trade-offs
-- [ ] `document` object (app): title, icon, cover, content (RICH_TEXT),
+- [x] `document` object (app): title, icon, cover, content (RICH_TEXT),
       parent (self-relation), position (fractional index), isFavorite,
       isTemplate, archivedAt, tags/labels
-- [ ] Fractional indexing util in `twenty-shared/utils` (with tests)
-- [ ] Upgrade command (2-39) if any server-side columns needed beyond app
-      metadata
+- [x] Fractional indexing util in `twenty-shared/utils` (with tests)
+- [x] Upgrade command (2-39) if any server-side columns needed beyond app
+      metadata (none needed — all columns live in app metadata; see report)
 
 ### P3.2 Editor upgrades
 - [ ] Slash-command extensions: toggle/heading/code/quote/callout/divider/
