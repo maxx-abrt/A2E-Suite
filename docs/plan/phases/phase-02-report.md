@@ -197,3 +197,28 @@ if observability needs them before P2.5.
 - Changed-file type-aware oxlint and oxfmt: clean.
 
 **Next:** P2.4 right widgets dock and pluggable widget registry.
+
+## 2026-09-10 — E2
+**Task:** P2.4 Workbench shell — widgets dock
+**Status:** done
+
+**What I did:**
+- Added a workspace-wide right dock with persisted `MINI`/`EXPANDED` mode, active widget, and width under exact `a2e-widgets-*` storage keys.
+- Added an app-facing live registry with six default extension points: inbox, Syna assistant, comments, tasks, activity, and real workspace presence; apps can register/unregister additional widgets at runtime.
+- Reused the shared resizable-panel primitive with 280–460px constraints and 12px snap-collapse behavior.
+- Added responsive CSS: in-flow desktop panel, overlay below 1200px, and bounded floating dock below 768px.
+- Mounted the dock once in the main workspace shell; print layouts continue to exclude auxiliary chrome.
+- Kept unconnected modules honest with explicit empty states instead of fake counts or records.
+
+**Tests and verification:**
+- Dock/registry/layout Jest suite: 5/5 passing.
+- Independent testing agent: all nine dock requirements verified, no code/design issue (`test_reports/iteration_5.json`, local artifact only).
+- Browser automation was blocked only by the container ENOSPC file-watcher limit; unit and code-level responsive validation passed.
+- Changed-file type-aware oxlint, oxfmt, and targeted tsgo: clean.
+
+**Decisions:**
+- Registry entries may provide their own React component; defaults use first-party safe empty states until their owning app phase lands.
+- The presence widget uses real roster data; no widget contains mocked data.
+- The dock uses a dedicated root stacking-context value below the existing side panel.
+
+**Next:** P2.4 responsive snap/mobile verification task, then side-panel tabs.

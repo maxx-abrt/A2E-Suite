@@ -168,7 +168,7 @@ grade) and the calm, predictable workbench chrome. See blueprint §4–§6.
 - [x] Consume in side panel header (pilot surface)
 
 ### P2.4 Workbench shell (widgets dock + tabs)
-- [ ] Right widgets dock: collapsible (MINI/EXPANDED), resizable, persisted
+- [x] Right widgets dock: collapsible (MINI/EXPANDED), resizable, persisted
       widths (localStorage keys `a2e-widgets-*`), hosts pluggable widgets
       (registry: inbox preview, assistant, comments, task list, activity,
       presence)

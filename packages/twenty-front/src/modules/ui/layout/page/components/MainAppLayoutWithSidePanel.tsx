@@ -3,6 +3,7 @@ import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKey
 import { RouteContextStoreProvider } from '@/context-store/components/RouteContextStoreProvider';
 import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
 import { SidePanelPathUrlSyncEffect } from '@/side-panel/routing/components/SidePanelPathUrlSyncEffect';
+import { WorkbenchWidgetDock } from '@/workbench-dock/components/WorkbenchWidgetDock';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { Outlet } from 'react-router-dom';
@@ -13,6 +14,7 @@ const StyledRow = styled.div`
   flex-direction: row;
   min-height: 0;
   min-width: 0;
+  position: relative;
 
   @media print {
     display: block;
@@ -55,6 +57,7 @@ export const MainAppLayoutWithSidePanel = () => {
         <Outlet />
       </StyledContent>
       {isMobile ? <CommandMenuForMobile /> : <SidePanelForDesktop />}
+      <WorkbenchWidgetDock />
     </StyledRow>
   );
 };
