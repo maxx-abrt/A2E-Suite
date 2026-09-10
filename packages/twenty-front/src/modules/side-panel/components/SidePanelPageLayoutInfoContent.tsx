@@ -9,6 +9,8 @@ import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfo
 import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TitleInput } from '@/ui/input/components/TitleInput';
+import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
+import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -20,7 +22,6 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { ThemeContext } from 'twenty-ui/theme-constants';
-import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 
 const StyledClickableIconWrapper = styled.div`
   cursor: pointer;
@@ -96,6 +97,7 @@ export const SidePanelPageLayoutInfoContent = ({
     widgetInEditMode,
     isIconEditable,
     selectedIconKey,
+    breadcrumb,
   } = headerInfo;
 
   const Icon = headerIcon ?? getIcon('IconDefault');
@@ -142,6 +144,13 @@ export const SidePanelPageLayoutInfoContent = ({
     updatePageLayoutTab(tab.id, { icon: iconKey });
   };
 
+  // The label slot carries the breadcrumb path so the title stays editable.
+  const headerLabel = isDefined(breadcrumb) ? (
+    <Breadcrumb links={breadcrumb} />
+  ) : (
+    headerType
+  );
+
   const iconElement =
     isIconEditable && isDefined(tab) ? (
       <IconPicker
@@ -180,7 +189,7 @@ export const SidePanelPageLayoutInfoContent = ({
           onFocus={handleTitleInputOpen}
         />
       }
-      label={headerType}
+      label={headerLabel}
     />
   );
 };

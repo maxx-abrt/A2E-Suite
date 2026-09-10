@@ -322,3 +322,53 @@ it, producing bogus `ENOENT` on hashed chunks; it must be stopped while testing.
 **Repair.** 20 tracked files (`twenty-shared/package.json`, its generated
 barrels and the `twenty-front-component-renderer` generated registries) were
 found truncated to 0 bytes in the working tree and restored from `HEAD`.
+
+
+## 2026-09-10 13:00 UTC — Zoo (GLM-5.3-Flash)
+**Task(s):** P2.4 Page-header context: active page sources title/breadcrumb/actions (PLAN.md line 179)
+**Status:** done
+
+**What I did:**
+- `usePageLayoutHeaderInfo` now emits an optional `breadcrumb` (typed as
+  `BreadcrumbProps['links']`) alongside the existing header info:
+  widget-settings pages source `Page Layout / <headerType>` and the two
+  new-widget type-select pages source `Page Layout / New widget`
+  (`packages/twenty-front/src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts`).
+- `SidePanelPageLayoutInfoContent` renders that breadcrumb through the shared
+  `Breadcrumb` component in the `HeaderIdentifier` label slot, so the title
+  stays an editable `TitleInput` while the context path stays visible
+  (`packages/twenty-front/src/modules/side-panel/components/SidePanelPageLayoutInfoContent.tsx`).
+  Note: `HeaderIdentifier` renders `label` via `StyledHeaderIdentifierLabel`
+  (tertiary color, nowrap) — the breadcrumb inherits that, which reads as the
+  calm secondary path rather than a full-width crumb.
+- Tests added to `usePageLayoutHeaderInfo.test.tsx`: widget-settings breadcrumb
+  content and new-widget breadcrumb content (8 tests total in the suite).
+
+**Decisions & trade-offs:**
+- Breadcrumb lives in the label slot instead of replacing the title: the
+  page-layout settings header is a *title editor* (rename flow), so replacing
+  it would regress the rename UX. The label slot was the only sanctioned slot
+  left. The `Tab` settings page deliberately emits no breadcrumb — its title
+  IS the tab name and there is no extra context to source.
+- No new portal/context machinery: reuse of `PageCardHeader`'s portal system
+  was considered but page-layout settings pages already render through
+  `SidePanelPageLayoutInfo`, which is where this header context is sourced.
+
+**Verification:**
+- `npx jest src/modules/side-panel/components/hooks/__tests__/usePageLayoutHeaderInfo.test.tsx --config=packages/twenty-front/jest.config.mjs` → 8 passed.
+- In-package `npx tsgo -p tsconfig.json --noEmit` → 0 errors in touched files
+  (pre-existing baseline errors elsewhere unchanged, `front-components` etc.).
+- `npx oxlint --type-aware` + `npx oxfmt --check` on the 3 touched files → clean.
+- `npx nx lint:diff-with-main twenty-front` → pass.
+- Lingui: all new user-facing strings go through `t` macros in existing
+  msg-shaped files; catalog churn intentionally not committed per house rules.
+
+**For the next agent:** next = P2.4 unit tests for dock persistence + tab
+store already exist (`tabs/__tests__/*`, `workbench-dock` tests); the PLAN
+line 180 also asks for the two-records-as-tabs e2e — browser e2e remains
+blocked in this container by the inotify/ENOSPC file-watcher limit (see the
+tabs entry above); the reload-restore and URL-precedence paths are covered by
+the integration-level Jest suites, so either run the Playwright spec from an
+unblocked machine or log the blockage again. Gotcha: `t` from
+`@lingui/core/macro` in the hook means msg keys for `Page Layout` /
+`New widget` already existed; verify no duplicate keys on extract.

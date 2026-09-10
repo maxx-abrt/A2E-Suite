@@ -90,4 +90,40 @@ describe('usePageLayoutHeaderInfo', () => {
       isIconEditable: true,
     });
   });
+
+  it('sources a Page Layout breadcrumb for widget settings', () => {
+    const widget = makeWidget('widget-id', 0);
+
+    const { result } = renderHook(() =>
+      usePageLayoutHeaderInfo({
+        sidePanelPage: SidePanelPages.PageLayoutWidgetSettings,
+        draftPageLayout: { tabs: [makeTab('tab-id', [widget])] },
+        pageLayoutEditingWidgetId: widget.id,
+        openTabId: null,
+        editedTitle: null,
+      }),
+    );
+
+    expect(result.current?.breadcrumb).toEqual([
+      { children: 'Page Layout' },
+      { children: 'Widget' },
+    ]);
+  });
+
+  it('sources a Page Layout breadcrumb for new-widget flows', () => {
+    const { result } = renderHook(() =>
+      usePageLayoutHeaderInfo({
+        sidePanelPage: SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
+        draftPageLayout: { tabs: [] },
+        pageLayoutEditingWidgetId: null,
+        openTabId: null,
+        editedTitle: null,
+      }),
+    );
+
+    expect(result.current?.breadcrumb).toEqual([
+      { children: 'Page Layout' },
+      { children: 'New widget' },
+    ]);
+  });
 });

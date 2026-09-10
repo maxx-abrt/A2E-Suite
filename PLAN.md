@@ -176,7 +176,7 @@ grade) and the calm, predictable workbench chrome. See blueprint §4–§6.
       navigator float < 768px (match existing mobile patterns)
 - [x] Side-panel tabs: multiple stacked contexts with persisted order,
       middle-click/"open in tab" affordance on records/docs/messages
-- [ ] Page-header context: active page sources title/breadcrumb/actions
+- [x] Page-header context: active page sources title/breadcrumb/actions
 - [ ] Unit tests for dock persistence + tab store; e2e: open two records as
       tabs, switch, close, reload → restored
 

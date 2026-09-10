@@ -4,6 +4,7 @@ import { isViewportFillingWidgetType } from '@/page-layout/widgets/utils/isViewp
 import { GRAPH_TYPE_INFORMATION } from '@/side-panel/pages/page-layout/constants/GraphTypeInformation';
 import { getCurrentGraphTypeFromConfig } from '@/side-panel/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
 import { isWidgetConfigurationOfTypeGraph } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
+import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
@@ -16,8 +17,8 @@ import {
   IconPerspective,
   IconPlus,
   IconTable,
-  type IconComponent,
   useIcons,
+  type IconComponent,
 } from 'twenty-ui/icon';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
@@ -31,6 +32,7 @@ type PageLayoutHeaderInfo = {
   widgetInEditMode: PageLayoutWidget | undefined;
   isIconEditable: boolean;
   selectedIconKey: string | null;
+  breadcrumb?: BreadcrumbProps['links'];
 };
 
 type UsePageLayoutHeaderInfoParams = {
@@ -71,6 +73,9 @@ const getPageLayoutWidgetHeaderInfo = ({
   widgetInEditMode,
   isIconEditable: false,
   selectedIconKey: null,
+  // The label slot renders this path next to the editable title so the
+  // settings context is always visible without blocking renaming.
+  breadcrumb: [{ children: t`Page Layout` }, { children: headerType }],
 });
 
 export const usePageLayoutHeaderInfo = ({
@@ -112,6 +117,8 @@ export const usePageLayoutHeaderInfo = ({
         ? getIcon(tab.icon)
         : IconPerspective;
 
+      // The settings title stays an editable input; the breadcrumb lives in
+      // the label slot so the context path is visible without losing editing.
       return {
         headerIcon: resolvedTabIcon ?? IconPerspective,
         headerIconColor: iconColor,
@@ -231,6 +238,7 @@ export const usePageLayoutHeaderInfo = ({
         widgetInEditMode: undefined,
         isIconEditable: false,
         selectedIconKey: null,
+        breadcrumb: [{ children: t`Page Layout` }, { children: t`New widget` }],
       };
     }
 
@@ -245,6 +253,7 @@ export const usePageLayoutHeaderInfo = ({
         widgetInEditMode: undefined,
         isIconEditable: false,
         selectedIconKey: null,
+        breadcrumb: [{ children: t`Page Layout` }, { children: t`New widget` }],
       };
     }
     default:
