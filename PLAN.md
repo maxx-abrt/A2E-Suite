@@ -181,7 +181,7 @@ grade) and the calm, predictable workbench chrome. See blueprint §4–§6.
       tabs, switch, close, reload → restored
 
 ### P2.5 Global search v1
-- [ ] Index providers wired: records (existing) + documents (stub for P3)
+- [x] Index providers wired: records (existing) + documents (stub for P3)
 - [ ] Frecency ranking; keyboard navigation; deep links open side panel
 - [ ] Performance budget: < 150ms interaction latency on 10k-record
       workspace (document measurement in report)

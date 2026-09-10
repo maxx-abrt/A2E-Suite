@@ -411,3 +411,45 @@ unblocked machine or log the blockage again. Gotcha: `t` from
 **For the next agent:** the Playwright `.env` is required before any e2e run;
 copy `.env.example` to `.env` and point `FRONTEND_BASE_URL` at a dev server.
 Next plan item = P2.5 Global search v1 (records provider + documents stub).
+
+
+## 2026-09-10 13:10 UTC — Zoo (GLM-5.3-Flash)
+**Task(s):** P2.5 Index providers wired: records (existing) + documents (stub for P3) (PLAN.md line 184)
+**Status:** done
+
+**What I did:**
+- Verified the P1.4 wiring already live: core records run through
+  `SearchService.getAllRecordsWithObjectMetadataItems` (the `search` query),
+  app records run through `searchAppRecords` → `AppSearchService` →
+  `SearchProviderRegistryService` (decorator-discovered, install-gated), and
+  the front consumes both in `SidePanelSearchRecordsPage` with grouped
+  results + frecency ranking (`groupSearchResultItems`).
+- Added the documents stub provider
+  `packages/twenty-server/src/engine/core-modules/search/services/document-search-provider.service.ts`:
+  decorated `@RegisteredSearchProvider` with the fixed a2e-documents app UUID
+  (read from `a2e-documents/src/application.config.ts`), returns `{items: []}`
+  until the P3 `document` object exists. Registered in `search.module.ts`.
+- Unit test
+  `services/__tests__/document-search-provider.service.spec.ts`: asserts the
+  decorator metadata key matches the app UUID and the stub returns empty.
+
+**Decisions & trade-offs:**
+- Stub now, fill in P3: registering the provider today proves the discovery
+  → install-gate → grouped-heading path works for documents without waiting
+  for the object; P3 then only replaces the `search` body.
+- Test inlines the app UUID rather than importing from `twenty-apps`: server
+  jest does not resolve that package (module-not-found on first run); matches
+  the hermetic style of the sibling registry spec.
+
+**Verification:**
+- `npx jest src/engine/core-modules/search --config=packages/twenty-server/jest.config.mjs` → 4 suites, 12 tests passed.
+- In-package `npx tsgo -p tsconfig.json --noEmit` → 0 errors in touched files.
+- `npx oxlint --type-aware` + `npx oxfmt --check` on the 3 touched files → clean.
+- No GraphQL schema change (provider discovery is runtime, not schema); no
+  entity change → no migration.
+
+**For the next agent:** next P2.5 item = frecency ranking + keyboard nav +
+deep links (mostly already present: `searchRecordsFrecencyByObjectState`,
+roving selectable list, `path` deep links from app providers). Audit what is
+missing before adding anything — likely only app-result results lacking
+side-panel open and the perf-budget measurement remain.
