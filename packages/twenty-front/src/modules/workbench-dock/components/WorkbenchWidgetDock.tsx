@@ -17,11 +17,13 @@ import { useWorkbenchWidgetRegistry } from '~/modules/workbench-dock/hooks/useWo
 import { workbenchWidgetDockActiveWidgetIdState } from '~/modules/workbench-dock/states/workbenchWidgetDockActiveWidgetIdState';
 import { workbenchWidgetDockModeState } from '~/modules/workbench-dock/states/workbenchWidgetDockModeState';
 import { workbenchWidgetDockWidthState } from '~/modules/workbench-dock/states/workbenchWidgetDockWidthState';
+import {
+  getWorkbenchWidgetDockModeAfterResize,
+  WORKBENCH_DOCK_MAX_WIDTH,
+  WORKBENCH_DOCK_MIN_WIDTH,
+} from '~/modules/workbench-dock/utils/getWorkbenchWidgetDockModeAfterResize';
 
 const WORKBENCH_DOCK_MINI_WIDTH = 48;
-const WORKBENCH_DOCK_MIN_WIDTH = 280;
-const WORKBENCH_DOCK_MAX_WIDTH = 460;
-const WORKBENCH_DOCK_SNAP_THRESHOLD = 12;
 const WORKBENCH_DOCK_WIDTH_CSS_VARIABLE =
   '--a2e-workbench-dock-workbenchWidgetDockWidth';
 
@@ -158,7 +160,7 @@ export const WorkbenchWidgetDock = () => {
 
   const activeTitle = getWorkbenchWidgetTitle(activeDefinition.id, t);
   const handleWidthChange = (nextWidth: number) => {
-    if (nextWidth <= WORKBENCH_DOCK_MIN_WIDTH + WORKBENCH_DOCK_SNAP_THRESHOLD) {
+    if (getWorkbenchWidgetDockModeAfterResize(nextWidth) === 'MINI') {
       setWorkbenchWidgetDockMode('MINI');
       return;
     }

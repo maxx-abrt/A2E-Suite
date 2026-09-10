@@ -172,7 +172,7 @@ grade) and the calm, predictable workbench chrome. See blueprint §4–§6.
       widths (localStorage keys `a2e-widgets-*`), hosts pluggable widgets
       (registry: inbox preview, assistant, comments, task list, activity,
       presence)
-- [ ] Snap-collapse thresholds (12px rule), floating overlay < 1200px,
+- [x] Snap-collapse thresholds (12px rule), floating overlay < 1200px,
       navigator float < 768px (match existing mobile patterns)
 - [ ] Side-panel tabs: multiple stacked contexts with persisted order,
       middle-click/"open in tab" affordance on records/docs/messages

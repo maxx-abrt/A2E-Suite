@@ -222,3 +222,13 @@ if observability needs them before P2.5.
 - The dock uses a dedicated root stacking-context value below the existing side panel.
 
 **Next:** P2.4 responsive snap/mobile verification task, then side-panel tabs.
+
+## 2026-09-10 — E2
+**Task:** P2.4 Workbench shell — responsive snap behavior
+**Status:** done
+
+- Extracted the 12px snap boundary into a deterministic utility used by the dock resize flow.
+- Added boundary tests for exact snap and expanded behavior; complete dock suite is 6/6 passing.
+- Confirmed the 1200px overlay and 768px bounded floating layouts in the production Linaria rules and independent review.
+
+**Next:** side-panel multi-context tabs with persisted order.
