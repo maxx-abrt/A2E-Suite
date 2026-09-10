@@ -177,7 +177,7 @@ grade) and the calm, predictable workbench chrome. See blueprint §4–§6.
 - [x] Side-panel tabs: multiple stacked contexts with persisted order,
       middle-click/"open in tab" affordance on records/docs/messages
 - [x] Page-header context: active page sources title/breadcrumb/actions
-- [ ] Unit tests for dock persistence + tab store; e2e: open two records as
+- [x] Unit tests for dock persistence + tab store; e2e: open two records as
       tabs, switch, close, reload → restored
 
 ### P2.5 Global search v1

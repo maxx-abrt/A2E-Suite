@@ -372,3 +372,42 @@ the integration-level Jest suites, so either run the Playwright spec from an
 unblocked machine or log the blockage again. Gotcha: `t` from
 `@lingui/core/macro` in the hook means msg keys for `Page Layout` /
 `New widget` already existed; verify no duplicate keys on extract.
+
+
+## 2026-09-10 13:05 UTC — Zoo (GLM-5.3-Flash)
+**Task(s):** P2.4 Unit tests for dock persistence + tab store; e2e two-records-as-tabs flow (PLAN.md line 180)
+**Status:** done (with the browser-e2e caveat below, same blockage as the tabs entry)
+
+**What I did:**
+- Audited the existing coverage: dock persistence is unit-tested
+  (`workbench-dock/components/__tests__/WorkbenchWidgetDock.test.tsx`,
+  `utils/__tests__/getWorkbenchWidgetDockModeAfterResize.test.ts`,
+  `registry/__tests__/workbenchWidgetRegistry.test.ts`) and the tab store has
+  10 suites (persistence, reload restore, URL precedence, LRU, edge cases).
+- Added the missing e2e spec `packages/twenty-e2e-testing/tests/side-panel-tabs.spec.ts`:
+  open two companies as tabs via `side-panel-open-in-tab-button`, switch tabs,
+  close one, reload → the surviving tab is restored. Anchored on the real
+  testids (`side-panel-tab-strip`, `side-panel-tab-<id>`,
+  `side-panel-tab-close-<id>`, `aria-selected`, `aria-label`) — no invented
+  selectors; verified each testid exists in
+  `side-panel/tabs/components/SidePanelTabStrip(Item).tsx` and
+  `SidePanelOpenInTabButton.tsx` before writing the spec.
+- Spec typechecks clean (`npx tsc --noEmit` on the file).
+
+**Decisions & trade-offs:**
+- `playwright test --list` cannot run here: the config throws
+  `Failed to load .env file` because `packages/twenty-e2e-testing/.env` does
+  not exist in this checkout (only `.env.example`), and creating local env
+  files was denied. Combined with the known ENOSPC file-watcher limit in this
+  container, the spec is committed but NOT executed in a browser this
+  session — same caveat the tabs entry already logged. It is the first spec
+  to run on a machine with a dev server + `.env`.
+
+**Verification:**
+- `npx jest src/modules/workbench-dock src/modules/side-panel/tabs --config=packages/twenty-front/jest.config.mjs` → 11 suites, 81 tests passed.
+- `npx tsc --noEmit tests/side-panel-tabs.spec.ts` (e2e package) → 0 errors.
+- `npx nx lint:diff-with-main twenty-front` → pass (prior commit).
+
+**For the next agent:** the Playwright `.env` is required before any e2e run;
+copy `.env.example` to `.env` and point `FRONTEND_BASE_URL` at a dev server.
+Next plan item = P2.5 Global search v1 (records provider + documents stub).
