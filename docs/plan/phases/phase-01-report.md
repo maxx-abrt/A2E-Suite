@@ -335,3 +335,54 @@ re-run, `twenty-client-sdk` dist must be rebuilt or server jest breaks again.
 - In-package `npx tsgo -p tsconfig.json --noEmit` → 1 error, identical to the documented P1.3 baseline (pre-existing `workspaceTemplate` TS2322 in `from-workspace-entity-to-flat.util.ts`); 0 errors in new code (after fixing one real error in my own first draft: flat entities carry serialized string `deletedAt`, not `Date`).
 - No GraphQL schema change; no entity/DB change (no migration or upgrade command due); twenty-shared untouched.
 **For the next agent:** P1.5 is complete; all P1 tasks ticked — phase acceptance is ready for review and P2 is next (realtime gateway, PLAN.md P2.1). When the first A2E app ships an AI tool (P3+ documents), author it as a logic function with `toolTriggerSettings` in the app manifest — do NOT create any registration hook. Consumption entry points for P9: `ToolRegistryService.getCatalog(context)` / `getToolsByCategories(context, {categories})` (tool-provider module), `COMMON_PRELOAD_TOOLS` constant for chat preloading, `buildToolCatalogSection` util for system-prompt rendering. Known limitation: `LogicFunctionToolProvider` doesn't filter by owning app's install state per se — it reads workspace flat maps, which only contain functions of synced (installed) apps; verify this assumption once during P2 integration testing.
+
+## 2026-09-10 12:05 UTC — Bilan (a2e-accounting) completion & hardening
+
+**Task(s):** finish Bilan integration into the app system (P7 app-side;
+P1.2 anatomy conformance).
+
+**What I did:**
+- Fixed 13 blocking `tsc` errors in the app manifest: the shared `option()`
+  helper typed select colors as `string` (13 fields across 5 objects rejected
+  by `FieldMetadataComplexOption`), now typed as a local `OptionColor` literal
+  union mirroring `twenty-shared`'s un-exported `TagColor`.
+- Removed the invalid `readability: MetadataReadability.RESTRICTED` property
+  from `orgProfile.iban/bic` (not part of `RegularFieldManifest`; only
+  `writability` exists). The gating intent is preserved by the
+  `bilan.finance.settings` permission flag + field descriptions; the
+  restriction now travels through the default role, which is the sanctioned
+  mechanism.
+- Built `quick-entry` front component (declared ID family 0013-0006, never
+  implemented): three-field expense/income capture, category-driven VAT
+  prefill, `enqueueSnackbar` feedback, `CoreApiClient` write. Ledger write
+  stays in `sync-finance-entry-to-ledger` logic — the component only creates
+  the finance entry.
+- Added the two required command menu items (anatomy rule): "Bilan : saisie
+  rapide" (GLOBAL, pinned) and "Bilan : trouver des aides" (GLOBAL) — the six
+  declared `COMMAND_MENU_ITEM_IDS` previously had zero backing files.
+
+**Verification:**
+- `npx tsc --noEmit` in the app → 0 errors (was 13).
+- `node --test` → 79/79 pass.
+- `dev:build .` → manifest OK; verified `commandMenuItems` (2),
+  `frontComponents` (subvention-explorer, quick-entry), 14 objects, 14 nav
+  items, 10 logic functions, dashboard + subvention-explorer page layouts.
+- `a2e-documents` still builds (1 file).
+- oxlint clean on all touched files.
+
+**Known limitations:**
+- No live workspace: install/uninstall sync verified by code audit +
+  manifest build, as with the earlier session noted above.
+- `readability` restriction for IBAN/BIC is currently advisory (permission
+  flag + description); a proper field-level visibility mechanism for app
+  fields would need server support (P7.1e).
+
+## 2026-09-10 13:55 UTC — Onboarding picker lists A2E apps
+
+The onboarding InstallApps step listed only Three Twenty marketplace apps and
+filtered by `isVetted` — first-party A2E apps (published on the private
+registry, `isVetted=false` by default) would never appear. Added Bureau +
+Bilan to `OnboardingInstallableApps` and exempted first-party A2E universal
+identifiers from the vetting filter in `InstallApps.tsx` (template picker
+still drives the actual template installs server-side). Verification:
+twenty-front typecheck clean; 165 onboarding tests pass.

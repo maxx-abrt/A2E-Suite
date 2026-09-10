@@ -1,7 +1,17 @@
-import { msg } from '@lingui/core/macro';
 import { type OnboardingInstallableApp } from '@/onboarding/types/OnboardingInstallableApp';
+import { msg } from '@lingui/core/macro';
 
 export const ONBOARDING_INSTALLABLE_APPS: OnboardingInstallableApp[] = [
+  {
+    universalIdentifier: '19126a9c-7cc0-4368-aaba-c7e5a87b0c48',
+    label: msg`Bureau`,
+    description: msg`Notes, docs and knowledge base`,
+  },
+  {
+    universalIdentifier: 'b11a0000-0000-4000-8000-000000000001',
+    label: msg`Bilan`,
+    description: msg`Invoicing, bookkeeping, budgets and funding`,
+  },
   {
     universalIdentifier: '8da4b8b5-5edf-4880-b51f-ab6e679ec617',
     label: msg`Call recorder`,

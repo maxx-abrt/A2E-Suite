@@ -63,12 +63,41 @@ export const SAVED_SUBVENTION_STATUS = {
   ABANDONED: 'ABANDONED',
 } as const;
 
+// Matches twenty-shared TagColor, which the SDK keeps un-exported: typing the
+// union here keeps option literals assignable to FieldMetadataComplexOption.
+type OptionColor =
+  | 'red'
+  | 'ruby'
+  | 'crimson'
+  | 'tomato'
+  | 'orange'
+  | 'amber'
+  | 'yellow'
+  | 'lime'
+  | 'grass'
+  | 'green'
+  | 'jade'
+  | 'mint'
+  | 'turquoise'
+  | 'cyan'
+  | 'sky'
+  | 'blue'
+  | 'iris'
+  | 'violet'
+  | 'purple'
+  | 'plum'
+  | 'pink'
+  | 'bronze'
+  | 'gold'
+  | 'brown'
+  | 'gray';
+
 const option = (
   suffix: string,
   value: string,
   label: string,
   position: number,
-  color: string,
+  color: OptionColor,
   objectIndex: string,
 ) => ({
   id: `b11a${objectIndex}00-0005-4000-8000-0000000000${suffix}`,
@@ -81,7 +110,14 @@ const option = (
 export const invoiceStatusOptions = [
   option('01', INVOICE_STATUS.DRAFT, 'Brouillon', 0, 'gray', '01'),
   option('02', INVOICE_STATUS.SENT, 'Envoyée', 1, 'blue', '01'),
-  option('03', INVOICE_STATUS.PARTIALLY_PAID, 'Partiellement payée', 2, 'yellow', '01'),
+  option(
+    '03',
+    INVOICE_STATUS.PARTIALLY_PAID,
+    'Partiellement payée',
+    2,
+    'yellow',
+    '01',
+  ),
   option('04', INVOICE_STATUS.PAID, 'Payée', 3, 'green', '01'),
   option('05', INVOICE_STATUS.OVERDUE, 'En retard', 4, 'red', '01'),
   option('06', INVOICE_STATUS.CANCELLED, 'Annulée', 5, 'gray', '01'),
@@ -93,13 +129,34 @@ export const quoteStatusOptions = [
   option('03', QUOTE_STATUS.ACCEPTED, 'Accepté', 2, 'green', '03'),
   option('04', QUOTE_STATUS.REFUSED, 'Refusé', 3, 'red', '03'),
   option('05', QUOTE_STATUS.EXPIRED, 'Expiré', 4, 'orange', '03'),
-  option('06', QUOTE_STATUS.CONVERTED, 'Transformé en facture', 5, 'purple', '03'),
+  option(
+    '06',
+    QUOTE_STATUS.CONVERTED,
+    'Transformé en facture',
+    5,
+    'purple',
+    '03',
+  ),
 ];
 
 export const taxModeOptions = (objectIndex: string) => [
   option('11', TAX_MODE.EXCLUSIVE, 'HT — TVA en sus', 0, 'blue', objectIndex),
-  option('12', TAX_MODE.INCLUSIVE, 'TTC — TVA incluse', 1, 'purple', objectIndex),
-  option('13', TAX_MODE.EXEMPT, 'Exonéré (art. 261-7 CGI)', 2, 'gray', objectIndex),
+  option(
+    '12',
+    TAX_MODE.INCLUSIVE,
+    'TTC — TVA incluse',
+    1,
+    'purple',
+    objectIndex,
+  ),
+  option(
+    '13',
+    TAX_MODE.EXEMPT,
+    'Exonéré (art. 261-7 CGI)',
+    2,
+    'gray',
+    objectIndex,
+  ),
   option(
     '14',
     TAX_MODE.REVERSE_CHARGE,
@@ -123,11 +180,25 @@ export const entryTypeOptions = (objectIndex: string) => [
 ];
 
 export const paymentMethodOptions = (objectIndex: string) => [
-  option('41', PAYMENT_METHOD.BANK_TRANSFER, 'Virement', 0, 'blue', objectIndex),
+  option(
+    '41',
+    PAYMENT_METHOD.BANK_TRANSFER,
+    'Virement',
+    0,
+    'blue',
+    objectIndex,
+  ),
   option('42', PAYMENT_METHOD.CARD, 'Carte bancaire', 1, 'purple', objectIndex),
   option('43', PAYMENT_METHOD.CASH, 'Espèces', 2, 'green', objectIndex),
   option('44', PAYMENT_METHOD.CHECK, 'Chèque', 3, 'orange', objectIndex),
-  option('45', PAYMENT_METHOD.DIRECT_DEBIT, 'Prélèvement', 4, 'sky', objectIndex),
+  option(
+    '45',
+    PAYMENT_METHOD.DIRECT_DEBIT,
+    'Prélèvement',
+    4,
+    'sky',
+    objectIndex,
+  ),
   option('46', PAYMENT_METHOD.OTHER, 'Autre', 5, 'gray', objectIndex),
 ];
 

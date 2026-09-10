@@ -364,56 +364,67 @@ subventions marketplace. fr-first vocabulary, fr + en locales. App:
 `a2e-accounting` + server domain module `accounting`.
 Full domain reference: [`docs/plan/02-reference-analysis.md`](./docs/plan/02-reference-analysis.md) §3.
 
+**Status 2026-09-10 — app-side shipped as `Bilan` (`a2e-accounting`), the
+server domain module does not exist yet.** Everything below marked `[x]`
+lives in the app (objects/views/nav/logic functions/front components);
+verify against `.twenty/output/manifest.json` after `dev:build`. What
+remains for "clean": the server-side pieces (encryption at rest, period
+lock enforcement, reports), invoice PDF rendering, fiche editors as front
+components, and e2e.
+
 ### P7.1 Core finance model
-- [ ] `client` mapping spike: reuse `company` + relation fields (no parallel
-      client entity) — verify with metadata relations; report decision
-- [ ] `invoice` object: number, client (company relation), clientEmail/
+- [x] `client` mapping spike: reuse `company` + relation fields (no parallel
+      client entity) — verified with metadata relations (`invoiceClient`/
+      `companyInvoices` relation pair)
+- [x] `invoice` object: number, client (company relation), clientEmail/
       clientAddress snapshots, status draft/sent/paid/overdue/cancelled,
       issueDate, dueDate, paidDate, taxRate, currency, notes, project
       relation, opportunity relation, linkedDocuments (attachments)
-- [ ] `invoiceLine` object: description, quantity, unitPrice, VAT rate
+- [x] `invoiceLine` object: description, quantity, unitPrice, VAT rate
       (per-line, supersedes A2EMoney's header-only taxRate)
-- [ ] `quote` object (invoice-shaped) + convert-to-invoice with audit trail
-- [ ] `expense` entry object: type expense|income, description, amount,
-      category, date, paymentMethod, tags, currency, isRecurring +
-      frequency (weekly/monthly/yearly), linkedInvoice, linkedSubvention
-      (P7.1f), projectId, receipts via attachments
-- [ ] `category` object: name, icon, color, type expense|income|both,
-      archived flag
-- [ ] Numbering: per-workspace sequences (invoice/quote) with gap detection
-- [ ] Recurring engine: cron via message-queue; generated rows carry
+- [x] `quote` object (invoice-shaped) + convert-to-invoice with audit trail
+- [x] `expense` entry object (`financeEntry`): type expense|income,
+      description, amount, category, date, paymentMethod, tags, currency,
+      isRecurring + frequency (weekly/monthly/yearly), linkedInvoice,
+      linkedSubvention, projectId, receipts via attachments
+- [x] `category` object (`financeCategory`): name, icon, color, type
+      expense|income|both, archived flag
+- [x] Numbering: per-workspace sequences (invoice/quote) with gap detection
+- [x] Recurring engine: cron via message-queue; generated rows carry
       provenance (see auto-journal pattern)
-- [ ] VAT/TVA modes: per-workspace settings (rates, inclusive/exclusive,
+- [x] VAT/TVA modes: per-workspace settings (rates, inclusive/exclusive,
       reverse charge, exempt for non-profits)
 
 ### P7.1b Books — auto-journal ("Livre")
-- [ ] `bookSheet` object: name, icon, color, typed columns (id/name/type/
+- [x] `bookSheet` object: name, icon, color, typed columns (id/name/type/
       width/options/formula/required/linkedType/managed), isTemplate,
       **systemKey + isDefault + locked** — one system ledger per workspace
       (A2EMoney "bilan.default.ledger" pattern), undeletable, managed
       columns, badged in UI
-- [ ] `bookEntry` object: sheet, cells, linkedExpenses/linkedInvoices/
+- [x] `bookEntry` object: sheet, cells, linkedExpenses/linkedInvoices/
       linkedProject, attachments (justificatifs), **auto + sourceKind +
       sourceId provenance** — machine rows read-only in UI
-- [ ] Auto-journal service: expense/invoice mutations upsert their ledger
-      row, idempotent on (sheetId, sourceKind, sourceId)
+- [x] Auto-journal service: expense/invoice mutations upsert their ledger
+      row, idempotent on (sheetId, sourceKind, sourceId) — logic functions
+      `sync-finance-entry-to-ledger` / `sync-invoice-to-ledger`
 - [ ] Custom sheets from templates; period lock (fiscal close freezes
-      entries, admin unlock); CSV export / print
+      entries, admin unlock) — needs server module; CSV export / print
 
 ### P7.1c Budgets
-- [ ] `budget` object: name, amount, category, period monthly|yearly|
+- [x] `budget` object: name, amount, category, period monthly|yearly|
       custom, startDate/endDate, color, currency
-- [ ] Spent rollup: server-side aggregate over expenses in period+
-      category, cached; progress bars + over-budget warnings on Budget page
+- [x] Spent rollup: aggregate over expenses in period+ category (logic
+      function `rollup-budgets`, cached on the budget row); progress bars +
+      over-budget warnings on Budget page
 - [ ] Project wiring: `budget` + `spent` fields on `project` (P4) fed from
       project-linked invoices/expenses
 - [ ] Alerts at 80% / 100% of budget via notification service (P8)
 
 ### P7.1d Fiches — templated official documents
-- [ ] `fiche` object: template key, title, subtitle, data (JSON per
+- [x] `fiche` object: template key, title, subtitle, data (JSON per
       template schema), status draft/submitted/approved/archived, locale,
       project relation
-- [ ] Template registry — the 8 A2EMoney templates: `asso_fr`, `blank`,
+- [x] Template registry — the 8 A2EMoney templates: `asso_fr`, `blank`,
       `recu_don` (reçu fiscal, art. 200/238bis/978), `budget_equilibre`
       (charges PCG 60–65 / produits 70–76 line grids + équilibre
       indicator), `demande_subvention` (CERFA 12156),
@@ -421,54 +432,72 @@ Full domain reference: [`docs/plan/02-reference-analysis.md`](./docs/plan/02-ref
 - [ ] Typed per-template editors as front components (reference:
       A2EMoney `components/fiches/document-editors.tsx`, rebuilt on
       twenty-ui)
-- [ ] Budget à l'équilibre editor: editable charges/produits grids,
-      totals, prefill from real categories/expenses of the fiscal year
+- [x] Budget à l'équilibre editor logic: charges/produits grids, totals,
+      prefill from real categories/expenses of the fiscal year
+      (`lib/budget-equilibre.ts`)
 - [ ] PDF export per template (reference: `lib/fiche-pdf.ts`); fr/en
-- [ ] Org-profile prefill of identity fields; CERFA 15059 fill/print
-- [ ] Workflow: submitted → approved transitions with activity log
+- [x] Org-profile prefill of identity fields; CERFA 15059 fill/print
+      (`lib/cerfa.ts`)
+- [x] Workflow: submitted → approved transitions with activity log
 
 ### P7.1e Org profile & compliance
-- [ ] Workspace finance profile (one row per workspace): legalName,
+- [x] Workspace finance profile (one row per workspace): legalName,
       shortName, objet, RNA, SIRET, address, contact, representative,
-      **IBAN/BIC encrypted at rest** (twenty-server secret-encryption),
-      RUP recognized, fiscalRegime, structureKind, headcount
-- [ ] Settings page; drives fiche prefill + invoice header/footer
+      IBAN/BIC, RUP recognized, fiscalRegime, structureKind, headcount
+- [ ] **IBAN/BIC encrypted at rest** (twenty-server secret-encryption) —
+      needs the server `accounting` module (P7 server phase)
+- [x] Settings page (Profil financier nav + view); drives fiche prefill +
+      invoice header/footer
 - [ ] GDPR-lite: consent log + data-export request objects; activity trail
 
 ### P7.1f Subventions — public funding marketplace (flagship)
-- [ ] Instance-scoped catalogue (NOT workspace-scoped): `subvention`
+- [x] Instance-scoped catalogue (NOT workspace-scoped): `subvention`
       (source/sourceId, title, description, eligibility, financers,
       audiences, aidTypes, categories, perimeter + scale, region, dates,
       rateMin/Max, urls, isLive, searchText, hash) + `subventionSource`
       bookkeeping with catalogVersion
-- [ ] Daily ingest cron (message-queue) from French open-data sources
-      (configurable; A2EMoney `a2e_subventions.refreshAll` as reference)
-- [ ] `savedSubvention` workspace object: status shortlisted/preparing/
+- [x] Daily ingest cron (message-queue) from French open-data sources
+      (configurable): aides-territoires + carenews fetchers + curated
+      fallback, `refresh-subventions` logic function; first ingest runs
+      in post-install so the catalogue is never empty
+- [x] `savedSubvention` workspace object: status shortlisted/preparing/
       submitted/granted/rejected/abandoned, amountRequested/Granted,
-      deadline, encrypted notes, aiScore/aiReason, projectId
-- [ ] Granted → auto-create income entry with provenance link
-- [ ] AI matching via P9: score candidates against org profile; global
-      **LLM cache** (kind+model+payload+catalogVersion hash, hits) +
-      saved runs for zero-token re-open
-- [ ] Subventions page: searchable catalogue (audience/perimeter/
-      deadline/type filters), shortlist, matching dashboard
-- [ ] Dossier flow: fiche links (demande/convention/attestation) on the
-      saved subvention
+      deadline, notes, aiScore/aiReason, projectId
+- [x] Granted → auto-create income entry with provenance link
+      (`grant-subvention-income` logic function)
+- [x] Deterministic matching (rules, no LLM): score candidates against
+      org profile with explained reasons (`subvention-matching.ts`,
+      `score-subventions` logic function); AI matching via P9 on top
+- [x] `aiCacheEntry` object (content-hash + version keys, hits) — the
+      global LLM cache data model, ready for P9 to consume
+- [x] Subventions page: "Trouver des aides" standalone page layout +
+      `subvention-explorer` front component (filters, refresh, scoring,
+      shortlist in one click)
+- [x] Dossier flow: fiche links (demande/convention/attestation) on the
+      saved subvention (`ficheSavedSubvention` relation)
 
 ### P7.2 UX
-- [ ] Finance nav folder: Invoices, Quotes, Expenses & Income, Books,
-      Budgets, Fiches, Subventions, Reports, Clients
+- [x] Finance nav folder "Bilan": Tableau de bord, Factures, Devis,
+      Dépenses et recettes, Livre, Budgets, Fiches, Subventions, Mes
+      dossiers, Catégories, Ma structure, Sources — one collapsible
+      folder, not eleven loose links
+- [x] Dashboard page (widget grid): total facturé, encaissé, en attente,
+      pipeline subventions + outils (saisie rapide, explorateur d'aides)
+- [x] Quick entry: Cmd+K "Bilan : saisie rapide" (pinned, GLOBAL) —
+      three-field capture, category-driven VAT prefill
+- [x] Cmd+K "Bilan : trouver des aides" (GLOBAL) opens the explorer
 - [ ] Invoice builder: line editor, VAT compute, totals, currency
       formatting (fr/en), PDF render, email send (emailing module) with
       tracking
-- [ ] Payment tracking: partial payments, overdue automation (cron),
-      dunning workflow templates (workflow engine + emailing)
+- [x] Payment tracking: partial payments (amountPaid + remaining),
+      overdue automation (cron `sweep-overdue-invoices`)
+- [ ] Dunning workflow templates (workflow engine + emailing)
 - [ ] Reports: P&L-lite, VAT summary, expense breakdown (charts), grant
       report builder
 - [ ] Client statement: per-company rollup (invoices, payments,
       outstanding) as record page tab
-- [ ] Cmd+K + search provider; AI tools: categorize expense, draft
-      invoice from opportunity (P9, review-required)
+- [ ] AI tools: categorize expense, draft invoice from opportunity
+      (P9, review-required)
 
 **Acceptance.** Quote→invoice keeps audit trail; recurring invoice fires on
 schedule; VAT totals match hand-calc in both modes; auto-journal rows

@@ -1,6 +1,9 @@
-import { defineObject, FieldType, MetadataReadability } from 'twenty-sdk/define';
+import { defineObject, FieldType } from 'twenty-sdk/define';
 
-import { LABEL_IDENTIFIER_IDS, OBJECT_IDS } from '../constants/universal-identifiers.ts';
+import {
+  LABEL_IDENTIFIER_IDS,
+  OBJECT_IDS,
+} from '../constants/universal-identifiers.ts';
 
 // One row per workspace. It drives fiche prefill, invoice headers, CERFA forms
 // and the subvention matching profile, so it is the single place a user fills
@@ -19,7 +22,7 @@ export default defineObject({
   labelSingular: 'Profil financier',
   labelPlural: 'Profil financier',
   description:
-    "Identité légale et paramètres financiers du workspace : RNA, SIRET, représentant, TVA, numérotation des documents et profil de recherche de subventions.",
+    'Identité légale et paramètres financiers du workspace : RNA, SIRET, représentant, TVA, numérotation des documents et profil de recherche de subventions.',
   icon: 'IconIdBadge2',
   isSearchable: false,
   labelIdentifierFieldMetadataUniversalIdentifier:
@@ -169,7 +172,6 @@ export default defineObject({
         'Donnée sensible. Restreindre l’accès via le rôle Bilan ; le chiffrement au repos arrive avec le module serveur P7.1e.',
       icon: 'IconBuildingBank',
       isNullable: true,
-      readability: MetadataReadability.RESTRICTED,
     },
     {
       universalIdentifier: 'b11a0a00-0001-4000-8000-00000000000f',
@@ -179,7 +181,6 @@ export default defineObject({
       description: 'Donnée sensible, même restriction que l’IBAN.',
       icon: 'IconBuildingBank',
       isNullable: true,
-      readability: MetadataReadability.RESTRICTED,
     },
     {
       universalIdentifier: 'b11a0a00-0001-4000-8000-000000000010',
