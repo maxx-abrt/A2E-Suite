@@ -12,6 +12,7 @@ import { COMMAND_MENU_SIDE_PANEL_PAGES } from '@/side-panel/constants/CommandMen
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
 import { SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE } from '@/side-panel/constants/SidePanelTopBarHeightMobile';
+import { SidePanelOpenInTabButton } from '@/side-panel/tabs/components/SidePanelOpenInTabButton';
 import { useHandleSidePanelBackspace } from '@/side-panel/hooks/useHandleSidePanelBackspace';
 import { useHandleSidePanelEscape } from '@/side-panel/hooks/useHandleSidePanelEscape';
 import { useSidePanelContextChips } from '@/side-panel/hooks/useSidePanelContextChips';
@@ -271,6 +272,7 @@ export const SidePanelTopBar = ({
           workspaceMembers={onlineWorkspaceMembers}
         />
         <StyledHeaderActionsPortal ref={setHeaderActionsPortal} />
+        <SidePanelOpenInTabButton />
         {sidePanelPage !== SidePanelPages.RoutedPage && (
           <SidePanelTopBarRightCornerIcon />
         )}

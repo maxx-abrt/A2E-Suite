@@ -5,6 +5,7 @@ import { visibleRecordFieldsComponentSelector } from '@/object-record/record-fie
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
+import { useSidePanelTabOpenIntentHandlers } from '@/side-panel/tabs/hooks/useSidePanelTabOpenIntentHandlers';
 import { RecordListRowField } from '@/object-record/record-list/components/RecordListRowField';
 import { RECORD_LIST_ROW_LABEL_IDENTIFIER_WIDTH } from '@/object-record/record-list/constants/RecordListRowLabelIdentifierWidth';
 import { RECORD_LIST_ROW_OVERFLOW_CHIP_SLOT_WIDTH } from '@/object-record/record-list/constants/RecordListRowOverflowChipSlotWidth';
@@ -92,6 +93,10 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
+  const openInTabHandlers = useSidePanelTabOpenIntentHandlers({
+    onOpenInTab: () => openRecordFromIndexView({ recordId, openInTab: true }),
+  });
+
   if (!isDefined(recordStore)) {
     return null;
   }
@@ -149,6 +154,8 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
       tabIndex={0}
       aria-label={t`Open record`}
       onClick={openRecord}
+      onMouseDownCapture={openInTabHandlers.onMouseDownCapture}
+      onAuxClickCapture={openInTabHandlers.onAuxClickCapture}
       onKeyDown={(event) => {
         if (event.target !== event.currentTarget) {
           return;

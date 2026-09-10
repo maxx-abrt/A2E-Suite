@@ -117,5 +117,8 @@ export const useNavigateSidePanel = () => {
 
   return {
     navigateSidePanel,
+    // Exposed so surfaces that own the whole stack (tab restoration) can raise
+    // the panel without pushing a navigation entry.
+    openSidePanel,
   };
 };

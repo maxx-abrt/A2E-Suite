@@ -1,5 +1,6 @@
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
+import { useOpenRoutedPageInSidePanelTab } from '@/side-panel/tabs/hooks/useOpenRoutedPageInSidePanelTab';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -21,6 +22,7 @@ export const useOpenRecordInSidePanel = () => {
 
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
+  const { openRoutedPageInSidePanelTab } = useOpenRoutedPageInSidePanelTab();
   const { runWorkflowRunOpeningInSidePanelEffects } =
     useRunWorkflowRunOpeningInSidePanelEffects();
   const { openNewRecordTitleCell } = useOpenNewRecordTitleCell();
@@ -35,12 +37,14 @@ export const useOpenRecordInSidePanel = () => {
       tab,
       isNewRecord = false,
       resetNavigationStack = false,
+      openInTab = false,
     }: {
       recordId: string;
       objectNameSingular: string;
       tab?: string;
       isNewRecord?: boolean;
       resetNavigationStack?: boolean;
+      openInTab?: boolean;
     }) => {
       if (isMobile) {
         // Mobile escapes the panel router and cannot hand its hash to the main
@@ -100,6 +104,32 @@ export const useOpenRecordInSidePanel = () => {
       const recordPathWithTab = isDefined(tab)
         ? `${recordPath}#${encodeURIComponent(tab)}`
         : recordPath;
+
+      // Tab opening is a distinct destination: it must not reuse or replace the
+      // context currently held by the panel.
+      if (openInTab) {
+        const objectMetadataItemForTab = store.get(
+          objectMetadataItemFamilySelector.selectorFamily({
+            objectName: objectNameSingular,
+            objectNameType: 'singular',
+          }),
+        );
+
+        if (!isDefined(objectMetadataItemForTab)) {
+          throw new Error(
+            `No object metadata item found for object name ${objectNameSingular}`,
+          );
+        }
+
+        const openedTab = openRoutedPageInSidePanelTab({
+          path: recordPathWithTab,
+          ...(isNewRecord
+            ? { pageTitle: t`New ${objectMetadataItemForTab.labelSingular}` }
+            : {}),
+        });
+
+        return openedTab?.pageId ?? null;
+      }
 
       if (
         isDefined(currentNavigationStackItem) &&
@@ -171,6 +201,7 @@ export const useOpenRecordInSidePanel = () => {
       navigate,
       openNewRecordTitleCell,
       openRoutedPageInSidePanel,
+      openRoutedPageInSidePanelTab,
       runWorkflowRunOpeningInSidePanelEffects,
       store,
     ],

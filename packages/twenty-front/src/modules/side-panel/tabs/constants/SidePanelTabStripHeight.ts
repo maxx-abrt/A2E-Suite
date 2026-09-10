@@ -1,0 +1,1 @@
+export const SIDE_PANEL_TAB_STRIP_HEIGHT = 32;

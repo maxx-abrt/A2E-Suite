@@ -10,6 +10,8 @@ import { SIDE_PANEL_PAGES_CONFIG } from '@/side-panel/constants/SidePanelPagesCo
 import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { SidePanelTabStrip } from '@/side-panel/tabs/components/SidePanelTabStrip';
+import { SidePanelTabsSyncEffect } from '@/side-panel/tabs/components/SidePanelTabsSyncEffect';
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { WorkspaceSurfaceHeaderPortalContext } from '@/ui/layout/contexts/WorkspaceSurfaceHeaderPortalContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -119,6 +121,8 @@ export const SidePanelRouter = () => {
                 setHeaderActionsPortal={setHeaderActionsPortal}
               />
             </motion.div>
+            <SidePanelTabStrip />
+            <SidePanelTabsSyncEffect />
             <StyledSidePanelContent>
               <CommandMenuContextProvider
                 displayType="listItem"

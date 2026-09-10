@@ -41,9 +41,11 @@ export const useApplyWorkspaceTemplate = () => {
         }
 
         setAppliedTemplate(template);
-        enqueueSuccessSnackBar(t`Workspace template applied`);
+        enqueueSuccessSnackBar({ message: t`Workspace template applied` });
       } catch {
-        enqueueErrorSnackBar(t`Failed to apply the workspace template`);
+        enqueueErrorSnackBar({
+          message: t`Failed to apply the workspace template`,
+        });
       }
     },
     [

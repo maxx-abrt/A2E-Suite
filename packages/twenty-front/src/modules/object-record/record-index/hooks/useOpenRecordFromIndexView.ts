@@ -44,7 +44,13 @@ export const useOpenRecordFromIndexView = () => {
   const store = useStore();
 
   const openRecordFromIndexView = useCallback(
-    ({ recordId }: { recordId: string }) => {
+    ({
+      recordId,
+      openInTab = false,
+    }: {
+      recordId: string;
+      openInTab?: boolean;
+    }) => {
       const parentViewFilters = store.get(currentRecordFilters);
 
       const parentViewSorts = store.get(currentRecordSorts);
@@ -69,6 +75,20 @@ export const useOpenRecordFromIndexView = () => {
           }),
           parentView,
         );
+
+      if (openInTab) {
+        // Middle-click / "open in tab" always stacks a context, whatever the
+        // workspace preference for a plain click is.
+        const tabPageInstanceId = openRecordInSidePanel({
+          recordId,
+          objectNameSingular,
+          openInTab: true,
+        });
+
+        setParentViewOn(tabPageInstanceId ?? MAIN_CONTEXT_STORE_INSTANCE_ID);
+
+        return;
+      }
 
       if (workspaceSurface.type === 'side-panel') {
         const destinationSurfaceInstanceId = openRecordInSidePanel({

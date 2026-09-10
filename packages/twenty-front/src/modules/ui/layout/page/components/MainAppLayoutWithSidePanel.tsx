@@ -3,6 +3,7 @@ import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKey
 import { RouteContextStoreProvider } from '@/context-store/components/RouteContextStoreProvider';
 import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
 import { SidePanelPathUrlSyncEffect } from '@/side-panel/routing/components/SidePanelPathUrlSyncEffect';
+import { SidePanelTabsRestoreEffect } from '@/side-panel/tabs/components/SidePanelTabsRestoreEffect';
 import { WorkbenchWidgetDock } from '@/workbench-dock/components/WorkbenchWidgetDock';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
@@ -53,6 +54,7 @@ export const MainAppLayoutWithSidePanel = () => {
     <StyledRow>
       <RouteContextStoreProvider />
       <SidePanelPathUrlSyncEffect />
+      <SidePanelTabsRestoreEffect />
       <StyledContent>
         <Outlet />
       </StyledContent>

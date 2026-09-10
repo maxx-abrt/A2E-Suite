@@ -24,6 +24,7 @@ import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-re
 import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/states/primaryDraggedRecordIdComponentState';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
+import { useSidePanelTabOpenIntentHandlers } from '@/side-panel/tabs/hooks/useSidePanelTabOpenIntentHandlers';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
@@ -150,6 +151,10 @@ export const RecordBoardCard = () => {
     openRecordFromIndexView({ recordId });
   };
 
+  const openInTabHandlers = useSidePanelTabOpenIntentHandlers({
+    onOpenInTab: () => openRecordFromIndexView({ recordId, openInTab: true }),
+  });
+
   const onMouseLeaveBoard = useDebouncedCallback(() => {
     if (isCompactModeActive && recordBoardCardIsExpanded) {
       setRecordBoardCardIsExpanded(false);
@@ -177,6 +182,8 @@ export const RecordBoardCard = () => {
           onPointerCancel={handlePointerCancel}
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
+          onMouseDownCapture={openInTabHandlers.onMouseDownCapture}
+          onAuxClickCapture={openInTabHandlers.onAuxClickCapture}
         >
           <StyledCardContainer
             isPrimaryMultiDrag={isDragOverlay && isRecordIdPrimaryDragMultiple}

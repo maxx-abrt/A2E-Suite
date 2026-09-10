@@ -1,4 +1,5 @@
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { useSidePanelTabOpenIntentHandlers } from '@/side-panel/tabs/hooks/useSidePanelTabOpenIntentHandlers';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
@@ -6,7 +7,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { CoreObjectNameSingular, OpenRecordIn } from 'twenty-shared/types';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { t } from '@lingui/core/macro';
-import { type MouseEvent } from 'react';
+import { useCallback, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   AvatarOrIcon,
@@ -68,6 +69,21 @@ export const RecordChip = ({
         }
       : undefined;
 
+  const handleOpenInTab = useCallback(() => {
+    openRecordInSidePanel({
+      recordId: record.id,
+      objectNameSingular,
+      openInTab: true,
+    });
+  }, [objectNameSingular, openRecordInSidePanel, record.id]);
+
+  const openInTabHandlers = useSidePanelTabOpenIntentHandlers({
+    onOpenInTab: handleOpenInTab,
+    isEnabled:
+      !forceDisableClick &&
+      objectNameSingular !== CoreObjectNameSingular.WorkspaceMember,
+  });
+
   // TODO temporary until we create a record show page for Workspaces members
 
   if (
@@ -98,31 +114,39 @@ export const RecordChip = ({
   }
 
   return (
-    <LinkChip
-      size={size}
-      maxWidth={maxWidth}
-      label={recordChipData.name}
-      emptyLabel={t`Untitled`}
-      isBold={isBold}
-      isLabelHidden={isLabelHidden}
-      leftComponent={
-        isIconHidden ? null : (
-          <AvatarOrIcon
-            placeholder={recordChipData.name}
-            placeholderColorSeed={record.id}
-            avatarType={recordChipData.avatarType}
-            avatarUrl={getAbsoluteImageUrl(recordChipData.avatarUrl ?? '')}
-          />
-        )
-      }
-      className={className}
-      variant={
-        variant ??
-        (!forceDisableClick ? ChipVariant.Highlighted : ChipVariant.Transparent)
-      }
-      to={to ?? getLinkToShowPage(objectNameSingular, record)}
-      onClick={handleCustomClick}
-      triggerEvent={triggerEvent}
-    />
+    <span
+      data-testid={`record-chip-open-in-tab-${record.id}`}
+      onMouseDownCapture={openInTabHandlers.onMouseDownCapture}
+      onAuxClickCapture={openInTabHandlers.onAuxClickCapture}
+    >
+      <LinkChip
+        size={size}
+        maxWidth={maxWidth}
+        label={recordChipData.name}
+        emptyLabel={t`Untitled`}
+        isBold={isBold}
+        isLabelHidden={isLabelHidden}
+        leftComponent={
+          isIconHidden ? null : (
+            <AvatarOrIcon
+              placeholder={recordChipData.name}
+              placeholderColorSeed={record.id}
+              avatarType={recordChipData.avatarType}
+              avatarUrl={getAbsoluteImageUrl(recordChipData.avatarUrl ?? '')}
+            />
+          )
+        }
+        className={className}
+        variant={
+          variant ??
+          (!forceDisableClick
+            ? ChipVariant.Highlighted
+            : ChipVariant.Transparent)
+        }
+        to={to ?? getLinkToShowPage(objectNameSingular, record)}
+        onClick={handleCustomClick}
+        triggerEvent={triggerEvent}
+      />
+    </span>
   );
 };

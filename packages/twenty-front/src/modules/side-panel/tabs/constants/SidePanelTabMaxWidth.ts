@@ -1,0 +1,1 @@
+export const SIDE_PANEL_TAB_MAX_WIDTH = 168;

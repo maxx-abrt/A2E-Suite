@@ -232,3 +232,93 @@ if observability needs them before P2.5.
 - Confirmed the 1200px overlay and 768px bounded floating layouts in the production Linaria rules and independent review.
 
 **Next:** side-panel multi-context tabs with persisted order.
+
+## P2.4 — Side-panel tabs (done)
+
+**Serializable tab model.** The live navigation stack carries
+`pageIcon: IconComponent`, a React component that cannot cross a JSON boundary.
+Persisted entries therefore store a canonical Twenty icon *key* and resolve it
+back through `useIcons().getIcon(key, 'IconDotsVertical')`. Router `state` is
+passed through a JSON round-trip (`toSerializableJsonValue`) so class
+instances, functions and cycles are dropped instead of corrupting the session.
+No component, function, `Map` or `Set` can reach localStorage.
+
+**Schema + validation.** `SIDE_PANEL_TABS_SCHEMA_VERSION = 1`. Hydration goes
+through `validateInitFn: isValidSidePanelTabsSession`, which checks the version,
+every entry shape, that `page` is a known `SidePanelPages` value, that a routed
+entry owns a location (and a purpose-built one does not), that `activePageId`
+exists in the stack, that ids are unique and that the tab count is within
+`SIDE_PANEL_TABS_MAX_COUNT`. An obsolete or malformed payload falls back to an
+empty session silently.
+
+**Store.** `sidePanelTabsState` (`a2e-side-panel-tabs`) and
+`activeSidePanelTabIdState` (`a2e-side-panel-active-tab`), both persisted; array
+order *is* the tab order. `useSidePanelTabs` exposes `openSidePanelTab`,
+`activateSidePanelTab`, `closeSidePanelTab`,
+`adoptNavigationStackAsSidePanelTab`, `syncActiveTabFromNavigationStack` and
+`restoreSidePanelTabsSession`.
+
+- Deduplication is derived from the routed location (`route:<pathname><search>`,
+  hash excluded) so the same record never opens twice, and purpose-built pages
+  key on page identity. Records use it today; documents, messages, projects,
+  files and invoices reuse the same rule with no second implementation.
+- A context switch snapshots the outgoing stack first, then restores the target
+  stack in a single write, so the panel never renders half-switched.
+- Opening in a tab first *adopts* whatever the panel currently shows, so the
+  user never loses the context they were on. The command menu is a launcher and
+  is deliberately never adopted.
+- Closing the active tab selects the right neighbor, falls back to the left, and
+  closes the panel when the last tab goes. LRU eviction never touches the active
+  tab.
+- `releaseSidePanelTabPageStates` mirrors the per-page cleanup of the history
+  hook: sub-page stacks, morph items and show-page active tab ids are cleared,
+  and routed flow state scopes are released only when no surviving tab still
+  references them. `releaseRemovedRoutedFlowStateScopes` was widened to the
+  scope-carrying shape so live and serialized entries share one rule.
+
+**Reload.** `SidePanelTabsRestoreEffect` runs once, before the user can act. When
+the URL already projects a side-panel path it keeps precedence for the live
+stack (a shared link is never hijacked by a local session) and the selection is
+aligned to it; otherwise the persisted active tab is restored and the panel is
+raised.
+
+**UI.** `SidePanelTabStrip` sits under the top bar and only renders when a tab
+exists, so nothing changes for users who never open one. `role=tablist` /
+`role=tab` / `aria-selected` / `aria-orientation`, roving tabIndex, arrows,
+Home/End, Enter/Space, Delete/Backspace to close, focus-visible outlines, close
+affordance revealed on hover *and* focus-within, native tooltip only when the
+title is actually truncated, active tab scrolled into view (respecting reduced
+motion), horizontal scroll with hidden scrollbars, taller rows and wider touch
+targets on mobile, hidden in print. Tokens only, no invented palette, no
+gradient.
+
+**Open in tab.** `useSidePanelTabOpenIntentHandlers` installs its handlers in the
+*capture* phase, because most Twenty open paths fire on `mousedown` of a
+descendant; without capture the normal open would already have run. Middle-click
+opens a tab and suppresses both the normal open and the browser's own new-tab
+behavior on links; cmd/ctrl-click stays a real browser navigation; a plain click
+is untouched. Wired on `RecordChip` (which also covers the record table label
+identifier cell), `RecordListRow` and `RecordBoardCard`, plumbed as
+`openInTab` through `useOpenRecordInSidePanel` and `useOpenRecordFromIndexView`,
+plus an explicit, discoverable `SidePanelOpenInTabButton` in the top bar for any
+context.
+
+**Gates.** 75 tests across 8 suites for the tab module; 492 tests / 80 suites
+green on the surrounding scope (side-panel, workbench dock, realtime, layout,
+record list, record board, a2e-workspace). `oxlint --type-aware` and `oxfmt`
+clean on every touched file. `tsgo -p tsconfig.json --noEmit` on `twenty-front`
+is **fully green (0 errors)** — three pre-existing baseline errors in
+`src/modules/a2e-workspace` (a `loading` prop `MainButton` never accepted, two
+snackbar calls using the old string signature) were fixed on the way.
+
+**Not claimed.** The PLAN e2e (two records as tabs, switch, close, reload,
+restored) was *not* run in a browser: browser e2e stays blocked in this
+container by the inotify/ENOSPC file-watcher limit. The flow is covered by
+integration-level Jest tests against the real store instead, including the
+reload-restore and URL-precedence paths. Separately, the supervisor `frontend`
+program (`nx run-many -t start`) rebuilds `twenty-shared/dist` while Jest reads
+it, producing bogus `ENOENT` on hashed chunks; it must be stopped while testing.
+
+**Repair.** 20 tracked files (`twenty-shared/package.json`, its generated
+barrels and the `twenty-front-component-renderer` generated registries) were
+found truncated to 0 bytes in the working tree and restored from `HEAD`.

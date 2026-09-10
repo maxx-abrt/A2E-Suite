@@ -131,7 +131,6 @@ export const A2eWorkspaceTemplatePicker = ({
             title={t`Apply template`}
             onClick={handleApply}
             disabled={!isDefined(selectedTemplate) || isLoading}
-            loading={isLoading}
             fullWidth
           />
         </StyledApplyButton>
