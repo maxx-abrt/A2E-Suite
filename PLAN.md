@@ -161,7 +161,7 @@ grade) and the calm, predictable workbench chrome. See blueprint §4–§6.
 - [x] Storybook/test harness with a mock server
 
 ### P2.3 Presence
-- [ ] Server: Redis TTL presence keys, join/leave/typing events on
+- [x] Server: Redis TTL presence keys, join/leave/typing events on
       `presence` topic, workspace roster query
 - [ ] Front: AvatarStack presence component (twenty-ui primitives), typing
       indicator primitives

@@ -1,12 +1,12 @@
 import { Test } from '@nestjs/testing';
 import { HttpAdapterHost } from '@nestjs/core';
 import jwt from 'jsonwebtoken';
-import type { Server } from 'node:http';
-import { createServer } from 'node:http';
+import { createServer, type Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import WebSocket from 'ws';
 
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { PresenceService } from 'src/engine/core-modules/realtime-gateway/services/presence.service';
 import { RealtimeGatewayService } from 'src/engine/core-modules/realtime-gateway/services/realtime-gateway.service';
 import { RealtimePublisherService } from 'src/engine/core-modules/realtime-gateway/services/realtime-publisher.service';
 import { RealtimeTopicAuthorizationService } from 'src/engine/core-modules/realtime-gateway/services/realtime-topic-authorization.service';
@@ -17,6 +17,8 @@ import IORedis from 'ioredis';
 const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 const USER_ID = '20202020-e6b5-4680-8a32-b8209737156b';
 const USER_ID_MEMBER = '20202020-3957-4908-9c36-2929a23f8357';
+const WORKSPACE_MEMBER_ID = '20202020-1e7c-43d9-a5db-685b506d816';
+const WORKSPACE_MEMBER_ID_MEMBER = '20202020-3957-4908-9c36-2929a23f8353';
 
 const waitForMessage = (
   webSocket: WebSocket,
@@ -53,6 +55,18 @@ const openSocket = (url: string) =>
     webSocket.on('error', reject);
   });
 
+const closeSocket = (webSocket: WebSocket) =>
+  new Promise<void>((resolve) => {
+    if (webSocket.readyState === WebSocket.CLOSED) {
+      resolve();
+
+      return;
+    }
+
+    webSocket.once('close', () => resolve());
+    webSocket.close();
+  });
+
 // Boots the gateway in isolation on an ephemeral port with real Redis
 // pub/sub fan-out. Tokens are signed here with HS256 (the gateway's verify
 // path is exercised through a thin JwtWrapperService stand-in — full JWT
@@ -64,6 +78,8 @@ describe('Realtime Gateway (isolated app)', () => {
   let httpServer: Server;
   let baseUrl: string;
   let publisherService: RealtimePublisherService;
+  let presenceService: PresenceService;
+  let redisClient: IORedis;
 
   const signToken = (payload: Record<string, unknown>): string =>
     jwt.sign(payload, appSecret, { algorithm: 'HS256' });
@@ -73,6 +89,7 @@ describe('Realtime Gateway (isolated app)', () => {
       sub: USER_ID,
       userId: USER_ID,
       workspaceId: WORKSPACE_ID,
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
       userWorkspaceId: '20202020-1e7c-43d9-a5db-685b506d816',
       type: JwtTokenTypeEnum.ACCESS,
       authProvider: 'password',
@@ -83,6 +100,7 @@ describe('Realtime Gateway (isolated app)', () => {
       sub: USER_ID_MEMBER,
       userId: USER_ID_MEMBER,
       workspaceId: WORKSPACE_ID,
+      workspaceMemberId: WORKSPACE_MEMBER_ID_MEMBER,
       userWorkspaceId: '20202020-3957-4908-9c36-2929a23f8353',
       type: JwtTokenTypeEnum.ACCESS,
       authProvider: 'password',
@@ -95,14 +113,17 @@ describe('Realtime Gateway (isolated app)', () => {
 
     const redisUrl = process.env.REDIS_URL ?? 'redis://localhost:6379';
 
+    redisClient = new IORedis(redisUrl, { lazyConnect: false });
+
     const moduleRef = await Test.createTestingModule({
       providers: [
         {
           provide: RedisClientService,
           useValue: {
-            getClient: () => new IORedis(redisUrl, { lazyConnect: false }),
+            getClient: () => redisClient,
           },
         },
+        PresenceService,
         RealtimeGatewayService,
         RealtimePublisherService,
         RealtimeTopicAuthorizationService,
@@ -131,6 +152,7 @@ describe('Realtime Gateway (isolated app)', () => {
     await app.init();
 
     publisherService = app.get(RealtimePublisherService);
+    presenceService = app.get(PresenceService);
     nestApp = app;
 
     await new Promise<void>((resolve) => {
@@ -145,6 +167,7 @@ describe('Realtime Gateway (isolated app)', () => {
     await new Promise<void>((resolve) => {
       httpServer.close(() => resolve());
     });
+    await redisClient.quit();
   });
 
   const subscribe = (webSocket: WebSocket, topic: string, token: string) => {
@@ -153,7 +176,7 @@ describe('Realtime Gateway (isolated app)', () => {
 
   it('completes subscribe → publish fan-out → increasing seq', async () => {
     const firstSocket = await openSocket(baseUrl);
-    const topic = `workspace:${WORKSPACE_ID}:presence`;
+    const topic = `workspace:${WORKSPACE_ID}`;
 
     subscribe(firstSocket, topic, adminToken());
 
@@ -186,8 +209,141 @@ describe('Realtime Gateway (isolated app)', () => {
 
     expect(followUp.seq as number).toBeGreaterThan(firstEnvelope.seq as number);
 
-    firstSocket.close();
-    secondSocket.close();
+    await Promise.all([closeSocket(firstSocket), closeSocket(secondSocket)]);
+  });
+
+  it('tracks TTL presence and broadcasts join, typing, and leave', async () => {
+    const existingPresenceKeys = await redisClient.keys(
+      `presence*:${WORKSPACE_ID}:*`,
+    );
+
+    if (existingPresenceKeys.length > 0) {
+      await redisClient.del(...existingPresenceKeys);
+    }
+
+    const topic = `workspace:${WORKSPACE_ID}:presence`;
+    const observerSocket = await openSocket(baseUrl);
+
+    subscribe(observerSocket, topic, adminToken());
+    await waitForMessage(observerSocket, (envelope) => envelope.type === 'ack');
+
+    const actorSocket = await openSocket(baseUrl);
+    const joinEventPromise = waitForMessage(observerSocket, (envelope) => {
+      const payload = envelope.payload as {
+        event?: string;
+        member?: { userId?: string };
+      };
+
+      return (
+        payload.event === 'join' && payload.member?.userId === USER_ID_MEMBER
+      );
+    });
+
+    subscribe(actorSocket, topic, memberToken());
+    await waitForMessage(actorSocket, (envelope) => envelope.type === 'ack');
+    await expect(joinEventPromise).resolves.toMatchObject({ topic });
+
+    await expect(
+      presenceService.getWorkspaceRoster(WORKSPACE_ID),
+    ).resolves.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ userId: USER_ID, isTyping: false }),
+        expect.objectContaining({ userId: USER_ID_MEMBER, isTyping: false }),
+      ]),
+    );
+
+    const typingEventPromise = waitForMessage(observerSocket, (envelope) => {
+      const payload = envelope.payload as {
+        event?: string;
+        member?: { userId?: string };
+      };
+
+      return (
+        payload.event === 'typing' && payload.member?.userId === USER_ID_MEMBER
+      );
+    });
+
+    actorSocket.send(
+      JSON.stringify({
+        action: 'presence',
+        topic,
+        event: 'typing-started',
+        typingContext: 'record:company:1',
+      }),
+    );
+
+    await expect(typingEventPromise).resolves.toMatchObject({
+      payload: {
+        event: 'typing',
+        isTyping: true,
+        typingContext: 'record:company:1',
+      },
+    });
+
+    const leaveEventPromise = waitForMessage(observerSocket, (envelope) => {
+      const payload = envelope.payload as {
+        event?: string;
+        member?: { userId?: string };
+      };
+
+      return (
+        payload.event === 'leave' && payload.member?.userId === USER_ID_MEMBER
+      );
+    });
+
+    await closeSocket(actorSocket);
+    await expect(leaveEventPromise).resolves.toMatchObject({ topic });
+
+    await expect(
+      presenceService.getWorkspaceRoster(WORKSPACE_ID),
+    ).resolves.not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ userId: USER_ID_MEMBER }),
+      ]),
+    );
+
+    await closeSocket(observerSocket);
+  });
+
+  it('rejects presence publishing before subscription and on non-presence topics', async () => {
+    const webSocket = await openSocket(baseUrl);
+    const presenceTopic = `workspace:${WORKSPACE_ID}:presence`;
+
+    webSocket.send(
+      JSON.stringify({
+        action: 'presence',
+        topic: presenceTopic,
+        event: 'heartbeat',
+      }),
+    );
+
+    await expect(
+      waitForMessage(webSocket, (envelope) => envelope.type === 'error'),
+    ).resolves.toMatchObject({
+      payload: {
+        message: 'Subscribe to presence before publishing presence state',
+      },
+    });
+
+    const workspaceTopic = `workspace:${WORKSPACE_ID}`;
+
+    subscribe(webSocket, workspaceTopic, adminToken());
+    await waitForMessage(webSocket, (envelope) => envelope.type === 'ack');
+    webSocket.send(
+      JSON.stringify({
+        action: 'presence',
+        topic: workspaceTopic,
+        event: 'typing-started',
+      }),
+    );
+
+    await expect(
+      waitForMessage(webSocket, (envelope) => envelope.type === 'error'),
+    ).resolves.toMatchObject({
+      payload: { message: 'Presence updates require a presence topic' },
+    });
+
+    await closeSocket(webSocket);
   });
 
   it('rejects an invalid token but keeps the socket usable', async () => {
@@ -211,7 +367,7 @@ describe('Realtime Gateway (isolated app)', () => {
 
     expect(ack.payload).toEqual({ action: 'subscribed' });
 
-    webSocket.close();
+    await closeSocket(webSocket);
   });
 
   it('isolates topics across workspaces', async () => {
@@ -232,7 +388,7 @@ describe('Realtime Gateway (isolated app)', () => {
       message: 'Topic workspace does not match the authenticated one',
     });
 
-    webSocket.close();
+    await closeSocket(webSocket);
   });
 
   it('scopes inbox topics to the owning user', async () => {
@@ -253,6 +409,6 @@ describe('Realtime Gateway (isolated app)', () => {
       message: 'Inbox topics are scoped to the owning user',
     });
 
-    webSocket.close();
+    await closeSocket(webSocket);
   });
 });

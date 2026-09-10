@@ -120,3 +120,35 @@ publishing from worker jobs, inject `RealtimePublisherService` (exported from
 provider registration needed; (4) metrics keys exist but counters are not yet
 incremented — wire `incrementCounterBy` in gateway connect/disconnect handlers
 if observability needs them before P2.5.
+
+
+## 2026-09-10 — E2
+**Task:** P2.3 Presence — server Redis state, realtime events, and roster query
+**Status:** done
+
+**What I did:**
+- Added `PresenceService` with workspace-scoped `presence:<workspaceId>:<userId>` records (45-second TTL), per-user connection sorted sets, and five-second typing records.
+- Added multi-connection-aware join/leave semantics: only the first live connection emits `join`, and `leave` is emitted only after the final connection closes.
+- Extended the websocket protocol with authenticated `presence` actions for heartbeat, typing-started, and typing-stopped; publishing is rejected unless the socket already subscribes to the matching presence topic.
+- Wired server ping/pong to refresh TTL state and socket close/unsubscribe to presence cleanup.
+- Added the guarded `workspacePresence` GraphQL query for initial/reconnect roster hydration.
+- Added malformed/expired Redis record tolerance and deterministic newest-first roster ordering.
+
+**Tests and verification:**
+- Realtime unit suite: 23/23 passing.
+- Isolated real-Redis integration suite: 6/6 passing without `--forceExit`, including fan-out, roster hydration, join/typing/leave, pre-subscription rejection, non-presence-topic rejection, invalid-token recovery, workspace isolation, and inbox scoping.
+- Independent testing agent: 29/29 checks passing, no remaining backend issue (`test_reports/iteration_2.json`, local test artifact only).
+- Changed-file type-aware oxlint: 0 warnings/errors; oxfmt: all changed files conform.
+- `twenty-shared` build passed. Full `twenty-server` tsgo still reports pre-existing clean-baseline errors outside realtime-gateway (ClickHouse typings, Express request augmentation, historical upgrade commands); no changed realtime file error was reported.
+
+**Decisions:**
+- Presence remains Redis-only; no database migration or upgrade command is needed.
+- The roster contains stable user/workspace-member IDs plus ephemeral state; the front resolves display metadata from its existing workspace-member cache.
+- Hard disconnects converge through TTL even when a leave packet cannot be emitted; reconnect always rehydrates through `workspacePresence`.
+
+**Files touched:**
+- `packages/twenty-server/src/engine/core-modules/realtime-gateway/**`
+- `packages/twenty-server/test/integration/realtime-gateway/realtime-gateway.integration-spec.ts`
+- `PLAN.md`
+
+**Next:** P2.3 front AvatarStack and typing indicator primitives.

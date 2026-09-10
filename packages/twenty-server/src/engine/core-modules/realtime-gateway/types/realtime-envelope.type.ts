@@ -1,6 +1,4 @@
-import { z } from 'zod';
-
-import { type ZodType } from 'zod';
+import { type ZodType, z } from 'zod';
 
 // Envelope contract shared with the front client; validated on both sides so
 // a bad payload can never reach a consumer hook.
@@ -36,6 +34,13 @@ export const realtimeUnsubscribeMessageSchema = z.object({
   topic: z.string().min(1),
 });
 
+export const realtimePresenceMessageSchema = z.object({
+  action: z.literal('presence'),
+  topic: z.string().min(1),
+  event: z.enum(['heartbeat', 'typing-started', 'typing-stopped']),
+  typingContext: z.string().trim().min(1).max(200).optional(),
+});
+
 export type RealtimeSubscribeMessage = z.infer<
   typeof realtimeSubscribeMessageSchema
 >;
@@ -44,9 +49,14 @@ export type RealtimeUnsubscribeMessage = z.infer<
   typeof realtimeUnsubscribeMessageSchema
 >;
 
+export type RealtimePresenceMessage = z.infer<
+  typeof realtimePresenceMessageSchema
+>;
+
 export type RealtimeClientMessage =
   | RealtimeSubscribeMessage
-  | RealtimeUnsubscribeMessage;
+  | RealtimeUnsubscribeMessage
+  | RealtimePresenceMessage;
 
 export const isRealtimeClientMessage = (
   value: unknown,
@@ -63,6 +73,10 @@ export const isRealtimeClientMessage = (
 
   if (action === 'unsubscribe') {
     return realtimeUnsubscribeMessageSchema.safeParse(value).success;
+  }
+
+  if (action === 'presence') {
+    return realtimePresenceMessageSchema.safeParse(value).success;
   }
 
   return false;

@@ -8,27 +8,30 @@ import { HttpAdapterHost } from '@nestjs/core';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { randomUUID } from 'node:crypto';
 import type { IncomingMessage } from 'node:http';
 import type { Duplex } from 'node:stream';
 import { WebSocketServer, type WebSocket } from 'ws';
 
-import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
-import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import {
   REALTIME_HEARTBEAT_INTERVAL_MS,
   REALTIME_MAX_SUBSCRIPTIONS_PER_SOCKET,
   REALTIME_WS_PATH,
 } from 'src/engine/core-modules/realtime-gateway/realtime-gateway.constants';
+import { PresenceService } from 'src/engine/core-modules/realtime-gateway/services/presence.service';
+import { RealtimeTopicAuthorizationService } from 'src/engine/core-modules/realtime-gateway/services/realtime-topic-authorization.service';
+import { RealtimePublisherService } from 'src/engine/core-modules/realtime-gateway/services/realtime-publisher.service';
 import { type RealtimeAuthenticatedSocketContext } from 'src/engine/core-modules/realtime-gateway/types/realtime-topic-context.type';
 import {
   isRealtimeClientMessage,
   type RealtimeEnvelope,
+  type RealtimePresenceMessage,
 } from 'src/engine/core-modules/realtime-gateway/types/realtime-envelope.type';
-import { RealtimeTopicAuthorizationService } from 'src/engine/core-modules/realtime-gateway/services/realtime-topic-authorization.service';
-import { RealtimePublisherService } from 'src/engine/core-modules/realtime-gateway/services/realtime-publisher.service';
+import { parseRealtimeTopic } from 'src/engine/core-modules/realtime-gateway/utils/parse-realtime-topic.util';
 
 type RealtimeSocketState = {
   authContext: RealtimeAuthenticatedSocketContext | null;
+  connectionId: string;
   subscriptionsByTopic: Map<string, () => void>;
   seqByTopic: Map<string, number>;
   isAlive: boolean;
@@ -50,6 +53,7 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
     private readonly httpAdapterHost: HttpAdapterHost,
     private readonly topicAuthorizationService: RealtimeTopicAuthorizationService,
     private readonly publisherService: RealtimePublisherService,
+    private readonly presenceService: PresenceService,
   ) {}
 
   onModuleInit(): void {
@@ -140,6 +144,7 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
   ): void {
     this.socketStates.set(webSocket, {
       authContext: EMPTY_SOCKET_CONTEXT,
+      connectionId: randomUUID(),
       subscriptionsByTopic: new Map(),
       seqByTopic: new Map(),
       isAlive: true,
@@ -150,6 +155,7 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
 
       if (isDefined(socketState)) {
         socketState.isAlive = true;
+        void this.refreshPresence(socketState);
       }
     });
 
@@ -161,6 +167,8 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
       const socketState = this.socketStates.get(webSocket);
 
       if (isDefined(socketState)) {
+        void this.leavePresence(socketState);
+
         for (const unsubscribe of socketState.subscriptionsByTopic.values()) {
           unsubscribe();
         }
@@ -201,10 +209,32 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
       return;
     }
 
+    if (parsed.action === 'presence') {
+      try {
+        await this.handlePresenceMessage(webSocket, socketState, parsed);
+      } catch (error) {
+        this.sendError(
+          webSocket,
+          error instanceof Error ? error.message : 'Presence update rejected',
+        );
+      }
+
+      return;
+    }
+
     if (parsed.action === 'unsubscribe') {
       const unsubscribe = socketState.subscriptionsByTopic.get(parsed.topic);
 
       if (isDefined(unsubscribe)) {
+        if (
+          isDefined(socketState.authContext) &&
+          this.isPresenceTopic(parsed.topic)
+        ) {
+          await this.presenceService.leave(
+            this.toPresenceIdentity(socketState),
+          );
+        }
+
         unsubscribe();
         socketState.subscriptionsByTopic.delete(parsed.topic);
         socketState.seqByTopic.delete(parsed.topic);
@@ -266,7 +296,7 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
               payload,
             });
           })
-          .then((unsubscribe) => {
+          .then(async (unsubscribe) => {
             const currentState = this.socketStates.get(webSocket);
 
             if (!isDefined(currentState)) {
@@ -283,6 +313,18 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
               type: 'ack',
               payload: { action: 'subscribed' },
             });
+
+            if (this.isPresenceTopic(parsed.topic)) {
+              await this.presenceService.join(
+                this.toPresenceIdentity(currentState),
+              );
+            }
+          })
+          .catch((error: unknown) => {
+            this.sendError(
+              webSocket,
+              error instanceof Error ? error.message : 'Subscription rejected',
+            );
           });
       } else {
         this.sendEnvelope(webSocket, {
@@ -297,6 +339,97 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
         webSocket,
         error instanceof Error ? error.message : 'Subscription rejected',
       );
+    }
+  }
+
+  private async handlePresenceMessage(
+    webSocket: WebSocket,
+    socketState: RealtimeSocketState,
+    message: RealtimePresenceMessage,
+  ): Promise<void> {
+    if (!isDefined(socketState.authContext)) {
+      throw new Error('Subscribe to presence before publishing presence state');
+    }
+
+    if (!socketState.subscriptionsByTopic.has(message.topic)) {
+      throw new Error('Presence topic is not subscribed');
+    }
+
+    this.topicAuthorizationService.assertTopicAuthorized(
+      socketState.authContext,
+      message.topic,
+    );
+
+    if (!this.isPresenceTopic(message.topic)) {
+      throw new Error('Presence updates require a presence topic');
+    }
+
+    const identity = this.toPresenceIdentity(socketState);
+
+    if (message.event === 'heartbeat') {
+      await this.presenceService.heartbeat(identity);
+    } else {
+      await this.presenceService.setTyping(
+        identity,
+        message.event === 'typing-started',
+        message.typingContext,
+      );
+    }
+
+    this.sendEnvelope(webSocket, {
+      topic: message.topic,
+      seq: 0,
+      type: 'ack',
+      payload: { action: 'presence-updated', event: message.event },
+    });
+  }
+
+  private async refreshPresence(
+    socketState: RealtimeSocketState,
+  ): Promise<void> {
+    if (
+      !isDefined(socketState.authContext) ||
+      ![...socketState.subscriptionsByTopic.keys()].some((topic) =>
+        this.isPresenceTopic(topic),
+      )
+    ) {
+      return;
+    }
+
+    await this.presenceService.heartbeat(this.toPresenceIdentity(socketState));
+  }
+
+  private async leavePresence(socketState: RealtimeSocketState): Promise<void> {
+    if (
+      !isDefined(socketState.authContext) ||
+      ![...socketState.subscriptionsByTopic.keys()].some((topic) =>
+        this.isPresenceTopic(topic),
+      )
+    ) {
+      return;
+    }
+
+    await this.presenceService.leave(this.toPresenceIdentity(socketState));
+  }
+
+  private toPresenceIdentity(socketState: RealtimeSocketState) {
+    if (!isDefined(socketState.authContext)) {
+      throw new Error('Realtime socket is not authenticated');
+    }
+
+    return {
+      workspaceId: socketState.authContext.workspaceId,
+      userId: socketState.authContext.userId,
+      workspaceMemberId: socketState.authContext.workspaceMemberId,
+      connectionId: socketState.connectionId,
+    };
+  }
+
+  private isPresenceTopic(topic: string): boolean {
+    try {
+      return parseRealtimeTopic(topic).kind === 'presence';
+    } catch {
+      return false;
     }
   }
 

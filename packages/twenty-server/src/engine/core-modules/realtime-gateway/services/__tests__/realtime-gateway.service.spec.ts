@@ -1,5 +1,6 @@
 import type { HttpAdapterHost } from '@nestjs/core';
 
+import { PresenceService } from 'src/engine/core-modules/realtime-gateway/services/presence.service';
 import { RealtimeGatewayService } from 'src/engine/core-modules/realtime-gateway/services/realtime-gateway.service';
 import { RealtimePublisherService } from 'src/engine/core-modules/realtime-gateway/services/realtime-publisher.service';
 import { RealtimeTopicAuthorizationService } from 'src/engine/core-modules/realtime-gateway/services/realtime-topic-authorization.service';
@@ -9,6 +10,7 @@ const createService = (httpAdapter: unknown) =>
     { httpAdapter } as HttpAdapterHost,
     {} as RealtimeTopicAuthorizationService,
     {} as RealtimePublisherService,
+    {} as PresenceService,
   );
 
 describe('RealtimeGatewayService', () => {
