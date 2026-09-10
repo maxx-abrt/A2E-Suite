@@ -453,3 +453,44 @@ deep links (mostly already present: `searchRecordsFrecencyByObjectState`,
 roving selectable list, `path` deep links from app providers). Audit what is
 missing before adding anything — likely only app-result results lacking
 side-panel open and the perf-budget measurement remain.
+
+
+## 2026-09-10 13:15 UTC — Zoo (GLM-5.3-Flash)
+**Task(s):** P2.5 Frecency ranking; keyboard navigation; deep links open side panel (PLAN.md line 185)
+**Status:** done
+
+**What I did:**
+- Audit: frecency ranking was already wired end-to-end
+  (`searchRecordsFrecencyByObjectState` localStorage-persisted with a
+  validated shape + `pruneSearchRecordObjectFrecency` cap of 100 entries,
+  `computeSearchRecordObjectFrecencyRank` classic useCount/decay rank
+  consumed by `groupSearchResultItems` which sorts groups and items by rank,
+  all covered by the existing three util tests). Keyboard navigation runs
+  through the shared `SelectableListItem`/`SidePanelList` roving-selection
+  machinery (Enter activates via `onEnter`).
+- The one real gap: app-provider results with a `path` navigated the **main**
+  router, leaving the side panel behind. Fixed in
+  `SidePanelSearchRecordsPage.tsx`: app deep links now open as a side-panel
+  routed page via `useOpenRoutedPageInSidePanel` (falls back to the main
+  navigate only when the panel surface cannot host the path — same guard the
+  hook already enforces via `isWorkspaceLocationAvailableOnSurface`).
+
+**Decisions & trade-offs:**
+- No new frecency code: the P1.4 skeleton already implements Bureau-style
+  ranking; adding a second ranking layer would be a parallel framework
+  (forbidden). The change is limited to the open behavior.
+- `closeCommandMenu()` before opening keeps the launcher symmetric with the
+  record-result branches.
+
+**Verification:**
+- In-package `npx tsgo -p tsconfig.json --noEmit` → 0 errors in the touched
+  file.
+- `npx oxlint --type-aware` + `npx oxfmt --check` → clean.
+- Existing suites already covering the ranking/keyboard behavior were green
+  earlier this session (side-panel search utils tests in the 81-test run).
+
+**For the next agent:** last P2.5 item = performance budget (< 150 ms on a
+10k-record workspace, documented measurement). Suggested approach: measure
+client-side group/sort latency for a synthetic 10k-item payload in a Jest
+benchmark (server latency depends on the DB, out of front scope), and record
+numbers in the report; alternatively mark the item blocked on a live server.

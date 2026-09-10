@@ -13,6 +13,7 @@ import { searchRecordsFrecencyByObjectState } from '@/side-panel/pages/search/st
 import { computeSearchRecordObjectFrecencyRank } from '@/side-panel/pages/search/utils/computeSearchRecordObjectFrecencyRank';
 import { getSidePanelSearchResultAnchorId } from '@/side-panel/pages/search/utils/getSidePanelSearchResultAnchorId';
 import { groupSearchResultItems } from '@/side-panel/pages/search/utils/groupSearchResultItems';
+import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -45,6 +46,7 @@ export const SidePanelSearchRecordsPage = () => {
   });
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { closeCommandMenu } = useCloseCommandMenu();
+  const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
   const { recordSearchObjectUsage } = useRecordSearchObjectUsage();
   const searchRecordsFrecencyByObject = useAtomStateValue(
     searchRecordsFrecencyByObjectState,
@@ -99,7 +101,18 @@ export const SidePanelSearchRecordsPage = () => {
 
                 if (isDefined(item.path)) {
                   closeCommandMenu();
-                  navigate(item.path);
+
+                  // Deep links stay inside the workbench: the app result
+                  // opens as a side-panel page, with the main router as
+                  // fallback for paths the panel surface cannot host.
+                  const openedPageId = openRoutedPageInSidePanel({
+                    path: item.path,
+                    pageTitle: item.label,
+                  });
+
+                  if (!isDefined(openedPageId)) {
+                    navigate(item.path);
+                  }
                 } else if (isTaskOrNote) {
                   openRecordInSidePanel({
                     recordId: item.recordId,
