@@ -181,3 +181,19 @@ if observability needs them before P2.5.
 - `PLAN.md`
 
 **Next:** consume the primitives in the side-panel header pilot surface.
+
+## 2026-09-10 — E2
+**Task:** P2.3 Presence — side-panel pilot
+**Status:** done
+
+**What I did:**
+- Wired the shared roster hook into `SidePanelTopBar` so live collaborators are visible wherever work context is opened.
+- Kept the desktop typing status compact beside existing header controls and preserved the mobile width budget by hiding only the typing sentence while retaining a three-avatar stack.
+- Added regression coverage for the integrated header without changing existing navigation, focus, back, expand, or close behavior.
+
+**Tests and verification:**
+- Combined realtime + side-panel header suite: 24/24 passing.
+- Independent testing agent: 24/24 passing; responsive presence behavior and existing keyboard flows verified, no issue (`test_reports/iteration_4.json`, local artifact only).
+- Changed-file type-aware oxlint and oxfmt: clean.
+
+**Next:** P2.4 right widgets dock and pluggable widget registry.

@@ -38,8 +38,10 @@ const getDisplayName = (workspaceMember: PartialWorkspaceMember) => {
 
 export const RealtimePresenceAvatarStack = ({
   workspaceMembers,
+  maxVisible = 5,
 }: {
   workspaceMembers: PartialWorkspaceMember[];
+  maxVisible?: number;
 }) => {
   const { t } = useLingui();
   const tooltipId = `presence-avatar-stack-${useId().replaceAll(':', '')}`;
@@ -58,7 +60,7 @@ export const RealtimePresenceAvatarStack = ({
     >
       <WorkspaceMemberAvatarStack
         defaultAvatarName={t`Workspace member`}
-        maxVisible={5}
+        maxVisible={maxVisible}
         totalWorkspaceMembersCount={workspaceMembers.length}
         workspaceMembers={workspaceMembers}
       />

@@ -7,6 +7,7 @@ import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { type SidePanelContextChipProps } from '@/side-panel/components/SidePanelContextChip';
+import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import {
@@ -21,6 +22,16 @@ import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/icon';
+
+let mockOnlineWorkspaceMembers: PartialWorkspaceMember[] = [];
+let mockTypingWorkspaceMembers: PartialWorkspaceMember[] = [];
+
+jest.mock('@/realtime/hooks/useWorkspacePresence', () => ({
+  useWorkspacePresence: () => ({
+    onlineWorkspaceMembers: mockOnlineWorkspaceMembers,
+    typingWorkspaceMembers: mockTypingWorkspaceMembers,
+  }),
+}));
 
 jest.mock('@/side-panel/components/SidePanelTopBarInputFocusEffect', () => ({
   SidePanelTopBarInputFocusEffect: () => null,
@@ -112,6 +123,26 @@ describe('SidePanelTopBar', () => {
     mockCloseSidePanelMenu.mockClear();
     mockIsMobile = false;
     mockContextChips = [];
+    mockOnlineWorkspaceMembers = [];
+    mockTypingWorkspaceMembers = [];
+  });
+
+  it('shows live collaborators and typing state in the side-panel header', () => {
+    const ada = {
+      id: 'member-1',
+      userEmail: 'ada@example.com',
+      avatarUrl: null,
+      name: { firstName: 'Ada', lastName: 'Lovelace' },
+    } as PartialWorkspaceMember;
+
+    mockOnlineWorkspaceMembers = [ada];
+    mockTypingWorkspaceMembers = [ada];
+
+    renderSidePanelCommandMenu();
+
+    expect(screen.getByTestId('presence-avatar-stack')).toBeVisible();
+    expect(screen.getByTestId('presence-typing-indicator')).toBeVisible();
+    expect(screen.getByTestId('presence-typing-text')).toHaveTextContent('Ada');
   });
 
   it('keeps the command menu search input focused while arrowing through items', async () => {

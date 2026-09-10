@@ -165,7 +165,7 @@ grade) and the calm, predictable workbench chrome. See blueprint §4–§6.
       `presence` topic, workspace roster query
 - [x] Front: AvatarStack presence component (twenty-ui primitives), typing
       indicator primitives
-- [ ] Consume in side panel header (pilot surface)
+- [x] Consume in side panel header (pilot surface)
 
 ### P2.4 Workbench shell (widgets dock + tabs)
 - [ ] Right widgets dock: collapsible (MINI/EXPANDED), resizable, persisted

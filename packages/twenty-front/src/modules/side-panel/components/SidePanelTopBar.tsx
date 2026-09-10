@@ -1,3 +1,6 @@
+import { RealtimePresenceAvatarStack } from '@/realtime/components/RealtimePresenceAvatarStack';
+import { RealtimeTypingIndicator } from '@/realtime/components/RealtimeTypingIndicator';
+import { useWorkspacePresence } from '@/realtime/hooks/useWorkspacePresence';
 import { SidePanelBackButton } from '@/side-panel/components/SidePanelBackButton';
 import { SidePanelCloseButton } from '@/side-panel/components/SidePanelCloseButton';
 import { SidePanelPageInfo } from '@/side-panel/components/SidePanelPageInfo';
@@ -125,6 +128,8 @@ export const SidePanelTopBar = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { t } = useLingui();
+  const { onlineWorkspaceMembers, typingWorkspaceMembers } =
+    useWorkspacePresence();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSidePanelSearch(event.target.value);
@@ -258,6 +263,13 @@ export const SidePanelTopBar = ({
         )}
       </StyledContentContainer>
       <StyledRightControlsContainer>
+        {!isMobile && (
+          <RealtimeTypingIndicator workspaceMembers={typingWorkspaceMembers} />
+        )}
+        <RealtimePresenceAvatarStack
+          maxVisible={isMobile ? 3 : 5}
+          workspaceMembers={onlineWorkspaceMembers}
+        />
         <StyledHeaderActionsPortal ref={setHeaderActionsPortal} />
         {sidePanelPage !== SidePanelPages.RoutedPage && (
           <SidePanelTopBarRightCornerIcon />
