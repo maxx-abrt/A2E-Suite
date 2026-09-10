@@ -1,9 +1,14 @@
 import { WorkspaceTemplate } from 'src/engine/core-modules/onboarding/enums/workspace-template.enum';
 
-// a2e-documents application (packages/twenty-apps/internal/a2e-documents) —
-// the only A2E app published so far; append future app UUIDs here as they land.
+// a2e-documents application (packages/twenty-apps/internal/a2e-documents).
 const A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER =
   '19126a9c-7cc0-4368-aaba-c7e5a87b0c48';
+
+// a2e-accounting application, "Bilan"
+// (packages/twenty-apps/internal/a2e-accounting) — append future app UUIDs
+// here as they land.
+const A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER =
+  'b11a0000-0000-4000-8000-000000000001';
 
 export type WorkspaceTemplateDefinition = {
   applicationUniversalIdentifiers: string[];
@@ -54,6 +59,7 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
   [WorkspaceTemplate.NON_PROFIT]: {
     applicationUniversalIdentifiers: [
       A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER,
+      A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER,
     ],
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [],
     sampleContentEnabled: false,
@@ -61,6 +67,7 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
   [WorkspaceTemplate.SMALL_BUSINESS]: {
     applicationUniversalIdentifiers: [
       A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER,
+      A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER,
     ],
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [],
     sampleContentEnabled: false,

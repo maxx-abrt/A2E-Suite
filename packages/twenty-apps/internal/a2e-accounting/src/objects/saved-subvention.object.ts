@@ -1,0 +1,211 @@
+import { defineObject, FieldType, OnDeleteAction } from 'twenty-sdk/define';
+
+import { manyToOne, oneToMany } from '../constants/field-vocabulary.ts';
+import {
+  LABEL_IDENTIFIER_IDS,
+  OBJECT_IDS,
+  RELATION_IDS,
+} from '../constants/universal-identifiers.ts';
+
+// The workspace side of a subvention: a dossier the user actually works on.
+// The catalogue row stays machine-owned; everything human lives here.
+export default defineObject({
+  universalIdentifier: OBJECT_IDS.savedSubvention,
+  nameSingular: 'savedSubvention',
+  namePlural: 'savedSubventions',
+  labelSingular: 'Dossier de subvention',
+  labelPlural: 'Mes dossiers de subvention',
+  description:
+    "Suivi d'une demande : shortlist, préparation, dépôt, décision, montants et pièces du dossier.",
+  icon: 'IconFolderStar',
+  labelIdentifierFieldMetadataUniversalIdentifier:
+    LABEL_IDENTIFIER_IDS.savedSubventionName,
+  fields: [
+    {
+      universalIdentifier: LABEL_IDENTIFIER_IDS.savedSubventionName,
+      type: FieldType.TEXT,
+      name: 'name',
+      label: 'Intitulé du dossier',
+      icon: 'IconAbc',
+      defaultValue: "''",
+    },
+    {
+      universalIdentifier: 'b11a0c00-0001-4000-8000-000000000002',
+      type: FieldType.SELECT,
+      name: 'status',
+      label: 'Avancement',
+      icon: 'IconProgress',
+      defaultValue: "'SHORTLISTED'",
+      options: [
+        {
+          id: 'b11a0c00-0005-4000-8000-000000000001',
+          value: 'SHORTLISTED',
+          label: 'Présélectionné',
+          position: 0,
+          color: 'gray',
+        },
+        {
+          id: 'b11a0c00-0005-4000-8000-000000000002',
+          value: 'PREPARING',
+          label: 'En préparation',
+          position: 1,
+          color: 'blue',
+        },
+        {
+          id: 'b11a0c00-0005-4000-8000-000000000003',
+          value: 'SUBMITTED',
+          label: 'Déposé',
+          position: 2,
+          color: 'purple',
+        },
+        {
+          id: 'b11a0c00-0005-4000-8000-000000000004',
+          value: 'GRANTED',
+          label: 'Accordé',
+          position: 3,
+          color: 'green',
+        },
+        {
+          id: 'b11a0c00-0005-4000-8000-000000000005',
+          value: 'REJECTED',
+          label: 'Refusé',
+          position: 4,
+          color: 'red',
+        },
+        {
+          id: 'b11a0c00-0005-4000-8000-000000000006',
+          value: 'ABANDONED',
+          label: 'Abandonné',
+          position: 5,
+          color: 'gray',
+        },
+      ],
+    },
+    {
+      universalIdentifier: 'b11a0c00-0001-4000-8000-000000000003',
+      type: FieldType.CURRENCY,
+      name: 'amountRequested',
+      label: 'Montant demandé',
+      icon: 'IconCurrencyEuro',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'b11a0c00-0001-4000-8000-000000000004',
+      type: FieldType.CURRENCY,
+      name: 'amountGranted',
+      label: 'Montant accordé',
+      icon: 'IconCashBanknote',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'b11a0c00-0001-4000-8000-000000000005',
+      type: FieldType.DATE_TIME,
+      name: 'deadline',
+      label: 'Échéance de dépôt',
+      icon: 'IconCalendarDue',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'b11a0c00-0001-4000-8000-000000000006',
+      type: FieldType.DATE_TIME,
+      name: 'submittedAt',
+      label: 'Déposé le',
+      icon: 'IconSend',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'b11a0c00-0001-4000-8000-000000000007',
+      type: FieldType.DATE_TIME,
+      name: 'decisionAt',
+      label: 'Décision le',
+      icon: 'IconGavel',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'b11a0c00-0001-4000-8000-000000000008',
+      type: FieldType.TEXT,
+      name: 'notes',
+      label: 'Notes',
+      icon: 'IconFileText',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'b11a0c00-0001-4000-8000-000000000009',
+      type: FieldType.NUMBER,
+      name: 'aiScore',
+      label: 'Score de pertinence',
+      description:
+        'Score règles (0-100) recalculé sur votre profil ; Syna le réordonnera en P9 sans jamais le remplacer silencieusement.',
+      icon: 'IconTargetArrow',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'b11a0c00-0001-4000-8000-00000000000a',
+      type: FieldType.TEXT,
+      name: 'aiReason',
+      label: 'Explication du score',
+      icon: 'IconInfoCircle',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'b11a0c00-0001-4000-8000-00000000000b',
+      type: FieldType.TEXT,
+      name: 'aiModel',
+      label: 'Modèle utilisé',
+      icon: 'IconCpu',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'b11a0c00-0001-4000-8000-00000000000c',
+      type: FieldType.DATE_TIME,
+      name: 'aiRunAt',
+      label: 'Analyse effectuée le',
+      icon: 'IconClock',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'b11a0c00-0001-4000-8000-00000000000d',
+      type: FieldType.FILES,
+      name: 'documents',
+      label: 'Pièces du dossier',
+      icon: 'IconPaperclip',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: RELATION_IDS.savedSubventionSubvention,
+      type: FieldType.RELATION,
+      name: 'subvention',
+      label: 'Subvention',
+      icon: 'IconAward',
+      relationTargetObjectMetadataUniversalIdentifier: OBJECT_IDS.subvention,
+      relationTargetFieldMetadataUniversalIdentifier:
+        RELATION_IDS.subventionSavedRecords,
+      universalSettings: {
+        ...manyToOne('subventionId'),
+        onDelete: OnDeleteAction.SET_NULL,
+      },
+    },
+    {
+      universalIdentifier: RELATION_IDS.savedSubventionFinanceEntries,
+      type: FieldType.RELATION,
+      name: 'financeEntries',
+      label: 'Recettes liées',
+      icon: 'IconArrowsExchange',
+      relationTargetObjectMetadataUniversalIdentifier: OBJECT_IDS.financeEntry,
+      relationTargetFieldMetadataUniversalIdentifier:
+        RELATION_IDS.financeEntrySavedSubvention,
+      universalSettings: oneToMany,
+    },
+    {
+      universalIdentifier: RELATION_IDS.savedSubventionFiches,
+      type: FieldType.RELATION,
+      name: 'fiches',
+      label: 'Fiches du dossier',
+      icon: 'IconFileSpreadsheet',
+      relationTargetObjectMetadataUniversalIdentifier: OBJECT_IDS.fiche,
+      relationTargetFieldMetadataUniversalIdentifier:
+        RELATION_IDS.ficheSavedSubvention,
+      universalSettings: oneToMany,
+    },
+  ],
+});

@@ -1,0 +1,172 @@
+import {
+  defineObject,
+  FieldType,
+  OnDeleteAction,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import {
+  manyToOne,
+  oneToMany,
+  QUOTE_STATUS,
+  quoteStatusOptions,
+  TAX_MODE,
+  taxModeOptions,
+} from '../constants/field-vocabulary.ts';
+import {
+  LABEL_IDENTIFIER_IDS,
+  OBJECT_IDS,
+  RELATION_IDS,
+} from '../constants/universal-identifiers.ts';
+
+export default defineObject({
+  universalIdentifier: OBJECT_IDS.quote,
+  nameSingular: 'quote',
+  namePlural: 'quotes',
+  labelSingular: 'Devis',
+  labelPlural: 'Devis',
+  description:
+    'Devis transformable en facture, avec conservation de la trace de conversion.',
+  icon: 'IconFileDescription',
+  labelIdentifierFieldMetadataUniversalIdentifier:
+    LABEL_IDENTIFIER_IDS.quoteNumber,
+  fields: [
+    {
+      universalIdentifier: LABEL_IDENTIFIER_IDS.quoteNumber,
+      type: FieldType.TEXT,
+      name: 'number',
+      label: 'Numéro',
+      icon: 'IconHash',
+      defaultValue: "''",
+    },
+    {
+      universalIdentifier: 'b11a0300-0001-4000-8000-000000000002',
+      type: FieldType.SELECT,
+      name: 'status',
+      label: 'Statut',
+      icon: 'IconProgress',
+      defaultValue: `'${QUOTE_STATUS.DRAFT}'`,
+      options: quoteStatusOptions,
+    },
+    {
+      universalIdentifier: 'b11a0300-0001-4000-8000-000000000003',
+      type: FieldType.TEXT,
+      name: 'clientName',
+      label: 'Nom du client',
+      icon: 'IconUser',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'b11a0300-0001-4000-8000-000000000004',
+      type: FieldType.DATE_TIME,
+      name: 'issueDate',
+      label: "Date d'émission",
+      icon: 'IconCalendar',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'b11a0300-0001-4000-8000-000000000005',
+      type: FieldType.DATE_TIME,
+      name: 'validUntil',
+      label: "Valable jusqu'au",
+      icon: 'IconCalendarDue',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'b11a0300-0001-4000-8000-000000000006',
+      type: FieldType.SELECT,
+      name: 'taxMode',
+      label: 'Régime de TVA',
+      icon: 'IconReceiptTax',
+      defaultValue: `'${TAX_MODE.EXCLUSIVE}'`,
+      options: taxModeOptions('03'),
+    },
+    {
+      universalIdentifier: 'b11a0300-0001-4000-8000-000000000007',
+      type: FieldType.CURRENCY,
+      name: 'amountSubtotal',
+      label: 'Total HT',
+      icon: 'IconCurrencyEuro',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'b11a0300-0001-4000-8000-000000000008',
+      type: FieldType.CURRENCY,
+      name: 'amountTax',
+      label: 'TVA',
+      icon: 'IconPercentage',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'b11a0300-0001-4000-8000-000000000009',
+      type: FieldType.CURRENCY,
+      name: 'amountTotal',
+      label: 'Total TTC',
+      icon: 'IconCurrencyEuro',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'b11a0300-0001-4000-8000-00000000000a',
+      type: FieldType.RICH_TEXT,
+      name: 'notes',
+      label: 'Notes et conditions',
+      icon: 'IconFileText',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'b11a0300-0001-4000-8000-00000000000b',
+      type: FieldType.FILES,
+      name: 'documents',
+      label: 'Pièces jointes',
+      icon: 'IconPaperclip',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'b11a0300-0001-4000-8000-00000000000c',
+      type: FieldType.DATE_TIME,
+      name: 'convertedAt',
+      label: 'Transformé le',
+      icon: 'IconExchange',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: RELATION_IDS.quoteClient,
+      type: FieldType.RELATION,
+      name: 'client',
+      label: 'Client',
+      icon: 'IconBuildingSkyscraper',
+      relationTargetObjectMetadataUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      relationTargetFieldMetadataUniversalIdentifier: RELATION_IDS.companyQuotes,
+      universalSettings: {
+        ...manyToOne('clientId'),
+        onDelete: OnDeleteAction.SET_NULL,
+      },
+    },
+    {
+      universalIdentifier: RELATION_IDS.quoteConvertedInvoice,
+      type: FieldType.RELATION,
+      name: 'convertedInvoice',
+      label: 'Facture émise',
+      icon: 'IconFileInvoice',
+      relationTargetObjectMetadataUniversalIdentifier: OBJECT_IDS.invoice,
+      relationTargetFieldMetadataUniversalIdentifier:
+        RELATION_IDS.invoiceSourceQuotes,
+      universalSettings: {
+        ...manyToOne('convertedInvoiceId'),
+        onDelete: OnDeleteAction.SET_NULL,
+      },
+    },
+    {
+      universalIdentifier: RELATION_IDS.quoteLines,
+      type: FieldType.RELATION,
+      name: 'lines',
+      label: 'Lignes',
+      icon: 'IconListNumbers',
+      relationTargetObjectMetadataUniversalIdentifier: OBJECT_IDS.invoiceLine,
+      relationTargetFieldMetadataUniversalIdentifier:
+        RELATION_IDS.invoiceLineQuote,
+      universalSettings: oneToMany,
+    },
+  ],
+});
