@@ -494,3 +494,32 @@ side-panel open and the perf-budget measurement remain.
 client-side group/sort latency for a synthetic 10k-item payload in a Jest
 benchmark (server latency depends on the DB, out of front scope), and record
 numbers in the report; alternatively mark the item blocked on a live server.
+
+
+## 2026-09-10 13:20 UTC — Zoo (GLM-5.3-Flash)
+**Task(s):** P2.5 Performance budget: < 150ms interaction latency on 10k-record workspace (PLAN.md line 186)
+**Status:** done
+
+**What I did:**
+- Added a locked benchmark
+  `packages/twenty-front/src/modules/side-panel/pages/search/utils/__tests__/groupSearchResultItems.performance.test.ts`:
+  10k synthetic records across 40 groups through `groupSearchResultItems`
+  (sort + fold), measured with `performance.now()` after a JIT warm-up round,
+  asserting < 150 ms.
+
+**Measurement (this session, Jest jsdom, MacBook local):**
+- Result: 8 ms for the full 10k-item sort + group pass — ~19× under budget.
+- Scope note: this covers the client-side interaction path (grouping +
+  frecency ordering + keyboard selection model all feed from this ordered
+  list). Network/database latency is server-side and out of front scope; the
+  server `search` query is paginated with cursor args, so it does not
+  materialize 10k rows in one payload.
+
+**Verification:**
+- `npx jest ...groupSearchResultItems.performance.test.ts --config=packages/twenty-front/jest.config.mjs` → 1 passed (8 ms measured).
+- `npx oxlint --type-aware` + `npx oxfmt --check` → clean.
+
+**For the next agent:** P2 acceptance remains: two-browser presence/live
+widget check needs a running dev environment (not available here); P2 is
+otherwise complete. P3 Documents is the next phase — start with the P3.1
+spike (extend `note` vs new `document` object) per PLAN.md.

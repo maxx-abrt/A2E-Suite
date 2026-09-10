@@ -183,7 +183,7 @@ grade) and the calm, predictable workbench chrome. See blueprint §4–§6.
 ### P2.5 Global search v1
 - [x] Index providers wired: records (existing) + documents (stub for P3)
 - [x] Frecency ranking; keyboard navigation; deep links open side panel
-- [ ] Performance budget: < 150ms interaction latency on 10k-record
+- [x] Performance budget: < 150ms interaction latency on 10k-record
       workspace (document measurement in report)
 
 **Acceptance.** Two browser sessions see presence + live widget updates;
