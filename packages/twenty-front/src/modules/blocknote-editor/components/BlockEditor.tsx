@@ -16,18 +16,21 @@ import {
   type SuggestionItem,
 } from '@/blocknote-editor/components/CustomSlashMenu';
 import { LinkToRecordSlashMenuItem } from '@/blocknote-editor/components/LinkToRecordSlashMenuItem';
+import { BlockEditorStatusBar } from '@/blocknote-editor/editor-status/components/BlockEditorStatusBar';
+import { isEditorTypewriterModeEnabledState } from '@/blocknote-editor/editor-status/states/isEditorTypewriterModeEnabledState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMentionMenu } from '@/mention/hooks/useMentionMenu';
 import { IconX } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-interface BlockEditorProps {
+type BlockEditorProps = {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
   onFocus?: () => void;
   onBlur?: () => void;
   onPaste?: (event: ClipboardEvent) => void;
   onChange?: () => void;
   readonly?: boolean;
-}
+};
 
 // oxlint-disable-next-line twenty/no-hardcoded-colors
 const StyledEditor = styled.div`
@@ -166,6 +169,9 @@ export const BlockEditor = ({
   onPaste,
   readonly,
 }: BlockEditorProps) => {
+  const isEditorTypewriterModeEnabled = useAtomStateValue(
+    isEditorTypewriterModeEnabledState,
+  );
   const { colorScheme } = useContext(ThemeContext);
   const { t } = useLingui();
 
@@ -186,6 +192,16 @@ export const BlockEditor = ({
 
   const handlePaste = (event: ClipboardEvent) => {
     onPaste?.(event);
+  };
+
+  // Typewriter mode keeps the caret block vertically centered: scrolling the
+  // current block to the middle of the viewport after every caret move.
+  const handleTypewriterCaretMove = (caretElement: HTMLElement) => {
+    if (!isEditorTypewriterModeEnabled) {
+      return;
+    }
+
+    caretElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
   return (
@@ -242,6 +258,10 @@ export const BlockEditor = ({
           suggestionMenuComponent={CustomMentionMenu}
         />
       </BlockNoteView>
+      <BlockEditorStatusBar
+        editor={editor}
+        onTypewriterCaretMove={handleTypewriterCaretMove}
+      />
     </StyledEditor>
   );
 };

@@ -214,7 +214,7 @@ App: `a2e-documents`.
 - [x] Slash-command extensions: toggle/heading/code/quote/callout/divider/
       image (upload → FILES), @mention (users + objects), /link to records
 - [x] Inline comments anchored to blocks (thread store per block id)
-- [ ] ToC/outline panel; word count; typewriter mode option
+- [x] ToC/outline panel; word count; typewriter mode option
 - [ ] Templates: instantiate from template docs (copy blocks); template
       gallery view
 - [ ] Version history: snapshot on save-interval (N versions, pruned);

@@ -215,3 +215,32 @@ do not recreate it per render or threads reset on every keystroke; (3)
 `resolveUsers` must be identity-stable (ref pattern) or user info shows
 "loading" forever; (4) UI check of composer/thread cards (light+dark) is
 still pending — do it in the P3.2 e2e pass.
+
+## 2026-09-10 17:20 UTC — Zoo (GLM-5.3-Flash)
+**Task(s):** P3.2 item 3 — ToC/outline panel; word count; typewriter mode option (PLAN.md line 217)
+**Status:** done
+
+**What I did:**
+- New sub-module `packages/twenty-front/src/modules/blocknote-editor/editor-status/`:
+  - `utils/getBlockOutline.ts` — extracts heading entries (blockId, level 1–6, single-spaced text) recursively through block children (toggle headings); runtime-`unknown` signature because the generic `Block<>` type is structurally awkward to name and `Array.isArray` does the narrowing.
+  - `utils/getBlockWordCount.ts` — word count over text runs incl. nested children; `[\s\p{Zs}]+`u split covers accented fr prose.
+  - `hooks/useBlockEditorOutline.ts` — subscribes to `editor.onChange` (fires on selection-only updates too), coalesces into one outline state.
+  - `states/isEditorOutlineOpenState.ts` + `isEditorTypewriterModeEnabledState.ts` — `createAtomState` with `localStorageOptions` under `a2e-editor-*` keys (matches `a2e-widgets-*` convention from P2.4).
+  - `components/BlockEditorStatusBar.tsx` — collapsible outline panel (click → `setTextCursorPosition` + focus, active heading highlighted via `onSelectionChange`), word count, outline + typewriter toggle buttons (icons `IconLayoutList`, `IconFocusCentered` from `twenty-ui/icon`), Lingui strings (`Toggle outline`, `Typewriter mode`, `Untitled section`, `words`).
+- Wired into `BlockEditor.tsx`: renders `<BlockEditorStatusBar>` below `BlockNoteView`; typewriter mode scrolls the caret element to viewport center via `scrollIntoView({ block: 'center' })` on `editor.onSelectionChange` when enabled.
+- Tests: `utils/__tests__/getBlockOutline.test.ts` (5), `utils/__tests__/getBlockWordCount.test.ts` (5) — structural types only, no blocknote runtime import (dist cannot be jest-loaded).
+- fr-FR translations filled in working tree for the 4 new msgids (catalogs NOT committed — i18n churn rule).
+
+**Decisions & trade-offs:**
+- Verified `@blocknote/core@0.51.4` has NO built-in ToC/outline component (grepped types + dist) — hand-rolled from `editor.document` is the primitive available; no new dependency added.
+- Typewriter scroll delegated to a `onTypewriterCaretMove` callback in BlockEditor (scroll owner = BlockEditor, detection owner = status bar) so a P3.3 doc-page scroll container can override the target.
+- Status bar renders null when editor undefined or empty doc + outline closed → zero visual impact on record notes fields; appears only once a doc has headings or words.
+- `oxlint` naming lint forced atom-state variables to match state names (`isEditorOutlineOpen`) — followed the enforced convention.
+
+**Verification:**
+- `npx jest src/modules/blocknote-editor --config=jest.config.mjs` → 7 suites, 45 passed.
+- `npx tsgo -p tsconfig.json --noEmit` → 74 errors = pre-existing baseline (identical count).
+- `npx oxlint` on editor-status + BlockEditor.tsx → 0 warnings 0 errors; `npx oxfmt --check` → clean.
+- `npx lingui extract` run locally; fr-FR msgstr completed for the 4 new strings; en.po verified present.
+
+**For the next agent:** next = P3.2 item 4 — Templates (instantiate from template docs + gallery view). Gotchas: (1) the status bar is inside `StyledEditor` flex column — `BlockNoteView` remains first child; verify visual ordering in the P3.2 e2e/UI pass (light+dark still untested per previous entries); (2) `useCreateBlockNote` in `RichTextFieldEditor` did NOT need changes — status bar lives in `BlockEditor`, so dashboards/other `BlockEditor` consumers get it for free; (3) blocknote `onChange` fires on selection-only updates too — word-count state updates could be micro-optimized with `getChanges()` diff if profiling ever shows churn; (4) outline entries are computed per change (O(document)); fine for v1, revisit if docs exceed ~1k blocks.
