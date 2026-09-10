@@ -186,6 +186,12 @@ msgstr "{0, plural, one {{days} dia} other {{days} dias}}"
 msgid "{0, plural, one {{years} year} other {{years} years}}"
 msgstr "{0, plural, one {{years} ano} other {{years} anos}}"
 
+#. js-lingui-id: pkIIls
+#. placeholder {0}: result.memberCount
+#: src/modules/command-menu-item/engine-command/record/single-record/message-list/components/DuplicateMessageListSingleRecordCommand.tsx
+msgid "{0, plural, one {# member} other {# members}}"
+msgstr ""
+
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
@@ -204,6 +210,12 @@ msgstr "{0, plural, one {# espaço de trabalho falhou ou está desatualizado} ot
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
 msgid "{0, plural, one {You do not have permission to access the {fieldsList} field} other {You do not have permission to access the {fieldsList} fields}}"
 msgstr "{0, plural, one {Você não tem permissão para acessar o campo {fieldsList}} other {Você não tem permissão para acessar os campos {fieldsList}}}"
+
+#. js-lingui-id: 9fR3j1
+#. placeholder {0}: onlineWorkspaceMembers.length
+#: src/modules/workbench-dock/components/DefaultWorkbenchWidgetContent.tsx
+msgid "{0} collaborators online"
+msgstr ""
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -248,6 +260,12 @@ msgstr "{0} nesta lista"
 msgid "{0} in this list, {1} sendable ({breakdown})"
 msgstr "{0} nesta lista, {1} enviável(is) ({breakdown})"
 
+#. js-lingui-id: Mj6oCJ
+#. placeholder {0}: getDisplayName(workspaceMembers[0])
+#: src/modules/realtime/components/RealtimeTypingIndicator.tsx
+msgid "{0} is typing…"
+msgstr ""
+
 #. js-lingui-id: T8aKxO
 #. placeholder {0}: layout.name
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -278,6 +296,12 @@ msgstr "{0} de {1}"
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "{0} opted out of this topic"
 msgstr "{0} cancelaram a subscrição deste tópico"
+
+#. js-lingui-id: 9tP5xw
+#. placeholder {0}: workspaceMembers.length
+#: src/modules/realtime/components/RealtimeTypingIndicator.tsx
+msgid "{0} people are typing…"
+msgstr ""
 
 #. js-lingui-id: 55frRG
 #. placeholder {0}: index + 1
@@ -927,6 +951,16 @@ msgstr "Um resumo ainda não está disponível para esta gravação de chamada."
 msgid "A verification email has been sent to"
 msgstr "Um email de verificação foi enviado para"
 
+#. js-lingui-id: hdn5qA
+#: src/modules/a2e-workspace/components/SettingsA2eSuiteSection.tsx
+msgid "A2E Suite"
+msgstr ""
+
+#. js-lingui-id: FPLuV4
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
+msgid "A2E Suite fields"
+msgstr ""
+
 #. js-lingui-id: DqlQy+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
 msgid "Ability to add more than one email address"
@@ -1258,6 +1292,11 @@ msgstr "Adicionar um Gatilho"
 msgid "Add a video conferencing link"
 msgstr "Adicionar um link de videoconferência"
 
+#. js-lingui-id: zaiojZ
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Add A2E Suite as a Streamable HTTP extension in Goose."
+msgstr ""
+
 #. js-lingui-id: MPPZ54
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
@@ -1463,6 +1502,7 @@ msgstr "Adicionar novo"
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker.tsx
 #: src/modules/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItemsWithSearch.tsx
 #: src/modules/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItemsWithSearch.tsx
+#: src/modules/object-record/record-table-widget/components/RecordTableWidgetJunctionAddNewRow.tsx
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetNestedRelationAddNewRow.tsx
 #: src/modules/object-record/record-table/components/RecordTableNoRecordGroupAddNew.tsx
 msgid "Add New"
@@ -1562,35 +1602,65 @@ msgstr "Adicionar fornecedor de identidade SSO"
 msgid "Add test input for evaluation (e.g., \"Find all customers in NY\")"
 msgstr ""
 
+#. js-lingui-id: WZuW/R
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Add the A2E Suite MCP server as a remote context server in Zed."
+msgstr ""
+
+#. js-lingui-id: S/PYP/
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Add the A2E Suite MCP server from Augment Code settings."
+msgstr ""
+
+#. js-lingui-id: xZOLuM
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Add the A2E Suite MCP server from Raycast's MCP commands or settings."
+msgstr ""
+
+#. js-lingui-id: KxxgPi
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Add the A2E Suite MCP server in Gemini CLI settings."
+msgstr ""
+
+#. js-lingui-id: zbfSmn
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Add the A2E Suite MCP server to your LibreChat configuration file."
+msgstr ""
+
+#. js-lingui-id: edaVrI
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Add the A2E Suite remote server with LM Studio's install link."
+msgstr ""
+
 #. js-lingui-id: FKGcEL
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Add the Twenty MCP server as a remote context server in Zed."
-msgstr "Adicione o servidor MCP da Twenty como um servidor de contexto remoto no Zed."
+#~ msgid "Add the Twenty MCP server as a remote context server in Zed."
+#~ msgstr "Adicione o servidor MCP da Twenty como um servidor de contexto remoto no Zed."
 
 #. js-lingui-id: iA2nHX
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Add the Twenty MCP server from Augment Code settings."
-msgstr "Adicione o servidor MCP da Twenty nas definições do Augment Code."
+#~ msgid "Add the Twenty MCP server from Augment Code settings."
+#~ msgstr "Adicione o servidor MCP da Twenty nas definições do Augment Code."
 
 #. js-lingui-id: l+NzAk
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Add the Twenty MCP server from Raycast's MCP commands or settings."
-msgstr "Adicione o servidor MCP da Twenty através dos comandos MCP ou das definições do Raycast."
+#~ msgid "Add the Twenty MCP server from Raycast's MCP commands or settings."
+#~ msgstr "Adicione o servidor MCP da Twenty através dos comandos MCP ou das definições do Raycast."
 
 #. js-lingui-id: j6G/yI
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Add the Twenty MCP server in Gemini CLI settings."
-msgstr "Adicione o servidor MCP da Twenty nas definições da CLI do Gemini."
+#~ msgid "Add the Twenty MCP server in Gemini CLI settings."
+#~ msgstr "Adicione o servidor MCP da Twenty nas definições da CLI do Gemini."
 
 #. js-lingui-id: /OyhlM
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Add the Twenty MCP server to your LibreChat configuration file."
-msgstr "Adicione o servidor MCP da Twenty ao seu ficheiro de configuração do LibreChat."
+#~ msgid "Add the Twenty MCP server to your LibreChat configuration file."
+#~ msgstr "Adicione o servidor MCP da Twenty ao seu ficheiro de configuração do LibreChat."
 
 #. js-lingui-id: K0DXoj
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Add the Twenty remote server with LM Studio's install link."
-msgstr "Adicione o servidor remoto da Twenty com o link de instalação do LM Studio."
+#~ msgid "Add the Twenty remote server with LM Studio's install link."
+#~ msgstr "Adicione o servidor remoto da Twenty com o link de instalação do LM Studio."
 
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -1609,8 +1679,8 @@ msgstr "Adicionar tópico"
 
 #. js-lingui-id: 4D/zWv
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Add Twenty as a Streamable HTTP extension in Goose."
-msgstr "Adicione a Twenty como uma extensão HTTP transmissível no Goose."
+#~ msgid "Add Twenty as a Streamable HTTP extension in Goose."
+#~ msgstr "Adicione a Twenty como uma extensão HTTP transmissível no Goose."
 
 #. js-lingui-id: XnwceV
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationRedirectURIsInput.tsx
@@ -1851,7 +1921,7 @@ msgid "Aggregate Chart"
 msgstr ""
 
 #. js-lingui-id: jsQZMk
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
@@ -2612,6 +2682,11 @@ msgstr "As aplicações abaixo não foram verificadas. Use por sua conta e risco
 msgid "Apply"
 msgstr "Aplicar"
 
+#. js-lingui-id: 4TwsNi
+#: src/modules/a2e-workspace/components/A2eWorkspaceTemplatePicker.tsx
+msgid "Apply template"
+msgstr ""
+
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 msgid "Apply{progressText}"
@@ -3208,6 +3283,11 @@ msgstr "entre minuto {start} e {end}"
 msgid "between the {startOrdinal} and {endOrdinal} of the month"
 msgstr "entre o {startOrdinal} e {endOrdinal} do mês"
 
+#. js-lingui-id: PDP8XO
+#: src/modules/onboarding/constants/OnboardingInstallableApps.ts
+msgid "Bilan"
+msgstr ""
+
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Billed monthly"
@@ -3423,6 +3503,11 @@ msgstr ""
 msgid "Bundled with {applicationName}"
 msgstr "Incluído com {applicationName}"
 
+#. js-lingui-id: vON7Ce
+#: src/modules/onboarding/constants/OnboardingInstallableApps.ts
+msgid "Bureau"
+msgstr ""
+
 #. js-lingui-id: yjeERL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "button"
@@ -3439,10 +3524,15 @@ msgstr "Botão"
 msgid "by {author}"
 msgstr "por {author}"
 
+#. js-lingui-id: VYON94
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx
+msgid "By using A2E Suite, you agree to the"
+msgstr ""
+
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
-msgid "By using Twenty, you agree to the"
-msgstr "Ao utilizar o Twenty, concorda com a"
+#~ msgid "By using Twenty, you agree to the"
+#~ msgstr "Ao utilizar o Twenty, concorda com a"
 
 #. js-lingui-id: Yx41df
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -4104,6 +4194,11 @@ msgstr "Reivindicado por este espaço de trabalho"
 msgid "Claiming is not configured on this server. Ask an administrator to set up the GitHub OAuth app."
 msgstr "A reivindicação não está configurada neste servidor. Peça a um administrador para configurar o aplicativo OAuth do GitHub."
 
+#. js-lingui-id: eq5p+L
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Classic sales workspace: companies, people and opportunities"
+msgstr ""
+
 #. js-lingui-id: fcgvCA
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Claude"
@@ -4221,6 +4316,11 @@ msgstr "O segredo do cliente foi substituído. Copie-o agora — não será most
 msgid "Client Settings"
 msgstr "Configurações do Cliente"
 
+#. js-lingui-id: mFFLKs
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Clients, pipeline and Documents for small companies"
+msgstr ""
+
 #. js-lingui-id: yJ8MIx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Cline"
@@ -4252,6 +4352,11 @@ msgstr "Fechar menu"
 #: src/modules/side-panel/components/SidePanelCloseButton.tsx
 msgid "Close side panel"
 msgstr "Fechar painel lateral"
+
+#. js-lingui-id: bJqkQ7
+#: src/modules/side-panel/tabs/components/SidePanelTabStripItem.tsx
+msgid "Close tab {displayedTitle}"
+msgstr ""
 
 #. js-lingui-id: 1Lxtdt
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -4288,6 +4393,11 @@ msgstr "Interpretador de código"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
 msgid "Code your function"
 msgstr "Codifique sua função"
+
+#. js-lingui-id: Ca/S9z
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Collaborative workspace with Documents alongside the CRM"
+msgstr ""
 
 #. js-lingui-id: H86f9p
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -4328,6 +4438,11 @@ msgstr "Recolher barra lateral"
 #: src/modules/ai/components/AiChatCollapseButton.tsx
 msgid "Collapse to side panel"
 msgstr "Recolher para o painel lateral"
+
+#. js-lingui-id: k9y5Jc
+#: src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+msgid "Collapse widgets"
+msgstr ""
 
 #. js-lingui-id: jZlrte
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -4630,6 +4745,16 @@ msgstr "Configure as definições IMAP para receber e sincronizar os seus e-mail
 msgid "Configure SMTP settings to send emails from your account."
 msgstr "Configure as definições de SMTP para enviar e-mails da sua conta."
 
+#. js-lingui-id: mDj7lx
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Configure the A2E Suite MCP server manually in Cascade."
+msgstr ""
+
+#. js-lingui-id: MnTJs4
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Configure the A2E Suite MCP server manually in Cline."
+msgstr ""
+
 #. js-lingui-id: TiCmQz
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Configure the default AI models for all workspaces"
@@ -4647,13 +4772,13 @@ msgstr "Configure o servidor remoto nas definições MCP do Amazon Q Developer."
 
 #. js-lingui-id: g1/8jH
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Configure the Twenty MCP server manually in Cascade."
-msgstr "Configure manualmente o servidor MCP da Twenty no Cascade."
+#~ msgid "Configure the Twenty MCP server manually in Cascade."
+#~ msgstr "Configure manualmente o servidor MCP da Twenty no Cascade."
 
 #. js-lingui-id: XiyvRh
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Configure the Twenty MCP server manually in Cline."
-msgstr "Configure manualmente o servidor MCP da Twenty no Cline."
+#~ msgid "Configure the Twenty MCP server manually in Cline."
+#~ msgstr "Configure manualmente o servidor MCP da Twenty no Cline."
 
 #. js-lingui-id: qA9AGQ
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
@@ -4809,6 +4934,11 @@ msgstr "Contas ligadas"
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 msgid "Connection"
 msgstr "Conexão"
+
+#. js-lingui-id: 61xrVf
+#: src/modules/realtime/components/RealtimeReconnectBanner.tsx
+msgid "Connection lost — reconnecting…"
+msgstr ""
 
 #. js-lingui-id: XYeKcu
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -5695,6 +5825,11 @@ msgstr "créditos/período"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Crimson"
 msgstr "Carmesim"
+
+#. js-lingui-id: MSlbwg
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "CRM"
+msgstr ""
 
 #. js-lingui-id: 6Oaeoc
 #: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
@@ -8515,10 +8650,30 @@ msgstr "Exportar ({exportedCount})"
 msgid "Export ({percentageValue}%)"
 msgstr "Exportar ({percentageValue}%)"
 
+#. js-lingui-id: fFvZn4
+#: src/modules/blocknote-editor/export/components/BlockEditorExportMenu.tsx
+msgid "Export as DOCX"
+msgstr ""
+
+#. js-lingui-id: lIMtoX
+#: src/modules/blocknote-editor/export/components/BlockEditorExportMenu.tsx
+msgid "Export as Markdown"
+msgstr ""
+
+#. js-lingui-id: otDbDT
+#: src/modules/blocknote-editor/export/components/BlockEditorExportMenu.tsx
+msgid "Export as PDF (print)"
+msgstr ""
+
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Export CSV"
 msgstr "Exportar CSV"
+
+#. js-lingui-id: 90ZrxR
+#: src/modules/blocknote-editor/export/components/BlockEditorExportMenu.tsx
+msgid "Export document"
+msgstr ""
 
 #. js-lingui-id: leUV74
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionWorkflowActionTriggerSection.tsx
@@ -8590,6 +8745,16 @@ msgstr "Falha ao adicionar o modelo"
 msgid "Failed to add provider"
 msgstr "Falha ao adicionar o provedor"
 
+#. js-lingui-id: ScvpVb
+#: src/modules/object-record/record-table-widget/components/RecordTableWidgetJunctionAddNewRow.tsx
+msgid "Failed to add record"
+msgstr ""
+
+#. js-lingui-id: dVUMEt
+#: src/modules/a2e-workspace/hooks/useApplyWorkspaceTemplate.ts
+msgid "Failed to apply the workspace template"
+msgstr ""
+
 #. js-lingui-id: E2CkaQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Failed to claim ownership."
@@ -8640,6 +8805,11 @@ msgstr "Falha ao eliminar tópico de cancelamento de subscrição."
 #: src/modules/dashboards/hooks/useDuplicateDashboard.ts
 msgid "Failed to duplicate dashboard"
 msgstr "Falha ao duplicar o painel"
+
+#. js-lingui-id: 6e1GS3
+#: src/modules/command-menu-item/engine-command/record/single-record/message-list/hooks/useDuplicateMessageList.ts
+msgid "Failed to duplicate list"
+msgstr ""
 
 #. js-lingui-id: WYXxQF
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
@@ -10037,14 +10207,19 @@ msgstr "Ocultar rótulo"
 msgid "Hide system indexes"
 msgstr "Ocultar índices do sistema"
 
+#. js-lingui-id: rr1YHG
+#: src/pages/settings/community/SettingsCommunity.tsx
+msgid "Hire a partner to help you implement and customize A2E Suite."
+msgstr ""
+
 #. js-lingui-id: 1ETc0T
 #: src/pages/settings/community/SettingsCommunity.tsx
-msgid "Hire a partner to help you implement and customize Twenty."
-msgstr "Contrate um parceiro para ajudar você a implementar e personalizar o Twenty."
+#~ msgid "Hire a partner to help you implement and customize Twenty."
+#~ msgstr "Contrate um parceiro para ajudar você a implementar e personalizar o Twenty."
 
 #. js-lingui-id: i0qMbr
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
+#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 msgid "Home"
 msgstr "Início"
 
@@ -10545,6 +10720,11 @@ msgstr "Índice excluído"
 msgid "Indexes"
 msgstr "Índices"
 
+#. js-lingui-id: fByw/g
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Individual"
+msgstr ""
+
 #. js-lingui-id: hG711D
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard.tsx
@@ -10639,6 +10819,7 @@ msgid "Insert your billing details to get a free trial and more AI credits"
 msgstr "Insira os seus dados de cobrança para obter um teste gratuito e mais créditos de IA"
 
 #. js-lingui-id: TKQ7K+
+#: src/modules/a2e-workspace/components/A2eSuiteApplicationCard.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -10669,6 +10850,11 @@ msgstr "Instalar e gerenciar aplicações"
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Install link"
 msgstr "Link de instalação"
+
+#. js-lingui-id: 44kANA
+#: src/modules/workbench-dock/components/DefaultWorkbenchWidgetContent.tsx
+msgid "Install or configure Syna to ask questions from any workspace context."
+msgstr ""
 
 #. js-lingui-id: K8iwJx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -10708,6 +10894,7 @@ msgid "Installed apps"
 msgstr "Aplicações instaladas"
 
 #. js-lingui-id: wJJ+Wy
+#: src/modules/a2e-workspace/components/A2eSuiteApplicationCard.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
@@ -10929,6 +11116,11 @@ msgstr "Convide a sua equipa"
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Invoice amount may vary if you add members or credits between periods"
 msgstr "O valor da fatura pode variar se adicionar membros ou créditos entre períodos"
+
+#. js-lingui-id: Eu1S7c
+#: src/modules/onboarding/constants/OnboardingInstallableApps.ts
+msgid "Invoicing, bookkeeping, budgets and funding"
+msgstr ""
 
 #. js-lingui-id: CUvG5b
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -11754,6 +11946,11 @@ msgstr ""
 msgid "List"
 msgstr "Lista"
 
+#. js-lingui-id: dhpbov
+#: src/modules/command-menu-item/engine-command/record/single-record/message-list/components/DuplicateMessageListSingleRecordCommand.tsx
+msgid "List duplicated with {memberCountLabel}"
+msgstr ""
+
 #. js-lingui-id: 3xTn5L
 #: src/modules/views/types/ViewType.ts
 msgid "List widget"
@@ -12341,6 +12538,11 @@ msgstr "Membros - Configurações"
 msgid "Members & invitees"
 msgstr "Membros e convidados"
 
+#. js-lingui-id: Ksgenf
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Members, volunteers and grants with Documents"
+msgstr ""
+
 #. js-lingui-id: UODtG8
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merge"
@@ -12885,6 +13087,8 @@ msgstr "Novo"
 
 #. js-lingui-id: 6WSYbN
 #. placeholder {0}: objectMetadataItem.labelSingular
+#. placeholder {0}: objectMetadataItemForTab.labelSingular
+#: src/modules/side-panel/hooks/useOpenRecordInSidePanel.ts
 #: src/modules/side-panel/hooks/useOpenRecordInSidePanel.ts
 msgid "New {0}"
 msgstr "Novo {0}"
@@ -13100,6 +13304,8 @@ msgstr "Novo Webhook"
 #. js-lingui-id: vam7Jz
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "New widget"
 msgstr ""
@@ -13185,6 +13391,11 @@ msgstr "Sem acesso"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "No active subscription."
 msgstr "Nenhuma assinatura ativa."
+
+#. js-lingui-id: FOocWX
+#: src/modules/workbench-dock/components/DefaultWorkbenchWidgetContent.tsx
+msgid "No active tasks in this view."
+msgstr ""
 
 #. js-lingui-id: LM+N3q
 #: src/modules/activities/timeline-activities/components/EventList.tsx
@@ -13628,6 +13839,11 @@ msgstr "Nenhum objeto com vistas encontrado"
 msgid "No option found"
 msgstr "Nenhuma opção encontrada"
 
+#. js-lingui-id: /h9ZDY
+#: src/modules/workbench-dock/components/DefaultWorkbenchWidgetContent.tsx
+msgid "No other collaborators are online right now."
+msgstr ""
+
 #. js-lingui-id: XRc1G9
 #: src/modules/ai/components/TerminalOutput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -13772,6 +13988,11 @@ msgstr "Nenhum papel encontrado"
 msgid "No rows with errors"
 msgstr "Nenhuma linha com erros"
 
+#. js-lingui-id: p31VuL
+#: src/modules/blocknote-editor/version-history/components/BlockEditorVersionHistoryPanel.tsx
+msgid "No saved version yet"
+msgstr ""
+
 #. js-lingui-id: Hsl+kr
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "No Select field"
@@ -13836,6 +14057,11 @@ msgstr "Nenhum gatilho configurado para esta função."
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "No trigger is enabled. Toggle one of the options above to choose how this function gets invoked."
 msgstr "Nenhum gatilho está habilitado. Ative uma das opções acima para escolher como esta função será invocada."
+
+#. js-lingui-id: +t2h12
+#: src/modules/workbench-dock/components/DefaultWorkbenchWidgetContent.tsx
+msgid "No unread items in this view."
+msgstr ""
 
 #. js-lingui-id: OLsGjz
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -13964,6 +14190,11 @@ msgstr "Opções do nó"
 msgid "Node settings"
 msgstr "Configurações do nó"
 
+#. js-lingui-id: snxeRr
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Non-profit"
+msgstr ""
+
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
@@ -14087,6 +14318,16 @@ msgstr "Não sincronizado"
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Note"
 msgstr "Nota"
+
+#. js-lingui-id: U6TIqV
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Notes-first workspace for courses and projects"
+msgstr ""
+
+#. js-lingui-id: EL1oLN
+#: src/modules/onboarding/constants/OnboardingInstallableApps.ts
+msgid "Notes, docs and knowledge base"
+msgstr ""
 
 #. js-lingui-id: VngD1z
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -14417,10 +14658,15 @@ msgstr "Recompensa de integração"
 msgid "One or more filters reference deactivated or deleted fields and will be automatically removed on save."
 msgstr "Um ou mais filtros referenciam campos desativados ou eliminados e serão automaticamente removidos ao guardar."
 
+#. js-lingui-id: LdXSen
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "One subscription provides one enterprise key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install A2E Suite on a second server, activate it with this same enterprise key, then register that server as a development instance. Development instances unlock enterprise features without extra billing and do not count toward your production seats."
+msgstr ""
+
 #. js-lingui-id: 2l4SGU
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "One subscription provides one enterprise key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same enterprise key, then register that server as a development instance. Development instances unlock enterprise features without extra billing and do not count toward your production seats."
-msgstr "Uma subscrição fornece uma chave enterprise que suporta uma instância de produção e uma instância potencial de staging ou teste. Para executar um ambiente de staging ou teste, instale a Twenty num segundo servidor, ative-o com esta mesma chave enterprise e, em seguida, registe esse servidor como uma instância de desenvolvimento. Instâncias de desenvolvimento desbloqueiam funcionalidades enterprise sem cobrança adicional e não contam para as suas licenças de produção."
+#~ msgid "One subscription provides one enterprise key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same enterprise key, then register that server as a development instance. Development instances unlock enterprise features without extra billing and do not count toward your production seats."
+#~ msgstr "Uma subscrição fornece uma chave enterprise que suporta uma instância de produção e uma instância potencial de staging ou teste. Para executar um ambiente de staging ou teste, instale a Twenty num segundo servidor, ative-o com esta mesma chave enterprise e, em seguida, registe esse servidor como uma instância de desenvolvimento. Instâncias de desenvolvimento desbloqueiam funcionalidades enterprise sem cobrança adicional e não contam para as suas licenças de produção."
 
 #. js-lingui-id: oFTo3P
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -14503,6 +14749,16 @@ msgstr "Abrir"
 msgid "Open a maintained integration or prefill clients that accept MCP install links."
 msgstr "Abra uma integração mantida ou pré-preencha clientes que aceitem links de instalação MCP."
 
+#. js-lingui-id: c1d/k/
+#: src/modules/workbench-dock/components/DefaultWorkbenchWidgetContent.tsx
+msgid "Open a record or document to see its discussion here."
+msgstr ""
+
+#. js-lingui-id: NnHKmY
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Open A2E Suite's official ChatGPT integration for your workspace."
+msgstr ""
+
 #. js-lingui-id: 650kGT
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
 msgid "Open an email editor to edit block settings."
@@ -14513,15 +14769,25 @@ msgstr "Abra um editor de email para editar as definições do bloco."
 msgid "Open as link"
 msgstr "Abrir como link"
 
+#. js-lingui-id: OTj/Tc
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Open Claude with the A2E Suite connector name and MCP URL prefilled."
+msgstr ""
+
 #. js-lingui-id: n0vVgf
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Open Claude with the Twenty connector name and MCP URL prefilled."
-msgstr "Abra o Claude com o nome do conector Twenty e o URL MCP pré-preenchidos."
+#~ msgid "Open Claude with the Twenty connector name and MCP URL prefilled."
+#~ msgstr "Abra o Claude com o nome do conector Twenty e o URL MCP pré-preenchidos."
+
+#. js-lingui-id: vHWa+M
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Open Cursor's MCP installer with the A2E Suite remote server config."
+msgstr ""
 
 #. js-lingui-id: +n2jpB
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Open Cursor's MCP installer with the Twenty remote server config."
-msgstr "Abra o instalador MCP do Cursor com a configuração do servidor remoto Twenty."
+#~ msgid "Open Cursor's MCP installer with the Twenty remote server config."
+#~ msgstr "Abra o instalador MCP do Cursor com a configuração do servidor remoto Twenty."
 
 #. js-lingui-id: pZZH4Q
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -14547,6 +14813,11 @@ msgstr "Abrir em página completa"
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Open in Roles"
 msgstr "Abrir em Funções"
+
+#. js-lingui-id: pDUyJb
+#: src/modules/side-panel/tabs/components/SidePanelOpenInTabButton.tsx
+msgid "Open in tab"
+msgstr ""
 
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -14575,15 +14846,20 @@ msgstr "Abrir registros em"
 msgid "Open records on a dedicated page"
 msgstr "Abrir registros em uma página dedicada"
 
+#. js-lingui-id: ipzETq
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Open Replit with the A2E Suite remote server config."
+msgstr ""
+
 #. js-lingui-id: q170S2
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Open Replit with the Twenty remote server config."
-msgstr "Abra o Replit com a configuração do servidor remoto Twenty."
+#~ msgid "Open Replit with the Twenty remote server config."
+#~ msgstr "Abra o Replit com a configuração do servidor remoto Twenty."
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Open Twenty's official ChatGPT integration for your workspace."
-msgstr "Abra a integração oficial da Twenty com o ChatGPT para o seu espaço de trabalho."
+#~ msgid "Open Twenty's official ChatGPT integration for your workspace."
+#~ msgstr "Abra a integração oficial da Twenty com o ChatGPT para o seu espaço de trabalho."
 
 #. js-lingui-id: OV5wZZ
 #: src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx
@@ -14867,6 +15143,13 @@ msgstr "layout da página"
 msgid "Page layout"
 msgstr "Layout da página"
 
+#. js-lingui-id: nITdXs
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
+msgid "Page Layout"
+msgstr ""
+
 #. js-lingui-id: HFlGEK
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "page layout tab"
@@ -14888,10 +15171,15 @@ msgstr "Layouts de Página"
 msgid "Page name"
 msgstr "Nome da página"
 
+#. js-lingui-id: Brl7iA
+#: src/pages/not-found/NotFound.tsx
+msgid "Page Not Found | A2E Suite"
+msgstr ""
+
 #. js-lingui-id: NRvxzv
 #: src/pages/not-found/NotFound.tsx
-msgid "Page Not Found | Twenty"
-msgstr "Página não encontrada | Twenty"
+#~ msgid "Page Not Found | Twenty"
+#~ msgstr "Página não encontrada | Twenty"
 
 #. js-lingui-id: oIhFvf
 #: src/modules/side-panel/pages/email-block-settings/components/EmailPageStyleSection.tsx
@@ -14923,6 +15211,11 @@ msgstr "Parágrafo"
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 msgid "Parameters"
 msgstr "Parâmetros"
+
+#. js-lingui-id: mSstPP
+#: src/modules/a2e-workspace/components/A2eSuiteApplicationCard.tsx
+msgid "Part of A2E Suite"
+msgstr ""
 
 #. js-lingui-id: mPkInZ
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -15024,6 +15317,11 @@ msgstr "PDF"
 msgid "Pending"
 msgstr "Pendente"
 
+#. js-lingui-id: 6xqQ9U
+#: src/modules/realtime/components/RealtimePresenceAvatarStack.tsx
+msgid "People currently viewing: {memberNames}"
+msgstr ""
+
 #. js-lingui-id: PxBA+g
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "People I’ve sent emails to and received emails from."
@@ -15122,6 +15420,11 @@ msgstr "Pessoa criada"
 #: src/modules/activities/emails/hooks/useCampaignEmailEditorVariables.ts
 msgid "Person ID"
 msgstr "ID da pessoa"
+
+#. js-lingui-id: 0ffgdi
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Personal workspace with Documents; CRM navigation hidden"
+msgstr ""
 
 #. js-lingui-id: zmwvG2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
@@ -15382,6 +15685,11 @@ msgstr "Pré-instalar em novos espaços de trabalho"
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Pre-installed only"
 msgstr "Somente pré-instalados"
+
+#. js-lingui-id: itZAku
+#: src/modules/a2e-workspace/components/SettingsA2eWorkspaceTemplateSection.tsx
+msgid "Pre-installs A2E apps and tunes the navigation for how you work. Re-runnable at any time."
+msgstr ""
 
 #. js-lingui-id: 0Lqxjs
 #: src/modules/auth/sign-in-up/constants/WorkspaceActivationMessages.tsx
@@ -16501,6 +16809,7 @@ msgid "restore"
 msgstr "restaurar"
 
 #. js-lingui-id: yKu/3Y
+#: src/modules/blocknote-editor/version-history/components/BlockEditorVersionHistoryPanel.tsx
 #: src/modules/information-banner/components/deleted-record/InformationBannerDeletedRecord.tsx
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton.tsx
 msgid "Restore"
@@ -16529,7 +16838,6 @@ msgstr "Resultado"
 
 #. js-lingui-id: kx0s+n
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx
-#: src/modules/side-panel/pages/search/components/SidePanelSearchRecordsPage.tsx
 msgid "Results"
 msgstr "Resultados"
 
@@ -16917,7 +17225,7 @@ msgstr "SDK"
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
-#: src/modules/object-record/record-table-widget/components/RecordTableWidgetNestedRelationPickerDropdownContent.tsx
+#: src/modules/object-record/record-table-widget/components/RecordTableWidgetRelationPickerDropdownContent.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/side-panel/hooks/useOpenRecordsSearchPageInSidePanel.ts
@@ -17828,7 +18136,7 @@ msgid "Setting up your <0>database</0>..."
 msgstr "A configurar a sua <0>base de dados</0>..."
 
 #. js-lingui-id: Tz0i8g
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -17838,6 +18146,7 @@ msgstr "A configurar a sua <0>base de dados</0>..."
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
@@ -17997,6 +18306,11 @@ msgstr "Painel lateral"
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "Side Panel"
 msgstr "Painel Lateral"
+
+#. js-lingui-id: INQgh3
+#: src/modules/side-panel/tabs/components/SidePanelTabStrip.tsx
+msgid "Side panel context tabs"
+msgstr ""
 
 #. js-lingui-id: 9k9PMD
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
@@ -18159,6 +18473,11 @@ msgstr "Ignoradas"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Sky"
 msgstr "Céu"
+
+#. js-lingui-id: x472HU
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Small business"
+msgstr ""
 
 #. js-lingui-id: Ik7fz5
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -18574,6 +18893,11 @@ msgstr "Cliente da Stripe vinculado a este espaço de trabalho"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Stripe subscription"
 msgstr "Assinatura da Stripe"
+
+#. js-lingui-id: a0qEkS
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Student"
+msgstr ""
 
 #. js-lingui-id: 1CalO6
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
@@ -19022,6 +19346,7 @@ msgid "Task Title"
 msgstr "Título da Tarefa"
 
 #. js-lingui-id: KM6m8p
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Team"
 msgstr "Equipe"
@@ -19112,6 +19437,11 @@ msgstr "Editor de Texto"
 msgid "The address your workspace will send and receive email from (e.g. support@mycompany.com). Outbound sending requires the domain to be verified in Outbound Domains."
 msgstr "O endereço a partir do qual o seu espaço de trabalho irá enviar e receber e-mails (por exemplo, support@mycompany.com). O envio de saída requer que o domínio seja verificado em Outbound Domains."
 
+#. js-lingui-id: XhabsD
+#: src/modules/a2e-workspace/components/SettingsA2eSuiteSection.tsx
+msgid "The all-in-one workspace modules built into this suite. Install only what you need."
+msgstr ""
+
 #. js-lingui-id: oVH0Mt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "The API endpoint for your OpenAI-compatible provider"
@@ -19122,14 +19452,14 @@ msgstr "O endpoint de API para o seu provedor compatível com OpenAI"
 msgid "The AWS region for Bedrock"
 msgstr "A região da AWS para o Bedrock"
 
-#. js-lingui-id: HP7per
+#. js-lingui-id: 9ZSiAg
 #: src/pages/settings/applications/utils/getStandardApplicationDescription.ts
 msgid ""
-"The base data model every Twenty workspace runs on.\n"
+"The base data model every A2E Suite workspace runs on.\n"
 "\n"
 "#### What \"foundation\" means\n"
 "\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
+"Every A2E Suite workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
 "\n"
 "#### Included objects\n"
 "- **People & Companies**: contact and account records\n"
@@ -19137,11 +19467,11 @@ msgid ""
 "- **Notes & Tasks**: activity and follow-ups\n"
 "- **Workflows & Dashboards**: automation and reporting\n"
 "\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
+"Remove this app and the rest of A2E Suite has nothing to hang off.\n"
 "\n"
 "#### Build your own app\n"
 "\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
+"Extend A2E Suite with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
 "\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
@@ -19156,36 +19486,71 @@ msgid ""
 "\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
 msgstr ""
-"O modelo de dados base sobre o qual todo espaço de trabalho do Twenty funciona.\n"
-"\n"
-"#### O que \"fundação\" significa\n"
-"\n"
-"Todo espaço de trabalho do Twenty começa com este conjunto de objetos. Eles definem a forma do seu CRM, incluindo relacionamentos, atividades e relatórios. Todo o restante, incluindo apps do marketplace, agentes de IA e objetos personalizados, se conecta a eles.\n"
-"\n"
-"#### Objetos incluídos\n"
-"- **Pessoas e Empresas**: registros de contatos e contas\n"
-"- **Oportunidades**: seu funil de vendas\n"
-"- **Notas e Tarefas**: atividade e acompanhamentos\n"
-"- **Fluxos de trabalho e Painéis**: automação e relatórios\n"
-"\n"
-"Remova este app e o restante do Twenty não terá em que se apoiar.\n"
-"\n"
-"#### Crie seu próprio app\n"
-"\n"
-"Estenda o Twenty com seus próprios objetos, campos, funções de lógica ou habilidades de IA. Gere a estrutura de um novo app com um único comando:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Em seguida, dentro da pasta:\n"
-"\n"
-"```bash\n"
-"cd my-twenty-app\n"
-"yarn twenty dev\n"
-"```\n"
-"\n"
-"Veja o [guia de Introdução](https://twenty.com/developers/extend/apps/getting-started) para o passo a passo completo e [Criação de Apps](https://twenty.com/developers/extend/apps/building) para as APIs `defineApplication` / `defineEntity`."
+
+#. js-lingui-id: HP7per
+#: src/pages/settings/applications/utils/getStandardApplicationDescription.ts
+#~ msgid ""
+#~ "The base data model every Twenty workspace runs on.\n"
+#~ "\n"
+#~ "#### What \"foundation\" means\n"
+#~ "\n"
+#~ "Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
+#~ "\n"
+#~ "#### Included objects\n"
+#~ "- **People & Companies**: contact and account records\n"
+#~ "- **Opportunities**: your sales pipeline\n"
+#~ "- **Notes & Tasks**: activity and follow-ups\n"
+#~ "- **Workflows & Dashboards**: automation and reporting\n"
+#~ "\n"
+#~ "Remove this app and the rest of Twenty has nothing to hang off.\n"
+#~ "\n"
+#~ "#### Build your own app\n"
+#~ "\n"
+#~ "Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
+#~ "\n"
+#~ "```bash\n"
+#~ "npx create-twenty-app@latest my-twenty-app\n"
+#~ "```\n"
+#~ "\n"
+#~ "Then inside the folder:\n"
+#~ "\n"
+#~ "```bash\n"
+#~ "cd my-twenty-app\n"
+#~ "yarn twenty dev\n"
+#~ "```\n"
+#~ "\n"
+#~ "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
+#~ msgstr ""
+#~ "O modelo de dados base sobre o qual todo espaço de trabalho do Twenty funciona.\n"
+#~ "\n"
+#~ "#### O que \"fundação\" significa\n"
+#~ "\n"
+#~ "Todo espaço de trabalho do Twenty começa com este conjunto de objetos. Eles definem a forma do seu CRM, incluindo relacionamentos, atividades e relatórios. Todo o restante, incluindo apps do marketplace, agentes de IA e objetos personalizados, se conecta a eles.\n"
+#~ "\n"
+#~ "#### Objetos incluídos\n"
+#~ "- **Pessoas e Empresas**: registros de contatos e contas\n"
+#~ "- **Oportunidades**: seu funil de vendas\n"
+#~ "- **Notas e Tarefas**: atividade e acompanhamentos\n"
+#~ "- **Fluxos de trabalho e Painéis**: automação e relatórios\n"
+#~ "\n"
+#~ "Remova este app e o restante do Twenty não terá em que se apoiar.\n"
+#~ "\n"
+#~ "#### Crie seu próprio app\n"
+#~ "\n"
+#~ "Estenda o Twenty com seus próprios objetos, campos, funções de lógica ou habilidades de IA. Gere a estrutura de um novo app com um único comando:\n"
+#~ "\n"
+#~ "```bash\n"
+#~ "npx create-twenty-app@latest my-twenty-app\n"
+#~ "```\n"
+#~ "\n"
+#~ "Em seguida, dentro da pasta:\n"
+#~ "\n"
+#~ "```bash\n"
+#~ "cd my-twenty-app\n"
+#~ "yarn twenty dev\n"
+#~ "```\n"
+#~ "\n"
+#~ "Veja o [guia de Introdução](https://twenty.com/developers/extend/apps/getting-started) para o passo a passo completo e [Criação de Apps](https://twenty.com/developers/extend/apps/building) para as APIs `defineApplication` / `defineEntity`."
 
 #. js-lingui-id: VsxjzF
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -19294,10 +19659,15 @@ msgstr "O nome que os destinatários veem ao lado do seu endereço. É definido 
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
 msgstr "A página que procura não existe ou nunca existiu. Vamos pô-lo de volta no caminho certo"
 
+#. js-lingui-id: rJZEzB
+#: src/pages/settings/legal/SettingsLegalDpaNew.tsx
+msgid "The PDF is pre-signed by A2E Suite and executed with your legal entity and authorized signatory."
+msgstr ""
+
 #. js-lingui-id: Ya1wb4
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
-msgid "The PDF is pre-signed by Twenty and executed with your legal entity and authorized signatory."
-msgstr "O PDF é pré-assinado pela Twenty e executado com a sua entidade jurídica e signatário autorizado."
+#~ msgid "The PDF is pre-signed by Twenty and executed with your legal entity and authorized signatory."
+#~ msgstr "O PDF é pré-assinado pela Twenty e executado com a sua entidade jurídica e signatário autorizado."
 
 #. js-lingui-id: Ir4tSJ
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -19738,6 +20108,11 @@ msgstr "Esta visualização usa {usageLabel} no objeto \"{0}\", que não é aces
 msgid "This week"
 msgstr "Esta semana"
 
+#. js-lingui-id: xssAa6
+#: src/modules/workbench-dock/components/DefaultWorkbenchWidgetContent.tsx
+msgid "This widget is ready for its app provider."
+msgstr ""
+
 #. js-lingui-id: DF2voz
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
@@ -19942,6 +20317,11 @@ msgstr "Alternar todas as permissões de objetos"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 msgid "Toggle all settings permissions"
 msgstr "Ativar todas as permissões de configurações"
+
+#. js-lingui-id: 5eiZOf
+#: src/modules/blocknote-editor/editor-status/components/BlockEditorStatusBar.tsx
+msgid "Toggle outline"
+msgstr ""
 
 #. js-lingui-id: IHtFjq
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -20298,8 +20678,8 @@ msgstr "Turquesa"
 
 #. js-lingui-id: JnaRPe
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
-msgid "Twenty fields"
-msgstr "Campos do Twenty"
+#~ msgid "Twenty fields"
+#~ msgstr "Campos do Twenty"
 
 #. js-lingui-id: YIjS4q
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
@@ -20395,6 +20775,11 @@ msgstr "Digite sua própria resposta aqui"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Types of content this model can process besides text"
 msgstr "Tipos de conteúdo que este modelo pode processar além de texto"
+
+#. js-lingui-id: /OnuFs
+#: src/modules/blocknote-editor/editor-status/components/BlockEditorStatusBar.tsx
+msgid "Typewriter mode"
+msgstr ""
 
 #. js-lingui-id: V9+2pH
 #: src/localization/hooks/useLocaleOptions.ts
@@ -20718,6 +21103,7 @@ msgstr "Formato de imagem não suportado"
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTableRow.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/side-panel/components/SidePanelContextChip.tsx
+#: src/modules/side-panel/tabs/components/SidePanelTabStripItem.tsx
 #: src/modules/ui/field/display/components/ActorDisplay.tsx
 #: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
@@ -20755,6 +21141,11 @@ msgstr "Lista sem título"
 #: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
 msgid "Untitled role"
 msgstr "Função sem título"
+
+#. js-lingui-id: cTSJUA
+#: src/modules/blocknote-editor/editor-status/components/BlockEditorStatusBar.tsx
+msgid "Untitled section"
+msgstr ""
 
 #. js-lingui-id: jxRjAG
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
@@ -21395,6 +21786,11 @@ msgstr "A verificar o seu e-mail"
 msgid "Version"
 msgstr "Versão"
 
+#. js-lingui-id: tEQUBk
+#: src/modules/blocknote-editor/version-history/components/BlockEditorVersionHistoryPanel.tsx
+msgid "Version history"
+msgstr ""
+
 #. js-lingui-id: J709SW
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Version installed"
@@ -21899,10 +22295,15 @@ msgstr ""
 msgid "Weight"
 msgstr "Peso"
 
+#. js-lingui-id: JUQbyb
+#: src/pages/auth/SignInUp.tsx
+msgid "Welcome to A2E Suite"
+msgstr ""
+
 #. js-lingui-id: nTuObL
 #: src/pages/auth/SignInUp.tsx
-msgid "Welcome to Twenty"
-msgstr "Bem-vindo ao Twenty"
+#~ msgid "Welcome to Twenty"
+#~ msgstr "Bem-vindo ao Twenty"
 
 #. js-lingui-id: t8ZvkC
 #: src/modules/onboarding/constants/WelcomeTitleMessage.ts
@@ -22020,6 +22421,11 @@ msgstr "Widget"
 msgid "Widget Settings"
 msgstr "Configurações do widget"
 
+#. js-lingui-id: 9axFjo
+#: src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+msgid "Widget shortcuts"
+msgstr ""
+
 #. js-lingui-id: YR3K7M
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "widgets"
@@ -22056,6 +22462,11 @@ msgstr "Sem indicativo"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "without credit card"
 msgstr "sem cartão de crédito"
+
+#. js-lingui-id: GSEMLK
+#: src/modules/blocknote-editor/editor-status/components/BlockEditorStatusBar.tsx
+msgid "words"
+msgstr ""
 
 #. js-lingui-id: 3J7l5w
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -22167,6 +22578,11 @@ msgstr "Workflows"
 msgid "Workspace"
 msgstr "Espaço de trabalho"
 
+#. js-lingui-id: kLt5bv
+#: src/modules/workbench-dock/components/DefaultWorkbenchWidgetContent.tsx
+msgid "Workspace activity will appear here as your team works."
+msgstr ""
+
 #. js-lingui-id: fQ8teq
 #: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
 #: src/pages/onboarding/WorkspaceActivation.tsx
@@ -22210,6 +22626,7 @@ msgid "Workspace logo upload failed"
 msgstr "Falha no carregamento do logótipo do espaço de trabalho"
 
 #. js-lingui-id: CbGxon
+#: src/modules/realtime/components/RealtimePresenceAvatarStack.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableRow.tsx
 msgid "Workspace member"
@@ -22228,6 +22645,16 @@ msgstr "Membros do Espaço de Trabalho"
 msgid "Workspace shared"
 msgstr "Espaço de Trabalho compartilhado"
 
+#. js-lingui-id: Wda7yA
+#: src/modules/a2e-workspace/components/SettingsA2eWorkspaceTemplateSection.tsx
+msgid "Workspace template"
+msgstr ""
+
+#. js-lingui-id: y8Yurl
+#: src/modules/a2e-workspace/hooks/useApplyWorkspaceTemplate.ts
+msgid "Workspace template applied"
+msgstr ""
+
 #. js-lingui-id: Smg70n
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Workspace upgrade health"
@@ -22237,6 +22664,11 @@ msgstr "Integridade da atualização do espaço de trabalho"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Workspace views require manage views permission"
 msgstr "As visualizações de espaço de trabalho exigem permissão para gerenciar visualizações"
+
+#. js-lingui-id: HsXWJU
+#: src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+msgid "Workspace widgets"
+msgstr ""
 
 #. js-lingui-id: pmt7u4
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -22386,6 +22818,11 @@ msgstr "Você está editando a tradução para {currentLanguageLabel}. Renomear,
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 msgid "You are not allowed to create records for this object"
 msgstr "Você não tem permissão para criar registros para este objeto"
+
+#. js-lingui-id: cYFa4d
+#: src/modules/realtime/components/RealtimeReconnectBanner.tsx
+msgid "You are offline. Some live updates may be missing until the connection comes back."
+msgstr ""
 
 #. js-lingui-id: iibZbD
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx

@@ -186,6 +186,12 @@ msgstr "{0, plural, other {{days} 天}}"
 msgid "{0, plural, one {{years} year} other {{years} years}}"
 msgstr "{0, plural, other {{years} 年}}"
 
+#. js-lingui-id: pkIIls
+#. placeholder {0}: result.memberCount
+#: src/modules/command-menu-item/engine-command/record/single-record/message-list/components/DuplicateMessageListSingleRecordCommand.tsx
+msgid "{0, plural, one {# member} other {# members}}"
+msgstr ""
+
 #. js-lingui-id: Qvm3VE
 #. placeholder {0}: selectedOptions.length
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
@@ -204,6 +210,12 @@ msgstr "{0, plural, other {# 個工作區升級失敗或版本落後}}"
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
 msgid "{0, plural, one {You do not have permission to access the {fieldsList} field} other {You do not have permission to access the {fieldsList} fields}}"
 msgstr "{0, plural, other {您無法訪問 {fieldsList} 字段}}"
+
+#. js-lingui-id: 9fR3j1
+#. placeholder {0}: onlineWorkspaceMembers.length
+#: src/modules/workbench-dock/components/DefaultWorkbenchWidgetContent.tsx
+msgid "{0} collaborators online"
+msgstr ""
 
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(nextCreditsByPeriod, { decimals: 2, })
@@ -248,6 +260,12 @@ msgstr "此清單中有 {0} 個"
 msgid "{0} in this list, {1} sendable ({breakdown})"
 msgstr "此清單中有 {0} 個，{1} 個可傳送 ({breakdown})"
 
+#. js-lingui-id: Mj6oCJ
+#. placeholder {0}: getDisplayName(workspaceMembers[0])
+#: src/modules/realtime/components/RealtimeTypingIndicator.tsx
+msgid "{0} is typing…"
+msgstr ""
+
 #. js-lingui-id: T8aKxO
 #. placeholder {0}: layout.name
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -278,6 +296,12 @@ msgstr "{0}/{1}"
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
 msgid "{0} opted out of this topic"
 msgstr "{0} 已選擇不接收此主題"
+
+#. js-lingui-id: 9tP5xw
+#. placeholder {0}: workspaceMembers.length
+#: src/modules/realtime/components/RealtimeTypingIndicator.tsx
+msgid "{0} people are typing…"
+msgstr ""
 
 #. js-lingui-id: 55frRG
 #. placeholder {0}: index + 1
@@ -927,6 +951,16 @@ msgstr "此通話錄音尚未提供摘要。"
 msgid "A verification email has been sent to"
 msgstr "驗證電子郵件已發送至"
 
+#. js-lingui-id: hdn5qA
+#: src/modules/a2e-workspace/components/SettingsA2eSuiteSection.tsx
+msgid "A2E Suite"
+msgstr ""
+
+#. js-lingui-id: FPLuV4
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
+msgid "A2E Suite fields"
+msgstr ""
+
 #. js-lingui-id: DqlQy+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
 msgid "Ability to add more than one email address"
@@ -1258,6 +1292,11 @@ msgstr "添加觸發器"
 msgid "Add a video conferencing link"
 msgstr "新增視訊會議連結"
 
+#. js-lingui-id: zaiojZ
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Add A2E Suite as a Streamable HTTP extension in Goose."
+msgstr ""
+
 #. js-lingui-id: MPPZ54
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
@@ -1463,6 +1502,7 @@ msgstr "添加新項目"
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker.tsx
 #: src/modules/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItemsWithSearch.tsx
 #: src/modules/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItemsWithSearch.tsx
+#: src/modules/object-record/record-table-widget/components/RecordTableWidgetJunctionAddNewRow.tsx
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetNestedRelationAddNewRow.tsx
 #: src/modules/object-record/record-table/components/RecordTableNoRecordGroupAddNew.tsx
 msgid "Add New"
@@ -1562,35 +1602,65 @@ msgstr "添加 SSO 身份提供者"
 msgid "Add test input for evaluation (e.g., \"Find all customers in NY\")"
 msgstr ""
 
+#. js-lingui-id: WZuW/R
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Add the A2E Suite MCP server as a remote context server in Zed."
+msgstr ""
+
+#. js-lingui-id: S/PYP/
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Add the A2E Suite MCP server from Augment Code settings."
+msgstr ""
+
+#. js-lingui-id: xZOLuM
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Add the A2E Suite MCP server from Raycast's MCP commands or settings."
+msgstr ""
+
+#. js-lingui-id: KxxgPi
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Add the A2E Suite MCP server in Gemini CLI settings."
+msgstr ""
+
+#. js-lingui-id: zbfSmn
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Add the A2E Suite MCP server to your LibreChat configuration file."
+msgstr ""
+
+#. js-lingui-id: edaVrI
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Add the A2E Suite remote server with LM Studio's install link."
+msgstr ""
+
 #. js-lingui-id: FKGcEL
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Add the Twenty MCP server as a remote context server in Zed."
-msgstr "在 Zed 中將 Twenty MCP 伺服器新增為遠端內容伺服器。"
+#~ msgid "Add the Twenty MCP server as a remote context server in Zed."
+#~ msgstr "在 Zed 中將 Twenty MCP 伺服器新增為遠端內容伺服器。"
 
 #. js-lingui-id: iA2nHX
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Add the Twenty MCP server from Augment Code settings."
-msgstr "在 Augment Code 設定中新增 Twenty MCP 伺服器。"
+#~ msgid "Add the Twenty MCP server from Augment Code settings."
+#~ msgstr "在 Augment Code 設定中新增 Twenty MCP 伺服器。"
 
 #. js-lingui-id: l+NzAk
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Add the Twenty MCP server from Raycast's MCP commands or settings."
-msgstr "透過 Raycast 的 MCP 指令或設定新增 Twenty MCP 伺服器。"
+#~ msgid "Add the Twenty MCP server from Raycast's MCP commands or settings."
+#~ msgstr "透過 Raycast 的 MCP 指令或設定新增 Twenty MCP 伺服器。"
 
 #. js-lingui-id: j6G/yI
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Add the Twenty MCP server in Gemini CLI settings."
-msgstr "在 Gemini CLI 設定中新增 Twenty MCP 伺服器。"
+#~ msgid "Add the Twenty MCP server in Gemini CLI settings."
+#~ msgstr "在 Gemini CLI 設定中新增 Twenty MCP 伺服器。"
 
 #. js-lingui-id: /OyhlM
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Add the Twenty MCP server to your LibreChat configuration file."
-msgstr "將 Twenty MCP 伺服器新增到您的 LibreChat 設定檔。"
+#~ msgid "Add the Twenty MCP server to your LibreChat configuration file."
+#~ msgstr "將 Twenty MCP 伺服器新增到您的 LibreChat 設定檔。"
 
 #. js-lingui-id: K0DXoj
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Add the Twenty remote server with LM Studio's install link."
-msgstr "使用 LM Studio 的安裝連結新增 Twenty 遠端伺服器。"
+#~ msgid "Add the Twenty remote server with LM Studio's install link."
+#~ msgstr "使用 LM Studio 的安裝連結新增 Twenty 遠端伺服器。"
 
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -1609,8 +1679,8 @@ msgstr "新增主題"
 
 #. js-lingui-id: 4D/zWv
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Add Twenty as a Streamable HTTP extension in Goose."
-msgstr "在 Goose 中將 Twenty 新增為可串流的 HTTP 擴充功能。"
+#~ msgid "Add Twenty as a Streamable HTTP extension in Goose."
+#~ msgstr "在 Goose 中將 Twenty 新增為可串流的 HTTP 擴充功能。"
 
 #. js-lingui-id: XnwceV
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationRedirectURIsInput.tsx
@@ -1851,7 +1921,7 @@ msgid "Aggregate Chart"
 msgstr ""
 
 #. js-lingui-id: jsQZMk
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
@@ -2612,6 +2682,11 @@ msgstr "下列應用程式未經審核。使用風險自負。"
 msgid "Apply"
 msgstr "套用"
 
+#. js-lingui-id: 4TwsNi
+#: src/modules/a2e-workspace/components/A2eWorkspaceTemplatePicker.tsx
+msgid "Apply template"
+msgstr ""
+
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 msgid "Apply{progressText}"
@@ -3208,6 +3283,11 @@ msgstr "在 {start} 和 {end} 分鐘之間"
 msgid "between the {startOrdinal} and {endOrdinal} of the month"
 msgstr "在每月的 {startOrdinal} 和 {endOrdinal} 之間"
 
+#. js-lingui-id: PDP8XO
+#: src/modules/onboarding/constants/OnboardingInstallableApps.ts
+msgid "Bilan"
+msgstr ""
+
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Billed monthly"
@@ -3423,6 +3503,11 @@ msgstr ""
 msgid "Bundled with {applicationName}"
 msgstr "隨 {applicationName} 一起打包"
 
+#. js-lingui-id: vON7Ce
+#: src/modules/onboarding/constants/OnboardingInstallableApps.ts
+msgid "Bureau"
+msgstr ""
+
 #. js-lingui-id: yjeERL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "button"
@@ -3439,10 +3524,15 @@ msgstr "按鈕"
 msgid "by {author}"
 msgstr "由 {author}"
 
+#. js-lingui-id: VYON94
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx
+msgid "By using A2E Suite, you agree to the"
+msgstr ""
+
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
-msgid "By using Twenty, you agree to the"
-msgstr "使用 Twenty 即表示您同意"
+#~ msgid "By using Twenty, you agree to the"
+#~ msgstr "使用 Twenty 即表示您同意"
 
 #. js-lingui-id: Yx41df
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -4104,6 +4194,11 @@ msgstr "由此工作區認領"
 msgid "Claiming is not configured on this server. Ask an administrator to set up the GitHub OAuth app."
 msgstr "此伺服器尚未設定認領功能。請要求管理員設定 GitHub OAuth 應用程式。"
 
+#. js-lingui-id: eq5p+L
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Classic sales workspace: companies, people and opportunities"
+msgstr ""
+
 #. js-lingui-id: fcgvCA
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Claude"
@@ -4221,6 +4316,11 @@ msgstr "已輪換 Client secret。請立即複製 — 它將不會再次顯示�
 msgid "Client Settings"
 msgstr "客戶端設置"
 
+#. js-lingui-id: mFFLKs
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Clients, pipeline and Documents for small companies"
+msgstr ""
+
 #. js-lingui-id: yJ8MIx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Cline"
@@ -4252,6 +4352,11 @@ msgstr "關閉選單"
 #: src/modules/side-panel/components/SidePanelCloseButton.tsx
 msgid "Close side panel"
 msgstr "關閉側邊面板"
+
+#. js-lingui-id: bJqkQ7
+#: src/modules/side-panel/tabs/components/SidePanelTabStripItem.tsx
+msgid "Close tab {displayedTitle}"
+msgstr ""
 
 #. js-lingui-id: 1Lxtdt
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -4288,6 +4393,11 @@ msgstr "程式碼解譯器"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
 msgid "Code your function"
 msgstr "編寫您的功能代碼"
+
+#. js-lingui-id: Ca/S9z
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Collaborative workspace with Documents alongside the CRM"
+msgstr ""
 
 #. js-lingui-id: H86f9p
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -4328,6 +4438,11 @@ msgstr "收合側邊欄"
 #: src/modules/ai/components/AiChatCollapseButton.tsx
 msgid "Collapse to side panel"
 msgstr "摺疊至側邊面板"
+
+#. js-lingui-id: k9y5Jc
+#: src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+msgid "Collapse widgets"
+msgstr ""
 
 #. js-lingui-id: jZlrte
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -4630,6 +4745,16 @@ msgstr "配置 IMAP 設定以接收和同步您的電子郵件。"
 msgid "Configure SMTP settings to send emails from your account."
 msgstr "配置 SMTP 設定以從您的帳戶發送電子郵件。"
 
+#. js-lingui-id: mDj7lx
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Configure the A2E Suite MCP server manually in Cascade."
+msgstr ""
+
+#. js-lingui-id: MnTJs4
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Configure the A2E Suite MCP server manually in Cline."
+msgstr ""
+
 #. js-lingui-id: TiCmQz
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Configure the default AI models for all workspaces"
@@ -4647,13 +4772,13 @@ msgstr "在 Amazon Q Developer 的 MCP 設定中設定遠端伺服器。"
 
 #. js-lingui-id: g1/8jH
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Configure the Twenty MCP server manually in Cascade."
-msgstr "在 Cascade 中手動設定 Twenty MCP 伺服器。"
+#~ msgid "Configure the Twenty MCP server manually in Cascade."
+#~ msgstr "在 Cascade 中手動設定 Twenty MCP 伺服器。"
 
 #. js-lingui-id: XiyvRh
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Configure the Twenty MCP server manually in Cline."
-msgstr "在 Cline 中手動設定 Twenty MCP 伺服器。"
+#~ msgid "Configure the Twenty MCP server manually in Cline."
+#~ msgstr "在 Cline 中手動設定 Twenty MCP 伺服器。"
 
 #. js-lingui-id: qA9AGQ
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
@@ -4809,6 +4934,11 @@ msgstr "已連接帳戶"
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 msgid "Connection"
 msgstr "連接"
+
+#. js-lingui-id: 61xrVf
+#: src/modules/realtime/components/RealtimeReconnectBanner.tsx
+msgid "Connection lost — reconnecting…"
+msgstr ""
 
 #. js-lingui-id: XYeKcu
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -5695,6 +5825,11 @@ msgstr "每期信用"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Crimson"
 msgstr "緋紅色"
+
+#. js-lingui-id: MSlbwg
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "CRM"
+msgstr ""
 
 #. js-lingui-id: 6Oaeoc
 #: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
@@ -8515,10 +8650,30 @@ msgstr "匯出（{exportedCount}）"
 msgid "Export ({percentageValue}%)"
 msgstr "匯出（{percentageValue}%）"
 
+#. js-lingui-id: fFvZn4
+#: src/modules/blocknote-editor/export/components/BlockEditorExportMenu.tsx
+msgid "Export as DOCX"
+msgstr ""
+
+#. js-lingui-id: lIMtoX
+#: src/modules/blocknote-editor/export/components/BlockEditorExportMenu.tsx
+msgid "Export as Markdown"
+msgstr ""
+
+#. js-lingui-id: otDbDT
+#: src/modules/blocknote-editor/export/components/BlockEditorExportMenu.tsx
+msgid "Export as PDF (print)"
+msgstr ""
+
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Export CSV"
 msgstr "導出 CSV"
+
+#. js-lingui-id: 90ZrxR
+#: src/modules/blocknote-editor/export/components/BlockEditorExportMenu.tsx
+msgid "Export document"
+msgstr ""
 
 #. js-lingui-id: leUV74
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionWorkflowActionTriggerSection.tsx
@@ -8590,6 +8745,16 @@ msgstr "新增模型失敗"
 msgid "Failed to add provider"
 msgstr "新增供應商失敗"
 
+#. js-lingui-id: ScvpVb
+#: src/modules/object-record/record-table-widget/components/RecordTableWidgetJunctionAddNewRow.tsx
+msgid "Failed to add record"
+msgstr ""
+
+#. js-lingui-id: dVUMEt
+#: src/modules/a2e-workspace/hooks/useApplyWorkspaceTemplate.ts
+msgid "Failed to apply the workspace template"
+msgstr ""
+
 #. js-lingui-id: E2CkaQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Failed to claim ownership."
@@ -8640,6 +8805,11 @@ msgstr "刪除退訂主題失敗。"
 #: src/modules/dashboards/hooks/useDuplicateDashboard.ts
 msgid "Failed to duplicate dashboard"
 msgstr "複製儀表板失敗"
+
+#. js-lingui-id: 6e1GS3
+#: src/modules/command-menu-item/engine-command/record/single-record/message-list/hooks/useDuplicateMessageList.ts
+msgid "Failed to duplicate list"
+msgstr ""
 
 #. js-lingui-id: WYXxQF
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
@@ -10037,14 +10207,19 @@ msgstr "隱藏標籤"
 msgid "Hide system indexes"
 msgstr "隱藏系統索引"
 
+#. js-lingui-id: rr1YHG
+#: src/pages/settings/community/SettingsCommunity.tsx
+msgid "Hire a partner to help you implement and customize A2E Suite."
+msgstr ""
+
 #. js-lingui-id: 1ETc0T
 #: src/pages/settings/community/SettingsCommunity.tsx
-msgid "Hire a partner to help you implement and customize Twenty."
-msgstr "聘請合作夥伴協助你導入並自訂 Twenty。"
+#~ msgid "Hire a partner to help you implement and customize Twenty."
+#~ msgstr "聘請合作夥伴協助你導入並自訂 Twenty。"
 
 #. js-lingui-id: i0qMbr
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
+#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 msgid "Home"
 msgstr "首頁"
 
@@ -10522,6 +10697,11 @@ msgstr "索引已刪除"
 msgid "Indexes"
 msgstr "索引"
 
+#. js-lingui-id: fByw/g
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Individual"
+msgstr ""
+
 #. js-lingui-id: hG711D
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard.tsx
@@ -10616,6 +10796,7 @@ msgid "Insert your billing details to get a free trial and more AI credits"
 msgstr "輸入您的帳單資訊，以取得免費試用及更多 AI 點數"
 
 #. js-lingui-id: TKQ7K+
+#: src/modules/a2e-workspace/components/A2eSuiteApplicationCard.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -10646,6 +10827,11 @@ msgstr "安裝和管理應用程序"
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Install link"
 msgstr "安裝連結"
+
+#. js-lingui-id: 44kANA
+#: src/modules/workbench-dock/components/DefaultWorkbenchWidgetContent.tsx
+msgid "Install or configure Syna to ask questions from any workspace context."
+msgstr ""
 
 #. js-lingui-id: K8iwJx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -10685,6 +10871,7 @@ msgid "Installed apps"
 msgstr "已安裝的應用程式"
 
 #. js-lingui-id: wJJ+Wy
+#: src/modules/a2e-workspace/components/A2eSuiteApplicationCard.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
@@ -10906,6 +11093,11 @@ msgstr "邀請您的團隊"
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Invoice amount may vary if you add members or credits between periods"
 msgstr "若在期間內新增成員或點數，發票金額可能會有所變動"
+
+#. js-lingui-id: Eu1S7c
+#: src/modules/onboarding/constants/OnboardingInstallableApps.ts
+msgid "Invoicing, bookkeeping, budgets and funding"
+msgstr ""
 
 #. js-lingui-id: CUvG5b
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -11731,6 +11923,11 @@ msgstr ""
 msgid "List"
 msgstr "清單"
 
+#. js-lingui-id: dhpbov
+#: src/modules/command-menu-item/engine-command/record/single-record/message-list/components/DuplicateMessageListSingleRecordCommand.tsx
+msgid "List duplicated with {memberCountLabel}"
+msgstr ""
+
 #. js-lingui-id: 3xTn5L
 #: src/modules/views/types/ViewType.ts
 msgid "List widget"
@@ -12318,6 +12515,11 @@ msgstr "成員 - 設定"
 msgid "Members & invitees"
 msgstr "成員與受邀者"
 
+#. js-lingui-id: Ksgenf
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Members, volunteers and grants with Documents"
+msgstr ""
+
 #. js-lingui-id: UODtG8
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merge"
@@ -12862,6 +13064,8 @@ msgstr "新"
 
 #. js-lingui-id: 6WSYbN
 #. placeholder {0}: objectMetadataItem.labelSingular
+#. placeholder {0}: objectMetadataItemForTab.labelSingular
+#: src/modules/side-panel/hooks/useOpenRecordInSidePanel.ts
 #: src/modules/side-panel/hooks/useOpenRecordInSidePanel.ts
 msgid "New {0}"
 msgstr "新增 {0}"
@@ -13077,6 +13281,8 @@ msgstr "新增 Webhook"
 #. js-lingui-id: vam7Jz
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "New widget"
 msgstr ""
@@ -13162,6 +13368,11 @@ msgstr "無存取權"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "No active subscription."
 msgstr "沒有有效的訂閱。"
+
+#. js-lingui-id: FOocWX
+#: src/modules/workbench-dock/components/DefaultWorkbenchWidgetContent.tsx
+msgid "No active tasks in this view."
+msgstr ""
 
 #. js-lingui-id: LM+N3q
 #: src/modules/activities/timeline-activities/components/EventList.tsx
@@ -13605,6 +13816,11 @@ msgstr "找不到具有檢視的物件"
 msgid "No option found"
 msgstr "未找到選項"
 
+#. js-lingui-id: /h9ZDY
+#: src/modules/workbench-dock/components/DefaultWorkbenchWidgetContent.tsx
+msgid "No other collaborators are online right now."
+msgstr ""
+
 #. js-lingui-id: XRc1G9
 #: src/modules/ai/components/TerminalOutput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -13749,6 +13965,11 @@ msgstr "未找到角色"
 msgid "No rows with errors"
 msgstr "沒有錯誤的行"
 
+#. js-lingui-id: p31VuL
+#: src/modules/blocknote-editor/version-history/components/BlockEditorVersionHistoryPanel.tsx
+msgid "No saved version yet"
+msgstr ""
+
 #. js-lingui-id: Hsl+kr
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "No Select field"
@@ -13813,6 +14034,11 @@ msgstr "未為此函式設定任何觸發器。"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "No trigger is enabled. Toggle one of the options above to choose how this function gets invoked."
 msgstr "未啟用任何觸發器。切換上方其中一個選項以選擇此函式如何被呼叫。"
+
+#. js-lingui-id: +t2h12
+#: src/modules/workbench-dock/components/DefaultWorkbenchWidgetContent.tsx
+msgid "No unread items in this view."
+msgstr ""
 
 #. js-lingui-id: OLsGjz
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -13941,6 +14167,11 @@ msgstr "節點選項"
 msgid "Node settings"
 msgstr "節點設定"
 
+#. js-lingui-id: snxeRr
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Non-profit"
+msgstr ""
+
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
@@ -14064,6 +14295,16 @@ msgstr "未同步"
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 msgid "Note"
 msgstr "備註"
+
+#. js-lingui-id: U6TIqV
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Notes-first workspace for courses and projects"
+msgstr ""
+
+#. js-lingui-id: EL1oLN
+#: src/modules/onboarding/constants/OnboardingInstallableApps.ts
+msgid "Notes, docs and knowledge base"
+msgstr ""
 
 #. js-lingui-id: VngD1z
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -14394,10 +14635,15 @@ msgstr "入門獎勵"
 msgid "One or more filters reference deactivated or deleted fields and will be automatically removed on save."
 msgstr "一或多個篩選器參照了已停用或已刪除的欄位，儲存時會自動移除。"
 
+#. js-lingui-id: LdXSen
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "One subscription provides one enterprise key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install A2E Suite on a second server, activate it with this same enterprise key, then register that server as a development instance. Development instances unlock enterprise features without extra billing and do not count toward your production seats."
+msgstr ""
+
 #. js-lingui-id: 2l4SGU
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "One subscription provides one enterprise key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same enterprise key, then register that server as a development instance. Development instances unlock enterprise features without extra billing and do not count toward your production seats."
-msgstr "一份訂閱提供一組企業金鑰，可供一個正式環境執行個體與一個潛在的預備或測試執行個體使用。若要執行預備或測試環境，請在第二台伺服器上安裝 Twenty，使用相同的企業金鑰啟用，然後將該伺服器註冊為開發環境執行個體。開發環境執行個體可在不額外收費的情況下啟用企業功能，且不會計入您的正式環境席次數量。"
+#~ msgid "One subscription provides one enterprise key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same enterprise key, then register that server as a development instance. Development instances unlock enterprise features without extra billing and do not count toward your production seats."
+#~ msgstr "一份訂閱提供一組企業金鑰，可供一個正式環境執行個體與一個潛在的預備或測試執行個體使用。若要執行預備或測試環境，請在第二台伺服器上安裝 Twenty，使用相同的企業金鑰啟用，然後將該伺服器註冊為開發環境執行個體。開發環境執行個體可在不額外收費的情況下啟用企業功能，且不會計入您的正式環境席次數量。"
 
 #. js-lingui-id: oFTo3P
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -14480,6 +14726,16 @@ msgstr "開啟"
 msgid "Open a maintained integration or prefill clients that accept MCP install links."
 msgstr "開啟維護中的整合，或預先填入支援 MCP 安裝連結的用戶端。"
 
+#. js-lingui-id: c1d/k/
+#: src/modules/workbench-dock/components/DefaultWorkbenchWidgetContent.tsx
+msgid "Open a record or document to see its discussion here."
+msgstr ""
+
+#. js-lingui-id: NnHKmY
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Open A2E Suite's official ChatGPT integration for your workspace."
+msgstr ""
+
 #. js-lingui-id: 650kGT
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
 msgid "Open an email editor to edit block settings."
@@ -14490,15 +14746,25 @@ msgstr "開啟電子郵件編輯器以編輯區塊設定。"
 msgid "Open as link"
 msgstr "作為連結開啟"
 
+#. js-lingui-id: OTj/Tc
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Open Claude with the A2E Suite connector name and MCP URL prefilled."
+msgstr ""
+
 #. js-lingui-id: n0vVgf
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Open Claude with the Twenty connector name and MCP URL prefilled."
-msgstr "開啟 Claude，並預先填入 Twenty 連接器名稱與 MCP URL。"
+#~ msgid "Open Claude with the Twenty connector name and MCP URL prefilled."
+#~ msgstr "開啟 Claude，並預先填入 Twenty 連接器名稱與 MCP URL。"
+
+#. js-lingui-id: vHWa+M
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Open Cursor's MCP installer with the A2E Suite remote server config."
+msgstr ""
 
 #. js-lingui-id: +n2jpB
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Open Cursor's MCP installer with the Twenty remote server config."
-msgstr "使用 Twenty 的遠端伺服器設定開啟 Cursor 的 MCP 安裝程式。"
+#~ msgid "Open Cursor's MCP installer with the Twenty remote server config."
+#~ msgstr "使用 Twenty 的遠端伺服器設定開啟 Cursor 的 MCP 安裝程式。"
 
 #. js-lingui-id: pZZH4Q
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -14524,6 +14790,11 @@ msgstr "在完整頁面中開啟"
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Open in Roles"
 msgstr "在角色中開啟"
+
+#. js-lingui-id: pDUyJb
+#: src/modules/side-panel/tabs/components/SidePanelOpenInTabButton.tsx
+msgid "Open in tab"
+msgstr ""
 
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -14552,15 +14823,20 @@ msgstr "開啟記錄的方式"
 msgid "Open records on a dedicated page"
 msgstr "在專用頁面開啟記錄"
 
+#. js-lingui-id: ipzETq
+#: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
+msgid "Open Replit with the A2E Suite remote server config."
+msgstr ""
+
 #. js-lingui-id: q170S2
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Open Replit with the Twenty remote server config."
-msgstr "使用 Twenty 的遠端伺服器設定開啟 Replit。"
+#~ msgid "Open Replit with the Twenty remote server config."
+#~ msgstr "使用 Twenty 的遠端伺服器設定開啟 Replit。"
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
-msgid "Open Twenty's official ChatGPT integration for your workspace."
-msgstr "為您的工作區開啟 Twenty 官方的 ChatGPT 整合。"
+#~ msgid "Open Twenty's official ChatGPT integration for your workspace."
+#~ msgstr "為您的工作區開啟 Twenty 官方的 ChatGPT 整合。"
 
 #. js-lingui-id: OV5wZZ
 #: src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx
@@ -14844,6 +15120,13 @@ msgstr "頁面佈局"
 msgid "Page layout"
 msgstr "頁面佈局"
 
+#. js-lingui-id: nITdXs
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
+msgid "Page Layout"
+msgstr ""
+
 #. js-lingui-id: HFlGEK
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "page layout tab"
@@ -14865,10 +15148,15 @@ msgstr "頁面佈局"
 msgid "Page name"
 msgstr "頁面名稱"
 
+#. js-lingui-id: Brl7iA
+#: src/pages/not-found/NotFound.tsx
+msgid "Page Not Found | A2E Suite"
+msgstr ""
+
 #. js-lingui-id: NRvxzv
 #: src/pages/not-found/NotFound.tsx
-msgid "Page Not Found | Twenty"
-msgstr "找不到頁面 | Twenty"
+#~ msgid "Page Not Found | Twenty"
+#~ msgstr "找不到頁面 | Twenty"
 
 #. js-lingui-id: oIhFvf
 #: src/modules/side-panel/pages/email-block-settings/components/EmailPageStyleSection.tsx
@@ -14900,6 +15188,11 @@ msgstr "段落"
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 msgid "Parameters"
 msgstr "參數"
+
+#. js-lingui-id: mSstPP
+#: src/modules/a2e-workspace/components/A2eSuiteApplicationCard.tsx
+msgid "Part of A2E Suite"
+msgstr ""
 
 #. js-lingui-id: mPkInZ
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -15001,6 +15294,11 @@ msgstr "PDF"
 msgid "Pending"
 msgstr "待處理"
 
+#. js-lingui-id: 6xqQ9U
+#: src/modules/realtime/components/RealtimePresenceAvatarStack.tsx
+msgid "People currently viewing: {memberNames}"
+msgstr ""
+
 #. js-lingui-id: PxBA+g
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "People I’ve sent emails to and received emails from."
@@ -15099,6 +15397,11 @@ msgstr "個人已建立"
 #: src/modules/activities/emails/hooks/useCampaignEmailEditorVariables.ts
 msgid "Person ID"
 msgstr "人員 ID"
+
+#. js-lingui-id: 0ffgdi
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Personal workspace with Documents; CRM navigation hidden"
+msgstr ""
 
 #. js-lingui-id: zmwvG2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
@@ -15359,6 +15662,11 @@ msgstr "在新的工作區上預先安裝"
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Pre-installed only"
 msgstr "僅限預裝"
+
+#. js-lingui-id: itZAku
+#: src/modules/a2e-workspace/components/SettingsA2eWorkspaceTemplateSection.tsx
+msgid "Pre-installs A2E apps and tunes the navigation for how you work. Re-runnable at any time."
+msgstr ""
 
 #. js-lingui-id: 0Lqxjs
 #: src/modules/auth/sign-in-up/constants/WorkspaceActivationMessages.tsx
@@ -16478,6 +16786,7 @@ msgid "restore"
 msgstr "還原"
 
 #. js-lingui-id: yKu/3Y
+#: src/modules/blocknote-editor/version-history/components/BlockEditorVersionHistoryPanel.tsx
 #: src/modules/information-banner/components/deleted-record/InformationBannerDeletedRecord.tsx
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton.tsx
 msgid "Restore"
@@ -16506,7 +16815,6 @@ msgstr "結果"
 
 #. js-lingui-id: kx0s+n
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx
-#: src/modules/side-panel/pages/search/components/SidePanelSearchRecordsPage.tsx
 msgid "Results"
 msgstr "結果"
 
@@ -16894,7 +17202,7 @@ msgstr "SDK"
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
-#: src/modules/object-record/record-table-widget/components/RecordTableWidgetNestedRelationPickerDropdownContent.tsx
+#: src/modules/object-record/record-table-widget/components/RecordTableWidgetRelationPickerDropdownContent.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/side-panel/hooks/useOpenRecordsSearchPageInSidePanel.ts
@@ -17805,7 +18113,7 @@ msgid "Setting up your <0>database</0>..."
 msgstr "正在設定您的<0>資料庫</0>..."
 
 #. js-lingui-id: Tz0i8g
-#: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
+#: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -17815,6 +18123,7 @@ msgstr "正在設定您的<0>資料庫</0>..."
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
@@ -17974,6 +18283,11 @@ msgstr "側邊面板"
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "Side Panel"
 msgstr "側邊面板"
+
+#. js-lingui-id: INQgh3
+#: src/modules/side-panel/tabs/components/SidePanelTabStrip.tsx
+msgid "Side panel context tabs"
+msgstr ""
 
 #. js-lingui-id: 9k9PMD
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
@@ -18136,6 +18450,11 @@ msgstr "已略過"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Sky"
 msgstr "天藍色"
+
+#. js-lingui-id: x472HU
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Small business"
+msgstr ""
 
 #. js-lingui-id: Ik7fz5
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -18551,6 +18870,11 @@ msgstr "已連結到此工作區的 Stripe 客戶"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Stripe subscription"
 msgstr "Stripe 訂閱"
+
+#. js-lingui-id: a0qEkS
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+msgid "Student"
+msgstr ""
 
 #. js-lingui-id: 1CalO6
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
@@ -18999,6 +19323,7 @@ msgid "Task Title"
 msgstr "任務標題"
 
 #. js-lingui-id: KM6m8p
+#: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Team"
 msgstr "團隊"
@@ -19089,6 +19414,11 @@ msgstr "文本編輯器"
 msgid "The address your workspace will send and receive email from (e.g. support@mycompany.com). Outbound sending requires the domain to be verified in Outbound Domains."
 msgstr "工作區將用來傳送與接收電子郵件的地址（例如：support@mycompany.com）。進行外寄傳送前，必須先在「外寄域名」中驗證該域名。"
 
+#. js-lingui-id: XhabsD
+#: src/modules/a2e-workspace/components/SettingsA2eSuiteSection.tsx
+msgid "The all-in-one workspace modules built into this suite. Install only what you need."
+msgstr ""
+
 #. js-lingui-id: oVH0Mt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "The API endpoint for your OpenAI-compatible provider"
@@ -19099,14 +19429,14 @@ msgstr "適用於您的 OpenAI 相容供應商的 API 端點"
 msgid "The AWS region for Bedrock"
 msgstr "Bedrock 的 AWS 區域"
 
-#. js-lingui-id: HP7per
+#. js-lingui-id: 9ZSiAg
 #: src/pages/settings/applications/utils/getStandardApplicationDescription.ts
 msgid ""
-"The base data model every Twenty workspace runs on.\n"
+"The base data model every A2E Suite workspace runs on.\n"
 "\n"
 "#### What \"foundation\" means\n"
 "\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
+"Every A2E Suite workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
 "\n"
 "#### Included objects\n"
 "- **People & Companies**: contact and account records\n"
@@ -19114,11 +19444,11 @@ msgid ""
 "- **Notes & Tasks**: activity and follow-ups\n"
 "- **Workflows & Dashboards**: automation and reporting\n"
 "\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
+"Remove this app and the rest of A2E Suite has nothing to hang off.\n"
 "\n"
 "#### Build your own app\n"
 "\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
+"Extend A2E Suite with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
 "\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
@@ -19133,6 +19463,41 @@ msgid ""
 "\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
 msgstr ""
+
+#. js-lingui-id: HP7per
+#: src/pages/settings/applications/utils/getStandardApplicationDescription.ts
+#~ msgid ""
+#~ "The base data model every Twenty workspace runs on.\n"
+#~ "\n"
+#~ "#### What \"foundation\" means\n"
+#~ "\n"
+#~ "Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
+#~ "\n"
+#~ "#### Included objects\n"
+#~ "- **People & Companies**: contact and account records\n"
+#~ "- **Opportunities**: your sales pipeline\n"
+#~ "- **Notes & Tasks**: activity and follow-ups\n"
+#~ "- **Workflows & Dashboards**: automation and reporting\n"
+#~ "\n"
+#~ "Remove this app and the rest of Twenty has nothing to hang off.\n"
+#~ "\n"
+#~ "#### Build your own app\n"
+#~ "\n"
+#~ "Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
+#~ "\n"
+#~ "```bash\n"
+#~ "npx create-twenty-app@latest my-twenty-app\n"
+#~ "```\n"
+#~ "\n"
+#~ "Then inside the folder:\n"
+#~ "\n"
+#~ "```bash\n"
+#~ "cd my-twenty-app\n"
+#~ "yarn twenty dev\n"
+#~ "```\n"
+#~ "\n"
+#~ "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
+#~ msgstr ""
 
 #. js-lingui-id: VsxjzF
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -19241,10 +19606,15 @@ msgstr "收件人在您的地址旁邊看到的名稱。此名稱會在建立頻
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
 msgstr "您正在尋找的頁面已經消失或從未存在。讓我們幫助您回到正軌"
 
+#. js-lingui-id: rJZEzB
+#: src/pages/settings/legal/SettingsLegalDpaNew.tsx
+msgid "The PDF is pre-signed by A2E Suite and executed with your legal entity and authorized signatory."
+msgstr ""
+
 #. js-lingui-id: Ya1wb4
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
-msgid "The PDF is pre-signed by Twenty and executed with your legal entity and authorized signatory."
-msgstr "此 PDF 已由 Twenty 預先簽署，並與您的法人實體與授權簽署人共同生效。"
+#~ msgid "The PDF is pre-signed by Twenty and executed with your legal entity and authorized signatory."
+#~ msgstr "此 PDF 已由 Twenty 預先簽署，並與您的法人實體與授權簽署人共同生效。"
 
 #. js-lingui-id: Ir4tSJ
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -19685,6 +20055,11 @@ msgstr "此檢視在物件 \"{0}\" 上使用了 {usageLabel}，無法存取。"
 msgid "This week"
 msgstr "本週"
 
+#. js-lingui-id: xssAa6
+#: src/modules/workbench-dock/components/DefaultWorkbenchWidgetContent.tsx
+msgid "This widget is ready for its app provider."
+msgstr ""
+
 #. js-lingui-id: DF2voz
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent.tsx
@@ -19889,6 +20264,11 @@ msgstr "切換所有物件權限"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 msgid "Toggle all settings permissions"
 msgstr "切換所有設置權限"
+
+#. js-lingui-id: 5eiZOf
+#: src/modules/blocknote-editor/editor-status/components/BlockEditorStatusBar.tsx
+msgid "Toggle outline"
+msgstr ""
 
 #. js-lingui-id: IHtFjq
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -20245,8 +20625,8 @@ msgstr "綠松石色"
 
 #. js-lingui-id: JnaRPe
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
-msgid "Twenty fields"
-msgstr "Twenty 欄位"
+#~ msgid "Twenty fields"
+#~ msgstr "Twenty 欄位"
 
 #. js-lingui-id: YIjS4q
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
@@ -20342,6 +20722,11 @@ msgstr "在此輸入你自己的答案"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Types of content this model can process besides text"
 msgstr "此模型除文字外可處理的內容類型"
+
+#. js-lingui-id: /OnuFs
+#: src/modules/blocknote-editor/editor-status/components/BlockEditorStatusBar.tsx
+msgid "Typewriter mode"
+msgstr ""
 
 #. js-lingui-id: V9+2pH
 #: src/localization/hooks/useLocaleOptions.ts
@@ -20665,6 +21050,7 @@ msgstr "不支援的圖片格式"
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTableRow.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/side-panel/components/SidePanelContextChip.tsx
+#: src/modules/side-panel/tabs/components/SidePanelTabStripItem.tsx
 #: src/modules/ui/field/display/components/ActorDisplay.tsx
 #: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
@@ -20702,6 +21088,11 @@ msgstr "未命名清單"
 #: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
 msgid "Untitled role"
 msgstr "無標題角色"
+
+#. js-lingui-id: cTSJUA
+#: src/modules/blocknote-editor/editor-status/components/BlockEditorStatusBar.tsx
+msgid "Untitled section"
+msgstr ""
 
 #. js-lingui-id: jxRjAG
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
@@ -21342,6 +21733,11 @@ msgstr "正在驗證您的電子郵件"
 msgid "Version"
 msgstr "版本"
 
+#. js-lingui-id: tEQUBk
+#: src/modules/blocknote-editor/version-history/components/BlockEditorVersionHistoryPanel.tsx
+msgid "Version history"
+msgstr ""
+
 #. js-lingui-id: J709SW
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Version installed"
@@ -21846,10 +22242,15 @@ msgstr ""
 msgid "Weight"
 msgstr "權重"
 
+#. js-lingui-id: JUQbyb
+#: src/pages/auth/SignInUp.tsx
+msgid "Welcome to A2E Suite"
+msgstr ""
+
 #. js-lingui-id: nTuObL
 #: src/pages/auth/SignInUp.tsx
-msgid "Welcome to Twenty"
-msgstr "歡迎來到 Twenty"
+#~ msgid "Welcome to Twenty"
+#~ msgstr "歡迎來到 Twenty"
 
 #. js-lingui-id: t8ZvkC
 #: src/modules/onboarding/constants/WelcomeTitleMessage.ts
@@ -21967,6 +22368,11 @@ msgstr "小工具"
 msgid "Widget Settings"
 msgstr "小工具設定"
 
+#. js-lingui-id: 9axFjo
+#: src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+msgid "Widget shortcuts"
+msgstr ""
+
 #. js-lingui-id: YR3K7M
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "widgets"
@@ -22003,6 +22409,11 @@ msgstr "不含國碼"
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
 msgid "without credit card"
 msgstr "不使用信用卡"
+
+#. js-lingui-id: GSEMLK
+#: src/modules/blocknote-editor/editor-status/components/BlockEditorStatusBar.tsx
+msgid "words"
+msgstr ""
 
 #. js-lingui-id: 3J7l5w
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -22114,6 +22525,11 @@ msgstr "Workflow"
 msgid "Workspace"
 msgstr "工作區"
 
+#. js-lingui-id: kLt5bv
+#: src/modules/workbench-dock/components/DefaultWorkbenchWidgetContent.tsx
+msgid "Workspace activity will appear here as your team works."
+msgstr ""
+
 #. js-lingui-id: fQ8teq
 #: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
 #: src/pages/onboarding/WorkspaceActivation.tsx
@@ -22157,6 +22573,7 @@ msgid "Workspace logo upload failed"
 msgstr "工作區標誌上傳失敗"
 
 #. js-lingui-id: CbGxon
+#: src/modules/realtime/components/RealtimePresenceAvatarStack.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableRow.tsx
 msgid "Workspace member"
@@ -22175,6 +22592,16 @@ msgstr "工作區成員"
 msgid "Workspace shared"
 msgstr "已共用至工作區"
 
+#. js-lingui-id: Wda7yA
+#: src/modules/a2e-workspace/components/SettingsA2eWorkspaceTemplateSection.tsx
+msgid "Workspace template"
+msgstr ""
+
+#. js-lingui-id: y8Yurl
+#: src/modules/a2e-workspace/hooks/useApplyWorkspaceTemplate.ts
+msgid "Workspace template applied"
+msgstr ""
+
 #. js-lingui-id: Smg70n
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Workspace upgrade health"
@@ -22184,6 +22611,11 @@ msgstr "工作區升級健康狀態"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Workspace views require manage views permission"
 msgstr "工作區視圖需管理檢視許可權"
+
+#. js-lingui-id: HsXWJU
+#: src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+msgid "Workspace widgets"
+msgstr ""
 
 #. js-lingui-id: pmt7u4
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -22333,6 +22765,11 @@ msgstr "您正在編輯 {currentLanguageLabel} 翻譯。重新命名則會變更
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 msgid "You are not allowed to create records for this object"
 msgstr "您無權在此對象中創建記錄"
+
+#. js-lingui-id: cYFa4d
+#: src/modules/realtime/components/RealtimeReconnectBanner.tsx
+msgid "You are offline. Some live updates may be missing until the connection comes back."
+msgstr ""
 
 #. js-lingui-id: iibZbD
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
