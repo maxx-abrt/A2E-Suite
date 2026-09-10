@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAtom, useStore } from 'jotai';
 
 import { BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { EditorCommentsThreadStore } from '@/blocknote-editor/comments/EditorCommentsThreadStore';
+import { useResolveCommentUsers } from '@/blocknote-editor/comments/hooks/useResolveCommentUsers';
 import { BlockEditor } from '@/blocknote-editor/components/BlockEditor';
 import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
 import { useAttachmentSync } from '@/blocknote-editor/hooks/useAttachmentSync';
@@ -9,6 +11,7 @@ import { useReplaceBlockEditorContent } from '@/blocknote-editor/hooks/useReplac
 import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
 import { prepareBodyWithSignedUrls } from '@/blocknote-editor/utils/prepareBodyWithSignedUrls';
 import { type Attachment } from '@/activities/files/types/Attachment';
+import { CommentsExtension } from '@blocknote/core/comments';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -17,6 +20,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useRecordSeededDraft } from '@/object-record/record-seeded-draft/hooks/useRecordSeededDraft';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
@@ -28,6 +32,7 @@ import { t } from '@lingui/core/macro';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
 import '@blocknote/react/style.css';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
@@ -53,6 +58,8 @@ export const RichTextFieldEditor = ({
   onBlur: onBlurOverride,
   editorRef,
 }: RichTextFieldEditorProps) => {
+  const resolveCommentUsers = useResolveCommentUsers();
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const store = useStore();
   const [recordInStore] = useAtom(recordStoreFamilyState.atomFamily(recordId));
 
@@ -128,15 +135,39 @@ export const RichTextFieldEditor = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fieldName, recordId]);
 
-  const editor = useCreateBlockNote({
-    initialContent: initialBody,
-    domAttributes: { editor: { class: 'editor' } },
-    schema: BLOCK_SCHEMA,
-    uploadFile: handleEditorBuiltInUploadFile,
-    placeholders: {
-      default: t`Type '/' for commands, '@' for mentions`,
+  const commentThreadStore = useMemo(
+    () =>
+      new EditorCommentsThreadStore({
+        currentUserId: currentWorkspaceMember?.id ?? '',
+      }),
+    // Editor (and its captured thread store) is created once per record field;
+    // identity changes would orphan existing threads.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [recordId, fieldName, currentWorkspaceMember?.id],
+  );
+
+  const commentsExtension = useMemo(
+    () =>
+      CommentsExtension({
+        threadStore: commentThreadStore,
+        resolveUsers: resolveCommentUsers,
+      }),
+    [commentThreadStore, resolveCommentUsers],
+  );
+
+  const editor = useCreateBlockNote(
+    {
+      initialContent: initialBody,
+      domAttributes: { editor: { class: 'editor' } },
+      schema: BLOCK_SCHEMA,
+      uploadFile: handleEditorBuiltInUploadFile,
+      placeholders: {
+        default: t`Type '/' for commands, '@' for mentions`,
+      },
+      extensions: [commentsExtension],
     },
-  });
+    [commentsExtension],
+  );
 
   if (editorRef) {
     editorRef.current = editor;

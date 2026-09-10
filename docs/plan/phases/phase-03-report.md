@@ -151,3 +151,67 @@ text) will strip it there by design; (3) `LinkToRecordPicker` uses
 dropdown component-state scoped to its instance id — keep the fixed id
 `link-to-record-slash-dropdown` unique per editor instance if multiple
 editors ever render simultaneously.
+
+## 2026-09-10 16:55 UTC — Zoo (GLM-5.3-Flash)
+**Task(s):** P3.2 item 2 — inline comments anchored to blocks (thread store
+per block id) (PLAN.md line 216)
+**Status:** done
+
+**What I did:**
+- Verified the installed `@blocknote/core@0.51` ships a full comments
+  extension (`@blocknote/core/comments`: `CommentsExtension`, `ThreadStore`,
+  `ThreadStoreAuth`, `DefaultThreadStoreAuth` + types) and `@blocknote/react`
+  auto-renders `FloatingComposerController` + `FloatingThreadController` via
+  `BlockNoteDefaultUI` when the extension is registered (`comments !== false`).
+  No parallel comment framework needed — pure primitive reuse (law §1).
+- `packages/twenty-front/src/modules/blocknote-editor/comments/
+  EditorCommentsThreadStore.ts` — in-memory `ThreadStore` implementation:
+  create/add/update/delete comment, delete/resolve/unresolve thread, emoji
+  reactions, pub-sub via `subscribe`. Nested `EditorCommentsThreadStoreAuth`
+  (author-only edit/reaction-delete; everyone-with-editor-access can comment,
+  resolve, delete — v1 granularity).
+- `comments/hooks/useResolveCommentUsers.ts` — `resolveUsers` bridge: loads
+  `WorkspaceMember` records via existing `useFindManyRecords`, maps to
+  blocknote `User` (id/username/avatarUrl). Ref-based so the stable callback
+  picked up at editor creation still sees later member loads.
+- `RichTextFieldEditor.tsx` — registers `CommentsExtension({
+  threadStore, resolveUsers })` in `useCreateBlockNote(..., { extensions })`.
+  `BlockNoteView` (default UI) then renders the floating composer on
+  selection and the thread card on anchor click; comment anchors persist as
+  marks inside the document body (survive reloads).
+- Test: `comments/__tests__/EditorCommentsThreadStore.test.ts` — 7 tests
+  (create/subscribe, add comment, resolve/unresolve attribution, update+delete,
+  reactions toggle, foreign-comment auth, thread delete). Suite total 33/33.
+
+**Decisions & trade-offs:**
+- In-memory thread bodies for v1: anchor marks persist with the body JSON,
+  but thread contents do not (no server comment storage yet). On reload,
+  anchors become orphaned marks; blocknote renders them as orphaned threads.
+  Documented limitation — server persistence (attachment-style object or
+  dedicated table) is the natural follow-up in P3.3/P8, out of scope here.
+- Did NOT touch the dashboards editor (`DashboardsBlockEditor`) — comments
+  scoped to record rich-text fields for v1; extending is one `extensions: []`
+  entry away if wanted.
+- Used `isDefined` only; `isNonEmptyString` does not exist in this branch's
+  `twenty-shared/utils` export set (verified via node REPL).
+- No new user-facing strings introduced by us (blocknote's own dictionary
+  handles comment UI labels) → no Lingui churn.
+
+**Verification:**
+- `npx jest src/modules/blocknote-editor --config=jest.config.mjs` → 5
+  suites, 33 passed.
+- `npx tsgo -p tsconfig.json --noEmit` → 74 errors = pre-existing baseline
+  (identical count as previous entry; zero new errors).
+- oxlint on touched files → 0 warnings 0 errors; `oxfmt --check` → clean.
+- `npx nx lint:diff-with-main twenty-front` → "No changed files." + success
+  (committed-diff lint; touched files linted directly).
+
+**For the next agent:** next = P3.2 item 3 — ToC/outline panel; word count;
+typewriter mode option. Gotchas: (1) blocknote dist still cannot be
+jest-imported — keep mocking `@blocknote/*` at suite level if a test needs
+the extension factory; the store test avoids runtime imports (types only);
+(2) `useCreateBlockNote` deps must include the comments extension instance —
+do not recreate it per render or threads reset on every keystroke; (3)
+`resolveUsers` must be identity-stable (ref pattern) or user info shows
+"loading" forever; (4) UI check of composer/thread cards (light+dark) is
+still pending — do it in the P3.2 e2e pass.

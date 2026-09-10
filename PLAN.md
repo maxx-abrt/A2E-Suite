@@ -213,7 +213,7 @@ App: `a2e-documents`.
 ### P3.2 Editor upgrades
 - [x] Slash-command extensions: toggle/heading/code/quote/callout/divider/
       image (upload → FILES), @mention (users + objects), /link to records
-- [ ] Inline comments anchored to blocks (thread store per block id)
+- [x] Inline comments anchored to blocks (thread store per block id)
 - [ ] ToC/outline panel; word count; typewriter mode option
 - [ ] Templates: instantiate from template docs (copy blocks); template
       gallery view
