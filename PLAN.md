@@ -211,7 +211,7 @@ App: `a2e-documents`.
       metadata (none needed — all columns live in app metadata; see report)
 
 ### P3.2 Editor upgrades
-- [ ] Slash-command extensions: toggle/heading/code/quote/callout/divider/
+- [x] Slash-command extensions: toggle/heading/code/quote/callout/divider/
       image (upload → FILES), @mention (users + objects), /link to records
 - [ ] Inline comments anchored to blocks (thread store per block id)
 - [ ] ToC/outline panel; word count; typewriter mode option
@@ -234,6 +234,8 @@ App: `a2e-documents`.
 - [ ] Cmd+K: create/open document commands; search provider for docs
 - [ ] Record integration: "Save as document" from record notes tab (copy);
       doc ↔ record relation field (morph-style link on document)
+
+      For docs system, use the base tree system notion-like, cleanly.
 
 **Acceptance.** Create tree, drag-reorder persists across reload; template
 flow works; export produces valid PDF/DOCX/MD; public share link with

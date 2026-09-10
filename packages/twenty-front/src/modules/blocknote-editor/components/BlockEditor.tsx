@@ -15,6 +15,7 @@ import {
   CustomSlashMenu,
   type SuggestionItem,
 } from '@/blocknote-editor/components/CustomSlashMenu';
+import { LinkToRecordSlashMenuItem } from '@/blocknote-editor/components/LinkToRecordSlashMenuItem';
 import { useMentionMenu } from '@/mention/hooks/useMentionMenu';
 import { IconX } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -171,25 +172,6 @@ export const BlockEditor = ({
   const blockNoteTheme = colorScheme === 'light' ? 'light' : 'dark';
   const getMentionItems = useMentionMenu(editor);
 
-  const getSlashMenuItems = async (query: string) => {
-    const filtered = filterSuggestionItems<SuggestionItem>(
-      getSlashMenu(editor),
-      query,
-    );
-
-    if (filtered.length > 0) {
-      return filtered;
-    }
-
-    return [
-      {
-        title: t`Close menu`,
-        Icon: IconX,
-        onItemClick: () => editor.getExtension(SuggestionMenu)?.closeMenu(),
-      },
-    ];
-  };
-
   const handleFocus = () => {
     onFocus?.();
   };
@@ -220,11 +202,40 @@ export const BlockEditor = ({
         editable={!readonly}
       >
         <CustomSideMenu editor={editor} />
-        <SuggestionMenuController
-          triggerCharacter="/"
-          getItems={getSlashMenuItems}
-          suggestionMenuComponent={CustomSlashMenu}
-        />
+        <LinkToRecordSlashMenuItem>
+          {(linkToRecordItem) => {
+            const slashMenuWithLinkToRecord = () => [
+              ...getSlashMenu(editor),
+              linkToRecordItem,
+            ];
+
+            return (
+              <SuggestionMenuController
+                triggerCharacter="/"
+                getItems={async (query: string) => {
+                  const filtered = filterSuggestionItems<SuggestionItem>(
+                    slashMenuWithLinkToRecord(),
+                    query,
+                  );
+
+                  if (filtered.length > 0) {
+                    return filtered;
+                  }
+
+                  return [
+                    {
+                      title: t`Close menu`,
+                      Icon: IconX,
+                      onItemClick: () =>
+                        editor.getExtension(SuggestionMenu)?.closeMenu(),
+                    },
+                  ];
+                }}
+                suggestionMenuComponent={CustomSlashMenu}
+              />
+            );
+          }}
+        </LinkToRecordSlashMenuItem>
         <SuggestionMenuController
           triggerCharacter="@"
           getItems={async (query) => getMentionItems(query)}

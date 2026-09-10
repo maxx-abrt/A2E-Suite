@@ -91,3 +91,63 @@ works because tsconfig resolves to the sibling yarn PnP install);
 (2) `dev:build` needs the absolute app path (`"$PWD"`); (3) new field/view
 IDs must stay in `constants/universal-identifiers.ts` — the dedup check is
 the only guard against silent collisions.
+
+## 2026-09-10 15:35 UTC — Zoo (GLM-5.3-Flash)
+**Task(s):** P3.2 first item — slash-command extensions (toggle/heading/code/
+quote/divider/image/@mention/link-to-record) (PLAN.md line 214)
+**Status:** done
+
+**What I did:**
+- Audit: blocknote 0.51 defaults already provide heading (incl. toggle),
+  quote, code block, divider, toggle list, image/video/audio (FilePanel →
+  `editor.uploadFile`, already wired to attachment upload in
+  `RichTextFieldEditor`), and @mention via `SuggestionMenuController` +
+  `useMentionSearch`. So the actual gaps were: **callout block** and
+  **/link to records**.
+- `packages/twenty-front/src/modules/blocknote-editor/blocks/CalloutBlock.tsx`
+  — new `callout` block spec (emoji prop cycling through 5 emoji, inline
+  content, Linaria styling with theme tokens); registered in `Schema.ts`.
+- `LinkToRecordSlashMenuItem.tsx` + `LinkToRecordPicker.tsx` — a "Link to
+  record" slash item (group Advanced, IconLink) that opens the existing
+  `SingleRecordPicker` on a fixed dropdownId via `useOpenDropdown`; on
+  selection it inserts a `mention` inline node (same shape as the @mention
+  path, so RecordChip rendering + side-panel opening work for free).
+  Picker object scope = same readable/searchable filter used by mention
+  search (`filterReadableActiveObjectMetadataItems`).
+- `BlockEditor.tsx` wires the item into the slash menu via a render-prop
+  around the existing `SuggestionMenuController` (no framework added).
+- Test: `getSlashMenu.test.ts` (icon mapping + custom File item) — mocked
+  `getDefaultReactSlashMenuItems` because the real blocknote dist bundle
+  breaks under SWC/jest (pre-existing; see Decisions). 26/26 tests pass.
+- Verification choice logged: rather than widen jest
+  `transformIgnorePatterns` for the whole @blocknote chain (which then hits
+  `h.default.extend is not a function` inside blocknote's bundled deps),
+  the unit test mocks the provider and exercises our own logic. UI
+  verification of the picker flow happens in the P3.2 e2e.
+
+**Decisions & trade-offs:**
+- Callout as a custom block spec rather than a quote variant: emoji +
+  bordered container are Notion-grade UX; blocknote 0.51 has no callout.
+- /link-to-record reuses `SingleRecordPicker` + `mention` inline content —
+  zero new fetch/picker machinery (law §1: relations via primitives).
+- Jest transform untouched (reverted mid-session); mock keeps the test
+  hermetic and fast.
+
+**Verification:**
+- `npx jest src/modules/blocknote-editor --config=jest.config.mjs` → 4
+  suites, 26 passed.
+- `npx tsgo -p tsconfig.json --noEmit` → 74 errors, all pre-existing in
+  `front-components/useFrontComponentExecutionContext.ts` (baseline count
+  verified identical via git stash before/after).
+- oxlint (touched files) → 0 warnings 0 errors; `oxfmt --check` → clean.
+- `npx nx lint:diff-with-main twenty-front` → "No changed files" (target is
+  committed diff only); files linted directly as above.
+
+**For the next agent:** next = P3.2 item 2 — inline comments anchored to
+blocks. Gotchas: (1) blocknote dist cannot be jest-imported — mock
+`@blocknote/react`/`@blocknote/core` at suite level; (2) the callout block
+is in BLOCK_SCHEMA, so dashboards' `filterSupportedBlocks` (standalone-rich-
+text) will strip it there by design; (3) `LinkToRecordPicker` uses
+dropdown component-state scoped to its instance id — keep the fixed id
+`link-to-record-slash-dropdown` unique per editor instance if multiple
+editors ever render simultaneously.

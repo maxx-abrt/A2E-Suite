@@ -4,6 +4,7 @@ import { type SuggestionItem } from '@/blocknote-editor/types/types';
 
 import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import {
+  IconAlertCircle,
   IconBlockquote,
   IconCode,
   type IconComponent,
@@ -23,6 +24,7 @@ import {
   IconMoodSmile,
   IconPhoto,
   IconPilcrow,
+  IconSquareRoundedCheck,
   IconTable,
   IconVideo,
 } from 'twenty-ui/icon';
@@ -37,6 +39,7 @@ const Icons: Record<string, IconComponent> = {
   'Toggle Heading 1': IconH1,
   'Toggle Heading 2': IconH2,
   'Toggle Heading 3': IconH3,
+  Callout: IconAlertCircle,
   'Toggle List': IconListDetails,
   Divider: IconMinus,
   Quote: IconBlockquote,
