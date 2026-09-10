@@ -217,7 +217,7 @@ App: `a2e-documents`.
 - [x] ToC/outline panel; word count; typewriter mode option
 - [x] Templates: instantiate from template docs (copy blocks); template
       gallery view
-- [ ] Version history: snapshot on save-interval (N versions, pruned);
+- [x] Version history: snapshot on save-interval (N versions, pruned);
       diff view (block-level), restore
 - [ ] Export: PDF (extend existing note-export path), DOCX, Markdown
 - [ ] Share: public read-only link (public-domain core module), optional

@@ -267,3 +267,29 @@ still pending — do it in the P3.2 e2e pass.
 - Manifest build (`dev:build`) not run this session (no local server); view/field UUIDs follow the committed `viewFieldId` scheme (view index 1 → `c31a0100-0004-…-0100-prefixed`).
 
 **For the next agent:** next = P3.2 item 5 — Version history (snapshot on save-interval, N pruned, block-level diff view, restore). Gotchas: (1) template copies created via the browser only carry what `DocumentNode` selects — extend the GraphQL selection if the copy must include icon/coverColor; (2) the templates view uses `VIEW_IDS.templates` (already reserved in universal-identifiers) — no new UUIDs minted; (3) run `node packages/twenty-sdk/dist/cli.cjs app:publish --private && app:install` against a live server to actually exercise instantiation; not possible this session.
+
+## 2026-09-10 17:35 UTC — Zoo (GLM-5.3-Flash)
+**Task(s):** P3.2 item 5 — Version history: snapshot on save-interval (N versions, pruned); diff view (block-level), restore (PLAN.md lines 220–221)
+**Status:** done
+
+**What I did:**
+- `packages/twenty-front/src/modules/blocknote-editor/version-history/`:
+  - `EditorVersionHistoryStore.ts` — in-memory ring buffer (default 20, pruned oldest-first) of `{versionId, createdAt, body}` snapshots; skips empty and unchanged consecutive bodies; pub-sub via `subscribe` (same lifecycle contract as `EditorCommentsThreadStore`).
+  - `hooks/useEditorVersionHistory.ts` — save-interval driver: snapshots only after 5s of typing calm, at most one snapshot per 120s interval, wired to `editor.onChange`.
+  - `utils/getBlockLevelDiff.ts` — block-level diff keyed on blocknote block id: added / removed / changed (text or type change).
+  - `states/isEditorVersionHistoryOpenState.ts` — `a2e-editor-version-history-open` localStorage atom.
+  - `components/BlockEditorVersionHistoryPanel.tsx` — toggle (IconHistory), version list (newest first, timestamp), block-diff view for the selected version (removed/added runs highlighted with theme `background.danger`/`background.transparent.success`), `Restore` = `editor.replaceBlocks(all ids, snapshot blocks)` — the documented blocknote primitive; restore then closes the panel and the normal change pipeline persists the body.
+- Wired into `BlockEditor.tsx` (below the status bar); store created once per editor instance via `useMemo([])`.
+
+**Decisions & trade-offs:**
+- Snapshots are in-memory per editor instance for v1 (same documented limitation as comment thread bodies): reload clears history; server persistence (dedicated table or JSON column) is the natural follow-up and would need migration + upgrade command — out of scope here.
+- Diff is block-level by block id: paste/reorder shows as add+remove pairs, no char-level diffing (v1 scope per task line).
+- Snapshot cadence = debounced idle + min interval, not raw change count, so 20 versions ≈ several hours of active editing.
+
+**Verification:**
+- `npx jest src/modules/blocknote-editor --config=jest.config.mjs` → 9 suites, 55 passed.
+- `npx tsgo -p tsconfig.json --noEmit` → 74 errors = pre-existing baseline.
+- oxlint on version-history + BlockEditor.tsx → 0 warnings 0 errors (removed an unused constant); `oxfmt` applied and clean.
+- fr-FR msgstr completed in working tree for `Version history`, `Restore`, `No saved version yet`; en.po present (catalogs not committed).
+
+**For the next agent:** next = P3.2 item 6 — Export: PDF (extend existing note-export path), DOCX, Markdown. Gotchas: (1) `@blocknote/xl-pdf-exporter` and `xl-docx-exporter` 0.51.4 are already in `twenty-front/package.json` — verify their API entrypoints (grep dist types) before coding; the existing note-export path lives under `packages/twenty-front/src/modules/…/note-export` or similar (grep `export note`); (2) restore uses `replaceBlocks` with all block ids — verify behavior when document is empty (replaceBlocks with empty array of ids); (3) the oxlint naming rule forces atom-state variables to match state names — name variables after the state atom; (4) theme has NO `background.success` — use `background.transparent.success` for green tints.

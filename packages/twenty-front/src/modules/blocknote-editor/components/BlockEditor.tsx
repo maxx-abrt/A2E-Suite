@@ -6,7 +6,7 @@ import { BlockNoteView } from '@blocknote/mantine';
 import { SuggestionMenuController } from '@blocknote/react';
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
-import { type ClipboardEvent, useContext } from 'react';
+import { useMemo, type ClipboardEvent, useContext } from 'react';
 import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { getSlashMenu } from '@/blocknote-editor/utils/getSlashMenu';
 import { CustomMentionMenu } from '@/blocknote-editor/components/CustomMentionMenu';
@@ -20,6 +20,8 @@ import { BlockEditorStatusBar } from '@/blocknote-editor/editor-status/component
 import { isEditorTypewriterModeEnabledState } from '@/blocknote-editor/editor-status/states/isEditorTypewriterModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMentionMenu } from '@/mention/hooks/useMentionMenu';
+import { BlockEditorVersionHistoryPanel } from '@/blocknote-editor/version-history/components/BlockEditorVersionHistoryPanel';
+import { EditorVersionHistoryStore } from '@/blocknote-editor/version-history/EditorVersionHistoryStore';
 import { IconX } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -172,6 +174,13 @@ export const BlockEditor = ({
   const isEditorTypewriterModeEnabled = useAtomStateValue(
     isEditorTypewriterModeEnabledState,
   );
+
+  // Same lifecycle contract as the comments thread store: created once per
+  // editor instance; recreating it per render would drop all snapshots.
+  const versionHistoryStore = useMemo(
+    () => new EditorVersionHistoryStore(),
+    [],
+  );
   const { colorScheme } = useContext(ThemeContext);
   const { t } = useLingui();
 
@@ -261,6 +270,10 @@ export const BlockEditor = ({
       <BlockEditorStatusBar
         editor={editor}
         onTypewriterCaretMove={handleTypewriterCaretMove}
+      />
+      <BlockEditorVersionHistoryPanel
+        editor={editor}
+        versionHistoryStore={versionHistoryStore}
       />
     </StyledEditor>
   );
