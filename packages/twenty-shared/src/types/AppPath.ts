@@ -4,6 +4,8 @@ export enum AppPath {
   VerifyEmail = '/verify-email',
   SignInUp = '/welcome',
   Invite = '/invite/:workspaceInviteHash',
+  // Read-only guest surface for a shared document snapshot (no auth).
+  DocumentShare = '/share/:shareToken',
   ResetPassword = '/reset-password/:passwordResetToken',
 
   // Onboarding

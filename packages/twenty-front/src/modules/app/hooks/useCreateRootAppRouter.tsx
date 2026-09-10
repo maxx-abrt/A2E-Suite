@@ -16,6 +16,12 @@ import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTr
 import { AuthFlowLayout } from '@/ui/layout/page/components/AuthFlowLayout';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 
+const DocumentShareGuestPage = lazy(() =>
+  import('~/pages/document-share/DocumentShareGuestPage').then((module) => ({
+    default: module.DocumentShareGuestPage,
+  })),
+);
+
 const SignInUp = lazy(() =>
   import('~/pages/auth/SignInUp').then((module) => ({
     default: module.SignInUp,
@@ -52,6 +58,14 @@ const createRootAppRouter = () =>
             />
           </Route>
         </Route>
+        <Route
+          path={AppPath.DocumentShare}
+          element={
+            <LazyRoute fallback={null}>
+              <DocumentShareGuestPage />
+            </LazyRoute>
+          }
+        />
         <Route element={<AuthFlowLayout />}>
           <Route path={AppPath.VerifyEmail} element={<VerifyEmail />} />
           <Route

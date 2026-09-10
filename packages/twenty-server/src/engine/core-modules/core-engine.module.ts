@@ -37,6 +37,7 @@ import { EnvironmentModule } from 'src/engine/core-modules/environment/environme
 import { ExceptionHandlerModule } from 'src/engine/core-modules/exception-handler/exception-handler.module';
 import { exceptionHandlerModuleFactory } from 'src/engine/core-modules/exception-handler/exception-handler.module-factory';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { DocumentShareModule } from 'src/engine/core-modules/document-share/document-share.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { GeoMapModule } from 'src/engine/core-modules/geo-map/geo-map-module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
@@ -123,6 +124,7 @@ import { FileModule } from './file/file.module';
     EmailingDomainModule,
     EmailingModule,
     PublicDomainModule,
+    DocumentShareModule,
     CloudflareModule,
     DnsManagerModule,
     WorkflowApiModule,

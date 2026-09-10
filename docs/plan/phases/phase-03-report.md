@@ -317,3 +317,55 @@ still pending — do it in the P3.2 e2e pass.
 - Lingui extract run; fr-FR completed for the 4 new strings; en.po present.
 
 **For the next agent:** next = P3.2 item 7 — Share: public read-only link (+ optional passphrase client-side AES-GCM, expiry, guest view page). Gotchas: (1) this needs a SERVER surface (public-domain core module or share table) — it is the first server task in this phase, budget for migration + upgrade command rules (2-39, epoch-ms strictly greater); (2) `documentTitle` prop is only defaulted — pass the real doc title when the document record page lands (P3.3); (3) the print-based PDF path adds class `a2e-print-editor` to body and never removes it — a real print stylesheet is a P3 polish item; (4) oxlint naming: adapter type aliases are fine, but keep WHY comments when casting generics (`as never`).
+
+## 2026-09-10 18:25 UTC — Zoo (GLM-5.3-Flash)
+**Task(s):** P3.2 item 7 — Share: public read-only link, optional passphrase
+(client-side AES-GCM), expiry, guest view page (PLAN.md lines 223–224)
+**Status:** done
+
+**What I did:**
+- New server core module `packages/twenty-server/src/engine/core-modules/document-share/`:
+  `DocumentShareEntity` (schema `core`, unique shareToken, documentRecordId,
+  titleSnapshot/bodySnapshot, encryptedBody/bodyIv/bodySalt triple, expiresAt,
+  createdByUserId, WorkspaceRelatedEntity), service (random-base64url 24-byte
+  token, one share per document per workspace, guest path with expiry →
+  DOCUMENT_SHARE_EXPIRED), resolver (authed create/list/delete + anonymous
+  `getGuestDocumentShare` query guarded by `PublicEndpointGuard` +
+  `NoPermissionGuard`, same pattern as `getPublicWorkspaceDataByDomain`),
+  DTOs, exception/filter, module registered in `core-engine.module.ts`.
+- Fast instance command `2-39-instance-command-fast-1789062772757-add-document-share-entity.ts` (CREATE TABLE + token index + workspace FK CASCADE, up/down).
+- Front module `packages/twenty-front/src/modules/document-share/`: crypto util (PBKDF2 210k → AES-GCM 256, encrypt/decrypt, base64), `useCreateDocumentShare`/`useDeleteDocumentShare`, `useGuestDocumentShare`, guest query document.
+- Guest page `pages/document-share/DocumentShareGuestPage.tsx` routed at `AppPath.DocumentShare = '/share/:shareToken'` (twenty-shared enum + root router, lazy): read-only markdown render of the snapshot (react-markdown), passphrase unlock form for protected shares.
+- `a2e-documents` document browser: "partager" action on DOCUMENT nodes (snapshot at click time; sharing a TEMPLATE intentionally excluded).
+
+**Decisions & trade-offs:**
+- Design correction applied early: the plan's "client-side AES-GCM per Bureau"
+  is incompatible with server-side bcrypt passphrase verification (the
+  passphrase would have to travel). Final model: the client encrypts the body
+  snapshot with the passphrase-derived key BEFORE upload; the server stores
+  only ciphertext+IV+salt; the GCM auth tag IS the verification (wrong
+  passphrase = decrypt failure). For protected shares the plaintext snapshot
+  column is saved empty so cleartext never sits next to key material.
+- Shares snapshot title+body at creation time (guests hold no workspace auth
+  context, so no live-record read is possible); re-share to refresh. A
+  share-management surface (revoke link, passphrase field in UI, expiry
+  picker) is the follow-up — hooks already exist.
+- The generated `CoreApiClient` schema predates the mutation, so the browser
+  action calls it with a structural payload (`as never`) like the other
+  ad-hoc records calls in that file.
+- jest env polyfills: jsdom lacks `crypto.subtle` and TextEncoder/Decoder —
+  polyfilled in `setupTests.ts` from `node:crypto`/`node:util` (conditional,
+  matching the existing web-streams polyfill pattern).
+
+**Verification:**
+- server: `npx tsgo -p tsconfig.json --noEmit` → 0 errors; `npx jest
+  src/engine/core-modules/document-share` → 7 passed (create plaintext /
+  ciphertext-only, duplicate reject, guest expiry throw, guest payload,
+  not-found, workspace-scoped delete).
+- front: `npx tsgo -p tsconfig.json --noEmit` → 74 = pre-existing baseline;
+  jest document-share suite → 2 passed (AES-GCM round-trip + wrong-passphrase
+  GCM rejection); oxlint on document-share dirs → 0/0; twenty-shared rebuilt
+  (`nx build twenty-shared --skip-nx-cache`) after adding AppPath.DocumentShare.
+- app: `a2e-documents` tsgo → 0 errors.
+
+**For the next agent:** next = P3.2 item 8 — Realtime co-editing guardrails (presence cursors P2 + optimistic merge with version check; document the no-OT limitation). Gotchas: (1) `useCreateDocumentShare` already accepts `passphrase`+`expiresAt` and encrypts client-side — the share-management UI only needs fields + a link display; (2) generated front GraphQL types don't include DocumentShare yet — run `npx nx run twenty-front:graphql:generate` after the next server metadata sync to replace the hand-written `GuestDocumentShare` type in `useGuestDocumentShare.ts`; (3) guest route bypasses AuthProvider redirects via the root router — test `/share/<token>` from an incognito profile before shipping the acceptance run; (4) never commit locales/**; fill fr-FR for the new guest-page strings in the working tree only.

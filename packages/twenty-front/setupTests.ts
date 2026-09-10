@@ -1,5 +1,9 @@
 import '@testing-library/jest-dom';
 import {
+  TextEncoder as TextEncoderFromNode,
+  TextDecoder as TextDecoderFromNode,
+} from 'node:util';
+import {
   ReadableStream as NodeReadableStream,
   TransformStream as NodeTransformStream,
   WritableStream as NodeWritableStream,
@@ -12,7 +16,23 @@ import { messages as enMessages } from '~/locales/generated/en';
 i18n.load({ [SOURCE_LOCALE]: enMessages });
 i18n.activate(SOURCE_LOCALE);
 
+import { webcrypto } from 'node:crypto';
+
 const globalWithWebStreams = globalThis as Record<string, unknown>;
+
+// jsdom exposes `crypto` but leaves `subtle` and the encoding globals
+// undefined; the share-module AES-GCM utils need the real implementation.
+if (typeof TextEncoder === 'undefined') {
+  globalWithWebStreams.TextEncoder = TextEncoderFromNode;
+  globalWithWebStreams.TextDecoder = TextDecoderFromNode;
+}
+
+if (typeof crypto !== 'undefined' && crypto.subtle === undefined) {
+  Object.defineProperty(crypto, 'subtle', {
+    value: webcrypto.subtle,
+    configurable: true,
+  });
+}
 
 if (globalWithWebStreams.TransformStream === undefined) {
   globalWithWebStreams.TransformStream = NodeTransformStream;

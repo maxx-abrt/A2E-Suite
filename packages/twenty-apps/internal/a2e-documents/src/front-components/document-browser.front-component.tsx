@@ -157,6 +157,30 @@ const DocumentBrowser = () => {
     await loadDocuments();
   };
 
+  // Shares snapshot the CURRENT body: later edits stay private until a new
+  // link is created. v1 keeps shares unencrypted; passphrase UI arrives with
+  // the share-management surface (typed DocumentShare mutation fields are not
+  // in the generated CoreApiClient schema yet, hence the raw client call).
+  const shareDocument = async (documentNode: DocumentNode): Promise<void> => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createDocumentShare: {
+        __args: {
+          createDocumentShareInput: {
+            documentRecordId: documentNode.id,
+            titleSnapshot: documentNode.title,
+            bodySnapshot: documentNode.content?.blocknote ?? '',
+          },
+        },
+        id: true,
+        shareToken: true,
+      },
+    } as never);
+
+    await loadDocuments();
+  };
+
   return (
     <div
       style={{
@@ -195,6 +219,7 @@ const DocumentBrowser = () => {
               documentNode={node}
               onCreateChild={createChild}
               onInstantiate={instantiateTemplate}
+              onShare={shareDocument}
             />
           ))}
         </ul>
@@ -207,12 +232,14 @@ type DocumentTreeItemProps = {
   documentNode: DocumentNode;
   onCreateChild: (parentDocumentId: string) => Promise<void>;
   onInstantiate: (templateDocument: DocumentNode) => Promise<void>;
+  onShare: (documentNode: DocumentNode) => Promise<void>;
 };
 
 const DocumentTreeItem = ({
   documentNode,
   onCreateChild,
   onInstantiate,
+  onShare,
 }: DocumentTreeItemProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const childNodes =
@@ -273,6 +300,20 @@ const DocumentTreeItem = ({
             dupliquer
           </button>
         )}
+        {documentNode.kind !== 'TEMPLATE' && (
+          <button
+            type="button"
+            onClick={() => onShare(documentNode)}
+            style={{
+              border: 'none',
+              background: 'transparent',
+              cursor: 'pointer',
+              color: appTheme.textSecondary,
+            }}
+          >
+            partager
+          </button>
+        )}
       </div>
       {isExpanded && (
         <ul
@@ -288,6 +329,7 @@ const DocumentTreeItem = ({
               documentNode={childNode}
               onCreateChild={onCreateChild}
               onInstantiate={onInstantiate}
+              onShare={onShare}
             />
           ))}
         </ul>
