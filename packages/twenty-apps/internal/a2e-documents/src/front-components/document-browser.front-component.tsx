@@ -3,6 +3,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineFrontComponent } from 'twenty-sdk/define';
 
 import { OBJECT_IDS } from '../constants/universal-identifiers.ts';
+import { buildTemplateCopyPayload } from '../lib/instantiate-template.ts';
 
 // LE NAVIGATEUR DE DOCUMENTS.
 //
@@ -22,6 +23,10 @@ type DocumentNode = {
   kind: string;
   isFavorite: boolean;
   archivedAt: string | null;
+  content?: {
+    blocknote?: string | null;
+    markdown?: string | null;
+  } | null;
   children?: { edges: { node: DocumentNode }[] };
 };
 
@@ -88,6 +93,33 @@ const DocumentBrowser = () => {
   useEffect(() => {
     void loadDocuments();
   }, [loadDocuments]);
+
+  // Instantiation = copy the template body into a fresh DOCUMENT record, so
+  // editing the copy never mutates the template.
+  const instantiateTemplate = async (
+    templateDocument: DocumentNode,
+  ): Promise<void> => {
+    const client = new CoreApiClient();
+    const copyPayload = buildTemplateCopyPayload(templateDocument);
+
+    await client.mutation({
+      createDocuments: {
+        __args: {
+          data: [
+            {
+              title: copyPayload.title,
+              kind: copyPayload.kind,
+              position: copyPayload.position,
+              content: copyPayload.content,
+            },
+          ],
+        },
+        id: true,
+      },
+    } as never);
+
+    await loadDocuments();
+  };
 
   const createChild = async (parentDocumentId: string): Promise<void> => {
     const client = new CoreApiClient();
@@ -162,6 +194,7 @@ const DocumentBrowser = () => {
               key={node.id}
               documentNode={node}
               onCreateChild={createChild}
+              onInstantiate={instantiateTemplate}
             />
           ))}
         </ul>
@@ -173,11 +206,13 @@ const DocumentBrowser = () => {
 type DocumentTreeItemProps = {
   documentNode: DocumentNode;
   onCreateChild: (parentDocumentId: string) => Promise<void>;
+  onInstantiate: (templateDocument: DocumentNode) => Promise<void>;
 };
 
 const DocumentTreeItem = ({
   documentNode,
   onCreateChild,
+  onInstantiate,
 }: DocumentTreeItemProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const childNodes =
@@ -224,6 +259,20 @@ const DocumentTreeItem = ({
         >
           + sous-document
         </button>
+        {documentNode.kind === 'TEMPLATE' && (
+          <button
+            type="button"
+            onClick={() => onInstantiate(documentNode)}
+            style={{
+              border: 'none',
+              background: 'transparent',
+              cursor: 'pointer',
+              color: appTheme.textSecondary,
+            }}
+          >
+            dupliquer
+          </button>
+        )}
       </div>
       {isExpanded && (
         <ul
@@ -238,6 +287,7 @@ const DocumentTreeItem = ({
               key={childNode.id}
               documentNode={childNode}
               onCreateChild={onCreateChild}
+              onInstantiate={onInstantiate}
             />
           ))}
         </ul>

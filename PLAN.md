@@ -215,7 +215,7 @@ App: `a2e-documents`.
       image (upload → FILES), @mention (users + objects), /link to records
 - [x] Inline comments anchored to blocks (thread store per block id)
 - [x] ToC/outline panel; word count; typewriter mode option
-- [ ] Templates: instantiate from template docs (copy blocks); template
+- [x] Templates: instantiate from template docs (copy blocks); template
       gallery view
 - [ ] Version history: snapshot on save-interval (N versions, pruned);
       diff view (block-level), restore

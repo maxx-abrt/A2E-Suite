@@ -244,3 +244,26 @@ still pending — do it in the P3.2 e2e pass.
 - `npx lingui extract` run locally; fr-FR msgstr completed for the 4 new strings; en.po verified present.
 
 **For the next agent:** next = P3.2 item 4 — Templates (instantiate from template docs + gallery view). Gotchas: (1) the status bar is inside `StyledEditor` flex column — `BlockNoteView` remains first child; verify visual ordering in the P3.2 e2e/UI pass (light+dark still untested per previous entries); (2) `useCreateBlockNote` in `RichTextFieldEditor` did NOT need changes — status bar lives in `BlockEditor`, so dashboards/other `BlockEditor` consumers get it for free; (3) blocknote `onChange` fires on selection-only updates too — word-count state updates could be micro-optimized with `getChanges()` diff if profiling ever shows churn; (4) outline entries are computed per change (O(document)); fine for v1, revisit if docs exceed ~1k blocks.
+
+## 2026-09-10 17:25 UTC — Zoo (GLM-5.3-Flash)
+**Task(s):** P3.2 item 4 — Templates: instantiate from template docs (copy blocks); template gallery view (PLAN.md lines 218–219)
+**Status:** done
+
+**What I did:**
+- `packages/twenty-apps/internal/a2e-documents/src/lib/instantiate-template.ts` — pure payload builder: strips the `Modèle — ` title prefix, demotes `kind` to `DOCUMENT`, copies `content` (blocknote + markdown) verbatim, optional fractional-index position override (default `'V'`, same as the browser's new-root position). No transport concerns → node:test unit-testable.
+- `src/lib/__tests__/instantiate-template.test.ts` — 6 tests (prefix strip, plain title, empty fallback, verbatim copy, missing content, position override). Run via the app's `node --test --experimental-strip-types` pattern (mirrors `a2e-accounting`'s lib tests).
+- `src/views/templates.view.ts` — metadata view primitive (ViewType.LIST, VIEW_IDS.templates) filtered `kind IS TEMPLATE` with tags column; opens in side panel. This is the "template gallery" — view-first per 04-twenty-native-law §2 decision order.
+- `src/front-components/document-browser.front-component.tsx` — `instantiateTemplate` action ("dupliquer" button on TEMPLATE nodes) calls `buildTemplateCopyPayload` then `createDocuments` with the copy payload; content field added to the `DocumentNode` shape so the browser carries the body verbatim.
+
+**Decisions & trade-offs:**
+- Verified the SDK `ViewType` enum (`packages/twenty-sdk/dist/define/index.d.ts`): TABLE/KANBAN/CALENDAR/LIST — no GALLERY type exists in v2.39, so the gallery ships as a LIST view; a card/grid gallery would need a front component (post-v1 polish, note for P3.3).
+- Copy semantics = full snapshot at instantiation time (no live link to the template). Editing the copy never mutates the template; a "update from template" re-sync is possible later by re-running the same payload builder.
+- Blocknote copy is verbatim JSON — comment anchors etc. carry over; attachment signed-URL refresh is handled by the existing editor pipeline on open (same path as any persisted body).
+
+**Verification:**
+- `node --test --experimental-strip-types src/lib/__tests__/instantiate-template.test.ts` → 6 pass, 0 fail.
+- `npx tsgo -p tsconfig.json --noEmit` in the app → 0 errors.
+- `npx oxlint -c .oxlintrc.json src` → 0 warnings 0 errors.
+- Manifest build (`dev:build`) not run this session (no local server); view/field UUIDs follow the committed `viewFieldId` scheme (view index 1 → `c31a0100-0004-…-0100-prefixed`).
+
+**For the next agent:** next = P3.2 item 5 — Version history (snapshot on save-interval, N pruned, block-level diff view, restore). Gotchas: (1) template copies created via the browser only carry what `DocumentNode` selects — extend the GraphQL selection if the copy must include icon/coverColor; (2) the templates view uses `VIEW_IDS.templates` (already reserved in universal-identifiers) — no new UUIDs minted; (3) run `node packages/twenty-sdk/dist/cli.cjs app:publish --private && app:install` against a live server to actually exercise instantiation; not possible this session.
