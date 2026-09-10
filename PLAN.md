@@ -222,7 +222,7 @@ App: `a2e-documents`.
 - [x] Export: PDF (extend existing note-export path), DOCX, Markdown
 - [x] Share: public read-only link (public-domain core module), optional
       passphrase (client-side AES-GCM per Bureau), expiry; guest view page
-- [ ] Realtime co-editing guardrails: presence cursors (P2) + optimistic
+- [x] Realtime co-editing guardrails: presence cursors (P2) + optimistic
       merge with version check (no OT in v1 — document the limitation)
 
 ### P3.3 Tree & navigation UX

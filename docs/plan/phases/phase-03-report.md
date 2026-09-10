@@ -369,3 +369,56 @@ still pending — do it in the P3.2 e2e pass.
 - app: `a2e-documents` tsgo → 0 errors.
 
 **For the next agent:** next = P3.2 item 8 — Realtime co-editing guardrails (presence cursors P2 + optimistic merge with version check; document the no-OT limitation). Gotchas: (1) `useCreateDocumentShare` already accepts `passphrase`+`expiresAt` and encrypts client-side — the share-management UI only needs fields + a link display; (2) generated front GraphQL types don't include DocumentShare yet — run `npx nx run twenty-front:graphql:generate` after the next server metadata sync to replace the hand-written `GuestDocumentShare` type in `useGuestDocumentShare.ts`; (3) guest route bypasses AuthProvider redirects via the root router — test `/share/<token>` from an incognito profile before shipping the acceptance run; (4) never commit locales/**; fill fr-FR for the new guest-page strings in the working tree only.
+
+## 2026-09-10 18:50 UTC — Zoo (GLM-5.3-Flash)
+
+### P3.2 Task 6 — Realtime co-editing guardrails (committed)
+
+**Design (no server changes):** document cursors ride the P2 workspace
+presence channel — the `typingContext` field (≤200 chars, already
+broadcast by the gateway) carries `doc:<documentRecordId>:<blockId>`.
+Publishing reuses `realtimeConnectionManager.sendPresence`; consumption
+subscribes `workspace:<id>:presence` via `useRealtimeTopic` and folds
+typing events into a per-user cursor map with the same 6s fallback
+timeout as chat typing. No OT in v1: consistency is guarded by
+`resolveOptimisticDocumentUpdate`, a pure block-level version check —
+equal base/latest → clean apply; disjoint changed blocks → merged;
+overlapping blocks → conflict listing `conflictingBlockIds` for the
+caller to surface. **Limitation: this is last-writer-wins at block
+granularity, not character-level OT/CRDT; concurrent edits inside the
+same block conflict instead of merging.**
+
+**New files (`packages/twenty-front/src/modules/blocknote-editor/co-editing/`):**
+- `utils/documentCursorContext.ts` + test — build/parse the
+  `doc:<documentId>:<blockId>` typingContext convention (200-char guard).
+- `utils/resolveOptimisticDocumentUpdate.ts` + test (5 cases) —
+  clean/merged/conflict semantics.
+- `hooks/useDocumentCursors.ts` — presence subscription, remote-cursor
+  memo, `publishCursor(blockId|null)`.
+- `components/BlockEditorRemoteCursorsEffect.tsx` — appends styled caret
+  markers into blocknote block elements (`[data-id="…"]`), per-user
+  deterministic color, label from workspace members.
+
+**Wiring:** `BlockEditor.tsx` takes an optional `documentRecordId` prop;
+`RichTextFieldEditor` passes `recordId` (only full-document editors get
+cursors; comment editors stay quiet). Cursor publish happens on
+`editor.onSelectionChange` with an unconditional hook call and cleanup
+publishing `null` on unmount.
+
+**Gotchas for next agent:**
+- `isNonEmptyString` lives in `@sniptt/guards`, NOT `twenty-shared/utils`
+  (only `isDefined` etc. are there) — a wrong import passes typecheck and
+  fails at runtime in jest.
+- Repo oxlint rule `twenty/effect-components` forces side-effect-only
+  components to end with `Effect` suffix (and their props with
+  `EffectProps`); plan DOM-effect components accordingly.
+- `themeCssVariables` has no `color.teal` / no `font.size.twoXs` — use
+  `color.jade` / `font.size.xxs`.
+- Pure-DOM markers need `css` from `@linaria/core`; Linaria styled
+  components only emit classes onto React-rendered elements.
+- Blocknote blocks carry `data-id`; `editor.domElement` is a getter
+  returning `HTMLDivElement | undefined`.
+
+**Gates:** co-editing 8/8 + full blocknote-editor 67/67 jest; tsgo clean
+(0 errors); oxlint 0 errors on blocknote-editor (1 pre-existing unused
+import in `getSlashMenu.ts` predates this task).

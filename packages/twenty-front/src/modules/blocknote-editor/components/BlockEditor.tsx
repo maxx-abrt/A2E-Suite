@@ -6,7 +6,8 @@ import { BlockNoteView } from '@blocknote/mantine';
 import { SuggestionMenuController } from '@blocknote/react';
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
-import { useMemo, type ClipboardEvent, useContext } from 'react';
+import { useEffect, useMemo, type ClipboardEvent, useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { getSlashMenu } from '@/blocknote-editor/utils/getSlashMenu';
 import { CustomMentionMenu } from '@/blocknote-editor/components/CustomMentionMenu';
@@ -16,6 +17,9 @@ import {
   type SuggestionItem,
 } from '@/blocknote-editor/components/CustomSlashMenu';
 import { LinkToRecordSlashMenuItem } from '@/blocknote-editor/components/LinkToRecordSlashMenuItem';
+import { BlockEditorRemoteCursorsEffect } from '@/blocknote-editor/co-editing/components/BlockEditorRemoteCursorsEffect';
+import { useDocumentCursors } from '@/blocknote-editor/co-editing/hooks/useDocumentCursors';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { BlockEditorStatusBar } from '@/blocknote-editor/editor-status/components/BlockEditorStatusBar';
 import { isEditorTypewriterModeEnabledState } from '@/blocknote-editor/editor-status/states/isEditorTypewriterModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -29,6 +33,9 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 type BlockEditorProps = {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
   documentTitle?: string;
+  // Defined only for full-page document editors: co-editing carets need a
+  // stable record id to scope presence topics and version checks.
+  documentRecordId?: string;
   onFocus?: () => void;
   onBlur?: () => void;
   onPaste?: (event: ClipboardEvent) => void;
@@ -168,6 +175,7 @@ const StyledEditor = styled.div`
 export const BlockEditor = ({
   editor,
   documentTitle = 'document',
+  documentRecordId,
   onFocus,
   onBlur,
   onChange,
@@ -177,6 +185,55 @@ export const BlockEditor = ({
   const isEditorTypewriterModeEnabled = useAtomStateValue(
     isEditorTypewriterModeEnabledState,
   );
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
+
+  // Hooks must stay unconditional even when co-editing is not wired up yet.
+  const { remoteCursors, publishCursor } = useDocumentCursors({
+    documentRecordId: documentRecordId ?? '',
+  });
+  const coEditingEnabled = isDefined(documentRecordId);
+
+  // Presence members identify by workspace member id; the cursor hook keeps
+  // the raw userId so the name lookup falls back gracefully when the roster
+  // has not loaded yet.
+  const memberNameByUserId = useMemo(() => {
+    const memberNameByUserId = new Map<string, string>();
+
+    for (const workspaceMember of currentWorkspaceMembers) {
+      if (isDefined(workspaceMember.userWorkspaceId)) {
+        memberNameByUserId.set(
+          workspaceMember.userWorkspaceId,
+          [workspaceMember.name?.firstName, workspaceMember.name?.lastName]
+            .filter(isDefined)
+            .join(' ')
+            .trim() || workspaceMember.userEmail,
+        );
+      }
+    }
+
+    return memberNameByUserId;
+  }, [currentWorkspaceMembers]);
+
+  // Publishing the caret on every selection event would flood the presence
+  // channel: blocknote's selection listener already coalesces keystrokes.
+  useEffect(() => {
+    if (!coEditingEnabled) {
+      return;
+    }
+
+    const unsubscribe = editor.onSelectionChange((updatedEditor) => {
+      const cursorBlock = updatedEditor.getTextCursorPosition().block;
+
+      publishCursor(isDefined(cursorBlock) ? cursorBlock.id : null);
+    });
+
+    return () => {
+      unsubscribe();
+      publishCursor(null);
+    };
+  }, [editor, publishCursor, coEditingEnabled]);
 
   // Same lifecycle contract as the comments thread store: created once per
   // editor instance; recreating it per render would drop all snapshots.
@@ -279,6 +336,13 @@ export const BlockEditor = ({
         versionHistoryStore={versionHistoryStore}
       />
       <BlockEditorExportMenu editor={editor} documentTitle={documentTitle} />
+      {coEditingEnabled ? (
+        <BlockEditorRemoteCursorsEffect
+          editorDomElement={editor.domElement ?? null}
+          remoteCursors={remoteCursors}
+          memberNameByUserId={memberNameByUserId}
+        />
+      ) : null}
     </StyledEditor>
   );
 };

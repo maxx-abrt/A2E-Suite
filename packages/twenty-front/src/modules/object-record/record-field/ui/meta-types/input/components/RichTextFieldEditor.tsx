@@ -337,6 +337,7 @@ export const RichTextFieldEditor = ({
       onBlur={handleBlockEditorBlur}
       onChange={handleEditorChange}
       editor={editor}
+      documentRecordId={recordId}
       readonly={isRecordFieldReadOnly}
     />
   );
