@@ -219,7 +219,7 @@ App: `a2e-documents`.
       gallery view
 - [x] Version history: snapshot on save-interval (N versions, pruned);
       diff view (block-level), restore
-- [ ] Export: PDF (extend existing note-export path), DOCX, Markdown
+- [x] Export: PDF (extend existing note-export path), DOCX, Markdown
 - [ ] Share: public read-only link (public-domain core module), optional
       passphrase (client-side AES-GCM per Bureau), expiry; guest view page
 - [ ] Realtime co-editing guardrails: presence cursors (P2) + optimistic

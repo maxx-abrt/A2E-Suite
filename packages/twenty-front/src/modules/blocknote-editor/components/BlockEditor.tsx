@@ -20,6 +20,7 @@ import { BlockEditorStatusBar } from '@/blocknote-editor/editor-status/component
 import { isEditorTypewriterModeEnabledState } from '@/blocknote-editor/editor-status/states/isEditorTypewriterModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMentionMenu } from '@/mention/hooks/useMentionMenu';
+import { BlockEditorExportMenu } from '@/blocknote-editor/export/components/BlockEditorExportMenu';
 import { BlockEditorVersionHistoryPanel } from '@/blocknote-editor/version-history/components/BlockEditorVersionHistoryPanel';
 import { EditorVersionHistoryStore } from '@/blocknote-editor/version-history/EditorVersionHistoryStore';
 import { IconX } from 'twenty-ui/icon';
@@ -27,6 +28,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type BlockEditorProps = {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
+  documentTitle?: string;
   onFocus?: () => void;
   onBlur?: () => void;
   onPaste?: (event: ClipboardEvent) => void;
@@ -165,6 +167,7 @@ const StyledEditor = styled.div`
 
 export const BlockEditor = ({
   editor,
+  documentTitle = 'document',
   onFocus,
   onBlur,
   onChange,
@@ -275,6 +278,7 @@ export const BlockEditor = ({
         editor={editor}
         versionHistoryStore={versionHistoryStore}
       />
+      <BlockEditorExportMenu editor={editor} documentTitle={documentTitle} />
     </StyledEditor>
   );
 };

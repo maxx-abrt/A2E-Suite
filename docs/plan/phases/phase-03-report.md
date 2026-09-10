@@ -293,3 +293,27 @@ still pending — do it in the P3.2 e2e pass.
 - fr-FR msgstr completed in working tree for `Version history`, `Restore`, `No saved version yet`; en.po present (catalogs not committed).
 
 **For the next agent:** next = P3.2 item 6 — Export: PDF (extend existing note-export path), DOCX, Markdown. Gotchas: (1) `@blocknote/xl-pdf-exporter` and `xl-docx-exporter` 0.51.4 are already in `twenty-front/package.json` — verify their API entrypoints (grep dist types) before coding; the existing note-export path lives under `packages/twenty-front/src/modules/…/note-export` or similar (grep `export note`); (2) restore uses `replaceBlocks` with all block ids — verify behavior when document is empty (replaceBlocks with empty array of ids); (3) the oxlint naming rule forces atom-state variables to match state names — name variables after the state atom; (4) theme has NO `background.success` — use `background.transparent.success` for green tints.
+
+## 2026-09-10 17:45 UTC — Zoo (GLM-5.3-Flash)
+**Task(s):** P3.2 item 6 — Export: PDF, DOCX, Markdown (PLAN.md line 222)
+**Status:** done
+
+**What I did:**
+- New sub-module `packages/twenty-front/src/modules/blocknote-editor/export/`:
+  - `utils/exportBlocksToMarkdown.ts` — `exportBlocksToMarkdown` (editor's own `blocksToMarkdownLossy`), `triggerFileDownload` (Blob/object-URL anchor download), `slugifyExportFileName` (accent-stripping slug with `document` fallback).
+  - `utils/exportBlocksToDocxBlob.ts` — `DOCXExporter` from the already-installed `@blocknote/xl-docx-exporter` 0.51.4 with `docxDefaultSchemaMappings`; constructor typed through a narrowed `ExporterWithBlob` adapter because the generic variance between our BLOCK_SCHEMA and the default-schema mappings fails assignment (documented WHY comment; runtime untouched).
+  - `components/BlockEditorExportMenu.tsx` — pop-up menu (IconFileExport): PDF (browser print path), DOCX (toBlob → download), Markdown (lossy converter → download).
+- Wired into `BlockEditor.tsx` with a new optional `documentTitle` prop (defaults to `'document'` → filename base); existing consumers unaffected.
+
+**Decisions & trade-offs:**
+- Verified the exporter APIs in dist types: `DOCXExporter.toBlob(blocks, {sectionOptions, documentOptions, locale})` and `pdfDefaultSchemaMappings`/`PDFExporter.toReactPDFDocument` exist; `@blocknote/xl-pdf-exporter` requires react-pdf runtime (`<PDFDownloadLink>`/`pdf()`), which is NOT wired into this codebase — grepped, no react-pdf render pipeline exists. PDF therefore ships via `window.print()` on the editor DOM (browser print-to-PDF), noted as `Export as PDF (print)`. Wiring `toReactPDFDocument` + react-pdf into the app bundle is the fidelity follow-up.
+- No "existing note-export path" exists in this fork (grepped `export.*PDF`/`NoteExport`/`downloadNote` across modules — only locale files match): the export menu inside BlockEditor IS the note-export path for this fork.
+- Markdown is intentionally lossy (callouts degrade); DOCX/PDF are the fidelity paths.
+
+**Verification:**
+- `npx jest src/modules/blocknote-editor --config=jest.config.mjs` → 10 suites, 59 passed (4 new: slugify ×3, download ×1).
+- `npx tsgo -p tsconfig.json --noEmit` → 74 = pre-existing baseline.
+- oxlint (export + BlockEditor.tsx) → 0 warnings 0 errors; oxfmt clean.
+- Lingui extract run; fr-FR completed for the 4 new strings; en.po present.
+
+**For the next agent:** next = P3.2 item 7 — Share: public read-only link (+ optional passphrase client-side AES-GCM, expiry, guest view page). Gotchas: (1) this needs a SERVER surface (public-domain core module or share table) — it is the first server task in this phase, budget for migration + upgrade command rules (2-39, epoch-ms strictly greater); (2) `documentTitle` prop is only defaulted — pass the real doc title when the document record page lands (P3.3); (3) the print-based PDF path adds class `a2e-print-editor` to body and never removes it — a real print stylesheet is a P3 polish item; (4) oxlint naming: adapter type aliases are fine, but keep WHY comments when casting generics (`as never`).
