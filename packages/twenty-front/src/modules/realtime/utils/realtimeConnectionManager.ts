@@ -27,6 +27,12 @@ type PendingSubscription = {
   token?: string;
 };
 
+export type RealtimePresenceUpdate = {
+  topic: string;
+  event: 'heartbeat' | 'typing-started' | 'typing-stopped';
+  typingContext?: string;
+};
+
 export type WebSocketLike = {
   readyState: number;
   OPEN: number;
@@ -118,6 +124,31 @@ export class RealtimeConnectionManager {
         this.sendUnsubscribe(topic);
       }
     };
+  }
+
+  sendPresence({
+    topic,
+    event,
+    typingContext,
+  }: RealtimePresenceUpdate): boolean {
+    if (
+      !isDefined(this.webSocket) ||
+      this.webSocket.readyState !== this.webSocket.OPEN ||
+      !this.topicListenersByTopic.has(topic)
+    ) {
+      return false;
+    }
+
+    this.webSocket.send(
+      JSON.stringify({
+        action: 'presence',
+        topic,
+        event,
+        ...(isNonEmptyString(typingContext) ? { typingContext } : {}),
+      }),
+    );
+
+    return true;
   }
 
   destroy(): void {

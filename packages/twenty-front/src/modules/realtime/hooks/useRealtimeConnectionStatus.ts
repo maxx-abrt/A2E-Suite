@@ -4,21 +4,27 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 import { realtimeConnectionStatusState } from '~/modules/realtime/states/realtimeConnectionStatusState';
-import { realtimeConnectionManager } from '~/modules/realtime/utils/RealtimeConnectionManager';
+import { realtimeConnectionManager } from '~/modules/realtime/utils/realtimeConnectionManager';
 
 // Mount once near the app root (banner, badge) to mirror the manager status
 // into the jotai atom the rest of the UI reads.
 export const useRealtimeConnectionStatus = (): {
   status: ReturnType<typeof realtimeConnectionManager.getStatus>;
 } => {
-  const setStatus = useSetAtomState(realtimeConnectionStatusState);
-  const status = useAtomStateValue(realtimeConnectionStatusState);
+  const setRealtimeConnectionStatus = useSetAtomState(
+    realtimeConnectionStatusState,
+  );
+  const realtimeConnectionStatus = useAtomStateValue(
+    realtimeConnectionStatusState,
+  );
 
   useEffect(() => {
-    const unsubscribe = realtimeConnectionManager.onStatusChange(setStatus);
+    const unsubscribe = realtimeConnectionManager.onStatusChange(
+      setRealtimeConnectionStatus,
+    );
 
     return unsubscribe;
-  }, [setStatus]);
+  }, [setRealtimeConnectionStatus]);
 
-  return { status };
+  return { status: realtimeConnectionStatus };
 };

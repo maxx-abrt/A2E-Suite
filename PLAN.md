@@ -163,7 +163,7 @@ grade) and the calm, predictable workbench chrome. See blueprint §4–§6.
 ### P2.3 Presence
 - [x] Server: Redis TTL presence keys, join/leave/typing events on
       `presence` topic, workspace roster query
-- [ ] Front: AvatarStack presence component (twenty-ui primitives), typing
+- [x] Front: AvatarStack presence component (twenty-ui primitives), typing
       indicator primitives
 - [ ] Consume in side panel header (pilot surface)
 

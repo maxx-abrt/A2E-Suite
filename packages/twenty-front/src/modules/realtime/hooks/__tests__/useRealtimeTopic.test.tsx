@@ -1,11 +1,11 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 
 import {
   createRealtimeMockServerHarness,
   type RealtimeMockServerHarness,
 } from '~/modules/realtime/testing/RealtimeMockServerHarness';
 import { useRealtimeTopic } from '~/modules/realtime/hooks/useRealtimeTopic';
-import { realtimeConnectionManager } from '~/modules/realtime/utils/RealtimeConnectionManager';
+import { realtimeConnectionManager } from '~/modules/realtime/utils/realtimeConnectionManager';
 
 describe('useRealtimeTopic', () => {
   let harness: RealtimeMockServerHarness;
@@ -38,7 +38,9 @@ describe('useRealtimeTopic', () => {
       topic: 'workspace:1:presence',
     });
 
-    harness.broadcast('workspace:1:presence', { value: 'hello' });
+    act(() => {
+      harness.broadcast('workspace:1:presence', { value: 'hello' });
+    });
 
     await waitFor(() => {
       expect(onEvent).toHaveBeenCalledWith(
@@ -47,6 +49,34 @@ describe('useRealtimeTopic', () => {
       );
       expect(result.current.lastEnvelope?.payload).toEqual({ value: 'hello' });
     });
+  });
+
+  it('publishes typing presence only for a live subscribed topic', async () => {
+    renderHook(() => useRealtimeTopic({ topic: 'workspace:1:presence' }));
+
+    await waitFor(() => {
+      expect(harness.getLastSentMessage()).toContain('workspace:1:presence');
+    });
+
+    expect(
+      realtimeConnectionManager.sendPresence({
+        topic: 'workspace:1:presence',
+        event: 'typing-started',
+        typingContext: 'record:company:1',
+      }),
+    ).toBe(true);
+    expect(JSON.parse(harness.getLastSentMessage() ?? '{}')).toEqual({
+      action: 'presence',
+      topic: 'workspace:1:presence',
+      event: 'typing-started',
+      typingContext: 'record:company:1',
+    });
+    expect(
+      realtimeConnectionManager.sendPresence({
+        topic: 'workspace:1:not-subscribed',
+        event: 'heartbeat',
+      }),
+    ).toBe(false);
   });
 
   it('ignores events for other topics', async () => {
@@ -60,7 +90,9 @@ describe('useRealtimeTopic', () => {
       expect(harness.getLastSentMessage()).toContain('workspace:1:presence');
     });
 
-    harness.broadcast('workspace:2:presence', { nope: true });
+    act(() => {
+      harness.broadcast('workspace:2:presence', { nope: true });
+    });
 
     // Drain the microtask queue; the wrong-topic event must not surface.
     await new Promise((resolve) => setTimeout(resolve, 10));
@@ -93,7 +125,9 @@ describe('useRealtimeTopic', () => {
       { timeout: 8000 },
     );
 
-    harness.broadcast('workspace:1:presence', { after: 'reconnect' });
+    act(() => {
+      harness.broadcast('workspace:1:presence', { after: 'reconnect' });
+    });
 
     await waitFor(() => {
       expect(onEvent).toHaveBeenCalledWith(

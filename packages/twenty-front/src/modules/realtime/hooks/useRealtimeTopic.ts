@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type RealtimeEnvelope } from '~/modules/realtime/utils/RealtimeConnectionManager';
-import { realtimeConnectionManager } from '~/modules/realtime/utils/RealtimeConnectionManager';
+import {
+  realtimeConnectionManager,
+  type RealtimeEnvelope,
+} from '~/modules/realtime/utils/realtimeConnectionManager';
 
 // Reconnect catch-up is the consumer's job: on reconnect the manager resends
 // subscriptions, and the hook replays the `sinceSeq` marker via the callback
@@ -12,15 +14,23 @@ import { realtimeConnectionManager } from '~/modules/realtime/utils/RealtimeConn
 export const useRealtimeTopic = <TPayload>({
   topic,
   onEvent,
+  enabled = true,
 }: {
   topic: string;
   onEvent?: (payload: TPayload, envelope: RealtimeEnvelope) => void;
+  enabled?: boolean;
 }): { lastEnvelope: RealtimeEnvelope | null } => {
   const [lastEnvelope, setLastEnvelope] = useState<RealtimeEnvelope | null>(
     null,
   );
 
   useEffect(() => {
+    if (!enabled) {
+      setLastEnvelope(null);
+
+      return;
+    }
+
     const unsubscribe = realtimeConnectionManager.subscribe(
       topic,
       (envelope) => {
@@ -36,7 +46,7 @@ export const useRealtimeTopic = <TPayload>({
     // onEvent is intentionally not a dependency: consumers pass inline
     // closures that would otherwise resubscribe on every render.
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [topic]);
+  }, [enabled, topic]);
 
   return { lastEnvelope };
 };

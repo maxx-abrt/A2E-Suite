@@ -152,3 +152,32 @@ if observability needs them before P2.5.
 - `PLAN.md`
 
 **Next:** P2.3 front AvatarStack and typing indicator primitives.
+
+
+## 2026-09-10 — E2
+**Task:** P2.3 Presence — frontend primitives
+**Status:** done
+
+**What I did:**
+- Added a workspace-presence query hook that hydrates the Redis roster, resyncs after reconnect, consumes scoped realtime join/leave/typing events, and expires stale typing UI locally.
+- Added an accessible Twenty-native realtime avatar stack with online status dot and member-name tooltip.
+- Added a compact `aria-live` typing indicator with reduced-motion behavior.
+- Added guarded typing publication to the single-socket connection manager; offline or unsubscribed topics cannot publish ephemeral presence.
+- Made `useRealtimeTopic` explicitly disableable during pre-workspace boot and renamed the pre-existing manager file to satisfy repository filename conventions.
+
+**Tests and verification:**
+- Front realtime Jest suite: 11/11 passing (manager, topic reconnect, offline queue, presence reducer, avatar stack, typing indicator).
+- Independent testing agent: 11/11 passing, no remaining frontend/design issue (`test_reports/iteration_3.json`, local artifact only).
+- Changed-file type-aware oxlint: 0 warnings/errors; oxfmt clean.
+- Full `twenty-front` tsgo still reports pre-existing failures outside `modules/realtime` (A2E template picker and unbuilt front-component-renderer); zero realtime changed-file errors.
+
+**Decisions:**
+- Presence display remains a reusable primitive in this task; the next checkbox wires it into the side-panel header.
+- Typing events are intentionally not queued offline because stale ephemeral state is worse than dropping it.
+- The roster uses workspace-member IDs to resolve names/avatars from the existing authenticated member cache.
+
+**Files touched:**
+- `packages/twenty-front/src/modules/realtime/**`
+- `PLAN.md`
+
+**Next:** consume the primitives in the side-panel header pilot surface.

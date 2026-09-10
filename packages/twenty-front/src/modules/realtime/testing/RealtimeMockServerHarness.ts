@@ -1,7 +1,7 @@
 import {
-  RealtimeConnectionManager,
+  type RealtimeConnectionManager,
   type WebSocketLike,
-} from '~/modules/realtime/utils/RealtimeConnectionManager';
+} from '~/modules/realtime/utils/realtimeConnectionManager';
 
 type InMemorySocket = WebSocketLike & {
   onopen: (() => void) | null;
