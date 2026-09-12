@@ -545,3 +545,54 @@ side-panel tab or full page (addressable URL).
 - P3.3 remaining: Cmd+K create/open doc commands + docs search provider
   (server stub `document-search-provider.service.ts` still empty);
   "Save as document" record integration.
+
+## 2026-09-12 12:31 UTC — Zoo (GLM-5.3-Flash)
+
+### P3.3 Task 3 — Cmd+K create/open commands + real documents search provider (committed)
+
+**Task(s):** PLAN.md P3.3 item 3 — Cmd+K create/open document commands;
+search provider for docs.
+
+**Status:** Done.
+
+**What I did:**
+- Server — `document-search-provider.service.ts` (search module): the P3.1
+  stub now queries the real `document` workspace object via
+  `WorkspaceOrmManager` under a system auth context (calendar precedent):
+  case-insensitive ILIKE over `title`, `archivedAt: null` (trash excluded),
+  ordered by title, limited by `params.limit`, mapped to
+  `/object/documents/<id>` record-show deep links. Blank input short-circuits.
+- Server — spec rewritten: blank input short-circuit + deep-link mapping,
+  plus the pre-existing registration assertion. 3/3 pass (and the other 10
+  search-module tests stay green).
+- App — `create-document-command.front-component.tsx`: Cmd+K action built on
+  the SDK `<Command execute={…}/>` primitive (runs then auto-unmounts):
+  creates a root document (fractional-indexed append) and navigates to its
+  record page. Universal identifier `c31a0000-0013-4000-8000-000000000003`.
+- App — `create-document-and-open.command-menu-item.ts` (global command
+  menu item wiring the above; id ...0011...0003) and
+  `FRONT_COMPONENT_IDS.createDocumentCommand`.
+
+**Decisions:**
+- Search ranks by title, not `position`: the fractional index orders the
+  tree, not relevance; title order keeps the truncated top-5 stable.
+- Command menu item references the front component through the id constant,
+  NOT a module import: manifest extraction resolves each file family
+  separately and a cross-family import failed the esbuild bundle
+  (`Could not resolve ../front-components/...`). Same reason object files
+  import relation ids from universal-identifiers.
+- "Open" commands already exist (go-to-documents pinned browser + record
+  pages reachable from search results); the new item covers create-and-open.
+
+**Verification:** server: document-search-provider spec 3/3 + full search
+module 13/13; tsgo clean for the touched file. App: tsc clean, oxlint 0/0,
+`twenty-sdk` dev:build succeeded (11 files). No locale files touched.
+
+**For the next agent:**
+- Cross-family imports in app source break the manifest bundler — always
+  route identifiers through `src/constants/universal-identifiers.ts`.
+- Untyped workspace repositories for app objects need an
+  `as unknown as <RowType>[]` cast after `executeInWorkspaceContext` (the
+  generic only types the repository, not the projection result).
+- P3.3 remaining: "Save as document" from record notes tab + doc↔record
+  relation (person/company relations already exist on the object).

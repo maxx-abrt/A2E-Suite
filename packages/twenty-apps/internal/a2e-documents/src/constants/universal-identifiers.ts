@@ -46,6 +46,7 @@ export const NAVIGATION_MENU_ITEM_IDS = {
 export const FRONT_COMPONENT_IDS = {
   documentBrowser: 'c31a0000-0013-4000-8000-000000000001',
   documentPage: 'c31a0000-0013-4000-8000-000000000002',
+  createDocumentCommand: 'c31a0000-0013-4000-8000-000000000003',
 } as const;
 
 export const VIEW_IDS = {

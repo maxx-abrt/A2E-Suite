@@ -231,7 +231,7 @@ App: `a2e-documents`.
       purge cron via app cron logic function)
 - [x] Doc page: cover/icon/title/editor/outline; open in side-panel tab or
       full page (addressable URL)
-- [ ] Cmd+K: create/open document commands; search provider for docs
+- [x] Cmd+K: create/open document commands; search provider for docs
 - [ ] Record integration: "Save as document" from record notes tab (copy);
       doc ↔ record relation field (morph-style link on document)
 
