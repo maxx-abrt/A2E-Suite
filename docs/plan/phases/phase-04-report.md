@@ -132,3 +132,12 @@ documented inline in PLAN.md and below)
   flagged, NOT silently invented here.
 - No post-install logic function added (no seed needed for this subset;
   option ids already committed manifest-side).
+
+### Correction (2026-09-12, later) — self-audit
+Session 1 ticked the P4.1 `project` object bullet [x] even though two listed
+items were missing: `members (relation)` (SDK has no many-to-many; junction
+object unresolved) and `milestones (object)` (deferred to its own bullet).
+That violated the plan rule that a task is ticked only when complete. The
+tick is reverted to [ ] with a PARTIAL note in PLAN.md. The task-extensions
+bullet was never ticked and remains [ ] with its PARTIAL annotation.
+Milestone object, workflow template and all of P4.2 remain open/untouched.

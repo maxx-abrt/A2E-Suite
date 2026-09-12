@@ -248,10 +248,14 @@ passphrase works from incognito; e2e covers create→edit→share→export.
 **Goal.** Asana/Huly-grade projects on Twenty tasks. App: `a2e-projects`.
 
 ### P4.1 Model
-- [x] `project` object: name, key (PRJ-style), status pipeline (planning/
+- [ ] `project` object: name, key (PRJ-style), status pipeline (planning/
       active/completed/on_hold), lead, members (relation), health, start/due
       dates, color, description (RICH_TEXT), milestones (object), budget +
       spent (finance fields, fed by P7 — declare here, wire in P7.1c)
+      → PARTIAL (name/key/status/health/dates/color/RICH_TEXT/budget+spent/
+      lead shipped; MISSING: members relation — blocked on SDK having no
+      many-to-many, needs junction-object decision — and milestones object,
+      which is its own bullet below)
 - [ ] `task` extensions (app fields on standard task): project relation,
       status (custom-status object w/ color + isDone), priority, labels,
       estimate (t-shirt), subtask parent relation, blockedBy self-relation,
@@ -272,6 +276,7 @@ passphrase works from incognito; e2e covers create→edit→share→export.
 - [ ] Gantt/timeline view (front component; framer-motion-free, virtualized)
 - [ ] Calendar view of tasks/due dates (link into existing calendar module
       surface)
+- [ ] Retro planning system with tasks/subtasks system integrated (using global tasks system etc... all clean with full retroplanning system)
 - [ ] My-tasks page ("assigned to me" + "created by me" + overdue smart
       lists)
 - [ ] Project page: overview widgets (health, milestones, members, activity)
