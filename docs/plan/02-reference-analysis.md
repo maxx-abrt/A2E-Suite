@@ -1,10 +1,20 @@
 # Report 02 — Reference Apps Analysis (Texxel/Bureau + A2EMoney)
 
-> What we are porting, where it comes from, and what maps to what in A2E Suite.
-> Texxel (aka "Bureau") lives at `../Texxel` relative to this workspace.
-> A2EMoney (Bilan) is cloned at `/tmp/A2EMoney` (re-clone with
-> `git clone --depth 1 https://github.com/maxx-abrt/A2EMoney /tmp/A2EMoney`
-> if missing) — treat both as the source of truth.
+> Historical feature analysis, with reference locations corrected 2026-09-12.
+> These are old, unrelated applications used to understand desired features,
+> not installable Twenty apps or an authoritative architecture for this fork.
+
+[Documentation home](../README.md) · [Current product contract](../product-experience.md)
+
+The tracked references are [Texxel/Bureau](<../../Inspiration apps (bureaubilan)/Texxel-main/>)
+and [A2EMoney](<../../Inspiration apps (bureaubilan)/A2EMoney-main/>).
+Read only the relevant schema/component for the assigned feature. There is no
+need to clone another repository or depend on a previous agent's `/tmp` paths.
+
+The inventories below describe reference behavior and desired mappings, not
+verified behavior of A2E Suite. Reconcile financial/security claims against the
+new implementation and domain review. Prefer Twenty's native primitives when
+a reference implementation conflicts with them.
 
 ## 1. Bureau (Texxel) in one paragraph
 
@@ -16,8 +26,9 @@ use every day should feel like one product, not five."
 
 ## 2. Bureau feature inventory → A2E Suite mapping
 
-Verified against `../Texxel/apps/web/convex/schema.ts` (978 lines, read in
-full) — table names below are the real Convex tables.
+Historical inventory of `Texxel-main/apps/web/convex/schema.ts` under the
+tracked inspiration directory. Table names describe the reference's Convex
+model, not this fork's database.
 
 | Bureau feature (real tables) | A2E Suite target | Overlap with Twenty today |
 |---|---|---|
@@ -31,10 +42,12 @@ full) — table names below are the real Convex tables.
 | Prefs: `flux_userPrefs` (locale, theme, accentColor, density, easyRead, tabs[], commandHistory frecency, shortcuts overrides, quietHours {enabled,start,end}) | P2 workbench (tabs, frecency) + P8 (quiet hours) | partial |
 | Notifications: shared `notifications` (type/title/message/body/read/link/metadata/relatedId) | P8 | timelineActivities exist |
 
-## 3. A2EMoney (Bilan) full domain — verified at `/tmp/A2EMoney`
+## 3. A2EMoney (Bilan) domain reference
 
-Schema read in full (`convex/schema.ts`) + `lib/fiche-templates.ts` (all 8
-templates) + app routes. **This is the finance backbone to replicate.**
+Historical analysis of `A2EMoney-main/convex/schema.ts`,
+`lib/fiche-templates.ts` (eight templates) and app routes. Use these for domain
+requirements, not verbatim architecture or compliance guarantees. Existing
+Bilan metadata/helpers should be extended, not ported a second time.
 
 ### 3.1 Core finance tables
 
