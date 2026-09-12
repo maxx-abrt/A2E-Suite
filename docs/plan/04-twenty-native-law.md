@@ -1,10 +1,15 @@
-# Report 04 — Twenty-Native Law (binding implementation rules)
+# Native implementation patterns
 
-> The purpose of this document: every feature MUST be built the way Twenty
-> itself builds features. No parallel frameworks, no side systems, no
-> "cleaner" reinventions. If Twenty already has a primitive for it, USE IT.
-> Implementers: read this before designing any task. Violations = rejected
-> in review (phase report must log a justification for any exception).
+[Documentation home](../README.md) · [Product experience](../product-experience.md)
+
+Reuse Twenty's metadata, UI and platform services before adding abstractions.
+This guide describes design constraints and acceptance targets; it does not
+prove every primitive mentioned below is currently exported or every planned
+service exists. Inspect SDK exports and adjacent code at the version in use.
+Repository conventions live in [AGENTS.md](../../AGENTS.md); SDK-required
+exports and local app patterns are exceptions to generic host-code defaults.
+Document a demonstrated gap and its simplest solution rather than treating
+this guide as a reason to invent an API.
 
 ## 0. Prime directive
 
@@ -27,7 +32,7 @@ twenty-front modules  →  first-party UI where app sandbox is not enough
 | Product concept | REQUIRED Twenty primitive | Forbidden alternative |
 |---|---|---|
 | New entity ("invoice", "project"…) | SDK `defineObject` in the app (metadata) | Hand-written TypeORM entity unless server logic demands it (then domain module + upgrade command) |
-| List/table/kanban/board views | SDK `defineView` (ViewType: table/kanban/board…) on the object | Custom React table/grid per object |
+| List/table/kanban views | SDK `defineView`; check supported enum values at the installed SDK version | Custom React table/grid per object or invented view types |
 | Record detail page | Page layout (`definePageLayout`) with standard widget types | Custom one-off detail screens (front components allowed only for genuinely novel layouts, e.g. Gantt) |
 | Custom statuses (task columns) | Select field + `isDone`-style semantics via field options; kanban view groups on it | Separate status engine |
 | Relations to CRM records | SDK relation fields to `company`/`person`/`opportunity` | String-id columns |
@@ -35,7 +40,7 @@ twenty-front modules  →  first-party UI where app sandbox is not enough
 | Rich text | RICH_TEXT (BlockNote JSON) + blocknote-editor | New editor stack |
 | Permissions per module | App `defineRole` + workspace roles | Custom ACL tables |
 | Automation ("on invoice paid → …") | Workflow engine (`workflow` module, workflow templates shipped by app) | Custom event handlers for user-facing automation |
-| Scheduled jobs (recurring invoices, purges, ingest) | message-queue + cron core module (server domain module) — user-facing control via workflow templates where sensible | Per-feature schedulers |
+| Scheduled jobs (recurring invoices, purges, ingest) | SDK logic-function cron triggers or existing server message-queue/cron; workflow recipes for user-configurable automation | Per-feature schedulers |
 | Dashboard/widgets | Page layouts + widget types (existing enum; extend additively via upgrade command when a new type is truly needed) | Custom dashboard framework |
 | Settings surfaces | Settings sections pattern (SettingsRoutes + settings nav) | Modal-only config |
 | Feature availability | App install state + feature flags (kill-switch) | Env-var-only gating for user-facing features |
@@ -43,7 +48,7 @@ twenty-front modules  →  first-party UI where app sandbox is not enough
 | Commands | `defineCommandMenuItem` / pinned commands | Hidden keyboard handlers |
 | Navigation | `defineNavigationMenuItem` (DB-backed nav; users can already reorder/hide in Settings → Experience) | Hard-coded routers |
 | Localization | Lingui (`t` + msg), fr+en | Hard-coded strings, ad-hoc i18n |
-| Money | NUMBER/amount fields + currency selector; formatting via Intl + workspace locale | String money |
+| Money | Existing CURRENCY/amount primitives with currency and explicit rounding rules; Intl for display, not financial arithmetic | String money or inconsistent floating-point calculations |
 | Version history (docs) | Domain module service + object (follow `note` patterns) | Git-style side system |
 | Notifications | Notification core service (P8) + realtime gateway topics | Per-app polling endpoints |
 
@@ -56,18 +61,20 @@ src/
   application.config.ts       // defineApplication, fixed UUID
   objects/*.object.ts         // defineObject per entity
   fields/*.field.ts           // cross-object relation fields
-  views/*.view.ts             // defineView (table + board minimum per object)
+  views/*.view.ts             // table; kanban/calendar only where meaningful
   page-layouts/*.page-layout.ts
   navigation-menu-items/*.navigation-menu-item.ts
   roles/*.role.ts             // minimum viable role grants
-  logic-functions/post-install.ts   // enable flag, register AI tools/search provider
+  logic-functions/           // validated lifecycle/event/cron functions
   command-menu-items/*.command-menu-item.ts
-  components/*.front-component.tsx  // only where metadata UI cannot express it
+  front-components/*.front-component.tsx  // only for interactions metadata cannot express
 ```
 
 Rules:
-- One object per file; file name = object name; exports named + default
-  (match real-estate).
+- One object per file; file name = object name. Match the SDK discovery
+  pattern: existing app definition files use `export default defineObject(...)`.
+  Do not add duplicate exports or remove SDK-required default exports to
+  apply the host application's named-export convention mechanically.
 - Every app object ships at minimum: a table view, a record page layout,
   a label identifier field, sensible `position`s on nav items.
 - The app MUST be uninstallable: no orphan rows, no orphan nav items.
@@ -113,7 +120,7 @@ Rules:
 A feature is NOT done when it "works standalone". It is done when:
 
 - [ ] Object(s) visible in Settings → Objects (metadata) with correct icons/labels
-- [ ] Views appear and behave (table + board minimum; filters/sort work)
+- [ ] Appropriate views appear and behave (table; board/calendar where useful; filters/sort work)
 - [ ] Record page renders via page layout (tabs: details, timeline, tasks,
       notes, files inherited for free — VERIFY they appear)
 - [ ] Nav item present, reorderable, hideable like native items
@@ -140,9 +147,10 @@ Before using any API/pattern, verify it exists in-repo this session:
   command menu items).
 - SDK exports: `packages/twenty-sdk/src/**` — check the export exists
   (`defineObject`, `FieldType`, `ViewType`, `NavigationMenuItemType`…).
-- Widget types: `packages/twenty-server/src/database/typeorm/entities/**`
-  pageLayoutWidget enum — the migration files list the legal values; new
-  ones ONLY via upgrade command.
+- Widget/view types: `packages/twenty-shared/src/types/page-layout/WidgetType.ts`
+  and `packages/twenty-shared/src/types/ViewType.ts`; follow through to SDK
+  exports, renderer support and metadata validation before adding a type.
+  Persisted changes require the appropriate migration/upgrade path.
 - Guards/services: `packages/twenty-server/src/engine/**` — import paths
   must match real files.
 - Front patterns: the module you're extending (e.g.

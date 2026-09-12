@@ -1,8 +1,15 @@
 # Report 03 — Integration Blueprint (how every module plugs in)
 
-> The one-page contract every implementing agent must follow. If a change
-> cannot be expressed within this blueprint, stop and re-plan — do not invent
-> parallel systems.
+> Target architecture, not a current-feature inventory. Reconciled 2026-09-12.
+> Reuse native primitives; document a concrete gap before adding a new one.
+
+[Documentation home](../README.md) · [Current app behavior](../applications.md)
+
+The realtime session/catch-up design, app AI registration, complete starter
+packs, global funding catalogue and notification service described below are
+acceptance targets, not all implemented contracts. Consult the codebase map
+and audit before relying on any named API; in particular `registerAiTools` is
+proposed, not an SDK export established by this guide.
 
 ## 1. Two extension tracks
 
@@ -22,11 +29,16 @@ app authored in the SDK format (reference:
 `components/` (front components), and heavyweight UI as front components or
 first-party front pages feature-flagged in.
 
-Hybrid rule: an app may need a server module for complex behavior (chat needs
-the gateway; accounting needs cron jobs). That module lives under
-`src/modules/<domain>/` (domain modules, not core) and is activated by app
-install (logic-function post-install enables the feature flag) — the app
-remains the user-facing unit of activation.
+Hybrid rule: domain behavior needing transactions, durable state or privileged
+server operations belongs under `src/modules/<domain>/`; cross-cutting behavior
+belongs in core. SDK logic functions already support scheduled/event work, so
+cron alone is not a reason to add a new domain module. Specify install gating,
+permissions and lifecycle explicitly; there is no assumed automatic feature-
+flag registration. The app remains the user-facing activation unit.
+
+Bureau should compose existing Documents/Projects rather than duplicate their
+objects; its packaging decision is pending. Bilan is `a2e-accounting`. See the
+[product contract](../product-experience.md).
 
 ## 2. Naming, ids and conventions
 
@@ -51,10 +63,11 @@ remains the user-facing unit of activation.
 
 ## 3. Activation & user experience contract
 
-- **Per-workspace activation**: app installed via CLI during dev, via
-  Settings → Applications → Marketplace in product. Uninstall must cleanly
-  remove app objects/views/nav (Twenty's app sync already handles deletion on
-  uninstall — verify per app in review).
+- **Per-workspace activation**: CLI provisioning and Settings → Applications
+  reuse Twenty's registration/install machinery. Catalog visibility and
+  packaged availability must be verified separately. Uninstall removes
+  app-owned metadata and may destroy data; it is not a harmless disable
+  toggle. Define retention/dependencies and test on a disposable workspace.
 - **Onboarding presets**: extend the onboarding module with workspace
   templates — `Individual`, `Student`, `Team`, `Non-profit`, `Small business`,
   `CRM`. Each preset pre-installs apps, seeds nav order, dashboards and sample

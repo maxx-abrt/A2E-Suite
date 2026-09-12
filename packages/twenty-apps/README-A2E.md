@@ -3,13 +3,19 @@
 How to create, publish and install a first-party `a2e-*` app inside this
 monorepo. The app format reference is
 [`internal/real-estate/`](./internal/real-estate/); the sanctioned anatomy is
-defined in [`docs/plan/04-twenty-native-law.md`](../../docs/plan/04-twenty-native-law.md)
-§2 (read it before your first app).
+defined in [native patterns](../../docs/plan/04-twenty-native-law.md).
+Start with the [applications runbook](../../docs/applications.md) for existing
+Bilan/Documents/Projects, catalog visibility and current version limitations.
+
+These apps are independent packages, not root Yarn workspaces. Bureau is a
+product packaging target, not another app to copy from. Documents is no longer
+an empty shell; do not clone its IDs or domain objects for a new app.
 
 ## Creating an internal app
 
-1. Copy the skeleton from `internal/real-estate/` (or, for an empty shell,
-   `internal/a2e-documents/`):
+1. Use the scaffolder matching the supported SDK version; inspect
+   `internal/real-estate/` for definitions and `examples/media-notes/` for
+   front components. Do not copy a published app wholesale. Typical anatomy:
 
    ```
    packages/twenty-apps/internal/a2e-<domain>/
@@ -22,7 +28,7 @@ defined in [`docs/plan/04-twenty-native-law.md`](../../docs/plan/04-twenty-nativ
        objects/  fields/  views/  page-layouts/
        navigation-menu-items/  command-menu-items/
        logic-functions/    # incl. post-install.ts
-       components/         # front components only where metadata is not enough
+       front-components/  # only where metadata is not enough
    ```
 
 2. Generate **two fresh UUIDs** with `node -e
@@ -33,16 +39,19 @@ defined in [`docs/plan/04-twenty-native-law.md`](../../docs/plan/04-twenty-nativ
    (the additive-only law). Never regenerate a UUID after the app has been
    published or installed on any workspace.
 
-3. Keep the devDependencies pinned to the same `twenty-sdk` /
-   `twenty-client-sdk` version as the other internal apps, then run
-   `cd packages/twenty-apps/internal/a2e-<domain> && yarn install`.
+3. Select a tested SDK/client/server combination, not merely whatever version
+   a neighboring app pins. Existing A2E apps pin 2.31.0 against workspace
+   SDK/server 2.39.0; compatibility and app-local lockfile gaps are D0 work.
+   Install dependencies in the app directory, preserve its lockfile, and
+   establish explicit build/typecheck/unit/integration scripts.
 
 ## Naming rules
 
 - App package name: `a2e-<domain>` (`a2e-documents`, `a2e-projects`, …).
   Internal apps live under `internal/`, examples under `examples/`.
-- `displayName` carries the user-facing brand: `A2E <Domain>` (e.g.
-  "A2E Documents").
+- `displayName` carries the product name, not necessarily the package name:
+  `Bilan` for `a2e-accounting`, currently `A2E Documents` / `A2E Projects`
+  for their apps. Confirm Bureau packaging before changing names/identities.
 - Object metadata names (`nameSingular`/`namePlural`) get **no** `a2e_`
   prefix — metadata is already workspace-scoped (`project`/`projects`,
   `invoice`/`invoices`).
@@ -62,25 +71,18 @@ defined in [`docs/plan/04-twenty-native-law.md`](../../docs/plan/04-twenty-nativ
 
 ## Publishing and installing locally
 
-Against a running dev server (from the repo root):
+Follow [the provisioning runbook](../../docs/applications.md) against a
+confirmed disposable workspace. It gives app-local and built-workspace CLI
+commands with explicit app paths/remotes and explains the version mismatch.
 
-```bash
-node packages/twenty-sdk/dist/cli.cjs app:publish --private
-node packages/twenty-sdk/dist/cli.cjs app:install
-```
+`app:publish --private` publishes to the server registry; bare `app:publish`
+targets npm. `app:install` is a separate workspace operation. Local development
+sync does not prove packaged install behavior. Test updates with populated
+records and stable IDs, not just a fresh manifest build.
 
-- `app:publish --private` builds the app and pushes it to the dev server's
-  app registry (npm publishing is the default and is NOT what internal apps
-  use).
-- `app:install` installs the published app on the connected workspace.
-- Run both from the repo root; pass the app path as the optional `[appPath]`
-  argument to target one app.
-- Re-publish + install after manifest changes; the server treats an install
-  of a newer version as an upgrade (downgrades are rejected).
-
-Uninstalling removes the app-owned metadata (objects, fields, views, page
-layouts, nav items, command menu items) — verified per app before shipping;
-see the P1 acceptance criteria in `docs/plan/PLAN.md`.
+Uninstall can remove app-owned metadata and data. Define export, retention,
+dependencies and file behavior before testing removal; never use production
+uninstall as a troubleshooting reset.
 
 ## App anatomy requirements (enforced in review)
 

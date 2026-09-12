@@ -1,7 +1,74 @@
-# A2E Suite — All-in-One Workspace Master Plan
+# A2E Suite — delivery plan
 
-> **Read [`PROMPT.md`](./PROMPT.md) first if you are an implementing AI.**
-> This file is the source of truth for scope, sequence and status.
+[Documentation home](docs/README.md) · [Product experience](docs/product-experience.md) · [Applications runbook](docs/applications.md)
+
+## Current delivery order — reconciled 2026-09-12
+
+**Goal:** a calm, modular workspace for individuals and teams, with Bureau
+(work/knowledge) and Bilan (finance) integrated into Twenty's native shell.
+CRM stays usable but is not the only starting point. Reference apps supply
+feature expectations, not code to run beside Twenty.
+
+The assigned issue determines session scope. When asked to choose roadmap
+work, use the order below. `D0`–`D5` are delivery work packages, not claims of
+implementation. The detailed `P1`–`P10` scope is retained below for traceability;
+its old checkboxes are **historical**, not a release-readiness dashboard.
+
+| Order | Work package | Required outcome / exit evidence | Depends on |
+| --- | --- | --- | --- |
+| D0 | Reproducible baseline and safety | Node/Yarn + dependencies + disposable DB/browser checks; compatible SDK/server matrix; explicit app build/unit/install checks; resolve audit F01–F03 access risks and F10 release/recovery gaps before broad release | Maintainer CI/release decision; audit Stage A |
+| D1 | Discoverable, reliable applications | Visible Applications empty/unavailable states; Bilan registration/publication/install journey; Projects discovery/preset wiring; confirm Bureau bundle vs registration; requested/applied/failed preset status and retry; Individual → CRM navigation regression | D0; Bureau packaging decision |
+| D2 | Complete starter templates | Versioned, localized starter packs at creation and in Settings; preview, optional samples, stable provenance, repeat-safe apply and visible partial failure; native workflow recipes where applicable | D1; product template contracts |
+| D3 | Reliable Bureau foundation | Finish existing Documents/Projects journeys: durable document state, authorized sharing/search, complete tree/actions, task membership/relations, atomic numbering and retry-safe time tracking; real install/upgrade and multi-user tests | D0/D1; audit B1–B4 |
+| D4 | Reliable Bilan foundation | Verify existing finance metadata and seeding; deterministic currency/rounding, idempotent transactional ledger/numbering, period locks, permissions; complete invoice/fiche UI/export; finance-domain review | D0/D1; audit B5; project rollups after D3 |
+| D5 | Expand without overwhelming users | Drive over existing storage; durable Chat/Inbox; permission-aware AI; performance, accessibility and solo/team polish. Deliver one complete user journey at a time | Relevant D0–D4 gates, not merely source presence |
+
+### Current readiness, not old ticks
+
+| Area | Observed | Still needed before a completion claim |
+| --- | --- | --- |
+| Activation/templates (P1) | Settings section, preset definitions and installer calls | Registration/provisioning, visible partial failure, reverse navigation transition, actual starter content and lifecycle tests |
+| Realtime/workbench (P2) | Gateway/client, dock/tabs and presence code | Session-auth alignment, topic permissions, failure/reconnect behavior and measured performance |
+| Documents (P3) | App plus editor/share/search surfaces | Persistence, permissions, action-input/tree completeness and real multi-session journeys |
+| Projects (P4) | Six objects, task fields, table/board/calendar definitions, overview and human-ID function | Wiring/install verification, atomic numbering, dependency/time integrity and missing UX; member junction and milestones already exist in source |
+| Bilan (P7) | Fourteen app objects, finance/fiche helpers, event/cron functions and UI | Packaged install/runtime checks, server invariants, encryption, complete editors/exports and domain review; catalogue is currently workspace app metadata, not the planned global service |
+| Bureau packaging; starter packs; Drive/Chat/Inbox/expanded AI | Product requirements and some shared infrastructure | Complete native app journeys; Bureau has no separate manifest; full starter packs are not implemented |
+
+Evidence and reproducible acceptance scenarios:
+[architecture audit](docs/repository-architecture-audit.md),
+[application inventory](docs/applications.md),
+[UX/template/file contracts](docs/product-experience.md).
+No runtime capability is newly certified by this documentation rework.
+
+### Decisions before implementation
+
+1. **Bureau packaging:** recommended composition of existing Documents/Projects;
+   confirm whether users install a distinct registration or a bundle/preset.
+2. **Lifecycle:** distinguish hide/disable/uninstall; agree on data retention,
+   export and dependent-app behavior before calling activation reversible.
+3. **Delivery:** select authoritative GitLab or external CI, supported
+   SDK/server/PostgreSQL versions and a reproducible app provisioning path.
+4. **Finance:** approve catalogue scope and compliance expectations with a
+   domain reviewer; do not port reference claims as guarantees.
+
+### Completion policy
+
+Use `planned`, `partial`, `blocked/unverified`, or `verified` with a dated
+handoff linking source and actual checks. A task is verified only when its own
+acceptance and neighboring integration checks pass. A phase is not complete
+because one helper or manifest builds. Preserve historical reports, append
+corrections, and use [task](docs/templates/task.md) / [handoff](docs/templates/handoff.md)
+templates for new work.
+
+---
+
+## Historical feature scope — P1–P10
+
+**Retained for requirements/history, not automatic task selection.** Earlier
+`[x]` marks below record prior implementation claims; they do not establish
+installation, security, persistence or end-to-end acceptance. Current delivery
+order and readiness above take precedence. Do not bulk-retick this list from a
+source inventory.
 
 **Mission.** Transform A2E Suite (Twenty fork, v2.39.0) into an all-in-one
 workspace — Notion/Asana/Huly class — where users activate only the modules
@@ -16,15 +83,14 @@ companies, and classic CRM teams.
 
 ---
 
-## How to use this plan
+## Reading the historical scope
 
-- **Status legend** — `[ ]` todo · `[~]` in progress (one at a time, max) ·
-  `[x]` done · `[!]` blocked (write why + blocker in the phase report).
-- **Tick tasks in this file as you complete them.** A task is ticked ONLY
-  after its acceptance criteria (per phase) AND the global quality gates
-  (§Gates) pass.
-- **One phase at a time, one task at a time.** Never start a new phase while
-  another has an unticked non-optional task.
+- **Legacy status legend** — `[ ]` not marked complete · `[~]` previously in
+  progress · `[x]` historical completion claim · `[!]` historical blocker.
+- Do not infer runtime readiness from these marks. Reconcile a specific
+  requirement with current code and executed acceptance checks when assigned.
+- Use D0–D5 above for sequencing; the original phase order below is retained
+  to locate requirements and reports, not to block urgent safety repairs.
 - **Phase reports.** Each phase has `docs/plan/phases/phase-<n>-report.md`.
   Append a dated entry for every work session: what was done, decisions,
   deviations, files touched, what's next. This is the handoff log for the
@@ -252,20 +318,19 @@ passphrase works from incognito; e2e covers create→edit→share→export.
       active/completed/on_hold), lead, members (relation), health, start/due
       dates, color, description (RICH_TEXT), milestones (object), budget +
       spent (finance fields, fed by P7 — declare here, wire in P7.1c)
-      → PARTIAL (name/key/status/health/dates/color/RICH_TEXT/budget+spent/
-      lead shipped; MISSING: members relation — blocked on SDK having no
-      many-to-many, needs junction-object decision — and milestones object,
-      which is its own bullet below)
+      → PARTIAL (2026-09-12 reconciliation: project-member junction and
+      milestone object now exist in source, alongside the project fields.
+      Validate installed relations, permissions and layouts; do not create
+      duplicate objects based on the older phase report.)
 - [ ] `task` extensions (app fields on standard task): project relation,
       status (custom-status object w/ color + isDone), priority, labels,
       estimate (t-shirt), subtask parent relation, blockedBy self-relation,
       human id (`<projectKey>-<n>` computed), time-tracking entries object
-      → PARTIAL (fields: project relation, projectStatus select w/ options,
-      priority, estimate + estimateLabel, blockIssue→note self-relation;
-      subtask parent + time-tracking entries object deferred → P4.2/P4.3
-      bullets own those surfaces; custom-status object + labels deferred —
-      select pipeline shipped instead; human id needs a computed-field
-      mechanism, opens a follow-up server question)
+      → PARTIAL (2026-09-12 reconciliation: task fields, labels/junction,
+      subtask relation, time-entry object and human-ID function exist.
+      The identifier function is not an atomic allocator; UI/API integrity
+      and lifecycle tests remain. Keep the existing select-status approach
+      unless a demonstrated requirement needs more.)
 - [ ] Milestone object: name, dueDate, project, doneAt
 - [ ] Workflow template: "recurring task generator" (uses existing workflow
       engine)
@@ -377,13 +442,14 @@ subventions marketplace. fr-first vocabulary, fr + en locales. App:
 `a2e-accounting` + server domain module `accounting`.
 Full domain reference: [`docs/plan/02-reference-analysis.md`](./docs/plan/02-reference-analysis.md) §3.
 
-**Status 2026-09-10 — app-side shipped as `Bilan` (`a2e-accounting`), the
-server domain module does not exist yet.** Everything below marked `[x]`
-lives in the app (objects/views/nav/logic functions/front components);
-verify against `.twenty/output/manifest.json` after `dev:build`. What
-remains for "clean": the server-side pieces (encryption at rest, period
-lock enforcement, reports), invoice PDF rendering, fiche editors as front
-components, and e2e.
+**Reconciled 2026-09-12 — app source exists as `Bilan`
+(`a2e-accounting`); this is not verified installation or release readiness.**
+The server accounting domain module is not present. Historical `[x]` claims
+below need real build/install/API checks, not only manifest inspection.
+Subvention/catalogue/cache objects currently live in workspace app metadata;
+instance scope is still a design target. Encryption at rest, period-lock
+invariants, reports, invoice PDF rendering, complete fiche editors and e2e
+remain unresolved. Use D4 and audit F12 for the next correctness work.
 
 ### P7.1 Core finance model
 - [x] `client` mapping spike: reuse `company` + relation fields (no parallel

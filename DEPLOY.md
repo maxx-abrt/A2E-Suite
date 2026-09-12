@@ -1,7 +1,26 @@
 # Deploy A2E Suite on Coolify
 
-Goal: `git push` → image built on GitHub → Coolify pulls it → app online.
-No build on your server. Total manual work: ~10 minutes, once.
+## Scope and release prerequisites
+
+This guide describes the repository's **existing GitHub/GHCR → Coolify path**,
+not an automatically configured release pipeline for the GitLab fork. Confirm
+the authoritative build project, registry, tested immutable image and deployment
+owner before using it. A GitLab push alone does not run `.github/workflows`.
+The owner/registry shown below are legacy configuration examples, not proof that
+this checkout publishes there or that those resources are public.
+
+[Documentation home](docs/README.md) · [Applications provisioning](docs/applications.md)
+
+- Platform deployment and Bilan/Documents/Projects provisioning are separate.
+  The production image does not bundle/install the internal A2E app sources.
+- Confirm supported database/runtime versions and required checks before a
+  release. Do not treat a healthy HTTP process as proof upgrades succeeded;
+  inspect migration and worker results (audit F09/F10).
+- Back up and rehearse restore before upgrades. Never change registry/package
+  visibility or deploy production as an incidental documentation task.
+
+The following setup is a starting runbook to adapt and verify, not a timed or
+certified deployment promise.
 
 ## Architecture
 
@@ -28,14 +47,10 @@ GitHub (your private repo)          Coolify server (VPS)
 
 ## Part 1 — On your Mac: push the deployment files
 
-```bash
-cd "/Users/maxaubert/Projets/A2E Suite"
-git add .github/workflows/cd-docker-image.yaml \
-        packages/twenty-docker/docker-compose.coolify.yml \
-        packages/twenty-docker/SELF-HOSTING.md DEPLOY.md
-git commit -m "feat: add self-host deployment (GHCR image + Coolify compose)"
-git push origin main
-```
+Use your reviewed branch/MR and the maintainer-approved release process.
+These files are already tracked: do not create a deployment commit or push
+straight to `main` just to follow this guide. Confirm where the GitHub workflow
+actually runs if your source of truth is GitLab.
 
 Then wait for the build to finish **before** touching Coolify:
 
@@ -50,8 +65,9 @@ Make the image public (Coolify pulls it without credentials):
 > GitHub → your package page `a2e-suite` → **Package settings** →
 > **Danger Zone** → **Change visibility** → Public.
 
-The image contains no secrets (secrets are injected at runtime), so public is
-safe. If you refuse, see "Private registry" at the bottom instead.
+Only make an image public after approval and an artifact/secrets review;
+runtime secret injection alone does not establish that the built layers are
+safe to publish. Otherwise use the private-registry configuration below.
 
 ## Part 2 — In Coolify: allow the private repo
 
@@ -154,14 +170,22 @@ workspace owner). **Done.**
 | View logs           | Coolify → resource → each service has a Logs tab                                   |
 | Stop / start        | Coolify power buttons (data volumes are preserved)                                 |
 
-Data lives in two Docker volumes: `a2e-suite_db-data` (database) and
-`a2e-suite_server-local-data` (uploaded files). Back them up with Coolify's
-built-in S3 backups, or:
+### Backup and restore requirements
 
-```bash
-docker run --rm -v a2e-suite_db-data:/data -v "$PWD":/backup alpine \
-  tar czf /backup/db-$(date +%F).tgz -C /data .
-```
+Confirm actual volume names in your deployment; the Compose project prefix can
+change them. Protect both PostgreSQL and uploaded files (local volume or object
+storage), plus encryption keys/configuration in a separate secret store.
+
+**Do not tar a live PostgreSQL data directory.** Use a database-consistent
+logical backup (`pg_dump`/`pg_restore`, with required roles/globals handled) or
+a supported physical backup/PITR process. Coordinate database and file-storage
+recovery points; database-only backup cannot restore uploaded content.
+
+Before relying on a backup, restore it to an isolated instance, verify migrations,
+workspace records, permissions, file downloads, encrypted data and worker jobs.
+Record the tested image/database versions, retention, recovery point and recovery
+time. Do not experiment against production or include keys in reports. No
+backup/restore drill has been performed for this documentation update.
 
 ## Troubleshooting
 

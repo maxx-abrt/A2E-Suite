@@ -2,7 +2,16 @@
 
 Guidance for AI coding agents (GitLab Duo Workflow, Codex, Cursor, …) working in this repository. `agent-config.yml` at the root defines the environment setup and verification commands for agents that support it (GitLab Duo Workflow). Claude Code reads this file through the `CLAUDE.md` symlink — keep a single source of truth, never let the two diverge.
 
-A2E Suite is an open-source CRM (a fork of Twenty) — an Nx / Yarn 4 monorepo. Main packages: `twenty-front` (React 18, Jotai, Linaria, Vite), `twenty-server` (NestJS, TypeORM, PostgreSQL, Redis, GraphQL), `twenty-shared` (isomorphic types/utils), `twenty-ui`, `twenty-sdk` (application SDK + CLI), `twenty-e2e-testing` (Playwright). Package directory names and npm names are kept as `twenty-*` intentionally; only user-facing brand strings are renamed to "A2E Suite".
+A2E Suite is a modular workspace platform in development, built on Twenty's CRM — an Nx / Yarn 4 monorepo. Preserve the CRM while adding native work/knowledge (Bureau) and finance (Bilan) experiences. Bureau is a product target, not an existing standalone app; Bilan is `a2e-accounting`. Main packages: `twenty-front` (React 19, Jotai, Linaria, Vite), `twenty-server` (NestJS, TypeORM, PostgreSQL, Redis, GraphQL Yoga), `twenty-shared` (isomorphic types/utils), `twenty-ui`, `twenty-sdk` (application SDK + CLI), `twenty-e2e-testing` (Playwright). Package directory names and npm names remain `twenty-*` intentionally.
+
+## Find the relevant context first
+
+- Start with the assigned issue, then [docs/README.md](docs/README.md). Read only the guides relevant to that task; do not automatically implement the first unchecked roadmap item.
+- [Codebase map](docs/plan/01-codebase-map.md): task-to-path lookup. [Product experience](docs/product-experience.md): names, UX and template contracts. [Applications](docs/applications.md): why source presence is not installation.
+- [PLAN.md](PLAN.md): delivery priorities and historical feature scope. Old checkmarks and reports are not current verification.
+- [PROMPT.md](PROMPT.md): execution/handoff workflow. [Verification](docs/verification.md): setup and checks. `AGENTS.md` is a symlink to this file; preserve that single source of repository rules.
+- Reference trees under `Inspiration apps (bureaubilan)` supply feature ideas only. Do not run or integrate their backends as part of the suite.
+- Read directory-specific guidance before editing. Preserve unrelated dirty files; never revert another contributor's work to obtain a clean tree.
 
 ## Role
 
