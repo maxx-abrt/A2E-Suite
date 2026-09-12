@@ -12,6 +12,7 @@
 # Optional environment:
 #   TAG                    image tag (default: latest)
 #   SERVER_PORT            host port for direct (non-proxied) access (default: 3000)
+#   LANDING_PAGE_URL       public landing page used after sign-out
 #   FALLBACK_ENCRYPTION_KEY, APP_SECRET, STORAGE_S3_*, EMAIL_* / SMTP vars
 name: a2e-suite
 
@@ -26,6 +27,7 @@ services:
       NODE_PORT: 3000
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:?required}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/${PG_DATABASE_NAME:-default}
       SERVER_URL: ${SERVER_URL:?required}
+      LANDING_PAGE_URL: ${LANDING_PAGE_URL:-}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       STORAGE_TYPE: ${STORAGE_TYPE:-local}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:?required}

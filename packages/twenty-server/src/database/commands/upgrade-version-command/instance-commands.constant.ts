@@ -111,6 +111,7 @@ import { EraseObjectNavigationCommandMenuItemPayloadsSlowInstanceCommand } from 
 import { AddLogoToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788542613404-add-logo-to-connection-provider';
 import { AddReadabilityToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788548844925-add-readability-to-object-metadata';
 import { AddWorkspaceTemplateToWorkspaceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788716868602-add-workspace-template-to-workspace';
+import { AddDocumentShareEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1789062772757-add-document-share-entity';
 import { AddRelationTargetFieldMetadataIdToViewFilterEarly2_4FastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1747234400000-add-relation-target-field-metadata-id-to-view-filter';
 import { AddMetadataToBillingPriceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1777100000000-add-metadata-to-billing-price';
 import { AddEmailGroupChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1778256809018-add-email-group-channel-type';
@@ -356,4 +357,5 @@ export const INSTANCE_COMMANDS = [
   AddLogoToConnectionProviderFastInstanceCommand,
   AddReadabilityToObjectMetadataFastInstanceCommand,
   AddWorkspaceTemplateToWorkspaceFastInstanceCommand,
+  AddDocumentShareEntityFastInstanceCommand,
 ];

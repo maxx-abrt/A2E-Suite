@@ -411,12 +411,29 @@ authorization and persistence checks pass.
       scripts were why CI skipped typecheck. Both recorded front test failures
       repaired same day (mcpSetup brand assertions → `A2E Suite`; navigation
       matrix regenerated with the missing DocumentShare block, 306/306).
-      UNVERIFIED: e2e and server-integration targets; maintainer SDK-pin/CI
-      decision open.
+      → PROGRESS (2026-09-13, phase-00 report): integration `test` database
+      created and reset through `database:init`/`database:migrate --include-slow`/
+      seed under `NODE_ENV=test`; document-share integration suite passes 4/4
+      against the booted app. Full 621-spec `test:integration:with-db-reset`
+      sweep OOM-killed on a 16 GB machine after ~30 min — harness verified,
+      full sweep still UNVERIFIED on this hardware. e2e and maintainer
+      SDK-pin/CI decision remain open.
 - [ ] **P0.2 Backend access boundaries (after P0.1):** repair caller-scoped
       document search, record-level share authorization and consistent
       encrypted/plain snapshot validation. Test two workspaces, restricted
       member, guest, expiry/revoke/archive; no leaked titles or share tokens.
+      → [x] DONE (2026-09-13, phase-00 report): document search runs under the
+      caller auth context with ILIKE escaping and no permission bypass; share
+      create/list/delete are document-authorized, fail-closed, archived-aware
+      and workspace-scoped; encrypted/plain representation enforced server-side
+      (full triple XOR plaintext, bounded lengths); guest path never returns
+      plaintext for passphrase-protected shares. Repaired along the way: the
+      document-share resolver had no `@CoreResolver()` (entire surface absent
+      from the schema), class-level auth guards blocked the public guest
+      endpoint, and the `documentShare` table command was never registered in
+      `instance-commands.constant.ts` (fresh installs had no table). Gates:
+      21 unit tests (search 6 + share 15) + 4 integration tests green, tsgo
+      clean, lint:diff-with-main clean.
 - [ ] **P0.3 Backend/front realtime (after P0.1):** reuse actual HTTP session
       and origin policy, revalidate revoked membership, enforce record/channel
       topic rights. Distinguish connection from subscription success; surface

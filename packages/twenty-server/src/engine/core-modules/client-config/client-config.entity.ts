@@ -287,6 +287,9 @@ export class ClientConfig {
   frontDomain: string;
 
   @Field(() => String, { nullable: true })
+  landingPageUrl?: string;
+
+  @Field(() => String, { nullable: true })
   publicFunctionDomain: string | null;
 
   @Field(() => Boolean)

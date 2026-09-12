@@ -69,6 +69,7 @@ describe('ClientConfigController', () => {
         isEmailVerificationRequired: false,
         defaultSubdomain: 'app',
         frontDomain: 'localhost',
+        landingPageUrl: 'https://www.example.com/',
         publicFunctionDomain: null,
         support: {
           supportDriver: SupportDriver.NONE,

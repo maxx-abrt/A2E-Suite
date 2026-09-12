@@ -155,3 +155,73 @@ server-integration and SDK-pin decision still open, unchanged).
 `twenty-server:test:integration:with-db-reset`, and the maintainer SDK-pin
 (2.31 vs 2.39) decision. Front unit suite should now be fully green — rerun
 `npx nx test twenty-front` once to confirm no other drift before relying on it.
+
+---
+
+## 2026-09-13 01:05 UTC — Zoo (code agent)
+
+**Task(s):** P0.2 (backend access boundaries — audit F01/F03) + P0.1
+integration-target provisioning.
+
+**Status:** P0.2 done. P0.1 advanced (integration harness now proven on this
+machine; full 621-spec sweep, e2e and the maintainer SDK-pin decision remain
+open).
+
+**What I did (P0.2 — F01, caller-scoped document search):**
+- `search/services/document-search-provider.service.ts`: removed the system
+  auth context + `shouldBypassPermissionChecks: true`; the query now runs under
+  the caller's ambient AsyncLocalStorage context with the default permission
+  pipeline, so Cmd+K results respect role/row permissions. Added
+  `escapeForIlike` on the search input so `%`/`_` match literally.
+
+**What I did (P0.2 — F03, share authorization/representation):**
+- `document-share/document-share.service.ts`: create/list/delete now verify
+  the caller can read the source document first (fail-closed try/catch →
+  FORBIDDEN; archived documents rejected); added `DOCUMENT_SHARE_INVALID_INPUT`
+  (mapped to UserInputError in the exception filter) enforcing one consistent
+  representation — full ciphertext triple XOR plaintext, bounded lengths, and a
+  caller-supplied plaintext body is nulled when the triple is complete;
+  guest payload omits `bodySnapshot` for passphrase-protected shares.
+- `document-share.module.ts`: added the missing `TwentyOrmModule` import
+  (workspace-scoped repository was never injectable).
+
+**Pre-existing blockers found and repaired while integration-testing the above:**
+- `document-share.resolver.ts` had no `@CoreResolver()` decorator: the whole
+  document-share GraphQL surface (including the guest endpoint the front share
+  page calls) was silently absent from the schema. Registered it and moved
+  auth guards from class level to per-method (WorkspaceResolver pattern) so
+  `getGuestDocumentShare` is genuinely public while the rest require
+  Workspace+User auth.
+- `2-39-instance-command-fast-1789062772757-add-document-share-entity.ts`
+  was never registered in
+  `database/commands/upgrade-version-command/instance-commands.constant.ts`:
+  fresh installs had no `core."documentShare"` table at all. Registered it;
+  `database:migrate` now creates it.
+
+**Verification (all run this session, NODE_ENV=test against the `test` DB):**
+- Provisioned: created `test` database, `npx nx database:reset twenty-server`
+  (init → migrate --include-slow → seed) → success; the document-share
+  instance command applied (`executed successfully` in the log).
+- `npx jest document-share search --config=packages/twenty-server/jest.config.mjs`
+  → 32/32 passed (share 15 + search-provider 6 + adjacent suites).
+- New `test/integration/graphql/suites/document-share/document-share.integration-spec.ts`
+  → 4/4 passed (workspace-scoped listing, forbidden create without document
+  read rights, partial ciphertext triple rejected pre-authorization, guest
+  endpoint reachable with no Authorization header and not-found for unknown
+  tokens).
+- `npx tsgo -p tsconfig.json --noEmit` (twenty-server) → clean.
+- `npx nx lint:diff-with-main twenty-server` → success.
+
+**P0.1 progress this session:**
+- `npx nx run twenty-server:test:integration:with-db-reset` (621 specs) was
+  SIGKILLed after ~30 min on this 16 GB machine — memory, not a test failure.
+  The harness itself is verified end-to-end (DB reset + app boot + suites).
+  UNVERIFIED remains: the full sweep, e2e suites, maintainer SDK-pin decision.
+- Front unit suite not rerun this session (previous entry left it green).
+
+**For the next agent:** run the integration sweep in chunks
+(`npx jest --config ./jest-integration.config.ts test/integration/graphql/suites/<area>`
+per area, `NODE_ENV=test` set and the `test` DB reset once) instead of the
+single nx target, or add swap/RAM. The guest 400 vs 200 lesson: a class-level
+guard cannot be bypassed by a method-level `PublicEndpointGuard` — Nest
+evaluates both.

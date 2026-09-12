@@ -3,6 +3,7 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { CreateDocumentShareInput } from 'src/engine/core-modules/document-share/dtos/create-document-share.input';
@@ -17,7 +18,9 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-@UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+// Without @CoreResolver the class never registers on the GraphQL schema and
+// every document-share endpoint silently 404s at the schema level.
+@CoreResolver()
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   DocumentShareExceptionFilter,
@@ -27,6 +30,7 @@ export class DocumentShareResolver {
   constructor(private readonly documentShareService: DocumentShareService) {}
 
   @Query(() => [DocumentShareDTO])
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async findManyDocumentShares(
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<DocumentShareDTO[]> {
@@ -36,6 +40,7 @@ export class DocumentShareResolver {
   }
 
   @Mutation(() => DocumentShareDTO)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async createDocumentShare(
     @Args('createDocumentShareInput')
     createDocumentShareInput: CreateDocumentShareInput,
@@ -56,6 +61,7 @@ export class DocumentShareResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async deleteDocumentShare(
     @Args('shareToken') shareToken: string,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,

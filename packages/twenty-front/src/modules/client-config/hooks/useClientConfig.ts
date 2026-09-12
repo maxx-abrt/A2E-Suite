@@ -203,6 +203,7 @@ export const useClientConfig = (): UseClientConfigResult => {
       setDomainConfiguration({
         defaultSubdomain: clientConfig?.defaultSubdomain,
         frontDomain: clientConfig?.frontDomain,
+        landingPageUrl: clientConfig?.landingPageUrl,
         publicFunctionDomain: clientConfig?.publicFunctionDomain,
       });
       setCanManageFeatureFlags(clientConfig?.canManageFeatureFlags);

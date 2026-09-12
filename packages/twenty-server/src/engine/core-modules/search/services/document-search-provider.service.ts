@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { escapeForIlike, isDefined } from 'twenty-shared/utils';
 
 import { RegisteredSearchProvider } from 'src/engine/core-modules/search/decorators/registered-search-provider.decorator';
 import {
@@ -9,7 +9,6 @@ import {
   type SearchProviderResult,
 } from 'src/engine/core-modules/search/types/search-provider.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 // APPLICATION_UNIVERSAL_IDENTIFIER of the a2e-documents app
 // (packages/twenty-apps/internal/a2e-documents/src/application.config.ts).
@@ -46,14 +45,16 @@ export class DocumentSearchProviderService implements SearchProvider {
   // ILIKE over the title of non-archived documents, ordered by title so the
   // truncated result set is stable. Position (fractional index) orders the
   // tree but is meaningless for search ranking.
+  // Runs under the CALLER's auth context (ambient AsyncLocalStorage from the
+  // GraphQL middleware) with normal repository permissions: a role or row
+  // predicate that hides a document must also hide it from Cmd+K. Never
+  // re-introduce a system context or shouldBypassPermissionChecks here.
   async search(params: SearchProviderParams): Promise<SearchProviderResult> {
     const searchInput = params.searchInput.trim();
 
     if (searchInput === '') {
       return { items: [] };
     }
-
-    const authContext = buildSystemAuthContext(params.workspaceId);
 
     // The cast keeps the untyped workspace repository honest: `find` with this
     // select projection returns exactly DocumentSearchRecord rows.
@@ -62,12 +63,11 @@ export class DocumentSearchProviderService implements SearchProvider {
         const documentRepository =
           this.workspaceOrmManager.getRepository<DocumentWorkspaceRepository>(
             'document',
-            { shouldBypassPermissionChecks: true },
           );
 
         return documentRepository.find({
           where: {
-            title: { ilike: `%${searchInput}%` },
+            title: { ilike: `%${escapeForIlike(searchInput)}%` },
             archivedAt: null,
           },
           select: { id: true, title: true },
@@ -75,7 +75,6 @@ export class DocumentSearchProviderService implements SearchProvider {
           take: params.limit,
         });
       },
-      authContext,
     )) as unknown as DocumentSearchRecord[];
 
     return {

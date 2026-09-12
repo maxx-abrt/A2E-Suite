@@ -19,6 +19,7 @@ export class DocumentShareExceptionFilter implements ExceptionFilter {
       case DocumentShareExceptionCode.DOCUMENT_SHARE_EXPIRED:
         throw new NotFoundError(exception);
       case DocumentShareExceptionCode.DOCUMENT_SHARE_FORBIDDEN:
+      case DocumentShareExceptionCode.DOCUMENT_SHARE_INVALID_INPUT:
         throw new UserInputError(exception);
       default:
         assertUnreachable(exception.code);

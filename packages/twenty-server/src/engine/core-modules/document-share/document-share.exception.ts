@@ -9,6 +9,7 @@ export enum DocumentShareExceptionCode {
   DOCUMENT_SHARE_NOT_FOUND = 'DOCUMENT_SHARE_NOT_FOUND',
   DOCUMENT_SHARE_FORBIDDEN = 'DOCUMENT_SHARE_FORBIDDEN',
   DOCUMENT_SHARE_EXPIRED = 'DOCUMENT_SHARE_EXPIRED',
+  DOCUMENT_SHARE_INVALID_INPUT = 'DOCUMENT_SHARE_INVALID_INPUT',
 }
 
 const getDocumentShareExceptionUserFriendlyMessage = (
@@ -23,6 +24,8 @@ const getDocumentShareExceptionUserFriendlyMessage = (
       return msg`Access to this share link is forbidden.`;
     case DocumentShareExceptionCode.DOCUMENT_SHARE_EXPIRED:
       return msg`This share link has expired.`;
+    case DocumentShareExceptionCode.DOCUMENT_SHARE_INVALID_INPUT:
+      return msg`Invalid share link input.`;
     default:
       assertUnreachable(code);
   }

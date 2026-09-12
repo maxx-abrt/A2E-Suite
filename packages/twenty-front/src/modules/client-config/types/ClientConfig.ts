@@ -26,6 +26,7 @@ export type ClientConfig = {
   captcha: Captcha;
   defaultSubdomain?: string;
   frontDomain: string;
+  landingPageUrl?: string;
   publicFunctionDomain?: string | null;
   isAttachmentPreviewEnabled: boolean;
   isConfigVariablesInDbEnabled: boolean;

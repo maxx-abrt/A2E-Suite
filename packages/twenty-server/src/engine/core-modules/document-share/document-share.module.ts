@@ -4,9 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DocumentShareEntity } from 'src/engine/core-modules/document-share/document-share.entity';
 import { DocumentShareResolver } from 'src/engine/core-modules/document-share/document-share.resolver';
 import { DocumentShareService } from 'src/engine/core-modules/document-share/document-share.service';
+import { TwentyOrmModule } from 'src/engine/twenty-orm/twenty-orm.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([DocumentShareEntity])],
+  imports: [TypeOrmModule.forFeature([DocumentShareEntity]), TwentyOrmModule],
   exports: [DocumentShareService],
   providers: [DocumentShareService, DocumentShareResolver],
 })
