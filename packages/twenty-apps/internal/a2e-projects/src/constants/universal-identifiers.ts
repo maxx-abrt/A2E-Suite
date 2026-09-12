@@ -19,6 +19,7 @@ export const OBJECT_IDS = {
   projectMember: 'c31a0400-0000-4000-8000-000000000000',
   timeEntry: 'c31a0500-0000-4000-8000-000000000000',
   label: 'c31a0600-0000-4000-8000-000000000000',
+  taskLabel: 'c31a0700-0000-4000-8000-000000000000',
 } as const;
 
 // Both sides of every relation, grouped by the record that owns the foreign key.
@@ -39,10 +40,11 @@ export const RELATION_IDS = {
   taskTimeEntries: 'c31a0500-0002-4000-8000-000000000004',
   timeEntryWorkspaceMember: 'c31a0500-0002-4000-8000-000000000005',
   workspaceMemberTimeEntries: 'c31a0500-0002-4000-8000-000000000006',
-  taskLabelLabel: 'c31a0600-0002-4000-8000-000000000001',
-  labelTasks: 'c31a0600-0002-4000-8000-000000000002',
-  taskLabelTask: 'c31a0600-0002-4000-8000-000000000003',
-  taskLabels: 'c31a0600-0002-4000-8000-000000000004',
+  taskLabelLabel: 'c31a0700-0002-4000-8000-000000000001',
+  labelTaskLabels: 'c31a0700-0002-4000-8000-000000000002',
+  labelsOnTask: 'c31a0700-0002-4000-8000-000000000004',
+  subtasks: 'c31a0100-0002-4000-8000-000000000003',
+  milestoneTasks: 'c31a0300-0002-4000-8000-000000000003',
 } as const;
 
 export const LABEL_IDENTIFIER_IDS = {
@@ -55,6 +57,8 @@ export const LABEL_IDENTIFIER_IDS = {
 
 export const LOGIC_FUNCTION_IDS = {
   postInstall: 'c31a0000-0012-4000-8000-000000000003',
+  purgeTrash: 'c31a0000-0012-4000-8000-000000000005',
+  taskHumanId: 'c31a0000-0012-4000-8000-000000000007',
 } as const;
 
 // Task-extension fields live on the standard task object (app fields,
@@ -64,11 +68,16 @@ export const TASK_FIELD_IDS = {
   project: 'c31a0201-0001-4000-8000-000000000001',
   tasksOnProject: 'c31a0201-0002-4000-8000-000000000001',
   projectStatus: 'c31a0201-0001-4000-8000-000000000002',
+  projectPriority: 'c31a0201-0001-4000-8000-000000000003',
   priority: 'c31a0201-0001-4000-8000-000000000003',
   estimate: 'c31a0201-0001-4000-8000-000000000004',
   blockIssue: 'c31a0201-0001-4000-8000-000000000005',
   blockedTasks: 'c31a0201-0002-4000-8000-000000000002',
   estimateLabel: 'c31a0201-0001-4000-8000-000000000006',
+  milestone: 'c31a0201-0001-4000-8000-000000000007',
+  parentTask: 'c31a0201-0001-4000-8000-000000000008',
+  taskLabels: 'c31a0201-0002-4000-8000-000000000003',
+  humanId: 'c31a0201-0001-4000-8000-000000000009',
 } as const;
 
 export const COMMAND_MENU_ITEM_IDS = {
@@ -78,6 +87,7 @@ export const COMMAND_MENU_ITEM_IDS = {
 
 export const NAVIGATION_MENU_ITEM_IDS = {
   projects: 'c31a0000-0010-4000-8000-000000000003',
+  myTasks: 'c31a0000-0010-4000-8000-000000000005',
 } as const;
 
 export const FRONT_COMPONENT_IDS = {
@@ -87,6 +97,12 @@ export const FRONT_COMPONENT_IDS = {
 
 export const VIEW_IDS = {
   allProjects: 'c31a0200-0003-4000-8000-000000000001',
+  allMilestones: 'c31a0300-0003-4000-8000-000000000001',
+  allLabels: 'c31a0600-0003-4000-8000-000000000001',
+  taskBoard: 'c31a0100-0003-4000-8000-000000000001',
+  taskCalendar: 'c31a0100-0003-4000-8000-000000000002',
+  taskMyTasks: 'c31a0100-0003-4000-8000-000000000003',
+  currentTasks: 'c31a0100-0003-4000-8000-000000000004',
 } as const;
 
 // View fields are positional, so their identifiers are derived. The middle

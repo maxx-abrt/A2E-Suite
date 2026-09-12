@@ -1,6 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql';
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UUIDScalarType, DateScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
 export class CreateDocumentShareInput {
@@ -25,6 +25,8 @@ export class CreateDocumentShareInput {
   @Field(() => String, { nullable: true })
   bodySalt?: string | null;
 
-  @Field({ nullable: true })
+  // Explicit scalar type required: without it NestJS GraphQL fails schema
+  // generation with UndefinedTypeError for this nullable Date input.
+  @Field(() => DateScalarType, { nullable: true })
   expiresAt?: Date | null;
 }

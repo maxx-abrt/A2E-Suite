@@ -50,6 +50,17 @@ export default defineObject({
       defaultValue: "''",
     },
     {
+      // Persisted join counter for task human ids (<KEY>-<n>): the number is
+      // minted once and never recomputed, so deleted tasks leave no gap.
+      universalIdentifier: 'c31a0200-0001-4000-8000-000000000010',
+      type: FieldType.NUMBER,
+      name: 'taskCounter',
+      label: 'Compteur de tâches',
+      description: 'Dernier n attribué aux identifiants de tâches CLÉ-n',
+      icon: 'IconCounter',
+      defaultValue: 0,
+    },
+    {
       universalIdentifier: 'c31a0200-0001-4000-8000-000000000003',
       type: FieldType.SELECT,
       name: 'status',

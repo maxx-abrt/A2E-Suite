@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UUIDScalarType, DateScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ObjectType('DocumentShare')
 export class DocumentShareDTO {
@@ -13,7 +13,9 @@ export class DocumentShareDTO {
   @Field(() => UUIDScalarType)
   documentRecordId: string;
 
-  @Field({ nullable: true })
+  // Explicit scalar type required: without it NestJS GraphQL fails schema
+  // generation with UndefinedTypeError for this nullable Date output.
+  @Field(() => DateScalarType, { nullable: true })
   expiresAt: Date | null;
 
   @Field({ nullable: false })
