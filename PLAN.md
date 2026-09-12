@@ -256,6 +256,12 @@ passphrase works from incognito; e2e covers create→edit→share→export.
       status (custom-status object w/ color + isDone), priority, labels,
       estimate (t-shirt), subtask parent relation, blockedBy self-relation,
       human id (`<projectKey>-<n>` computed), time-tracking entries object
+      → PARTIAL (fields: project relation, projectStatus select w/ options,
+      priority, estimate + estimateLabel, blockIssue→note self-relation;
+      subtask parent + time-tracking entries object deferred → P4.2/P4.3
+      bullets own those surfaces; custom-status object + labels deferred —
+      select pipeline shipped instead; human id needs a computed-field
+      mechanism, opens a follow-up server question)
 - [ ] Milestone object: name, dueDate, project, doneAt
 - [ ] Workflow template: "recurring task generator" (uses existing workflow
       engine)

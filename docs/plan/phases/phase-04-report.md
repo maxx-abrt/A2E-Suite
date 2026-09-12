@@ -72,3 +72,63 @@ server not possible (none running) — noted for the next agent running
   `node packages/twenty-sdk/dist/cli.cjs app:publish --private packages/twenty-apps/internal/a2e-projects && node ... app:install` —
   verify install/uninstall + Settings → Objects rendering per native law §5.
 - Position 110 leaves room for P4.2 My-tasks nav item at 120.
+
+
+## 2026-09-12 14:05 UTC — OpenHands (P4 agent, session 2)
+**Task:** P4.1 `task` extensions (app fields pinned on the standard task object)
+**Status:** PARTIAL DONE (subset of the bullet's list shipped; remainder
+documented inline in PLAN.md and below)
+**What was verified before writing (anti-hallucination passes):**
+- STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS is a value export from
+  twenty-sdk/define (not just a type), with .task = 20202020-1ba1-... —
+  real ids from packages/twenty-shared/src/metadata/constants/
+  standard-object-fields.constant.ts (task block) and
+  task-flat-object.mock.ts. note = 20202020-0b00-....
+- Real-estate personType.field.ts confirmed: app fields pinned on STANDARD
+  objects live as standalone src/fields/*.field.ts with
+  objectUniversalIdentifier = standard object id.
+- SYSTEM_VIEW_KEYS export covers only INDEX/FIELDS_WIDGET for the standard
+  app's own views (runtime probe of twenty-sdk/dist/define/index.cjs) —
+  app views on standard objects therefore point objectUniversalIdentifier
+  at the object id directly.
+- The SDK has NO many-to-many primitive (checked relation-type.interface.ts
+  + RelationType in dist) — stays an open plan-amendment question for
+  members (P4.1 session-1 report) and any labels-M2M idea here.
+- TagColor + FieldMetadataComplexOption (color: TagColor) verified live in
+  twenty-shared/src/types/FieldMetadataOptions.ts — used for status colors.
+**Files added:**
+- src/constants/universal-identifiers.ts: TASK_FIELD_IDS block
+  (c31a0201 family — task-field standalones).
+- src/constants/field-vocabulary.ts: +manyToOne join-column helper.
+- src/fields/task-project.field.ts (task→project M2O, FK on task,
+  onDelete SET_NULL, matching how Twenty treats assignee deletion)
+- src/fields/project-tasks.field.ts (project→tasks inverse O2M)
+- src/fields/task-project-status.field.ts (SELECT, 3 committed options
+  TODO/IN_PROGRESS/DONE gray/blue/green, default TODO)
+- src/fields/task-priority.field.ts (SELECT, 4 options)
+- src/fields/task-estimate.field.ts + task-estimate-label.field.ts
+  (TEXT pair — plain + colored-label variant, real-estate Text+options
+  pattern)
+- src/fields/task-block-issue.field.ts (task→note M2O "Bloquée par")
+- src/fields/note-blocked-tasks.field.ts (note→tasks inverse)
+- src/views/project-tasks.view.ts (standard-task TABLE view "Tâches
+  projet": title/project/projectStatus/assignee/priority/dueAt — the free
+  side-panel column surface native law §3 grants).
+**Verification done:**
+- npx tsc --noEmit (a2e-projects): 0 errors.
+- yarn lint (oxlint): 0 warnings 0 errors.
+- npx twenty app:publish --private: tarball builds, manifest.json 21.2kB
+  with all 9 families (objects 1, fields 7, views 2 incl. the new
+  task-surface view, pageLayouts 1, nav 1, cmds 2, frontComponents 2,
+  roles 1). Upload fails without a dev server on :2020 (session-1
+  behavior, not a code defect). .twenty/ build output cleaned pre-commit.
+**Scope honesty (NOT in this commit):**
+- labels (object), subtask parent relation, human id (computed) and
+  time-tracking entries object remain open; each is a full surface
+  (object+UI+relations), logged in PLAN.md's PARTIAL note. Suggestion:
+  labels→P4.2 (board tag UX), subtasks→P4.2 (tree UI), time-tracking→P4.3
+  (entries object + timer hook), human-id→needs a server computed-field
+  decision (page-layout hooks or domain module src/modules/project/) —
+  flagged, NOT silently invented here.
+- No post-install logic function added (no seed needed for this subset;
+  option ids already committed manifest-side).

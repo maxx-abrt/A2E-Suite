@@ -32,6 +32,20 @@ export const LOGIC_FUNCTION_IDS = {
   postInstall: 'c31a0000-0012-4000-8000-000000000003',
 } as const;
 
+// Task-extension fields live on the standard task object (app fields,
+// real-estate personType.field.ts pattern). `c31a0201` = family key issued
+// from the A2E namespace block, next to the object family (`c31a0200`).
+export const TASK_FIELD_IDS = {
+  project: 'c31a0201-0001-4000-8000-000000000001',
+  tasksOnProject: 'c31a0201-0002-4000-8000-000000000001',
+  projectStatus: 'c31a0201-0001-4000-8000-000000000002',
+  priority: 'c31a0201-0001-4000-8000-000000000003',
+  estimate: 'c31a0201-0001-4000-8000-000000000004',
+  blockIssue: 'c31a0201-0001-4000-8000-000000000005',
+  blockedTasks: 'c31a0201-0002-4000-8000-000000000002',
+  estimateLabel: 'c31a0201-0001-4000-8000-000000000006',
+} as const;
+
 export const COMMAND_MENU_ITEM_IDS = {
   createProject: 'c31a0000-0011-4000-8000-000000000004',
   goToProjects: 'c31a0000-0011-4000-8000-000000000005',
