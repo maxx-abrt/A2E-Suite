@@ -113,3 +113,45 @@ skipped; no AI attribution in commits; no i18n catalogs touched.
    `fix(apps): repair app lockfiles, SDK-2.31 API drift and CI script wiring`
    (app package.json/lockfiles + 2 src fixes) + this phase report + the
    PLAN.md annotation, same commit per PROMPT.md §2.3.
+
+## 2026-09-12 21:15 UTC — Zoo (code agent)
+
+**Task(s):** P0.1 follow-up — repair the two pre-existing front test failures
+recorded in the entry above (quick wins #1 from "For the next agent").
+
+**Status:** done (for those two suites; P0.1 itself remains partial — e2e,
+server-integration and SDK-pin decision still open, unchanged).
+
+**What I did:**
+- Committed the previous session's baseline as
+  `23632014 fix(apps): repair app lockfiles, SDK-2.31 API drift and CI script
+  wiring` (9 files: 3 app package.json + 2 lockfiles + 2 src fixes +
+  PLAN.md annotation + this report).
+- `packages/twenty-front/src/modules/settings/mcp-and-apis/utils/__tests__/mcpSetup.test.ts`:
+  updated the two hard-coded brand assertions (`connectorName`, Goose `name`)
+  from `Twenty` to `A2E Suite`, matching `MCP_SETUP.server.displayName`
+  (intentional fork rebrand in `constants/McpSetup.ts:14`). Product code
+  untouched.
+- `packages/twenty-front/src/hooks/__tests__/usePageChangeEffectNavigateLocation.test.ts`:
+  the exhaustive-matrix guard expected 302 cases but the file had 292. Root
+  cause: the hand-written matrix predates the fork-added `AppPath.DocumentShare`
+  route and had no block for it. Added the standard 10-case DocumentShare block
+  (plan-required, suspended→billing, logged-out→SignInUp, each onboarding
+  status, completed→undefined). `DocumentShare` is in neither
+  `ONGOING_USER_CREATION_PATHS` nor `ONBOARDING_PATHS`
+  (`src/auth/constants/`), so it follows the regular-app-page pattern; the
+  logged-out case relies on the not-ongoing-creation branch in
+  `usePageChangeEffectNavigateLocation.ts:96-104` returning SignInUp.
+
+**Verification (all run this session):**
+- `npx jest .../mcpSetup.test.ts --config=packages/twenty-front/jest.config.mjs`
+  → 10/10 passed.
+- `npx jest .../usePageChangeEffectNavigateLocation.test.ts --config=...`
+  → 306/306 passed (was 7022/7025 at baseline).
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → clean.
+- `npx nx lint:diff-with-main twenty-front` → success.
+
+**For the next agent:** remaining P0.1 UNVERIFIED items unchanged: e2e suites,
+`twenty-server:test:integration:with-db-reset`, and the maintainer SDK-pin
+(2.31 vs 2.39) decision. Front unit suite should now be fully green — rerun
+`npx nx test twenty-front` once to confirm no other drift before relying on it.

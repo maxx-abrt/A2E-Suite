@@ -408,10 +408,11 @@ authorization and persistence checks pass.
       lockfiles repaired (documents: none committed; accounting: 0 bytes) and
       SDK-2.31 API drift fixed (`gridPosition`, side-panel `pageTitle`);
       `typecheck`/`test:unit` CI scripts added to all three apps — the missing
-      scripts were why CI skipped typecheck. Two PRE-EXISTING front test
-      failures recorded (mcpSetup brand assertions; navigation-path matrix
-      count) — not environment, not yet repaired. UNVERIFIED: e2e and
-      server-integration targets; maintainer SDK-pin/CI decision open.
+      scripts were why CI skipped typecheck. Both recorded front test failures
+      repaired same day (mcpSetup brand assertions → `A2E Suite`; navigation
+      matrix regenerated with the missing DocumentShare block, 306/306).
+      UNVERIFIED: e2e and server-integration targets; maintainer SDK-pin/CI
+      decision open.
 - [ ] **P0.2 Backend access boundaries (after P0.1):** repair caller-scoped
       document search, record-level share authorization and consistent
       encrypted/plain snapshot validation. Test two workspaces, restricted
