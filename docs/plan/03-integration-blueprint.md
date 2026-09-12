@@ -6,6 +6,16 @@
 > All local reference projects are feature/UX inspiration only: never integrate
 > their apps wholesale, copy full code or adopt their stacks/dependencies.
 > If a primitive is missing, inspect and record the gap before extending it.
+> Target architecture, not a current-feature inventory. Reconciled 2026-09-12.
+> Reuse native primitives; document a concrete gap before adding a new one.
+
+[Documentation home](../README.md) · [Current app behavior](../applications.md)
+
+The realtime session/catch-up design, app AI registration, complete starter
+packs, global funding catalogue and notification service described below are
+acceptance targets, not all implemented contracts. Consult the codebase map
+and audit before relying on any named API; in particular `registerAiTools` is
+proposed, not an SDK export established by this guide.
 
 ## 1. Two extension tracks
 
@@ -32,6 +42,16 @@ permissions at request/job execution. A post-install flag alone is not an
 activation or security contract. Reuse application metadata and queue/runtime
 infrastructure; native install state remains the user-facing activation truth.
 Calendar packaging is decided in P4C.1; provider creation/sync already exists.
+Hybrid rule: domain behavior needing transactions, durable state or privileged
+server operations belongs under `src/modules/<domain>/`; cross-cutting behavior
+belongs in core. SDK logic functions already support scheduled/event work, so
+cron alone is not a reason to add a new domain module. Specify install gating,
+permissions and lifecycle explicitly; there is no assumed automatic feature-
+flag registration. The app remains the user-facing activation unit.
+
+Bureau should compose existing Documents/Projects rather than duplicate their
+objects; its packaging decision is pending. Bilan is `a2e-accounting`. See the
+[product contract](../product-experience.md).
 
 ## 2. Naming, ids and conventions
 
@@ -84,6 +104,19 @@ Calendar packaging is decided in P4C.1; provider creation/sync already exists.
 - **Nav**: every app contributes a discoverable native entry or grouped folder
   (e.g. Bilan); use supported VIEW/OBJECT/layout navigation patterns verified
   in the SDK. Preserve user reorder/hide choices rather than hard-coding order.
+- **Per-workspace activation**: CLI provisioning and Settings → Applications
+  reuse Twenty's registration/install machinery. Catalog visibility and
+  packaged availability must be verified separately. Uninstall removes
+  app-owned metadata and may destroy data; it is not a harmless disable
+  toggle. Define retention/dependencies and test on a disposable workspace.
+- **Onboarding presets**: extend the onboarding module with workspace
+  templates — `Individual`, `Student`, `Team`, `Non-profit`, `Small business`,
+  `CRM`. Each preset pre-installs apps, seeds nav order, dashboards and sample
+  data. Presented at workspace creation and re-runnable from Settings →
+  General ("Change template"). CRM-off presets hide CRM nav items (navigation
+  menu items are DB rows — presets just set visibility).
+- **Nav**: every app registers one navigation-menu-item (PAGE_LAYOUT or OBJECT
+  type), positioned after core items; folders allowed (e.g. "Finance").
 - **Command menu**: every app pins at least "Create <thing>" + "Go to <app>"
   commands, mirroring `open-media-notes.command-menu-item.ts`.
 - **Side panel**: record previews and quick-editors open in the existing side

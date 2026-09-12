@@ -1,10 +1,34 @@
-<p align="center">
-  <a href="https://www.twenty.com">
-    <img src="./packages/twenty-website/public/images/core/logo.svg" width="100px" alt="Twenty logo" />
-  </a>
-</p>
+# A2E Suite
 
-<h2 align="center">A2E Suite — The #1 Open-Source CRM</h2>
+**A modular workspace for notes, projects, collaboration and finance — built
+on Twenty's native platform.**
+
+A2E Suite is a Twenty fork evolving beyond CRM. Keep the familiar sidebar,
+records, views, permissions and workflows; activate only the experiences you
+need. **Bureau** is the intended work/knowledge experience. **Bilan** is the
+finance app (`a2e-accounting`). Existing CRM journeys remain part of the suite.
+
+> **Development status:** Documents, Projects and Bilan have source code, but
+> complete installation, starter-template and collaboration journeys still have
+> gaps. Bureau has no separate installable app definition yet. Source presence
+> and historical roadmap checkmarks are not release certification.
+
+## Start here
+
+| Goal | Guide |
+| --- | --- |
+| Understand the fork | [Documentation home](docs/README.md) |
+| Find or install Bilan / Bureau | [Applications and troubleshooting](docs/applications.md) |
+| Understand the intended experience | [Product, templates and file lifecycle](docs/product-experience.md) |
+| Pick development work | [Delivery plan](PLAN.md) and [architecture audit](docs/repository-architecture-audit.md) |
+| Contribute or run checks | [Agent guide](AGENTS.md), [codebase map](docs/plan/01-codebase-map.md), [verification](docs/verification.md) |
+| Self-host | [Deployment guide](DEPLOY.md); app provisioning is a separate step |
+
+## Twenty foundations and upstream resources
+
+The links and screenshots below describe the upstream platform, not a hosted
+A2E Suite service or proof that every planned A2E app is available. Package names
+remain `twenty-*` for compatibility; inspiration apps are not runtime services.
 
 <p align="center"><a href="https://twenty.com"><img src="./packages/twenty-website/public/images/readme/globe-icon.svg" width="12" height="12"/> Website</a> · <a href="https://docs.twenty.com"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="12" height="12"/> Documentation</a> · <a href="https://github.com/orgs/twentyhq/projects/1"><img src="./packages/twenty-website/public/images/readme/map-icon.svg" width="12" height="12"/> Roadmap </a> · <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-website/public/images/readme/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="./packages/twenty-website/public/images/readme/figma-icon.webp"  width="12" height="12"/>  Figma</a></p>
 
@@ -20,11 +44,14 @@
 
 <br />
 
-# Why A2E Suite
+## Why build on Twenty?
 
-A2E Suite gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves. A2E Suite is the CRM you build, ship, and version like the rest of your stack.
+Twenty supplies the metadata engine, app SDK, CRM records and shared UI that
+let A2E Suite grow without adding another identity, database or navigation
+system. The [fork's product contract](docs/product-experience.md) explains what
+we reuse and what remains to be delivered.
 
-<a href="https://twenty.com/resources/why-twenty"><img src="./packages/twenty-website/public/images/readme/star-icon.svg" width="14" height="14"/> Learn more about why we built A2E Suite</a>
+[Read the upstream Twenty rationale](https://twenty.com/resources/why-twenty).
 
 <br />
 
@@ -32,7 +59,9 @@ A2E Suite gives technical teams the building blocks for a custom CRM that meets 
 
 ### <img src="./packages/twenty-website/public/images/readme/globe-icon.svg" width="14" height="14"/> Cloud
 
-The fastest way to get started. Sign up at [twenty.com](https://twenty.com) and spin up a workspace in under a minute, with no infrastructure to manage and always up to date.
+[Twenty Cloud](https://twenty.com) is the upstream hosted service, not this
+fork's deployment. For A2E Suite use the [deployment guide](DEPLOY.md) and verify
+app provisioning with the [applications runbook](docs/applications.md).
 
 ### <img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="14" height="14"/> Build an app
 
@@ -42,31 +71,14 @@ Scaffold a new app with the A2E Suite CLI:
 npx create-twenty-app my-app
 ```
 
-Define objects, fields, and views as code:
+Use the generated app's pinned SDK and stable universal identifiers. See the
+[internal app authoring guide](packages/twenty-apps/README-A2E.md) for native
+objects, views, layouts, roles and commands. Do not copy existing app IDs.
 
-```ts
-import { defineObject, FieldType } from 'twenty-sdk/define';
-
-export default defineObject({
-  nameSingular: 'deal',
-  namePlural: 'deals',
-  labelSingular: 'Deal',
-  labelPlural: 'Deals',
-  fields: [
-    { name: 'name', label: 'Name', type: FieldType.TEXT },
-    { name: 'amount', label: 'Amount', type: FieldType.CURRENCY },
-    { name: 'closeDate', label: 'Close Date', type: FieldType.DATE_TIME },
-  ],
-});
-```
-
-Then ship it to your workspace:
-
-```bash
-npx twenty app:publish --private
-```
-
-See the [app development guide](https://docs.twenty.com/developers/extend/apps/getting-started) for objects, views, agents, and logic functions.
+Build, publish and install are separate steps, run in an app directory or with
+an explicit app path. Follow the [applications runbook](docs/applications.md)
+against a confirmed scratch remote; it explains current SDK-version and
+packaging limitations.
 
 ### <img src="./packages/twenty-website/public/images/readme/rocket-icon.svg" width="14" height="14"/> Self-hosting
 

@@ -6,6 +6,36 @@
 > feature/UX inspiration only, never backend/dependency integration targets.
 > Written against `TWENTY_CURRENT_VERSION = 2.39.0` (see
 > `packages/twenty-server/src/engine/core-modules/upgrade/constants/twenty-current-version.constant.ts`).
+> Source-backed navigation guide, reconciled at `3e664c89` on 2026-09-12.
+> Read the section relevant to your task, not every package. Current server
+> version: `2.39.0`; recheck the version constant before migration work.
+
+[Documentation home](../README.md) · [Applications runbook](../applications.md)
+
+## Task → first source path
+
+Paths below are relative to the repository root. Search within the listed
+module before widening to the monorepo; exclude inspiration trees/generated
+output from ordinary product searches.
+
+| Task / symptom | Start here | Follow through |
+| --- | --- | --- |
+| Missing Bilan / A2E installation cards | `packages/twenty-front/src/modules/a2e-workspace/` | `twenty-server/src/engine/core-modules/application/` (under `packages/`): registration → marketplace → install → manifest sync |
+| Workspace preset or onboarding | `packages/twenty-server/src/engine/core-modules/onboarding/` | Front `a2e-workspace`, `src/pages/onboarding/` and Settings General |
+| Documents / Bureau knowledge features | `packages/twenty-apps/internal/a2e-documents/src/` | Front `blocknote-editor`; server core `document-share` and `search` |
+| Projects / task fields | `packages/twenty-apps/internal/a2e-projects/src/` | Server `src/modules/task/`; native object-record views and page layouts |
+| Bilan finance / grants / fiches | `packages/twenty-apps/internal/a2e-accounting/src/` | `objects`, `lib`, `logic-functions`, `front-components`; no server accounting domain module yet |
+| Navigation / previews / workbench | `packages/twenty-front/src/modules/navigation/` | `navigation-menu-item`, `side-panel`, `command-menu`, `object-record`, `page-layout` |
+| Permissions / tenant isolation | `packages/twenty-server/src/engine/twenty-orm/` | Workspace auth context, roles and metadata permissions; do not use system-context bypasses for user queries |
+| Realtime / presence | `packages/twenty-server/src/engine/core-modules/realtime-gateway/` | Front `src/modules/realtime/`; HTTP `user-session` contract |
+| Files / future Drive | `packages/twenty-server/src/engine/core-modules/file-storage/` | `src/modules/attachment/`, FILES metadata and existing previews |
+| Metadata entity change | `packages/twenty-server/src/engine/workspace-manager/workspace-migration/` | Validation/build → flat maps/cache → runner; relevant syncable-entity guides |
+| SDK build / publish / install | `packages/twenty-sdk/src/cli/commands/` | `operations/`, app-local manifests/lockfiles; not deprecated `twenty-cli` |
+| Deployment / release | `packages/twenty-docker/twenty/Dockerfile` | Entrypoint, Coolify Compose, `.github/workflows/`; GitLab delivery policy still needs confirmation |
+
+Use [verification](../verification.md) for executable checks and the
+[architecture audit](../repository-architecture-audit.md) for known boundary
+failures. This map identifies code, not runtime readiness.
 
 ## 1. What this repo is
 
@@ -63,6 +93,9 @@ Key facts:
   with `engine/core-modules/realtime-gateway` ws/Redis and front realtime/
   presence/dock/tab code. Session auth, topic ACLs and durable refetch remain
   PLAN P0.3 repairs; source presence is not proven browser reliability.
+  with the A2E `realtime-gateway` WebSocket server and front client. The
+  gateway's session authentication, authorization and reconnect contracts
+  still need repair (audit F02/F06); code existence is not reliable co-editing.
 - **Background jobs**: BullMQ worker via `message-queue` + Redis; server and
   worker run the same codebase (`yarn start` runs front+server+worker).
 - **Feature flags**: `feature-flag` core module + `FeatureFlagGuard`; lab
@@ -112,10 +145,11 @@ First-class apps are the intended way to add product surface:
   `definePageLayout`, `defineRole`, `defineLogicFunction`,
   `defineCommandMenuItem`, `defineFrontComponent`, `FieldType`,
   `NavigationMenuItemType`, etc.
-- Publishing: `node packages/twenty-sdk/dist/cli.cjs app:publish --private &&
-  app:install` against a running server. App manifests and records sync into
-  the workspace metadata (applications, app objects/views/nav items appear in
-  Settings → Applications → Installed, and in the main nav automatically).
+- Publishing and installation are separate operations against a confirmed
+  server/workspace; both require the app directory or an explicit app path.
+  See the [applications runbook](../applications.md) for exact commands,
+  SDK compatibility, catalog visibility and lifecycle verification. Source
+  folders and Docker platform builds do not automatically install apps.
 - Front components run sandboxed with an SDK client (`uploadFile`, records
   access…), rendered by `front-components` module.
 - Marketplace UI: Settings → Applications (tabs: marketplace / installed /
@@ -148,6 +182,10 @@ orchestration, search federation) are server core modules.
 - **Onboarding**: `onboarding` core module (workspace creation flow).
 
 ## 6. Commands cheat-sheet
+
+Run from the root after [tooling setup](../verification.md). Database reset and
+integration reset targets are destructive: use disposable test databases only.
+Apps under `twenty-apps` are independent packages, not root workspaces.
 
 ```bash
 bash packages/twenty-utils/setup-dev-env.sh          # Postgres/Redis + DB init

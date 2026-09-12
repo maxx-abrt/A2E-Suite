@@ -101,6 +101,21 @@ UX. None means production-tested. IDs map to actionable PLAN.md tasks.
   established by inspecting controls. These become A2E acceptance tests.
 - W's duplicated `a2e_*` tables are a historical finance subset, not the same
   schema as B. Use B for finance feature detail; do not merge their schemas.
+> Historical feature analysis, with reference locations corrected 2026-09-12.
+> These are old, unrelated applications used to understand desired features,
+> not installable Twenty apps or an authoritative architecture for this fork.
+
+[Documentation home](../README.md) · [Current product contract](../product-experience.md)
+
+The tracked references are [Texxel/Bureau](<../../Inspiration apps (bureaubilan)/Texxel-main/>)
+and [A2EMoney](<../../Inspiration apps (bureaubilan)/A2EMoney-main/>).
+Read only the relevant schema/component for the assigned feature. There is no
+need to clone another repository or depend on a previous agent's `/tmp` paths.
+
+The inventories below describe reference behavior and desired mappings, not
+verified behavior of A2E Suite. Reconcile financial/security claims against the
+new implementation and domain review. Prefer Twenty's native primitives when
+a reference implementation conflicts with them.
 
 ## 1. Bureau (Texxel) in one paragraph
 
@@ -117,6 +132,9 @@ Observed declarations in W `convex/schema.ts` (read in full). Table names
 below are reference data shapes, not A2E models or runtime verification.
 Overlap notes distinguish native primitives from pending integration; current
 implementation details and release gates are in PLAN.md.
+Historical inventory of `Texxel-main/apps/web/convex/schema.ts` under the
+tracked inspiration directory. Table names describe the reference's Convex
+model, not this fork's database.
 
 | Bureau feature (real tables) | A2E Suite target | Overlap with Twenty today |
 |---|---|---|
@@ -162,6 +180,38 @@ replicate and not a claim that every referenced feature works.
 - `a2e_budgets`: amount/spent, category, monthly/yearly/custom period, dates,
   color/currency. `a2e_categories`: name/icon/color/type and archive. P7 maps
   these to existing metadata, rollup and accessible budget/report views.
+## 3. A2EMoney (Bilan) domain reference
+
+Historical analysis of `A2EMoney-main/convex/schema.ts`,
+`lib/fiche-templates.ts` (eight templates) and app routes. Use these for domain
+requirements, not verbatim architecture or compliance guarantees. Existing
+Bilan metadata/helpers should be extended, not ported a second time.
+
+### 3.1 Core finance tables
+
+- `projects` — enriched with `budget` (amount) + `spent` (rolled-up). **Port:
+  budget/spent fields on our P4 project object, fed by P7.**
+- `a2e_invoices` — number, client (+ `linkedClientId` → contacts), email,
+  address, items[{id, description, quantity, unitPrice}], status draft/sent/
+  paid/overdue/cancelled, issueDate/dueDate/paidDate, notes, linkedDocuments
+  (→ drive), attachments display-cache, linkedBookEntries, taxRate,
+  currency, projectId. **Port P7: invoice + invoiceLine objects.**
+- `a2e_expenses` — description, amount, category, date, paymentMethod, type
+  expense|income, linkedInvoice, linkedBookEntries,
+  **linkedSubventionSavedId**, isRecurring + recurringFrequency weekly/
+  monthly/yearly, tags, currency, sheetId, projectId. **Port P7.**
+- `a2e_bookSheets` ("Livre") — name/icon/color/type, columns[{id, name, type,
+  width, options[], formula, required, linkedType, **managed**}],
+  isTemplate, **systemKey "bilan.default.ledger" + isDefault + locked**: the
+  auto-journal every expense/income writes into, undeletable, managed
+  columns. **Port P7 verbatim concept: system ledger sheet.**
+- `a2e_bookEntries` — sheetId, cells, linkedDocuments/attachments,
+  linkedExpenses/linkedInvoices/linkedProjectId, **auto + sourceKind +
+  sourceId provenance for machine rows**. **Port P7.**
+- `a2e_budgets` — name, amount, spent, category, period monthly|yearly|
+  custom, startDate/endDate, color, currency. **Port P7: budget object +
+  tracking (spent = live rollup of expenses in period/category).**
+- `a2e_categories` — name/icon/color, type expense|income|both, archived.
 
 ### 3.2 Org identity & compliance
 
