@@ -1,5 +1,11 @@
 # Report 01 — A2E Suite Codebase Map
 
+> Context report; current-state corrections reconciled 2026-09-12.
+> PLAN.md's ledger/contracts and the dated architecture audit distinguish
+> implemented source from unverified release behavior. Reference apps are
+> feature/UX inspiration only, never backend/dependency integration targets.
+> Written against `TWENTY_CURRENT_VERSION = 2.39.0` (see
+> `packages/twenty-server/src/engine/core-modules/upgrade/constants/twenty-current-version.constant.ts`).
 > Source-backed navigation guide, reconciled at `3e664c89` on 2026-09-12.
 > Read the section relevant to your task, not every package. Current server
 > version: `2.39.0`; recheck the version constant before migration work.
@@ -67,7 +73,8 @@ Key facts:
 
 - **Metadata engine**: every workspace has its own schema; objects/fields/views
   are rows in metadata tables, materialized into per-workspace Postgres
-  schemas. Standard objects are declared once as `*.workspace-entity.ts` files
+  schemas. The server uses GraphQL Yoga; Apollo is the browser client.
+  Standard objects are declared once as `*.workspace-entity.ts` files
   (e.g. `src/modules/note/standard-objects/note.workspace-entity.ts`) and
   provisioned per workspace.
 - **Polymorphic activity targets**: `noteTarget`, `taskTarget`,
@@ -83,6 +90,9 @@ Key facts:
 - **Entity changes need a generated migration**: `npx nx run
   twenty-server:database:migrate:generate --name <name> --type <fast|slow>`.
 - **Realtime today**: SSE (`engine/api/mcp`, front `sse-db-event`) coexists
+  with `engine/core-modules/realtime-gateway` ws/Redis and front realtime/
+  presence/dock/tab code. Session auth, topic ACLs and durable refetch remain
+  PLAN P0.3 repairs; source presence is not proven browser reliability.
   with the A2E `realtime-gateway` WebSocket server and front client. The
   gateway's session authentication, authorization and reconnect contracts
   still need repair (audit F02/F06); code existence is not reliable co-editing.
@@ -154,11 +164,14 @@ orchestration, search federation) are server core modules.
 
 - **CRM core**: companies, people, opportunities, pipeline views, workflows,
   messaging (email/SMS campaigns + messaging-webhooks), timeline activities.
-- **Notes**: `note` object + noteTargets, notes tab on records, standalone
-  notes nav item; note export-to-PDF command exists.
+- **Notes/documents**: native `note` + noteTargets stays intact; the separate
+  `a2e-documents` app uses the host editor. Current PDF export is browser print,
+  not an assumed pre-existing dedicated note-PDF pipeline. Durable comments,
+  history, template/share inputs and populated exports need P3 acceptance.
 - **Tasks**: `task` object + taskTargets, per-record tasks tab, GO_TO_TASKS.
-- **Calendar**: full calendar module with Google/Microsoft/CalDAV drivers,
-  connected-account sync. Recurrence handled by providers, not locally.
+- **Calendar**: provider creation/import/sync with Google/Microsoft/CalDAV
+  drivers, not yet the proposed full calendar product. P4C owns local events,
+  full day/week/month UX, recurrence editing and reminders capability review.
 - **Files**: attachment polymorphic object + file-storage core module (S3-
   compatible). No standalone drive/browser UI.
 - **Search**: `search` core module (workspace search service powering Cmd+K).
