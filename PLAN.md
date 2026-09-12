@@ -226,9 +226,9 @@ App: `a2e-documents`.
       merge with version check (no OT in v1 — document the limitation)
 
 ### P3.3 Tree & navigation UX
-- [ ] Documents page: sidebar tree (drag to reparent via fractional index),
+- [x] Documents page: sidebar tree (drag to reparent via fractional index),
       quick search, favorites section, archive/trash with restore (7-day
-      purge cron via message-queue)
+      purge cron via app cron logic function)
 - [ ] Doc page: cover/icon/title/editor/outline; open in side-panel tab or
       full page (addressable URL)
 - [ ] Cmd+K: create/open document commands; search provider for docs

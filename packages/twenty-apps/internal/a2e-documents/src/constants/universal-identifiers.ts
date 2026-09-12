@@ -31,6 +31,7 @@ export const LABEL_IDENTIFIER_IDS = {
 
 export const LOGIC_FUNCTION_IDS = {
   postInstall: 'c31a0000-0012-4000-8000-000000000001',
+  purgeArchivedDocuments: 'c31a0000-0012-4000-8000-000000000002',
 } as const;
 
 export const COMMAND_MENU_ITEM_IDS = {

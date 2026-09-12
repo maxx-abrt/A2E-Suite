@@ -422,3 +422,73 @@ publishing `null` on unmount.
 **Gates:** co-editing 8/8 + full blocknote-editor 67/67 jest; tsgo clean
 (0 errors); oxlint 0 errors on blocknote-editor (1 pre-existing unused
 import in `getSlashMenu.ts` predates this task).
+
+## 2026-09-12 12:10 UTC — Zoo (GLM-5.3-Flash)
+
+### P3.3 Task 1 — Documents page: notion-like tree browser + trash cron (committed)
+
+**Task(s):** PLAN.md P3.3 item 1 — sidebar tree (drag to reparent via
+fractional index), quick search, favorites section, archive/trash with
+restore, 7-day purge cron.
+
+**Status:** Done.
+
+**What I did** (all in `packages/twenty-apps/internal/a2e-documents`):
+- `src/lib/fractional-position.ts`: local port of
+  `twenty-shared` `generateFractionalIndexBetween` (front-component sandbox
+  cannot import twenty-shared — same constraint as the `field-vocabulary.ts`
+  TagColor port) + `buildAppendPosition` helper. Byte-compatible with the
+  original: it never validates keys on entry (my first draft added
+  `validateOrderKey` calls and broke on `'a0'`; removed).
+- `src/lib/document-tree.ts`: `TreeDocument`, cycle-guarded
+  `isDescendantOf`, `buildMoveDocumentPayload` (excludes the moved doc from
+  its own sibling bounds, fractional insert at target index),
+  `buildRestoreDocumentPayload` (append at end of chosen parent).
+- `src/lib/trash-retention.ts`: `TRASH_RETENTION_DAYS = 7`;
+  `isPastTrashRetention` — missing/unparsable `archivedAt` never purges.
+- `src/logic-functions/purge-archived-documents.ts`: daily 04:00 cron logic
+  function (`cronTriggerSettings`, pattern per a2e-accounting precedent);
+  queries `archivedAt: NOT_NULL` (firstPage 500), filters by retention,
+  destroys per-id. Universal identifier
+  `c31a0000-0012-4000-8000-000000000002` (LOGIC_FUNCTION family).
+- `src/front-components/document-browser.front-component.tsx`: rebuilt as a
+  Notion-like browser over the existing Documents nav surface — quick
+  search (flat filtered results), Favoris, Arborescence (recursive tree,
+  HTML5 drag-and-drop: drop ON a node appends as child, drop on a child
+  wrapper inserts at that sibling index; custom mime
+  `text/a2e-document-id`), Corbeille with restore / destroy and a
+  "purge imminente" badge past retention. Opening a doc navigates via
+  `navigate(AppPath.RecordShowPage, { objectNameSingular, objectRecordId })`
+  (positional args — NavigateFunction is `(to, params?, …)`, not an object).
+  `position` now selected in queries so ordering is fractional-indexed.
+- `src/constants/universal-identifiers.ts`: added the purge cron id.
+
+**Decisions:**
+- Purge runs as an app cron logic function (a2e-accounting
+  `sweep-overdue-invoices.ts` precedent) instead of core message-queue
+  plumbing — app-first integration law; PLAN wording updated accordingly.
+- Drag-drop modeled after Notion: drop on node = make child; drop between
+  siblings = insert at index. Cycle rejection lives in the pure lib so it
+  is unit-testable without React.
+- Keep the browser as the existing front-component (the "left sidebar
+  worktree") and route opening to the standard record page via
+  `AppPath.RecordShowPage` rather than inventing new routing — the
+  dedicated doc page surface is P3.3 task 2.
+
+**Verification:** tsc clean (0 errors); oxlint 0 warnings/0 errors;
+19/19 lib tests pass (fractional-position 7, document-tree 7,
+trash-retention 5) plus 6 pre-existing instantiate-template tests;
+`twenty-sdk` `dev:build` succeeded (7 files, manifest + typecheck OK).
+No locale files touched.
+
+**For the next agent:**
+- `navigate` in the front-component sandbox is positional
+  (`to, params, queryParams, options`) — not a react-router-style object.
+- Front-component sandbox: no twenty-shared; port utils locally with a WHY
+  header (precedents now: `field-vocabulary.ts`, `fractional-position.ts`).
+- `defineFrontComponent` lives in `twenty-sdk/define`; `navigate`/`AppPath`
+  in `twenty-sdk/front-component`.
+- P3.3 remaining: doc page (cover/icon/title/editor/outline, side-panel or
+  full page URL), Cmd+K commands + docs search provider (server stub
+  `document-search-provider.service.ts` still empty), "Save as document"
+  record integration.
