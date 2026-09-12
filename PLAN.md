@@ -232,7 +232,7 @@ App: `a2e-documents`.
 - [x] Doc page: cover/icon/title/editor/outline; open in side-panel tab or
       full page (addressable URL)
 - [x] Cmd+K: create/open document commands; search provider for docs
-- [ ] Record integration: "Save as document" from record notes tab (copy);
+- [x] Record integration: "Save as document" from record notes tab (copy);
       doc ↔ record relation field (morph-style link on document)
 
       For docs system, use the base tree system notion-like, cleanly.

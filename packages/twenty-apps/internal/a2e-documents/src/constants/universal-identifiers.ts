@@ -37,6 +37,9 @@ export const LOGIC_FUNCTION_IDS = {
 export const COMMAND_MENU_ITEM_IDS = {
   createDocument: 'c31a0000-0011-4000-8000-000000000001',
   goToDocuments: 'c31a0000-0011-4000-8000-000000000002',
+  createDocumentAndOpen: 'c31a0000-0011-4000-8000-000000000003',
+  saveCompanyAsDocument: 'c31a0000-0011-4000-8000-000000000004',
+  savePersonAsDocument: 'c31a0000-0011-4000-8000-000000000005',
 } as const;
 
 export const NAVIGATION_MENU_ITEM_IDS = {
@@ -47,6 +50,7 @@ export const FRONT_COMPONENT_IDS = {
   documentBrowser: 'c31a0000-0013-4000-8000-000000000001',
   documentPage: 'c31a0000-0013-4000-8000-000000000002',
   createDocumentCommand: 'c31a0000-0013-4000-8000-000000000003',
+  saveRecordAsDocumentCommand: 'c31a0000-0013-4000-8000-000000000004',
 } as const;
 
 export const VIEW_IDS = {

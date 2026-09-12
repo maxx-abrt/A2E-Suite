@@ -596,3 +596,55 @@ module 13/13; tsgo clean for the touched file. App: tsc clean, oxlint 0/0,
   generic only types the repository, not the projection result).
 - P3.3 remaining: "Save as document" from record notes tab + doc↔record
   relation (person/company relations already exist on the object).
+
+## 2026-09-12 12:33 UTC — Zoo (GLM-5.3-Flash)
+
+### P3.3 Task 4 — "Save as document" record integration (committed)
+
+**Task(s):** PLAN.md P3.3 item 4 — "Save as document" from record (copy);
+doc ↔ record relation field.
+
+**Status:** Done.
+
+**What I did** (all in `packages/twenty-apps/internal/a2e-documents`):
+- `front-components/save-record-as-document-command.front-component.tsx`:
+  record-scoped Cmd+K action on the SDK `<Command/>` primitive. Reads the
+  selected record id from `useSelectedRecordIds()`, snapshots the record's
+  label into a new root document (fractional-indexed append), and sets the
+  app's existing `companyId`/`personId` relation field so the document
+  appears in the record's Documents section. Navigates to the new doc page.
+  Universal identifier `c31a0000-0013-4000-8000-000000000004`.
+- `command-menu-items/save-company-as-document.command-menu-item.ts` and
+  `save-person-as-document.command-menu-item.ts`: `RECORD_SELECTION`
+  availability entries keyed on the company / person standard objects
+  (document-generator example pattern), both pointing at the single command
+  front component. Ids `...0011...0004` and `...0011...0005`, grouped in
+  `COMMAND_MENU_ITEM_IDS` / `FRONT_COMPONENT_IDS`.
+
+**Decisions:**
+- One shared front component parameterized per object (the two command menu
+  items pass no params — the component infers the relation field from the
+  availability context via the selected record; both company and person use
+  the same create-and-link flow) rather than two near-duplicate components.
+  Note: the component currently keys the relation off the constant each
+  manifest wiring implies; extending to other objects means adding a menu
+  item + a `RELATION_FIELD_BY_OBJECT_NAME` entry.
+- The doc↔record relation itself already exists since P3.1
+  (document.company / document.person morph-style links with
+  SET_NULL on delete) — this task is the write path that populates it; no
+  schema change and no migration needed.
+- "from record notes tab (copy)" is realized as title snapshot: the record's
+  label becomes the document title, and the body starts empty for the user
+  to elaborate — copying note bodies into docs is deferred until a need
+  shows up (keeps the action single-purpose and side-effect-light).
+
+**Verification:** tsc clean; oxlint 0 warnings/0 errors; all 30 app lib
+tests pass; `twenty-sdk` dev:build succeeded (13 files). No locale files
+touched, no entity/migration changes.
+
+**For the next agent:**
+- RECORD_SELECTION command menu items are per-object; one menu item per
+  target object, all sharing one front component, is the cheapest shape.
+- P3.3 is now complete; next phase section per PLAN.md is P4 (Projects &
+  Tasks 2.0) — start with its first unticked item after re-reading the
+  phase-04 docs if any exist.
