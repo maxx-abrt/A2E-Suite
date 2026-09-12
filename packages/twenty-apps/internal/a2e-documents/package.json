@@ -15,7 +15,8 @@
   "scripts": {
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",
-    "lint:fix": "oxlint --fix -c .oxlintrc.json ."
+    "lint:fix": "oxlint --fix -c .oxlintrc.json .",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",

@@ -69,7 +69,6 @@ const openDocumentInSidePanel = (documentId: string): void => {
     page: SidePanelPages.ViewRecord,
     recordId: documentId,
     objectNameSingular: 'documents',
-    pageTitle: 'Document',
   });
 };
 

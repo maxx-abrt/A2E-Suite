@@ -402,6 +402,16 @@ authorization and persistence checks pass.
       Correct app CI script/lockfile discovery and verify SDK 2.31 app pins
       against server/SDK 2.39 before assuming compatibility. Decide authoritative
       GitLab release checks with maintainers (audit F08/F09).
+      → PARTIAL (2026-09-12, phase-00 report): Node 24.20/Yarn 4.13, local
+      PG16/Redis and Playwright chromium provisioned; uncached twenty-shared
+      build, server tests (7786 passed) and server/front builds pass. App
+      lockfiles repaired (documents: none committed; accounting: 0 bytes) and
+      SDK-2.31 API drift fixed (`gridPosition`, side-panel `pageTitle`);
+      `typecheck`/`test:unit` CI scripts added to all three apps — the missing
+      scripts were why CI skipped typecheck. Two PRE-EXISTING front test
+      failures recorded (mcpSetup brand assertions; navigation-path matrix
+      count) — not environment, not yet repaired. UNVERIFIED: e2e and
+      server-integration targets; maintainer SDK-pin/CI decision open.
 - [ ] **P0.2 Backend access boundaries (after P0.1):** repair caller-scoped
       document search, record-level share authorization and consistent
       encrypted/plain snapshot validation. Test two workspaces, restricted

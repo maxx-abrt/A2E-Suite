@@ -45,8 +45,7 @@ export default definePageLayout({
           title: 'Total facturé',
           type: 'GRAPH',
           objectUniversalIdentifier: OBJECT_IDS.invoice,
-          position: {
-            layoutMode: PageLayoutTabLayoutMode.GRID,
+          gridPosition: {
             row: 0,
             column: 0,
             rowSpan: 2,
@@ -66,8 +65,7 @@ export default definePageLayout({
           title: 'Encaissé',
           type: 'GRAPH',
           objectUniversalIdentifier: OBJECT_IDS.invoice,
-          position: {
-            layoutMode: PageLayoutTabLayoutMode.GRID,
+          gridPosition: {
             row: 0,
             column: 3,
             rowSpan: 2,
@@ -87,8 +85,7 @@ export default definePageLayout({
           title: 'Mouvements enregistrés',
           type: 'GRAPH',
           objectUniversalIdentifier: OBJECT_IDS.financeEntry,
-          position: {
-            layoutMode: PageLayoutTabLayoutMode.GRID,
+          gridPosition: {
             row: 0,
             column: 6,
             rowSpan: 2,
@@ -108,8 +105,7 @@ export default definePageLayout({
           title: 'Aides au catalogue',
           type: 'GRAPH',
           objectUniversalIdentifier: OBJECT_IDS.subvention,
-          position: {
-            layoutMode: PageLayoutTabLayoutMode.GRID,
+          gridPosition: {
             row: 0,
             column: 9,
             rowSpan: 2,
@@ -129,8 +125,7 @@ export default definePageLayout({
           title: 'Factures par statut',
           type: 'GRAPH',
           objectUniversalIdentifier: OBJECT_IDS.invoice,
-          position: {
-            layoutMode: PageLayoutTabLayoutMode.GRID,
+          gridPosition: {
             row: 2,
             column: 0,
             rowSpan: 5,
@@ -151,8 +146,7 @@ export default definePageLayout({
           title: 'Dépenses et recettes par nature',
           type: 'GRAPH',
           objectUniversalIdentifier: OBJECT_IDS.financeEntry,
-          position: {
-            layoutMode: PageLayoutTabLayoutMode.GRID,
+          gridPosition: {
             row: 2,
             column: 6,
             rowSpan: 5,
@@ -173,8 +167,7 @@ export default definePageLayout({
           title: 'Budgets consommés',
           type: 'GRAPH',
           objectUniversalIdentifier: OBJECT_IDS.budget,
-          position: {
-            layoutMode: PageLayoutTabLayoutMode.GRID,
+          gridPosition: {
             row: 7,
             column: 0,
             rowSpan: 5,
@@ -196,8 +189,7 @@ export default definePageLayout({
           title: 'Dossiers de subvention par statut',
           type: 'GRAPH',
           objectUniversalIdentifier: OBJECT_IDS.savedSubvention,
-          position: {
-            layoutMode: PageLayoutTabLayoutMode.GRID,
+          gridPosition: {
             row: 7,
             column: 6,
             rowSpan: 5,
