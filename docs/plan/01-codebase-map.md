@@ -1,6 +1,9 @@
 # Report 01 — A2E Suite Codebase Map
 
-> Context report for implementing agents. Read this before touching anything.
+> Context report; current-state corrections reconciled 2026-09-12.
+> PLAN.md's ledger/contracts and the dated architecture audit distinguish
+> implemented source from unverified release behavior. Reference apps are
+> feature/UX inspiration only, never backend/dependency integration targets.
 > Written against `TWENTY_CURRENT_VERSION = 2.39.0` (see
 > `packages/twenty-server/src/engine/core-modules/upgrade/constants/twenty-current-version.constant.ts`).
 
@@ -14,8 +17,8 @@ Primary packages:
 
 | Package | Stack | Role |
 |---|---|---|
-| `twenty-server` | NestJS, TypeORM, PostgreSQL, Redis, GraphQL (Apollo) | API server + background worker |
-| `twenty-front` | React 18, Jotai, Linaria, Vite, Apollo, Lingui | SPA frontend |
+| `twenty-server` | NestJS 11, TypeORM, PostgreSQL, Redis, GraphQL Yoga | API server + background worker |
+| `twenty-front` | React 19, Jotai, Linaria, Vite, Apollo client, Lingui | SPA frontend |
 | `twenty-shared` | TypeScript | Isomorphic types/utils (`twenty-shared/utils` guards) |
 | `twenty-ui` | React + Linaria | Design system, icon dictionary (`src/icon/icon-dictionary.md`) |
 | `twenty-sdk` | TypeScript | App SDK (`defineApplication`, `defineObject`, …) + publish/install CLI |
@@ -40,7 +43,8 @@ Key facts:
 
 - **Metadata engine**: every workspace has its own schema; objects/fields/views
   are rows in metadata tables, materialized into per-workspace Postgres
-  schemas. Standard objects are declared once as `*.workspace-entity.ts` files
+  schemas. The server uses GraphQL Yoga; Apollo is the browser client.
+  Standard objects are declared once as `*.workspace-entity.ts` files
   (e.g. `src/modules/note/standard-objects/note.workspace-entity.ts`) and
   provisioned per workspace.
 - **Polymorphic activity targets**: `noteTarget`, `taskTarget`,
@@ -55,9 +59,10 @@ Key facts:
   `packages/twenty-server/docs/UPGRADE_COMMANDS.md`.
 - **Entity changes need a generated migration**: `npx nx run
   twenty-server:database:migrate:generate --name <name> --type <fast|slow>`.
-- **Realtime today**: SSE only (`engine/api/mcp` streams; front has an
-  `sse-db-event` module for DB-event subscriptions). **No WebSocket server
-  exists yet.**
+- **Realtime today**: SSE (`engine/api/mcp`, front `sse-db-event`) coexists
+  with `engine/core-modules/realtime-gateway` ws/Redis and front realtime/
+  presence/dock/tab code. Session auth, topic ACLs and durable refetch remain
+  PLAN P0.3 repairs; source presence is not proven browser reliability.
 - **Background jobs**: BullMQ worker via `message-queue` + Redis; server and
   worker run the same codebase (`yarn start` runs front+server+worker).
 - **Feature flags**: `feature-flag` core module + `FeatureFlagGuard`; lab
@@ -125,11 +130,14 @@ orchestration, search federation) are server core modules.
 
 - **CRM core**: companies, people, opportunities, pipeline views, workflows,
   messaging (email/SMS campaigns + messaging-webhooks), timeline activities.
-- **Notes**: `note` object + noteTargets, notes tab on records, standalone
-  notes nav item; note export-to-PDF command exists.
+- **Notes/documents**: native `note` + noteTargets stays intact; the separate
+  `a2e-documents` app uses the host editor. Current PDF export is browser print,
+  not an assumed pre-existing dedicated note-PDF pipeline. Durable comments,
+  history, template/share inputs and populated exports need P3 acceptance.
 - **Tasks**: `task` object + taskTargets, per-record tasks tab, GO_TO_TASKS.
-- **Calendar**: full calendar module with Google/Microsoft/CalDAV drivers,
-  connected-account sync. Recurrence handled by providers, not locally.
+- **Calendar**: provider creation/import/sync with Google/Microsoft/CalDAV
+  drivers, not yet the proposed full calendar product. P4C owns local events,
+  full day/week/month UX, recurrence editing and reminders capability review.
 - **Files**: attachment polymorphic object + file-storage core module (S3-
   compatible). No standalone drive/browser UI.
 - **Search**: `search` core module (workspace search service powering Cmd+K).

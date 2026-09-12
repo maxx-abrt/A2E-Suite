@@ -1,10 +1,11 @@
 # Report 04 — Twenty-Native Law (binding implementation rules)
 
-> The purpose of this document: every feature MUST be built the way Twenty
-> itself builds features. No parallel frameworks, no side systems, no
-> "cleaner" reinventions. If Twenty already has a primitive for it, USE IT.
-> Implementers: read this before designing any task. Violations = rejected
-> in review (phase report must log a justification for any exception).
+> Reconciled 2026-09-12: use actual Twenty primitives, not invented APIs or
+> parallel frameworks. PLAN.md owns current status, dependency order, C1–C7
+> product/lifecycle contracts and E01–E12 acceptance. These rules are target
+> guidance, not evidence that existing app definitions meet them.
+> Every reference app/project is feature/UX inspiration only: no wholesale
+> integration, source transplant or architecture/dependency adoption.
 
 ## 0. Prime directive
 
@@ -12,8 +13,9 @@ Twenty's strength is its **metadata-driven core**: objects, fields, views,
 page layouts, filters, roles, workflows are DATA, provisioned per workspace.
 Apps are the sanctioned way to ship new product surface on top of that
 core. Our roadmap adds product modules through that system — users get
-Notion/Huly/Bureau-class features that behave exactly like native Twenty
-because they ARE native Twenty metadata + first-party code.
+feature-rich, Notion-like flows through native Twenty metadata and first-party
+code. Progressive disclosure beats Huly-like density: templates and a useful
+first action must not require users to learn metadata or workbench controls.
 
 ```
 server core-modules  →  cross-cutting infra (realtime, notifications, AI)
@@ -27,15 +29,15 @@ twenty-front modules  →  first-party UI where app sandbox is not enough
 | Product concept | REQUIRED Twenty primitive | Forbidden alternative |
 |---|---|---|
 | New entity ("invoice", "project"…) | SDK `defineObject` in the app (metadata) | Hand-written TypeORM entity unless server logic demands it (then domain module + upgrade command) |
-| List/table/kanban/board views | SDK `defineView` (ViewType: table/kanban/board…) on the object | Custom React table/grid per object |
+| List/table/kanban/calendar views | SDK `defineView` using verified ViewType values on the object; board means KANBAN, not an invented BOARD enum | Custom React table/grid per object |
 | Record detail page | Page layout (`definePageLayout`) with standard widget types | Custom one-off detail screens (front components allowed only for genuinely novel layouts, e.g. Gantt) |
 | Custom statuses (task columns) | Select field + `isDone`-style semantics via field options; kanban view groups on it | Separate status engine |
 | Relations to CRM records | SDK relation fields to `company`/`person`/`opportunity` | String-id columns |
 | Files/receipts | FILES field type → attachment/file-storage | Custom file tables |
 | Rich text | RICH_TEXT (BlockNote JSON) + blocknote-editor | New editor stack |
-| Permissions per module | App `defineRole` + workspace roles | Custom ACL tables |
+| Permissions per module | Verify SDK role API (`defineApplicationRole` in current apps), workspace roles and row/field permissions; membership junctions are domain data | Parallel authentication/ACL engine |
 | Automation ("on invoice paid → …") | Workflow engine (`workflow` module, workflow templates shipped by app) | Custom event handlers for user-facing automation |
-| Scheduled jobs (recurring invoices, purges, ingest) | message-queue + cron core module (server domain module) — user-facing control via workflow templates where sensible | Per-feature schedulers |
+| Scheduled jobs (recurring entries, purges, ingest) | Existing app logic-function cron triggers or server message-queue jobs when authoritative domain behavior requires them; opt-in user recipes via workflows | Per-feature schedulers |
 | Dashboard/widgets | Page layouts + widget types (existing enum; extend additively via upgrade command when a new type is truly needed) | Custom dashboard framework |
 | Settings surfaces | Settings sections pattern (SettingsRoutes + settings nav) | Modal-only config |
 | Feature availability | App install state + feature flags (kill-switch) | Env-var-only gating for user-facing features |
@@ -56,23 +58,28 @@ src/
   application.config.ts       // defineApplication, fixed UUID
   objects/*.object.ts         // defineObject per entity
   fields/*.field.ts           // cross-object relation fields
-  views/*.view.ts             // defineView (table + board minimum per object)
+  views/*.view.ts             // defineView (table; kanban only when meaningful)
   page-layouts/*.page-layout.ts
   navigation-menu-items/*.navigation-menu-item.ts
   roles/*.role.ts             // minimum viable role grants
-  logic-functions/post-install.ts   // enable flag, register AI tools/search provider
+  logic-functions/post-install.ts   // idempotent operational defaults; no parallel registry
   command-menu-items/*.command-menu-item.ts
   components/*.front-component.tsx  // only where metadata UI cannot express it
 ```
 
 Rules:
-- One object per file; file name = object name; exports named + default
-  (match real-estate).
+- One object per file; file name = object name. Match the actual SDK loader
+  convention in adjacent app declaration files (currently default declaration
+  exports), not an invented named-plus-default requirement. Ordinary product
+  TypeScript follows CLAUDE.md's named-export convention.
 - Every app object ships at minimum: a table view, a record page layout,
   a label identifier field, sensible `position`s on nav items.
-- The app MUST be uninstallable: no orphan rows, no orphan nav items.
-  Test install → uninstall → reinstall on a scratch workspace per app
-  (task in each phase's acceptance).
+- Lifecycle follows PLAN C3: native uninstall may remove app data and fields;
+  it is not reversible disable. Preview dependency/data/file impact, export and
+  require confirmation; block removal if retention cannot be honored. Test
+  populated install → upgrade → removal/failure → reinstall, retained standard
+  records/shared files, revoked shares and stopped jobs/tools/search. Reinstall
+  cannot promise deleted-data recovery.
 - Heavy UI decision order: (1) metadata views/page layouts; (2) page-layout
   FRONT_COMPONENT widget; (3) dedicated front page feature-flagged — in that
   order. Log the choice in the phase report.
@@ -113,7 +120,7 @@ Rules:
 A feature is NOT done when it "works standalone". It is done when:
 
 - [ ] Object(s) visible in Settings → Objects (metadata) with correct icons/labels
-- [ ] Views appear and behave (table + board minimum; filters/sort work)
+- [ ] Views appear and behave (table, plus appropriate kanban/calendar; filters/sort work)
 - [ ] Record page renders via page layout (tabs: details, timeline, tasks,
       notes, files inherited for free — VERIFY they appear)
 - [ ] Nav item present, reorderable, hideable like native items
@@ -126,7 +133,10 @@ A feature is NOT done when it "works standalone". It is done when:
 - [ ] Workflows/automation templates installed with the app
 - [ ] Settings: any module settings live in a proper settings section
 - [ ] fr + en complete; light + dark verified; responsive spot-check
-- [ ] Uninstall/reinstall clean on scratch workspace
+- [ ] Onboarding/template apply and later install use one readiness contract;
+      defaults reusable, samples optional, existing customizations preserved
+- [ ] Populated uninstall/reinstall, dependencies/export/retention and failed
+      hooks tested per C3; no orphan references or misleading restore promise
 - [ ] Permissions: viewer/member/admin behave differently where the module
       restricts anything
 
@@ -160,8 +170,9 @@ report → plan amendment. Never fake it.
 - Virtualization for large surfaces (Gantt, chat scrollback, book grids).
 - Redis caching for expensive aggregates (budget spent rollups) with
   explicit invalidation on writes.
-- Feature-flag EVERY new core module surface; default-on but kill-switchable
-  (env + admin), mirroring the `lab`/feature-flag modules.
+- Gate new core surfaces using existing feature-flag patterns. Enable only
+  after their acceptance checks; app installation and role permissions still
+  apply. A kill-switch is containment, not an app uninstall/data-retention policy.
 
 ## 8. What "keeps working" means (regression covenant)
 

@@ -1,8 +1,11 @@
 # Report 03 — Integration Blueprint (how every module plugs in)
 
-> The one-page contract every implementing agent must follow. If a change
-> cannot be expressed within this blueprint, stop and re-plan — do not invent
-> parallel systems.
+> Twenty-native implementation guidance, reconciled 2026-09-12.
+> PLAN.md owns status, dependencies, C1–C7 contracts and E01–E12 acceptance.
+> This blueprint describes target behavior, not a claim it already works.
+> All local reference projects are feature/UX inspiration only: never integrate
+> their apps wholesale, copy full code or adopt their stacks/dependencies.
+> If a primitive is missing, inspect and record the gap before extending it.
 
 ## 1. Two extension tracks
 
@@ -22,11 +25,13 @@ app authored in the SDK format (reference:
 `components/` (front components), and heavyweight UI as front components or
 first-party front pages feature-flagged in.
 
-Hybrid rule: an app may need a server module for complex behavior (chat needs
-the gateway; accounting needs cron jobs). That module lives under
-`src/modules/<domain>/` (domain modules, not core) and is activated by app
-install (logic-function post-install enables the feature flag) — the app
-remains the user-facing unit of activation.
+Hybrid rule: domain behavior may require `src/modules/<domain>/` for atomic
+operations or authoritative policy; ordinary app jobs can use existing logic
+function cron/event triggers. Domain services check workspace app state and
+permissions at request/job execution. A post-install flag alone is not an
+activation or security contract. Reuse application metadata and queue/runtime
+infrastructure; native install state remains the user-facing activation truth.
+Calendar packaging is decided in P4C.1; provider creation/sync already exists.
 
 ## 2. Naming, ids and conventions
 
@@ -51,18 +56,34 @@ remains the user-facing unit of activation.
 
 ## 3. Activation & user experience contract
 
-- **Per-workspace activation**: app installed via CLI during dev, via
-  Settings → Applications → Marketplace in product. Uninstall must cleanly
-  remove app objects/views/nav (Twenty's app sync already handles deletion on
-  uninstall — verify per app in review).
-- **Onboarding presets**: extend the onboarding module with workspace
-  templates — `Individual`, `Student`, `Team`, `Non-profit`, `Small business`,
-  `CRM`. Each preset pre-installs apps, seeds nav order, dashboards and sample
-  data. Presented at workspace creation and re-runnable from Settings →
-  General ("Change template"). CRM-off presets hide CRM nav items (navigation
-  menu items are DB rows — presets just set visibility).
-- **Nav**: every app registers one navigation-menu-item (PAGE_LAYOUT or OBJECT
-  type), positioned after core items; folders allowed (e.g. "Finance").
+- **Lifecycle (PLAN C3)**: install via existing application registration/install
+  and metadata migration, surfaced in Settings and onboarding. Hide is a
+  preference; uninstall can delete app objects/fields/data. Do not present it
+  as reversible disable. Preflight dependencies, data/file impact and export;
+  block removal where retention cannot be honored. Revoke shares and stop jobs/
+  tools/search; test failed hooks, populated removal, upgrade and reinstall.
+  Standard CRM records survive; app-added field values require explicit policy.
+- **Onboarding/templates (PLAN C1/C2)**: six preset identifiers already exist;
+  current service does not provide truthful partial setup or optional sample
+  seeding. Unify preset and checkbox choices in one authorized, idempotent,
+  resumable operation with preview, compatible IDs/versions, progress/errors
+  and retry. Same operation serves onboarding and later Settings application.
+  No-app/skip keeps CRM usable; optional apps stay optional.
+- **Reusable configuration**: distinguish workspace presets, content templates
+  and workflow recipes. Version/provenance/inputs and dependency references
+  resolve to native metadata, never reference-app code. Instantiate new IDs;
+  exclude secrets/private data. Samples are optional; operational defaults are
+  separate. Reapplying preserves existing user fields/views/layouts/nav/roles;
+  manage only owned defaults. Current nav hiding deletes standard nav rows,
+  so restoration/user-override behavior must be repaired and tested.
+- **Team/UX (PLAN C4/C7)**: invitations join the already configured workspace;
+  roles govern templates/install/records/search/export/realtime. Personal
+  preferences do not overwrite team defaults. One useful first action, blank
+  or template creation, optional advanced views/widgets and keyboard paths;
+  no second shell or Huly-like configuration complexity.
+- **Nav**: every app contributes a discoverable native entry or grouped folder
+  (e.g. Bilan); use supported VIEW/OBJECT/layout navigation patterns verified
+  in the SDK. Preserve user reorder/hide choices rather than hard-coding order.
 - **Command menu**: every app pins at least "Create <thing>" + "Go to <app>"
   commands, mirroring `open-media-notes.command-menu-item.ts`.
 - **Side panel**: record previews and quick-editors open in the existing side
@@ -75,10 +96,12 @@ remains the user-facing unit of activation.
 
 Self-hosted-grade; no Vercel constraints. Design:
 
-- New core module `realtime-gateway`: WebSocket server (ws) mounted on the
-  Nest HTTP server (same port 3000) at path `/realtime`.
-- Auth: cookie session (same as HTTP) validated on upgrade; workspace derived
-  from subscription topics, not from client input.
+- Existing `realtime-gateway` mounts ws on the Nest HTTP server at `/realtime`.
+  Current auth/transport is not accepted: see PLAN P0.3 and audit F02/F06.
+- Target auth: reuse HTTP session resolution and origin policy, authorize every
+  topic against authenticated workspace/member/record/channel rights, and handle
+  revocation/expiry. Never trust the topic's workspace ID or readable-cookie
+  workaround as proof of membership.
 - Envelope: `{ topic, seq, type, payload }`; topics like
   `workspace:<id>:chat:<channelId>`, `workspace:<id>:presence`,
   `workspace:<id>:inbox:<userId>`, `workspace:<id>:object:<name>:<recordId>`.
@@ -87,9 +110,11 @@ Self-hosted-grade; no Vercel constraints. Design:
 - Presence: heartbeat + `presence:<workspaceId>:<userId>` TTL keys in Redis;
   online/typing states broadcast on the presence topic; AvatarStack in
   workbench consumes it.
-- Delivery guarantees: at-most-once per socket + client-side catch-up fetch
-  on reconnect (REST/GraphQL hydrate). Missed-message window handled by
-  `since` cursor params — do NOT build broker-grade exactly-once.
+- Delivery target: ephemeral pub/sub plus authoritative record refetch on
+  reconnect. Existing per-socket sequence numbers are not durable replay
+  cursors. Chat/inbox need persisted domain cursors and deduplication; specify
+  actual API pagination before inventing `since` parameters. No broker-grade
+  exactly-once claim; failed subscriptions must not acknowledge success.
 - Front: `realtime` front module exposing `useRealtimeTopic(topic)` hook with
   auto-reconnect (exponential backoff), connection status atom feeding the
   reconnect banner, and an offline mutation queue for chat/inbox composer.
@@ -100,9 +125,10 @@ Self-hosted-grade; no Vercel constraints. Design:
 
 ## 5. Unified AI system (Track A, P9)
 
-- Extend `tool`/`tool-provider` core modules into an **AI registry** every
-  module teaches: `registerAiTools(appId, tools[])` at app install
-  (logic-function), unregistered on uninstall.
+- Reuse the **existing** `LogicFunctionToolProvider` and `toolTriggerSettings`
+  on app-owned logic functions. P1.5 established native discovery/dispatch;
+  there is no need for `registerAiTools`, a new table or registration hooks.
+  Validate permissions and uninstall/cache behavior through the real API.
 - One assistant surface: upgrade the `ai-chat` page into the system-wide
   assistant (side panel + full page), context-aware of the current object
   (record, doc, invoice, channel) via context-store.
@@ -115,9 +141,10 @@ Self-hosted-grade; no Vercel constraints. Design:
 
 ## 6. Search federation (Track A, P2/P8)
 
-- Extend the `search` core module with a provider interface: core objects
-  (existing) + registered app providers (documents, chat messages, invoices,
-  drive files). Apps register their provider at install.
+- Existing search provider interface/decorator registry discovers Nest providers;
+  AppSearchService gates by installed app IDs. It is not an app post-install
+  hook. Repair caller-context/row permissions in document search before release;
+  install gating alone is insufficient. Future providers follow the same path.
 - Cmd+K results grouped by app with frecency ranking (Bureau pattern).
 - Deep links: every result opens the record/doc/message in side panel or
   page, using stable URLs (`/object/<name>/<id>`, app routes).
@@ -162,15 +189,22 @@ Self-hosted-grade; no Vercel constraints. Design:
   `fiche.data` stores template-shaped JSON; typed editors render from the
   registry; PDF export per template; identity fields prefill from the
   workspace finance profile.
-- **Subventions catalogue**: instance-scoped (not per-workspace) tables in
-  the accounting server module; ingest via cron through message-queue;
-  catalogVersion participates in AI cache keys.
-- **AI + finance guardrail**: AI may draft/score/categorize; humans commit.
-  No AI path mutates financial records without explicit user confirmation.
+- **Subventions catalogue**: current objects are workspace-scoped. PLAN D03
+  decides whether shared instance ingestion warrants an additive migration;
+  no accounting server module exists yet. Keep source IDs/freshness/errors and
+  saved dossier snapshots; no exhaustive-grants or nonempty-catalogue guarantee.
+- **Forms/books**: Livre includes system journal and reusable custom tracking
+  sheets. Keep grant dossiers/reports separate from donation receipts; resolve
+  the current CERFA 15059 naming contradiction with a domain reviewer (D04).
+- **AI + finance guardrail**: AI may draft/score/categorize; humans confirm
+  mutations. Private results/runs/cache remain workspace/access-scoped, even
+  if a future public catalogue is shared. Re-open saved runs without a new
+  provider call; permission changes invalidate access (PLAN C6).
 
 ## 11. Definition of "integrated" (the bar each app must clear)
 
-1. Activates/deactivates per workspace without core impact.
+1. Installs with truthful readiness; hides without deletion; removes only with
+   dependency/data safeguards (C3), preserving core CRM and required records.
 2. Present in nav, Cmd+K, search, and side-panel where relevant.
 3. Cross-links at least one other surface (record tab, relation field, or
    assistant action).

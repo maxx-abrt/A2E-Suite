@@ -1,7 +1,20 @@
+# A2E Suite — Agent operating contract
 
-You are implementing A2E Suite's all-in-one workspace roadmap.
+Follow the user's requested scope. **For planning/review-only requests, edit
+planning files only; do not start product implementation.** For implementation,
+use PLAN.md's current-state ledger, C1–C7 contracts, dependency order and real
+acceptance checks. Historical completion claims are not verification.
 
-Read, in this exact order, fully before writing any code:
+All apps/projects under `Inspiration apps (bureaubilan)` are feature/UX
+inspiration only. Never integrate them wholesale, copy their full code, adopt
+their architecture/dependencies or connect their backends. Read the complete
+local inventory in reference analysis; distinguish UI, schemas, prototypes and
+unavailable external sources. Seek Notion-like progressive disclosure, not a
+Huly-style complex shell.
+
+## 1. Kickoff
+
+Read fully before writing product code:
 1. PROMPT.md          (this file — the operating contract)
 2. PLAN.md            (scope, phases, and the task checklist you will tick)
 3. CLAUDE.md + AGENTS.md (house rules: style, i18n, icons, migrations)
@@ -11,27 +24,34 @@ Read, in this exact order, fully before writing any code:
 7. docs/plan/04-twenty-native-law.md  (BINDING — read fully; your work is
    rejected in review if it violates the concept→primitive mapping §1,
    the anatomy standards §2–§4, or skips the wiring checklist §5)
-8. The latest entries of docs/plan/phases/phase-<N>-report.md for the
-   CURRENT phase (find it in PLAN.md — the phase with [~] or the first
-   unticked phase).
+8. docs/repository-architecture-audit.md (dated risks, not a competing backlog)
+9. The relevant docs/plan/phases/phase-<N>-report.md entries (historical
+   handoffs; current code and PLAN.md corrections take precedence).
 
 Then:
-- Locate the first unticked task [ ] in the current phase of PLAN.md.
+- Locate the active task, or the first **dependency-ready** pending task in
+  PLAN.md's execution order. Start with P0/P1 repairs, not automatically P4.
+  For a planning-only task, reconcile scope/status and do not implement.
 - Read the surrounding code for every file you intend to touch (adjacent
   files beat any written rule). Never edit blind.
-- Implement ONLY that one task. Small commits. Tick the task in PLAN.md
-  ([x]) in the same commit and append a dated entry to the phase report.
-- Run the quality gates (PROMPT.md §3). If anything fails, fix it before
-  moving on.
-- Stop after the task or when context runs low; your phase-report entry is
-  the handoff for the next agent.
-```
+- Implement only that ready task. Run the real quality gates (§3) and its
+  acceptance scenarios before ticking `[x]`; append evidence to the existing
+  phase report in the same commit. Source presence/build-only or a written
+  test is not an integrated flow pass. Preserve unrelated user changes.
+- If blocked, report failed command, cause, fallback and **UNVERIFIED** checks;
+  do not tick or weaken tests. Environment/tooling can be provisioned through
+  `.gitlab/duo/agent-config.yml`.
+- Stop after the task or when context runs low; hand off exact next ready work.
+  Planning-only work needs source/link/consistency checks and an honest test
+  limitation in the MR, not new phase-report or summary files.
 
 ## 2. Operating rules (binding, no exceptions)
 
-1. **PLAN.md is the contract.** Do only the current task. If you believe the
-   plan is wrong, STOP and write a "DEVIATION REQUEST" entry in the phase
-   report instead of silently changing course. Never invent new systems —
+1. **PLAN.md is the scope/status/acceptance contract.** Its dated current-state
+   corrections and C1–C7 supersede historical phase reports. Explicit user
+   planning requests authorize coherent plan changes, not product code.
+   For implementation deviations, document the reason and unresolved decision
+   before changing scope. Never invent new systems —
    everything must fit [`docs/plan/03-integration-blueprint.md`](./docs/plan/03-integration-blueprint.md)
    and [`docs/plan/04-twenty-native-law.md`](./docs/plan/04-twenty-native-law.md):
    if Twenty has a primitive for it, you USE the primitive (views, page
@@ -48,10 +68,12 @@ Then:
    `twenty-apps/internal/real-estate/` is the app-format reference;
    `twenty-server/src/modules/<domain>/` the server-module reference.
 5. **Never break what works.** Additive only: no renames/removals of
-   tables, columns, GraphQL fields, routes, exported symbols. New entity →
-   generated migration + upgrade command under `2-39/` with a real epoch-ms
-   timestamp strictly greater than every existing one in that dir, `up` +
-   `down`. Never rewrite committed upgrade commands.
+   tables, columns, GraphQL fields, routes, exported symbols. New server entity →
+   generated migration + upgrade command under the actual current version
+   directory (currently `2-39/`) with a strictly increasing real epoch-ms
+   timestamp, `up` + `down`. App metadata uses manifest migration. Never rewrite
+   committed commands. User-confirmed app uninstall follows PLAN.md C3 and is
+   not permission to destructively refactor shared CRM data.
 6. **House style** (from CLAUDE.md, enforced): named exports only; types
    over interfaces; no `any`; no abbreviations; `Props`-suffixed component
    prop types; `//` comments only for WHY; Linaria for styling; icons from
@@ -88,7 +110,8 @@ Adapt to what the task touched; when in doubt run all:
 - [ ] In-package `npx tsgo -p tsconfig.json --noEmit` clean
 - [ ] `twenty-shared` touched → rebuilt with `--skip-nx-cache`
 - [ ] GraphQL schema changed → `npx nx run twenty-front:graphql:generate`
-- [ ] Entity changed → migration generated + upgrade command (rules §2.4)
+- [ ] Server entity changed → generated migration/upgrade command (rules §2.5);
+      app metadata changed → manifest validation and populated install/upgrade
 - [ ] UI: works light+dark, mobile-responsive, Lingui fr+en keys complete
 - [ ] e2e updated/added for user-visible flows
 - [ ] PLAN.md ticked + phase report appended (same commit)
@@ -97,25 +120,28 @@ Adapt to what the task touched; when in doubt run all:
 
 Determine state in this order, WITHOUT asking the user:
 
-1. `PLAN.md` — find the phase containing `[~]` (in progress) or the first
-   phase with unticked tasks. That is the current phase.
+1. `PLAN.md` — read current-state ledger, execution order, unresolved decisions
+   and prerequisite results; continue `[~]` or the first dependency-ready task.
+   Legacy `[x]` is not a release certificate. Full-calendar work is P4C, not
+   satisfied by a task CALENDAR view; setup/lifecycle spans all app phases.
 2. `docs/plan/phases/phase-<N>-report.md` — read the LAST dated entries:
    they say exactly what was finished, what remains, known issues.
 3. `git status` + `git log --oneline -15` — uncommitted work exists?
-   - Clean tree → continue from the first unticked task.
-   - Dirty tree → read the diff, run the gates on it; either complete the
-     half-done task (tick + report) or revert it (and say so in the
-     report). Never pile new work on top of unexplained changes.
-4. Trust the reports over your assumptions. If reality contradicts a
-   report (tick without code, code without tick), fix the discrepancy and
-   log it as "STATE REPAIR" in the phase report.
+   - Clean tree → continue from the selected dependency-ready task.
+   - Dirty tree → inspect the diff and ownership; preserve unrelated user
+     work. Do not revert unexplained changes. Ask if ownership blocks progress.
+4. Trust current source and real checks over assumptions or old reports.
+   If reality contradicts a report, annotate the plan without erasing valid
+   implementation or historical evidence. Implementation sessions append
+   "STATE REPAIR"; planning-only sessions record the reconciliation in the MR.
 
 Then proceed with the kickoff protocol (§1) from the correct task.
 
 ## 5. Phase-report format (append, never rewrite)
 
 File: `docs/plan/phases/phase-<N>-report.md` (create on first entry; N is
-two digits, e.g. `phase-01-report.md`).
+two digits, e.g. `phase-01-report.md`; P0 uses phase-00 and P4C appends to
+phase-04). Planning-only requests do not need a new report.
 
 ```markdown
 ## YYYY-MM-DD HH:MM UTC — <Agent>
@@ -137,7 +163,9 @@ factual and terse; no code dumps (reference file paths).
   `defineObject`, `FieldType.FILES` — verified patterns live in
   `packages/twenty-apps/examples/media-notes/`).
 - Every command you say passed, you actually ran this session.
-- Every ticked task maps to code that exists in the diff.
+- Every newly ticked task maps to implementation plus passing acceptance
+  evidence (including verification-only work on existing code). Legacy ticks
+  retain historical meaning only; no product task is ticked by a planning edit.
 - You did NOT touch: `locales/**` catalogs, committed upgrade commands,
   `twenty-docker` defaults, billing logic, auth guards semantics.
 
