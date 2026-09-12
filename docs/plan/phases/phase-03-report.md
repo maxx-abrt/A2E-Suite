@@ -492,3 +492,56 @@ No locale files touched.
   full page URL), Cmd+K commands + docs search provider (server stub
   `document-search-provider.service.ts` still empty), "Save as document"
   record integration.
+
+## 2026-09-12 12:23 UTC — Zoo (GLM-5.3-Flash)
+
+### P3.3 Task 2 — Doc page: cover/outline/sub-pages widget + side-panel opening (committed)
+
+**Task(s):** PLAN.md P3.3 item 2 — cover/icon/title/editor/outline; open in
+side-panel tab or full page (addressable URL).
+
+**Status:** Done.
+
+**What I did** (all in `packages/twenty-apps/internal/a2e-documents`):
+- `src/lib/document-outline.ts`: `extractOutline` — parses the markdown
+  projection of the RICH_TEXT field into `{level, text}` heading entries;
+  fenced code blocks are skipped so `#` lines inside them never leak into
+  the outline; unbalanced fences tolerated.
+- `src/lib/__tests__/document-outline.test.ts`: 5 tests (levels, fence
+  skipping, unbalanced fence, trailing hashes, empty input).
+- `src/front-components/document-page.front-component.tsx` (new): record-page
+  widget rendering the Notion-like page furniture — color cover
+  (`coverColor` with fallback), heading outline (indented by level), and the
+  Sous-pages list with inline creation (fractional-indexed append) and
+  per-child open actions: full page via `navigate(AppPath.RecordShowPage, …)`
+  or side panel via
+  `openSidePanelPage({ page: SidePanelPages.ViewRecord, recordId, objectNameSingular })`.
+  Reads the current record from `useSelectedRecordIds()` (the host passes the
+  record-page record — verified in `FrontComponentWidgetRenderer`).
+- `src/page-layouts/document.page-layout.ts`: added the widget
+  (`FRONT_COMPONENT` → documentPage) to the Home tab after Contenu.
+- `src/constants/universal-identifiers.ts`: `FRONT_COMPONENT_IDS` group with
+  documentBrowser + documentPage (family 0013).
+
+**Decisions:**
+- Title/editor/URL were already delivered by the P3.2 record-page work
+  (Fields widget + FIELD_RICH_TEXT widget + AppPath.RecordShowPage); this
+  task adds only what metadata widgets cannot express (cover, outline,
+  sub-page navigation) as one front-component widget — no new routing.
+- Outline parses the markdown projection, not the blocknote AST: the editor
+  bundle is not importable in the app sandbox.
+- Cover color is the existing `coverColor` TEXT field (P3.1); a color-picker
+  UI arrives with the doc-page toolbar polish, the widget already renders it.
+
+**Verification:** tsc clean; oxlint 0/0; document-outline 5/5;
+`twenty-sdk` dev:build succeeded (9 files). No locale files touched.
+
+**For the next agent:**
+- `openSidePanelPage` accepts purpose-built pages via the exported
+  `SidePanelPages` enum (ViewRecord/EditRichText/…); no `as never` needed.
+- Record-page front-component widgets get the current record id via
+  `useSelectedRecordIds()` (length 1) — documented in
+  FrontComponentWidgetRenderer.
+- P3.3 remaining: Cmd+K create/open doc commands + docs search provider
+  (server stub `document-search-provider.service.ts` still empty);
+  "Save as document" record integration.

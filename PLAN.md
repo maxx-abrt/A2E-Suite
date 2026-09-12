@@ -229,7 +229,7 @@ App: `a2e-documents`.
 - [x] Documents page: sidebar tree (drag to reparent via fractional index),
       quick search, favorites section, archive/trash with restore (7-day
       purge cron via app cron logic function)
-- [ ] Doc page: cover/icon/title/editor/outline; open in side-panel tab or
+- [x] Doc page: cover/icon/title/editor/outline; open in side-panel tab or
       full page (addressable URL)
 - [ ] Cmd+K: create/open document commands; search provider for docs
 - [ ] Record integration: "Save as document" from record notes tab (copy);

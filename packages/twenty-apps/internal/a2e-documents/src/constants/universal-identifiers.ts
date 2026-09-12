@@ -43,6 +43,11 @@ export const NAVIGATION_MENU_ITEM_IDS = {
   documents: 'c31a0000-0010-4000-8000-000000000001',
 } as const;
 
+export const FRONT_COMPONENT_IDS = {
+  documentBrowser: 'c31a0000-0013-4000-8000-000000000001',
+  documentPage: 'c31a0000-0013-4000-8000-000000000002',
+} as const;
+
 export const VIEW_IDS = {
   allDocuments: 'c31a0100-0003-4000-8000-000000000001',
   templates: 'c31a0100-0003-4000-8000-000000000002',

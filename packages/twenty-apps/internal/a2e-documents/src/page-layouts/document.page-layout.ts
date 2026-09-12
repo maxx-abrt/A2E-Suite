@@ -1,6 +1,9 @@
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 
-import { OBJECT_IDS } from '../constants/universal-identifiers.ts';
+import {
+  FRONT_COMPONENT_IDS,
+  OBJECT_IDS,
+} from '../constants/universal-identifiers.ts';
 
 // Document record page: the FIELD_RICH_TEXT widget renders the shared
 // blocknote editor for the content field; everything else is native metadata
@@ -30,6 +33,15 @@ export default definePageLayout({
           type: 'FIELD_RICH_TEXT',
           objectUniversalIdentifier: OBJECT_IDS.document,
           configuration: { configurationType: 'FIELD_RICH_TEXT' },
+        },
+        {
+          universalIdentifier: 'c31a0100-000a-4000-8000-000000000004',
+          title: 'Page',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier: FRONT_COMPONENT_IDS.documentPage,
+          },
         },
       ],
     },
