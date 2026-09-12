@@ -1,0 +1,1441 @@
+{
+  "metadata": {
+    "title": "Bilan — All-in-One Money Management",
+    "description": "Streamline your finances with Bilan. Budgets, invoicing, expense tracking, books and team collaboration for individuals, businesses and associations."
+  },
+  "brand": {
+    "name": "Bilan",
+    "suite": "A2E Suite"
+  },
+  "auth": {
+    "title": "Welcome to Bilan",
+    "subtitle": "Sign in to your workspace or create a new one.",
+    "continueWithGoogle": "Continue with Google",
+    "or": "or",
+    "emailLabel": "Email address",
+    "sendMagicLink": "Send sign-in code",
+    "verifyCodeLabel": "Verification code",
+    "verifyCodeHint": "Check your inbox — the code expires in 15 minutes.",
+    "verifyCta": "Verify and sign in",
+    "useDifferentEmail": "Use a different email",
+    "legal": "By continuing you agree to our",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "toasts": {
+      "codeSent": "We sent you a sign-in code.",
+      "signedIn": "Signed in"
+    },
+    "errors": {
+      "google": "Could not sign in with Google",
+      "email": "Could not send the sign-in code",
+      "code": "Invalid or expired code"
+    }
+  },
+  "onboarding": {
+    "title": "Create your first workspace",
+    "subtitle": "A workspace groups members, projects and finances. You can create more later.",
+    "typeLabel": "What best describes you?",
+    "types": {
+      "individual": {
+        "title": "Individual",
+        "description": "Personal money management"
+      },
+      "business": {
+        "title": "Business",
+        "description": "Company or freelance"
+      },
+      "association": {
+        "title": "Association",
+        "description": "Non-profit, NGO, charity"
+      }
+    },
+    "nameLabel": "Workspace name",
+    "namePlaceholder": "e.g. Acme Inc., My Personal, Save The Whales",
+    "currencyLabel": "Default currency",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "What is this workspace for?",
+    "submit": "Create workspace",
+    "toasts": {
+      "created": "Workspace created!",
+      "failed": "Could not create workspace"
+    },
+    "sharedNotice": "This workspace is shared with the whole A2E suite: members, roles, files and notifications are common. Your financial data stays in Bilan, encrypted."
+  },
+  "workspace": {
+    "switcher": {
+      "label": "Workspace",
+      "create": "Create new workspace",
+      "manage": "Manage workspaces",
+      "noWorkspace": "No workspace selected",
+      "members": "{count, plural, =0 {No members} =1 {1 member} other {# members}}",
+      "currentRole": "Your role: {role}",
+      "sharedHint": "The workspace is created in A2E Core, so it is instantly available in every app of the suite (Bilan, Bureau, Drive…)."
+    },
+    "empty": {
+      "title": "No workspace yet",
+      "description": "Create your first workspace to start using Bilan.",
+      "cta": "Create workspace"
+    }
+  },
+  "legalPages": {
+    "privacy": {
+      "title": "Privacy Policy",
+      "lastUpdated": "Last updated: {date}"
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "lastUpdated": "Last updated: {date}"
+    }
+  },
+  "common": {
+    "income": "Income",
+    "expense": "Expense",
+    "pending": "Pending",
+    "linkedTo": "Linked to",
+    "add": "Add",
+    "amount": "Amount",
+    "cancel": "Cancel",
+    "category": "Category",
+    "client": "Client",
+    "close": "Close",
+    "color": "Color",
+    "create": "Create",
+    "currency": "Currency",
+    "date": "Date",
+    "description": "Description",
+    "edit": "Edit",
+    "errorOccurred": "An error occurred",
+    "name": "Name",
+    "notes": "Notes",
+    "project": "Project",
+    "save": "Save",
+    "status": "Status",
+    "delete": "Delete",
+    "loading": "Loading…",
+    "search": "Search",
+    "actions": "Actions",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "yes": "Yes",
+    "no": "No",
+    "optional": "Optional",
+    "required": "Required",
+    "all": "All",
+    "none": "None",
+    "export": "Export",
+    "download": "Download",
+    "view": "View",
+    "open": "Open",
+    "update": "Update",
+    "title": "Title",
+    "restore": "Restore"
+  },
+  "nav": {
+    "features": "Features",
+    "pricing": "Pricing",
+    "testimonials": "Testimonials",
+    "signIn": "Sign in",
+    "getStarted": "Get Started",
+    "dashboard": "Dashboard",
+    "budget": "Budget",
+    "expenses": "Expenses",
+    "invoices": "Invoices",
+    "projects": "Projects",
+    "book": "Book",
+    "documents": "Documents",
+    "legal": "Legal",
+    "reports": "Reports",
+    "team": "Team",
+    "activity": "Activity",
+    "fiches": "Project sheets",
+    "settings": "Settings",
+    "signOut": "Sign Out",
+    "storage": "Storage",
+    "security": "Security",
+    "subventions": "Grants",
+    "search": "Search a page, an invoice, a project…",
+    "clients": "Contacts"
+  },
+  "landing": {
+    "badge": "v1.0 · Now in beta",
+    "hero": {
+      "title": "Building",
+      "highlight": "the financial future",
+      "description": "Bilan helps individuals, associations and businesses move from idea to launch: budgets, invoicing, expenses, ledger, projects and collaboration, without unnecessary complexity.",
+      "startFree": "Start for free",
+      "seeHowItWorks": "See how it works",
+      "benefits": {
+        "freeForever": "Free forever plan",
+        "storage": "500MB document storage",
+        "setup": "Setup in 2 minutes"
+      },
+      "tail": "of your organization",
+      "primaryCta": "Get Early Access",
+      "secondaryCta": "Contact Us",
+      "trustLine": "Trusted by creators, teams and associations",
+      "stats": {
+        "teams": {
+          "value": "15+",
+          "label": "Active teams"
+        },
+        "uptime": {
+          "value": "99.9%",
+          "label": "Uptime"
+        },
+        "tx": {
+          "value": "120k+",
+          "label": "Transactions"
+        }
+      }
+    },
+    "profiles": {
+      "title": "Tailored for your needs",
+      "description": "Whether you're managing personal finances or running a business, Finflow adapts to you.",
+      "individual": {
+        "title": "Individual",
+        "description": "Track personal expenses, set budgets, and manage your financial goals with ease.",
+        "features": [
+          "Personal budget tracking",
+          "Expense categorization",
+          "Savings goals",
+          "Financial insights"
+        ],
+        "cta": "Get started as Individual"
+      },
+      "business": {
+        "title": "Business / Association",
+        "description": "Complete financial management with invoicing, project budgets, and legal compliance.",
+        "features": [
+          "Professional invoicing",
+          "Project budget sheets",
+          "Legal compliance tools",
+          "Multi-user access"
+        ],
+        "cta": "Get started as Business",
+        "badge": "POPULAR"
+      }
+    },
+    "features": {
+      "title": "Everything you need to manage finances",
+      "description": "Powerful features designed to give you complete control over your financial life.",
+      "items": {
+        "budget": {
+          "title": "Budget Management",
+          "description": "Create and track budgets with visual breakdowns. Set limits, get alerts, and stay on top of spending."
+        },
+        "invoice": {
+          "title": "Invoice System",
+          "description": "Create professional invoices, track payments, export to PDF, and send automated reminders."
+        },
+        "expense": {
+          "title": "Expense Tracking",
+          "description": "Log expenses instantly, categorize transactions, and attach receipts for justification."
+        },
+        "book": {
+          "title": "Smart Book System",
+          "description": "A powerful spreadsheet interface for financial data. Link entries to invoices and expenses."
+        },
+        "connected": {
+          "title": "Connected Data",
+          "description": "Link invoices to expenses to book entries. Everything connected in one place."
+        },
+        "storage": {
+          "title": "Document Storage",
+          "description": "500MB free storage for receipts, certificates, and justification documents."
+        }
+      }
+    },
+    "bookSystem": {
+      "badge": "Smart Book System",
+      "title": "Your financial data, beautifully organized",
+      "description": "A powerful, customizable spreadsheet interface designed specifically for financial management. Link entries directly to invoices, expenses, and documents.",
+      "features": [
+        "Custom columns and data types",
+        "Link entries to invoices & expenses",
+        "Automatic calculations and formulas",
+        "Export to Excel, PDF, or CSV",
+        "Attach receipts & certificates"
+      ],
+      "cta": "Try the Book System"
+    },
+    "stats": {
+      "activeUsers": {
+        "value": "50K+",
+        "label": "Active Users"
+      },
+      "invoices": {
+        "value": "2M+",
+        "label": "Invoices Created"
+      },
+      "uptime": {
+        "value": "99.9%",
+        "label": "Uptime"
+      },
+      "rating": {
+        "value": "4.9/5",
+        "label": "User Rating"
+      }
+    },
+    "pricing": {
+      "title": "Simple, transparent pricing",
+      "description": "Start free, upgrade when you need more. No hidden fees.",
+      "plans": {
+        "free": {
+          "name": "Free",
+          "price": "0",
+          "description": "Perfect for getting started",
+          "features": [
+            "Personal budgets",
+            "Expense tracking",
+            "Basic reports",
+            "500MB storage",
+            "1 user"
+          ],
+          "cta": "Start Free"
+        },
+        "pro": {
+          "name": "Pro",
+          "price": "19",
+          "description": "For growing businesses",
+          "features": [
+            "Everything in Free",
+            "Professional invoicing",
+            "Project sheets",
+            "5GB storage",
+            "5 users",
+            "Priority support"
+          ],
+          "cta": "Start Pro Trial",
+          "badge": "MOST POPULAR"
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "price": "49",
+          "description": "For larger organizations",
+          "features": [
+            "Everything in Pro",
+            "Unlimited users",
+            "Legal compliance",
+            "50GB storage",
+            "API access",
+            "Custom integrations"
+          ],
+          "cta": "Contact Sales"
+        }
+      },
+      "perMonth": "/month"
+    },
+    "testimonials": {
+      "title": "Loved by thousands",
+      "description": "See what our users have to say about Finflow.",
+      "items": [
+        {
+          "quote": "Finflow completely transformed how I manage my freelance finances. The invoicing system alone saved me hours every month.",
+          "author": "Sarah Chen",
+          "role": "Freelance Designer"
+        },
+        {
+          "quote": "As an association treasurer, the legal compliance features are invaluable. Everything we need in one place.",
+          "author": "Marcus Johnson",
+          "role": "NGO Treasurer"
+        },
+        {
+          "quote": "The book system is incredible. It's like Excel but actually designed for finance. I can link everything together.",
+          "author": "Emma Rodriguez",
+          "role": "Small Business Owner"
+        }
+      ]
+    },
+    "cta": {
+      "title": "Ready to take control of your finances?",
+      "description": "Join thousands of individuals and businesses already using Finflow to simplify their financial management.",
+      "button": "Get Started Free"
+    },
+    "footer": {
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "contact": "Contact",
+      "copyright": "2026 Bilan. Part of the A2E Suite."
+    },
+    "why": {
+      "tag": "WHY A2EMONEY",
+      "title": "Designed for speed. Built for growth.",
+      "description": "A focused, modern approach that helps teams structure finances, ship faster, and grow with confidence.",
+      "items": {
+        "speed": {
+          "title": "Fast execution",
+          "description": "Spin up invoicing, expenses and budgets in minutes."
+        },
+        "clarity": {
+          "title": "Clear direction",
+          "description": "Turn raw numbers into decisions, no endless spreadsheets."
+        },
+        "scale": {
+          "title": "Scalable foundation",
+          "description": "Isolated workspaces, roles, projects, built to grow with you."
+        },
+        "design": {
+          "title": "Thoughtful design",
+          "description": "Every detail crafted for clarity and joy of use."
+        },
+        "vision": {
+          "title": "Long-term vision",
+          "description": "Built for enduring value beyond the first launch."
+        },
+        "founder": {
+          "title": "Founder-friendly",
+          "description": "Tailored to the pace of teams and associations."
+        }
+      }
+    },
+    "intuitive": {
+      "title": "Intuitive by design",
+      "description": "We focus on clarity, balance and simplicity, so finances are easy to understand and act on.",
+      "cta": "Learn more",
+      "bullets": [
+        "Thoughtful structure",
+        "Growth-oriented thinking",
+        "Calm, distraction-free layouts",
+        "Designed to communicate clearly"
+      ]
+    },
+    "evolve": {
+      "title": "Built to evolve",
+      "description": "Whether you're shaping an idea or preparing for growth, our approach adapts to your pace.",
+      "cta": "Learn more",
+      "bullets": [
+        "Role-based access",
+        "Instant updates",
+        "Secure sharing",
+        "Flexible foundation",
+        "Teams and devices"
+      ]
+    },
+    "faqs": {
+      "tag": "FAQ",
+      "title": "Frequently asked questions",
+      "description": "Give the right people the right visibility, without the back-and-forth.",
+      "items": [
+        {
+          "q": "Who is Bilan for?",
+          "a": "Individuals, freelancers, associations and small teams who want to manage their finances simply."
+        },
+        {
+          "q": "Do I need a finished product?",
+          "a": "No. We help you start from day one, your books grow with you."
+        },
+        {
+          "q": "Can this scale later?",
+          "a": "Yes, isolated workspaces, roles, projects and legal exports are built-in."
+        },
+        {
+          "q": "Is this only for one sector?",
+          "a": "No. Clarity and structure apply to any organization."
+        },
+        {
+          "q": "Do you offer support?",
+          "a": "Yes, magic-link auth, GDPR exports, activity log, and we're reachable."
+        }
+      ]
+    },
+    "ctaFinal": {
+      "title": "Ready to bring your project to life?",
+      "description": "Join the teams and associations building their next step with Bilan.",
+      "primary": "Get Early Access",
+      "secondary": "Contact Us"
+    },
+    "security": {
+      "badge": "Security & compliance",
+      "title": "Encrypted at rest. Hosted in Europe. Auditable.",
+      "subtitle": "The most sensitive financial values (IBAN, BIC, SIRET, contact details) are encrypted with AES-256-GCM using a per-workspace key. Supporting files live in a private EU bucket, reachable only through signed links.",
+      "cta": "See the Trust Center",
+      "items": {
+        "encryption": {
+          "title": "AES-256-GCM per workspace",
+          "body": "HKDF-derived keys, ciphertexts bound to workspace, table and field."
+        },
+        "files": {
+          "title": "Private file bucket",
+          "body": "Backblaze B2 (EU), 10-minute signed URLs, no public URL ever."
+        },
+        "gdpr": {
+          "title": "GDPR end to end",
+          "body": "Export, erasure, processing register and versioned consent built in."
+        },
+        "suite": {
+          "title": "Shared A2E workspace",
+          "body": "Members, roles, notifications and Drive shared across the suite, one login."
+        }
+      }
+    },
+    "bento": {
+      "tag": "All of Bilan, at a glance",
+      "title": "The features that do the work for you",
+      "description": "Every module is wired to the others: an expense justifies a ledger line, an awarded grant becomes income, a file stays findable across the whole suite.",
+      "cta": "Open the app",
+      "items": {
+        "journal": {
+          "title": "Automatic accounting journal",
+          "body": "One book per workspace, filled by itself. Every income and expense creates its line — date, label, category, amount, payment method, project, proofs, reference. You never touch it: at year end, you export it.",
+          "tagline": "No double entry"
+        },
+        "subventions": {
+          "title": "Grants & calls for projects",
+          "body": "Over 3,000 French public funding schemes, refreshed daily. Describe your project: the AI assistant targets the ones you are actually eligible for, explains why, and tracks your applications to the decision.",
+          "tagline": "Refreshed daily"
+        },
+        "transactions": {
+          "title": "Income & expenses",
+          "body": "Record in seconds, attach the proof, sort by category and project."
+        },
+        "invoices": {
+          "title": "Invoices",
+          "body": "Automatic numbering, VAT, PDF export, reminders — and payment flips into income."
+        },
+        "budget": {
+          "title": "Budgets",
+          "body": "Envelopes per category and period, overspend alerts, balanced budget."
+        },
+        "projects": {
+          "title": "Projects & French filings",
+          "body": "Per-project budget tracking, project sheets, pre-filled CERFA 15059 and tax receipts."
+        },
+        "drive": {
+          "title": "Shared drive & proofs",
+          "body": "Your documents live in the encrypted A2E suite drive (Backblaze B2, private bucket, short-lived signed links). A receipt attached to an expense stays findable from any A2E app, and from the ledger line it justifies."
+        },
+        "reports": {
+          "title": "Reports & exports",
+          "body": "Cash flow, breakdowns, period comparison. CSV, XLSX and PDF export."
+        },
+        "team": {
+          "title": "Team, roles & shared workspaces",
+          "body": "Workspaces, members, roles and notifications are shared across the A2E suite: one invitation, access everywhere."
+        },
+        "security": {
+          "title": "Encrypted and GDPR-ready",
+          "body": "Per-workspace AES-256-GCM encryption on sensitive data, EU hosting, one-click export and erasure."
+        }
+      }
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome back",
+    "personalFinance": "Personal Finance",
+    "businessDashboard": "Business Dashboard",
+    "addExpense": "Add Expense",
+    "newInvoice": "New Invoice",
+    "stats": {
+      "totalBalance": "Total Balance",
+      "monthlyIncome": "Monthly Income",
+      "monthlyExpenses": "Monthly Expenses",
+      "pendingInvoices": "Pending Invoices",
+      "savingsGoal": "Savings Goal",
+      "fromLastMonth": "from last month"
+    },
+    "recentTransactions": {
+      "title": "Recent Transactions",
+      "description": "Your latest financial activity",
+      "viewAll": "View All"
+    },
+    "pendingInvoices": {
+      "title": "Pending Invoices",
+      "description": "Awaiting payment",
+      "manage": "Manage Invoices"
+    },
+    "bookEntries": {
+      "title": "Recent Book Entries",
+      "description": "Connected records",
+      "openBook": "Open Book"
+    },
+    "storage": {
+      "title": "Storage Used",
+      "of": "of 500MB"
+    },
+    "search": "Search transactions, invoices...",
+    "myAccount": "My Account",
+    "profile": "Profile"
+  },
+  "notifications": {
+    "open": "Open notifications",
+    "title": "Notifications",
+    "unreadCount": "{count} unread",
+    "allRead": "You're all caught up",
+    "markAllRead": "Mark all read",
+    "emptyTitle": "No notifications",
+    "emptyDescription": "You'll see alerts, invoice updates, and team activity here.",
+    "dismiss": "Dismiss",
+    "clearAll": "Clear all",
+    "preferences": "Preferences"
+  },
+  "attachments": {
+    "cta": "Drop files or click to upload",
+    "hint": "PDF, images, DOC — up to 10MB each",
+    "uploading": "Uploading…",
+    "tooMany": "You can attach up to {max} files",
+    "fileTooLarge": "{name} is larger than 10MB",
+    "quotaExceeded": "Storage quota exceeded (100MB)",
+    "uploadFailed": "Upload failed",
+    "fallbackLocal": "{name} saved locally (S3 unavailable)",
+    "download": "Download",
+    "remove": "Remove",
+    "countLabel": "{count} attached"
+  },
+  "team": {
+    "title": "Team & Workspaces",
+    "description": "Manage members, roles and invitations across workspaces.",
+    "newWorkspace": "New workspace",
+    "newWorkspaceDescription": "A workspace groups your finances with a separate set of members and data.",
+    "workspaceName": "Workspace name",
+    "workspaceNamePlaceholder": "e.g. Acme Inc.",
+    "workspaceDescription": "Description",
+    "workspaceDescriptionPlaceholder": "A short description of this workspace",
+    "workspaceSlug": "Slug: {slug}",
+    "optional": "optional",
+    "cancel": "Cancel",
+    "create": "Create workspace",
+    "createFirstWorkspace": "Create your first workspace",
+    "emptyTitle": "No workspace yet",
+    "emptyDescription": "Create a workspace to start collaborating with your team.",
+    "yourWorkspaces": "Your workspaces",
+    "memberCount": "{count, plural, =0 {No members} =1 {1 member} other {# members}}",
+    "members": "Members",
+    "invite": "Invite",
+    "inviteMember": "Invite a member",
+    "inviteDescription": "They'll receive an email with an invitation link valid for 14 days.",
+    "email": "Email",
+    "role": "Role",
+    "sendInvitation": "Send invitation",
+    "pendingInvitations": "Pending invitations",
+    "invitationCount": "{count, plural, =0 {No pending invitations} =1 {1 pending invitation} other {# pending invitations}}",
+    "noInvitationsTitle": "No pending invitations",
+    "noInvitationsDescription": "Invite teammates to collaborate on this workspace.",
+    "invitationExpiresAt": "Expires {date}",
+    "invitationExpired": "Expired",
+    "copyInviteLink": "Copy link",
+    "revoke": "Revoke",
+    "makeAdmin": "Make admin",
+    "makeMember": "Make member",
+    "makeViewer": "Make viewer",
+    "remove": "Remove",
+    "you": "you",
+    "confirmDelete": "Delete this workspace? This cannot be undone.",
+    "confirmRemoveMember": "Remove this member from the shared workspace?",
+    "gdprTitle": "GDPR compliance",
+    "gdprDescription": "Members, roles and invitations are stored in A2E Core (EU). Every action is logged and exportable; erasure is available from Settings → Security & compliance.",
+    "roles": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "member": "Member",
+      "viewer": "Viewer"
+    },
+    "roleHint": {
+      "admin": "Can manage everything except deleting the workspace.",
+      "member": "Can create and edit financial data.",
+      "viewer": "Read-only access."
+    },
+    "toasts": {
+      "workspaceCreated": "Workspace created",
+      "workspaceCreateFailed": "Could not create workspace",
+      "workspaceDeleted": "Workspace deleted",
+      "invitationSent": "Invitation sent to {email}",
+      "invitationRevoked": "Invitation revoked",
+      "roleUpdated": "Role updated",
+      "memberRemoved": "Member removed",
+      "linkCopied": "Invitation link copied",
+      "roleCreated": "Role created"
+    },
+    "seats": "{used} of {limit} seats used",
+    "seatsExceeded": "Seat limit of {limit} reached — upgrade your plan.",
+    "rolesExceeded": "Custom role limit of {limit} reached.",
+    "sharedInviteNotice": "The invitation is issued by A2E Core: the person joins this workspace in Bilan and in every suite app.",
+    "customRoles": "Custom roles",
+    "customRolesDescription": "Fine-grained permissions, shared across the A2E suite.",
+    "newRole": "New role",
+    "permissions": "Permissions",
+    "noRoles": "No custom role yet. Base roles (owner, admin, member, viewer) apply."
+  },
+  "book": {
+    "smartOverview": {
+      "title": "Smart overview",
+      "description": "Every expense, income and paid invoice aggregated in one place.",
+      "income": "Total income",
+      "expenses": "Total expenses",
+      "netBalance": "Net balance",
+      "pendingInvoices": "Pending invoices",
+      "latestActivity": "Latest activity",
+      "viewAll": "View full book",
+      "source": {
+        "expense": "Expense",
+        "income": "Income",
+        "invoice": "Invoice"
+      },
+      "emptyTitle": "Your book is empty",
+      "emptyDescription": "Add your first expense, income or invoice — it'll appear here automatically."
+    }
+  },
+  "pages": {
+    "sections": {
+      "workspace": "Workspace",
+      "manage": "Manage",
+      "tools": "Tools"
+    },
+    "dashboard": {
+      "welcome": "Welcome back",
+      "addExpense": "Add expense",
+      "newInvoice": "New invoice",
+      "stats": {
+        "totalBalance": "Total balance",
+        "monthlyIncome": "Monthly income",
+        "monthlyExpenses": "Monthly expenses",
+        "pendingInvoices": "Pending invoices"
+      },
+      "recentTransactions": {
+        "title": "Recent transactions",
+        "description": "Your latest financial activity",
+        "viewAll": "View all",
+        "empty": "Log your first expense or income to see it here."
+      },
+      "pendingInvoices": {
+        "title": "Pending invoices",
+        "description": "Awaiting payment",
+        "manage": "Manage invoices",
+        "empty": "Create your first invoice to start tracking payments."
+      },
+      "activity": {
+        "title": "Latest activity",
+        "description": "Team & workspace changes",
+        "empty": "Nothing happened yet."
+      },
+      "selectWorkspace": "Select or create a workspace to continue."
+    },
+    "budget": {
+      "title": "Budgets",
+      "description": "Set spending limits per category. Auto-calculated from expenses.",
+      "new": "New budget",
+      "empty": {
+        "title": "No budgets yet",
+        "description": "Create a budget to track spending against a category."
+      },
+      "period": "Period",
+      "periods": {
+        "monthly": "Monthly",
+        "yearly": "Yearly",
+        "custom": "Custom"
+      },
+      "start": "Start",
+      "end": "End",
+      "color": "Color",
+      "spent": "Spent",
+      "toasts": {
+        "created": "Budget created",
+        "failed": "Could not save"
+      },
+      "projectBudgets": "Project budgets",
+      "project": "Project"
+    },
+    "expenses": {
+      "title": "Expenses & income",
+      "description": "Track money in and out, attach receipts, link to projects.",
+      "add": "Add transaction",
+      "addExpense": "Add expense",
+      "addIncome": "Add income",
+      "type": "Type",
+      "expense": "Expense",
+      "income": "Income",
+      "paymentMethod": "Payment method",
+      "project": "Project (optional)",
+      "noProject": "— No project —",
+      "totals": {
+        "income": "Total income",
+        "expenses": "Total expenses",
+        "net": "Net"
+      },
+      "empty": {
+        "title": "No transactions yet",
+        "description": "Log your first expense or income to see it here."
+      },
+      "attach": {
+        "title": "Attach receipts",
+        "description": "Add receipts or supporting documents. They'll be linked automatically."
+      },
+      "done": "Done",
+      "toasts": {
+        "addedExpense": "Expense added",
+        "addedIncome": "Income added",
+        "failed": "Could not save"
+      }
+    },
+    "invoices": {
+      "title": "Invoices",
+      "description": "Create, send and track payments. Auto-numbered per year.",
+      "new": "New invoice",
+      "clientEmail": "Client email",
+      "clientAddress": "Client address",
+      "issueDate": "Issue date",
+      "dueDate": "Due date",
+      "lineItems": "Line items",
+      "addLine": "Add line",
+      "taxRate": "Tax rate (%)",
+      "subtotal": "Subtotal",
+      "tax": "Tax",
+      "total": "Total",
+      "number": "Number",
+      "issue": "Issue",
+      "due": "Due",
+      "actions": {
+        "markSent": "Mark as sent",
+        "markPaid": "Mark as paid",
+        "markOverdue": "Mark as overdue",
+        "backToDraft": "Back to draft",
+        "delete": "Delete"
+      },
+      "status": {
+        "draft": "Draft",
+        "sent": "Sent",
+        "paid": "Paid",
+        "overdue": "Overdue",
+        "cancelled": "Cancelled"
+      },
+      "empty": {
+        "title": "No invoices yet",
+        "description": "Create your first invoice to start tracking client billing."
+      },
+      "attach": {
+        "title": "Attach documents",
+        "description": "Attach contracts, signed quotes or proof of delivery."
+      },
+      "toasts": {
+        "created": "Invoice created",
+        "marked": "Marked as {status}",
+        "failed": "Could not save"
+      }
+    },
+    "projects": {
+      "title": "Projects",
+      "description": "Shared across the A2E Suite. Link invoices, expenses, books and fiches.",
+      "new": "New project",
+      "openFiche": "Open project sheet",
+      "status": {
+        "planning": "Planning",
+        "active": "Active",
+        "on_hold": "On hold",
+        "completed": "Completed"
+      },
+      "empty": {
+        "title": "No projects yet",
+        "description": "Create a project to group invoices, expenses and tasks.",
+        "tasks": "No task for this project.",
+        "documents": "No document linked to this project."
+      },
+      "budget": "Budget",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "toasts": {
+        "created": "Project created",
+        "failed": "Could not save"
+      },
+      "tabs": {
+        "transactions": "Transactions",
+        "fiches": "Sheets",
+        "documents": "Documents",
+        "details": "Details",
+        "tasks": "Tasks"
+      },
+      "tasksShared": "Tasks live in A2E Core, so they also show up in Bureau and on mobile.",
+      "newTaskPlaceholder": "New task for this project…"
+    },
+    "fiches": {
+      "navTitle": "Project sheets",
+      "title": "Project sheets",
+      "description": "Smart, printable association project sheets (fiches projet). Filled or empty PDF export, customizable templates.",
+      "new": "New project sheet",
+      "newFromTemplate": "From template",
+      "newBlank": "Blank sheet",
+      "templateLabel": "Template",
+      "open": "Open sheet",
+      "duplicate": "Duplicate",
+      "exportPdf": "Export to PDF",
+      "exportBlankPdf": "Empty PDF",
+      "exportFilledPdf": "Filled PDF",
+      "saved": "Saved",
+      "saving": "Saving…",
+      "lastSaved": "Last saved {when}",
+      "linkedProject": "Linked project (optional)",
+      "noProjectLinked": "— No project linked —",
+      "search": "Search sheets…",
+      "empty": {
+        "title": "No project sheets yet",
+        "description": "Start from a template (e.g. Fiche projet associatif) or a blank sheet."
+      },
+      "templates": {
+        "asso_fr": {
+          "name": "Fiche projet associatif (FR)",
+          "description": "French association project sheet — identity, context, audience, objectives, actions, partners, evaluation."
+        },
+        "blank": {
+          "name": "Blank sheet",
+          "description": "Start from scratch with a free-form rich text editor."
+        },
+        "recu_don": {
+          "name": "Tax donation receipt (CERFA 11580*05)",
+          "description": "Receipt for donations to certain general-interest organisations (art. 200, 238 bis & 978 CGI). Legal, signature-ready PDF."
+        },
+        "budget_equilibre": {
+          "name": "Balanced provisional budget",
+          "description": "Annual or per-action budget — balanced expenses and income (French association chart of accounts)."
+        },
+        "demande_subvention": {
+          "name": "Grant application (CERFA 12156)",
+          "description": "Full grant application dossier: identity, provisional budget, project and sworn statement."
+        },
+        "convention_subvention": {
+          "name": "Grant agreement",
+          "description": "Agreement between funder and association (mandatory above €23,000/year from one public funder)."
+        },
+        "rapport_activite": {
+          "name": "Annual activity report",
+          "description": "Yearly narrative report — association life, actions, results and outlook. To attach to the financial report."
+        },
+        "attestation_honneur": {
+          "name": "Sworn statement",
+          "description": "Statement signed by the legal representative, part of the grant application dossier."
+        }
+      },
+      "fields": {
+        "title": "Title",
+        "subtitle": "Subtitle",
+        "ficheTitle": "Sheet title",
+        "logo": "Logo",
+        "partnerLogo": "Partner logo",
+        "association": "Association / Department",
+        "referent": "Project lead",
+        "phone": "Phone",
+        "email": "Email",
+        "thematic": "Thematic",
+        "thematics": {
+          "culture": "Culture",
+          "sport": "Sport",
+          "social": "Social",
+          "education": "Education",
+          "other": "Other"
+        },
+        "context": "Initial situation, problem or need identified",
+        "origin": "Origin of the idea (field, volunteers, partners…)",
+        "linkToProject": "Link to the global association project",
+        "audience": "Target audience",
+        "ageProfile": "Profile / age",
+        "estimatedParticipants": "Estimated participants",
+        "geographicArea": "Geographic area",
+        "identifiedNeeds": "Identified needs",
+        "needs": {
+          "isolation": "Isolation / lack of social ties",
+          "economic": "Economic difficulties",
+          "culturalAccess": "Lack of access to cultural / sport offer",
+          "educational": "Educational difficulties",
+          "other": "Other"
+        },
+        "generalObjective": "General objective (one sentence)",
+        "specificObjectives": "Specific objectives (3 to 4 operational objectives)",
+        "actionTypes": "Type of planned actions",
+        "actions": {
+          "workshops": "Regular workshops",
+          "event": "One-off event",
+          "individualSupport": "Individual support",
+          "awareness": "Awareness / information",
+          "other": "Other"
+        },
+        "action": "Action {n}",
+        "actionDescription": "Action description",
+        "audienceLabel": "Audience",
+        "frequency": "Frequency",
+        "period": "Period / dates",
+        "addAction": "Add an action",
+        "removeAction": "Remove",
+        "humanResources": "Human resources",
+        "volunteers": "Volunteers",
+        "employees": "Employees",
+        "externalContributors": "External contributors",
+        "materialResources": "Material / logistical resources",
+        "partners": "Potential partners",
+        "partnersOptions": {
+          "localGov": "Local authorities",
+          "associations": "Other associations",
+          "schools": "Schools / universities",
+          "companies": "Companies / sponsoring",
+          "other": "Other"
+        },
+        "successIndicators": "Success indicators",
+        "targetParticipants": "Target participants",
+        "targetAttendance": "Target attendance rate (%)",
+        "qualitativeIndicators": "Other qualitative indicators",
+        "trackingTools": "Tracking tools",
+        "trackingOptions": {
+          "attendance": "Attendance sheets",
+          "satisfaction": "Satisfaction questionnaire",
+          "collective": "Collective discussion time",
+          "report": "Written report / activity report",
+          "other": "Other"
+        },
+        "perspectives": "Perspectives (renewal, extension, adaptation)",
+        "date": "Date",
+        "referentSignature": "Project lead signature",
+        "boardVisa": "Board / Council visa",
+        "boardOpinion": "Board opinion",
+        "opinions": {
+          "favorable": "Favorable",
+          "reserved": "Reserved",
+          "unfavorable": "Unfavorable"
+        },
+        "observations": "Board observations"
+      }
+    },
+    "book": {
+      "title": "Books",
+      "description": "Custom spreadsheets for any financial data. Export to CSV / Google Sheets compatible.",
+      "new": "New sheet",
+      "startFromTemplate": "Start from a template",
+      "sheetName": "Sheet name",
+      "rows": "{count, plural, =0 {No rows} =1 {1 row} other {# rows}}",
+      "columns": "{count, plural, =0 {No columns} =1 {1 column} other {# columns}}",
+      "addRow": "Add row",
+      "updated": "Updated {when}",
+      "empty": {
+        "title": "No sheets yet",
+        "description": "Create your first book sheet to start tracking financial data."
+      },
+      "templates": {
+        "cashflow": "Cash flow",
+        "donations": "Donations log",
+        "grants": "Grants tracker",
+        "custom": "Blank sheet"
+      },
+      "toasts": {
+        "created": "Sheet created",
+        "failed": "Could not save"
+      },
+      "autoBadge": "Auto",
+      "autoLocked": "Automatic journal — cannot be deleted",
+      "autoDescription": "Filled automatically from your income and expenses · {proofs} linked proof(s)",
+      "detail": {
+        "rowsColumns": "{rows} rows · {columns} columns",
+        "columnsBtn": "Columns",
+        "settings": "Sheet settings",
+        "manageColumns": "Manage columns",
+        "name": "Name",
+        "type": "Type",
+        "required": "Required",
+        "optionsHint": "Options (comma separated)",
+        "addColumn": "Add column",
+        "saveColumns": "Save columns",
+        "addRow": "Add row",
+        "add": "Add",
+        "autoLine": "Automatically generated line",
+        "cannotDelete": "Could not delete",
+        "couldNotUpdate": "Could not update",
+        "saved": "Saved",
+        "autoBanner": "<b>Automatic journal.</b> Every income and expense recorded in Bilan creates, updates or removes its line here — proofs included. Greyed columns are driven by the app; the Comment column stays yours. Export this journal as-is at year end.",
+        "autoNoManual": "The lines of this journal come from your transactions.",
+        "autoAddCta": "Add a transaction",
+        "proofs": "Proofs",
+        "noRowsYet": "No line yet — record an income or an expense and it will appear here."
+      }
+    },
+    "documents": {
+      "title": "Documents (A2E Drive)",
+      "description": "Receipts, contracts, supporting documents — stored in the shared A2E Drive on Backblaze B2 (EU), private bucket, 10-minute signed links.",
+      "uploadTitle": "Upload new document",
+      "uploadDescription": "Files uploaded here are not linked to any entity. You can link them from an invoice, expense, project or book entry.",
+      "storage": {
+        "used": "Storage used",
+        "files": "{count, plural, =0 {No files} =1 {1 file} other {# files}}",
+        "plan": "{plan} plan",
+        "encrypted": "encrypted at rest"
+      },
+      "empty": {
+        "title": "No documents yet",
+        "description": "Upload receipts, certificates and supporting files."
+      },
+      "upload": "Upload",
+      "newFolder": "New folder",
+      "uploaded": "{name} uploaded to A2E Drive",
+      "quotaExceeded": "Storage quota reached",
+      "dropHint": "Drop files here — they land in the workspace's shared Drive.",
+      "uploading": "Uploading…",
+      "searchPlaceholder": "Search a file across the workspace…",
+      "allFiles": "All files",
+      "inFolder": "Folder: {name}",
+      "subfolders": "subfolders",
+      "renamePrompt": "New file name",
+      "folderNamePrompt": "Folder name",
+      "trashNotice": "Deleted files are kept 30 days, then permanently removed from B2.",
+      "confirmEmptyTrash": "Permanently empty the trash?",
+      "emptyTrash": "Empty trash",
+      "trashEmptied": "{count} file(s) permanently deleted",
+      "trashEmpty": "Trash is empty",
+      "tabs": {
+        "files": "Files",
+        "trash": "Trash"
+      }
+    },
+    "reports": {
+      "title": "Reports",
+      "description": "Aggregated insights across {workspace}.",
+      "totals": {
+        "income": "Total income",
+        "expenses": "Total expenses",
+        "invoiced": "Total invoiced",
+        "net": "Net"
+      },
+      "monthly": "Monthly income vs expenses",
+      "byCategory": "Expenses by category",
+      "noData": "No data yet.",
+      "composition": {
+        "title": "Income / Expense composition",
+        "subtitle": "Normalized monthly breakdown over the last 12 months"
+      }
+    },
+    "activity": {
+      "title": "Activity log",
+      "description": "Immutable audit trail for this workspace.",
+      "empty": {
+        "title": "No activity yet",
+        "description": "Workspace events will be logged here."
+      },
+      "auditNotice": "Merged trail: shared events (workspace, members, files, tasks) come from A2E Core, financial events from Bilan."
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Manage your profile and active workspace.",
+      "profile": "Profile",
+      "workspace": "Workspace",
+      "exportGdpr": "Export GDPR data",
+      "danger": "Danger zone",
+      "dangerDescription": "Deleting a workspace removes all invoices, expenses, books, budgets, projects and members associated with it. This action is permanent.",
+      "deleteWorkspace": "Delete workspace",
+      "signOut": "Sign out",
+      "toasts": {
+        "profileSaved": "Profile saved",
+        "workspaceSaved": "Workspace saved",
+        "workspaceDeleted": "Workspace deleted",
+        "failed": "Could not save",
+        "orgSaved": "Organisation saved"
+      },
+      "emailManagedByWorkOS": "Your email is managed by your A2E identity (WorkOS) and verified server-side.",
+      "workspaceShared": "Name, currency and description are shared with the whole A2E suite.",
+      "organisation": "Organisation identity",
+      "organisationDescription": "Used to prefill CERFA forms, tax receipts and agreements. Shield-marked fields are encrypted at rest.",
+      "dangerCoreNotice": "The shared workspace itself cannot be deleted from Bilan (an A2E Core decision). You can erase all Bilan financial data from Security & compliance.",
+      "org": {
+        "legalName": "Legal name",
+        "rna": "RNA number",
+        "phone": "Phone",
+        "website": "Website",
+        "postalCode": "Postal code",
+        "city": "City",
+        "address": "Address",
+        "objet": "Purpose",
+        "representativeName": "Legal representative",
+        "representativeRole": "Position",
+        "encryptedNotice": "IBAN, BIC, SIRET, RNA, address, phone, email and representative are encrypted with AES-256-GCM using a per-workspace derived key. Only members of this workspace can read them."
+      },
+      "core": {
+        "title": "A2E shared workspace",
+        "description": "Health of the link between Bilan and the shared A2E Core database.",
+        "coreHost": "Core deployment",
+        "session": "Shared session",
+        "connected": "connected",
+        "notConnected": "not connected",
+        "identity": "Verified identity",
+        "coreUser": "Core user",
+        "linkedWorkspace": "Linked workspace",
+        "membership": "Membership (mirror)",
+        "notMirrored": "not synced",
+        "workspaceCount": "Workspaces available",
+        "plan": "Plan & storage",
+        "modules": "Modules served by core",
+        "appAccess": "Included apps",
+        "lastError": "Last error",
+        "degraded": "Degraded mode: shared modules are off, Bilan runs on its own data.",
+        "resync": "Resync",
+        "resynced": "Memberships resynced"
+      },
+      "security": {
+        "title": "Security & compliance",
+        "description": "The real state of encryption, hosting and your GDPR rights — computed server-side.",
+        "encryptionOn": "Encryption active",
+        "encryptionOff": "Encryption inactive",
+        "encryption": "Encryption at rest",
+        "algorithm": "Algorithm",
+        "kdf": "Key derivation",
+        "binding": "Context binding",
+        "keyLocation": "Key location",
+        "encryptedFields": "Encrypted fields",
+        "fieldsTitle": "Fields encrypted at rest",
+        "residency": "Data residency",
+        "appDb": "Bilan database",
+        "sharedDb": "Shared database",
+        "filesStore": "Files",
+        "bucket": "Bucket",
+        "private": "private",
+        "public": "public",
+        "fileAccess": "File access",
+        "auth": "Authentication",
+        "bridge": "Service bridge",
+        "gdpr": "GDPR — your rights",
+        "analytics": "Product analytics",
+        "analyticsHint": "No advertising trackers. Anonymised usage measurement, off by default.",
+        "consentGranted": "Consent recorded",
+        "consentWithdrawn": "Consent withdrawn",
+        "exportAll": "Export everything (Bilan + A2E)",
+        "exportMe": "Export my data",
+        "exportDone": "Export generated",
+        "trustCenter": "Trust Center",
+        "retentionNotice": "Accounting records are kept for 10 years (legal obligation, French commercial code art. L123-22). Erasure removes your personal identifiers without destroying the books.",
+        "eraseMe": "Erase my identity",
+        "eraseWorkspace": "Erase financial data",
+        "confirmEraseMe": "Erase your profile and pseudonymise your actions in Bilan?",
+        "confirmEraseWorkspace": "PERMANENTLY erase every financial record of this workspace?",
+        "erasedMe": "Profile erased, {count} action(s) pseudonymised",
+        "erasedWorkspace": "Financial data erased"
+      }
+    },
+    "legal": {
+      "title": "Legal & compliance",
+      "description": "GDPR, data residency and security details for Bilan.",
+      "privacyDesc": "How we collect, store and process your data.",
+      "termsDesc": "The rules you agree to when using the service.",
+      "residency": {
+        "title": "Data residency",
+        "items": [
+          "Database hosted on Convex (EU - Paris region)",
+          "Documents stored on Backblaze B2 (EU - Central, Frankfurt)",
+          "Workspaces are fully isolated; cross-workspace access is denied by construction",
+          "All writes are recorded in the activity log for legal traceability",
+          "Workspace owners can export all data as JSON at any time (GDPR)"
+        ]
+      },
+      "read": "Read"
+    },
+    "invite": {
+      "invitedTitle": "You're invited to join",
+      "asRole": "As a {role}, you'll be able to collaborate on this workspace.",
+      "accept": "Accept invitation",
+      "signInToAccept": "Sign in to accept",
+      "notFound": "Invitation not found",
+      "notFoundDescription": "This invitation does not exist or has been revoked.",
+      "goHome": "Go home",
+      "noLongerValid": "Invitation {status}",
+      "noLongerValidDescription": "This invitation is no longer valid.",
+      "goDashboard": "Go to dashboard",
+      "joined": "Joined workspace!"
+    },
+    "preview": {
+      "title": "File preview",
+      "download": "Download",
+      "openOriginal": "Open original",
+      "loading": "Loading preview…",
+      "noPreview": "No preview available for this file type."
+    },
+    "clients": {
+      "title": "Clients & donors",
+      "description": "The shared A2E People directory: a contact created here is available across the suite.",
+      "new": "New contact",
+      "edit": "Edit contact",
+      "phone": "Phone",
+      "address": "Address",
+      "company": "Organisation",
+      "invoices": "Invoices",
+      "totalPaid": "Collected",
+      "searchPlaceholder": "Search by name, email, SIRET…",
+      "quota": "{used} contact(s) / {limit}",
+      "sharedNotice": "This contact is stored in the shared A2E directory (EU). Bilan invoices reference it by id.",
+      "confirmDelete": "Delete this contact from the shared directory?",
+      "empty": {
+        "title": "No contact yet",
+        "description": "Add your clients, donors and partners — they become available across the A2E suite."
+      },
+      "toasts": {
+        "created": "Contact created",
+        "updated": "Contact updated",
+        "failed": "Could not save",
+        "duplicate": "A contact already exists with this email: {name}",
+        "quota": "Contact limit of {limit} reached"
+      }
+    },
+    "security": {
+      "badge": "Trust Center — live status",
+      "title": "Security isn't a promise here: this page queries the server.",
+      "subtitle": "Bilan handles the money of associations and small organisations. Every sensitive value is encrypted with a per-workspace key, files live in a private EU bucket, and everything shown below is read live from the backend.",
+      "cta": "Open Bilan",
+      "live": {
+        "encryption": "Field encryption",
+        "active": "Active",
+        "inactive": "Inactive",
+        "fields": "Encrypted fields",
+        "bucket": "File bucket",
+        "private": "Private",
+        "public": "Public",
+        "region": "Hosting",
+        "notice": "Values read live from the deployment (nothing hard-coded)."
+      },
+      "pillars": {
+        "encryption": {
+          "title": "Application-level encryption at rest",
+          "body": "IBAN, BIC, SIRET, contact details and notes are encrypted before they hit the database. A single root key stays in the backend environment; each workspace gets its own derived key and every value is bound to its workspace, table and field."
+        },
+        "auth": {
+          "title": "One identity, two backends",
+          "body": "Authentication is delegated to WorkOS AuthKit. The same RS256-signed token is verified by Bilan's backend and by the shared A2E Core database: no token exchange, no stored passwords."
+        },
+        "files": {
+          "title": "Files in a private bucket",
+          "body": "No file is public. A2E Core issues short-lived signed URLs, only to a verified workspace member. Storage keys never reach the browser.",
+          "private": "private bucket — no public URL"
+        },
+        "residency": {
+          "title": "Hosted in Europe",
+          "body": "Application database, shared database and file storage all sit in the European Union. Non-EU sub-processors are covered by standard contractual clauses."
+        }
+      },
+      "fields": {
+        "title": "Exactly what is encrypted",
+        "body": "We prefer an exact list to a marketing claim. This list is the same source of truth the code uses."
+      },
+      "architecture": {
+        "title": "Where your data lives",
+        "body": "Bilan is part of the A2E suite: one shared database for what is common, a dedicated one for accounting. That split keeps the blast radius small and the books isolated.",
+        "bilan": {
+          "title": "Bilan database",
+          "body": "Invoices, transactions, budgets, books, sheets, CERFA, organisation identity (encrypted)."
+        },
+        "core": {
+          "title": "A2E Core",
+          "body": "Identities, workspaces, members, roles, invitations, notifications, tasks, contacts, audit trail."
+        },
+        "drive": {
+          "title": "A2E Drive (B2)",
+          "body": "Supporting files linked to an expense, invoice or project — private bucket, signed links."
+        }
+      },
+      "gdpr": {
+        "title": "GDPR, end to end",
+        "body": "Record of processing, lawful basis, retention, sub-processors and rights: all exposed and actionable from inside the app.",
+        "purpose": "Purpose",
+        "basis": "Lawful basis",
+        "retention": "Retention",
+        "subProcessors": "Sub-processors",
+        "rights": "Your rights",
+        "contact": "Rights requests and data contact:"
+      },
+      "practices": {
+        "title": "Engineering practices",
+        "item1": "Every backend function derives the user from the verified token: a client-supplied id is never trusted.",
+        "item2": "Workspace access is checked against a membership mirror refreshed by a secret-gated server-to-server bridge.",
+        "item3": "No secret in the browser bundle: only public deployment URLs and the WorkOS client id ship to the client.",
+        "item4": "Public share links are re-validated on every request (expiry, revocation, passphrase).",
+        "item5": "Ciphertexts are context-bound: moving one into another column makes it undecryptable.",
+        "item6": "The audit trail is append-only at the application level and exportable for your own controls.",
+        "item7": "Controlled degradation: if the shared layer fails, Bilan keeps running on its own data instead of erroring out.",
+        "item8": "Quotas are enforced server-side, never only in the UI."
+      },
+      "footerCta": {
+        "title": "Keep your books without compromise",
+        "body": "Clear accounting, French legal documents, secured files and a workspace shared with the rest of the A2E suite.",
+        "privacy": "Privacy policy"
+      }
+    },
+    "subventions": {
+      "title": "Grants",
+      "description": "Every French public funding scheme in one place — refreshed daily — plus an assistant that finds the ones that actually fit your project.",
+      "refresh": "Refresh",
+      "save": "Track",
+      "saved": "Tracked",
+      "stats": {
+        "total": "{count} schemes indexed",
+        "updated": "Updated {when}"
+      },
+      "toasts": {
+        "saved": "Added to your pipeline",
+        "refreshing": "Catalogue refresh started",
+        "converted": "Income created and posted to the journal"
+      },
+      "ai": {
+        "title": "Describe your project",
+        "subtitle": "The assistant reads your description, targets compatible schemes and explains why. Every search is cached — re-running one is free.",
+        "placeholder": "E.g. Our non-profit is opening a community workspace in Lyon for digital inclusion of 16-25 year olds. 3 staff, €120,000 budget, we need to fund a role and IT equipment.",
+        "cta": "Find my grants",
+        "running": "Analysing…",
+        "fit": "fit",
+        "resultCount": "{count} relevant scheme(s)",
+        "scanned": "{count} schemes analysed",
+        "cached": "Cached result",
+        "history": "Previous searches",
+        "tooShort": "Describe your project in a few sentences (20 characters minimum).",
+        "noMatch": "No sufficiently relevant scheme. Add your territory, audience and need.",
+        "failed": "The analysis failed. Please try again shortly.",
+        "notConfigured": "AI assistant not configured on this deployment (missing Gemini key). The catalogue is still browsable.",
+        "examples": {
+          "assoJeunes": "Community education non-profit in Seine-Saint-Denis, tutoring 80 secondary pupils, needs to fund a coordinator role.",
+          "tiersLieu": "Rural community hub in Occitanie: coworking, bike repair and digital workshops, needs to invest in fitting out the premises.",
+          "startup": "4-person startup building carbon-footprint measurement software, R&D stage, looking for grants and tax credits."
+        },
+        "privacyNote": "Only the description you type is sent to the Google Gemini model. No amount, no proof, no personal data leaves Bilan.",
+        "consentTitle": "Before your first search",
+        "consentBody": "To find relevant schemes, your project description is sent to Google Gemini (sub-processor, transfer covered by standard contractual clauses). Nothing else is transmitted: not your accounting entries, not your proofs, not your members' data. You can withdraw this consent at any time from the Trust Center.",
+        "consentAccept": "I agree — run the search",
+        "consentDecline": "Cancel"
+      },
+      "track": {
+        "title": "My applications",
+        "count": "{count} application(s)",
+        "noProject": "No project",
+        "markGranted": "Mark as granted",
+        "booked": "in journal",
+        "deadline": "Apply before {when}",
+        "removedSource": "Scheme removed from catalogue",
+        "amountRequired": "Enter the granted amount.",
+        "grantTitle": "Grant awarded",
+        "grantHelp": "The amount is recorded as income and appears immediately in the automatic journal, with the funder as reference.",
+        "grantAmount": "Granted amount ({currency})",
+        "grantConfirm": "Record the income",
+        "status": {
+          "shortlisted": "Shortlisted",
+          "preparing": "Preparing",
+          "submitted": "Submitted",
+          "granted": "Granted",
+          "rejected": "Rejected",
+          "abandoned": "Abandoned"
+        }
+      },
+      "catalogue": {
+        "title": "Grant catalogue",
+        "searchPlaceholder": "Search a scheme, a funder, a theme…",
+        "filters": "Filters",
+        "all": "All",
+        "audience": "Beneficiary",
+        "scale": "Scale",
+        "aidType": "Aid type",
+        "openOnly": "Open applications only",
+        "callsOnly": "Calls for projects only",
+        "callBadge": "Call for projects",
+        "open": "Open",
+        "loadMore": "Show more schemes",
+        "sourcesLabel": "Sources:",
+        "empty": {
+          "title": "No scheme matches",
+          "description": "Widen your filters, or run the AI assistant with a project description."
+        }
+      }
+    }
+  },
+  "consent": {
+    "title": "Your data, your rules",
+    "body": "Bilan ships no advertising trackers. Only anonymised product analytics are optional.",
+    "learnMore": "Trust Center",
+    "accept": "Accept",
+    "refuse": "Decline"
+  }
+}

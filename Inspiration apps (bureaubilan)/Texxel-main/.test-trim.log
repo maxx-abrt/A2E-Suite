@@ -1,0 +1,11 @@
+Progress: resolved 1, reused 0, downloaded 0, added 0
+apps/web                                 |  WARN  deprecated mathjax-full@3.2.2
+Progress: resolved 225, reused 0, downloaded 0, added 0
+Progress: resolved 730, reused 0, downloaded 0, added 0
+ WARN  11 deprecated subdependencies found: @aws-sdk/core@3.977.1, @oslojs/asn1@1.0.0, @oslojs/binary@1.0.0, @oslojs/crypto@1.0.1, @xmldom/xmldom@0.9.10, glob@7.2.3, inflight@1.0.6, lucia@3.2.2, oslo@1.2.1, rimraf@3.0.2, whatwg-encoding@3.1.1
+Progress: resolved 1762, reused 0, downloaded 0, added 0
+Progress: resolved 1762, reused 148, downloaded 0, added 0
+.                                        |  +10 +
+.                                        | -253 -------------------------
+Progress: resolved 1762, reused 253, downloaded 0, added 10, done
+Done in 5.9s using pnpm v10.34.5

@@ -1,0 +1,67 @@
+
+> @bureau/web@1.0.0 build /app/Texxel/apps/web
+> next build
+
+▲ Next.js 16.2.11 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 29.7s
+  Running TypeScript ...
+  Finished TypeScript in 16.2s ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/28) ...
+  Generating static pages using 7 workers (7/28) 
+  Generating static pages using 7 workers (14/28) 
+  Generating static pages using 7 workers (21/28) 
+✓ Generating static pages using 7 workers (28/28) in 431ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/ai
+├ ƒ /api/auth/signin
+├ ƒ /api/auth/signout
+├ ƒ /api/auth/token
+├ ƒ /api/callback
+├ ƒ /api/dev/jwks
+├ ƒ /api/dev/login
+├ ƒ /api/dev/logout
+├ ƒ /api/trpc/[trpc]
+├ ○ /app
+├ ○ /app/activity
+├ ○ /app/analytics
+├ ○ /app/calendar
+├ ○ /app/databases
+├ ƒ /app/databases/[databaseId]
+├ ○ /app/discussions
+├ ○ /app/documents
+├ ƒ /app/documents/[documentId]
+├ ○ /app/files
+├ ○ /app/inbox
+├ ○ /app/members
+├ ○ /app/projects
+├ ƒ /app/projects/[projectId]
+├ ○ /app/settings
+├ ○ /app/settings/roles
+├ ○ /app/tasks
+├ ○ /app/tasks/trash
+├ ○ /app/trash
+├ ○ /auth
+├ ƒ /callback
+├ ƒ /invite/[token]
+├ ƒ /next-api/ai
+├ ƒ /next-api/auth/signin
+├ ƒ /next-api/auth/signout
+├ ƒ /next-api/auth/token
+├ ƒ /next-api/dev/jwks
+├ ƒ /next-api/dev/login
+├ ƒ /next-api/dev/logout
+├ ƒ /next-api/trpc/[trpc]
+└ ƒ /share/[shareToken]
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

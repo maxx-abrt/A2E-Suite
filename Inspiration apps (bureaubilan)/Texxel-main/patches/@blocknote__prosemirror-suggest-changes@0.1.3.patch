@@ -1,0 +1,11 @@
+diff --git a/dist/withSuggestChanges.js b/dist/withSuggestChanges.js
+index e78132a00ea248d1afac394c5e54536b6a6e7086..0dd1f1d2935007790f5682e32159fba801700825 100644
+--- a/dist/withSuggestChanges.js
++++ b/dist/withSuggestChanges.js
+@@ -126,6 +126,5 @@ function getStepHandler(step) {
+     return function dispatchTransaction(tr) {
+         const transaction = isSuggestChangesEnabled(this.state) && !tr.getMeta("history$") && !tr.getMeta("collab$") && !("skip" in (tr.getMeta(suggestChangesKey) ?? {})) ? transformToSuggestionTransaction(tr, this.state) : tr;
+         dispatch.call(this, transaction);
+-        console.log(this.state);
+     };
+ }

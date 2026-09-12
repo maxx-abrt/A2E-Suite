@@ -1,0 +1,529 @@
+// ─── A2E AI Service — calls /api/ai and parses structured actions ────────────
+
+export interface AiMessage {
+  role: "developer" | "user" | "assistant";
+  content: string;
+}
+ 
+export type AiActionType =
+  | "create_task"
+  | "edit_task"
+  | "create_subtask"
+  | "create_document"
+  | "replace_content"
+  | "edit_document_blocks"
+  | "insert_blocks"
+  | "create_project";
+
+export interface AiAction {
+  type: AiActionType;
+  label: string;
+  data: Record<string, any>;
+}
+
+export interface AiResponse {
+  text: string;
+  actions: AiAction[];
+}
+
+const ACTION_REGEX = /```action\s*\n?([\s\S]*?)\n?```/g;
+
+function tryParseActionJson(json: string): AiAction[] {
+  const trimmed = json.trim();
+  try {
+    const parsed = JSON.parse(trimmed);
+    if (Array.isArray(parsed)) return parsed.filter((a: any) => a.type);
+    if (parsed.type) return [parsed];
+  } catch {}
+  return [];
+}
+
+function parseActions(raw: string): { text: string; actions: AiAction[] } {
+  const actions: AiAction[] = [];
+
+  // Primary: ```action blocks
+  let text = raw.replace(ACTION_REGEX, (_, json) => {
+    actions.push(...tryParseActionJson(json));
+    return "";
+  }).trim();
+
+  // Fallback: ```json blocks that contain action-shaped JSON (have a "type" field matching known actions)
+  const JSON_REGEX = /```json\s*\n?([\s\S]*?)\n?```/g;
+  const knownTypes = new Set(["create_task","edit_task","create_subtask","create_document","replace_content","edit_document_blocks","insert_blocks","create_project"]);
+  text = text.replace(JSON_REGEX, (full, json) => {
+    const found = tryParseActionJson(json);
+    const actionFound = found.filter((a) => knownTypes.has(a.type));
+    if (actionFound.length > 0) {
+      actions.push(...actionFound);
+      return "";
+    }
+    return full;
+  }).trim();
+
+  // Auto-generate labels if missing
+  for (const a of actions) {
+    if (!a.label) a.label = defaultLabel(a);
+  }
+  return { text, actions };
+}
+
+function defaultLabel(a: AiAction): string {
+  switch (a.type) {
+    case "create_task": return `Create task: ${a.data.title ?? "Untitled"}`;
+    case "edit_task": return `Edit task${a.data.title ? `: ${a.data.title}` : ""}`;
+    case "create_subtask": return `Add subtask: ${a.data.title ?? "Subtask"}`;
+    case "create_document": return `Create note: ${a.data.title ?? "Untitled"}`;
+    case "replace_content": return "Replace note content";
+    case "edit_document_blocks": return "Edit note (BlockNote)";
+    case "insert_blocks": return `Insert into note: ${a.data.title ?? "content"}`;
+    case "create_project": return `Create project: ${a.data.name ?? "Untitled"}`;
+    default: return "Action";
+  }
+}
+
+export interface AiSendOptions {
+  temperature?: number;
+  max_tokens?: number;
+  action?: string;
+  plan?: "free" | "suite";
+  model?: string;
+}
+
+export interface AiFullResponse extends AiResponse {
+  usage?: { input_tokens: number; output_tokens: number; total_tokens: number };
+  model?: string;
+}
+
+export async function sendAiMessage(
+  messages: AiMessage[],
+  opts?: AiSendOptions,
+): Promise<AiFullResponse> {
+  const res = await fetch("/next-api/ai", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      messages,
+      temperature: opts?.temperature ?? 0.7,
+      max_tokens: opts?.max_tokens ?? 8192,
+      action: opts?.action ?? "chat",
+      plan: opts?.plan ?? "free",
+      model: opts?.model,
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: "Network error" }));
+    if (err.error === "suite_required") {
+      throw new Error("suite_required");
+    }
+    throw new Error(err.error ?? `AI request failed (${res.status})`);
+  }
+
+  const data = await res.json();
+  const parsed = parseActions(data.content);
+  return {
+    ...parsed,
+    usage: data.usage,
+    model: data.model,
+  };
+}
+
+// ─── System prompt builder ───────────────────────────────────────────────────
+
+export interface TaskCtx {
+  id: string;
+  title: string;
+  status: string;
+  priority: string;
+  dueDate?: number;
+  description?: string;
+  parentTaskId?: string;
+  assigneeName?: string;
+  projectName?: string;
+  projectId?: string;
+  subtaskCount?: number;
+  commentCount?: number;
+}
+
+export interface DocCtx {
+  id: string;
+  title: string;
+  icon?: string;
+}
+
+export interface ProjectCtx {
+  id: string;
+  name: string;
+  color?: string;
+  taskCount?: number;
+}
+
+export interface TeamCtx {
+  id: string;
+  name: string;
+  memberCount?: number;
+}
+
+export interface AppContext {
+  locale: string;
+  userName?: string;
+  tasks: TaskCtx[];
+  documents: DocCtx[];
+  projects: ProjectCtx[];
+  teams: TeamCtx[];
+  currentDocument?: { id: string; title: string; content?: string; icon?: string };
+  currentTask?: { id: string; title: string; status: string; priority: string; description?: string; assigneeName?: string; projectName?: string };
+}
+
+export function buildSystemPrompt(ctx: AppContext): string {
+  const lang = ctx.locale === "fr" ? "French" : "English";
+  const hi = ctx.userName ? ` The user's name is ${ctx.userName}.` : "";
+  const today = new Date().toISOString().split("T")[0];
+  const todayMs = Date.now();
+
+  // ── Tasks ──────────────────────────────────────────────────────────────────
+  const overdue    = ctx.tasks.filter((t) => t.dueDate && t.dueDate < todayMs && t.status !== "done" && t.status !== "cancelled");
+  const inProgress = ctx.tasks.filter((t) => t.status === "in_progress");
+  const todoItems  = ctx.tasks.filter((t) => t.status === "todo");
+  const doneCount  = ctx.tasks.filter((t) => t.status === "done").length;
+  const dueToday   = ctx.tasks.filter((t) => {
+    if (!t.dueDate || t.status === "done" || t.status === "cancelled") return false;
+    const d = new Date(t.dueDate);
+    const n = new Date();
+    return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth() && d.getDate() === n.getDate();
+  });
+
+  const tasksSummary = ctx.tasks.length > 0
+    ? ctx.tasks
+        .slice(0, 60)
+        .map((t) => {
+          let line = `- [${t.id}] [${t.status}] [${t.priority}] "${t.title}"`;
+          if (t.dueDate) {
+            const dStr = new Date(t.dueDate).toISOString().split("T")[0];
+            const isOvd = t.dueDate < todayMs && t.status !== "done";
+            line += ` due:${dStr}${isOvd ? " ⚠️OVERDUE" : ""}`;
+          }
+          if (t.assigneeName) line += ` @${t.assigneeName}`;
+          if (t.projectName)  line += ` [project:${t.projectName}]`;
+          if (t.parentTaskId) line += ` [subtask-of:${t.parentTaskId}]`;
+          if (t.description)  line += `\n    desc: "${t.description.slice(0, 120)}"`;
+          return line;
+        })
+        .join("\n")
+    : "No tasks yet.";
+
+  // ── Documents ──────────────────────────────────────────────────────────────
+  const docsSummary = ctx.documents.length > 0
+    ? ctx.documents.slice(0, 40).map((d) => `- [${d.id}] ${d.icon ?? "📄"} "${d.title}"`).join("\n")
+    : "No notes yet.";
+
+  // ── Projects ───────────────────────────────────────────────────────────────
+  const projectsSummary = ctx.projects.length > 0
+    ? ctx.projects.map((p) => {
+        let line = `- [${p.id}] "${p.name}"`;
+        if (p.taskCount !== undefined) line += ` (${p.taskCount} tasks)`;
+        return line;
+      }).join("\n")
+    : "No projects yet.";
+
+  // ── Teams ──────────────────────────────────────────────────────────────────
+  const teamsSummary = ctx.teams.length > 0
+    ? ctx.teams.map((t) => `- [${t.id}] "${t.name}"${t.memberCount !== undefined ? ` (${t.memberCount} members)` : ""}`).join("\n")
+    : "No teams yet.";
+
+  // ── Current context ────────────────────────────────────────────────────────
+  let currentCtx = "";
+  if (ctx.currentDocument) {
+    currentCtx += `\n## ACTIVE NOTE: "${ctx.currentDocument.title}" [ID: ${ctx.currentDocument.id}]\n`;
+    if (ctx.currentDocument.content) {
+      const plain = extractPlainText(ctx.currentDocument.content).slice(0, 4000);
+      currentCtx += `\n### Plain text content:\n\`\`\`\n${plain}\n\`\`\`\n`;
+      currentCtx += `\n### Raw BlockNote JSON (for editing — preserve structure):\n${ctx.currentDocument.content.slice(0, 3000)}\n`;
+    } else {
+      currentCtx += `\n*(Note is empty — you can write content for it)*\n`;
+    }
+  }
+  if (ctx.currentTask) {
+    currentCtx += `\n## ACTIVE TASK: "${ctx.currentTask.title}" [ID: ${ctx.currentTask.id}]\n`;
+    currentCtx += `Status: ${ctx.currentTask.status} | Priority: ${ctx.currentTask.priority}\n`;
+    if (ctx.currentTask.description) currentCtx += `Description: ${ctx.currentTask.description.slice(0, 800)}\n`;
+    if (ctx.currentTask.assigneeName) currentCtx += `Assigned to: ${ctx.currentTask.assigneeName}\n`;
+    if (ctx.currentTask.projectName)  currentCtx += `Project: ${ctx.currentTask.projectName}\n`;
+  }
+
+  // ── Alerts ─────────────────────────────────────────────────────────────────
+  const alerts: string[] = [];
+  if (overdue.length > 0)   alerts.push(`⚠️ ${overdue.length} overdue task(s): ${overdue.slice(0, 3).map((t) => `"${t.title}"`).join(", ")}${overdue.length > 3 ? "…" : ""}`);
+  if (dueToday.length > 0)  alerts.push(`📅 ${dueToday.length} task(s) due TODAY: ${dueToday.map((t) => `"${t.title}"`).join(", ")}`);
+  if (inProgress.length > 5) alerts.push(`🔄 ${inProgress.length} tasks in progress — possibly too many WIP`);
+  const alertBlock = alerts.length > 0 ? `\n## ⚡ Alerts\n${alerts.join("\n")}\n` : "";
+
+  return `You are **Bureau AI**, the intelligent productivity assistant built into the Bureau workspace app.${hi}
+Today's date: ${today}. Always respond in ${lang}. Be warm, direct, and genuinely helpful. Use emoji sparingly (✨ 📝 ✅ 🎯 🗓️) but keep it professional.
+${alertBlock}
+## Workspace snapshot
+- Tasks: ${ctx.tasks.length} total · ${todoItems.length} todo · ${inProgress.length} in progress · ${doneCount} done · ${overdue.length} overdue
+- Notes: ${ctx.documents.length} · Projects: ${ctx.projects.length} · Teams: ${ctx.teams.length}
+
+## All tasks
+${tasksSummary}
+
+## Notes
+${docsSummary}
+
+## Projects
+${projectsSummary}
+
+## Teams
+${teamsSummary}
+${currentCtx}
+## Your role & capabilities
+
+You help the user:
+1. **Manage tasks** — create, edit, prioritize, set deadlines, create subtasks, bulk plan
+2. **Manage projects** — create new projects with color/description, build project plans with linked tasks and notes
+3. **Write and edit notes** — create rich structured notes, update existing ones with full BlockNote formatting, link plans to projects
+4. **Plan & organize** — break goals into phases, create tasks with deadlines, generate project plans as note + tasks + project in one shot
+5. **Analyse the workspace** — surface insights, flag overdue work, suggest daily focus, identify bottlenecks
+
+You PROPOSE actions — the user sees each as an approval card and clicks "Apply" or rejects it. Never claim you've done something directly. For multi-step plans, emit all actions together so the user can review and apply them in order.
+
+---
+
+## Action blocks
+
+Embed actions using \`\`\`action\`\`\` JSON blocks. Always include a short "label".
+
+### ⚠️ MANDATORY ACTION RULE — READ CAREFULLY:
+You MUST emit a \`\`\`action block for ANY request that involves creating or modifying content. NEVER just describe what you would do — always output the action block so the user can click Apply.
+
+### BIAS TO ACTION — don't interrogate the user:
+When the user's intent is clear, PROPOSE the action immediately using sensible defaults instead of asking follow-up questions. The user can edit anything before/after Apply, so defaults are safe:
+- Missing priority → "medium". Missing status → "todo". Missing due date → omit it (no due date).
+- Missing project/assignee → omit. Vague note request → draft reasonable structured content.
+Only ask a clarifying question when the request is genuinely ambiguous (e.g. you cannot tell what to create at all). Prefer: emit the action AND add one short sentence inviting the user to tweak details.
+
+### DECISION TREE — which action to use for notes:
+${ctx.currentDocument
+  ? `**YOU ARE ON NOTE "${ctx.currentDocument.title}" [ID: ${ctx.currentDocument.id}]**
+- User asks to ADD/INSERT content (table, text, list, summary, any new content…) → **MUST use insert_blocks** with documentId: "${ctx.currentDocument.id}"
+- User asks to REWRITE/REPLACE the whole note → use **edit_document_blocks** with documentId: "${ctx.currentDocument.id}"
+- User asks to CREATE A NEW separate note → use **create_document**
+
+**EXAMPLE** — user asks "add a 3x3 table":
+\`\`\`action
+{"type":"insert_blocks","label":"Insert 3x3 table","data":{"documentId":"${ctx.currentDocument.id}","blocks":[{"type":"table","content":{"type":"tableContent","rows":[{"cells":[[{"type":"text","text":"Col 1","styles":{"bold":true}}],[{"type":"text","text":"Col 2","styles":{"bold":true}}],[{"type":"text","text":"Col 3","styles":{"bold":true}}]]},{"cells":[[{"type":"text","text":""}],[{"type":"text","text":""}],[{"type":"text","text":""}]]},{"cells":[[{"type":"text","text":""}],[{"type":"text","text":""}],[{"type":"text","text":""}]]}]}}]}}
+\`\`\``
+  : `- No active note open → use **create_document** for any note creation`}
+
+---
+
+### Create a task
+\`\`\`action
+{"type": "create_task", "label": "Create: <title>", "data": {"title": "Task title", "description": "Optional detail", "priority": "none|low|medium|high|urgent", "status": "todo", "dueDate": "YYYY-MM-DD"}}
+\`\`\`
+
+### Edit a task (use exact ID from task list above)
+\`\`\`action
+{"type": "edit_task", "label": "Update: <title>", "data": {"id": "<exact_task_id>", "status": "todo|in_progress|in_review|done|cancelled", "priority": "none|low|medium|high|urgent", "title": "New title (optional)", "description": "Updated description (optional)", "dueDate": "YYYY-MM-DD"}}
+\`\`\`
+
+### Create a subtask
+\`\`\`action
+{"type": "create_subtask", "label": "Subtask: <title>", "data": {"parentTaskId": "<exact_parent_id>", "title": "Subtask title", "priority": "medium", "dueDate": "YYYY-MM-DD"}}
+\`\`\`
+
+### Insert blocks into the CURRENT note (APPEND content — does NOT erase existing content)
+Use this when the user asks to add a table, section, list, or any content to the open note.
+\`\`\`action
+{"type": "insert_blocks", "label": "Insert: <description>", "data": {"documentId": "<exact_doc_id>", "blocks": [<array of BlockNote blocks>]}}
+\`\`\`
+
+### Replace full content of an existing note
+Use this ONLY when user explicitly asks to rewrite/replace the whole note.
+\`\`\`action
+{"type": "edit_document_blocks", "label": "Rewrite note: <title>", "data": {"documentId": "<exact_doc_id>", "blocks": [<array of BlockNote blocks>]}}
+\`\`\`
+
+### Create a brand new note
+\`\`\`action
+{"type": "create_document", "label": "New note: <title>", "data": {"title": "Note title", "icon": "📝", "blocks": [<array of BlockNote blocks>]}}
+\`\`\`
+
+### Create a project
+\`\`\`action
+{"type": "create_project", "label": "New project: <name>", "data": {"name": "Project name", "description": "Optional description", "color": "#6366f1", "dueDate": "YYYY-MM-DD"}}
+\`\`\`
+Available colors for projects: #6366f1 (indigo), #8b5cf6 (violet), #ec4899 (pink), #ef4444 (red), #f97316 (orange), #eab308 (yellow), #22c55e (green), #06b6d4 (cyan), #3b82f6 (blue), #64748b (slate)
+
+You can emit **multiple action blocks** in one response (e.g. create project + note + tasks all at once for a full plan).
+
+---
+
+## BlockNote JSON — compact reference
+
+Every block: \`{"type": "<type>", "props": {<optional>}, "content": [{"type":"text","text":"...","styles":{<optional>}}]}\`
+
+Block types: paragraph · heading (props: {"level":1|2|3}) · bulletListItem · numberedListItem · checkListItem (props: {"checked":false}) · quote · codeBlock (props: {"language":"js"})
+
+Inline styles in content: {"bold":true} {"italic":true} {"textColor":"red|orange|yellow|green|blue|purple"} {"backgroundColor":"yellow"}
+
+**Table** — cells are ARRAYS of inline objects (never wrap in tableCell):
+\`{"type":"table","content":{"type":"tableContent","rows":[{"cells":[[{"type":"text","text":"H1","styles":{"bold":true}}],[{"type":"text","text":"H2","styles":{"bold":true}}]]},{"cells":[[{"type":"text","text":"val1"}],[{"type":"text","text":"val2"}]]}]}}\`
+
+---
+
+## Planning patterns
+
+When user asks to plan/create a project plan: emit **create_project** → **create_document** (plan note) → multiple **create_task** blocks — all in one response.
+When user asks to add content to the current note: emit **insert_blocks** with the full block array.
+
+## Rules
+- Always respond in ${lang}
+- Today is ${today} — use this for any relative date calculations ("next Monday", "in 3 days", etc.)
+- NEVER say "I did X" — always say "I'm proposing X, click Apply to confirm"
+- Always include "label" in every action block
+- **Follow the DECISION TREE above strictly** — when on a note, default to \`insert_blocks\` for additions, \`edit_document_blocks\` only for full rewrites, never guess IDs
+- When creating plans, emit the note + all tasks in the same response
+- Deadlines: always use ISO YYYY-MM-DD format, compute from today's date (${today})
+- Proactively flag overdue/high-priority items when relevant
+- Keep responses concise — prefer bullet points and structure over long paragraphs
+- For note content, always use rich BlockNote blocks, never plain text`;
+}
+
+export function extractPlainText(blockNoteJson: string): string {
+  try {
+    const blocks = JSON.parse(blockNoteJson);
+    if (!Array.isArray(blocks)) return blockNoteJson;
+    return blocks
+      .map((block: any) => {
+        const prefix = block.type === "heading" ? "#".repeat(block.props?.level ?? 1) + " " :
+          block.type === "bulletListItem" ? "• " :
+          block.type === "numberedListItem" ? "- " :
+          block.type === "checkListItem" ? (block.props?.checked ? "☑ " : "☐ ") : "";
+        if (!block.content) return prefix || "";
+        if (typeof block.content === "string") return prefix + block.content;
+        if (Array.isArray(block.content)) {
+          const text = block.content
+            .map((c: any) => {
+              if (typeof c === "string") return c;
+              if (c.text) return c.text;
+              if (c.type === "text") return c.text ?? "";
+              return "";
+            })
+            .join("");
+          return prefix + text;
+        }
+        return prefix;
+      })
+      .filter(Boolean)
+      .join("\n");
+  } catch {
+    return blockNoteJson.slice(0, 3000);
+  }
+}
+
+export interface BulkTaskDraft {
+  title: string;
+  description?: string;
+  status?: string;
+  priority?: "none" | "low" | "medium" | "high" | "urgent";
+  dueDate?: string; // YYYY-MM-DD
+  assignee?: string;
+  project?: string;
+  labels?: string[];
+  estimateMinutes?: number;
+}
+
+export interface BulkTaskParseContext {
+  locale: "en" | "fr";
+  statuses: { key: string; label: string }[];
+  members: { userId: string; name?: string | null; email?: string | null }[];
+  projects: { _id: string; name: string }[];
+  labels: string[];
+  today?: string;
+}
+
+function extractJsonArray(raw: string): any[] {
+  const codeBlock = /```(?:json)?\s*\n?([\s\S]*?)\n?```/.exec(raw);
+  const text = codeBlock ? codeBlock[1] : raw;
+  const trimmed = text.trim();
+  if (!trimmed) return [];
+  try {
+    const parsed = JSON.parse(trimmed);
+    if (Array.isArray(parsed)) return parsed;
+    if (parsed && typeof parsed === "object") return [parsed];
+  } catch {}
+  // Fallback: try to find the first JSON array in the text.
+  const arrayMatch = trimmed.match(/\[[\s\S]*\]/);
+  if (arrayMatch) {
+    try {
+      const parsed = JSON.parse(arrayMatch[0]);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {}
+  }
+  return [];
+}
+
+export async function parseBulkTasks(
+  raw: string,
+  ctx: BulkTaskParseContext,
+): Promise<{ tasks: BulkTaskDraft[]; text: string }> {
+  const lang = ctx.locale === "fr" ? "French" : "English";
+  const today = ctx.today ?? new Date().toISOString().split("T")[0];
+  const statusList = ctx.statuses.map((s) => `"${s.key}" (${s.label})`).join(", ");
+  const memberList = ctx.members
+    .map((m) => `"${m.name ?? m.email ?? m.userId}"`)
+    .join(", ");
+  const projectList = ctx.projects.map((p) => `"${p.name}"`).join(", ");
+  const labelList = ctx.labels.map((l) => `"${l}"`).join(", ");
+
+  const system = `You are a structured data parser. Parse the user's pasted text into a JSON array of tasks. Respond ONLY in ${lang}.
+Today's date: ${today}.
+Use exact date math: "tomorrow" = ${today} + 1 day, "next Monday" = the next Monday, etc.
+
+Each task object must have these fields:
+- title (required, string)
+- description (optional, string)
+- status (optional, string: one of ${statusList})
+- priority (optional, one of: "none", "low", "medium", "high", "urgent"; default "medium" if a priority is implied)
+- dueDate (optional, "YYYY-MM-DD" ISO string)
+- assignee (optional, free-form name or email)
+- project (optional, free-form project name)
+- labels (optional, array of strings)
+- estimateMinutes (optional, number)
+
+Infer the best status, priority, assignee, project, due date and labels from the text. If a value is ambiguous, include it as-is and leave related fields empty.
+
+Available workspace members: ${memberList || "none"}
+Available projects: ${projectList || "none"}
+Available labels: ${labelList || "none"}
+
+Return ONLY a JSON array inside a markdown code block (\`\`\`json). No prose outside the code block.`;
+
+  const response = await sendAiMessage(
+    [
+      { role: "developer", content: system },
+      { role: "user", content: raw },
+    ],
+    { action: "bulk_import_tasks", temperature: 0.2, max_tokens: 4096 },
+  );
+
+  const tasks = extractJsonArray(response.text)
+    .filter((t) => t && typeof t.title === "string" && t.title.trim())
+    .map((t) => ({
+      title: t.title.trim(),
+      description: t.description ? String(t.description).trim() : undefined,
+      status: t.status ? String(t.status) : undefined,
+      priority: ["none", "low", "medium", "high", "urgent"].includes(t.priority)
+        ? t.priority
+        : undefined,
+      dueDate: t.dueDate ? String(t.dueDate) : undefined,
+      assignee: t.assignee ? String(t.assignee) : undefined,
+      project: t.project ? String(t.project) : undefined,
+      labels: Array.isArray(t.labels) ? t.labels.map(String) : undefined,
+      estimateMinutes: typeof t.estimateMinutes === "number" ? t.estimateMinutes : undefined,
+    })) as BulkTaskDraft[];
+
+  return { tasks, text: response.text };
+}

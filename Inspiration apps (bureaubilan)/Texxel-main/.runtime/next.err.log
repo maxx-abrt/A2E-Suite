@@ -1,0 +1,4 @@
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Parsing of /app/Texxel/node_modules/next-intl/dist/esm/production/extractor/format/index.js for build dependencies failed at 'import(t)'.
+<w> Build dependencies behind this expression are ignored and might cause incorrect cache invalidation.
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Parsing of /app/Texxel/node_modules/next-intl/dist/esm/production/extractor/format/index.js for build dependencies failed at 'import(t)'.
+<w> Build dependencies behind this expression are ignored and might cause incorrect cache invalidation.

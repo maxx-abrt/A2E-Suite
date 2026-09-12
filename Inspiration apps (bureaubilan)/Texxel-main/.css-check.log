@@ -1,0 +1,38 @@
+
+ RUN  v3.2.4 /app/Texxel/apps/web
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/editor-schema.test.tsx [ tests/editor-schema.test.tsx ]
+SyntaxError: Unexpected token 'export'
+ ❯ ../../node_modules/recharts/lib/state/layoutSlice.js:7:16
+
+Module /app/Texxel/node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs:2 seems to be an ES Module but shipped in a CommonJS package. You might want to create an issue to the package "@reduxjs/toolkit" asking them to ship the file in .mjs extension or add "type": "module" in their package.json.
+
+As a temporary workaround you can try to inline the package by updating your config:
+
+// vitest.config.js
+export default {
+  test: {
+    server: {
+      deps: {
+        inline: [
+          "@reduxjs/toolkit"
+        ]
+      }
+    }
+  }
+}
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  23:43:21
+   Duration  1.81s (transform 79ms, setup 127ms, collect 0ms, tests 0ms, environment 258ms, prepare 334ms)
+
+undefined
+/app/Texxel/apps/web:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run tests/editor-schema.test.tsx

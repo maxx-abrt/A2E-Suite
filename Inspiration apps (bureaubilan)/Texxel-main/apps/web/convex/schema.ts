@@ -1,0 +1,977 @@
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
+
+/**
+ * A2E SUITE SHARED SCHEMA + A2EMoney TABLES + BUREAU TABLES
+ *
+ * - Auth tables come from convex-auth (do not redefine).
+ * - Shared tables (workspaces, memberships, invitations, projects, tasks,
+ *   activities, notifications) are owned by the A2E foundation and used by every
+ *   app in the suite. Left UNCHANGED so A2EMoney keeps working.
+ * - A2EMoney tables are prefixed `a2e_` (preserved verbatim, superset deploy).
+ * - Bureau (this app) adds ONLY `flux_` prefixed tables. Every flux table is
+ *   workspace-scoped with a `by_workspace` index.
+ */
+export default defineSchema({
+  // ---- users (keyed by WorkOS externalId) ----
+  users: defineTable({
+    externalId: v.string(),
+    email: v.string(),
+    name: v.optional(v.string()),
+    image: v.optional(v.string()),
+    createdAt: v.number(),
+  }).index("by_external_id", ["externalId"]),
+
+  // ================= SHARED TABLES (suite-wide) =================
+  workspaces: defineTable({
+    name: v.string(),
+    slug: v.string(),
+    description: v.optional(v.string()),
+    avatar: v.optional(v.string()),
+    storageQuota: v.number(),
+    ownerId: v.id("users"),
+    locale: v.optional(v.string()),
+    currency: v.optional(v.string()),
+    type: v.optional(
+      v.union(
+        v.literal("individual"),
+        v.literal("business"),
+        v.literal("association"),
+      ),
+    ),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+    /** A2E Core workspace id this local workspace is linked to (Pattern B). */
+    coreId: v.optional(v.string()),
+  })
+    .index("by_slug", ["slug"])
+    .index("by_owner", ["ownerId"])
+    .index("by_coreId", ["coreId"]),
+
+  memberships: defineTable({
+    userId: v.id("users"),
+    workspaceId: v.id("workspaces"),
+    role: v.union(
+      v.literal("owner"),
+      v.literal("admin"),
+      v.literal("member"),
+      v.literal("viewer"),
+    ),
+    joinedAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_workspace", ["workspaceId"])
+    .index("by_user_workspace", ["userId", "workspaceId"]),
+
+  invitations: defineTable({
+    email: v.string(),
+    workspaceId: v.id("workspaces"),
+    role: v.union(
+      v.literal("owner"),
+      v.literal("admin"),
+      v.literal("member"),
+      v.literal("viewer"),
+    ),
+    token: v.string(),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("accepted"),
+      v.literal("revoked"),
+      v.literal("expired"),
+    ),
+    invitedBy: v.id("users"),
+    expiresAt: v.number(),
+    createdAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"])
+    .index("by_email", ["email"])
+    .index("by_token", ["token"]),
+
+  projects: defineTable({
+    workspaceId: v.id("workspaces"),
+    name: v.string(),
+    client: v.string(),
+    status: v.union(
+      v.literal("planning"),
+      v.literal("active"),
+      v.literal("completed"),
+      v.literal("on_hold"),
+    ),
+    startDate: v.optional(v.number()),
+    targetDate: v.optional(v.number()), // milestone target date (§15.1 milestones; M10.5)
+    endDate: v.optional(v.number()),
+    description: v.optional(v.string()),
+    color: v.optional(v.string()),
+    key: v.optional(v.string()), // short uppercase prefix for task identifiers, e.g. "PRJ" (§15.1; M0.3)
+    nextTaskNumber: v.optional(v.number()), // per-project counter for `tasks.number` (§15.1; M0.3)
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"])
+    .index("by_status", ["workspaceId", "status"]),
+
+  tasks: defineTable({
+    workspaceId: v.id("workspaces"),
+    projectId: v.optional(v.id("projects")),
+    parentId: v.optional(v.id("tasks")), // subtask parent (null = root task)
+    title: v.string(),
+    description: v.optional(v.string()),
+    // Status is a string key. Defaults: "todo" | "in_progress" | "done", but
+    // workspaces can define custom statuses (see flux_taskStatuses). Stored as a
+    // plain string for forward-compatibility with custom workspace statuses.
+    status: v.string(),
+    assigneeId: v.optional(v.id("users")),
+    dueDate: v.optional(v.number()),
+    coreTaskId: v.optional(v.string()),
+    // ---- M0.2 (§15.1) tracker fields; additive/optional, backward-compatible ----
+    blockedBy: v.optional(v.array(v.id("tasks"))), // dependency: tasks blocking this one
+    estimation: v.optional(v.string()), // t-shirt size "XS"|"S"|"M"|"L"|"XL" (points kept in flux_taskMeta.estimateMinutes)
+    startDate: v.optional(v.number()), // task-level start date (mirrors flux_taskMeta.startDate)
+    // ---- M0.3 (§15.1) human identifier PRJ-42 = projects.key + number ----
+    number: v.optional(v.number()), // per-project sequence; paired with projects.key
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"])
+    .index("by_project", ["projectId"])
+    .index("by_assignee", ["assigneeId"])
+    .index("by_parent", ["parentId"])
+    .index("by_coreTaskId", ["coreTaskId"])
+    .index("by_project_number", ["projectId", "number"]),
+
+  activities: defineTable({
+    workspaceId: v.id("workspaces"),
+    actorId: v.id("users"),
+    action: v.string(),
+    targetType: v.string(),
+    targetId: v.string(),
+    metadata: v.optional(v.any()),
+    createdAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId", "createdAt"])
+    .index("by_actor", ["actorId"])
+    .index("by_target", ["targetType", "targetId"]),
+
+  notifications: defineTable({
+    // Shared, suite-wide table. Some apps store external/legacy user UUIDs here
+    // (not convex-auth Id<"users">), so keep this permissive to avoid breaking
+    // deploys with `v.id("users")` schema validation against existing rows.
+    userId: v.string(),
+    workspaceId: v.optional(v.id("workspaces")),
+    type: v.string(),
+    title: v.string(),
+    message: v.optional(v.string()),
+    body: v.optional(v.string()),
+    read: v.boolean(),
+    link: v.optional(v.string()),
+    metadata: v.optional(v.any()),
+    relatedId: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId", "read"])
+    .index("by_user_created", ["userId", "createdAt"])
+    .index("by_workspace", ["workspaceId"]),
+
+  // ================= A2EMoney TABLES (a2e_) =================
+  a2e_invoices: defineTable({
+    workspaceId: v.id("workspaces"),
+    projectId: v.optional(v.id("projects")),
+    number: v.string(),
+    client: v.string(),
+    clientEmail: v.string(),
+    clientAddress: v.optional(v.string()),
+    items: v.array(
+      v.object({
+        id: v.string(),
+        description: v.string(),
+        quantity: v.number(),
+        unitPrice: v.number(),
+      }),
+    ),
+    status: v.union(
+      v.literal("draft"),
+      v.literal("sent"),
+      v.literal("paid"),
+      v.literal("overdue"),
+      v.literal("cancelled"),
+    ),
+    issueDate: v.number(),
+    dueDate: v.number(),
+    paidDate: v.optional(v.number()),
+    notes: v.optional(v.string()),
+    linkedDocuments: v.optional(v.array(v.string())),
+    linkedBookEntries: v.optional(v.array(v.string())),
+    taxRate: v.optional(v.number()),
+    currency: v.string(),
+    linkedClientId: v.optional(v.id("a2e_clients")),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"])
+    .index("by_status", ["workspaceId", "status"])
+    .index("by_project", ["projectId"])
+    .index("by_number", ["workspaceId", "number"]),
+
+  a2e_expenses: defineTable({
+    workspaceId: v.id("workspaces"),
+    projectId: v.optional(v.id("projects")),
+    description: v.string(),
+    amount: v.number(),
+    category: v.string(),
+    date: v.number(),
+    paymentMethod: v.string(),
+    type: v.union(v.literal("expense"), v.literal("income")),
+    notes: v.optional(v.string()),
+    linkedDocuments: v.optional(v.array(v.string())),
+    linkedInvoice: v.optional(v.id("a2e_invoices")),
+    linkedBookEntries: v.optional(v.array(v.string())),
+    isRecurring: v.optional(v.boolean()),
+    recurringFrequency: v.optional(
+      v.union(
+        v.literal("weekly"),
+        v.literal("monthly"),
+        v.literal("yearly"),
+      ),
+    ),
+    tags: v.optional(v.array(v.string())),
+    currency: v.optional(v.string()),
+    sheetId: v.optional(v.id("a2e_bookSheets")),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"])
+    .index("by_workspace_date", ["workspaceId", "date"])
+    .index("by_category", ["workspaceId", "category"])
+    .index("by_project", ["projectId"])
+    .index("by_sheet", ["sheetId"]),
+
+  a2e_documents: defineTable({
+    workspaceId: v.id("workspaces"),
+    name: v.string(),
+    type: v.union(
+      v.literal("invoice"),
+      v.literal("receipt"),
+      v.literal("certificate"),
+      v.literal("contract"),
+      v.literal("other"),
+    ),
+    size: v.number(),
+    contentType: v.optional(v.string()),
+    url: v.string(),
+    s3Key: v.string(),
+    linkedToType: v.optional(
+      v.union(
+        v.literal("expense"),
+        v.literal("invoice"),
+        v.literal("book_entry"),
+        v.literal("project"),
+      ),
+    ),
+    linkedToId: v.optional(v.string()),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"])
+    .index("by_linked", ["linkedToType", "linkedToId"]),
+
+  a2e_bookSheets: defineTable({
+    workspaceId: v.id("workspaces"),
+    name: v.string(),
+    icon: v.optional(v.string()),
+    color: v.optional(v.string()),
+    type: v.optional(v.string()),
+    columns: v.optional(v.array(
+      v.object({
+        id: v.string(),
+        name: v.string(),
+        type: v.string(),
+        width: v.optional(v.number()),
+        options: v.optional(v.array(v.string())),
+        formula: v.optional(v.string()),
+        required: v.optional(v.boolean()),
+        linkedType: v.optional(v.string()),
+      }),
+    )),
+    isTemplate: v.optional(v.boolean()),
+    description: v.optional(v.string()),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"])
+    .index("by_template", ["isTemplate"]),
+
+  a2e_bookEntries: defineTable({
+    workspaceId: v.id("workspaces"),
+    sheetId: v.id("a2e_bookSheets"),
+    cells: v.any(),
+    linkedDocuments: v.optional(v.array(v.string())),
+    linkedExpenses: v.optional(v.array(v.id("a2e_expenses"))),
+    linkedInvoices: v.optional(v.array(v.id("a2e_invoices"))),
+    linkedProjectId: v.optional(v.id("projects")),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_sheet", ["sheetId"])
+    .index("by_workspace", ["workspaceId"]),
+
+  a2e_categories: defineTable({
+    workspaceId: v.id("workspaces"),
+    name: v.string(),
+    icon: v.optional(v.string()),
+    color: v.optional(v.string()),
+    type: v.union(v.literal("expense"), v.literal("income"), v.literal("both")),
+    archived: v.optional(v.boolean()),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"]),
+
+  a2e_fiches: defineTable({
+    workspaceId: v.id("workspaces"),
+    projectId: v.optional(v.id("projects")),
+    template: v.string(),
+    title: v.string(),
+    subtitle: v.optional(v.string()),
+    data: v.any(),
+    status: v.optional(
+      v.union(
+        v.literal("draft"),
+        v.literal("submitted"),
+        v.literal("approved"),
+        v.literal("archived"),
+      ),
+    ),
+    locale: v.optional(v.string()),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"])
+    .index("by_project", ["projectId"]),
+
+  // a2e_clients + a2e_grantReports: referenced by newer a2e functions; defined
+  // here (empty on the deployment) so the superset compiles. Shapes inferred
+  // from a2e_clients.ts / a2e_grantReports.ts usage.
+  a2e_clients: defineTable({
+    workspaceId: v.id("workspaces"),
+    name: v.string(),
+    email: v.optional(v.string()),
+    address: v.optional(v.string()),
+    siret: v.optional(v.string()),
+    phone: v.optional(v.string()),
+    notes: v.optional(v.string()),
+    totalInvoiced: v.optional(v.number()),
+    totalPaid: v.optional(v.number()),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"]),
+
+  a2e_grantReports: defineTable({
+    workspaceId: v.id("workspaces"),
+    projectId: v.optional(v.id("projects")),
+    title: v.string(),
+    data: v.any(),
+    status: v.optional(
+      v.union(
+        v.literal("draft"),
+        v.literal("submitted"),
+        v.literal("approved"),
+        v.literal("archived"),
+      ),
+    ),
+    locale: v.optional(v.string()),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"])
+    .index("by_project", ["projectId"]),
+
+  // ================= FLUX TABLES (flux_) =================
+  // Notion-style documents/notes. Nested via parentId. Content = BlockNote JSON.
+  flux_documents: defineTable({
+    workspaceId: v.id("workspaces"),
+    title: v.string(),
+    parentId: v.optional(v.id("flux_documents")),
+    content: v.optional(v.string()),
+    icon: v.optional(v.string()),
+    coverImage: v.optional(v.string()),
+    coverY: v.optional(v.number()), // cover crop offset 0-100 for reposition drag (§14.5; M0.4)
+    isArchived: v.boolean(),
+    isPublished: v.boolean(),
+    allowGuestEdit: v.optional(v.boolean()), // published page editable by anonymous guests
+    order: v.optional(v.number()),
+    sortKey: v.optional(v.string()), // fractional index (§14.2); supersedes `order` once reads flip in M3
+    shareToken: v.optional(v.string()),
+    visibility: v.optional(v.string()), // "workspace" | "private" | "custom"
+    accessUserIds: v.optional(v.array(v.id("users"))),
+    isFolder: v.optional(v.boolean()),
+    isLocked: v.optional(v.boolean()),       // passphrase-protected (client-side AES-GCM)
+    passphraseSalt: v.optional(v.string()),  // hex, 16 bytes — for PBKDF2 key derivation
+    lockIv: v.optional(v.string()),          // hex, 12 bytes — AES-GCM IV
+    passphraseHint: v.optional(v.string()),  // optional hint shown on lock screen
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"])
+    .index("by_workspace_parent", ["workspaceId", "parentId"])
+    .index("by_workspace_parent_sortKey", ["workspaceId", "parentId", "sortKey"])
+    .index("by_share_token", ["shareToken"])
+    .searchIndex("search_title", {
+      searchField: "title",
+      filterFields: ["workspaceId", "isArchived"],
+    }),
+
+  flux_documentVersions: defineTable({
+    documentId: v.id("flux_documents"),
+    workspaceId: v.id("workspaces"),
+    title: v.string(),
+    content: v.optional(v.string()),
+    savedBy: v.id("users"),
+    savedAt: v.number(),
+  })
+    .index("by_document", ["documentId"]),
+
+  // Real-time collaboration presence: who is currently viewing/editing a doc.
+  // Rows are refreshed by a client heartbeat and considered "active" while
+  // lastSeen is recent (see flux_presence.ts PRESENCE_TTL_MS). Additive only.
+  flux_presence: defineTable({
+    workspaceId: v.id("workspaces"),
+    documentId: v.id("flux_documents"),
+    userId: v.id("users"),
+    state: v.string(), // "viewing" | "editing"
+    lastSeen: v.number(),
+  })
+    .index("by_document", ["documentId"])
+    .index("by_document_user", ["documentId", "userId"]),
+
+  // Anonymous guest presence on publicly shared documents (no auth). Additive only.
+  flux_guestPresence: defineTable({
+    documentId: v.id("flux_documents"),
+    guestId: v.string(), // random client-generated id, persisted in localStorage
+    guestName: v.string(), // e.g. "Guest Fox"
+    state: v.string(), // "viewing" | "editing"
+    lastSeen: v.number(),
+  })
+    .index("by_document", ["documentId"])
+    .index("by_document_guest", ["documentId", "guestId"]),
+  flux_comments: defineTable({
+    workspaceId: v.id("workspaces"),
+    documentId: v.id("flux_documents"),
+    userId: v.id("users"), // author
+    content: v.string(),
+    mentionedUserIds: v.optional(v.array(v.id("users"))),
+    parentId: v.optional(v.id("flux_comments")), // reserved for threaded replies
+    resolved: v.optional(v.boolean()),
+    resolvedBy: v.optional(v.id("users")),
+    resolvedAt: v.optional(v.number()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_document", ["documentId"])
+    .index("by_workspace", ["workspaceId"]),
+
+  // BlockNote-native inline comment threads. Positions are stored separately
+  // because BlockNote intentionally omits comment marks from serialized block JSON.
+  flux_commentThreads: defineTable({
+    workspaceId: v.id("workspaces"),
+    documentId: v.id("flux_documents"),
+    threadId: v.string(),
+    createdBy: v.id("users"),
+    metadata: v.optional(v.any()),
+    anchorFrom: v.optional(v.number()),
+    anchorTo: v.optional(v.number()),
+    referenceText: v.optional(v.string()),
+    anchorUpdatedAt: v.optional(v.number()),
+    resolved: v.boolean(),
+    resolvedBy: v.optional(v.id("users")),
+    resolvedUpdatedAt: v.optional(v.number()),
+    deletedAt: v.optional(v.number()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_document", ["documentId", "createdAt"])
+    .index("by_thread_id", ["threadId"])
+    .index("by_workspace", ["workspaceId"]),
+
+  flux_commentMessages: defineTable({
+    workspaceId: v.id("workspaces"),
+    documentId: v.id("flux_documents"),
+    threadId: v.string(),
+    commentId: v.string(),
+    userId: v.id("users"),
+    body: v.optional(v.any()),
+    metadata: v.optional(v.any()),
+    reactions: v.optional(v.array(v.object({
+      emoji: v.string(),
+      createdAt: v.number(),
+      userIds: v.array(v.id("users")),
+    }))),
+    deletedAt: v.optional(v.number()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_thread", ["threadId", "createdAt"])
+    .index("by_comment_id", ["commentId"])
+    .index("by_document", ["documentId"]),
+
+  // Workspace font library and per-document writing/export style settings.
+  flux_fonts: defineTable({
+    workspaceId: v.id("workspaces"),
+    family: v.string(),
+    sourceType: v.string(), // upload | google
+    storageId: v.optional(v.id("_storage")),
+    coreFileId: v.optional(v.string()),
+    cssUrl: v.optional(v.string()),
+    fileName: v.optional(v.string()),
+    format: v.string(),
+    mimeType: v.optional(v.string()),
+    size: v.optional(v.number()),
+    weight: v.optional(v.number()),
+    style: v.optional(v.string()),
+    createdBy: v.id("users"),
+    deletedAt: v.optional(v.number()),
+    createdAt: v.number(),
+  }).index("by_workspace", ["workspaceId", "createdAt"]),
+
+  flux_documentStyles: defineTable({
+    workspaceId: v.id("workspaces"),
+    documentId: v.id("flux_documents"),
+    fontId: v.optional(v.id("flux_fonts")),
+    fontFamily: v.string(),
+    fontSize: v.number(),
+    lineHeight: v.number(),
+    pageSize: v.string(),
+    marginTop: v.number(),
+    marginRight: v.number(),
+    marginBottom: v.number(),
+    marginLeft: v.number(),
+    headerEnabled: v.boolean(),
+    footerEnabled: v.boolean(),
+    headerText: v.optional(v.string()),
+    footerText: v.optional(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_document", ["documentId"])
+    .index("by_workspace", ["workspaceId"]),
+
+  // Notion-style custom databases. columns/cells stored as JSON strings.
+  flux_databases: defineTable({
+    workspaceId: v.id("workspaces"),
+    title: v.string(),
+    description: v.optional(v.string()),
+    icon: v.optional(v.string()),
+    color: v.optional(v.string()),
+    columns: v.string(),
+    viewType: v.optional(v.string()), // "table" | "gallery" | "kanban" | "calendar"
+    viewConfig: v.optional(v.string()), // JSON: { groupBy, dateField, cardField }
+    isArchived: v.optional(v.boolean()),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"]),
+
+  // Saved document templates (workspace-scoped).
+  flux_docTemplates: defineTable({
+    workspaceId: v.id("workspaces"),
+    title: v.string(),
+    content: v.optional(v.string()),
+    icon: v.optional(v.string()),
+    category: v.optional(v.string()),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"]),
+
+  flux_databaseRows: defineTable({
+    databaseId: v.id("flux_databases"),
+    workspaceId: v.id("workspaces"),
+    cells: v.string(),
+    order: v.optional(v.number()),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_database", ["databaseId"])
+    .index("by_workspace", ["workspaceId"]),
+
+  // Bureau-specific task presentation metadata. Sidecar to the shared `tasks`
+  // table (keeps the shared table decoupled & cross-app safe).
+  flux_taskMeta: defineTable({
+    workspaceId: v.id("workspaces"),
+    taskId: v.id("tasks"),
+    priority: v.optional(
+      v.union(
+        v.literal("none"),
+        v.literal("low"),
+        v.literal("medium"),
+        v.literal("high"),
+        v.literal("urgent"),
+      ),
+    ),
+    labels: v.optional(v.array(v.string())),
+    order: v.optional(v.number()),
+    startDate: v.optional(v.number()),
+    estimateMinutes: v.optional(v.number()),
+    color: v.optional(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"])
+    .index("by_task", ["taskId"]),
+
+  flux_taskComments: defineTable({
+    workspaceId: v.id("workspaces"),
+    taskId: v.id("tasks"),
+    userId: v.id("users"),
+    content: v.string(),
+    createdAt: v.number(),
+  })
+    .index("by_task", ["taskId"]),
+
+  // Temporary trash bin for deleted tasks. Tasks are hidden from normal views
+  // while a bin entry exists; a daily cron permanently deletes them after 7 days.
+  flux_taskBin: defineTable({
+    workspaceId: v.id("workspaces"),
+    taskId: v.id("tasks"),
+    deletedBy: v.id("users"),
+    deletedAt: v.number(),
+    expiresAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId", "deletedAt"])
+    .index("by_task", ["taskId"])
+    .index("by_expires", ["expiresAt"]),
+
+  // Calendar events.
+  flux_events: defineTable({
+    workspaceId: v.id("workspaces"),
+    title: v.string(),
+    description: v.optional(v.string()),
+    start: v.number(),
+    end: v.optional(v.number()),
+    allDay: v.optional(v.boolean()),
+    recurrence: v.optional(v.string()), // legacy simple freq: none|daily|weekly|biweekly|monthly
+    recurrenceFreq: v.optional(
+      v.union(
+        v.literal("none"),
+        v.literal("daily"),
+        v.literal("weekly"),
+        v.literal("monthly"),
+      ),
+    ),
+    recurrenceInterval: v.optional(v.number()), // every N weeks/months/days
+    recurrenceDaysOfWeek: v.optional(v.array(v.number())), // 0=Sun..6=Sat
+    recurrenceMonthlyPosition: v.optional(
+      v.union(
+        v.literal("same_day"),
+        v.literal("first"),
+        v.literal("second"),
+        v.literal("third"),
+        v.literal("fourth"),
+        v.literal("last"),
+      ),
+    ),
+    recurrenceEndAfter: v.optional(v.number()), // number of occurrences
+    recurrenceUntil: v.optional(v.number()),
+    recurrenceExceptions: v.optional(v.array(v.number())), // epoch ms of skipped occurrences
+    color: v.optional(v.string()),
+    location: v.optional(v.string()),
+    projectId: v.optional(v.id("projects")),
+    taskId: v.optional(v.id("tasks")),
+    coreEventId: v.optional(v.string()),
+    // ---- M0.4 (§15.2) calendar upgrades; additive/optional ----
+    reminders: v.optional(v.array(v.number())), // minutes before start to notify
+    startDate: v.optional(v.number()), // separate calendar start date (`start` stays the effective instant)
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"])
+    .index("by_workspace_start", ["workspaceId", "start"])
+    .index("by_coreEventId", ["coreEventId"]),
+
+  flux_favorites: defineTable({
+    userId: v.id("users"),
+    workspaceId: v.id("workspaces"),
+    documentId: v.id("flux_documents"),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_workspace", ["userId", "workspaceId"])
+    .index("by_user_document", ["userId", "documentId"]),
+
+  flux_tags: defineTable({
+    workspaceId: v.id("workspaces"),
+    name: v.string(),
+    color: v.optional(v.string()),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"]),
+
+  flux_documentTags: defineTable({
+    workspaceId: v.id("workspaces"),
+    documentId: v.id("flux_documents"),
+    tagId: v.id("flux_tags"),
+  })
+    .index("by_document", ["documentId"])
+    .index("by_tag", ["tagId"]),
+
+  // Per-user Bureau preferences (app-scoped, not workspace-scoped).
+  flux_userPrefs: defineTable({
+    userId: v.id("users"),
+    locale: v.optional(v.string()),
+    theme: v.optional(v.string()),
+    accentColor: v.optional(v.string()),
+    density: v.optional(v.string()),
+    easyRead: v.optional(v.boolean()),
+    docToolbarHidden: v.optional(v.array(v.string())),
+    onboardingCompleted: v.optional(v.boolean()),
+    lastWorkspaceId: v.optional(v.id("workspaces")),
+    // ---- M0.5: workbench tabs (§4), command frecency (§5), shortcut overrides (§10) ----
+    tabs: v.optional(
+      v.array(
+        v.object({
+          id: v.string(),
+          kind: v.string(), // 'doc'|'task'|'project'|'view'
+          refId: v.optional(v.string()),
+          title: v.string(),
+          icon: v.optional(v.string()),
+        }),
+      ),
+    ),
+    commandHistory: v.optional(
+      v.array(
+        v.object({
+          key: v.string(), // command/result id
+          uses: v.number(),
+          lastUsed: v.number(),
+        }),
+      ),
+    ),
+    shortcuts: v.optional(v.any()), // { [actionId]: keyCombo } user overrides merged over defaults
+    // ---- M5.5 (§6) quiet hours: suppresses browser push, inbox still fills ----
+    quietHours: v.optional(
+      v.object({
+        enabled: v.boolean(),
+        start: v.string(), // "HH:MM" 24h, local time
+        end: v.string(), // "HH:MM" 24h, local time (may be next day)
+      }),
+    ),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_user", ["userId"]),
+
+  // Workspace-specific custom task statuses (Kanban columns). When a workspace
+  // has none, the app falls back to the 3 built-in defaults (todo/in_progress/
+  // done) and seeds them on first access via flux_taskStatuses.ensureDefaults.
+  flux_taskStatuses: defineTable({
+    workspaceId: v.id("workspaces"),
+    key: v.string(), // stable slug stored on tasks.status
+    label: v.string(),
+    color: v.string(),
+    order: v.number(),
+    isDone: v.optional(v.boolean()), // counts as "completed" for progress calc
+    createdBy: v.optional(v.id("users")),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"])
+    .index("by_workspace_key", ["workspaceId", "key"]),
+
+  // Workspace-scoped reusable labels for tasks (name + color).
+  flux_labels: defineTable({
+    workspaceId: v.id("workspaces"),
+    name: v.string(),
+    color: v.string(),
+    createdBy: v.optional(v.id("users")),
+    createdAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"]),
+
+  // Project assignment / membership (who is working on a project).
+  flux_projectMembers: defineTable({
+    projectId: v.id("projects"),
+    workspaceId: v.id("workspaces"),
+    userId: v.id("users"),
+    role: v.optional(v.string()), // "lead" | "member"
+    addedBy: v.optional(v.id("users")),
+    addedAt: v.number(),
+  })
+    .index("by_project", ["projectId"])
+    .index("by_workspace", ["workspaceId"])
+    .index("by_user", ["userId"])
+    .index("by_workspace_user", ["workspaceId", "userId"])
+    .index("by_project_user", ["projectId", "userId"]),
+
+  // Chat / Discussion channels (workspace global, per-project, or custom).
+  flux_chatChannels: defineTable({
+    workspaceId: v.id("workspaces"),
+    name: v.string(),
+    slug: v.string(),
+    type: v.union(
+      v.literal("workspace"),
+      v.literal("project"),
+      v.literal("custom"),
+    ),
+    projectId: v.optional(v.id("projects")),
+    visibility: v.optional(v.union(v.literal("public"), v.literal("private"))),
+    postPermission: v.optional(v.union(v.literal("all"), v.literal("admin"), v.literal("moderator"))),
+    description: v.optional(v.string()),
+    archived: v.optional(v.boolean()),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"])
+    .index("by_workspace_slug", ["workspaceId", "slug"])
+    .index("by_project", ["projectId"]),
+
+  // Channel membership (visibility, posting rights, moderation roles).
+  flux_channelMembers: defineTable({
+    channelId: v.id("flux_chatChannels"),
+    workspaceId: v.id("workspaces"),
+    userId: v.id("users"),
+    role: v.union(v.literal("viewer"), v.literal("poster"), v.literal("moderator")),
+    addedBy: v.optional(v.id("users")),
+    joinedAt: v.number(),
+  })
+    .index("by_channel", ["channelId"])
+    .index("by_channel_user", ["channelId", "userId"])
+    .index("by_user", ["userId"])
+    .index("by_workspace", ["workspaceId"]),
+
+  // Chat messages.
+  flux_chatMessages: defineTable({
+    channelId: v.id("flux_chatChannels"),
+    workspaceId: v.id("workspaces"),
+    userId: v.id("users"),
+    content: v.string(),
+    attachments: v.optional(
+      v.array(
+        v.object({
+          storageId: v.optional(v.id("_storage")),
+          coreFileId: v.optional(v.string()),
+          name: v.string(),
+          size: v.number(),
+          contentType: v.optional(v.string()),
+        }),
+      ),
+    ),
+    mentionedUserIds: v.optional(v.array(v.id("users"))),
+    mentionedEntities: v.optional(
+      v.array(
+        v.object({
+          type: v.string(),
+          id: v.string(),
+          name: v.optional(v.string()),
+        }),
+      ),
+    ),
+    parentId: v.optional(v.id("flux_chatMessages")), // thread reply
+    editedAt: v.optional(v.number()),
+    deletedAt: v.optional(v.number()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_channel", ["channelId", "createdAt"])
+    .index("by_parent", ["parentId", "createdAt"])
+    .index("by_workspace", ["workspaceId", "createdAt"]),
+
+  // Message reactions (emoji per user per message).
+  flux_chatReactions: defineTable({
+    messageId: v.id("flux_chatMessages"),
+    userId: v.id("users"),
+    emoji: v.string(),
+    createdAt: v.number(),
+  })
+    .index("by_message", ["messageId"]),
+
+  // Per-user read cursors for each channel.
+  flux_chatUserReads: defineTable({
+    userId: v.id("users"),
+    channelId: v.id("flux_chatChannels"),
+    lastReadAt: v.number(),
+    lastMessageId: v.optional(v.id("flux_chatMessages")),
+    updatedAt: v.number(),
+  })
+    .index("by_user_channel", ["userId", "channelId"])
+    .index("by_user", ["userId"]),
+
+  // Time tracking entries (logged against a task and/or project).
+  flux_timeEntries: defineTable({
+    workspaceId: v.id("workspaces"),
+    taskId: v.optional(v.id("tasks")),
+    projectId: v.optional(v.id("projects")),
+    userId: v.id("users"),
+    minutes: v.number(),
+    note: v.optional(v.string()),
+    spentAt: v.number(), // when the work happened (day)
+    createdAt: v.number(),
+  })
+    .index("by_task", ["taskId"])
+    .index("by_project", ["projectId"])
+    .index("by_workspace", ["workspaceId"])
+    .index("by_user", ["userId"]),
+
+  // Discord-style custom workspace roles and their permissions.
+  flux_roles: defineTable({
+    workspaceId: v.id("workspaces"),
+    name: v.string(),
+    color: v.string(),
+    permissions: v.array(v.string()),
+    isDefault: v.optional(v.boolean()),
+    order: v.number(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"])
+    .index("by_workspace_default", ["workspaceId", "isDefault"]),
+
+  // Role assignments: a user can have multiple roles in a workspace.
+  flux_roleAssignments: defineTable({
+    workspaceId: v.id("workspaces"),
+    userId: v.id("users"),
+    roleId: v.id("flux_roles"),
+    assignedBy: v.optional(v.id("users")),
+    assignedAt: v.number(),
+  })
+    .index("by_user_workspace", ["userId", "workspaceId"])
+    .index("by_role", ["roleId"])
+    .index("by_workspace", ["workspaceId"]),
+
+  // Teams inside a workspace (§15.3; M0.5). Tasks can be assigned to a team and
+  // boards can filter/group by team; @team mentions notify all members (M12).
+  flux_teams: defineTable({
+    workspaceId: v.id("workspaces"),
+    name: v.string(),
+    color: v.optional(v.string()),
+    icon: v.optional(v.string()),
+    memberIds: v.optional(v.array(v.id("users"))),
+    createdBy: v.optional(v.id("users")),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"]),
+}, {
+  // SHARED A2E Suite deployment: other apps in the suite own and extend some
+  // tables (e.g. `notifications` gets extra fields like `relatedId` and legacy
+  // UUID userIds) with shapes this schema does not fully model. Disabling strict
+  // schema validation prevents `convex deploy` from ever failing on another
+  // app's data. TypeScript still type-checks writes inside our own functions.
+  schemaValidation: false,
+});

@@ -1,0 +1,55 @@
+Scope: all 7 workspace projects
+Lockfile is up to date, resolution step is skipped
+Packages: +1438
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+   ╭──────────────────────────────────────────────╮
+   │                                              │
+   │     Update available! 10.34.5 → 12.3.4.      │
+   │     Changelog: https://pnpm.io/v/12.3.4      │
+   │   To update, run: corepack use pnpm@12.3.4   │
+   │                                              │
+   ╰──────────────────────────────────────────────╯
+
+Progress: resolved 0, reused 0, downloaded 1, added 0
+Progress: resolved 0, reused 0, downloaded 15, added 4
+Progress: resolved 0, reused 0, downloaded 25, added 8
+Progress: resolved 0, reused 0, downloaded 28, added 8
+Progress: resolved 0, reused 0, downloaded 36, added 12
+Progress: resolved 0, reused 0, downloaded 40, added 12
+Progress: resolved 0, reused 0, downloaded 56, added 16
+Progress: resolved 0, reused 0, downloaded 89, added 38
+Progress: resolved 0, reused 0, downloaded 105, added 43
+Progress: resolved 0, reused 0, downloaded 132, added 52
+Progress: resolved 0, reused 0, downloaded 159, added 62
+Progress: resolved 0, reused 0, downloaded 206, added 81
+Progress: resolved 0, reused 0, downloaded 265, added 106
+Progress: resolved 0, reused 0, downloaded 290, added 125
+Progress: resolved 0, reused 0, downloaded 335, added 144
+Progress: resolved 0, reused 0, downloaded 436, added 312
+Progress: resolved 0, reused 0, downloaded 489, added 363
+Progress: resolved 0, reused 0, downloaded 524, added 378
+Progress: resolved 0, reused 0, downloaded 625, added 497
+Progress: resolved 0, reused 0, downloaded 819, added 844
+Progress: resolved 0, reused 0, downloaded 975, added 1010
+Progress: resolved 0, reused 0, downloaded 1140, added 1165
+Progress: resolved 0, reused 0, downloaded 1307, added 1339
+Progress: resolved 0, reused 0, downloaded 1360, added 1390
+Progress: resolved 0, reused 0, downloaded 1382, added 1436
+Progress: resolved 0, reused 0, downloaded 1383, added 1438, done
+node_modules/@swc/core postinstall$ node postinstall.js
+node_modules/@parcel/watcher install$ node scripts/build-from-source.js
+node_modules/esbuild postinstall$ node install.js
+node_modules/sharp install$ node install/check.js || npm run build
+node_modules/unrs-resolver postinstall$ node postinstall.js
+node_modules/@parcel/watcher install: Done
+node_modules/@swc/core postinstall: Done
+apps/web/node_modules/sharp install$ node install/check
+node_modules/unrs-resolver postinstall: Done
+node_modules/esbuild postinstall: Done
+node_modules/sharp install: Done
+apps/web/node_modules/sharp install: Done
+
+apps/mobile preinstall$ ./scripts/cmd-guard.js --preinstall
+apps/mobile preinstall: Done
+Done in 28.4s using pnpm v10.34.5

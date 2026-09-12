@@ -1,0 +1,582 @@
+"use client";
+
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTheme } from "next-themes";
+import { useMutation, useQuery, useConvex } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { useLocale } from "@/components/providers/locale-provider";
+import { useTranslations } from "next-intl";
+import {
+  BlockNoteSchema,
+  defaultInlineContentSpecs,
+  defaultBlockSpecs,
+  defaultStyleSpecs,
+  type PartialBlock,
+} from "@blocknote/core";
+import { CommentsExtension } from "@blocknote/core/comments";
+import { filterSuggestionItems } from "@blocknote/core/extensions";
+import * as locales from "@blocknote/core/locales";
+import {
+  BlockNoteViewEditor,
+  FloatingComposerController,
+  FormattingToolbar,
+  FormattingToolbarController,
+  getFormattingToolbarItems,
+  ThreadsSidebar,
+  useCreateBlockNote,
+  createReactInlineContentSpec,
+  getDefaultReactSlashMenuItems,
+  SuggestionMenuController,
+} from "@blocknote/react";
+import { BlockNoteView } from "@blocknote/mantine";
+import { ConvexThreadStore } from "@/lib/convex-thread-store";
+import { cn } from "@/lib/utils";
+import { MessageText1 } from "iconsax-reactjs";
+import { useUpload, useCoreAction, coreApi } from "@a2e/core";
+import type { EntityRef, Id as CoreId } from "@a2e/core";
+import { useCoreWorkspaceId } from "@/hooks/use-core-workspace-id";
+import { coreFlags } from "@/lib/core-flags";
+import { toast } from "sonner";
+import { ChartBlock, buildChartSlashMenuItems } from "./chart-block";
+import { FontFamilySelect, FontFamilyStyle, type FontOption } from "./font-style";
+import { fluxEditorSchema } from "@/lib/editor-schema";
+export { fluxEditorSchema } from "@/lib/editor-schema";
+import { ReviewExtension, attachReview, restoreReview, serializeEditor, isSyntheticChange, SYNTHETIC_META } from "@/lib/editor-review";
+import { EditorTools } from "./editor-tools";
+import { getMathSlashMenuItems, locales as mathLocales } from "@blocknote/math-block";
+import { getDiagramSlashMenuItems, locales as diagramLocales } from "@blocknote/diagram-block";
+import { multiColumnDropCursor, getMultiColumnSlashMenuItems, locales as columnLocales } from "@blocknote/xl-multi-column";
+import { emptyDatabase } from "@/lib/editor-database";
+import { suggestionMenuFloatingUIOptions } from "@/lib/suggestion-menu-options";
+import "@blocknote/core/fonts/inter.css";
+import "@blocknote/mantine/style.css";
+import "./editor-workspace.css";
+
+export type Mentionable = { id: string; label: string; kind: "user" | "task" | "project"; userId?: string; image?: string };
+
+const INLINE_SYSTEM_FONTS: FontOption[] = [
+  { family: "Plus Jakarta Sans" },
+  { family: "Inter" },
+  { family: "Georgia" },
+  { family: "Arial" },
+  { family: "Times New Roman" },
+  { family: "Courier New" },
+];
+
+export function extractMentionUserIds(doc: any[]): string[] {
+  const ids: string[] = [];
+  const walk = (blocks: any[]) => {
+    for (const block of blocks ?? []) {
+      if (Array.isArray(block.content)) {
+        for (const item of block.content) {
+          if (item?.type === "mention" && item?.props?.kind === "user" && item?.props?.id) ids.push(item.props.id);
+        }
+      }
+      if (block.children) walk(block.children);
+    }
+  };
+  walk(doc);
+  return Array.from(new Set(ids));
+}
+
+function scanAnchors(editor: any) {
+  const doc = editor?._tiptapEditor?.state?.doc;
+  if (!doc) return [];
+  const anchors = new Map<string, { threadId: string; from: number; to: number; referenceText: string }>();
+  doc.descendants((node: any, pos: number) => {
+    for (const mark of node.marks ?? []) {
+      if (mark.type?.name !== "comment" || !mark.attrs?.threadId) continue;
+      const threadId = String(mark.attrs.threadId);
+      const from = pos;
+      const to = pos + node.nodeSize;
+      const current = anchors.get(threadId);
+      anchors.set(threadId, {
+        threadId,
+        from: Math.min(current?.from ?? from, from),
+        to: Math.max(current?.to ?? to, to),
+        referenceText: "",
+      });
+    }
+  });
+  return Array.from(anchors.values()).map((anchor) => ({
+    ...anchor,
+    referenceText: doc.textBetween(anchor.from, anchor.to, " ").slice(0, 500),
+  }));
+}
+
+function rehydrateAnchors(editor: any, rows: any[]) {
+  const tiptap = editor?._tiptapEditor;
+  const state = tiptap?.state;
+  const commentMark = state?.schema?.marks?.comment;
+  if (!state || !commentMark) return;
+  const existing = new Set<string>();
+  state.doc.descendants((node: any) => {
+    for (const mark of node.marks ?? []) if (mark.type?.name === "comment" && mark.attrs?.threadId) existing.add(String(mark.attrs.threadId));
+  });
+  const tr = state.tr;
+  let changed = false;
+  for (const row of rows ?? []) {
+    const from = row?.anchor?.from;
+    const to = row?.anchor?.to;
+    if (existing.has(row.id) || typeof from !== "number" || typeof to !== "number") continue;
+    const safeFrom = Math.max(1, Math.min(Math.floor(from), tr.doc.content.size - 1));
+    const safeTo = Math.max(safeFrom + 1, Math.min(Math.floor(to), tr.doc.content.size));
+    if (safeTo <= safeFrom) continue;
+    tr.addMark(safeFrom, safeTo, commentMark.create({ threadId: row.id, orphan: !!row.resolved }));
+    changed = true;
+  }
+  if (changed) tiptap.view.dispatch(tr.setMeta(SYNTHETIC_META, true));
+}
+
+function useDocumentFont(font?: any) {
+  useEffect(() => {
+    if (!font) return;
+    if (font.sourceType === "google" && font.cssUrl) {
+      const id = `bureau-google-font-${font._id}`;
+      if (document.getElementById(id)) return;
+      const link = document.createElement("link");
+      link.id = id;
+      link.rel = "stylesheet";
+      link.href = font.cssUrl;
+      document.head.appendChild(link);
+      return;
+    }
+    if (font.sourceType === "upload" && font.fileUrl) {
+      const face = new FontFace(font.family, `url(${JSON.stringify(font.fileUrl)})`, {
+        weight: String(font.weight ?? 400),
+        style: font.style ?? "normal",
+      });
+      face.load().then((loaded) => document.fonts.add(loaded)).catch(() => undefined);
+    }
+  }, [font]);
+}
+
+interface FluxEditorProps {
+  documentId?: Id<"flux_documents">;
+  userId?: string;
+  commentRole?: "comment" | "editor";
+  commentsOpen?: boolean;
+  focusMode?: boolean;
+  onCommentsOpenChange?: (open: boolean) => void;
+  initialContent?: string;
+  editable?: boolean;
+  onChange?: (content: string) => void;
+  onMentions?: (userIds: string[]) => void;
+  mentionables?: Mentionable[];
+  onEditorReady?: (editor: any) => void;
+  documentStyle?: any;
+  selectedFont?: any;
+  availableFonts?: FontOption[];
+}
+
+export function FluxEditor({
+  documentId,
+  userId,
+  commentRole = "comment",
+  commentsOpen = false,
+  focusMode = false,
+  onCommentsOpenChange,
+  initialContent,
+  editable = true,
+  onChange,
+  onMentions,
+  mentionables = [],
+  onEditorReady,
+  documentStyle,
+  selectedFont,
+  availableFonts,
+}: FluxEditorProps) {
+  const { resolvedTheme } = useTheme();
+  const { locale } = useLocale();
+  const tComments = useTranslations("docsExperience.comments");
+  const tChips = useTranslations("chips");
+  const tEditor = useTranslations("editor");
+  const convex = useConvex();
+  const generateUploadUrl = useMutation(api.flux_files.generateUploadUrl);
+
+  // ── OS file drop → core drive attachment (§14.6) ────────────────────────
+  // When the user drags a file from the OS onto the editor, upload it to the
+  // shared A2E Core drive with `linkedTo` = the current document so it shows
+  // up in the Files widget, then insert a block at the caret (image block for
+  // images, a named link paragraph for other files). When the core drive is
+  // unavailable, the drop is left to BlockNote's native image handling
+  // (Convex `flux_files`) so the editor never regresses. The handler itself
+  // is defined after `editor` is created below (it closes over the editor).
+  const coreWsId = useCoreWorkspaceId();
+  const { upload: uploadToCoreDrive } = useUpload();
+  const presignView = useCoreAction(coreApi.drive.presignView);
+  const presignDownload = useCoreAction(coreApi.drive.presignDownload);
+
+  const createThread = useMutation(api.flux_commentThreads.createThread);
+  const addComment = useMutation(api.flux_commentThreads.addComment);
+  const updateComment = useMutation(api.flux_commentThreads.updateComment);
+  const deleteComment = useMutation(api.flux_commentThreads.deleteComment);
+  const deleteThread = useMutation(api.flux_commentThreads.deleteThread);
+  const setResolved = useMutation(api.flux_commentThreads.setResolved);
+  const setReaction = useMutation(api.flux_commentThreads.setReaction);
+  const syncAnchors = useMutation(api.flux_commentThreads.syncAnchors);
+  const threadRows = useQuery(api.flux_commentThreads.listForDocument, documentId ? { documentId } : "skip");
+  const [commentFilter, setCommentFilter] = useState<"open" | "resolved" | "all">("open");
+  const [commentSort, setCommentSort] = useState<"position" | "recent-activity" | "oldest">("position");
+  const anchorTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useDocumentFont(selectedFont);
+
+  const parsed = useMemo<PartialBlock[] | undefined>(() => {
+    if (!initialContent) return undefined;
+    try {
+      const value = JSON.parse(initialContent);
+      return Array.isArray(value) && value.length ? value : undefined;
+    } catch {
+      return undefined;
+    }
+  }, [initialContent]);
+
+  const dictionary = { ...((locales as any)[locale] ?? locales.en), math: (mathLocales as any)[locale] ?? mathLocales.en, diagram: (diagramLocales as any)[locale] ?? diagramLocales.en, multi_column: (columnLocales as any)[locale] ?? columnLocales.en };
+  const tx = useTranslations("editorTools");
+  const [reviewError, setReviewError] = useState(false);
+  const members = useMemo(() => mentionables.filter((item) => item.kind === "user"), [mentionables]);
+  // Refs so closures captured at editor creation (resolveUsers) stay fresh.
+  const membersRef = useRef(members);
+  membersRef.current = members;
+
+  // Created ONCE per document: `useCreateBlockNote` rebuilds the whole editor
+  // when `threadStore` changes (userId / role arriving late used to trigger
+  // that on every open, doubling mount work). Identity binds late instead.
+  const threadStore = useMemo(() => {
+    if (!documentId) return null;
+    return new ConvexThreadStore(userId ?? "", documentId, {
+      createThread,
+      addComment,
+      updateComment,
+      deleteComment,
+      deleteThread,
+      setResolved,
+      setReaction,
+    }, commentRole);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [documentId]);
+
+  useEffect(() => {
+    threadStore?.bindIdentity(userId ?? "", commentRole);
+  }, [threadStore, userId, commentRole]);
+
+  const resolveUsers = useCallback(async (ids: string[]) => ids.map((id) => {
+    const member = membersRef.current.find((item) => String(item.id) === String(id) || String(item.userId) === String(id));
+    return { id, username: member?.label ?? tComments("member"), avatarUrl: member?.image ?? "" };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), []);
+
+  const editor = useCreateBlockNote({
+    schema: fluxEditorSchema,
+    initialContent: parsed,
+    dictionary,
+    dropCursor: multiColumnDropCursor,
+    extensions: [ReviewExtension, ...(threadStore ? [CommentsExtension({ threadStore, resolveUsers })] : [])],
+    uploadFile: async (file: File) => {
+      const url = await generateUploadUrl();
+      const response = await fetch(url, { method: "POST", headers: { "Content-Type": file.type }, body: file });
+      if (!response.ok) throw new Error(tComments("uploadFailed"));
+      const { storageId } = await response.json();
+      const publicUrl = await convex.query(api.flux_files.getUrl, { storageId });
+      if (!publicUrl) throw new Error(tComments("resolveUploadFailed"));
+      return publicUrl;
+    },
+  }, [threadStore]);
+
+  useEffect(() => {
+    try { restoreReview(editor, initialContent); } catch { setReviewError(true); }
+    const detach = attachReview(editor, () => toast.info(tx("textReviewOnly"), { id: "review-text-only" }));
+    return () => { detach(); if (anchorTimer.current) clearTimeout(anchorTimer.current); };
+  }, [editor]);
+
+  // ── OS file drop → core drive attachment (§14.6) ────────────────────────
+  // Intercepts OS file drops on the editor wrapper (capture phase, before
+  // BlockNote's native image handling). Uploads each file to the shared A2E
+  // Core drive with `linkedTo` = the current document so it appears in the
+  // Files widget, then inserts a block at the caret (image block for images,
+  // a named link paragraph for other files). Internal block drags carry no
+  // `dataTransfer.files` and pass through untouched. When the core drive is
+  // unavailable, the drop is left to BlockNote's native image handling
+  // (Convex `flux_files`) so the editor never regresses.
+  const handleDropCapture = (e: React.DragEvent) => {
+    const dropped = e.dataTransfer?.files;
+    if (!dropped || dropped.length === 0) return;
+    if (!editable || !documentId || !coreFlags.drive || !coreWsId) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const linkedTo: EntityRef = { app: "bureau", type: "document", id: String(documentId) };
+    void (async () => {
+      let inserted = 0;
+      for (const file of Array.from(dropped)) {
+        try {
+          const { fileId } = await uploadToCoreDrive({
+            workspaceId: coreWsId as CoreId<"workspaces">,
+            file,
+            sourceApp: "bureau",
+            linkedTo,
+          });
+          const isImage = file.type.startsWith("image/");
+          const { url } = isImage
+            ? await presignView({ fileId })
+            : await presignDownload({ fileId });
+          const currentBlock = editor.getTextCursorPosition?.().block;
+          if (isImage) {
+            editor.insertBlocks(
+              [{ type: "image", props: { url, caption: file.name } } as any],
+              currentBlock,
+              "after",
+            );
+          } else {
+            editor.insertBlocks(
+              [
+                {
+                  type: "paragraph",
+                  content: [
+                    { type: "link", href: url, content: [{ type: "text", text: file.name, styles: {} }] } as any,
+                  ],
+                } as any,
+              ],
+              currentBlock,
+              "after",
+            );
+          }
+          inserted++;
+        } catch {
+          /* per-file failure; continue with the rest */
+        }
+      }
+      if (inserted > 0) toast.success(tEditor("dropAttached", { count: inserted }));
+      if (inserted < dropped.length) toast.error(tEditor("dropFailed"));
+    })();
+  };
+
+  useEffect(() => threadStore?.updateFromServer(threadRows as any), [threadRows, threadStore]);
+  // Re-run rehydration only when thread anchors actually change — Convex
+  // re-emits `threadRows` on unrelated writes (presence, reactions…) and
+  // re-dispatching anchor marks each time re-renders the whole editor.
+  const threadSignature = useMemo(
+    () => (threadRows ?? []).map((row: any) => `${row.id}:${row.anchorFrom ?? ""}-${row.anchorTo ?? ""}:${row.resolved ? 1 : 0}`).join("|"),
+    [threadRows],
+  );
+  useEffect(() => {
+    if (!threadRows?.length) return;
+    const id = window.setTimeout(() => rehydrateAnchors(editor, threadRows as any[]), 80);
+    return () => window.clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editor, threadSignature]);
+
+  const readyRef = useRef(onEditorReady);
+  readyRef.current = onEditorReady;
+  useEffect(() => readyRef.current?.(editor), [editor]);
+
+  // ── Thread <-> anchor navigation sync ──
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const openRef = useRef(onCommentsOpenChange);
+  openRef.current = onCommentsOpenChange;
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const onClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (!target) return;
+      // Click on a highlighted range -> open the panel and reveal its thread.
+      if (target.closest(".bn-thread-mark")) {
+        openRef.current?.(true);
+        window.setTimeout(() => {
+          el.querySelector(".bn-thread[data-selected]")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }, 180);
+        return;
+      }
+      // Click on a thread card -> scroll to and flash the anchored text.
+      if (target.closest(".bn-thread") && target.closest("[data-testid='comments-sidebar']")) {
+        window.setTimeout(() => {
+          const mark = el.querySelector(".bn-thread-mark-selected") as HTMLElement | null;
+          if (!mark) return;
+          mark.scrollIntoView({ behavior: "smooth", block: "center" });
+          mark.classList.add("bureau-anchor-flash");
+          window.setTimeout(() => mark.classList.remove("bureau-anchor-flash"), 1400);
+        }, 120);
+      }
+    };
+    // Cmd/Ctrl+Shift+M starts a comment on the current selection.
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === "m") {
+        event.preventDefault();
+        try {
+          (editor as any).comments?.startPendingComment?.();
+          (editor as any).formattingToolbar?.closeMenu?.();
+        } catch {
+          /* no selection */
+        }
+      }
+    };
+    el.addEventListener("click", onClick);
+    el.addEventListener("keydown", onKey);
+    return () => {
+      el.removeEventListener("click", onClick);
+      el.removeEventListener("keydown", onKey);
+    };
+  }, [editor]);
+
+  // Latest-callback refs: the change handler is registered once per editor,
+  // but parents re-create onChange/onMentions on every render.
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+  const onMentionsRef = useRef(onMentions);
+  onMentionsRef.current = onMentions;
+  const reviewErrorRef = useRef(reviewError);
+  reviewErrorRef.current = reviewError;
+  // Throttle window for the expensive side effects (full-document JSON
+  // serialization + mention walk). Leading-edge suppressed, at most 4×/s.
+  const changeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const changePending = useRef(false);
+
+  const runChangeSideEffects = useCallback(() => {
+    changePending.current = false;
+    if (!reviewErrorRef.current) onChangeRef.current?.(serializeEditor(editor));
+    onMentionsRef.current?.(extractMentionUserIds(editor.document as any[]));
+  }, [editor]);
+
+  const handleChange = useCallback(() => {
+    // Programmatic dispatches (anchor rehydrate, review restore) must not
+    // re-save content or re-sync anchors — that feedback loop freezes the tab.
+    if (isSyntheticChange(editor)) return;
+    changePending.current = true;
+    if (!changeTimer.current) {
+      changeTimer.current = setTimeout(() => {
+        changeTimer.current = null;
+        runChangeSideEffects();
+      }, 250);
+    }
+    if (documentId && threadStore) {
+      if (anchorTimer.current) clearTimeout(anchorTimer.current);
+      anchorTimer.current = setTimeout(() => {
+        const anchors = scanAnchors(editor);
+        if (anchors.length) syncAnchors({ documentId, anchors }).catch(() => undefined);
+      }, 700);
+    }
+  }, [editor, documentId, threadStore, syncAnchors, runChangeSideEffects]);
+
+  // Flush a pending serialization on unmount so throttled edits are not lost.
+  useEffect(() => () => {
+    if (changeTimer.current) clearTimeout(changeTimer.current);
+    if (changePending.current) runChangeSideEffects();
+  }, [runChangeSideEffects]);
+
+  const inlineFonts = useMemo<FontOption[]>(
+    () => [...INLINE_SYSTEM_FONTS, ...(availableFonts ?? [])],
+    [availableFonts],
+  );
+
+  const fontFamily = documentStyle?.fontFamily || selectedFont?.family || "Plus Jakarta Sans";
+  const fontSize = documentStyle?.fontSize ?? 16;
+  const lineHeight = documentStyle?.lineHeight ?? 1.65;
+  const openCount = (threadRows ?? []).filter((row: any) => !row.resolved && !row.deletedAt).length;
+
+  return (
+    <div
+      ref={wrapRef}
+      className="flux-editor relative"
+      style={{ "--doc-font-family": `"${fontFamily}", var(--font-sans)`, "--doc-font-size": `${fontSize}px`, "--doc-line-height": lineHeight } as React.CSSProperties}
+      data-testid="flux-editor"
+      onDropCapture={handleDropCapture}
+    >
+      {reviewError && <div role="alert" className="mb-3 rounded-lg border border-destructive bg-card p-3 text-sm">{tx("reviewLoadError")}</div>}
+      {editable && !reviewError && <EditorTools editor={editor} />}
+      <BlockNoteView
+        editor={editor}
+        editable={editable && !reviewError}
+        theme={resolvedTheme === "dark" ? "dark" : "light"}
+        onChange={handleChange}
+        renderEditor={false}
+        comments={false}
+        slashMenu={false}
+        formattingToolbar={false}
+      >
+        <BlockNoteViewEditor />
+        {editable && (
+          <FormattingToolbarController
+            formattingToolbar={() => (
+              <FormattingToolbar>
+                {getFormattingToolbarItems()}
+                <FontFamilySelect fonts={inlineFonts} />
+              </FormattingToolbar>
+            )}
+          />
+        )}
+        {editable && (
+          <SuggestionMenuController
+            triggerCharacter="@"
+            floatingUIOptions={suggestionMenuFloatingUIOptions}
+            getItems={async (query) => filterSuggestionItems(mentionables.map((item) => ({
+              title: item.label,
+              subtext: item.kind,
+              onItemClick: () => editor.insertInlineContent([
+                { type: "mention", props: { id: item.id, label: item.label, kind: item.kind } } as any,
+                " ",
+              ]),
+            })), query)}
+          />
+        )}
+        {editable && (
+          <SuggestionMenuController
+            triggerCharacter="/"
+            floatingUIOptions={suggestionMenuFloatingUIOptions}
+            getItems={async (query) => {
+              const defaults = getDefaultReactSlashMenuItems(editor);
+              const chartItems = buildChartSlashMenuItems(editor, (key) => {
+                try { return tChips(key as any); } catch { return key; }
+              });
+              const databaseItem = { title: tx("database"), group: tx("advanced"), aliases: ["database", "collection", "base", "table"], onItemClick: () => editor.insertBlocks([{ type: "database", props: { data: JSON.stringify(emptyDatabase(crypto.randomUUID(), userId ?? "guest", tx("database"), tx("name"))) } }], editor.getTextCursorPosition().block, "after") };
+              const all = [...defaults, ...getMultiColumnSlashMenuItems(editor), ...getMathSlashMenuItems(editor), ...getDiagramSlashMenuItems(editor), databaseItem, ...chartItems];
+              if (!query) return all;
+              return filterSuggestionItems(all, query);
+            }}
+          />
+        )}
+        {threadStore && editable && <FloatingComposerController />}
+
+        {commentsOpen && threadStore && (
+          <>
+            <button
+              type="button"
+              aria-label={tComments("closeAria")}
+              className="fixed inset-0 z-[85] bg-black/20 backdrop-blur-[1px] lg:hidden"
+              onClick={() => onCommentsOpenChange?.(false)}
+              data-testid="comments-backdrop"
+            />
+            <aside className={cn("fixed inset-y-0 right-0 z-[90] flex w-full flex-col border-l border-border bg-background shadow-2xl sm:w-[390px] lg:z-[80] lg:w-[360px] lg:shadow-[-12px_0_35px_rgba(49,48,46,0.08)]", focusMode ? "lg:top-[49px]" : "lg:top-[113px]")} data-testid="comments-sidebar">
+              <div className="flex items-center gap-3 border-b border-border px-4 py-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--flux-coral-soft)] text-primary"><MessageText1 variant="Bulk" size={18} /></span>
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-sm font-semibold">{tComments("title")}</h2>
+                  <p className="text-xs text-muted-foreground">{tComments("count", { count: openCount })}</p>
+                </div>
+                <button type="button" onClick={() => onCommentsOpenChange?.(false)} className="rounded-lg px-2 py-1 text-sm text-muted-foreground hover:bg-muted hover:text-foreground" data-testid="comments-close">{tComments("close")}</button>
+              </div>
+              <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2.5">
+                <div className="flex rounded-lg bg-muted p-0.5">
+                  {(["open", "resolved", "all"] as const).map((filter) => (
+                    <button key={filter} type="button" onClick={() => setCommentFilter(filter)} className={cn("rounded-md px-2.5 py-1 text-xs font-medium", commentFilter === filter ? "bg-card text-foreground shadow-sm" : "text-muted-foreground")} data-testid={`comments-filter-${filter}`}>{tComments(filter === "open" ? "filterOpen" : filter === "resolved" ? "filterResolved" : "filterAll")}</button>
+                  ))}
+                </div>
+                <select value={commentSort} onChange={(event) => setCommentSort(event.target.value as any)} className="ml-auto h-8 rounded-lg border border-border bg-card px-2 text-xs outline-none focus:ring-2 focus:ring-ring" data-testid="comments-sort">
+                  <option value="position">{tComments("sortPosition")}</option>
+                  <option value="recent-activity">{tComments("sortRecent")}</option>
+                  <option value="oldest">{tComments("sortOldest")}</option>
+                </select>
+              </div>
+              <div className="min-h-0 flex-1 overflow-y-auto px-3 py-3 [&_.bn-threads-sidebar]:max-w-full! [&_.bn-thread]:rounded-xl! [&_.bn-thread]:border! [&_.bn-thread]:border-border! [&_.bn-thread]:bg-card! [&_.bn-thread]:shadow-none!">
+                <ThreadsSidebar filter={commentFilter} sort={commentSort} maxCommentsBeforeCollapse={4} />
+              </div>
+              <div className="border-t border-border px-4 py-2.5 text-[11px] text-muted-foreground">{tComments("hint")}</div>
+            </aside>
+          </>
+        )}
+      </BlockNoteView>
+    </div>
+  );
+}
+
+export default FluxEditor;

@@ -1,0 +1,81 @@
+section_id,section_label,field_id,field_label,type,required_level
+qualitative_report,Bilan qualitatif de l’action réalisée,association_name,Nom,text,high
+qualitative_report,Bilan qualitatif de l’action réalisée,siret,Numéro SIRET,string,high
+qualitative_report,Bilan qualitatif de l’action réalisée,rna_or_receipt,Numéro RNA ou à défaut numéro du récépissé en préfecture,text,high
+qualitative_report,Bilan qualitatif de l’action réalisée,alsace_moselle_registry_date,Date d’inscription au registre des Associations (association de droit local Alsace-Moselle),date,conditional
+qualitative_report,Bilan qualitatif de l’action réalisée,action_implementation,Décrire précisément la mise en œuvre de l’action,textarea,high
+qualitative_report,Bilan qualitatif de l’action réalisée,beneficiaries_count,Nombre approximatif de personnes bénéficiaires,number,high
+qualitative_report,Bilan qualitatif de l’action réalisée,beneficiaries_by_audience,Répartition par type de publics,repeater,recommended
+qualitative_report,Bilan qualitatif de l’action réalisée,action_dates,Date(s) de réalisation de l’action,repeater,high
+qualitative_report,Bilan qualitatif de l’action réalisée,action_locations,Lieu(x) de réalisation de l’action,repeater,high
+qualitative_report,Bilan qualitatif de l’action réalisée,objectives_achievement,Les objectifs de l’action ont-ils été atteints au regard des indicateurs utilisés ?,textarea,high
+financial_summary,Tableau de synthèse,exercise_year,Exercice 20…,year,high
+financial_summary,Tableau de synthèse,expense_lines,Charges,table,high
+financial_summary,Tableau de synthèse,income_lines,Produits,table,high
+financial_summary,Tableau de synthèse,grant_amount,La subvention de … €,integer_currency,high
+financial_summary,Tableau de synthèse,grant_share_percent,… représente … % du total des produits,percentage,high
+financial_summary,Tableau de synthèse,expense_group_60,Achats,table_group,high
+financial_summary,Tableau de synthèse,expense_row_60_Achats matières et fournitures,Achats matières et fournitures,table_row,conditional
+financial_summary,Tableau de synthèse,expense_row_60_Autres fournitures,Autres fournitures,table_row,conditional
+financial_summary,Tableau de synthèse,expense_group_61,Services extérieurs,table_group,high
+financial_summary,Tableau de synthèse,expense_row_61_Locations,Locations,table_row,conditional
+financial_summary,Tableau de synthèse,expense_row_61_Entretien et réparation,Entretien et réparation,table_row,conditional
+financial_summary,Tableau de synthèse,expense_row_61_Assurance,Assurance,table_row,conditional
+financial_summary,Tableau de synthèse,expense_row_61_Documentation,Documentation,table_row,conditional
+financial_summary,Tableau de synthèse,expense_group_62,Autres services extérieurs,table_group,high
+financial_summary,Tableau de synthèse,expense_row_62_Rémunérations intermédiaires e,Rémunérations intermédiaires et honoraires,table_row,conditional
+financial_summary,Tableau de synthèse,"expense_row_62_Publicité, publication","Publicité, publication",table_row,conditional
+financial_summary,Tableau de synthèse,"expense_row_62_Déplacements, missions","Déplacements, missions",table_row,conditional
+financial_summary,Tableau de synthèse,"expense_row_62_Services bancaires, autres","Services bancaires, autres",table_row,conditional
+financial_summary,Tableau de synthèse,expense_group_63,Impôts et taxes,table_group,high
+financial_summary,Tableau de synthèse,expense_row_63_Impôts et taxes sur rémunérati,Impôts et taxes sur rémunération,table_row,conditional
+financial_summary,Tableau de synthèse,expense_row_63_Autres impôts et taxes,Autres impôts et taxes,table_row,conditional
+financial_summary,Tableau de synthèse,expense_group_64,Charges de personnel,table_group,high
+financial_summary,Tableau de synthèse,expense_row_64_Rémunération des personnels,Rémunération des personnels,table_row,conditional
+financial_summary,Tableau de synthèse,expense_row_64_Charges sociales,Charges sociales,table_row,conditional
+financial_summary,Tableau de synthèse,expense_row_64_Autres charges de personnel,Autres charges de personnel,table_row,conditional
+financial_summary,Tableau de synthèse,expense_group_65,Autres charges de gestion courante,table_group,high
+financial_summary,Tableau de synthèse,expense_group_66,Charges financières,table_group,high
+financial_summary,Tableau de synthèse,expense_group_67,Charges exceptionnelles,table_group,high
+financial_summary,Tableau de synthèse,expense_group_68,Dotation aux amortissements,table_group,high
+financial_summary,Tableau de synthèse,expense_group_indirect,Charges indirectes affectées à l’action,table_group,high
+financial_summary,Tableau de synthèse,expense_row_indirect_Charges fixes de fonctionnemen,Charges fixes de fonctionnement,table_row,conditional
+financial_summary,Tableau de synthèse,expense_row_indirect_Frais financiers,Frais financiers,table_row,conditional
+financial_summary,Tableau de synthèse,expense_row_indirect_Autres,Autres,table_row,conditional
+financial_summary,Tableau de synthèse,expense_group_86,Emplois des contributions volontaires en nature,table_group,high
+financial_summary,Tableau de synthèse,expense_row_86_860 Secours en nature,860 Secours en nature,table_row,conditional
+financial_summary,Tableau de synthèse,expense_row_86_861 Mise à disposition gratuit,861 Mise à disposition gratuite de biens et services,table_row,conditional
+financial_summary,Tableau de synthèse,expense_row_86_862 Prestations,862 Prestations,table_row,conditional
+financial_summary,Tableau de synthèse,expense_row_86_864 Personnel bénévole,864 Personnel bénévole,table_row,conditional
+financial_summary,Tableau de synthèse,income_group_70,"Vente de marchandises, produits finis, prestations de services",table_group,high
+financial_summary,Tableau de synthèse,income_group_73,Dotations et produits de tarification,table_group,high
+financial_summary,Tableau de synthèse,income_group_74,Subventions d’exploitation,table_group,high
+financial_summary,Tableau de synthèse,income_row_74_État - préciser le(s) ministèr,État - préciser le(s) ministère(s) sollicité(s),table_row,conditional
+financial_summary,Tableau de synthèse,income_row_74_Région(s),Région(s),table_row,conditional
+financial_summary,Tableau de synthèse,income_row_74_Département(s),Département(s),table_row,conditional
+financial_summary,Tableau de synthèse,income_row_74_Intercommunalité(s) : EPCI,Intercommunalité(s) : EPCI,table_row,conditional
+financial_summary,Tableau de synthèse,income_row_74_Commune(s),Commune(s),table_row,conditional
+financial_summary,Tableau de synthèse,income_row_74_Organismes sociaux (détailler),Organismes sociaux (détailler),table_row,conditional
+financial_summary,Tableau de synthèse,income_row_74_Fonds européens,Fonds européens,table_row,conditional
+financial_summary,Tableau de synthèse,income_row_74_Agence de services et de paiem,Agence de services et de paiement (ex-CNASEA - emplois aidés),table_row,conditional
+financial_summary,Tableau de synthèse,income_row_74_Autres établissements publics,Autres établissements publics,table_row,conditional
+financial_summary,Tableau de synthèse,income_row_74_Aides privées,Aides privées,table_row,conditional
+financial_summary,Tableau de synthèse,income_group_75,Autres produits de gestion courante,table_group,high
+financial_summary,Tableau de synthèse,"income_row_75_Dont cotisations, dons manuels","Dont cotisations, dons manuels ou legs",table_row,conditional
+financial_summary,Tableau de synthèse,income_group_76,Produits financiers,table_group,high
+financial_summary,Tableau de synthèse,income_group_77,Produits exceptionnels,table_group,high
+financial_summary,Tableau de synthèse,income_group_78,Reports ressources non utilisées d’opérations antérieures,table_group,high
+financial_summary,Tableau de synthèse,income_group_own_resources,Ressources propres affectées à l’action,table_group,high
+financial_summary,Tableau de synthèse,income_group_87,Contributions volontaires en nature,table_group,high
+financial_summary,Tableau de synthèse,income_row_87_870 Bénévolat,870 Bénévolat,table_row,conditional
+financial_summary,Tableau de synthèse,income_row_87_871 Prestations en nature,871 Prestations en nature,table_row,conditional
+financial_summary,Tableau de synthèse,income_row_87_875 Dons en nature,875 Dons en nature,table_row,conditional
+financial_annex,Données chiffrées : annexe,allocation_rules_indirect_costs,Règles de répartition des charges indirectes affectées à l’action subventionnée,textarea,conditional
+financial_annex,Données chiffrées : annexe,significant_variance_explanation,Explication et justification des écarts significatifs entre le budget prévisionnel et le budget final exécuté,textarea,conditional
+financial_annex,Données chiffrées : annexe,voluntary_contributions_details,Contributions volontaires en nature affectées à la réalisation du projet ou de l’action subventionnée,textarea,conditional
+financial_annex,Données chiffrées : annexe,additional_observations,Observations sur le compte-rendu financier de l’opération subventionnée,textarea,optional
+financial_annex,Données chiffrées : annexe,signatory_full_name,"Je soussigné(e), nom et prénom",text,high
+financial_annex,Données chiffrées : annexe,legal_representative_association_name,Représentant(e) légal(e) de l’association,text,high
+financial_annex,Données chiffrées : annexe,signed_on,"Fait, le",date,high
+financial_annex,Données chiffrées : annexe,signed_at,à,text,high
+financial_annex,Données chiffrées : annexe,signature,Signature,signature,high

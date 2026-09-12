@@ -1,0 +1,9 @@
+.editor-tool { display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:6px; background:var(--background); transition:background-color 150ms; }
+.editor-tool:hover { background:var(--muted); color:var(--foreground); }
+.editor-tool:focus-visible { outline:2px solid var(--ring); outline-offset:2px; }
+.flux-editor [data-review="insertion"] { background:color-mix(in srgb, var(--primary) 12%, var(--background)); color:var(--foreground); text-decoration:underline; text-decoration-color:var(--primary); text-underline-offset:3px; }
+.flux-editor [data-review="deletion"] { background:var(--muted); color:var(--muted-foreground); text-decoration:line-through; }
+.flux-editor .bn-editor { background:var(--background); }
+.bureau-database-block { color:var(--foreground); --background:var(--card); }
+.tx-tree-row svg path { transition:stroke 150ms; }
+@media (prefers-reduced-motion:reduce) { .tx-tree-row, .tx-tree-row svg path, .editor-tool { transition:none !important; } }

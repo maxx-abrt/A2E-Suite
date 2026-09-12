@@ -1,0 +1,1441 @@
+{
+  "metadata": {
+    "title": "Bilan — Gestion d'argent tout-en-un",
+    "description": "Simplifiez vos finances avec Bilan. Budgets, facturation, suivi des dépenses, livres et collaboration d'équipe pour particuliers, entreprises et associations."
+  },
+  "brand": {
+    "name": "Bilan",
+    "suite": "Suite A2E"
+  },
+  "auth": {
+    "title": "Bienvenue sur Bilan",
+    "subtitle": "Connectez-vous à votre espace de travail ou créez-en un nouveau.",
+    "continueWithGoogle": "Continuer avec Google",
+    "or": "ou",
+    "emailLabel": "Adresse e-mail",
+    "sendMagicLink": "Envoyer le code de connexion",
+    "verifyCodeLabel": "Code de vérification",
+    "verifyCodeHint": "Vérifiez votre boîte de réception — le code expire dans 15 minutes.",
+    "verifyCta": "Vérifier et se connecter",
+    "useDifferentEmail": "Utiliser un autre e-mail",
+    "legal": "En continuant, vous acceptez nos",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "toasts": {
+      "codeSent": "Nous vous avons envoyé un code de connexion.",
+      "signedIn": "Connecté"
+    },
+    "errors": {
+      "google": "Connexion Google impossible",
+      "email": "Impossible d'envoyer le code de connexion",
+      "code": "Code invalide ou expiré"
+    }
+  },
+  "onboarding": {
+    "title": "Créez votre premier espace de travail",
+    "subtitle": "Un espace de travail regroupe membres, projets et finances. Vous pourrez en créer d'autres plus tard.",
+    "typeLabel": "Comment vous décririez-vous ?",
+    "types": {
+      "individual": {
+        "title": "Particulier",
+        "description": "Gestion d'argent personnel"
+      },
+      "business": {
+        "title": "Entreprise",
+        "description": "Société ou freelance"
+      },
+      "association": {
+        "title": "Association",
+        "description": "Association, ONG, organisation caritative"
+      }
+    },
+    "nameLabel": "Nom de l'espace de travail",
+    "namePlaceholder": "ex. Acme Inc., Personnel, Save The Whales",
+    "currencyLabel": "Devise par défaut",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "À quoi sert cet espace de travail ?",
+    "submit": "Créer l'espace de travail",
+    "toasts": {
+      "created": "Espace de travail créé !",
+      "failed": "Impossible de créer l'espace de travail"
+    },
+    "sharedNotice": "Cet espace est partagé avec toute la suite A2E : membres, rôles, fichiers et notifications sont communs. Vos données financières restent dans Bilan, chiffrées."
+  },
+  "workspace": {
+    "switcher": {
+      "label": "Espace de travail",
+      "create": "Créer un nouvel espace",
+      "manage": "Gérer les espaces",
+      "noWorkspace": "Aucun espace sélectionné",
+      "members": "{count, plural, =0 {Aucun membre} =1 {1 membre} other {# membres}}",
+      "currentRole": "Votre rôle : {role}",
+      "sharedHint": "L'espace est créé dans A2E Core : il sera immédiatement disponible dans toutes les apps de la suite (Bilan, Bureau, Drive…)."
+    },
+    "empty": {
+      "title": "Aucun espace de travail",
+      "description": "Créez votre premier espace de travail pour commencer à utiliser Bilan.",
+      "cta": "Créer un espace"
+    }
+  },
+  "legalPages": {
+    "privacy": {
+      "title": "Politique de confidentialité",
+      "lastUpdated": "Dernière mise à jour : {date}"
+    },
+    "terms": {
+      "title": "Conditions d'utilisation",
+      "lastUpdated": "Dernière mise à jour : {date}"
+    }
+  },
+  "common": {
+    "income": "Revenu",
+    "expense": "Dépense",
+    "pending": "En attente",
+    "linkedTo": "Lié à",
+    "add": "Ajouter",
+    "amount": "Montant",
+    "cancel": "Annuler",
+    "category": "Catégorie",
+    "client": "Client",
+    "close": "Fermer",
+    "color": "Couleur",
+    "create": "Créer",
+    "currency": "Devise",
+    "date": "Date",
+    "description": "Description",
+    "edit": "Modifier",
+    "errorOccurred": "Une erreur est survenue",
+    "name": "Nom",
+    "notes": "Notes",
+    "project": "Projet",
+    "save": "Enregistrer",
+    "status": "Statut",
+    "delete": "Supprimer",
+    "loading": "Chargement…",
+    "search": "Rechercher",
+    "actions": "Actions",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "yes": "Oui",
+    "no": "Non",
+    "optional": "Facultatif",
+    "required": "Requis",
+    "all": "Tous",
+    "none": "Aucun",
+    "export": "Exporter",
+    "download": "Télécharger",
+    "view": "Voir",
+    "open": "Ouvrir",
+    "update": "Mettre à jour",
+    "title": "Titre",
+    "restore": "Restaurer"
+  },
+  "nav": {
+    "features": "Fonctionnalités",
+    "pricing": "Tarifs",
+    "testimonials": "Témoignages",
+    "signIn": "Connexion",
+    "getStarted": "Commencer",
+    "dashboard": "Tableau de bord",
+    "budget": "Budget",
+    "expenses": "Transactions",
+    "invoices": "Factures",
+    "projects": "Projets",
+    "book": "Livre",
+    "documents": "Documents",
+    "legal": "Légal",
+    "reports": "Rapports",
+    "team": "Équipe",
+    "activity": "Activité",
+    "fiches": "Fiches projet",
+    "settings": "Paramètres",
+    "signOut": "Déconnexion",
+    "storage": "Stockage",
+    "security": "Sécurité",
+    "subventions": "Subventions",
+    "search": "Rechercher une page, une facture, un projet…",
+    "clients": "Contacts"
+  },
+  "landing": {
+    "badge": "v1.0 · Lancement progressif",
+    "hero": {
+      "title": "Construisons",
+      "highlight": "l'avenir financier",
+      "description": "Bilan accompagne particuliers, associations et entreprises de l'idée au pilotage : budgets, factures, dépenses, livre comptable, projets et collaboration, sans complexité inutile.",
+      "startFree": "Commencer gratuitement",
+      "seeHowItWorks": "Voir comment ça marche",
+      "benefits": {
+        "freeForever": "Plan gratuit à vie",
+        "storage": "500Mo de stockage documents",
+        "setup": "Configuration en 2 minutes"
+      },
+      "tail": "de votre organisation",
+      "primaryCta": "Accès anticipé",
+      "secondaryCta": "Nous contacter",
+      "trustLine": "Choisi par les créateurs, les équipes et les associations",
+      "stats": {
+        "teams": {
+          "value": "15+",
+          "label": "Équipes actives"
+        },
+        "uptime": {
+          "value": "99.9%",
+          "label": "Disponibilité"
+        },
+        "tx": {
+          "value": "120k+",
+          "label": "Transactions"
+        }
+      }
+    },
+    "profiles": {
+      "title": "Adapté à vos besoins",
+      "description": "Que vous gériez vos finances personnelles ou dirigiez une entreprise, Bilan s'adapte à vous.",
+      "individual": {
+        "title": "Particulier",
+        "description": "Suivez vos dépenses personnelles, définissez des budgets et gérez vos objectifs financiers en toute simplicité.",
+        "features": [
+          "Suivi budgétaire personnel",
+          "Catégorisation des dépenses",
+          "Objectifs d'épargne",
+          "Insights financiers"
+        ],
+        "cta": "Commencer en tant que Particulier"
+      },
+      "business": {
+        "title": "Entreprise / Association",
+        "description": "Gestion financière complète avec facturation, budgets projet et conformité légale.",
+        "features": [
+          "Facturation professionnelle",
+          "Tableaux de budgets projet",
+          "Outils de conformité légale",
+          "Accès multi-utilisateurs"
+        ],
+        "cta": "Commencer en tant qu'Entreprise",
+        "badge": "POPULAIRE"
+      }
+    },
+    "features": {
+      "title": "Tout ce dont vous avez besoin pour gérer vos finances",
+      "description": "Fonctionnalités puissantes conçues pour vous donner un contrôle total sur votre vie financière.",
+      "items": {
+        "budget": {
+          "title": "Gestion de Budget",
+          "description": "Créez et suivez des budgets avec des visualisations. Définissez des limites, recevez des alertes et maîtrisez vos dépenses."
+        },
+        "invoice": {
+          "title": "Système de Facturation",
+          "description": "Créez des factures professionnelles, suivez les paiements, exportez en PDF et envoyez des rappels automatiques."
+        },
+        "expense": {
+          "title": "Suivi des Transactions",
+          "description": "Enregistrez les dépenses instantanément, catégorisez les transactions et joignez des reçus pour justifier."
+        },
+        "book": {
+          "title": "Système de Livre Intelligent",
+          "description": "Une interface tableur puissante pour les données financières. Liez les entrées aux factures et dépenses."
+        },
+        "connected": {
+          "title": "Données Connectées",
+          "description": "Liez les factures aux dépenses et aux entrées de livre. Tout est connecté en un seul endroit."
+        },
+        "storage": {
+          "title": "Stockage de Documents",
+          "description": "500Mo de stockage gratuit pour reçus, certificats et documents justificatifs."
+        }
+      }
+    },
+    "bookSystem": {
+      "badge": "Système de Livre Intelligent",
+      "title": "Vos données financières, magnifiquement organisées",
+      "description": "Une interface tableur puissante et personnalisable conçue spécifiquement pour la gestion financière. Liez les entrées directement aux factures, dépenses et documents.",
+      "features": [
+        "Colonnes personnalisées et types de données",
+        "Liez les entrées aux factures & dépenses",
+        "Calculs et formules automatiques",
+        "Export vers Excel, PDF ou CSV",
+        "Joignez reçus & certificats"
+      ],
+      "cta": "Essayer le Système de Livre"
+    },
+    "stats": {
+      "activeUsers": {
+        "value": "50K+",
+        "label": "Utilisateurs Actifs"
+      },
+      "invoices": {
+        "value": "2M+",
+        "label": "Factures Créées"
+      },
+      "uptime": {
+        "value": "99.9%",
+        "label": "Disponibilité"
+      },
+      "rating": {
+        "value": "4.9/5",
+        "label": "Note Utilisateurs"
+      }
+    },
+    "pricing": {
+      "title": "Tarifs simples et transparents",
+      "description": "Commencez gratuitement, upgradez quand vous en avez besoin. Aucun frais caché.",
+      "plans": {
+        "free": {
+          "name": "Gratuit",
+          "price": "0",
+          "description": "Parfait pour commencer",
+          "features": [
+            "Budgets personnels",
+            "Suivi des dépenses",
+            "Rapports basiques",
+            "500Mo stockage",
+            "1 utilisateur"
+          ],
+          "cta": "Commencer Gratuit"
+        },
+        "pro": {
+          "name": "Pro",
+          "price": "19",
+          "description": "Pour les entreprises en croissance",
+          "features": [
+            "Tout du Gratuit",
+            "Facturation professionnelle",
+            "Tableaux de projets",
+            "5Go stockage",
+            "5 utilisateurs",
+            "Support prioritaire"
+          ],
+          "cta": "Essai Pro",
+          "badge": "LE PLUS POPULAIRE"
+        },
+        "enterprise": {
+          "name": "Entreprise",
+          "price": "49",
+          "description": "Pour les grandes organisations",
+          "features": [
+            "Tout du Pro",
+            "Utilisateurs illimités",
+            "Conformité légale",
+            "50Go stockage",
+            "Accès API",
+            "Intégrations personnalisées"
+          ],
+          "cta": "Contacter les Ventes"
+        }
+      },
+      "perMonth": "/mois"
+    },
+    "testimonials": {
+      "title": "Adoré par des milliers",
+      "description": "Découvrez ce que nos utilisateurs pensent de Bilan.",
+      "items": [
+        {
+          "quote": "Bilan a complètement transformé ma gestion financière freelance. Le système de facturation seul m'a fait gagner des heures chaque mois.",
+          "author": "Sarah Chen",
+          "role": "Designer Freelance"
+        },
+        {
+          "quote": "En tant que trésorier d'association, les fonctionnalités de conformité légale sont inestimables. Tout ce dont nous avons besoin en un seul endroit.",
+          "author": "Marcus Johnson",
+          "role": "Trésorier ONG"
+        },
+        {
+          "quote": "Le système de livre est incroyable. C'est comme Excel mais conçu pour la finance. Je peux tout lier ensemble.",
+          "author": "Emma Rodriguez",
+          "role": "Propriétaire de PME"
+        }
+      ]
+    },
+    "cta": {
+      "title": "Prêt à prendre le contrôle de vos finances ?",
+      "description": "Rejoignez des milliers de particuliers et d'entreprises qui utilisent déjà Bilan pour simplifier leur gestion financière.",
+      "button": "Commencer Gratuitement"
+    },
+    "footer": {
+      "privacy": "Confidentialité",
+      "terms": "Conditions",
+      "contact": "Contact",
+      "copyright": "2024 Bilan. Tous droits réservés."
+    },
+    "why": {
+      "tag": "POURQUOI A2EMONEY",
+      "title": "Conçue pour la vitesse. Bâtie pour grandir.",
+      "description": "Une approche claire et moderne qui aide les équipes à structurer leurs finances, à livrer plus vite et à grandir avec confiance.",
+      "items": {
+        "speed": {
+          "title": "Exécution rapide",
+          "description": "Mettez en route facturation, dépenses et budgets en quelques minutes."
+        },
+        "clarity": {
+          "title": "Direction claire",
+          "description": "Transformez vos chiffres en décisions, sans tableurs interminables."
+        },
+        "scale": {
+          "title": "Fondation évolutive",
+          "description": "Workspaces isolés, rôles, projets, pensé pour grandir avec vous."
+        },
+        "design": {
+          "title": "Design soigné",
+          "description": "Chaque détail est pensé pour la clarté et le plaisir d'utilisation."
+        },
+        "vision": {
+          "title": "Vision long terme",
+          "description": "On construit pour la durée, au-delà du premier lancement."
+        },
+        "founder": {
+          "title": "Pensé pour vous",
+          "description": "Adapté au rythme et aux besoins des équipes et associations."
+        }
+      }
+    },
+    "intuitive": {
+      "title": "Intuitif par conception",
+      "description": "Nous misons sur la clarté, l'équilibre et la simplicité, pour que vos idées et vos finances avancent en confiance.",
+      "cta": "En savoir plus",
+      "bullets": [
+        "Structure réfléchie",
+        "Vision orientée croissance",
+        "Interface calme et lisible",
+        "Conçue pour communiquer clairement"
+      ]
+    },
+    "evolve": {
+      "title": "Conçue pour évoluer",
+      "description": "Que vous lanciez une idée ou prépariez une montée en charge, notre approche s'adapte à votre rythme.",
+      "cta": "En savoir plus",
+      "bullets": [
+        "Rôles & permissions",
+        "Mises à jour instantanées",
+        "Partage sécurisé",
+        "Fondation flexible",
+        "Multi-équipes et appareils"
+      ]
+    },
+    "faqs": {
+      "tag": "FAQ",
+      "title": "Questions fréquentes",
+      "description": "Donnez les bons accès aux bonnes personnes, sans aller-retour.",
+      "items": [
+        {
+          "q": "Pour qui Bilan est-il fait ?",
+          "a": "Particuliers, freelances, associations et petites équipes qui veulent piloter leurs finances simplement."
+        },
+        {
+          "q": "Faut-il un produit fini ?",
+          "a": "Non. Bilan vous accompagne dès le départ, vous construisez votre comptabilité au fil de l'eau."
+        },
+        {
+          "q": "Peut-on grandir avec Bilan ?",
+          "a": "Oui. Workspaces isolés, rôles, projets, exports légaux : pensé pour grandir."
+        },
+        {
+          "q": "Est-ce réservé à un secteur ?",
+          "a": "Non. Les principes de clarté et de structure s'appliquent à toute organisation."
+        },
+        {
+          "q": "Y a-t-il du support ?",
+          "a": "Oui, magic-link auth, exports RGPD, suivi d'activité, et nous sommes joignables."
+        }
+      ]
+    },
+    "ctaFinal": {
+      "title": "Prêt à donner vie à votre projet ?",
+      "description": "Rejoignez les équipes et associations qui bâtissent leur prochaine étape avec Bilan.",
+      "primary": "Accès anticipé",
+      "secondary": "Nous contacter"
+    },
+    "security": {
+      "badge": "Sécurité & conformité",
+      "title": "Chiffré au repos. Hébergé en Europe. Auditable.",
+      "subtitle": "Les données financières les plus sensibles (IBAN, BIC, SIRET, coordonnées) sont chiffrées en AES-256-GCM avec une clé dérivée par espace. Les justificatifs vivent dans un bucket privé en UE, accessibles seulement par liens signés.",
+      "cta": "Voir le centre de confiance",
+      "items": {
+        "encryption": {
+          "title": "AES-256-GCM par espace",
+          "body": "Clés dérivées par HKDF, chiffrés liés à leur espace, table et champ."
+        },
+        "files": {
+          "title": "Fichiers en bucket privé",
+          "body": "Backblaze B2 (UE), URLs signées 10 minutes, aucune URL publique."
+        },
+        "gdpr": {
+          "title": "RGPD de A à Z",
+          "body": "Export, effacement, registre des traitements et consentement versionné intégrés."
+        },
+        "suite": {
+          "title": "Espace partagé A2E",
+          "body": "Membres, rôles, notifications et Drive communs à toute la suite, une seule connexion."
+        }
+      }
+    },
+    "bento": {
+      "tag": "Tout Bilan, en un coup d'œil",
+      "title": "Les fonctionnalités qui font le travail à votre place",
+      "description": "Chaque module est relié aux autres : une dépense justifie une ligne de journal, une subvention obtenue devient une recette, un fichier reste retrouvable partout dans la suite.",
+      "cta": "Ouvrir l'application",
+      "items": {
+        "journal": {
+          "title": "Journal comptable automatique",
+          "body": "Un livre par espace, rempli tout seul. Chaque recette et chaque dépense y crée sa ligne — date, libellé, catégorie, montant, moyen de paiement, projet, justificatifs, référence. Vous n'y touchez jamais : en fin d'exercice, vous l'exportez.",
+          "tagline": "Zéro saisie double"
+        },
+        "subventions": {
+          "title": "Subventions & appels à projets",
+          "body": "Plus de 3 000 aides publiques françaises, actualisées chaque jour. Décrivez votre projet : l'assistant IA cible celles auxquelles vous êtes vraiment éligible, explique pourquoi, et suit vos dossiers jusqu'à la décision.",
+          "tagline": "Mis à jour quotidiennement"
+        },
+        "transactions": {
+          "title": "Recettes & dépenses",
+          "body": "Enregistrez en quelques secondes, joignez le justificatif, classez par catégorie et par projet."
+        },
+        "invoices": {
+          "title": "Factures",
+          "body": "Numérotation automatique, TVA, export PDF, relances — et l'encaissement bascule en recette."
+        },
+        "budget": {
+          "title": "Budgets",
+          "body": "Enveloppes par catégorie et par période, alertes de dépassement, budget à l'équilibre."
+        },
+        "projects": {
+          "title": "Projets & CERFA",
+          "body": "Suivi du budget par projet, fiches projet, CERFA 15059 et reçus fiscaux pré-remplis."
+        },
+        "drive": {
+          "title": "Drive partagé & justificatifs",
+          "body": "Vos pièces vivent dans le drive chiffré de la suite A2E (Backblaze B2, bucket privé, liens signés à durée limitée). Un reçu joint à une dépense reste retrouvable depuis n'importe quelle app A2E, et depuis la ligne de journal qu'il justifie."
+        },
+        "reports": {
+          "title": "Rapports & exports",
+          "body": "Trésorerie, répartition, comparaison de périodes. Export CSV, XLSX et PDF."
+        },
+        "team": {
+          "title": "Équipe, rôles & espaces partagés",
+          "body": "Les espaces, membres, rôles et notifications sont communs à toute la suite A2E : une invitation, un accès partout."
+        },
+        "security": {
+          "title": "Chiffré et conforme RGPD",
+          "body": "Chiffrement AES-256-GCM par espace sur les données sensibles, hébergement UE, export et effacement en un clic."
+        }
+      }
+    }
+  },
+  "dashboard": {
+    "welcome": "Bon retour",
+    "personalFinance": "Finances Personnelles",
+    "businessDashboard": "Tableau de Bord Entreprise",
+    "addExpense": "Ajouter Dépense",
+    "newInvoice": "Nouvelle Facture",
+    "stats": {
+      "totalBalance": "Solde Total",
+      "monthlyIncome": "Revenus Mensuels",
+      "monthlyExpenses": "Transactions Mensuelles",
+      "pendingInvoices": "Factures en Attente",
+      "savingsGoal": "Objectif d'Épargne",
+      "fromLastMonth": "du mois dernier"
+    },
+    "recentTransactions": {
+      "title": "Transactions Récentes",
+      "description": "Votre dernière activité financière",
+      "viewAll": "Voir Tout"
+    },
+    "pendingInvoices": {
+      "title": "Factures en Attente",
+      "description": "En attente de paiement",
+      "manage": "Gérer les Factures"
+    },
+    "bookEntries": {
+      "title": "Entrées Récentes du Livre",
+      "description": "Enregistrements connectés",
+      "openBook": "Ouvrir le Livre"
+    },
+    "storage": {
+      "title": "Stockage Utilisé",
+      "of": "sur 500Mo"
+    },
+    "search": "Rechercher transactions, factures...",
+    "myAccount": "Mon Compte",
+    "profile": "Profil"
+  },
+  "notifications": {
+    "open": "Ouvrir les notifications",
+    "title": "Notifications",
+    "unreadCount": "{count} non lues",
+    "allRead": "Vous êtes à jour",
+    "markAllRead": "Tout marquer comme lu",
+    "emptyTitle": "Aucune notification",
+    "emptyDescription": "Les alertes, mises à jour de factures et activités d'équipe apparaîtront ici.",
+    "dismiss": "Ignorer",
+    "clearAll": "Tout effacer",
+    "preferences": "Préférences"
+  },
+  "attachments": {
+    "cta": "Déposez des fichiers ou cliquez pour téléverser",
+    "hint": "PDF, images, DOC — jusqu'à 10Mo par fichier",
+    "uploading": "Téléversement…",
+    "tooMany": "Vous pouvez joindre jusqu'à {max} fichiers",
+    "fileTooLarge": "{name} dépasse 10Mo",
+    "quotaExceeded": "Quota de stockage dépassé (100Mo)",
+    "uploadFailed": "Échec du téléversement",
+    "fallbackLocal": "{name} enregistré localement (S3 indisponible)",
+    "download": "Télécharger",
+    "remove": "Supprimer",
+    "countLabel": "{count} joint(s)"
+  },
+  "team": {
+    "title": "Équipe & Espaces",
+    "description": "Gérez les membres, rôles et invitations de vos espaces.",
+    "newWorkspace": "Nouvel espace",
+    "newWorkspaceDescription": "Un espace regroupe vos finances avec ses propres membres et données.",
+    "workspaceName": "Nom de l'espace",
+    "workspaceNamePlaceholder": "ex. Acme SARL",
+    "workspaceDescription": "Description",
+    "workspaceDescriptionPlaceholder": "Une courte description de cet espace",
+    "workspaceSlug": "Slug : {slug}",
+    "optional": "optionnel",
+    "cancel": "Annuler",
+    "create": "Créer l'espace",
+    "createFirstWorkspace": "Créer votre premier espace",
+    "emptyTitle": "Aucun espace",
+    "emptyDescription": "Créez un espace pour commencer à collaborer avec votre équipe.",
+    "yourWorkspaces": "Vos espaces",
+    "memberCount": "{count, plural, =0 {Aucun membre} =1 {1 membre} other {# membres}}",
+    "members": "Membres",
+    "invite": "Inviter",
+    "inviteMember": "Inviter un membre",
+    "inviteDescription": "Il recevra un email avec un lien d'invitation valide 14 jours.",
+    "email": "Email",
+    "role": "Rôle",
+    "sendInvitation": "Envoyer l'invitation",
+    "pendingInvitations": "Invitations en attente",
+    "invitationCount": "{count, plural, =0 {Aucune invitation en attente} =1 {1 invitation en attente} other {# invitations en attente}}",
+    "noInvitationsTitle": "Aucune invitation en attente",
+    "noInvitationsDescription": "Invitez vos collègues à collaborer sur cet espace.",
+    "invitationExpiresAt": "Expire le {date}",
+    "invitationExpired": "Expirée",
+    "copyInviteLink": "Copier le lien",
+    "revoke": "Révoquer",
+    "makeAdmin": "Passer administrateur",
+    "makeMember": "Passer membre",
+    "makeViewer": "Passer lecteur",
+    "remove": "Retirer",
+    "you": "vous",
+    "confirmDelete": "Supprimer cet espace ? Cette action est irréversible.",
+    "confirmRemoveMember": "Retirer ce membre de l'espace partagé ?",
+    "gdprTitle": "Conformité RGPD",
+    "gdprDescription": "Les membres, rôles et invitations sont conservés dans A2E Core (UE). Chaque action est journalisée et exportable ; l'effacement est disponible depuis Paramètres → Sécurité & conformité.",
+    "roles": {
+      "owner": "Propriétaire",
+      "admin": "Administrateur",
+      "member": "Membre",
+      "viewer": "Lecteur"
+    },
+    "roleHint": {
+      "admin": "Peut tout gérer sauf supprimer l'espace.",
+      "member": "Peut créer et modifier les données financières.",
+      "viewer": "Lecture seule."
+    },
+    "toasts": {
+      "workspaceCreated": "Espace créé",
+      "workspaceCreateFailed": "Impossible de créer l'espace",
+      "workspaceDeleted": "Espace supprimé",
+      "invitationSent": "Invitation envoyée à {email}",
+      "invitationRevoked": "Invitation révoquée",
+      "roleUpdated": "Rôle mis à jour",
+      "memberRemoved": "Membre retiré",
+      "linkCopied": "Lien d'invitation copié",
+      "roleCreated": "Rôle créé"
+    },
+    "seats": "{used} membre(s) sur {limit} inclus dans le plan",
+    "seatsExceeded": "Limite de {limit} membres atteinte — passez à un plan supérieur.",
+    "rolesExceeded": "Limite de {limit} rôles personnalisés atteinte.",
+    "sharedInviteNotice": "L'invitation est émise par A2E Core : la personne rejoindra cet espace dans Bilan et dans toutes les apps de la suite.",
+    "customRoles": "Rôles personnalisés",
+    "customRolesDescription": "Des permissions fines, partagées avec toute la suite A2E.",
+    "newRole": "Nouveau rôle",
+    "permissions": "Permissions",
+    "noRoles": "Aucun rôle personnalisé. Les rôles de base (propriétaire, admin, membre, lecteur) s'appliquent."
+  },
+  "book": {
+    "smartOverview": {
+      "title": "Vue d'ensemble intelligente",
+      "description": "Toutes vos dépenses, revenus et factures payées agrégés en un seul endroit.",
+      "income": "Total revenus",
+      "expenses": "Total dépenses",
+      "netBalance": "Solde net",
+      "pendingInvoices": "Factures en attente",
+      "latestActivity": "Activité récente",
+      "viewAll": "Voir le livre complet",
+      "source": {
+        "expense": "Dépense",
+        "income": "Revenu",
+        "invoice": "Facture"
+      },
+      "emptyTitle": "Votre livre est vide",
+      "emptyDescription": "Ajoutez une dépense, un revenu ou une facture — ils apparaîtront ici automatiquement."
+    }
+  },
+  "pages": {
+    "sections": {
+      "workspace": "Espace",
+      "manage": "Gestion",
+      "tools": "Outils"
+    },
+    "dashboard": {
+      "welcome": "Bon retour",
+      "addExpense": "Ajouter une dépense",
+      "newInvoice": "Nouvelle facture",
+      "stats": {
+        "totalBalance": "Solde total",
+        "monthlyIncome": "Revenus du mois",
+        "monthlyExpenses": "Transactions du mois",
+        "pendingInvoices": "Factures en attente"
+      },
+      "recentTransactions": {
+        "title": "Transactions récentes",
+        "description": "Votre dernière activité financière",
+        "viewAll": "Voir tout",
+        "empty": "Enregistrez votre première dépense ou recette pour la voir ici."
+      },
+      "pendingInvoices": {
+        "title": "Factures en attente",
+        "description": "En attente de paiement",
+        "manage": "Gérer les factures",
+        "empty": "Créez votre première facture pour suivre les paiements."
+      },
+      "activity": {
+        "title": "Dernière activité",
+        "description": "Changements de l'équipe et de l'espace",
+        "empty": "Rien ne s'est encore passé."
+      },
+      "selectWorkspace": "Sélectionnez ou créez un espace pour continuer."
+    },
+    "budget": {
+      "title": "Budgets",
+      "description": "Définissez des plafonds par catégorie. Calculés automatiquement à partir des dépenses.",
+      "new": "Nouveau budget",
+      "empty": {
+        "title": "Aucun budget pour l'instant",
+        "description": "Créez un budget pour suivre les dépenses par catégorie."
+      },
+      "period": "Période",
+      "periods": {
+        "monthly": "Mensuel",
+        "yearly": "Annuel",
+        "custom": "Personnalisé"
+      },
+      "start": "Début",
+      "end": "Fin",
+      "color": "Couleur",
+      "spent": "Dépensé",
+      "toasts": {
+        "created": "Budget créé",
+        "failed": "Impossible d'enregistrer"
+      },
+      "projectBudgets": "Budgets de projets",
+      "project": "Projet"
+    },
+    "expenses": {
+      "title": "Transactions & recettes",
+      "description": "Suivez vos flux, attachez des justificatifs, liez aux projets.",
+      "add": "Ajouter une transaction",
+      "addExpense": "Ajouter une dépense",
+      "addIncome": "Ajouter une recette",
+      "type": "Type",
+      "expense": "Dépense",
+      "income": "Recette",
+      "paymentMethod": "Moyen de paiement",
+      "project": "Projet (optionnel)",
+      "noProject": "— Aucun projet —",
+      "totals": {
+        "income": "Recettes",
+        "expenses": "Transactions",
+        "net": "Net"
+      },
+      "empty": {
+        "title": "Aucune transaction pour l'instant",
+        "description": "Enregistrez votre première dépense ou recette pour la voir ici."
+      },
+      "attach": {
+        "title": "Joindre des justificatifs",
+        "description": "Ajoutez les reçus ou pièces justificatives. Ils seront liés automatiquement."
+      },
+      "done": "Terminé",
+      "toasts": {
+        "addedExpense": "Dépense ajoutée",
+        "addedIncome": "Recette ajoutée",
+        "failed": "Impossible d'enregistrer"
+      }
+    },
+    "invoices": {
+      "title": "Factures",
+      "description": "Créez, envoyez et suivez les paiements. Numérotation automatique par année.",
+      "new": "Nouvelle facture",
+      "clientEmail": "E-mail du client",
+      "clientAddress": "Adresse du client",
+      "issueDate": "Date d'émission",
+      "dueDate": "Échéance",
+      "lineItems": "Lignes",
+      "addLine": "Ajouter une ligne",
+      "taxRate": "Taux de TVA (%)",
+      "subtotal": "Sous-total",
+      "tax": "TVA",
+      "total": "Total",
+      "number": "Numéro",
+      "issue": "Émission",
+      "due": "Échéance",
+      "actions": {
+        "markSent": "Marquer envoyée",
+        "markPaid": "Marquer payée",
+        "markOverdue": "Marquer en retard",
+        "backToDraft": "Repasser en brouillon",
+        "delete": "Supprimer"
+      },
+      "status": {
+        "draft": "Brouillon",
+        "sent": "Envoyée",
+        "paid": "Payée",
+        "overdue": "En retard",
+        "cancelled": "Annulée"
+      },
+      "empty": {
+        "title": "Aucune facture pour l'instant",
+        "description": "Créez votre première facture pour suivre la facturation client."
+      },
+      "attach": {
+        "title": "Joindre des documents",
+        "description": "Joignez contrats, devis signés ou preuves de livraison."
+      },
+      "toasts": {
+        "created": "Facture créée",
+        "marked": "Marquée {status}",
+        "failed": "Impossible d'enregistrer"
+      }
+    },
+    "projects": {
+      "title": "Projets",
+      "description": "Partagés dans toute la Suite A2E. Liez factures, dépenses, livres et fiches projet.",
+      "new": "Nouveau projet",
+      "openFiche": "Ouvrir la fiche projet",
+      "status": {
+        "planning": "Planification",
+        "active": "Actif",
+        "on_hold": "En pause",
+        "completed": "Terminé"
+      },
+      "empty": {
+        "title": "Aucun projet pour l'instant",
+        "description": "Créez un projet pour regrouper factures, dépenses et tâches.",
+        "tasks": "Aucune tâche pour ce projet.",
+        "documents": "Aucun document lié à ce projet."
+      },
+      "budget": "Budget",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "toasts": {
+        "created": "Projet créé",
+        "failed": "Impossible d'enregistrer"
+      },
+      "tabs": {
+        "transactions": "Transactions",
+        "fiches": "Fiches",
+        "documents": "Documents",
+        "details": "Détails",
+        "tasks": "Tâches"
+      },
+      "tasksShared": "Les tâches sont stockées dans A2E Core : elles apparaissent aussi dans Bureau et sur mobile.",
+      "newTaskPlaceholder": "Nouvelle tâche pour ce projet…"
+    },
+    "fiches": {
+      "navTitle": "Fiches projet",
+      "title": "Fiches projet",
+      "description": "Fiches projet imprimables intelligentes (associatives & business). Export PDF vide ou rempli, modèles personnalisables.",
+      "new": "Nouvelle fiche projet",
+      "newFromTemplate": "Depuis un modèle",
+      "newBlank": "Fiche vierge",
+      "templateLabel": "Modèle",
+      "open": "Ouvrir la fiche",
+      "duplicate": "Dupliquer",
+      "exportPdf": "Exporter en PDF",
+      "exportBlankPdf": "PDF vierge",
+      "exportFilledPdf": "PDF rempli",
+      "saved": "Enregistré",
+      "saving": "Enregistrement…",
+      "lastSaved": "Enregistré {when}",
+      "linkedProject": "Projet lié (optionnel)",
+      "noProjectLinked": "— Aucun projet lié —",
+      "search": "Rechercher des fiches…",
+      "empty": {
+        "title": "Aucune fiche projet",
+        "description": "Démarrez à partir d'un modèle (ex. Fiche projet associatif) ou d'une fiche vierge."
+      },
+      "templates": {
+        "asso_fr": {
+          "name": "Fiche projet associatif (FR)",
+          "description": "Fiche projet associatif — identité, contexte, public, objectifs, actions, partenaires, évaluation."
+        },
+        "blank": {
+          "name": "Fiche vierge",
+          "description": "Démarrez avec un éditeur de texte enrichi libre."
+        },
+        "recu_don": {
+          "name": "Reçu fiscal de dons (CERFA 11580*05)",
+          "description": "Reçu au titre des dons à certains organismes d'intérêt général (art. 200, 238 bis et 978 du CGI). PDF légal prêt à signer."
+        },
+        "budget_equilibre": {
+          "name": "Budget prévisionnel à l'équilibre",
+          "description": "Budget annuel ou par action — charges et produits équilibrés (plan comptable associatif)."
+        },
+        "demande_subvention": {
+          "name": "Demande de subvention (CERFA 12156)",
+          "description": "Dossier complet de demande de subvention : identité, budget prévisionnel, projet et attestation sur l'honneur."
+        },
+        "convention_subvention": {
+          "name": "Convention de subvention",
+          "description": "Convention entre financeur et association (obligatoire au-delà de 23 000 €/an d'un même financeur public)."
+        },
+        "rapport_activite": {
+          "name": "Rapport d'activité annuel",
+          "description": "Rapport narratif annuel — vie associative, actions menées, bilan et perspectives. À joindre au compte rendu financier."
+        },
+        "attestation_honneur": {
+          "name": "Attestation sur l'honneur",
+          "description": "Attestation signée par le représentant légal, pièce du dossier de demande de subvention."
+        }
+      },
+      "fields": {
+        "title": "Titre",
+        "subtitle": "Sous-titre",
+        "ficheTitle": "Titre de la fiche",
+        "logo": "Logo",
+        "partnerLogo": "Logo partenaire",
+        "association": "Association / Service",
+        "referent": "Référent du projet",
+        "phone": "Téléphone",
+        "email": "E-mail",
+        "thematic": "Thématique",
+        "thematics": {
+          "culture": "Culture",
+          "sport": "Sport",
+          "social": "Social",
+          "education": "Éducation",
+          "other": "Autre"
+        },
+        "context": "Constat de départ (situation, problème, besoin repéré)",
+        "origin": "Origine de l'idée (terrain, bénévoles, partenaires…)",
+        "linkToProject": "Lien avec le projet associatif global",
+        "audience": "Public(s) visé(s)",
+        "ageProfile": "Profil / âge",
+        "estimatedParticipants": "Nombre estimé de participants",
+        "geographicArea": "Zone géographique",
+        "identifiedNeeds": "Besoins repérés",
+        "needs": {
+          "isolation": "Isolement / manque de lien social",
+          "economic": "Difficultés économiques",
+          "culturalAccess": "Manque d'accès à l'offre culturelle / sportive",
+          "educational": "Difficultés scolaires / éducatives",
+          "other": "Autre"
+        },
+        "generalObjective": "Objectif général (en une phrase)",
+        "specificObjectives": "Objectifs spécifiques (3 à 4 objectifs opérationnels)",
+        "actionTypes": "Type d'actions prévues",
+        "actions": {
+          "workshops": "Ateliers réguliers",
+          "event": "Événement ponctuel",
+          "individualSupport": "Accompagnement individuel",
+          "awareness": "Sensibilisation / information",
+          "other": "Autre"
+        },
+        "action": "Action {n}",
+        "actionDescription": "Description de l'action",
+        "audienceLabel": "Public",
+        "frequency": "Fréquence",
+        "period": "Période / dates",
+        "addAction": "Ajouter une action",
+        "removeAction": "Retirer",
+        "humanResources": "Moyens humains",
+        "volunteers": "Bénévoles",
+        "employees": "Salariés",
+        "externalContributors": "Intervenants externes",
+        "materialResources": "Moyens matériels / logistiques",
+        "partners": "Partenaires pressentis",
+        "partnersOptions": {
+          "localGov": "Collectivités locales",
+          "associations": "Autres associations",
+          "schools": "Établissements scolaires / universitaires",
+          "companies": "Entreprises / mécénat",
+          "other": "Autre"
+        },
+        "successIndicators": "Indicateurs de réussite",
+        "targetParticipants": "Cible : nombre de participants",
+        "targetAttendance": "Cible : taux de participation (%)",
+        "qualitativeIndicators": "Autres indicateurs (qualitatifs)",
+        "trackingTools": "Outils de suivi",
+        "trackingOptions": {
+          "attendance": "Feuilles de présence",
+          "satisfaction": "Questionnaire de satisfaction",
+          "collective": "Temps d'échange collectif",
+          "report": "Bilan écrit / rapport d'activité",
+          "other": "Autre"
+        },
+        "perspectives": "Perspectives (reconduction, extension, adaptation)",
+        "date": "Date",
+        "referentSignature": "Signature du référent du projet",
+        "boardVisa": "Visa du Bureau / Conseil d'Administration",
+        "boardOpinion": "Avis du Bureau",
+        "opinions": {
+          "favorable": "Avis favorable",
+          "reserved": "Avis réservé",
+          "unfavorable": "Avis défavorable"
+        },
+        "observations": "Observations du Bureau"
+      }
+    },
+    "book": {
+      "title": "Livres",
+      "description": "Feuilles personnalisées pour toutes vos données financières. Export CSV / compatible Google Sheets.",
+      "new": "Nouvelle feuille",
+      "startFromTemplate": "Démarrer avec un modèle",
+      "sheetName": "Nom de la feuille",
+      "rows": "{count, plural, =0 {Aucune ligne} =1 {1 ligne} other {# lignes}}",
+      "columns": "{count, plural, =0 {Aucune colonne} =1 {1 colonne} other {# colonnes}}",
+      "addRow": "Ajouter une ligne",
+      "updated": "Mis à jour {when}",
+      "empty": {
+        "title": "Aucune feuille pour l'instant",
+        "description": "Créez votre première feuille pour suivre vos données financières."
+      },
+      "templates": {
+        "cashflow": "Trésorerie",
+        "donations": "Journal des dons",
+        "grants": "Suivi des subventions",
+        "custom": "Feuille vierge"
+      },
+      "toasts": {
+        "created": "Feuille créée",
+        "failed": "Impossible d'enregistrer"
+      },
+      "autoBadge": "Auto",
+      "autoLocked": "Journal automatique — non supprimable",
+      "autoDescription": "Alimenté automatiquement par vos recettes et dépenses · {proofs} justificatif(s) liés",
+      "detail": {
+        "rowsColumns": "{rows} lignes · {columns} colonnes",
+        "columnsBtn": "Colonnes",
+        "settings": "Réglages de la feuille",
+        "manageColumns": "Gérer les colonnes",
+        "name": "Nom",
+        "type": "Type",
+        "required": "Obligatoire",
+        "optionsHint": "Options (séparées par des virgules)",
+        "addColumn": "Ajouter une colonne",
+        "saveColumns": "Enregistrer les colonnes",
+        "addRow": "Ajouter une ligne",
+        "add": "Ajouter",
+        "autoLine": "Ligne générée automatiquement",
+        "cannotDelete": "Impossible de supprimer",
+        "couldNotUpdate": "Modification impossible",
+        "saved": "Enregistré",
+        "autoBanner": "<b>Journal automatique.</b> Chaque recette et chaque dépense enregistrée dans Bilan crée, met à jour ou supprime sa ligne ici — justificatifs compris. Les colonnes grisées sont pilotées par l'application ; la colonne Commentaire reste libre. Exportez ce journal tel quel en fin d'exercice.",
+        "autoNoManual": "Les lignes de ce journal proviennent de vos transactions.",
+        "autoAddCta": "Ajouter une transaction",
+        "proofs": "Justificatifs",
+        "noRowsYet": "Aucune ligne pour l'instant — enregistrez une recette ou une dépense et elle apparaîtra ici."
+      }
+    },
+    "documents": {
+      "title": "Documents (A2E Drive)",
+      "description": "Reçus, contrats, justificatifs — stockés dans le Drive partagé A2E sur Backblaze B2 (UE), bucket privé, liens signés 10 minutes.",
+      "uploadTitle": "Téléverser un document",
+      "uploadDescription": "Les fichiers téléversés ici ne sont liés à aucune entité. Vous pourrez les lier depuis une facture, dépense, projet ou ligne de livre.",
+      "storage": {
+        "used": "Stockage utilisé",
+        "files": "{count, plural, =0 {Aucun fichier} =1 {1 fichier} other {# fichiers}}",
+        "plan": "plan {plan}",
+        "encrypted": "chiffré au repos"
+      },
+      "empty": {
+        "title": "Aucun document pour l'instant",
+        "description": "Téléversez vos reçus, certificats et pièces justificatives."
+      },
+      "upload": "Téléverser",
+      "newFolder": "Nouveau dossier",
+      "uploaded": "{name} téléversé dans A2E Drive",
+      "quotaExceeded": "Quota de stockage atteint",
+      "dropHint": "Glissez vos fichiers ici — ils rejoignent le Drive partagé de l'espace.",
+      "uploading": "Téléversement…",
+      "searchPlaceholder": "Rechercher un fichier dans tout l'espace…",
+      "allFiles": "Tous les fichiers",
+      "inFolder": "Dossier : {name}",
+      "subfolders": "sous-dossiers",
+      "renamePrompt": "Nouveau nom du fichier",
+      "folderNamePrompt": "Nom du dossier",
+      "trashNotice": "Les fichiers supprimés sont conservés 30 jours puis effacés définitivement de B2.",
+      "confirmEmptyTrash": "Vider définitivement la corbeille ?",
+      "emptyTrash": "Vider la corbeille",
+      "trashEmptied": "{count} fichier(s) supprimé(s) définitivement",
+      "trashEmpty": "Corbeille vide",
+      "tabs": {
+        "files": "Fichiers",
+        "trash": "Corbeille"
+      }
+    },
+    "reports": {
+      "title": "Rapports",
+      "description": "Indicateurs consolidés pour {workspace}.",
+      "totals": {
+        "income": "Total recettes",
+        "expenses": "Total dépenses",
+        "invoiced": "Total facturé",
+        "net": "Net"
+      },
+      "monthly": "Recettes vs dépenses mensuelles",
+      "byCategory": "Transactions par catégorie",
+      "noData": "Pas encore de données.",
+      "composition": {
+        "title": "Composition revenus / dépenses",
+        "subtitle": "Répartition mensuelle normalisée sur les 12 derniers mois"
+      }
+    },
+    "activity": {
+      "title": "Journal d'activité",
+      "description": "Trace immuable et auditable de cet espace.",
+      "empty": {
+        "title": "Aucune activité pour l'instant",
+        "description": "Les événements de l'espace apparaîtront ici."
+      },
+      "auditNotice": "Journal fusionné : les évènements partagés (espace, membres, fichiers, tâches) viennent d'A2E Core, les évènements financiers de Bilan."
+    },
+    "settings": {
+      "title": "Paramètres",
+      "description": "Gérez votre profil et l'espace de travail actif.",
+      "profile": "Profil",
+      "workspace": "Espace de travail",
+      "exportGdpr": "Exporter données RGPD",
+      "danger": "Zone dangereuse",
+      "dangerDescription": "Supprimer un espace de travail efface toutes les factures, dépenses, livres, budgets, projets et membres associés. Cette action est définitive.",
+      "deleteWorkspace": "Supprimer l'espace",
+      "signOut": "Se déconnecter",
+      "toasts": {
+        "profileSaved": "Profil enregistré",
+        "workspaceSaved": "Espace enregistré",
+        "workspaceDeleted": "Espace supprimé",
+        "failed": "Impossible d'enregistrer",
+        "orgSaved": "Organisation enregistrée"
+      },
+      "emailManagedByWorkOS": "L'email est géré par votre identité A2E (WorkOS) et vérifié côté serveur.",
+      "workspaceShared": "Nom, devise et description sont partagés avec toute la suite A2E.",
+      "organisation": "Identité de l'organisation",
+      "organisationDescription": "Utilisée pour préremplir les CERFA, reçus fiscaux et conventions. Les champs marqués d'un bouclier sont chiffrés au repos.",
+      "dangerCoreNotice": "L'espace partagé lui-même ne peut pas être supprimé depuis Bilan (décision A2E Core). Vous pouvez effacer toutes les données financières Bilan depuis Sécurité & conformité.",
+      "org": {
+        "legalName": "Dénomination légale",
+        "rna": "N° RNA",
+        "phone": "Téléphone",
+        "website": "Site web",
+        "postalCode": "Code postal",
+        "city": "Ville",
+        "address": "Adresse",
+        "objet": "Objet social",
+        "representativeName": "Représentant légal",
+        "representativeRole": "Fonction",
+        "encryptedNotice": "IBAN, BIC, SIRET, RNA, adresse, téléphone, email et représentant sont chiffrés en AES-256-GCM avec une clé dérivée par espace. Ils ne sont lisibles que par les membres de cet espace."
+      },
+      "core": {
+        "title": "Espace partagé A2E",
+        "description": "État du lien entre Bilan et la base partagée A2E Core.",
+        "coreHost": "Déploiement core",
+        "session": "Session partagée",
+        "connected": "connectée",
+        "notConnected": "non connectée",
+        "identity": "Identité vérifiée",
+        "coreUser": "Utilisateur core",
+        "linkedWorkspace": "Espace lié",
+        "membership": "Appartenance (miroir)",
+        "notMirrored": "non synchronisée",
+        "workspaceCount": "Espaces accessibles",
+        "plan": "Plan & stockage",
+        "modules": "Modules servis par core",
+        "appAccess": "Apps incluses",
+        "lastError": "Dernière erreur",
+        "degraded": "Mode dégradé : les modules partagés sont désactivés, Bilan fonctionne sur ses propres données.",
+        "resync": "Resynchroniser",
+        "resynced": "Appartenances resynchronisées"
+      },
+      "security": {
+        "title": "Sécurité & conformité",
+        "description": "État réel du chiffrement, de l'hébergement et de vos droits RGPD — calculé côté serveur.",
+        "encryptionOn": "Chiffrement actif",
+        "encryptionOff": "Chiffrement inactif",
+        "encryption": "Chiffrement au repos",
+        "algorithm": "Algorithme",
+        "kdf": "Dérivation de clé",
+        "binding": "Liaison de contexte",
+        "keyLocation": "Emplacement de la clé",
+        "encryptedFields": "Champs chiffrés",
+        "fieldsTitle": "Champs chiffrés au repos",
+        "residency": "Hébergement des données",
+        "appDb": "Base Bilan",
+        "sharedDb": "Base partagée",
+        "filesStore": "Fichiers",
+        "bucket": "Bucket",
+        "private": "privé",
+        "public": "public",
+        "fileAccess": "Accès fichiers",
+        "auth": "Authentification",
+        "bridge": "Passerelle de service",
+        "gdpr": "RGPD — vos droits",
+        "analytics": "Statistiques produit",
+        "analyticsHint": "Aucun traceur publicitaire. Mesure d'usage anonymisée, désactivée par défaut.",
+        "consentGranted": "Consentement enregistré",
+        "consentWithdrawn": "Consentement retiré",
+        "exportAll": "Exporter tout (Bilan + A2E)",
+        "exportMe": "Exporter mes données",
+        "exportDone": "Export généré",
+        "trustCenter": "Centre de confiance",
+        "retentionNotice": "Les pièces comptables sont conservées 10 ans (obligation légale, art. L123-22 du code de commerce). L'effacement retire vos identifiants personnels sans détruire la comptabilité.",
+        "eraseMe": "Effacer mon identité",
+        "eraseWorkspace": "Effacer les données financières",
+        "confirmEraseMe": "Effacer votre profil et pseudonymiser vos actions dans Bilan ?",
+        "confirmEraseWorkspace": "Effacer DÉFINITIVEMENT toutes les données financières de cet espace ?",
+        "erasedMe": "Profil effacé, {count} action(s) pseudonymisée(s)",
+        "erasedWorkspace": "Données financières effacées"
+      }
+    },
+    "legal": {
+      "title": "Légal & conformité",
+      "description": "RGPD, résidence des données et sécurité pour Bilan.",
+      "privacyDesc": "Comment nous collectons, stockons et traitons vos données.",
+      "termsDesc": "Les règles que vous acceptez en utilisant le service.",
+      "residency": {
+        "title": "Résidence des données",
+        "items": [
+          "Base de données hébergée sur Convex (UE - région Paris)",
+          "Documents stockés sur Backblaze B2 (UE - Central, Francfort)",
+          "Les espaces sont totalement isolés ; tout accès inter-espace est refusé par construction",
+          "Toutes les écritures sont enregistrées dans le journal d'activité pour traçabilité légale",
+          "Les propriétaires peuvent exporter toutes les données en JSON à tout moment (RGPD)"
+        ]
+      },
+      "read": "Lire"
+    },
+    "invite": {
+      "invitedTitle": "Vous êtes invité·e à rejoindre",
+      "asRole": "En tant que {role}, vous pourrez collaborer sur cet espace.",
+      "accept": "Accepter l'invitation",
+      "signInToAccept": "Se connecter pour accepter",
+      "notFound": "Invitation introuvable",
+      "notFoundDescription": "Cette invitation n'existe pas ou a été révoquée.",
+      "goHome": "Retour à l'accueil",
+      "noLongerValid": "Invitation {status}",
+      "noLongerValidDescription": "Cette invitation n'est plus valide.",
+      "goDashboard": "Aller au tableau de bord",
+      "joined": "Vous avez rejoint l'espace !"
+    },
+    "preview": {
+      "title": "Aperçu du fichier",
+      "download": "Télécharger",
+      "openOriginal": "Ouvrir l'original",
+      "loading": "Chargement de l'aperçu…",
+      "noPreview": "Aucun aperçu disponible pour ce type de fichier."
+    },
+    "clients": {
+      "title": "Clients & donateurs",
+      "description": "Le répertoire de personnes partagé A2E : un contact créé ici est disponible dans toute la suite.",
+      "new": "Nouveau contact",
+      "edit": "Modifier le contact",
+      "phone": "Téléphone",
+      "address": "Adresse",
+      "company": "Organisation",
+      "invoices": "Factures",
+      "totalPaid": "Encaissé",
+      "searchPlaceholder": "Rechercher par nom, email, SIRET…",
+      "quota": "{used} contact(s) / {limit}",
+      "sharedNotice": "Ce contact est enregistré dans le répertoire partagé A2E (UE). Les factures Bilan y font référence par identifiant.",
+      "confirmDelete": "Supprimer ce contact du répertoire partagé ?",
+      "empty": {
+        "title": "Aucun contact",
+        "description": "Ajoutez vos clients, donateurs et partenaires — ils seront disponibles dans toute la suite A2E."
+      },
+      "toasts": {
+        "created": "Contact créé",
+        "updated": "Contact mis à jour",
+        "failed": "Enregistrement impossible",
+        "duplicate": "Un contact existe déjà avec cet email : {name}",
+        "quota": "Limite de {limit} contacts atteinte"
+      }
+    },
+    "security": {
+      "badge": "Centre de confiance — état en direct",
+      "title": "La sécurité n'est pas une promesse : c'est une page qui interroge le serveur.",
+      "subtitle": "Bilan gère l'argent d'associations et de petites structures. Chaque donnée sensible est chiffrée avec une clé dérivée par espace, les fichiers vivent dans un bucket privé en Europe, et tout ce qui est affiché ci-dessous est lu en direct depuis le backend.",
+      "cta": "Ouvrir Bilan",
+      "live": {
+        "encryption": "Chiffrement des champs",
+        "active": "Actif",
+        "inactive": "Inactif",
+        "fields": "Champs chiffrés",
+        "bucket": "Bucket fichiers",
+        "private": "Privé",
+        "public": "Public",
+        "region": "Hébergement",
+        "notice": "Valeurs lues en direct depuis le déploiement (aucune valeur codée en dur)."
+      },
+      "pillars": {
+        "encryption": {
+          "title": "Chiffrement applicatif au repos",
+          "body": "IBAN, BIC, SIRET, coordonnées et notes sont chiffrés avant écriture en base. Une clé racine unique reste dans les variables d'environnement du backend ; chaque espace obtient sa propre clé dérivée, et chaque valeur est liée à son espace, sa table et son champ."
+        },
+        "auth": {
+          "title": "Une seule identité, deux backends",
+          "body": "L'authentification est déléguée à WorkOS AuthKit. Le même jeton signé RS256 est vérifié par le backend Bilan et par la base partagée A2E Core : aucun échange de jeton, aucun mot de passe stocké."
+        },
+        "files": {
+          "title": "Fichiers en bucket privé",
+          "body": "Aucun fichier n'est public. A2E Core délivre des URLs signées de courte durée, uniquement à un membre vérifié de l'espace. Les clés du stockage n'atteignent jamais le navigateur.",
+          "private": "bucket privé — aucune URL publique"
+        },
+        "residency": {
+          "title": "Données hébergées en Europe",
+          "body": "Base applicative, base partagée et stockage de fichiers sont en Union européenne. Les sous-traitants hors UE sont encadrés par des clauses contractuelles types."
+        }
+      },
+      "fields": {
+        "title": "Ce qui est chiffré, précisément",
+        "body": "Nous préférons une liste exacte à une formule marketing. Cette liste est la source de vérité utilisée par le code lui-même."
+      },
+      "architecture": {
+        "title": "Où vivent vos données",
+        "body": "Bilan fait partie de la suite A2E : une base partagée pour ce qui est commun, une base dédiée pour la comptabilité. Cette séparation limite le rayon d'impact et garde la comptabilité isolée.",
+        "bilan": {
+          "title": "Base Bilan",
+          "body": "Factures, transactions, budgets, livres, fiches, CERFA, identité de l'organisation (chiffrée)."
+        },
+        "core": {
+          "title": "A2E Core",
+          "body": "Identités, espaces, membres, rôles, invitations, notifications, tâches, contacts, journal d'audit."
+        },
+        "drive": {
+          "title": "A2E Drive (B2)",
+          "body": "Pièces justificatives liées à une dépense, une facture ou un projet — bucket privé, liens signés."
+        }
+      },
+      "gdpr": {
+        "title": "RGPD, de A à Z",
+        "body": "Registre des traitements, base légale, durées de conservation, sous-traitants et droits : tout est exposé et actionnable depuis l'application.",
+        "purpose": "Finalité",
+        "basis": "Base légale",
+        "retention": "Conservation",
+        "subProcessors": "Sous-traitants",
+        "rights": "Vos droits",
+        "contact": "Exercice des droits et contact délégué :"
+      },
+      "practices": {
+        "title": "Pratiques d'ingénierie",
+        "item1": "Chaque fonction backend dérive l'utilisateur du jeton vérifié : aucun identifiant client n'est jamais accepté tel quel.",
+        "item2": "L'accès aux données d'un espace est contrôlé contre un miroir d'appartenance rafraîchi par une passerelle serveur-à-serveur protégée par secret.",
+        "item3": "Aucun secret dans le bundle navigateur : seules les URLs publiques des déploiements et l'identifiant client WorkOS y figurent.",
+        "item4": "Les liens de partage public sont revalidés à chaque requête (expiration, révocation, phrase secrète).",
+        "item5": "Les valeurs chiffrées sont liées à leur contexte : déplacer un chiffré dans une autre colonne le rend indéchiffrable.",
+        "item6": "Le journal d'audit est immuable côté application et exportable pour vos contrôles.",
+        "item7": "Dégradation contrôlée : si la couche partagée tombe, Bilan continue sur ses propres données au lieu d'échouer.",
+        "item8": "Les quotas sont appliqués côté serveur, jamais seulement dans l'interface."
+      },
+      "footerCta": {
+        "title": "Prêt à tenir vos comptes sans compromis",
+        "body": "Comptabilité claire, documents légaux français, fichiers sécurisés et espace partagé avec le reste de la suite A2E.",
+        "privacy": "Politique de confidentialité"
+      }
+    },
+    "subventions": {
+      "title": "Subventions",
+      "description": "Toutes les aides publiques françaises au même endroit — mises à jour chaque jour — et un assistant qui trouve celles qui correspondent vraiment à votre projet.",
+      "refresh": "Actualiser",
+      "save": "Suivre",
+      "saved": "Suivi",
+      "stats": {
+        "total": "{count} aides référencées",
+        "updated": "Mis à jour {when}"
+      },
+      "toasts": {
+        "saved": "Ajoutée à votre suivi",
+        "refreshing": "Actualisation du catalogue lancée",
+        "converted": "Recette créée et inscrite au journal"
+      },
+      "ai": {
+        "title": "Décrivez votre projet",
+        "subtitle": "L'assistant lit votre description, cible les aides compatibles et explique pourquoi. Chaque recherche est mise en cache : la relancer ne coûte rien.",
+        "placeholder": "Ex. : Notre association ouvre un tiers-lieu à Lyon pour l'insertion numérique des 16-25 ans. 3 salariés, budget 120 000 €, besoin de financer un poste et l'équipement informatique.",
+        "cta": "Trouver mes aides",
+        "running": "Analyse en cours…",
+        "fit": "de correspondance",
+        "resultCount": "{count} aide(s) pertinente(s)",
+        "scanned": "{count} aides analysées",
+        "cached": "Résultat en cache",
+        "history": "Recherches précédentes",
+        "tooShort": "Décrivez votre projet en quelques phrases (20 caractères minimum).",
+        "noMatch": "Aucune aide suffisamment pertinente. Précisez votre territoire, votre public et votre besoin.",
+        "failed": "L'analyse a échoué. Réessayez dans un instant.",
+        "notConfigured": "Assistant IA non configuré sur ce déploiement (clé Gemini manquante). Le catalogue reste consultable.",
+        "examples": {
+          "assoJeunes": "Association d'éducation populaire en Seine-Saint-Denis, accompagnement scolaire de 80 collégiens, besoin de financer un poste de coordinateur.",
+          "tiersLieu": "Tiers-lieu rural en Occitanie : coworking, réparation de vélos et ateliers numériques, besoin d'investir dans l'aménagement du local.",
+          "startup": "Startup de 4 personnes développant un logiciel de mesure de l'empreinte carbone, phase de R&D, recherche subventions et crédits d'impôt."
+        },
+        "privacyNote": "Seule la description que vous écrivez est envoyée au modèle Google Gemini. Aucun montant, aucun justificatif, aucune donnée nominative ne quitte Bilan.",
+        "consentTitle": "Avant la première recherche",
+        "consentBody": "Pour trouver les aides pertinentes, la description de votre projet est envoyée à Google Gemini (sous-traitant, transfert encadré par les clauses contractuelles types). Rien d'autre n'est transmis : ni vos écritures comptables, ni vos justificatifs, ni les données de vos membres. Vous pouvez retirer ce consentement à tout moment depuis le Centre de confiance.",
+        "consentAccept": "J'accepte et je lance la recherche",
+        "consentDecline": "Annuler"
+      },
+      "track": {
+        "title": "Mon suivi de dossiers",
+        "count": "{count} dossier(s)",
+        "noProject": "Sans projet",
+        "markGranted": "Marquer obtenue",
+        "booked": "au journal",
+        "deadline": "Dépôt avant le {when}",
+        "removedSource": "Aide retirée du catalogue",
+        "amountRequired": "Indiquez le montant obtenu.",
+        "grantTitle": "Subvention obtenue",
+        "grantHelp": "Le montant est enregistré comme recette et apparaît immédiatement dans le journal automatique, avec le financeur en référence.",
+        "grantAmount": "Montant obtenu ({currency})",
+        "grantConfirm": "Enregistrer la recette",
+        "status": {
+          "shortlisted": "Repérée",
+          "preparing": "En préparation",
+          "submitted": "Déposée",
+          "granted": "Obtenue",
+          "rejected": "Refusée",
+          "abandoned": "Abandonnée"
+        }
+      },
+      "catalogue": {
+        "title": "Catalogue des aides",
+        "searchPlaceholder": "Rechercher une aide, un financeur, un thème…",
+        "filters": "Filtres",
+        "all": "Toutes",
+        "audience": "Bénéficiaire",
+        "scale": "Échelle",
+        "aidType": "Type d'aide",
+        "openOnly": "Candidatures ouvertes uniquement",
+        "callsOnly": "Appels à projets uniquement",
+        "callBadge": "Appel à projets",
+        "open": "Ouvrir",
+        "loadMore": "Voir plus d'aides",
+        "sourcesLabel": "Sources :",
+        "empty": {
+          "title": "Aucune aide ne correspond",
+          "description": "Élargissez vos filtres, ou lancez l'assistant IA avec une description de votre projet."
+        }
+      }
+    }
+  },
+  "consent": {
+    "title": "Vos données, vos règles",
+    "body": "Bilan n'utilise aucun traceur publicitaire. Seules des statistiques produit anonymisées sont optionnelles.",
+    "learnMore": "Centre de confiance",
+    "accept": "Accepter",
+    "refuse": "Refuser"
+  }
+}

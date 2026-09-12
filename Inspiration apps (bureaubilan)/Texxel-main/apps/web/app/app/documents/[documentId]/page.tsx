@@ -1,0 +1,15 @@
+"use client";
+
+import { useParams } from "next/navigation";
+import { DocumentView } from "@/components/app/document-view";
+import { DocumentErrorBoundary } from "@/components/app/document-error-boundary";
+import { Id } from "@/convex/_generated/dataModel";
+
+export default function DocumentPage() {
+  const params = useParams<{ documentId: string }>();
+  return (
+    <DocumentErrorBoundary>
+      <DocumentView documentId={params.documentId as Id<"flux_documents">} />
+    </DocumentErrorBoundary>
+  );
+}

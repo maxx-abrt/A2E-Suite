@@ -1,0 +1,28 @@
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Progress: resolved 113, reused 0, downloaded 0, added 0
+Progress: resolved 714, reused 0, downloaded 0, added 0
+Progress: resolved 1317, reused 0, downloaded 0, added 0
+Progress: resolved 1444, reused 0, downloaded 0, added 0
+Progress: resolved 1638, reused 0, downloaded 0, added 0
+ WARN  9 deprecated subdependencies found: @aws-sdk/core@3.977.1, @oslojs/asn1@1.0.0, @oslojs/binary@1.0.0, @oslojs/crypto@1.0.1, glob@7.2.3, inflight@1.0.6, lucia@3.2.2, oslo@1.2.1, rimraf@3.0.2
+Progress: resolved 1643, reused 0, downloaded 0, added 0
+Progress: resolved 1643, reused 0, downloaded 18, added 0
+Progress: resolved 1643, reused 40, downloaded 21, added 0
+.                                        | +321 -249 +++++++++++++++------------
+Progress: resolved 1643, reused 108, downloaded 29, added 0
+Progress: resolved 1643, reused 108, downloaded 58, added 16
+Progress: resolved 1643, reused 108, downloaded 63, added 24
+Progress: resolved 1643, reused 108, downloaded 68, added 26
+Progress: resolved 1643, reused 108, downloaded 72, added 28
+Progress: resolved 1643, reused 108, downloaded 77, added 28
+Progress: resolved 1643, reused 108, downloaded 81, added 30
+Progress: resolved 1643, reused 108, downloaded 90, added 32
+Progress: resolved 1643, reused 108, downloaded 138, added 153
+Progress: resolved 1643, reused 108, downloaded 138, added 155
+Progress: resolved 1643, reused 108, downloaded 170, added 179
+Progress: resolved 1643, reused 108, downloaded 198, added 186
+Progress: resolved 1643, reused 108, downloaded 243, added 202
+Progress: resolved 1643, reused 108, downloaded 323, added 316
+Progress: resolved 1643, reused 108, downloaded 325, added 320
+Progress: resolved 1643, reused 108, downloaded 326, added 321, done
+Done in 26.1s using pnpm v10.34.5
