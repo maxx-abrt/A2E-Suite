@@ -1,0 +1,23 @@
+# GitLab Duo Workflow agent configuration — environment setup and verification
+# commands for AI agents (see AGENTS.md at the root for the full rulebook).
+# Only `setup` and the `test`/`lint`/`sast`/`secret_detection` command keys are
+# supported by Duo Workflow; anything else here would be ignored.
+
+setup:
+  # Repo pins yarn@4.13.0 in package.json; corepack activates it without a global install.
+  - corepack enable
+  - corepack prepare yarn@4.13.0 --activate
+  # Immutable: the lockfile is authoritative; fails fast on drift instead of resolving.
+  - yarn install --immutable
+  # twenty-shared/dist is per-branch state nothing tracks; dependent packages
+  # typecheck and test against it, so it must exist before any verification run.
+  - npx nx build twenty-shared --skip-nx-cache
+
+commands:
+  # Prefer the scoped run for the package you touched; single-file form is in AGENTS.md.
+  # Integration/e2e suites need Postgres+Redis and are intentionally not the agent default.
+  test: npx nx test twenty-shared && npx nx test twenty-server && npx nx test twenty-utils
+  # Diff-based lint is the fast path; add `--configuration=fix` to autofix.
+  lint: npx nx lint:diff-with-main twenty-server && npx nx lint:diff-with-main twenty-front
+  sast: npx semgrep --config auto --error
+  secret_detection: gitleaks detect --source . --no-git -v --redact --exit-code 1
