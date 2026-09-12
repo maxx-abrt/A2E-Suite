@@ -22,7 +22,7 @@ const field = {
   budget: 'c31a0200-0001-4000-8000-000000000009',
 };
 
-const fieldId = (position: number) => viewFieldId(0, position);
+const fieldId = (position: number) => viewFieldId('02', 0, position);
 
 export default defineView({
   universalIdentifier: VIEW_IDS.allProjects,
