@@ -1,4 +1,3 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { Command } from 'twenty-sdk/front-component';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { AppPath, navigate } from 'twenty-sdk/front-component';
@@ -11,7 +10,7 @@ export const GO_TO_PROJECTS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
 
 const GoToProjectsCommand = () => {
   const execute = async (): Promise<void> => {
-    await navigate(AppPath.ObjectIndexPage, {
+    await navigate(AppPath.RecordIndexPage, {
       objectNamePlural: 'projects',
     });
   };

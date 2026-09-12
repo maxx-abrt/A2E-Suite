@@ -2,6 +2,7 @@ import { FieldType, RelationType } from 'twenty-sdk/define';
 
 // Shared field vocabulary. Options are DATA, so a status renders the same
 // color everywhere it appears (task columns, boards, project list views).
+// FieldType is re-exported because object files import it from here.
 // Follows A2E Documents' field-vocabulary.ts pattern, including the
 // OptionColor union typed here because the SDK keeps TagColor un-exported.
 type OptionColor =
@@ -70,6 +71,8 @@ export const projectHealthOptions = [
   option('12', PROJECT_HEALTH.AT_RISK, 'À risque', 1, 'orange'),
   option('13', PROJECT_HEALTH.OFF_TRACK, 'En difficulté', 2, 'red'),
 ];
+
+export const RELATION = FieldType.RELATION;
 
 export const oneToMany = {
   relationType: RelationType.ONE_TO_MANY,

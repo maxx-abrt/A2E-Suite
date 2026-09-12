@@ -248,7 +248,7 @@ passphrase works from incognito; e2e covers create→edit→share→export.
 **Goal.** Asana/Huly-grade projects on Twenty tasks. App: `a2e-projects`.
 
 ### P4.1 Model
-- [ ] `project` object: name, key (PRJ-style), status pipeline (planning/
+- [x] `project` object: name, key (PRJ-style), status pipeline (planning/
       active/completed/on_hold), lead, members (relation), health, start/due
       dates, color, description (RICH_TEXT), milestones (object), budget +
       spent (finance fields, fed by P7 — declare here, wire in P7.1c)

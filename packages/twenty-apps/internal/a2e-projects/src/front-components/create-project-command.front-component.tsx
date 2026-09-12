@@ -3,11 +3,6 @@ import { Command } from 'twenty-sdk/front-component';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { AppPath, navigate } from 'twenty-sdk/front-component';
 
-import {
-  COMMAND_MENU_ITEM_IDS,
-  OBJECT_IDS,
-} from '../constants/universal-identifiers.ts';
-
 // CRÉER UN PROJET (P4.2 Cmd+K task, minimal create command shipped with the
 // object so the app meets the "Create <thing>" anatomy rule).
 //
@@ -62,5 +57,3 @@ export default defineFrontComponent({
   description: 'Crée un projet et ouvre sa page.',
   component: CreateProjectCommand,
 });
-
-export { COMMAND_MENU_ITEM_IDS, OBJECT_IDS };
