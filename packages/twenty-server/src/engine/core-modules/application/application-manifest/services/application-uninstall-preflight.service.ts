@@ -4,6 +4,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
+import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
+import { type FlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-maps.type';
+import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-maps.type';
+import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
+
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -32,6 +37,10 @@ type UninstallImpact = {
     objectNameSingular: string;
     approximateCount: number;
   }[];
+  crossAppDependents: {
+    dependentApplicationName: string;
+    dependency: string;
+  }[];
 };
 
 @Injectable()
@@ -46,6 +55,99 @@ export class ApplicationUninstallPreflightService {
     private readonly objectRecordCountService: ObjectRecordCountService,
   ) {}
 
+  private computeCrossAppDependents({
+    applicationId,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    flatApplicationMaps,
+  }: {
+    applicationId: string;
+    flatObjectMetadataMaps: FlatObjectMetadataMaps;
+    flatFieldMetadataMaps: FlatFieldMetadataMaps;
+    flatApplicationMaps: FlatApplicationCacheMaps;
+  }): UninstallImpact['crossAppDependents'] {
+    // Another app depends on this one when its relation field targets one of
+    // this app's objects — uninstalling drops the target side and leaves the
+    // dependent app's field dangling.
+    const ownedObjectById = new Map(
+      Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .filter(
+          (flatObjectMetadata) =>
+            flatObjectMetadata.applicationId === applicationId,
+        )
+        .map((flatObjectMetadata) => [flatObjectMetadata.id, flatObjectMetadata]),
+    );
+
+    const ownedFieldById = new Map(
+      Object.values(flatFieldMetadataMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .filter(
+          (flatFieldMetadata) =>
+            flatFieldMetadata.applicationId === applicationId,
+        )
+        .map((flatFieldMetadata) => [flatFieldMetadata.id, flatFieldMetadata]),
+    );
+
+    const dependenciesByApplicationId = new Map<string, Set<string>>();
+
+    for (const flatFieldMetadata of Object.values(
+      flatFieldMetadataMaps.byUniversalIdentifier,
+    )) {
+      if (
+        !isDefined(flatFieldMetadata) ||
+        flatFieldMetadata.applicationId === applicationId ||
+        !isDefined(flatFieldMetadata.relationTargetObjectMetadataId)
+      ) {
+        continue;
+      }
+
+      const targetObject = ownedObjectById.get(
+        flatFieldMetadata.relationTargetObjectMetadataId,
+      );
+
+      if (!isDefined(targetObject)) {
+        continue;
+      }
+
+      const targetField = isDefined(
+        flatFieldMetadata.relationTargetFieldMetadataId,
+      )
+        ? ownedFieldById.get(flatFieldMetadata.relationTargetFieldMetadataId)
+        : undefined;
+
+      const dependency = isDefined(targetField)
+        ? `field '${flatFieldMetadata.name}' (relation to '${targetObject.nameSingular}.${targetField.name}')`
+        : `field '${flatFieldMetadata.name}' (relation to object '${targetObject.nameSingular}')`;
+
+      const dependencies =
+        dependenciesByApplicationId.get(flatFieldMetadata.applicationId) ??
+        new Set<string>();
+
+      dependencies.add(dependency);
+      dependenciesByApplicationId.set(
+        flatFieldMetadata.applicationId,
+        dependencies,
+      );
+    }
+
+    return [...dependenciesByApplicationId.entries()].flatMap(
+      ([dependentApplicationId, dependencies]) => {
+        const dependentApplication =
+          flatApplicationMaps.byId[dependentApplicationId];
+
+        if (!isDefined(dependentApplication)) {
+          return [];
+        }
+
+        return [...dependencies].map((dependency) => ({
+          dependentApplicationName: dependentApplication.name,
+          dependency,
+        }));
+      },
+    );
+  }
+
   async computeUninstallImpact({
     workspaceId,
     applicationUniversalIdentifier,
@@ -59,12 +161,17 @@ export class ApplicationUninstallPreflightService {
         workspaceId,
       });
 
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatViewMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
-        'flatViewMaps',
-      ]);
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatViewMaps,
+      flatApplicationMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+      'flatViewMaps',
+      'flatApplicationMaps',
+    ]);
 
     const flatObjectMetadatas = Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,
@@ -165,6 +272,13 @@ export class ApplicationUninstallPreflightService {
       }),
     );
 
+    const crossAppDependents = this.computeCrossAppDependents({
+      applicationId: application.id,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatApplicationMaps,
+    });
+
     return {
       ownedObjects: ownedObjects.map((flatObjectMetadata) => ({
         universalIdentifier: flatObjectMetadata.universalIdentifier,
@@ -173,6 +287,7 @@ export class ApplicationUninstallPreflightService {
       ownedFieldsOnStandardObjects,
       ownedViewsOnStandardObjects,
       approximateRecordLossByObject,
+      crossAppDependents,
     };
   }
 
@@ -211,6 +326,32 @@ export class ApplicationUninstallPreflightService {
     if (objectsWithData.length > 0) {
       throw new ApplicationException(
         `Application ${applicationUniversalIdentifier} still holds data in objects: ${objectsWithData.join(', ')}. Export the data or empty the objects before uninstalling.`,
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
+
+    // C3 dependency preflight: name dependent apps so the refusal is
+    // actionable (detach/impact preview is a later explicit contract).
+    if (impact.crossAppDependents.length > 0) {
+      const dependentsByName = new Map<string, string[]>();
+
+      for (const { dependentApplicationName, dependency } of impact.crossAppDependents) {
+        const dependencies =
+          dependentsByName.get(dependentApplicationName) ?? [];
+
+        dependencies.push(dependency);
+        dependentsByName.set(dependentApplicationName, dependencies);
+      }
+
+      const dependentSummary = [...dependentsByName.entries()]
+        .map(
+          ([dependentApplicationName, dependencies]) =>
+            `${dependentApplicationName} (${dependencies.join('; ')})`,
+        )
+        .join(', ');
+
+      throw new ApplicationException(
+        `Application ${applicationUniversalIdentifier} cannot be uninstalled because other applications depend on it: ${dependentSummary}.`,
         ApplicationExceptionCode.FORBIDDEN,
       );
     }

@@ -78,23 +78,21 @@ export default defineObject({
       isNullable: true,
     },
     {
-      // Fractional index string from twenty-shared; sorting is string order.
-      universalIdentifier: 'c31a0100-0001-4000-8000-000000000006',
-      type: FieldType.TEXT,
-      name: 'position',
-      label: 'Position',
-      description:
-        'Index fractionnaire lexicographique : l’ordre des frères ne se renumérote jamais',
-      icon: 'IconAbc',
-      isNullable: true,
-    },
-    {
       universalIdentifier: 'c31a0100-0001-4000-8000-000000000007',
       type: FieldType.BOOLEAN,
       name: 'isFavorite',
       label: 'Favori',
       icon: 'IconHeart',
       defaultValue: false,
+    },
+    {
+      // 0.2.0 upgrade probe: additive field on a populated workspace.
+      universalIdentifier: 'c31a0100-0001-4000-8000-00000000000a',
+      type: FieldType.TEXT,
+      name: 'summary',
+      label: 'Résumé',
+      icon: 'IconAbc',
+      isNullable: true,
     },
     {
       universalIdentifier: 'c31a0100-0001-4000-8000-000000000008',
@@ -155,17 +153,6 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: RELATION_IDS.companyDocuments,
-      type: FieldType.RELATION,
-      name: 'documents',
-      label: 'Documents',
-      icon: 'IconFiles',
-      relationTargetObjectMetadataUniversalIdentifier: OBJECT_IDS.document,
-      relationTargetFieldMetadataUniversalIdentifier:
-        RELATION_IDS.documentCompany,
-      universalSettings: oneToMany,
-    },
-    {
       universalIdentifier: RELATION_IDS.documentPerson,
       type: FieldType.RELATION,
       name: 'person',
@@ -179,17 +166,6 @@ export default defineObject({
         ...manyToOne('personId'),
         onDelete: OnDeleteAction.SET_NULL,
       },
-    },
-    {
-      universalIdentifier: RELATION_IDS.personDocuments,
-      type: FieldType.RELATION,
-      name: 'documents',
-      label: 'Documents',
-      icon: 'IconFiles',
-      relationTargetObjectMetadataUniversalIdentifier: OBJECT_IDS.document,
-      relationTargetFieldMetadataUniversalIdentifier:
-        RELATION_IDS.documentPerson,
-      universalSettings: oneToMany,
     },
   ],
 });

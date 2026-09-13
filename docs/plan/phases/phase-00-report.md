@@ -429,3 +429,73 @@ data-loss inspection, (3) naming cross-app dependents (apps referencing this
 app's fields/views) in the preflight refusal — the impact payload already
 computes owned fields/views on foreign objects, so (3) is a small extension.
 Then P0.5 or P1.6a per execution order.
+
+## 2026-09-13 17:40 UTC — Zoo (code agent)
+**Task(s):** P0.4 leftovers (1)(2)(3) closed → P0.4 ticked; P0.1/P0.2 ticked.
+**Status:** done. P0.1, P0.2 and P0.4 are ticked in PLAN.md; P0.5 remains open
+(gates release).
+**What I did:**
+- Cross-app dependents naming (P0.4 leftover 3): preflight impact now
+  names applications whose relation fields target the uninstalling app's
+  owned objects (`computeCrossAppDependents`); the refusal message lists
+  the dependent apps. Unit 8/8, integration 4/4 (new dependent-manifest
+  case), adjacent uninstall suites 10/10, tsgo + diff-lint clean.
+- Published-artifact provisioning (P0.4 leftover 1): rebuilt
+  `twenty-sdk/dist/cli.cjs` (previous dist was browser-externalized and
+  crashed), then on the running local server (remote "scratch", ~/:3000
+  server + :2020 registry) ran `dev:build` → `app:publish --private` →
+  `app:install` for `a2e-documents`. Two real manifest defects surfaced
+  and fixed: (a) a custom TEXT `position` field collided with the
+  auto-derived system position field (position name is reserved);
+  (b) both relation sides were declared on the document object — the
+  validator requires the target field to point back, and the framework
+  auto-creates the inverse; inverse sides on foreign standard objects
+  (company, person) must be declared as standalone
+  `src/fields/*.ts` `defineField` manifests. Install of 0.1.2 from the
+  uploaded tarball succeeded; DB shows the application row, the document
+  object and both inverse RELATION fields. Source folders in Git were
+  never the installed app — acceptance used the published artifact only.
+- Populated-workspace upgrade (P0.4 leftover 2): created a record via
+  GraphQL on the installed workspace, bumped the app to 0.2.0 adding an
+  additive nullable `summary` field, published + installed the upgrade.
+  The record survived (id/title/position preserved, column added
+  nullable, no duplicate seeds); probe record deleted afterwards.
+- P0.1 e2e: fixed `packages/twenty-e2e-testing` login.setup.ts — A2E
+  auto-selects the single workspace, so the "Choose a workspace" step is
+  now conditional. Created `.env` from `.env.example` (vite dev front on
+  :3001 via `npx nx start twenty-front`; `nx serve` serves a stale static
+  build). Result: 4/11 pass (login.setup, return-to-path deep link,
+  signup_invite_email + 1). The 7 failures are pre-existing A2E-vs-upstream
+  drift, not regressions: onboarding, return-to-path query params,
+  workspace-template-preset, create-kanban-view (Industry field),
+  create-record ("Intro" field), side-panel-tabs (needs 2 company
+  records), workflow-creation (no "Workflows" nav button). Fixing the
+  specs is a follow-up, not a P0.1 gate.
+- Full 621-spec integration sweep stays UNVERIFIED on 16 GB hardware
+  (OOM, pre-existing); chunked runs remain the local path.
+**Decisions & trade-offs:**
+- Maintainer confirmed (2026-09-13) ticking P0.1 with annotations:
+  prod-composition checks (D06, F08/F09 GitLab release checks) are
+  deferred behind the first production deployment and stay in the
+  "Unresolved decisions" table; the e2e drift list is recorded as
+  follow-up rather than blocking P0.1.
+- Inverse-relation fields on foreign objects belong in top-level
+  manifest `fields` (`ManifestEntityKey.Fields`), not in
+  `defineObject`'s field array — this matches how the accounting app
+  declares only the FK-owning side.
+- `.env` for e2e-testing is local-only (matches `.env.example`
+  pattern); verify it is gitignored before committing.
+**Verification (all this session):**
+- SDK CLI: `npx nx build twenty-sdk --skip-nx-cache`; `dev:build`,
+  `app:publish --private --remote scratch`, `app:install --remote scratch`
+  → "✓ Application installed" (0.1.2, then upgrade 0.2.0).
+- DB (psql `default`): application A2E Documents 0.2.0, document object
+  + `documents` RELATION fields on company/person present; record
+  survival checked in `workspace_1wgvd1injqtife6y4rvfbu3h5."_document"`.
+- Preflight: unit 8/8, integration 4/4, adjacent 10/10; tsgo clean,
+  `npx nx lint:diff-with-main twenty-server` clean.
+- e2e: `npx playwright test` → 4 passed / 7 failed (drift, see above).
+**For the next agent:** P0 is complete except P0.5 (release/recovery,
+gates release). Follow-ups worth a ticket: fix the 7 drifted e2e specs;
+run the 621-spec sweep in chunks on beefier hardware; run D06/F08/F09
+checks on the first production deployment.

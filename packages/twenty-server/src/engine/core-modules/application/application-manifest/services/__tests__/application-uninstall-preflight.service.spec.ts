@@ -5,6 +5,8 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { ApplicationUninstallPreflightService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall-preflight.service';
 import { ObjectRecordCountService } from 'src/engine/metadata-modules/object-metadata/object-record-count.service';
@@ -32,6 +34,25 @@ const WORKSPACE_ID = 'workspace-1';
 const APP_ID = 'app-1';
 const APP_UNIVERSAL_IDENTIFIER = '11111111-1111-4111-8111-111111111111';
 const OTHER_APP_UNIVERSAL_IDENTIFIER = '22222222-2222-4222-8222-222222222222';
+const OTHER_APP_ID = 'other-app';
+const OTHER_APP_NAME = 'Invoicing Companion';
+const OTHER_APP_2_ID = 'other-app-2';
+
+const buildFlatApplicationCacheMaps = (): FlatApplicationCacheMaps => ({
+  byId: {
+    [OTHER_APP_ID]: {
+      id: OTHER_APP_ID,
+      name: OTHER_APP_NAME,
+    } as unknown as FlatApplication,
+    [OTHER_APP_2_ID]: {
+      id: OTHER_APP_2_ID,
+      name: 'Standalone App',
+    } as unknown as FlatApplication,
+  },
+  idByUniversalIdentifier: {
+    [OTHER_APP_UNIVERSAL_IDENTIFIER]: OTHER_APP_ID,
+  },
+});
 
 describe('ApplicationUninstallPreflightService', () => {
   let applicationService: ApplicationService;
@@ -52,6 +73,7 @@ describe('ApplicationUninstallPreflightService', () => {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatViewMaps,
+      flatApplicationMaps: buildFlatApplicationCacheMaps(),
     });
   };
 
@@ -181,6 +203,84 @@ describe('ApplicationUninstallPreflightService', () => {
         },
       ]);
     });
+
+    it('lists cross-app dependents whose relation fields target owned objects', async () => {
+      injectFlatMaps({
+        flatObjectMetadataMaps: {
+          byUniversalIdentifier: {
+            [APP_UNIVERSAL_IDENTIFIER]: buildFlatObjectMetadata({
+              universalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+              applicationId: APP_ID,
+              applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+              nameSingular: 'invoice',
+            }),
+          },
+        },
+        flatFieldMetadataMaps: {
+          byUniversalIdentifier: {
+            'foreign-relation-field': {
+              id: 'foreign-relation-field-id',
+              universalIdentifier: 'foreign-relation-field',
+              applicationId: OTHER_APP_ID,
+              name: 'linkedInvoice',
+              relationTargetObjectMetadataId: `id-${APP_UNIVERSAL_IDENTIFIER}`,
+              relationTargetFieldMetadataId: null,
+            },
+            'self-relation-field': {
+              id: 'self-relation-field-id',
+              universalIdentifier: 'self-relation-field',
+              applicationId: APP_ID,
+              name: 'parentInvoice',
+              relationTargetObjectMetadataId: `id-${APP_UNIVERSAL_IDENTIFIER}`,
+              relationTargetFieldMetadataId: null,
+            },
+            'unrelated-relation-field': {
+              id: 'unrelated-relation-field-id',
+              universalIdentifier: 'unrelated-relation-field',
+              applicationId: OTHER_APP_2_ID,
+              name: 'linkedCompany',
+              relationTargetObjectMetadataId: 'id-some-standard-object',
+              relationTargetFieldMetadataId: null,
+            },
+          },
+        },
+      });
+
+      const impact = await preflightService.computeUninstallImpact({
+        workspaceId: WORKSPACE_ID,
+        applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+      });
+
+      expect(impact.crossAppDependents).toEqual([
+        {
+          dependentApplicationName: OTHER_APP_NAME,
+          dependency:
+            "field 'linkedInvoice' (relation to object 'invoice')",
+        },
+      ]);
+    });
+
+    it('returns no cross-app dependents when no foreign relation targets owned objects', async () => {
+      injectFlatMaps({
+        flatObjectMetadataMaps: {
+          byUniversalIdentifier: {
+            [APP_UNIVERSAL_IDENTIFIER]: buildFlatObjectMetadata({
+              universalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+              applicationId: APP_ID,
+              applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+              nameSingular: 'invoice',
+            }),
+          },
+        },
+      });
+
+      const impact = await preflightService.computeUninstallImpact({
+        workspaceId: WORKSPACE_ID,
+        applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+      });
+
+      expect(impact.crossAppDependents).toEqual([]);
+    });
   });
 
   describe('assertUninstallAllowed', () => {
@@ -209,6 +309,43 @@ describe('ApplicationUninstallPreflightService', () => {
       ).rejects.toMatchObject({
         code: ApplicationExceptionCode.FORBIDDEN,
         message: expect.stringContaining('still holds data'),
+      });
+    });
+
+    it('refuses uninstall when other applications depend on owned objects', async () => {
+      injectFlatMaps({
+        flatObjectMetadataMaps: {
+          byUniversalIdentifier: {
+            [APP_UNIVERSAL_IDENTIFIER]: buildFlatObjectMetadata({
+              universalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+              applicationId: APP_ID,
+              applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+              nameSingular: 'invoice',
+            }),
+          },
+        },
+        flatFieldMetadataMaps: {
+          byUniversalIdentifier: {
+            'foreign-relation-field': {
+              id: 'foreign-relation-field-id',
+              universalIdentifier: 'foreign-relation-field',
+              applicationId: OTHER_APP_ID,
+              name: 'linkedInvoice',
+              relationTargetObjectMetadataId: `id-${APP_UNIVERSAL_IDENTIFIER}`,
+              relationTargetFieldMetadataId: null,
+            },
+          },
+        },
+      });
+
+      await expect(
+        preflightService.assertUninstallAllowed({
+          workspaceId: WORKSPACE_ID,
+          applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+        }),
+      ).rejects.toMatchObject({
+        code: ApplicationExceptionCode.FORBIDDEN,
+        message: expect.stringContaining(OTHER_APP_NAME),
       });
     });
 

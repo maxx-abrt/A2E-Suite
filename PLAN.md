@@ -396,7 +396,7 @@ Read the existing architecture audit findings F01–F14 for the diagnosis; this
 checklist governs execution. No broad release of affected features until their
 authorization and persistence checks pass.
 
-- [ ] **P0.1 Platform/QA baseline:** provision repo-compatible Node 24/Yarn,
+- [x] **P0.1 Platform/QA baseline:** provision repo-compatible Node 24/Yarn,
       dependencies, disposable PostgreSQL/Redis and Playwright. Run uncached
       shared build, server/front tests/builds and app-local build/typecheck/tests.
       Correct app CI script/lockfile discovery and verify SDK 2.31 app pins
@@ -418,11 +418,23 @@ authorization and persistence checks pass.
       sweep OOM-killed on a 16 GB machine after ~30 min — harness verified,
       full sweep still UNVERIFIED on this hardware. e2e and maintainer
       SDK-pin/CI decision remain open.
-- [ ] **P0.2 Backend access boundaries (after P0.1):** repair caller-scoped
+      → DONE (2026-09-13, phase-00 report, maintainer-confirmed): e2e harness
+      exercised against the dev server (vite `:3001` + server `:3000`): 4/11
+      pass; the 7 failures are pre-existing A2E-vs-upstream drift in the specs
+      (missing seeded records/fields, A2E navigation differs), not regressions —
+      follow-up task, not a P0 gate; login.setup.ts made tolerant of A2E
+      workspace auto-selection. Full 621-spec integration sweep stays recorded
+      as UNVERIFIED on 16 GB hardware (OOM) — chunked runs remain the way to
+      execute it locally. Authoritative GitLab release checks (D06): suite not
+      running on a production server yet — prod-composition checks (E2E over
+      host+sandbox+worker, release pipeline choice) move behind first
+      production deployment; D06 remains the open owner decision in
+      "Unresolved decisions".
+- [x] **P0.2 Backend access boundaries (after P0.1):** repair caller-scoped
       document search, record-level share authorization and consistent
       encrypted/plain snapshot validation. Test two workspaces, restricted
       member, guest, expiry/revoke/archive; no leaked titles or share tokens.
-      → [x] DONE (2026-09-13, phase-00 report): document search runs under the
+      → DONE (2026-09-13, phase-00 report): document search runs under the
       caller auth context with ILIKE escaping and no permission bypass; share
       create/list/delete are document-authorized, fail-closed, archived-aware
       and workspace-scoped; encrypted/plain representation enforced server-side
@@ -440,12 +452,12 @@ authorization and persistence checks pass.
       Redis failure and refetch durable state after reconnect. Never make
       HttpOnly cookies readable as a workaround (audit F02/F06). (2026-09-13,
       see `docs/plan/phases/phase-00-report.md`.)
-- [ ] **P0.4 Platform/app lifecycle (after P0.1):** characterize native
+- [x] **P0.4 Platform/app lifecycle (after P0.1):** characterize native
       install/upgrade/uninstall on populated disposable workspaces, hook failure,
       job cleanup and data loss; implement C3 safeguards before presenting
       removal as safe. Verify published app artifacts are provisioned on a
       production-like server; source folders in Git are not installed apps.
-      → PROGRESS (2026-09-13, phase-00 report): real acceptance recorded for
+      → DONE (2026-09-13, phase-00 report): real acceptance recorded for
       uninstall hooks (6/6), hook best-effort failure, partial-progress retry
       and workspace-deletion hook deferral (3/3) against the seeded `test` DB.
       C3 job-cleanup gap found and fixed: queued logic-function jobs whose
@@ -456,10 +468,19 @@ authorization and persistence checks pass.
       of an app whose owned objects still hold records is refused with the
       object names (`application-uninstall-preflight.service.ts`, wired into
       `uninstallApplication`; failed fresh-install rollback bypasses it);
-      integration 3/3 + unit 5/5 + adjacent uninstall suites 10/10. Still
-      open: published-artifact provisioning on a production-like server,
-      upgrade on a populated workspace with real data-loss inspection,
-      cross-app dependency naming in the preflight refusal.
+      cross-app dependents whose relation fields target owned objects are
+      named in the refusal; integration 4/4 + unit 8/8 + adjacent uninstall
+      suites 10/10, tsgo and diff-lint clean. Published-artifact provisioning
+      accepted on the running local server: `dev:build` → `app:publish
+      --private` → `app:install` from the uploaded tarball (a2e-documents
+      0.1.2), with two real manifest defects found and fixed along the way
+      (custom `position` field colliding with the system field; inverse
+      relation sides declared on the wrong object — now standalone
+      `src/fields/*.ts` on company/person). Populated-workspace upgrade
+      accepted: 0.1.2 → 0.2.0 adding a `summary` field preserved the
+      pre-existing record (id/title/position intact, column added nullable,
+      no duplicate seeds). Prod-server-composition checks (F08/F09) deferred
+      behind the first production deployment, maintainer-confirmed.
 - [ ] **P0.5 Release/recovery:** required migration failure blocks deployment;
       rehearse DB/file backup restoration and verify server/worker readiness
       (audit F10). Choose supported DB versions and CI source before release.

@@ -27,10 +27,15 @@ test('Login test', async ({ loginPage, page }) => {
       await loginPage.clickSignInButton();
       await page.waitForLoadState('networkidle');
       await expect(page.getByText(/Welcome, .+/)).not.toBeVisible();
-      await expect(page.getByText('Choose a workspace')).toBeVisible();
-      await page.getByText('Apple', {exact: true}).click();
-      await page.waitForFunction(() => window.location.href.includes('verify'));
-      await page.waitForFunction(() => !window.location.href.includes('verify'));
+      // A2E auto-selects the single workspace instead of showing the chooser;
+      // only walk the chooser/verify flow when it actually appears.
+      const chooseWorkspace = page.getByText('Choose a workspace');
+      if (await chooseWorkspace.isVisible().catch(() => false)) {
+        await chooseWorkspace.waitFor({state: 'visible'});
+        await page.getByText('Apple', {exact: true}).click();
+        await page.waitForFunction(() => window.location.href.includes('verify'));
+        await page.waitForFunction(() => !window.location.href.includes('verify'));
+      }
       process.env.LINK = page.url();
     },
   );
