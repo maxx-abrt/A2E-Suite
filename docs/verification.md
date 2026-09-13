@@ -51,6 +51,22 @@ npx nx lint:diff-with-main <pkg>
 npx tsgo -p tsconfig.json --noEmit
 ```
 
+## Service requirements by tier
+
+- **Tier 0 — no services:** unit jest files, `--findRelatedTests`, `tsgo`,
+  diff lint, app `dev:build`/typecheck/lint, docs check. Safe anywhere.
+- **Tier 1 — Postgres + Redis only, no app launch:** server integration
+  slices on the `test` DB. One-second preflight before attempting:
+  `pg_isready -h localhost && redis-cli ping`. Reset the `test` DB only
+  when schema/migrations changed — not per run.
+- **Tier 2 — running app (`yarn start`, :3000/:3001):** e2e suites, real
+  `app:publish`/`app:install`, browser journeys. Executor sessions defer
+  these to the orchestrator as `Missing for tick`; reuse a running dev
+  stack rather than cold-booting per check.
+
+Docker is not required for local verification — Postgres/Redis run
+natively (Homebrew). Docker matters only for deployment-image checks.
+
 Rebuild `twenty-shared` with `--skip-nx-cache` after switching branches or
 changing shared code before trusting dependent tests. Run the relevant package
 build too when its build/runtime boundary changed. Nx cached success alone is

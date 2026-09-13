@@ -145,8 +145,9 @@ companies, and classic CRM teams.
 6. No committed i18n catalog churn; no AI-attributed commits.
 7. Additive only: no renames/removals of existing tables, fields, GraphQL
    fields, routes. Deprecate, don't delete.
-8. For implementation, update the phase report and tick only accepted tasks
-   in the same commit. For planning-only changes, check source/link integrity,
+8. For implementation, the orchestrator updates the phase report and ticks
+   only accepted tasks in the same commit; executor sessions leave reports,
+   not ticks. For planning-only changes, check source/link integrity,
    scope and consistency and report runtime limitations; do not tick product work.
 
 ## Current-state ledger — source evidence, not release certification
@@ -361,7 +362,13 @@ User tests in E12 must validate the flow before describing it as intuitive.
    already native. **P10** final usability/release regression; baseline UX
    and accessibility are required earlier, not deferred to polish.
 
-For each task, the implementing agent hands off: ID, evidence paths, prerequisite
+Two roles execute this plan (PROMPT.md): **executor** sessions self-select the
+next dependency-ready slice from the order below — the first unmet bullet of
+the first ready task, or a pinned `docs/tasks/` brief — and append a short
+report to the task's phase file; they never edit this file. The
+**orchestrator** runs on demand: verifies reports in batch, runs the
+acceptance checks executors cannot, and ticks. For each task, the handoff
+carries: ID, evidence paths, prerequisite
 results, contract/input/output changes, permissions and data-lifecycle impact,
 checks actually run, failed/unverified checks and next ready task. Use existing
 phase reports; do not create another summary/backlog. Planning-only requests

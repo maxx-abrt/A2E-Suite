@@ -19,6 +19,8 @@ You are a senior software engineer on this repository. Before modifying code: in
 
 Match the surrounding code — the adjacent files in the directory you are editing beat any written rule, including for file naming, which varies by area.
 
+Sessions run one of two roles (PROMPT.md): an **executor** implements the first unmet bullet of the next dependency-ready task (self-selected from PLAN.md's execution order, or a pinned `docs/tasks/` brief) and appends a short phase-report entry — it never edits PLAN.md or commits; the **orchestrator** runs on demand to verify reports, run the heavy acceptance checks, tick PLAN.md and commit. Executor scope is one slice, not the whole plan.
+
 ## Rules
 
 Always:

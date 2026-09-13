@@ -1,176 +1,140 @@
-Follow the user's requested scope. **For planning/review-only requests, edit
-planning files only; do not start product implementation.** For implementation,
-use PLAN.md's current-state ledger, C1–C7 contracts, dependency order and real
-acceptance checks. Historical completion claims are not verification.
+# PROMPT.md — execution contract
 
-All apps/projects under `Inspiration apps (bureaubilan)` are feature/UX
-inspiration only. Never integrate them wholesale, copy their full code, adopt
-their architecture/dependencies or connect their backends. Read the complete
-local inventory in reference analysis; distinguish UI, schemas, prototypes and
-unavailable external sources. Seek Notion-like progressive disclosure, not a
-Huly-style complex shell.
+This plan runs with two roles. RooCode auto-loads the canonical contract
+per mode — `.roo/rules-a2e-executor/executor.md` and
+`.roo/rules-a2e-orchestrator/orchestrator.md`; other agents read the same
+files. If unsure of your role, act as EXECUTOR.
 
-## 1. Kickoff
+- **EXECUTOR** (fast model): implements ONE slice per session — the first
+  unmet bullet of the next dependency-ready task — appends a short report,
+  NEVER edits PLAN.md, never commits.
+- **ORCHESTRATOR** (strong model / maintainer): runs on demand, not per
+  task — verifies executor reports in batch, runs the heavy acceptance
+  checks, ticks PLAN.md, commits.
 
-Read fully before writing product code:
-1. PROMPT.md          (this file — the operating contract)
-2. PLAN.md            (scope, phases, and the task checklist you will tick)
-3. CLAUDE.md + AGENTS.md (house rules: style, i18n, icons, migrations)
-4. docs/plan/01-codebase-map.md
-5. docs/plan/02-reference-analysis.md
-6. docs/plan/03-integration-blueprint.md
-7. docs/plan/04-twenty-native-law.md  (BINDING — read fully; your work is
-   rejected in review if it violates the concept→primitive mapping §1,
-   the anatomy standards §2–§4, or skips the wiring checklist §5)
-8. docs/repository-architecture-audit.md (dated risks, not a competing backlog)
-9. The relevant docs/plan/phases/phase-<N>-report.md entries (historical
-   handoffs; current code and PLAN.md corrections take precedence).
+## Executor workflow
+
+Find your task, in order:
+
+1. A pasted brief, or the single pending file in `docs/tasks/` → that is
+   your task.
+2. Otherwise self-select from PLAN.md, reading ONLY the delivery-order
+   table, the current-state ledger, the execution-order list, and your
+   chosen task's own section — never the whole file. Take the first
+   `[ ]`/`[~]` task whose dependencies are DONE; check the last entry of
+   its phase file to skip work already reported. Your slice is that task's
+   first unmet bullet, not the whole task.
+3. Nothing dependency-ready → say so and stop.
 
 Then:
-- Locate the active task, or the first **dependency-ready** pending task in
-  PLAN.md's execution order. Start with P0/P1 repairs, not automatically P4.
-  For a planning-only task, reconcile scope/status and do not implement.
-- Read the surrounding code for every file you intend to touch (adjacent
-  files beat any written rule). Never edit blind.
-- Implement only that ready task. Run the real quality gates (§3) and its
-  acceptance scenarios before ticking `[x]`; append evidence to the existing
-  phase report in the same commit. Source presence/build-only or a written
-  test is not an integrated flow pass. Preserve unrelated user changes.
-- If blocked, report failed command, cause, fallback and **UNVERIFIED** checks;
-  do not tick or weaken tests. Environment/tooling can be provisioned through
-  `.gitlab/duo/agent-config.yml`.
-- Stop after the task or when context runs low; hand off exact next ready work.
-  Planning-only work needs source/link/consistency checks and an honest test
-  limitation in the MR, not new phase-report or summary files.
 
-## 2. Operating rules (binding, no exceptions)
+1. Read only: `AGENTS.md`, your slice, the files it touches + one adjacent
+   sibling each. The plan slice carries the decisions you need.
+2. Read before writing; match adjacent code; reuse existing primitives and
+   `twenty-shared/utils` guards. Verify every API/SDK symbol in real code
+   before using it. Never invent parallel systems — views, page layouts,
+   workflows, roles, nav and command-menu items are Twenty primitives; use
+   them.
+3. If the work already exists and passes checks, change nothing — verify
+   and report done-for-review. Do not rebuild what a previous report
+   marked done.
+4. Run only the checks covering your change (see Fast checks). Max 2 fix
+   attempts per failing gate, then report BLOCKED with the exact error.
+5. Append your report (format below) to the task's phase file — as soon as
+   checks pass, or when the session is ~2/3 consumed, whichever comes
+   first. Never end a session without it: the report is what stops the
+   next agent redoing or breaking your work.
+6. Stop. One slice = one session. Do not pick the next task.
 
-1. **PLAN.md is the scope/status/acceptance contract.** Its dated current-state
-   corrections and C1–C7 supersede historical phase reports. Explicit user
-   planning requests authorize coherent plan changes, not product code.
-   For implementation deviations, document the reason and unresolved decision
-   before changing scope. Never invent new systems —
-   everything must fit [`docs/plan/03-integration-blueprint.md`](./docs/plan/03-integration-blueprint.md)
-   and [`docs/plan/04-twenty-native-law.md`](./docs/plan/04-twenty-native-law.md):
-   if Twenty has a primitive for it, you USE the primitive (views, page
-   layouts, workflows, roles, nav items, command menu items) — no parallel
-   frameworks, no hand-rolled replacements.
-2. **Verify primitives before using them** (04-twenty-native-law §6):
-   grep the real-estate app, twenty-sdk exports, and the module you extend
-   to confirm the API exists before you code against it.
-3. **One task = one focused change** = tick in PLAN.md + phase-report entry
-   + green gates. A task is NOT done until its phase's acceptance criteria
-   are unaffected and gates pass.
-4. **Read before writing.** For every file you touch, read it and at least
-   one adjacent sibling first. Match local naming, structure and patterns —
-   `twenty-apps/internal/real-estate/` is the app-format reference;
-   `twenty-server/src/modules/<domain>/` the server-module reference.
-5. **Never break what works.** Additive only: no renames/removals of
-   tables, columns, GraphQL fields, routes, exported symbols. New server entity →
-   generated migration + upgrade command under the actual current version
-   directory (currently `2-39/`) with a strictly increasing real epoch-ms
-   timestamp, `up` + `down`. App metadata uses manifest migration. Never rewrite
-   committed commands. User-confirmed app uninstall follows PLAN.md C3 and is
-   not permission to destructively refactor shared CRM data.
-6. **House style** (from CLAUDE.md, enforced): named exports only; types
-   over interfaces; no `any`; no abbreviations; `Props`-suffixed component
-   prop types; `//` comments only for WHY; Linaria for styling; icons from
-   `twenty-ui/icon` only (canonical names in
-   `packages/twenty-ui/src/icon/icon-dictionary.md`); Lingui for ALL
-   user-facing strings (fr + en); reuse `twenty-shared/utils` guards
-   (`isDefined`, `isNonEmptyString`, …) — never reimplement helpers.
-7. **Do not commit** i18n catalogs (`locales/*.po`, `locales/generated/*`)
-   and never include AI attribution in commit messages (no
-   `@anthropic.com`, no "Generated with …" lines) — CI rejects both.
-8. **Commands** (from repo root; details in 01-codebase-map.md §6):
+Never: edit PLAN.md; commit; commit i18n catalogs or AI attribution;
+rename or delete existing tables, fields, routes, exports; run full
+package suites, e2e or the full integration sweep; revert dirty files you
+did not create; install or copy `Inspiration apps (bureaubilan)` code.
 
-   ```bash
-   npx jest <file.spec.ts> --config=packages/<pkg>/jest.config.mjs   # one test file
-   npx nx test <pkg>                                                  # package tests
-   npx nx lint:diff-with-main <pkg>                                   # lint
-   cd packages/<pkg> && npx tsgo -p tsconfig.json --noEmit             # typecheck (trust this over nx cache)
-   npx nx build twenty-shared --skip-nx-cache                          # after touching twenty-shared
-   npx nx run twenty-server:database:migrate:generate --name <n> --type fast|slow
-   node packages/twenty-sdk/dist/cli.cjs app:publish --private && node packages/twenty-sdk/dist/cli.cjs app:install   # publish an app to a local server
-   ```
-
-   Gotchas: `twenty-shared/dist` is per-branch state — rebuild before
-   trusting dependent typechecks/tests. Nx can serve a stale pass — verify
-   fixes with in-package `tsgo`.
-
-## 3. Quality gates (run before ticking ANY task)
-
-Adapt to what the task touched; when in doubt run all:
-
-- [ ] Unit tests for new/changed server services and front hooks/components
-- [ ] Integration test added for server modules with DB behavior
-- [ ] `npx nx lint:diff-with-main <pkg>` clean for touched packages
-- [ ] In-package `npx tsgo -p tsconfig.json --noEmit` clean
-- [ ] `twenty-shared` touched → rebuilt with `--skip-nx-cache`
-- [ ] GraphQL schema changed → `npx nx run twenty-front:graphql:generate`
-- [ ] Server entity changed → generated migration/upgrade command (rules §2.5);
-      app metadata changed → manifest validation and populated install/upgrade
-- [ ] UI: works light+dark, mobile-responsive, Lingui fr+en keys complete
-- [ ] e2e updated/added for user-visible flows
-- [ ] PLAN.md ticked + phase report appended (same commit)
-
-## 4. Resume protocol (where did the last agent leave off?)
-
-Determine state in this order, WITHOUT asking the user:
-
-1. `PLAN.md` — read current-state ledger, execution order, unresolved decisions
-   and prerequisite results; continue `[~]` or the first dependency-ready task.
-   Legacy `[x]` is not a release certificate. Full-calendar work is P4C, not
-   satisfied by a task CALENDAR view; setup/lifecycle spans all app phases.
-2. `docs/plan/phases/phase-<N>-report.md` — read the LAST dated entries:
-   they say exactly what was finished, what remains, known issues.
-3. `git status` + `git log --oneline -15` — uncommitted work exists?
-   - Clean tree → continue from the selected dependency-ready task.
-   - Dirty tree → inspect the diff and ownership; preserve unrelated user
-     work. Do not revert unexplained changes. Ask if ownership blocks progress.
-4. Trust current source and real checks over assumptions or old reports.
-   If reality contradicts a report, annotate the plan without erasing valid
-   implementation or historical evidence. Implementation sessions append
-   "STATE REPAIR"; planning-only sessions record the reconciliation in the MR.
-
-Then proceed with the kickoff protocol (§1) from the correct task.
-
-## 5. Phase-report format (append, never rewrite)
-
-File: `docs/plan/phases/phase-<N>-report.md` (create on first entry; N is
-two digits, e.g. `phase-01-report.md`; P0 uses phase-00 and P4C appends to
-phase-04). Planning-only requests do not need a new report.
+### Executor report — append to the task's phase file, keep it ~10 lines
 
 ```markdown
-## YYYY-MM-DD HH:MM UTC — <Agent>
-**Task(s):** P<N>.<M> <task title> (PLAN.md lines if useful)
-**Status:** done | partial (what remains) | blocked (blocker)
-**What I did:** bullet list of changes w/ file paths
-**Decisions & trade-offs:** any call made and why (spike outcomes here)
-**Verification:** gates run + results (paste key output lines)
-**For the next agent:** exact next step, gotchas, unresolved questions
+## YYYY-MM-DD HH:MM UTC — <model> [executor]
+**Task:** <id> <title> · **Slice:** <which bullet> · **Claim:**
+done-for-review | partial | blocked
+**Changed:** <files touched>
+**Checks:** <command → result; only commands actually run>
+**Missing for tick:** <acceptance evidence still absent, or the blocker>
+**Do not redo:** <what already works, so the next agent leaves it alone>
+**Next:** <exact next micro-step>
 ```
 
-Rules: entries are append-only; corrections get their own entry; keep it
-factual and terse; no code dumps (reference file paths).
+## Orchestrator workflow
 
-## 6. Anti-hallucination checklist (before you claim done)
+You are the auditor, not the dispatcher — run after several executor
+sessions or before a commit/MR.
 
-- Every file path you mention exists (you opened it this session).
-- Every API/SDK symbol you used was seen in real code (grep it; e.g.
-  `defineObject`, `FieldType.FILES` — verified patterns live in
-  `packages/twenty-apps/examples/media-notes/`).
-- Every command you say passed, you actually ran this session.
-- Every newly ticked task maps to implementation plus passing acceptance
-  evidence (including verification-only work on existing code). Legacy ticks
-  retain historical meaning only; no product task is ticked by a planning edit.
-- You did NOT touch: `locales/**` catalogs, committed upgrade commands,
-  `twenty-docker` defaults, billing logic, auth guards semantics.
+1. Resume: `git status` / `git diff` / `git log --oneline -15` + the new
+   executor reports in `docs/plan/phases/`. Dirty work with no report:
+   inspect and attribute the diff, write the missing entry yourself,
+   decide salvage vs redo; never revert unexplained changes.
+2. For each unverified report: inspect the diff for unrelated churn, i18n
+   catalogs, secrets, deleted features — then run the checks the report
+   lists as missing.
+3. Tick PLAN.md only with acceptance evidence; annotate status + date +
+   phase file. Commit change + report + tick together. Partial stays
+   `[ ]` or `[~]` with the reason — a tick is your verification, not the
+   executor's claim.
+4. Blocked/partial reports: split the item into smaller bullets in
+   PLAN.md, fix the environment, or ask the user the smallest question.
+   Record product deviations in the phase file and PLAN.md's unresolved
+   decisions.
+5. Optional: pin work by writing `docs/tasks/<task-id>-<slug>.md` from
+   `docs/templates/executor-brief.md` (one pending at a time) when a task
+   needs narrowing, specific files, or non-plan scope.
 
-## 7. When stuck (in order)
+## Fast checks — executors run only the ones covering their change
 
-1. Re-read the blueprint section for your phase + one real example in the
-   codebase doing the same thing.
-2. Write a "BLOCKED" entry in the phase report with the exact error/output
-   and your analysis; leave the workspace clean.
-3. Only then ask the user — with the smallest possible question.
+**Tier 0 — no services needed (default, always safe):**
+
+- One test file:
+  `npx jest <file.spec.ts> --config=packages/<pkg>/jest.config.mjs`
+- Tests covering files you changed:
+  `npx jest --findRelatedTests <paths> --config=packages/<pkg>/jest.config.mjs`
+- Typecheck (trust this over nx cache):
+  `cd packages/<pkg> && npx tsgo -p tsconfig.json --noEmit`
+- Lint touched files only: `npx nx lint:diff-with-main <pkg>`
+  (`--configuration=fix` to auto-fix)
+- App package fast gates, no server needed:
+  `yarn typecheck && yarn lint && npx twenty dev:build .`
+- Doc edits: `node docs/scripts/check-docs.mjs`
+
+**Tier 1 — Postgres + Redis up, no app launch:**
+
+- Preflight (1s): `pg_isready -h localhost && redis-cli ping` — either
+  fails → report BLOCKED naming the service.
+- Integration slice on the existing `test` DB:
+  `cd packages/twenty-server && NODE_ENV=test npx jest --config jest-integration.config.ts test/integration/graphql/suites/<area>`
+  Reset only when schema/migrations changed; otherwise run directly.
+- Inspect workspace data read-only: postgres MCP server (`.mcp.json`).
+
+**Tier 2 — running app required (`yarn start`): orchestrator only.**
+e2e, real `app:publish`/`app:install`, browser journeys → executors list
+them as `Missing for tick` and never launch the stack.
+
+After switching branches or editing `twenty-shared`, rebuild it first:
+`npx nx build twenty-shared --skip-nx-cache`. Environment setup:
+`docs/verification.md` + `packages/twenty-utils/setup-dev-env.sh`.
+
+## Binding rules — both roles
+
+- PLAN.md is the scope/status/acceptance contract. Deviations get a
+  phase-file entry + plan edit, never silent scope changes.
+- Additive only: deprecate, don't delete. New server entity → generated
+  migration + upgrade command under the current version directory with a
+  strictly increasing epoch-ms timestamp, `up` + `down`; app metadata uses
+  manifest migration. Never rewrite committed commands.
+- House style per AGENTS.md: named exports, types over interfaces, no
+  `any`, `//` comments for WHY only, Linaria styling, icons from
+  `twenty-ui/icon`, Lingui fr+en for all user-facing strings.
+- Reference apps are feature/UX inspiration only — never integrate, copy
+  wholesale, adopt dependencies or connect backends.
+- No committed i18n catalog churn; no AI attribution in commits.
+- Every claimed pass is a command actually run this session; every file
+  mentioned was actually opened. Blocked stays UNVERIFIED — never weaken a
+  test to go green.

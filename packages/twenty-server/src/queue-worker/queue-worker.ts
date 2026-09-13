@@ -1,10 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { HealthModule } from 'src/engine/core-modules/health/health.module';
+import { ReadinessService } from 'src/engine/core-modules/health/services/readiness.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 import 'src/instrument';
 import { QueueWorkerModule } from 'src/queue-worker/queue-worker.module';
+import { startWorkerHealthServer } from 'src/queue-worker/start-worker-health-server';
 import { enableValidationMetadataCache } from 'src/utils/enable-validation-metadata-cache.util';
 
 async function bootstrap() {
@@ -22,6 +25,10 @@ async function bootstrap() {
     exceptionHandlerService = app.get(ExceptionHandlerService);
 
     app.useLogger(loggerService ?? false);
+
+    startWorkerHealthServer({
+      readinessService: app.select(HealthModule).get(ReadinessService),
+    });
 
     app.enableShutdownHooks();
   } catch (err) {

@@ -13,9 +13,11 @@ this checkout publishes there or that those resources are public.
 
 - Platform deployment and Bilan/Documents/Projects provisioning are separate.
   The production image does not bundle/install the internal A2E app sources.
-- Confirm supported database/runtime versions and required checks before a
-  release. Do not treat a healthy HTTP process as proof upgrades succeeded;
-  inspect migration and worker results (audit F09/F10).
+- Supported infrastructure matrix: **PostgreSQL 16** (hard runtime floor: 14 —
+  the server refuses to boot below it) and **Redis 7**. All compose files pin
+  `postgres:16` / `redis:7` accordingly. Do not treat a healthy HTTP process
+  as proof upgrades succeeded; inspect migration and worker results
+  (audit F09/F10).
 - Back up and rehearse restore before upgrades. Never change registry/package
   visibility or deploy production as an incidental documentation task.
 
@@ -184,8 +186,52 @@ recovery points; database-only backup cannot restore uploaded content.
 Before relying on a backup, restore it to an isolated instance, verify migrations,
 workspace records, permissions, file downloads, encrypted data and worker jobs.
 Record the tested image/database versions, retention, recovery point and recovery
-time. Do not experiment against production or include keys in reports. No
-backup/restore drill has been performed for this documentation update.
+time. Do not experiment against production or include keys in reports.
+
+### Restore drill — rehearsed procedure (2026-09-13, dev environment)
+
+A logical-backup restore was rehearsed end to end against a scratch database on
+the same PostgreSQL 16 instance; treat the commands below as the baseline to
+repeat on each deployment target before relying on a backup.
+
+```bash
+# 1. Backup (custom format, compressible, restorable with selective recovery)
+pg_dump -h <host> -U postgres -Fc -d <database> -f backup-YYYYMMDD.dump
+
+# 2. Restore into an ISOLATED scratch database (never over the live one)
+createdb -h <host> -U postgres <database>_restore_drill
+pg_restore -h <host> -U postgres -d <database>_restore_drill \
+  --no-owner --no-privileges backup-YYYYMMDD.dump
+
+# 3. Verify content parity, then run the migration gate on the copy:
+#    node dist/command/command.js run-instance-commands
+PG_DATABASE_URL="postgres://<host>:5432/<database>_restore_drill" \
+  node dist/command/command.js run-instance-commands
+```
+
+Verified during the drill:
+
+- `pg_restore` exits 0; workspace/user counts, roles/role-targets, API keys,
+  installed apps (name + version), documents, workflows and file rows match
+  the source database exactly.
+- Encrypted-at-rest rows (`core."signingKey"`, application variables) restore
+  byte-identical — `ENCRYPTION_KEY` (and `FALLBACK_ENCRYPTION_KEY` when used)
+  must be part of the same recovery point or the data is unrecoverable.
+- The migration gate refuses to run when any workspace has not completed its
+  last workspace command (mid-upgrade state is detected, not silently
+  accepted) and is a clean no-op when the copy is already current.
+- Local file storage (`server-local-data` volume →
+  `packages/twenty-server/.local-storage`) is keyed by
+  `{workspaceId}/{applicationId}/…`; `core.file` rows store paths relative to
+  that scope. Back up the volume together with the database — a database-only
+  backup leaves app source/tarballs and uploads missing.
+
+Readiness vs liveness (audit F10, partially addressed): `/healthz` remains a
+liveness-only probe (process up), while `/readyz` now checks database and Redis
+connectivity on the server, and the worker serves its own `/readyz` on port
+3099 (`WORKER_HEALTH_PORT`) wired into its compose healthcheck. Migrations run
+before traffic routing through the entrypoint gate, not inside the probes.
+Inspect server/worker logs after upgrade if a deployment misbehaves.
 
 ## Troubleshooting
 

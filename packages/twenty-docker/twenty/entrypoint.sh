@@ -23,8 +23,12 @@ setup_and_migrate_db() {
         echo "Warning: Failed to flush cache before upgrade, but continuing startup..."
     fi
 
+    # The upgrade command exits non-zero on any workspace migration failure;
+    # booting on a partially migrated DB makes the deployment report healthy
+    # over broken data, so the container must abort instead.
     if ! yarn command:prod upgrade; then
-        echo "Warning: Upgrade completed with errors. Some workspaces may not be fully migrated. Check logs for details."
+        echo "ERROR: Upgrade failed. Refusing to start against a partially migrated database. Fix the migration and restart the container."
+        exit 1
     fi
 
     if ! yarn command:prod cache:flush; then

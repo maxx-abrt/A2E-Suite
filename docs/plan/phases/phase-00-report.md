@@ -499,3 +499,36 @@ Then P0.5 or P1.6a per execution order.
 gates release). Follow-ups worth a ticket: fix the 7 drifted e2e specs;
 run the 621-spec sweep in chunks on beefier hardware; run D06/F08/F09
 checks on the first production deployment.
+
+## 2026-09-13 18:05 UTC — GLM-5.3-Flash [executor]
+**Task:** P0.5 Release/recovery · **Slice:** first bullet — required migration failure blocks deployment (F10) · **Claim:** partial
+**Changed:** `packages/twenty-docker/twenty/entrypoint.sh` — `yarn command:prod upgrade` failure now `exit 1` (container aborts) instead of warn-and-continue; the misleading "Successfully migrated DB!" after a failure is unreachable. Verified the server-side upgrade command already exits non-zero on workspace failure (`upgrade.command.ts` throws on `totalFailures > 0`), so the defect was purely the entrypoint swallowing it.
+**Checks:** `sh -n entrypoint.sh` → OK; shell shim proving failed upgrade exits 1 before exec. Compose variants setting `DISABLE_DB_MIGRATIONS=true` (server-coordinated migrations) unaffected.
+**Missing for tick:** real docker boot with an injected failing upgrade (needs built image + running Docker, heavy); readiness-vs-liveness split, backup/restore rehearsal, supported-DB-version pinning — later F10 bullets.
+**Do not redo:** entrypoint gate is in place; do not re-add warn-and-continue on upgrade.
+**Next:** rehearsal of DB/file backup restore in a scratch environment, then readiness/liveness separation.
+
+## 2026-09-13 20:25 UTC — GLM-5.3-Flash [executor]
+**Task:** P0.5 Release/recovery · **Slice:** second bullet — rehearse DB/file backup restoration (F10) · **Claim:** partial
+**Changed:** `DEPLOY.md` only — new "Restore drill — rehearsed procedure" section (additive; docs check PASS).
+**Checks:** `pg_dump -Fc default` → 1.4 MB / 105 table-data entries; `pg_restore` into isolated `default_restore_drill_2` → exit 0; parity vs source: workspaces/users, role/roleTarget 1005, apiKey 1, signingKey 1, A2E Documents 0.2.0, _document 1, workflow 2, file 35 — all match. Upgrade gate on the copy: refused without `--force` (workspace mid-upgrade detection working), no-op pass with `--force`, exit 0. File rows verified to be workspace/application-scoped relative paths; physical files exist under `.local-storage/{workspaceId}/{applicationId}/…`. `node docs/scripts/check-docs.mjs` → PASS.
+**Missing for tick:** drill not repeated on a production-like server/DB version matrix (local PG16 only); readiness-vs-liveness split still open — `/healthz` is `health.check([])` (liveness only, no DB/Redis/migration checks) and the worker compose service has no healthcheck at all; supported-DB-version pinning decision outstanding.
+**Do not redo:** the restore drill procedure and DEPLOY.md section are done and accurate for dev PG16; do not re-add the "No backup/restore drill has been performed" sentence — replace it when a prod drill runs.
+**Next:** readiness/liveness split — give `/healthz` real indicators (DB, Redis) or add a separate `/readyz`, and a worker healthcheck; then DB-version pinning decision.
+**Cleanup note:** scratch DB `default_restore_drill_2`, `/tmp/a2e-backup-drill-20260913.dump` and `/tmp/drill-upgrade.log` were left in place (user denied the combined cleanup command) — safe to drop/delete.
+
+## 2026-09-13 18:55 UTC — GLM-5.3-Flash [executor]
+**Task:** P0.5 Release/recovery · **Slice:** third bullet — readiness-vs-liveness split + worker healthcheck (F10) · **Claim:** done-for-review
+**Changed:** `packages/twenty-server/src/engine/core-modules/health/services/readiness.service.ts` (new: DB `SELECT 1` + Redis `PING`, 3s deadline via existing `withDeadline`, failures reported `indicator.down()` so probes get deterministic 503, never a throw); `controllers/readiness.controller.ts` (new, `/readyz` public guards, Terminus); `health.module.ts` (mounts both controllers; imports `TypeORMModule` so the worker context has a DataSource); `queue-worker/start-worker-health-server.ts` (new: node:http on `WORKER_HEALTH_PORT` default 3099, `/readyz` → `isReady()`); `queue-worker.ts` (starts it); `twenty-shared/src/types/ApiPath.ts` (additive `Ready = 'readyz'`); both `docker-compose.coolify.yml` copies (root + `packages/twenty-docker/`, kept identical): server probe `/healthz` → `/readyz` (timeout 10s), worker gets its own healthcheck; `DEPLOY.md` F10 paragraph updated. `/healthz` stays liveness-only on purpose (restart signal), readiness failures stop routing without killing the process.
+**Checks:** jest health suite 7/7 (readiness 6 + controller 1); `tsgo -p tsconfig.json --noEmit` clean (twenty-server); `nx build twenty-shared --skip-nx-cache` (ApiPath touched); `nx lint:diff-with-main twenty-server` clean; `node docs/scripts/check-docs.mjs` PASS; YAML parse of both compose files OK (`docker` CLI absent locally, compose config not runnable).
+**Missing for tick:** real docker boot exercising `/readyz` 503 during a DB outage and the worker probe on the built image (needs Docker — not on this machine); prod DB-version drill items from the 20:25 entry remain open (PG version matrix, supported-DB pinning decision).
+**Do not redo:** readiness service/controller, worker health server, compose probes, DEPLOY.md paragraph are in place and tested at unit level; do not add dependency checks to `/healthz` (split is intentional).
+**Next:** supported-DB-version pinning decision (needs maintainer input), then prod-composition rehearsal (already deferred behind first production deployment).
+
+## 2026-09-13 19:05 UTC — GLM-5.3-Flash [executor]
+**Task:** P0.5 Release/recovery · **Slice:** fourth bullet — supported DB versions (F10; CI-source decision excluded, maintainer-owned D06) · **Claim:** done-for-review
+**Changed:** `database/typeorm/database-version-check.service.ts` (new: `SHOW server_version` at OnModuleInit, throws below PG major 14 — boot fails fast in both server and worker before any migration); registered in `typeorm.module.ts` providers; `packages/twenty-docker/docker-compose.yml` + both `docker-compose.coolify.yml` copies: bare `redis` → `redis:7` (postgres:16 already pinned everywhere); `DEPLOY.md`: supported matrix stated (PG16 target / 14 floor / Redis 7). Floor is 14 because existing deployments may run <16; only composes pin 16.
+**Checks:** jest `src/database/typeorm` 4/4 (version-check 3 + core.datasource 1); `tsgo --noEmit` clean; `nx lint:diff-with-main twenty-server` clean (exit 0); `check-docs.mjs` PASS; YAML parse of all three composes OK.
+**Missing for tick:** prod-composition rehearsal on real infra (deferred behind first production deployment, maintainer-confirmed); D06 CI-source decision (owner decision, not executor scope).
+**Do not redo:** version gate + redis pins + DEPLOY.md matrix are in place; do not raise the runtime floor to 16 without a migration story for existing deployments.
+**Next:** P0.5 is now executor-complete except Tier-2/prod items; next dependency-ready task per execution order is P1.6a (template contracts).

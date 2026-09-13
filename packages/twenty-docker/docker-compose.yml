@@ -125,7 +125,7 @@ services:
     restart: always
 
   redis:
-    image: redis
+    image: redis:7
     restart: always
     command: ["--maxmemory-policy", "noeviction"]
     healthcheck:

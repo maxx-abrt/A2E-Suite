@@ -9,6 +9,8 @@ explains the fork; upstream product documentation lives in
 
 | I need to… | Read first | Then inspect |
 | --- | --- | --- |
+| Execute one planned task (executor) | [PROMPT.md](../PROMPT.md) executor workflow + PLAN.md's execution order (or a pinned `docs/tasks/` brief) | Only the chosen task's section + the files it touches |
+| Verify and tick work in batch (orchestrator) | [PROMPT.md](../PROMPT.md) + the new executor phase-report entries | [Delivery plan](../PLAN.md) current state + the diffs |
 | Understand the product and naming | [Product experience](product-experience.md) | [Delivery plan](../PLAN.md) |
 | Find Bilan, Bureau or the app installer | [Applications runbook](applications.md) | The linked catalog, installer and preset source |
 | Locate the code for a change | [Codebase map](plan/01-codebase-map.md) | One adjacent implementation and its tests |
@@ -26,7 +28,8 @@ explains the fork; upstream product documentation lives in
 - **[AGENTS.md](../AGENTS.md):** repository conventions; closer directory rules
   and real adjacent code determine local patterns. `AGENTS.md` is a symlink
   to `CLAUDE.md`, so both entry points share the same rules.
-- **[PROMPT.md](../PROMPT.md):** short execution and handoff workflow.
+- **[PROMPT.md](../PROMPT.md):** executor/orchestrator workflow — executors
+  implement one brief and report; only the orchestrator ticks PLAN.md.
 - **[PLAN.md](../PLAN.md):** delivery order and retained feature scope.
 - **Product experience:** target UX and acceptance contracts, not a claim that
   everything is implemented.

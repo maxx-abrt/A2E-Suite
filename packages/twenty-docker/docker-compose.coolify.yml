@@ -60,9 +60,10 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: curl --fail http://localhost:3000/healthz
+      # /readyz checks database and redis; /healthz stays a liveness-only probe
+      test: curl --fail http://localhost:3000/readyz
       interval: 5s
-      timeout: 5s
+      timeout: 10s
       retries: 20
     restart: always
 
@@ -100,6 +101,13 @@ services:
         condition: service_healthy
       server:
         condition: service_healthy
+    healthcheck:
+      # /healthz is liveness-only; /readyz exercises the worker's own database
+      # and redis connections (node:http server on WORKER_HEALTH_PORT, 3099)
+      test: curl --fail http://localhost:3099/readyz
+      interval: 5s
+      timeout: 10s
+      retries: 20
     restart: always
 
   db:
@@ -118,7 +126,7 @@ services:
     restart: always
 
   redis:
-    image: redis
+    image: redis:7
     restart: always
     command: ['--maxmemory-policy', 'noeviction']
     healthcheck:
