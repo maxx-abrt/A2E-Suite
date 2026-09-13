@@ -8,7 +8,10 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { type MessageQueueJobRetryContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import {
+  LogicFunctionExecutionException,
+  LogicFunctionExecutorService,
+} from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -99,6 +102,16 @@ export class LogicFunctionTriggerJob {
           error instanceof LogicFunctionException &&
           error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED
         ) {
+          continue;
+        }
+
+        // An uninstalled application deletes its logic functions; a job
+        // enqueued before the uninstall can never succeed again, so it must
+        // drain instead of burning the queue retry budget on retries.
+        if (error instanceof LogicFunctionExecutionException) {
+          this.logger.warn(
+            `Skipping function ${logicFunctionPayload.logicFunctionId} (workspace ${logicFunctionPayload.workspaceId}): ${error.message}`,
+          );
           continue;
         }
 

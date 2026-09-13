@@ -306,3 +306,71 @@ this task requires; no front change needed there.
 **What I did:** re-ran every gate from a clean shell against the working tree; no code changed.
 **Verification:** realtime-gateway server suites 26/26; front `src/modules/realtime` 12/12; `tsgo --noEmit` clean in twenty-server and twenty-front; `nx lint:diff-with-main` clean for both packages. `.env.test` diff inspected: queue-URL isolation comment + `REDIS_QUEUE_URL`, no secrets.
 **For the next agent:** next dependency-ready task is P0.4 (platform/app lifecycle characterization on disposable workspaces). The `.env.test` queue isolation note matters for any integration run alongside a dev worker.
+
+## 2026-09-13 14:10 UTC — Zoo (code agent)
+**Task(s):** P0.4 Platform/app lifecycle — characterization + first C3 safeguard (PLAN.md line ~443).
+**Status:** partial (see "For the next agent" for the open remainder).
+
+**What I did (characterization, code + real runs against the seeded `test` DB):**
+- Mapped the native lifecycle surface: `application-install.service.ts`
+  (lock-guarded install/upgrade with version-progression validation, failed
+  fresh-install rollback without uninstall hook, post-install hook sync/enqueue
+  paths), `application-sync.service.ts` `uninstallApplication` (UNINSTALLING
+  state transition with revert, workspace-migration deletion, best-effort
+  runtime-resource cleanup), `application-uninstall.service.ts` (best-effort
+  hook per app; strict mode throws aggregated failures for workspace
+  deletion), `application-stop.service.ts` + kill-switch command (cache-backed
+  stop checked in `logic-function-executor.service.ts` before throttle).
+- Confirmed upstream integration suites already cover: uninstall hook
+  execution/absence/manifest drift (6 tests), hook best-effort failure,
+  partial-progress retry and workspace-deletion hook deferral, install
+  workspace-version/progression failures. Ran them for real (results below).
+
+**C3 gap found and fixed (job cleanup after uninstall):**
+- App uninstall deletes the application's logic functions through the
+  workspace migration, but logic-function jobs already enqueued before the
+  uninstall still reference them. `logic-function-trigger.job.ts` only skipped
+  `LOGIC_FUNCTION_DISABLED` (stopped app) and `DEPENDENCIES_SIZE_EXCEEDED`;
+  the executor's `LogicFunctionExecutionException` (`LOGIC_FUNCTION_NOT_FOUND`,
+  thrown by `getFlatEntitiesOrThrow` for deleted functions) fell through to
+  `throw error`, so BullMQ failed and retried those jobs to the retry limit —
+  retrying work that can never succeed, violating C3 "drain/cancel safely;
+  recheck app availability at queued execution".
+- Fix: the job now drains (warn + `continue`) on any
+  `LogicFunctionExecutionException` from the executor's own guard checks.
+  Deliberately narrow: user-code failures (`error.error` inside a successful
+  execute result) and `LogicFunctionException` from drivers still propagate.
+- New unit spec `logic-function-trigger/jobs/__tests__/logic-function-trigger.job.spec.ts`
+  (3 tests): drains missing-function errors, still rethrows unexpected
+  crashes, regression-guards the stopped-app skip.
+
+**Decisions & trade-offs:**
+- Draining (silently completing) rather than cancelling: the queue driver has
+  no per-job cancel API in `message-queue.service.ts`; drain matches the
+  existing LOGIC_FUNCTION_DISABLED precedent and needs no new primitive.
+- Fix scoped to `LogicFunctionExecutionException` (executor-internal guards),
+  not all `LogicFunctionException`: GraphQL-facing codes are mapped in
+  `logic-function-graphql-api-exception-handler.utils.ts` and reusing that
+  enum here would conflate API semantics with queue semantics.
+
+**Verification (all this session):**
+- `npx jest logic-function-trigger --config=packages/twenty-server/jest.config.mjs`
+  → 68/68 (incl. 3 new job-drain tests).
+- `cd packages/twenty-server && npx tsgo -p tsconfig.json --noEmit` → clean.
+- `npx nx lint:diff-with-main twenty-server` → success.
+- Integration (NODE_ENV=test, `--runInBand`, 6 GB heap): uninstall-hook suite
+  6/6; workspace-deletion-hooks + uninstall-retry 3/3 — all green WITH the fix.
+- UNVERIFIED: parallel (non-`--runInBand`) integration on this 16 GB machine
+  OOMs (pre-existing, same as the earlier 621-spec sweep note); published-
+  artifact provisioning on a production-like server not exercised.
+
+**For the next agent:** P0.4 remainder = (1) verify published app artifacts
+provision on a production-like server (source folders in Git are not installed
+apps) — needs `app:publish` against a docker/coolify-like server; (2) upgrade
+characterization on a populated workspace with real data-loss inspection (the
+`successful-uninstall-application-with-package-file-fks` suite is a starting
+point); (3) C3 dependency preflight for destructive removal (dependent
+apps/views/workflows naming) is still unimplemented — that is the next code
+task under P0.4, likely needing a new resolver input, not a flag on the
+existing uninstall mutation. Integration runs on this machine: use
+`--runInBand` + `NODE_OPTIONS=--max-old-space-size=6144`.

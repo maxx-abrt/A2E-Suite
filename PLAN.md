@@ -445,6 +445,16 @@ authorization and persistence checks pass.
       job cleanup and data loss; implement C3 safeguards before presenting
       removal as safe. Verify published app artifacts are provisioned on a
       production-like server; source folders in Git are not installed apps.
+      → PROGRESS (2026-09-13, phase-00 report): real acceptance recorded for
+      uninstall hooks (6/6), hook best-effort failure, partial-progress retry
+      and workspace-deletion hook deferral (3/3) against the seeded `test` DB.
+      C3 job-cleanup gap found and fixed: queued logic-function jobs whose
+      function was deleted by an app uninstall now drain instead of burning
+      the queue retry budget (`logic-function-trigger.job.ts`). Upstream
+      integration suites already cover install-failure rollback and version
+      progression. Still open: published-artifact provisioning on a
+      production-like server, upgrade on a populated workspace with real data
+      loss inspection, dependency preflight for destructive removal.
 - [ ] **P0.5 Release/recovery:** required migration failure blocks deployment;
       rehearse DB/file backup restoration and verify server/worker readiness
       (audit F10). Choose supported DB versions and CI source before release.
