@@ -19,14 +19,20 @@ export const useRealtimeTopic = <TPayload>({
   topic: string;
   onEvent?: (payload: TPayload, envelope: RealtimeEnvelope) => void;
   enabled?: boolean;
-}): { lastEnvelope: RealtimeEnvelope | null } => {
+}): {
+  lastEnvelope: RealtimeEnvelope | null;
+  lastError: RealtimeEnvelope | null;
+} => {
   const [lastEnvelope, setLastEnvelope] = useState<RealtimeEnvelope | null>(
     null,
   );
 
+  const [lastError, setLastError] = useState<RealtimeEnvelope | null>(null);
+
   useEffect(() => {
     if (!enabled) {
       setLastEnvelope(null);
+      setLastError(null);
 
       return;
     }
@@ -34,6 +40,15 @@ export const useRealtimeTopic = <TPayload>({
     const unsubscribe = realtimeConnectionManager.subscribe(
       topic,
       (envelope) => {
+        // Subscription rejections surface separately from events: the
+        // connection is healthy, the topic itself was refused (auth,
+        // membership, topic rights, Redis failure).
+        if (envelope.type === 'error') {
+          setLastError(envelope);
+
+          return;
+        }
+
         setLastEnvelope(envelope);
 
         if (isDefined(onEvent)) {
@@ -48,5 +63,5 @@ export const useRealtimeTopic = <TPayload>({
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, topic]);
 
-  return { lastEnvelope };
+  return { lastEnvelope, lastError };
 };

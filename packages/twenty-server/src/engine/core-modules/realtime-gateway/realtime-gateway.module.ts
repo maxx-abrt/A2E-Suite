@@ -7,11 +7,22 @@ import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-cl
 import { RealtimeGatewayService } from 'src/engine/core-modules/realtime-gateway/services/realtime-gateway.service';
 import { RealtimePublisherService } from 'src/engine/core-modules/realtime-gateway/services/realtime-publisher.service';
 import { RealtimeTopicAuthorizationService } from 'src/engine/core-modules/realtime-gateway/services/realtime-topic-authorization.service';
+import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
+import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 // Track A core primitive (blueprint §4). Mounted once from CoreEngineModule;
 // the queue worker inherits it harmlessly (no HTTP adapter → service no-ops).
+// UserSessionModule/WorkspaceCacheModule back the F02 repair: subscribes
+// authenticate through the same session resolution and member cache as HTTP.
 @Module({
-  imports: [JwtModule, RedisClientModule],
+  imports: [
+    JwtModule,
+    RedisClientModule,
+    UserSessionModule,
+    WorkspaceCacheModule,
+    CoreEntityCacheModule,
+  ],
   providers: [
     PresenceResolver,
     PresenceService,

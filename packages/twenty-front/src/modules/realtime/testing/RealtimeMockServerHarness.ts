@@ -14,6 +14,7 @@ type InMemorySocket = WebSocketLike & {
 export type RealtimeMockServerHarness = {
   install: (manager: RealtimeConnectionManager) => void;
   broadcast: (topic: string, payload: unknown) => void;
+  sendError: (topic: string, message: string) => void;
   getLastSentMessage: () => string | undefined;
   getSentMessages: () => string[];
   getClientCount: () => number;
@@ -83,6 +84,16 @@ export const createRealtimeMockServerHarness =
         });
 
         client?.onmessage?.({ data: message });
+      },
+      sendError: (topic, message) => {
+        const envelope = JSON.stringify({
+          topic,
+          seq: 0,
+          type: 'error',
+          payload: { message },
+        });
+
+        client?.onmessage?.({ data: envelope });
       },
       getLastSentMessage: () => sentMessages.at(-1),
       getSentMessages: () => [...sentMessages],

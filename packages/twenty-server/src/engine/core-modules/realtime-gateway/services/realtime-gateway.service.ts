@@ -28,6 +28,10 @@ import {
   type RealtimePresenceMessage,
 } from 'src/engine/core-modules/realtime-gateway/types/realtime-envelope.type';
 import { parseRealtimeTopic } from 'src/engine/core-modules/realtime-gateway/utils/parse-realtime-topic.util';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
+import { isRequestOriginAllowed } from 'src/engine/core-modules/user-session/utils/is-request-origin-allowed.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type Request } from 'express';
 
 type RealtimeSocketState = {
   authContext: RealtimeAuthenticatedSocketContext | null;
@@ -40,8 +44,13 @@ type RealtimeSocketState = {
 const EMPTY_SOCKET_CONTEXT: RealtimeAuthenticatedSocketContext | null = null;
 
 // Raw ws server mounted on the Nest HTTP server (same port) at /realtime.
-// Auth happens at upgrade via the session cookie AND on every subscribe via
-// the re-sent access token, so a stolen upgrade never yields readable data.
+// The upgrade enforces the same origin policy as credentialed HTTP requests
+// (audit F02): cross-origin handshakes cannot carry cookies, so they would
+// never authenticate anyway — rejecting them early keeps that invariant
+// server-side instead of relying on client behavior. Authentication happens
+// per subscribe through the shared HTTP session/JWT resolution, and the
+// result is never cached across subscribes, so a revoked session or removed
+// membership stops new subscriptions immediately.
 @Injectable()
 export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(RealtimeGatewayService.name);
@@ -54,6 +63,8 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
     private readonly topicAuthorizationService: RealtimeTopicAuthorizationService,
     private readonly publisherService: RealtimePublisherService,
     private readonly presenceService: PresenceService,
+    private readonly userSessionCookieService: UserSessionCookieService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   onModuleInit(): void {
@@ -87,6 +98,41 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
         const { pathname } = new URL(request.url ?? '', 'http://localhost');
 
         if (pathname !== REALTIME_WS_PATH) {
+          return;
+        }
+
+        const origin = request.headers.origin;
+
+        // isRequestOriginAllowed expects an express Request for its
+        // same-origin comparison; the ws upgrade carries the same Host and
+        // x-forwarded-proto headers, so a minimal stand-in preserves the
+        // shared policy (including proxy-terminated https) without coupling
+        // the util to socket specifics.
+        const forwardedProto = request.headers['x-forwarded-proto'];
+        const protocol =
+          typeof forwardedProto === 'string'
+            ? forwardedProto.split(',')[0].trim()
+            : 'http';
+
+        const upgradeRequest = {
+          protocol,
+          get: (name: string) => request.headers[name.toLowerCase()],
+        } as unknown as Request;
+
+        if (
+          !isDefined(origin) ||
+          !isRequestOriginAllowed({
+            origin,
+            request: upgradeRequest,
+            twentyConfigService: this.twentyConfigService,
+          })
+        ) {
+          this.logger.warn(
+            `Rejected realtime upgrade from origin ${origin ?? 'missing'}`,
+          );
+
+          socket.destroy();
+
           return;
         }
 
@@ -251,20 +297,21 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
     }
 
     try {
-      const authContext = isDefined(socketState.authContext)
-        ? socketState.authContext
-        : await this.topicAuthorizationService.authenticate(
-            parsed.token ?? this.extractSessionTokenFromUpgradeCookie(request),
-          );
+      // Re-authenticated on every subscribe — never cached — so session
+      // revocation and membership removal take effect on the next message.
+      const authContext = await this.topicAuthorizationService.authenticate(
+        parsed.token ??
+          this.userSessionCookieService.extractSessionTokenFromRequest({
+            headers: { cookie: request.headers.cookie },
+          } as never),
+      );
 
       this.topicAuthorizationService.assertTopicAuthorized(
         authContext,
         parsed.topic,
       );
 
-      if (!isDefined(socketState.authContext)) {
-        socketState.authContext = authContext;
-      }
+      socketState.authContext = authContext;
 
       if (
         socketState.subscriptionsByTopic.size >=
@@ -324,6 +371,7 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
             this.sendError(
               webSocket,
               error instanceof Error ? error.message : 'Subscription rejected',
+              parsed.topic,
             );
           });
       } else {
@@ -338,6 +386,7 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
       this.sendError(
         webSocket,
         error instanceof Error ? error.message : 'Subscription rejected',
+        parsed.topic,
       );
     }
   }
@@ -433,35 +482,6 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private extractSessionTokenFromUpgradeCookie(
-    request: IncomingMessage,
-  ): string | undefined {
-    const cookieHeader = request.headers.cookie;
-
-    if (!isDefined(cookieHeader)) {
-      return undefined;
-    }
-
-    for (const cookiePart of cookieHeader.split(';')) {
-      const separatorIndex = cookiePart.indexOf('=');
-
-      if (separatorIndex === -1) {
-        continue;
-      }
-
-      const cookieName = cookiePart.slice(0, separatorIndex).trim();
-
-      if (
-        cookieName === 'twenty-session' ||
-        cookieName === '__Host-twenty-session'
-      ) {
-        return cookiePart.slice(separatorIndex + 1).trim();
-      }
-    }
-
-    return undefined;
-  }
-
   private sendEnvelope(webSocket: WebSocket, envelope: RealtimeEnvelope): void {
     if (webSocket.readyState !== webSocket.OPEN) {
       return;
@@ -470,9 +490,15 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
     webSocket.send(JSON.stringify(envelope));
   }
 
-  private sendError(webSocket: WebSocket, message: string): void {
+  // The topic is echoed back so the client can attribute the failure to the
+  // subscribe that caused it instead of reporting a bare transport error.
+  private sendError(
+    webSocket: WebSocket,
+    message: string,
+    topic?: string,
+  ): void {
     this.sendEnvelope(webSocket, {
-      topic: '',
+      topic: topic ?? '',
       seq: 0,
       type: 'error',
       payload: { message },

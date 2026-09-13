@@ -330,7 +330,15 @@ export class RealtimeConnectionManager {
       return;
     }
 
-    if (envelope.type !== 'event') {
+    // Error envelopes are attributed to their topic by the server so a
+    // failed subscribe is distinguishable from a transport failure
+    // (connection status stays 'connected'). Untopiced errors are
+    // connection-level and carry no per-topic meaning, so they are dropped.
+    if (envelope.type !== 'event' && envelope.type !== 'error') {
+      return;
+    }
+
+    if (envelope.type === 'error' && !isNonEmptyString(envelope.topic)) {
       return;
     }
 

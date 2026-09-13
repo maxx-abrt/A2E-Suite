@@ -7,6 +7,9 @@ import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-c
 import { REALTIME_REDIS_CHANNEL_PREFIX } from '../realtime-gateway.constants';
 import { serializeRealtimeEnvelope } from '../utils/serialize-realtime-envelope.util';
 
+// Audit F06: subscribeTopic must reject when Redis is unavailable — the
+// gateway turns that rejection into an error envelope instead of acking a
+// subscription that cannot deliver.
 type RealtimeSubscriber = (envelope: {
   topic: string;
   seq: number;
@@ -71,6 +74,8 @@ export class RealtimePublisherService implements OnModuleDestroy {
           `Failed to subscribe redis topic ${redisTopic}`,
           error,
         );
+
+        throw error;
       }
     }
 

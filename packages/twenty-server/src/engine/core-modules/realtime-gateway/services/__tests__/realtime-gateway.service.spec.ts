@@ -4,6 +4,8 @@ import { PresenceService } from 'src/engine/core-modules/realtime-gateway/servic
 import { RealtimeGatewayService } from 'src/engine/core-modules/realtime-gateway/services/realtime-gateway.service';
 import { RealtimePublisherService } from 'src/engine/core-modules/realtime-gateway/services/realtime-publisher.service';
 import { RealtimeTopicAuthorizationService } from 'src/engine/core-modules/realtime-gateway/services/realtime-topic-authorization.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 
 const createService = (httpAdapter: unknown) =>
   new RealtimeGatewayService(
@@ -11,6 +13,8 @@ const createService = (httpAdapter: unknown) =>
     {} as RealtimeTopicAuthorizationService,
     {} as RealtimePublisherService,
     {} as PresenceService,
+    {} as UserSessionCookieService,
+    {} as TwentyConfigService,
   );
 
 describe('RealtimeGatewayService', () => {

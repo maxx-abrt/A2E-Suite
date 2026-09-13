@@ -434,11 +434,12 @@ authorization and persistence checks pass.
       `instance-commands.constant.ts` (fresh installs had no table). Gates:
       21 unit tests (search 6 + share 15) + 4 integration tests green, tsgo
       clean, lint:diff-with-main clean.
-- [ ] **P0.3 Backend/front realtime (after P0.1):** reuse actual HTTP session
+- [x] **P0.3 Backend/front realtime (after P0.1):** reuse actual HTTP session
       and origin policy, revalidate revoked membership, enforce record/channel
       topic rights. Distinguish connection from subscription success; surface
       Redis failure and refetch durable state after reconnect. Never make
-      HttpOnly cookies readable as a workaround (audit F02/F06).
+      HttpOnly cookies readable as a workaround (audit F02/F06). (2026-09-13,
+      see `docs/plan/phases/phase-00-report.md`.)
 - [ ] **P0.4 Platform/app lifecycle (after P0.1):** characterize native
       install/upgrade/uninstall on populated disposable workspaces, hook failure,
       job cleanup and data loss; implement C3 safeguards before presenting

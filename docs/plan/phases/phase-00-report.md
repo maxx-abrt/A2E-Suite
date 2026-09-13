@@ -225,3 +225,84 @@ per area, `NODE_ENV=test` set and the `test` DB reset once) instead of the
 single nx target, or add swap/RAM. The guest 400 vs 200 lesson: a class-level
 guard cannot be bypassed by a method-level `PublicEndpointGuard` — Nest
 evaluates both.
+
+## 2026-09-13 13:45 UTC — Zoo (code agent)
+
+**Task(s):** P0.3 (backend/front realtime — audit F02/F06).
+
+**Status:** P0.3 done.
+
+**What I did (F02 — realtime aligned with the HTTP session contract):**
+- `realtime-gateway/services/realtime-topic-authorization.service.ts`:
+  `authenticate` now accepts real session tokens (`sess_` prefix via
+  `isUserSessionToken`) and resolves them through
+  `UserSessionService.resolveSession` (Redis-cached, revocation-aware, same
+  source as the HTTP path); JWTs are still honored but restricted to
+  `ACCESS` type (refresh/agnostic/API-key tokens rejected). Membership is
+  revalidated on EVERY subscribe through
+  `WorkspaceCacheService.getOrRecompute(workspaceId, ['flatWorkspaceMemberMaps'])`
+  — the same pattern as `jwt.auth.strategy.validateAccessToken` — so a removed
+  member is refused on the next subscribe, not at next reconnect.
+- `realtime-gateway/services/realtime-gateway.service.ts`: the upgrade
+  handshake now runs `isRequestOriginAllowed` (the exact HTTP util) against an
+  express-`Request` shim built from the upgrade request headers
+  (`x-forwarded-proto` honored for TLS-terminating proxies); disallowed or
+  missing origins are logged and the socket destroyed before any ws handshake.
+  The hand-rolled upgrade cookie parser was deleted — the cookie is now
+  extracted with `UserSessionCookieService.extractSessionTokenFromRequest`,
+  and it stays HttpOnly (no front cookie-reading path was introduced).
+- `realtime-gateway.module.ts`: imports `UserSessionModule` +
+  `WorkspaceCacheModule` to provide the two new dependencies.
+
+**What I did (F06 — connection vs subscription success):**
+- `realtime-publisher.service.ts`: a Redis `subscribe` failure no longer
+  resolves a no-op unsubscribe; it propagates after cleanup, so the gateway
+  rejects the subscribe instead of acking.
+- `realtime-gateway.service.ts`: subscribe error envelopes now echo the
+  requested `topic` (previously `topic: ''`), so failures are attributable;
+  the client no longer receives a `subscribed` ack for a topic the server
+  could not actually subscribe to.
+- front `realtimeConnectionManager.ts`: `error` envelopes with a non-empty
+  topic are delivered to that topic's listeners; topic-less envelopes are
+  dropped. Connection status semantics unchanged — a rejected subscription
+  reads as `connected` + per-topic error, not a transport failure.
+- front `useRealtimeTopic.ts`: exposes `lastError` (topic-attributed
+  rejection) separately from `lastEnvelope` (data events); consumers can now
+  distinguish "the topic was refused" from "no data yet".
+
+**Scope decision (recorded):** "record/channel topic rights" is enforced at
+the level that exists today — workspace membership, workspace-scoped topics,
+and per-user inbox scoping (only the owning user's inbox topic is allowed).
+Object/chat publishers do not exist yet (only presence ships), so record-row
+and channel ACL enforcement lands with those publishers (P2/P5); the topic
+authorization seam (`assertTopicAuthorized`) is the single place to extend.
+
+**Reconnect durability note:** `useWorkspacePresence` already refetches the
+roster on the `connected` status event, which is the durable-state refetch
+this task requires; no front change needed there.
+
+**Verification (all run this session):**
+- `npx jest realtime-gateway --config=packages/twenty-server/jest.config.mjs`
+  → 26/26 passed (topic-authorization suite rewritten: session-token path,
+  per-subscribe membership revalidation, non-ACCESS JWT rejection, agnostic
+  rejection; assertTopicAuthorized coverage unchanged and green).
+- `npx jest --config=packages/twenty-front/jest.config.mjs src/modules/realtime`
+  → 12/12 passed, including the new "surfaces a subscription rejection
+  distinctly from connection status" case (status stays `connected`,
+  `lastError` populated, no data event emitted).
+- `npx tsgo -p tsconfig.json --noEmit` in both `twenty-server` and
+  `twenty-front` → clean.
+- oxlint + oxfmt on the changed realtime directories → server clean; front
+  has 8 pre-existing errors in committed files I did not touch
+  (`RealtimeConstants.ts` naked-constant rule, `useRealtimeOfflineQueue.ts`
+  duplicate imports) — left for the owning task, not masked.
+- Not run: real two-process ws handshake against a live server (requires the
+  dev environment); the upgrade-path origin check reuses the HTTP util by
+  construction but has no integration test in this session.
+
+## 2026-09-13 13:50 UTC — Zoo (code agent)
+**Task(s):** P0.3 — independent re-verification of the uncommitted session above before committing.
+**Status:** done (commit).
+**What I did:** re-ran every gate from a clean shell against the working tree; no code changed.
+**Verification:** realtime-gateway server suites 26/26; front `src/modules/realtime` 12/12; `tsgo --noEmit` clean in twenty-server and twenty-front; `nx lint:diff-with-main` clean for both packages. `.env.test` diff inspected: queue-URL isolation comment + `REDIS_QUEUE_URL`, no secrets.
+**For the next agent:** next dependency-ready task is P0.4 (platform/app lifecycle characterization on disposable workspaces). The `.env.test` queue isolation note matters for any integration run alongside a dev worker.

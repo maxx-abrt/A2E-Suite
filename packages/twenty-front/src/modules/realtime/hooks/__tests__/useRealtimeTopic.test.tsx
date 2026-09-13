@@ -100,6 +100,41 @@ describe('useRealtimeTopic', () => {
     expect(onEvent).not.toHaveBeenCalled();
   });
 
+  // F06: a rejected subscription must not read as a transport failure —
+  // the status stays 'connected' while the error surfaces on the hook.
+  it('surfaces a subscription rejection distinctly from connection status', async () => {
+    const onEvent = jest.fn();
+    const statusListener = jest.fn();
+
+    const { result } = renderHook(() =>
+      useRealtimeTopic({ topic: 'workspace:1:presence', onEvent }),
+    );
+
+    realtimeConnectionManager.onStatusChange(statusListener);
+
+    await waitFor(() => {
+      expect(harness.getLastSentMessage()).toContain('workspace:1:presence');
+    });
+
+    act(() => {
+      harness.sendError(
+        'workspace:1:presence',
+        'User is not a member of the workspace',
+      );
+    });
+
+    await waitFor(() => {
+      expect(result.current.lastError).toMatchObject({
+        topic: 'workspace:1:presence',
+        type: 'error',
+      });
+    });
+
+    expect(result.current.lastEnvelope).toBeNull();
+    expect(onEvent).not.toHaveBeenCalled();
+    expect(realtimeConnectionManager.getStatus()).toBe('connected');
+  });
+
   it('re-subscribes after a reconnect', async () => {
     const onEvent = jest.fn();
 
