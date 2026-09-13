@@ -452,9 +452,14 @@ authorization and persistence checks pass.
       function was deleted by an app uninstall now drain instead of burning
       the queue retry budget (`logic-function-trigger.job.ts`). Upstream
       integration suites already cover install-failure rollback and version
-      progression. Still open: published-artifact provisioning on a
-      production-like server, upgrade on a populated workspace with real data
-      loss inspection, dependency preflight for destructive removal.
+      progression. C3 data-loss preflight implemented and accepted: uninstall
+      of an app whose owned objects still hold records is refused with the
+      object names (`application-uninstall-preflight.service.ts`, wired into
+      `uninstallApplication`; failed fresh-install rollback bypasses it);
+      integration 3/3 + unit 5/5 + adjacent uninstall suites 10/10. Still
+      open: published-artifact provisioning on a production-like server,
+      upgrade on a populated workspace with real data-loss inspection,
+      cross-app dependency naming in the preflight refusal.
 - [ ] **P0.5 Release/recovery:** required migration failure blocks deployment;
       rehearse DB/file backup restoration and verify server/worker readiness
       (audit F10). Choose supported DB versions and CI source before release.

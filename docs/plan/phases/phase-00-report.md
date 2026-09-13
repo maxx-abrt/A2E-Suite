@@ -374,3 +374,58 @@ apps/views/workflows naming) is still unimplemented — that is the next code
 task under P0.4, likely needing a new resolver input, not a flag on the
 existing uninstall mutation. Integration runs on this machine: use
 `--runInBand` + `NODE_OPTIONS=--max-old-space-size=6144`.
+
+## 2026-09-13 15:31 UTC — Zoo (code agent)
+**Task(s):** P0.4 — C3 data-loss preflight for app uninstall (finishing the uncommitted session found in the tree).
+**Status:** done (P0.4 remains partial overall; see previous entry's open items).
+**What I did:**
+- Verified every primitive the uncommitted
+  `application-manifest/services/application-uninstall-preflight.service.ts`
+  uses is real: `ObjectRecordCountService.getApproximateRecordCountByTableName`
+  (pg_class reltuples, same source as `getRecordCounts`),
+  `WorkspaceCacheService.getOrRecompute` flat maps, `applicationId` as a
+  scalar survivor on flat entities (only the relation object is omitted),
+  `objectMetadataUniversalIdentifier` as declared universal FK for
+  fieldMetadata/view, `computeObjectTargetTable` ('_'-prefixed live table),
+  `ApplicationExceptionCode.FORBIDDEN`. Call-site audit: resolver uninstall
+  → preflight on; failed fresh-install rollback → `shouldRunDataLossPreflight:
+  false` (deadlock guard); workspace deletion uses the hooks-only path
+  (`runUninstallHooksForWorkspaceDeletion*`), unaffected.
+- Fixed the unit spec: count-map mocks were keyed by `nameSingular` but the
+  service derives the live table name (`_invoice`), so data-holding objects
+  read as empty; also added `applicationUniversalIdentifier` to the flat
+  object fixtures (required by `computeObjectTargetTable`).
+- Fixed the integration spec to be rerunnable and non-polluting: run-unique
+  object name (aborted runs leave non-transactional enum/table leftovers;
+  `coupon` collided on every rerun), records via schema-qualified SQL
+  (per-object GraphQL mutations are not in the booted app's static schema;
+  `createdByName`/`updatedByName` have no defaults), and the refused-uninstall
+  test now completes the real recovery path (delete records → uninstall
+  succeeds) so it never orphans metadata in the shared workspace.
+**Decisions & trade-offs:**
+- Refusal (FORBIDDEN naming the objects) rather than a confirmation flag:
+  C3 says no supported export/retention path exists, so removal of an app
+  holding data must be refused, not presented as safe. Hide remains the
+  containment. A future confirmation/export flow can relax this at the
+  resolver level.
+- Preflight counts only app-owned objects' tables. App-owned fields/views on
+  other apps' objects are computed and returned in the impact payload but do
+  not block (column data loss with zero owned-object records is a metadata
+  concern, not the data-loss refusal this task targets).
+**Verification (all this session):**
+- `npx jest application-uninstall-preflight --config=packages/twenty-server/jest.config.mjs` → 5/5.
+- `npx jest application-manifest --config=packages/twenty-server/jest.config.mjs` → 29 suites, 148/148.
+- Integration (NODE_ENV=test, `--runInBand`, 6 GB heap, seeded `test` DB):
+  new `uninstall-data-loss-preflight.integration-spec.ts` → 3/3; adjacent
+  uninstall suites (logic-function-hook, retry, workspace-deletion hooks,
+  package-file FKs) → 4 suites, 10/10.
+- `cd packages/twenty-server && npx tsgo -p tsconfig.json --noEmit` → clean.
+- `npx nx lint:diff-with-main twenty-server` → success.
+- UNVERIFIED: full 621-spec integration sweep (machine OOM limit, pre-existing);
+  published-artifact provisioning and populated-workspace upgrade remain open.
+**For the next agent:** P0.4 leftovers are (1) production-like
+published-artifact provisioning, (2) populated-workspace upgrade with
+data-loss inspection, (3) naming cross-app dependents (apps referencing this
+app's fields/views) in the preflight refusal — the impact payload already
+computes owned fields/views on foreign objects, so (3) is a small extension.
+Then P0.5 or P1.6a per execution order.

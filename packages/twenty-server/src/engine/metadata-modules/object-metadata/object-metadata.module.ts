@@ -60,6 +60,10 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MostlyEmptyFieldsService,
     ObjectMetadataToolsFactory,
   ],
-  exports: [ObjectMetadataService, ObjectMetadataToolsFactory],
+  exports: [
+    ObjectMetadataService,
+    ObjectMetadataToolsFactory,
+    ObjectRecordCountService,
+  ],
 })
 export class ObjectMetadataModule {}

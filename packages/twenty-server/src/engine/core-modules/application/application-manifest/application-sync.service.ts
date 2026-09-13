@@ -11,6 +11,7 @@ import { v4 } from 'uuid';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
+import { ApplicationUninstallPreflightService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall-preflight.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
@@ -51,6 +52,7 @@ export class ApplicationSyncService {
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly applicationUninstallService: ApplicationUninstallService,
+    private readonly applicationUninstallPreflightService: ApplicationUninstallPreflightService,
     @InjectRepository(FrontComponentEntity)
     private readonly frontComponentRepository: Repository<FrontComponentEntity>,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
@@ -340,14 +342,25 @@ export class ApplicationSyncService {
     workspaceId,
     applicationUniversalIdentifier,
     shouldRunUninstallHook = true,
+    shouldRunDataLossPreflight = true,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
     shouldRunUninstallHook?: boolean;
+    // False only for internal rollback paths (failed fresh install); user
+    // facing uninstall always refuses removal of apps still holding data.
+    shouldRunDataLossPreflight?: boolean;
   }): Promise<WorkspaceMigration> {
     const application = await this.applicationService.findOneApplicationOrThrow(
       { universalIdentifier: applicationUniversalIdentifier, workspaceId },
     );
+
+    if (shouldRunDataLossPreflight) {
+      await this.applicationUninstallPreflightService.assertUninstallAllowed({
+        workspaceId,
+        applicationUniversalIdentifier,
+      });
+    }
 
     if (!application.canBeUninstalled) {
       throw new ApplicationException(

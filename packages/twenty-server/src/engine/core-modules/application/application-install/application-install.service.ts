@@ -423,6 +423,9 @@ export class ApplicationInstallService {
           applicationUniversalIdentifier: universalIdentifier,
           workspaceId: params.workspaceId,
           shouldRunUninstallHook: false,
+          // Failed fresh install rollback: the app never finished installing,
+          // so data-loss refusal would deadlock the rollback itself.
+          shouldRunDataLossPreflight: false,
         });
       }
 
