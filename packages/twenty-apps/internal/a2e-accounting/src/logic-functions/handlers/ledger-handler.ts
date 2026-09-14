@@ -6,8 +6,8 @@ import {
   LEDGER_SYSTEM_KEY,
   type LedgerRowInput,
   type LedgerSourceKind,
-  isLedgerPeriodLocked,
   isLedgerUniqueViolation,
+  isLedgerWriteLocked,
   mergeLedgerCells,
   resolveLedgerUpsertAction,
 } from '../../lib/ledger.ts';
@@ -31,6 +31,7 @@ type LedgerSheet = {
 type LedgerEntry = {
   id: string;
   cells?: Record<string, unknown> | null;
+  entryDate?: string | null;
   deletedAt?: string | null;
 };
 
@@ -71,7 +72,18 @@ export const upsertLedgerRow = async (
   const client = coreClient();
   const sheet = await ensureLedgerSheet(client);
 
-  if (isLedgerPeriodLocked(sheet.periodLockedUntil, input.entryDate)) {
+  // The lock is re-checked after the find because a treasurer can close the
+  // period between this event's read and its write: the early check alone lets
+  // a late replay land on closed books. An update/restore must also refuse when
+  // the ROW's existing date is inside the lock — rewriting history is exactly
+  // what the lock exists to prevent.
+  const isLocked = (existingEntryDate?: string | null): boolean =>
+    isLedgerWriteLocked(sheet.periodLockedUntil, [
+      input.entryDate,
+      existingEntryDate,
+    ]);
+
+  if (isLocked()) {
     console.log(
       `[bilan] Écriture ignorée : exercice clôturé jusqu'au ${sheet.periodLockedUntil}`,
     );
@@ -87,7 +99,7 @@ export const upsertLedgerRow = async (
   const existing = await findOneRecord<LedgerEntry>(
     client,
     'bookEntries',
-    { id: true, cells: true, deletedAt: true },
+    { id: true, cells: true, entryDate: true, deletedAt: true },
     {
       sourceKey: { eq: row.sourceKey },
       or: [
@@ -96,6 +108,14 @@ export const upsertLedgerRow = async (
       ],
     },
   );
+
+  if (isLocked(existing?.entryDate)) {
+    console.log(
+      `[bilan] Écriture ignorée : ligne ${existing?.id} dans l'exercice clôturé jusqu'au ${sheet.periodLockedUntil}`,
+    );
+
+    return 'SKIPPED_LOCKED';
+  }
 
   const data: RecordShape = {
     label: row.label,

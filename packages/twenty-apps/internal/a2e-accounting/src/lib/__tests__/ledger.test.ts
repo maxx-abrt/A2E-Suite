@@ -6,6 +6,7 @@ import {
   buildLedgerSourceKey,
   isLedgerPeriodLocked,
   isLedgerUniqueViolation,
+  isLedgerWriteLocked,
   LEDGER_COLUMNS,
   LEDGER_SYSTEM_KEY,
   MANAGED_LEDGER_COLUMN_IDS,
@@ -115,6 +116,29 @@ test('a locked period rejects entries dated on or before the lock', () => {
   assert.equal(isLedgerPeriodLocked('2026-12-31', '2026-03-04T00:00:00Z'), true);
   assert.equal(isLedgerPeriodLocked('2026-12-31', '2027-01-02T00:00:00Z'), false);
   assert.equal(isLedgerPeriodLocked(undefined, '2026-03-04T00:00:00Z'), false);
+});
+
+test('a write is locked when the new date OR the row date sits in the closed period', () => {
+  // New date inside the lock: the late-replay race.
+  assert.equal(
+    isLedgerWriteLocked('2026-12-31', ['2026-03-04T00:00:00Z', undefined]),
+    true,
+  );
+  // Row already carries a locked-period date: rewriting closed history.
+  assert.equal(
+    isLedgerWriteLocked('2026-12-31', ['2027-02-01T00:00:00Z', '2025-06-01T00:00:00Z']),
+    true,
+  );
+  // Neither date is lockable: normal current-period write.
+  assert.equal(
+    isLedgerWriteLocked('2026-12-31', ['2027-02-01T00:00:00Z', null]),
+    false,
+  );
+  // No lock at all.
+  assert.equal(
+    isLedgerWriteLocked(undefined, ['2026-03-04T00:00:00Z', '2025-06-01T00:00:00Z']),
+    false,
+  );
 });
 
 test('the CSV export escapes separators and quotes', () => {

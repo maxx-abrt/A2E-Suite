@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { readCounterState } from '../numbering.ts';
+import { readCounterState, shouldStampInvoiceNumber } from '../numbering.ts';
 
 test('a well-formed counter passes through unchanged', () => {
   assert.deepEqual(
@@ -54,4 +54,24 @@ test('an empty prefix normalizes to undefined so the caller applies the default'
     ),
     { prefix: undefined, next: 4 },
   );
+});
+
+test('only an unnumbered issued invoice is a stamp candidate', () => {
+  assert.equal(shouldStampInvoiceNumber({ status: 'SENT' }), true);
+  assert.equal(
+    shouldStampInvoiceNumber({ number: '', status: 'PARTIALLY_PAID' }),
+    true,
+  );
+  assert.equal(
+    shouldStampInvoiceNumber({ number: '   ', status: 'PAID' }),
+    true,
+  );
+
+  assert.equal(
+    shouldStampInvoiceNumber({ number: 'FA-2026-0001', status: 'SENT' }),
+    false,
+  );
+  assert.equal(shouldStampInvoiceNumber({ status: 'DRAFT' }), false);
+  assert.equal(shouldStampInvoiceNumber({ status: 'CANCELLED' }), false);
+  assert.equal(shouldStampInvoiceNumber({ status: null }), false);
 });

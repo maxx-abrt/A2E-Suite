@@ -4,6 +4,7 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 
 import { FRONT_COMPONENT_IDS } from '../constants/universal-identifiers.ts';
+import { toMicros } from '../lib/money.ts';
 
 // LA SAISIE RAPIDE.
 //
@@ -250,7 +251,9 @@ export const QuickEntry = () => {
             data: {
               label: label.trim(),
               entryType,
-              amountMicros: Math.round(parsedAmount * 1_000_000),
+              // Money rounds half away from zero everywhere in Bilan; raw
+              // Math.round is half-toward-+∞ and would disagree on -x.5 cents.
+              amountMicros: toMicros(parsedAmount),
               entryDate,
               paymentMethod,
               vatRate: Number.parseFloat(vatRate.replace(',', '.')) || 0,

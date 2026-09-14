@@ -107,6 +107,7 @@ export const LOGIC_FUNCTION_IDS = {
   refreshSubventionsNow: 'b11a0000-0012-4000-8000-000000000009',
   scoreSubventions: 'b11a0000-0012-4000-8000-00000000000a',
   renderFiche: 'b11a0000-0012-4000-8000-00000000000b',
+  stampInvoiceNumber: 'b11a0000-0012-4000-8000-00000000000c',
 } as const;
 
 export const FRONT_COMPONENT_IDS = {

@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { allocateDocumentNumber } from '../handlers/numbering-handler.ts';
+import {
+  allocateDocumentNumber,
+  stampInvoiceNumberIssued,
+} from '../handlers/numbering-handler.ts';
 
 // The CAS contract with the Core API: `updateManyOrgProfiles` renders the
 // caller filter into the UPDATE WHERE and returns only the rows it wrote.
@@ -191,4 +194,169 @@ test('giving up after the attempt cap throws instead of guessing', async () => {
     allocateDocumentNumber('invoice', new Date(), client),
     /Numérotation contestée/,
   );
+});
+
+// --- Issuance flow (stamp-invoice-number) ---
+
+const buildIssuingClient = (options: {
+  storedCounter: number | null;
+  mutations: {
+    name: string;
+    data: Record<string, unknown>;
+    args: Record<string, unknown>;
+  }[];
+}) => {
+  let stored = options.storedCounter;
+
+  return {
+    query: async () => ({
+      orgProfiles: {
+        edges: [
+          {
+            node: {
+              id: 'profile-1',
+              invoiceNumberPrefix: 'FA-{{YYYY}}-',
+              invoiceNextNumber: stored,
+            },
+          },
+        ],
+      },
+    }),
+    mutation: async (selection: Record<string, unknown>) => {
+      const entries = selection as Record<
+        string,
+        { __args: Record<string, unknown> }
+      >;
+      const mutationName = Object.keys(entries).find(
+        (name) => name !== '__args',
+      ) as string;
+
+      options.mutations.push({
+        name: mutationName,
+        data: entries[mutationName].__args.data as Record<string, unknown>,
+        args: entries[mutationName].__args,
+      });
+
+      if (mutationName === 'updateOrgProfiles') {
+        const args = entries.updateOrgProfiles.__args as {
+          filter: Record<string, unknown>;
+          data: Record<string, unknown>;
+        };
+
+        const expected = (
+          (args.filter.invoiceNextNumber as Record<string, unknown>).or as Record<
+            string,
+            unknown
+          >[]
+        )[0].eq as number;
+
+        const matches = stored === null ? true : stored === expected;
+
+        if (!matches) {
+          return { updateOrgProfiles: [] };
+        }
+
+        stored = expected + 1;
+
+        return { updateOrgProfiles: [{ id: 'profile-1' }] };
+      }
+
+      return { updateInvoice: { id: 'invoice-1' } };
+    },
+  };
+};
+
+test('an invoice issued by a direct API write is stamped server-side, once', async () => {
+  const mutations: {
+    name: string;
+    data: Record<string, unknown>;
+    args: Record<string, unknown>;
+  }[] = [];
+
+  const client = buildIssuingClient({ storedCounter: 7, mutations });
+
+  const result = await stampInvoiceNumberIssued(
+    'invoice-1',
+    { number: '', status: 'SENT' },
+    'invoice.created',
+    client,
+  );
+
+  assert.deepEqual(result, { stamped: 'FA-2026-0007' });
+
+  const stamped = mutations.find((mutation) => mutation.name === 'updateInvoice');
+
+  assert.deepEqual(stamped?.data, { number: 'FA-2026-0007' });
+  assert.equal(
+    mutations.filter((mutation) => mutation.name === 'updateOrgProfiles').length,
+    1,
+  );
+});
+
+test('a DRAFT creation is skipped and its issuing update triggers the stamp', async () => {
+  const mutations: {
+    name: string;
+    data: Record<string, unknown>;
+    args: Record<string, unknown>;
+  }[] = [];
+
+  const client = buildIssuingClient({ storedCounter: 9, mutations });
+
+  const created = await stampInvoiceNumberIssued(
+    'invoice-1',
+    { number: null, status: 'DRAFT' },
+    'invoice.created',
+    client,
+  );
+
+  assert.deepEqual(created, { skipped: 'draft-created' });
+  assert.equal(mutations.length, 0);
+
+  const issued = await stampInvoiceNumberIssued(
+    'invoice-1',
+    { number: null, status: 'SENT' },
+    'invoice.updated',
+    client,
+  );
+
+  assert.deepEqual(issued, { stamped: 'FA-2026-0009' });
+});
+
+test('an already-numbered invoice is never re-stamped, even when edited', async () => {
+  const mutations: {
+    name: string;
+    data: Record<string, unknown>;
+    args: Record<string, unknown>;
+  }[] = [];
+
+  const client = buildIssuingClient({ storedCounter: 3, mutations });
+
+  const result = await stampInvoiceNumberIssued(
+    'invoice-1',
+    { number: 'FA-2026-0001', status: 'PAID' },
+    'invoice.updated',
+    client,
+  );
+
+  assert.deepEqual(result, { skipped: 'already-numbered-or-draft' });
+  assert.equal(mutations.length, 0);
+});
+
+test('a legacy unnumbered invoice is stamped on its next update', async () => {
+  const mutations: {
+    name: string;
+    data: Record<string, unknown>;
+    args: Record<string, unknown>;
+  }[] = [];
+
+  const client = buildIssuingClient({ storedCounter: 11, mutations });
+
+  const result = await stampInvoiceNumberIssued(
+    'invoice-1',
+    { number: null, status: 'OVERDUE' },
+    'invoice.updated',
+    client,
+  );
+
+  assert.deepEqual(result, { stamped: 'FA-2026-0011' });
 });

@@ -16,6 +16,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
@@ -45,6 +46,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
@@ -177,8 +179,14 @@ export const SettingsApplicationDetails = () => {
         message: t`Application successfully uninstalled.`,
       });
       navigate(SettingsPath.Applications);
-    } catch {
-      enqueueErrorSnackBar({ message: t`Error uninstalling application.` });
+    } catch (error) {
+      // Server C3 refusals (data loss, dependents) carry a specific
+      // explanation; falling back to a generic message would hide it.
+      enqueueErrorSnackBar({
+        message: CombinedGraphQLErrors.is(error)
+          ? getErrorMessageFromApolloError(error)
+          : t`Error uninstalling application.`,
+      });
     } finally {
       setIsUninstalling(false);
     }

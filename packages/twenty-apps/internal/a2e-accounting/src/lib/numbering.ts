@@ -93,3 +93,30 @@ export const readCounterState = (
 export const DEFAULT_INVOICE_PREFIX = 'FA-{{YYYY}}-';
 export const DEFAULT_QUOTE_PREFIX = 'DE-{{YYYY}}-';
 export const DEFAULT_RECEIPT_PREFIX = 'RF-{{YYYY}}-';
+
+// The number belongs to the issued invoice, not the draft (art. L102 B): a
+// cancelled draft never burns one, and any non-DRAFT status — including one
+// written directly through the API — stamps exactly once.
+export const INVOICE_STAMP_STATUSES = [
+  'SENT',
+  'PARTIALLY_PAID',
+  'PAID',
+  'OVERDUE',
+] as const;
+
+export type InvoiceStampInput = {
+  number?: string | null;
+  status?: string | null;
+};
+
+export const shouldStampInvoiceNumber = (
+  invoice: InvoiceStampInput,
+): boolean => {
+  const hasNumber =
+    typeof invoice.number === 'string' && invoice.number.trim().length > 0;
+
+  return (
+    !hasNumber &&
+    (INVOICE_STAMP_STATUSES as readonly string[]).includes(invoice.status ?? '')
+  );
+};

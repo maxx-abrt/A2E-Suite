@@ -23,7 +23,7 @@ export type TemplateCopyPayload = {
   };
 };
 
-const TEMPLATE_TITLE_PREFIX = 'Modèle — ';
+export const TEMPLATE_TITLE_PREFIX = 'Modèle — ';
 
 // Same opening position the browser uses for every new root document; callers
 // pass a fractional index (twenty-shared generateFractionalIndexBetween) when

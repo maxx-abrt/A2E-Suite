@@ -1,8 +1,15 @@
 import {
   buildDocumentNumber,
   readCounterState,
+  shouldStampInvoiceNumber,
 } from '../../lib/numbering.ts';
-import { coreClient, findOneRecord, type RecordShape } from '../utils/records.ts';
+import { INVOICE_STATUS } from '../../constants/field-vocabulary.ts';
+import {
+  coreClient,
+  findOneRecord,
+  updateRecord,
+  type RecordShape,
+} from '../utils/records.ts';
 
 // L'ALLOCATEUR DE NUMÉROS.
 //
@@ -108,6 +115,44 @@ export type CoreClientLike = Pick<
   ReturnType<typeof coreClient>,
   'query' | 'mutation'
 >;
+
+// The full issuance flow, extracted from the logic function so the unit
+// runner can exercise it without importing `twenty-sdk/define`.
+export type InvoiceNumberFlowResult =
+  | { skipped: string }
+  | { stamped: string };
+
+export const stampInvoiceNumberIssued = async (
+  recordId: string,
+  record: { number?: string | null; status?: string | null },
+  eventName: string,
+  client: CoreClientLike = coreClient(),
+): Promise<InvoiceNumberFlowResult> => {
+  const isCreated = eventName.endsWith('.created');
+
+  // A DRAFT creation never burns a number; the update that issues it does.
+  if (isCreated && record.status === INVOICE_STATUS.DRAFT) {
+    return { skipped: 'draft-created' };
+  }
+
+  // On updates the invariant is re-checked instead of re-allocated, so a
+  // record created before this function existed is stamped the first time it
+  // is touched — and an already-numbered invoice never gets a second number.
+  if (!isCreated && !shouldStampInvoiceNumber(record)) {
+    return { skipped: 'already-numbered-or-draft' };
+  }
+
+  const allocated = await allocateDocumentNumber('invoice', new Date(), client);
+
+  await updateRecord(
+    client as ReturnType<typeof coreClient>,
+    'updateInvoice',
+    recordId,
+    { number: allocated.number },
+  );
+
+  return { stamped: allocated.number };
+};
 
 export const allocateDocumentNumber = async (
   kind: DocumentKind,

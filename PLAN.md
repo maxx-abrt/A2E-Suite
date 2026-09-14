@@ -571,16 +571,26 @@ persona, and the conventions every later phase relies on.
       student/journal/team/non-profit/small-business bundles with previewed
       contents and only compatible ready apps; keep CRM-only available. These
       persona bundle contents are proposals, not observed shipped presets.
-- [ ] **P1.6e Workspace reuse (after P1.6c):** save/edit/duplicate authorized
+- [~] **P1.6e Workspace reuse (after P1.6c):** save/edit/duplicate authorized
       content templates, instantiate from first-open and later gallery, delete
       template without deleting copies; permission-aware attachment/ID remapping.
       Repeat on an existing customized workspace and verify no configuration loss.
+      — 2026-09-14 orchestrator: save→template + duplicate payloads and browser
+      buttons verified (unit 42/42, live 0.2.1 install on scratch); remainder
+      open (gallery/first-open entrypoints, populated-workspace regression);
+      phase-01-report 2026-09-14 entries.
 
 ### P1.7 Lifecycle and team entry (R07/R09/R15)
-- [ ] **P1.7a App management (after P0.4/P1.6c):** install later, readiness,
+- [~] **P1.7a App management (after P0.4/P1.6c):** install later, readiness,
       dependency impact, export/confirmation, hide versus uninstall labels and
       blocked-removal explanation per C3. Test upgrade, failure/retry/reinstall;
       no promise of data restoration from reinstall.
+      — 2026-09-14 orchestrator: labels/wording + server `userFriendlyMessage`
+      refusals land (spec 8/8, related front 41/41), but the C3 preflight
+      itself FAILS live on never-ANALYZEd tables (reltuples=-1 → count 0 →
+      uninstall proceeds and drops data) — refusal path unverifiable until
+      fixed; remaining legs (readiness, dependency display, export) untouched;
+      phase-01-report 2026-09-14 entries.
 - [ ] **P1.7b Team entry (after P1.6c/P0.2):** invitations join the configured
       workspace; member/viewer/admin matrix, role changes and removed-member
       behavior apply to templates, projects, search, tools and shares. Preserve
@@ -940,12 +950,24 @@ No accounting server-domain module exists at baseline. Start with the existing
 14-object manifest and repair, not a second finance implementation.
 
 ### P7.0 Safety gate (after P0; before P7 expansion)
-- [ ] Verify schema/relations on fresh and populated installs; transactional
+- [~] Verify schema/relations on fresh and populated installs; transactional
       ledger replay/uniqueness recovery, invoice numbering, money/rounding,
       period-close races and alternate API writes (audit F12, C6).
-- [ ] Implement protected organization bank data and role/field access; review
+      — 2026-09-14 orchestrator: app-side code verified green (unit 96/96,
+      typecheck, lint, manifest build) incl. issuance stamping and lock
+      re-check; **BLOCKED live**: a2e-accounting 0.1.0 not installable
+      (38 manifest sync errors — multi-values settings, relation targets,
+      reserved names address/links, view-field refs, unique TEXT index);
+      alternate-API stamping and concurrent proofs unverified; phase-04-report
+      2026-09-14 entries.
+- [~] Implement protected organization bank data and role/field access; review
       export/retention/uninstall behavior with finance/privacy reviewers.
       Field descriptions and UI locks are not security enforcement.
+      — 2026-09-14 orchestrator: server-enforced fieldPermissions shipped and
+      manifest-verified (both roles deny iban/bic; finance-user assignable);
+      ORM guard chain source-verified; live role-assignment proof BLOCKED by
+      the same install failure above; reviewer sign-off pending; phase-04-report
+      2026-09-14 entries.
 - [ ] Resolve catalogue storage scope and CERFA report/receipt terminology
       (C6/D03/D04). Financial compliance is not certified by reference code.
 # P7 — Accounting & Finance (full A2EMoney/Bilan port)

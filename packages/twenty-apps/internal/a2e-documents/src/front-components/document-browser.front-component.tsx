@@ -11,6 +11,10 @@ import {
 } from '../lib/document-tree.ts';
 import { buildAppendPosition } from '../lib/fractional-position.ts';
 import { buildTemplateCopyPayload } from '../lib/instantiate-template.ts';
+import {
+  buildSaveAsTemplatePayload,
+  buildTemplateDuplicatePayload,
+} from '../lib/save-document-as-template.ts';
 import { isPastTrashRetention } from '../lib/trash-retention.ts';
 
 // LE NAVIGATEUR DE DOCUMENTS.
@@ -103,6 +107,7 @@ const DocumentBrowser = () => {
               isFavorite: true,
               archivedAt: true,
               position: true,
+              content: { blocknote: true, markdown: true },
               children: {
                 __args: {
                   orderBy: [{ position: 'AscNullsFirst' }, { title: 'Asc' }],
@@ -151,6 +156,59 @@ const DocumentBrowser = () => {
               kind: copyPayload.kind,
               position: copyPayload.position,
               content: copyPayload.content,
+            },
+          ],
+        },
+        id: true,
+      },
+    } as never);
+
+    await loadDocuments();
+  };
+
+  // Save-as-template = copy the document body into a fresh TEMPLATE record:
+  // promoting never moves the source, and editing either side afterwards
+  // stays independent (C1 reuse contract).
+  const saveDocumentAsTemplate = async (
+    documentNode: DocumentNode,
+  ): Promise<void> => {
+    const client = new CoreApiClient();
+    const templatePayload = buildSaveAsTemplatePayload(documentNode);
+
+    await client.mutation({
+      createDocuments: {
+        __args: {
+          data: [
+            {
+              title: templatePayload.title,
+              kind: templatePayload.kind,
+              position: templatePayload.position,
+              content: templatePayload.content,
+            },
+          ],
+        },
+        id: true,
+      },
+    } as never);
+
+    await loadDocuments();
+  };
+
+  const duplicateTemplate = async (
+    templateDocument: DocumentNode,
+  ): Promise<void> => {
+    const client = new CoreApiClient();
+    const duplicatePayload = buildTemplateDuplicatePayload(templateDocument);
+
+    await client.mutation({
+      createDocuments: {
+        __args: {
+          data: [
+            {
+              title: duplicatePayload.title,
+              kind: duplicatePayload.kind,
+              position: duplicatePayload.position,
+              content: duplicatePayload.content,
             },
           ],
         },
@@ -408,6 +466,8 @@ const DocumentBrowser = () => {
                 onOpen={openDocument}
                 onCreateChild={createChild}
                 onInstantiate={instantiateTemplate}
+                onSaveAsTemplate={saveDocumentAsTemplate}
+                onDuplicateTemplate={duplicateTemplate}
                 onShare={shareDocument}
                 onArchive={archiveDocument}
                 onMove={moveDocument}
@@ -551,6 +611,8 @@ type DocumentTreeItemProps = {
   onOpen: (documentId: string) => void;
   onCreateChild: (parentDocumentId: string | null) => Promise<void>;
   onInstantiate: (templateDocument: DocumentNode) => Promise<void>;
+  onSaveAsTemplate: (documentNode: DocumentNode) => Promise<void>;
+  onDuplicateTemplate: (templateDocument: DocumentNode) => Promise<void>;
   onShare: (documentNode: DocumentNode) => Promise<void>;
   onArchive: (documentNode: DocumentNode) => Promise<void>;
   onMove: (options: {
@@ -571,6 +633,8 @@ const DocumentTreeItem = ({
   onOpen,
   onCreateChild,
   onInstantiate,
+  onSaveAsTemplate,
+  onDuplicateTemplate,
   onShare,
   onArchive,
   onMove,
@@ -657,21 +721,39 @@ const DocumentTreeItem = ({
           + sous-document
         </button>
         {documentNode.kind === DOCUMENT_KIND.TEMPLATE ? (
-          <button
-            type="button"
-            onClick={() => onInstantiate(documentNode)}
-            style={ghostButtonStyle}
-          >
-            dupliquer
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={() => onInstantiate(documentNode)}
+              style={ghostButtonStyle}
+            >
+              utiliser
+            </button>
+            <button
+              type="button"
+              onClick={() => onDuplicateTemplate(documentNode)}
+              style={ghostButtonStyle}
+            >
+              dupliquer
+            </button>
+          </>
         ) : (
-          <button
-            type="button"
-            onClick={() => onShare(documentNode)}
-            style={ghostButtonStyle}
-          >
-            partager
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={() => onSaveAsTemplate(documentNode)}
+              style={ghostButtonStyle}
+            >
+              créer un modèle
+            </button>
+            <button
+              type="button"
+              onClick={() => onShare(documentNode)}
+              style={ghostButtonStyle}
+            >
+              partager
+            </button>
+          </>
         )}
         <button
           type="button"
@@ -724,6 +806,8 @@ const DocumentTreeItem = ({
                 onOpen={onOpen}
                 onCreateChild={onCreateChild}
                 onInstantiate={onInstantiate}
+                onSaveAsTemplate={onSaveAsTemplate}
+                onDuplicateTemplate={onDuplicateTemplate}
                 onShare={onShare}
                 onArchive={onArchive}
                 onMove={onMove}

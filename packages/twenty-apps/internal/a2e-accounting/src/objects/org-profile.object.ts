@@ -11,10 +11,11 @@ import {
 //
 // KNOWN LIMITATION (logged in the phase report): iban/bic are stored as plain
 // metadata text. Encryption at rest requires a server-side domain module
-// (twenty-server secret-encryption), which an app manifest cannot reach. Until
-// P7.1e ships that module, these two fields are gated behind the
-// `bilan.finance.settings` permission flag and MUST NOT be surfaced in any
-// default view.
+// (twenty-server secret-encryption), which an app manifest cannot reach.
+// Protection today is server-enforced role denial: both Bilan roles declare
+// fieldPermissions that hide iban/bic from reads and writes (see
+// roles/finance-user.role.ts), so only a workspace admin sees them. These two
+// fields MUST NOT be surfaced in any default view.
 export default defineObject({
   universalIdentifier: OBJECT_IDS.orgProfile,
   nameSingular: 'orgProfile',
@@ -169,7 +170,7 @@ export default defineObject({
       name: 'iban',
       label: 'IBAN',
       description:
-        'Donnée sensible. Restreindre l’accès via le rôle Bilan ; le chiffrement au repos arrive avec le module serveur P7.1e.',
+        'Donnée bancaire protégée : lecture et écriture refusées au niveau serveur pour les rôles Bilan (utilisateur et fonctions). Seul un administrateur d’espace de travail peut la consulter.',
       icon: 'IconBuildingBank',
       isNullable: true,
     },
@@ -178,7 +179,7 @@ export default defineObject({
       type: FieldType.TEXT,
       name: 'bic',
       label: 'BIC',
-      description: 'Donnée sensible, même restriction que l’IBAN.',
+      description: 'Donnée bancaire protégée, même restriction que l’IBAN.',
       icon: 'IconBuildingBank',
       isNullable: true,
     },

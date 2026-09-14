@@ -309,6 +309,11 @@ describe('ApplicationUninstallPreflightService', () => {
       ).rejects.toMatchObject({
         code: ApplicationExceptionCode.FORBIDDEN,
         message: expect.stringContaining('still holds data'),
+        userFriendlyMessage: expect.objectContaining({
+          values: expect.objectContaining({
+            objectsWithDataSummary: 'invoice',
+          }),
+        }),
       });
     });
 
@@ -346,6 +351,11 @@ describe('ApplicationUninstallPreflightService', () => {
       ).rejects.toMatchObject({
         code: ApplicationExceptionCode.FORBIDDEN,
         message: expect.stringContaining(OTHER_APP_NAME),
+        userFriendlyMessage: expect.objectContaining({
+          values: expect.objectContaining({
+            dependentSummary: expect.stringContaining(OTHER_APP_NAME),
+          }),
+        }),
       });
     });
 

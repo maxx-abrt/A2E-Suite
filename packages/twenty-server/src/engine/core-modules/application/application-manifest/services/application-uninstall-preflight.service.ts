@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -7,7 +8,6 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-maps.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-maps.type';
-import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
 
 import {
   ApplicationException,
@@ -15,9 +15,6 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { ObjectRecordCountService } from 'src/engine/metadata-modules/object-metadata/object-record-count.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -323,10 +320,17 @@ export class ApplicationUninstallPreflightService {
     // C3: no supported export/retention path exists yet, so removing an app
     // holding data is refused rather than presented as a safe action. Hide
     // (navigation preference) remains the supported containment.
+    const objectsWithDataSummary = objectsWithData.join(', ');
+
     if (objectsWithData.length > 0) {
       throw new ApplicationException(
-        `Application ${applicationUniversalIdentifier} still holds data in objects: ${objectsWithData.join(', ')}. Export the data or empty the objects before uninstalling.`,
+        `Application ${applicationUniversalIdentifier} still holds data in objects: ${objectsWithDataSummary}. Export the data or empty the objects before uninstalling.`,
         ApplicationExceptionCode.FORBIDDEN,
+        {
+          // The generic FORBIDDEN fallback ("no permission") is misleading
+          // here: the caller IS allowed, the removal is blocked by C3.
+          userFriendlyMessage: msg`Uninstall is blocked because this application still holds data (${objectsWithDataSummary}). Export or delete these records first: uninstalling deletes them permanently, and reinstalling will not restore them. To keep the data while hiding the app, remove it from your navigation instead.`,
+        },
       );
     }
 
@@ -353,6 +357,9 @@ export class ApplicationUninstallPreflightService {
       throw new ApplicationException(
         `Application ${applicationUniversalIdentifier} cannot be uninstalled because other applications depend on it: ${dependentSummary}.`,
         ApplicationExceptionCode.FORBIDDEN,
+        {
+          userFriendlyMessage: msg`This application cannot be uninstalled because other applications depend on it: ${dependentSummary}. Uninstall or detach the dependent applications first.`,
+        },
       );
     }
 

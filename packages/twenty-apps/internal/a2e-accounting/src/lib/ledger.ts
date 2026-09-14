@@ -178,6 +178,20 @@ export const isLedgerPeriodLocked = (
   return isoDay(entryDate) <= isoDay(periodLockedUntil);
 };
 
+// A write touches closed books if EITHER date falls inside the lock: the new
+// date, or the date the row already carries (rewriting or reviving a locked
+// row is as much a closed-period edit as inserting one). Non-string dates
+// (never-booked rows) are simply not lockable.
+export const isLedgerWriteLocked = (
+  periodLockedUntil: string | null | undefined,
+  entryDates: (string | null | undefined)[],
+): boolean =>
+  entryDates.some(
+    (entryDate) =>
+      typeof entryDate === 'string' &&
+      isLedgerPeriodLocked(periodLockedUntil, entryDate),
+  );
+
 export const toCsv = (
   columns: LedgerColumn[],
   rows: Record<string, unknown>[],

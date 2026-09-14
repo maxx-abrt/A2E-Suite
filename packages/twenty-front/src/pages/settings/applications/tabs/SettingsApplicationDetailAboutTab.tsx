@@ -255,10 +255,22 @@ export const SettingsApplicationDetailAboutTab = ({
           modalInstanceId={UNINSTALL_APPLICATION_MODAL_ID}
           title={t`Uninstall Application?`}
           subtitle={
-            <Trans>
-              Please type {`"${confirmationValue}"`} to confirm you want to
-              uninstall this application.
-            </Trans>
+            <>
+              <Trans>
+                Uninstalling permanently deletes this application and its
+                records. Reinstalling will not restore deleted data.
+              </Trans>
+              <br />
+              <Trans>
+                To keep your data but stop seeing this app, remove it from your
+                navigation instead.
+              </Trans>
+              <br />
+              <Trans>
+                Please type {`"${confirmationValue}"`} to confirm you want to
+                uninstall this application.
+              </Trans>
+            </>
           }
           onConfirmClick={onUninstall}
           confirmButtonText={t`Uninstall`}
