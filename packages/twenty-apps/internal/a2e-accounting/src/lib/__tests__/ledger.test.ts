@@ -5,10 +5,12 @@ import {
   buildLedgerRow,
   buildLedgerSourceKey,
   isLedgerPeriodLocked,
+  isLedgerUniqueViolation,
   LEDGER_COLUMNS,
   LEDGER_SYSTEM_KEY,
   MANAGED_LEDGER_COLUMN_IDS,
   mergeLedgerCells,
+  resolveLedgerUpsertAction,
   toCsv,
 } from '../ledger.ts';
 
@@ -77,6 +79,36 @@ test('a merge on a row that never had a comment yields an empty comment', () => 
   const merged = mergeLedgerCells(undefined, buildLedgerRow(input).cells);
 
   assert.equal(merged.comment, '');
+});
+
+test('an upsert merges a live row in place', () => {
+  assert.equal(resolveLedgerUpsertAction({ deletedAt: null }), 'UPDATE');
+  assert.equal(resolveLedgerUpsertAction({}), 'UPDATE');
+});
+
+test('an upsert revives a retired row instead of duplicating it', () => {
+  assert.equal(
+    resolveLedgerUpsertAction({ deletedAt: '2026-08-01T00:00:00Z' }),
+    'RESTORE',
+  );
+});
+
+test('a row the find never saw is created through the race-recovery path', () => {
+  assert.equal(resolveLedgerUpsertAction(undefined), 'CREATE_WITH_RECOVERY');
+});
+
+test('the unique-violation detector matches the server error wording', () => {
+  assert.equal(
+    isLedgerUniqueViolation(
+      new Error(
+        'A duplicate entry was detected: unique constraint source_key was violated',
+      ),
+    ),
+    true,
+  );
+  assert.equal(isLedgerUniqueViolation(new Error('code 23505')), true);
+  assert.equal(isLedgerUniqueViolation(new Error('network down')), false);
+  assert.equal(isLedgerUniqueViolation('boom'), false);
 });
 
 test('a locked period rejects entries dated on or before the lock', () => {

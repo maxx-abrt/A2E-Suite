@@ -11,7 +11,14 @@ const A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER =
   'b11a0000-0000-4000-8000-000000000001';
 
 export type WorkspaceTemplateDefinition = {
+  // Integer bumped whenever the definition changes meaningfully (app set,
+  // managed nav rows, samples); recorded in setup-operation results so a
+  // client can detect stale previews (P1.6a contract §1).
+  version: number;
   applicationUniversalIdentifiers: string[];
+  // Apps a user may deselect at setup; every other preset app is required.
+  // Empty until P1.6d marks per-app optionality.
+  optionalApplicationUniversalIdentifiers: string[];
   // Standard navigation rows hidden for CRM-off presets; templates hide by
   // deleting the workspace-wide row (navigation menu items are DB rows).
   hiddenStandardNavigationMenuItemUniversalIdentifiers: string[];
@@ -23,14 +30,18 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
   WorkspaceTemplateDefinition
 > = {
   [WorkspaceTemplate.CRM]: {
+    version: 1,
     applicationUniversalIdentifiers: [],
+    optionalApplicationUniversalIdentifiers: [],
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [],
     sampleContentEnabled: false,
   },
   [WorkspaceTemplate.INDIVIDUAL]: {
+    version: 1,
     applicationUniversalIdentifiers: [
       A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER,
     ],
+    optionalApplicationUniversalIdentifiers: [],
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [
       '20202020-b001-4b01-8b01-c0aba11c0001',
       '20202020-b005-4b05-8b05-c0aba11c0005',
@@ -39,9 +50,11 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
     sampleContentEnabled: false,
   },
   [WorkspaceTemplate.STUDENT]: {
+    version: 1,
     applicationUniversalIdentifiers: [
       A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER,
     ],
+    optionalApplicationUniversalIdentifiers: [],
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [
       '20202020-b001-4b01-8b01-c0aba11c0001',
       '20202020-b005-4b05-8b05-c0aba11c0005',
@@ -50,25 +63,31 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
     sampleContentEnabled: false,
   },
   [WorkspaceTemplate.TEAM]: {
+    version: 1,
     applicationUniversalIdentifiers: [
       A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER,
     ],
+    optionalApplicationUniversalIdentifiers: [],
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [],
     sampleContentEnabled: false,
   },
   [WorkspaceTemplate.NON_PROFIT]: {
+    version: 1,
     applicationUniversalIdentifiers: [
       A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER,
       A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER,
     ],
+    optionalApplicationUniversalIdentifiers: [],
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [],
     sampleContentEnabled: false,
   },
   [WorkspaceTemplate.SMALL_BUSINESS]: {
+    version: 1,
     applicationUniversalIdentifiers: [
       A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER,
       A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER,
     ],
+    optionalApplicationUniversalIdentifiers: [],
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [],
     sampleContentEnabled: false,
   },

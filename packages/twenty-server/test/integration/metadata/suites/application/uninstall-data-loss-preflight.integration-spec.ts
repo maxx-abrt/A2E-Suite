@@ -1,4 +1,5 @@
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
+import { recreateDevelopmentApplication } from 'test/integration/metadata/suites/application/utils/recreate-development-application.util';
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -9,7 +10,6 @@ import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { type ObjectManifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { type RelationType as ServerRelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -40,7 +40,18 @@ const buildManifest = () =>
   buildBaseManifest({
     appId: TEST_APP_ID,
     roleId: TEST_ROLE_ID,
-    overrides: { objects: [TEST_OBJECT] },
+    // role labels are workspace-unique; the run-unique suffix avoids
+    // collisions with leftovers of aborted runs
+    overrides: {
+      objects: [TEST_OBJECT],
+      roles: [
+        {
+          universalIdentifier: TEST_ROLE_ID,
+          label: `Preflight Role ${OBJECT_NAME_SUFFIX}`,
+          description: 'A test role',
+        },
+      ],
+    },
   });
 
 // A second application owning an object with a relation field targeting the
@@ -220,6 +231,68 @@ describe('Uninstall application data-loss preflight', () => {
 
     expect(errors).toBeUndefined();
     expect(data?.uninstallApplication).toBe(true);
+  }, 60000);
+
+  // C3: reinstall restores supported defaults, not deleted data. The same
+  // manifest (fixed universal identifiers) re-syncs after a completed
+  // uninstall; the object's table is re-created empty, proving nothing was
+  // retained or restored.
+  it('reinstalls the same manifest after a completed uninstall, starting from empty data', async () => {
+    // setupApplicationForSync leaves fake timers active; the reinstall's
+    // GraphQL calls need the real clock
+    jest.useRealTimers();
+
+    await insertCouponRecord();
+
+    const uninstall = await uninstallApplication({
+      universalIdentifier: TEST_APP_ID,
+      expectToFail: false,
+    });
+
+    expect(uninstall.errors).toBeUndefined();
+    expect(uninstall.data?.uninstallApplication).toBe(true);
+
+    const tableGone = await globalThis.testDataSource.query(
+      `SELECT table_schema FROM information_schema.tables WHERE table_name = $1`,
+      [`_${TEST_OBJECT.nameSingular}`],
+    );
+
+    expect(tableGone).toHaveLength(0);
+
+    // the uninstall removed the development application row, so the
+    // reinstall re-creates it (the registration survived the uninstall)
+    await recreateDevelopmentApplication({
+      applicationUniversalIdentifier: TEST_APP_ID,
+      name: 'Test Application',
+      sourcePath: 'test-uninstall-preflight',
+    });
+
+    await syncApplication({
+      manifest: buildManifest(),
+      expectToFail: false,
+    });
+
+    // same object identity, re-created from the manifest defaults
+    const { objects } = await findManyObjectMetadata({
+      input: { filter: {}, paging: { first: 200 } },
+      gqlFields: 'id universalIdentifier nameSingular',
+      expectToFail: false,
+    });
+
+    const reinstalledObject = objects.find(
+      (object) =>
+        object.universalIdentifier === TEST_OBJECT.universalIdentifier,
+    );
+
+    expect(reinstalledObject).toBeDefined();
+
+    const { schema, tableName } = await resolveCouponTable();
+
+    const recordCount: { count: string }[] = await globalThis.testDataSource.query(
+      `SELECT count(*) AS count FROM "${schema}"."${tableName}"`,
+    );
+
+    expect(recordCount[0]?.count).toBe('0');
   }, 60000);
 
   it('refuses uninstall while another application relates to the owned object, naming the dependent', async () => {

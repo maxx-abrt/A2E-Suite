@@ -16,19 +16,21 @@ export class DatabaseVersionCheckService implements OnModuleInit {
   ) {}
 
   async onModuleInit(): Promise<void> {
-    const [[{ version }]] = (await this.dataSource.query(
+    // TypeORM query() returns a flat rows array for raw SQL, and SHOW
+    // server_version names its column server_version (not version).
+    const [{ server_version: serverVersion }] = (await this.dataSource.query(
       'SHOW server_version',
-    )) as [[{ version: string }]];
+    )) as [{ server_version: string }];
 
-    const majorVersion = parseInt(version.split('.')[0] ?? '0', 10);
+    const majorVersion = parseInt(serverVersion.split('.')[0] ?? '0', 10);
 
     if (majorVersion < MINIMUM_POSTGRES_MAJOR_VERSION) {
       throw new Error(
-        `PostgreSQL ${version} is not supported: the minimum is ${MINIMUM_POSTGRES_MAJOR_VERSION}. ` +
+        `PostgreSQL ${serverVersion} is not supported: the minimum is ${MINIMUM_POSTGRES_MAJOR_VERSION}. ` +
           'Upgrade the database before running the server.',
       );
     }
 
-    this.logger.log(`PostgreSQL ${version} — supported version`);
+    this.logger.log(`PostgreSQL ${serverVersion} — supported version`);
   }
 }

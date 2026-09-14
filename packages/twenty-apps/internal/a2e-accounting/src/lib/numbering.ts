@@ -72,6 +72,24 @@ export const nextSequenceFrom = (documentNumbers: string[]): number => {
   return sequences.length === 0 ? 1 : Math.max(...sequences) + 1;
 };
 
+// A NUMBER field read through the Core API can come back missing (a profile
+// seeded before the field existed, a hand-cleared row), so the allocator
+// normalizes instead of crashing or allocating `NaN`.
+export const readCounterState = (
+  profile: Record<string, unknown>,
+  prefixField: string,
+  nextNumberField: string,
+): { prefix: string | undefined; next: number } => {
+  const prefix = profile[prefixField];
+  const next = profile[nextNumberField];
+
+  return {
+    prefix: typeof prefix === 'string' && prefix.length > 0 ? prefix : undefined,
+    next:
+      typeof next === 'number' && Number.isInteger(next) && next > 0 ? next : 1,
+  };
+};
+
 export const DEFAULT_INVOICE_PREFIX = 'FA-{{YYYY}}-';
 export const DEFAULT_QUOTE_PREFIX = 'DE-{{YYYY}}-';
 export const DEFAULT_RECEIPT_PREFIX = 'RF-{{YYYY}}-';

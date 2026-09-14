@@ -5,6 +5,13 @@ import {
   DEFAULT_QUOTE_PREFIX,
   DEFAULT_RECEIPT_PREFIX,
 } from '../lib/numbering.ts';
+import {
+  findMissingStarterFiches,
+  findMissingStarterSheets,
+  starterFichePayloads,
+  type StarterBookSheet,
+  type StarterFiche,
+} from '../lib/starter-books.ts';
 import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
 import { ensureLedgerSheet } from './handlers/ledger-handler.ts';
 import { refreshSubventions } from './handlers/refresh-subventions-handler.ts';
@@ -118,12 +125,75 @@ const seedOrgProfile = async (
   return true;
 };
 
+const seedStarterSheets = async (
+  client: ReturnType<typeof coreClient>,
+): Promise<number> => {
+  const existing = await findAllRecords<{ systemKey?: string | null }>(
+    client,
+    'bookSheets',
+    { systemKey: true },
+    {},
+  );
+
+  const missingSheets = findMissingStarterSheets(
+    existing.map((sheet) => sheet.systemKey),
+  );
+
+  await createRecords(
+    client,
+    'createBookSheets',
+    missingSheets.map((sheet: StarterBookSheet) => ({
+      name: sheet.name,
+      description: sheet.description,
+      sheetKind: 'CUSTOM',
+      systemKey: sheet.systemKey,
+      isDefault: false,
+      isLocked: false,
+      isTemplate: true,
+      columns: sheet.columns,
+    })),
+  );
+
+  return missingSheets.length;
+};
+
+const seedStarterFiches = async (
+  client: ReturnType<typeof coreClient>,
+): Promise<number> => {
+  const existing = await findAllRecords<{ title?: string | null; templateKey?: string | null }>(
+    client,
+    'fiches',
+    { title: true, templateKey: true },
+    {},
+  );
+
+  const missingFiches = findMissingStarterFiches(existing);
+
+  if (missingFiches.length > 0) {
+    const payloadByTitle = new Map(
+      starterFichePayloads().map((payload) => [payload.title, payload]),
+    );
+
+    await createRecords(
+      client,
+      'createFiches',
+      missingFiches
+        .map((fiche: StarterFiche) => payloadByTitle.get(fiche.title))
+        .filter((payload) => payload !== undefined),
+    );
+  }
+
+  return missingFiches.length;
+};
+
 const handler = async () => {
   const client = coreClient();
 
   const categoriesCreated = await seedCategories(client);
   const ledgerSheet = await ensureLedgerSheet(client);
   const orgProfileCreated = await seedOrgProfile(client);
+  const starterSheetsCreated = await seedStarterSheets(client);
+  const starterFichesCreated = await seedStarterFiches(client);
 
   // The catalogue is filled at install: a treasurer opening Subventions for
   // the first time must see real aids, not an empty table waiting for a cron.
@@ -142,6 +212,8 @@ const handler = async () => {
     categoriesCreated,
     ledgerSheetId: ledgerSheet.id,
     orgProfileCreated,
+    starterSheetsCreated,
+    starterFichesCreated,
     catalogue,
   };
 
@@ -154,7 +226,7 @@ export default definePostInstallLogicFunction({
   universalIdentifier: LOGIC_FUNCTION_IDS.postInstall,
   name: 'post-install',
   description:
-    'Prépare Bilan : catégories du plan comptable, journal automatique, fiche de structure, et première ingestion du catalogue de subventions.',
+    'Prépare Bilan : catégories du plan comptable, journal automatique, feuilles de démarrage (trésorerie, dons, subventions), fiches budget et demande, fiche de structure, et première ingestion du catalogue de subventions.',
   timeoutSeconds: 300,
   shouldRunSynchronously: false,
   handler,

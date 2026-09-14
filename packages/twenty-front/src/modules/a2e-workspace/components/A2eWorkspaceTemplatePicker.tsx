@@ -1,10 +1,9 @@
+import { A2eWorkspaceTemplatePreview } from '@/a2e-workspace/components/A2eWorkspaceTemplatePreview';
 import { type A2eWorkspaceTemplateOption } from '@/a2e-workspace/constants/A2eWorkspaceTemplates';
-import { useApplyWorkspaceTemplate } from '@/a2e-workspace/hooks/useApplyWorkspaceTemplate';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledGrid = styled.div`
@@ -59,16 +58,6 @@ const StyledCardDescription = styled.span`
   line-height: 1.4;
 `;
 
-const StyledFooter = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-`;
-
-const StyledApplyButton = styled.div`
-  width: 220px;
-`;
-
 export type A2eWorkspaceTemplatePickerProps = {
   options: A2eWorkspaceTemplateOption[];
   // Set by the onboarding flow so a freshly created workspace shows a
@@ -85,26 +74,15 @@ export const A2eWorkspaceTemplatePicker = ({
   const [selectedTemplate, setSelectedTemplate] = useState<
     A2eWorkspaceTemplateOption['value'] | null
   >(null);
-  const { applyWorkspaceTemplate, appliedTemplate, isLoading } =
-    useApplyWorkspaceTemplate();
 
-  const handleApply = async () => {
-    if (!isDefined(selectedTemplate)) {
-      return;
-    }
-
-    await applyWorkspaceTemplate(selectedTemplate);
-
-    onApplied?.();
-  };
-
+  // Both entrypoints (onboarding picker and Settings section) render through
+  // the same preview + operation flow so the server applies one operation
+  // contract everywhere.
   return (
     <>
       <StyledGrid>
         {options.map((option) => {
-          const isSelected =
-            selectedTemplate === option.value ||
-            (!isDefined(selectedTemplate) && appliedTemplate === option.value);
+          const isSelected = selectedTemplate === option.value;
           const { Icon } = option;
 
           return (
@@ -125,16 +103,12 @@ export const A2eWorkspaceTemplatePicker = ({
           );
         })}
       </StyledGrid>
-      <StyledFooter>
-        <StyledApplyButton>
-          <MainButton
-            title={t`Apply template`}
-            onClick={handleApply}
-            disabled={!isDefined(selectedTemplate) || isLoading}
-            fullWidth
-          />
-        </StyledApplyButton>
-      </StyledFooter>
+      {isDefined(selectedTemplate) && (
+        <A2eWorkspaceTemplatePreview
+          template={selectedTemplate}
+          onApplied={onApplied}
+        />
+      )}
     </>
   );
 };

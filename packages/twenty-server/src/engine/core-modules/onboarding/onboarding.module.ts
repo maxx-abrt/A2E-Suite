@@ -3,7 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-value-pair.module';
 import { OnboardingResolver } from 'src/engine/core-modules/onboarding/onboarding.resolver';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { WorkspaceTemplateService } from 'src/engine/core-modules/onboarding/workspace-template.service';
@@ -17,8 +20,11 @@ import { OnboardingInviteSuggestionsModule } from 'src/modules/onboarding-invite
 @Module({
   imports: [
     ApplicationModule,
+    ApplicationPackageModule,
     ApplicationRegistrationModule,
     BillingModule,
+    CacheLockModule,
+    KeyValuePairModule,
     UserVarsModule,
     OnboardingInviteSuggestionsModule,
     WorkspaceCacheModule,

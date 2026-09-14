@@ -135,6 +135,38 @@ export const mergeLedgerCells = (
   comment: (existingCells ?? {}).comment ?? '',
 });
 
+// Decision for the auto-journal upsert, pure so the uniqueness-recovery
+// contract is unit-testable: a live row is merged in place, a retired row is
+// revived (its tombstone still holds the unique `sourceKey`), and a missing
+// row is created with a race-recovery pass because two concurrent events can
+// both observe an empty find before either insert lands.
+export type LedgerUpsertAction =
+  | 'CREATE_WITH_RECOVERY'
+  | 'RESTORE'
+  | 'UPDATE';
+
+export const resolveLedgerUpsertAction = (
+  existing: { deletedAt?: string | null } | undefined,
+): LedgerUpsertAction => {
+  if (existing === undefined) {
+    return 'CREATE_WITH_RECOVERY';
+  }
+
+  return typeof existing.deletedAt === 'string' ? 'RESTORE' : 'UPDATE';
+};
+
+// The unique violation surfaces through the genql ClientError message chain
+// (server TwentyOrm DUPLICATE_ENTRY_DETECTED → UserInputError); match on text
+// because the generated client is untyped about error payloads.
+export const isLedgerUniqueViolation = (error: unknown): boolean => {
+  const message = error instanceof Error ? error.message : String(error);
+
+  return (
+    message.includes('duplicate entry was detected') ||
+    message.includes('23505')
+  );
+};
+
 export const isLedgerPeriodLocked = (
   periodLockedUntil: string | null | undefined,
   entryDate: string,

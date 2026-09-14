@@ -5,10 +5,18 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { ApplyWorkspaceTemplateInput } from 'src/engine/core-modules/onboarding/dtos/apply-workspace-template.input';
+import {
+  ApplyTemplateResultDTO,
+  TemplatePreviewDTO,
+} from 'src/engine/core-modules/onboarding/dtos/apply-template-operation-result.dto';
+import {
+  ApplyWorkspaceTemplateInput,
+  ApplyWorkspaceTemplateOperationInput,
+} from 'src/engine/core-modules/onboarding/dtos/apply-workspace-template.input';
 import { InviteSuggestionDTO } from 'src/engine/core-modules/onboarding/dtos/invite-suggestion.dto';
 import { OnboardingStepNavigationDTO } from 'src/engine/core-modules/onboarding/dtos/onboarding-step-navigation.dto';
 import { OnboardingStepSuccessDTO } from 'src/engine/core-modules/onboarding/dtos/onboarding-step-success.dto';
+import { WorkspaceTemplate } from 'src/engine/core-modules/onboarding/enums/workspace-template.enum';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { WorkspaceTemplateService } from 'src/engine/core-modules/onboarding/workspace-template.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -96,6 +104,45 @@ export class OnboardingResolver {
     });
 
     return { success: true };
+  }
+
+  @Mutation(() => ApplyTemplateResultDTO)
+  @UseGuards(NoPermissionGuard)
+  async applyWorkspaceTemplateOperation(
+    @AuthUser() user: AuthContextUser,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args({
+      name: 'input',
+      type: () => ApplyWorkspaceTemplateOperationInput,
+    })
+    input: ApplyWorkspaceTemplateOperationInput,
+  ): Promise<ApplyTemplateResultDTO> {
+    const result =
+      await this.workspaceTemplateService.applyWorkspaceTemplateOperation({
+        workspaceId: workspace.id,
+        idempotencyKey: input.idempotencyKey,
+        template: input.template,
+        templateVersion: input.templateVersion,
+        deselectedOptionalAppUniversalIdentifiers:
+          input.deselectedOptionalAppUniversalIdentifiers,
+        sampleContentEnabled: input.sampleContentEnabled ?? false,
+      });
+
+    return result;
+  }
+
+  @Query(() => TemplatePreviewDTO)
+  @UseGuards(NoPermissionGuard)
+  async workspaceTemplatePreview(
+    @AuthUser() user: AuthContextUser,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args({ name: 'template', type: () => WorkspaceTemplate })
+    template: WorkspaceTemplate,
+  ): Promise<TemplatePreviewDTO> {
+    return this.workspaceTemplateService.getWorkspaceTemplatePreview({
+      workspaceId: workspace.id,
+      template,
+    });
   }
 
   @Mutation(() => OnboardingStepSuccessDTO)

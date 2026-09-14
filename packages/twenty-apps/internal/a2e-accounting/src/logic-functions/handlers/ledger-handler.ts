@@ -7,7 +7,9 @@ import {
   type LedgerRowInput,
   type LedgerSourceKind,
   isLedgerPeriodLocked,
+  isLedgerUniqueViolation,
   mergeLedgerCells,
+  resolveLedgerUpsertAction,
 } from '../../lib/ledger.ts';
 import {
   coreClient,
@@ -29,6 +31,7 @@ type LedgerSheet = {
 type LedgerEntry = {
   id: string;
   cells?: Record<string, unknown> | null;
+  deletedAt?: string | null;
 };
 
 export const ensureLedgerSheet = async (
@@ -64,7 +67,7 @@ export const ensureLedgerSheet = async (
 
 export const upsertLedgerRow = async (
   input: LedgerRowInput & { financeEntryId?: string; invoiceId?: string },
-): Promise<'CREATED' | 'UPDATED' | 'SKIPPED_LOCKED'> => {
+): Promise<'CREATED' | 'UPDATED' | 'RESTORED' | 'SKIPPED_LOCKED'> => {
   const client = coreClient();
   const sheet = await ensureLedgerSheet(client);
 
@@ -78,11 +81,20 @@ export const upsertLedgerRow = async (
 
   const row = buildLedgerRow(input);
 
+  // A deletedAt key anywhere in the filter makes the server widen the query to
+  // soft-deleted rows; the or-of-nullability is a tautology whose only job is
+  // to trigger that widening so retired rows holding the unique key are seen.
   const existing = await findOneRecord<LedgerEntry>(
     client,
     'bookEntries',
-    { id: true, cells: true },
-    { sourceKey: { eq: row.sourceKey } },
+    { id: true, cells: true, deletedAt: true },
+    {
+      sourceKey: { eq: row.sourceKey },
+      or: [
+        { deletedAt: { is: 'NULL' } },
+        { deletedAt: { is: 'NOT_NULL' } },
+      ],
+    },
   );
 
   const data: RecordShape = {
@@ -102,12 +114,16 @@ export const upsertLedgerRow = async (
     ...(input.invoiceId ? { invoiceId: input.invoiceId } : {}),
   };
 
-  if (existing === undefined) {
-    await createRecords(client, 'createBookEntries', [
-      { ...data, cells: row.cells },
-    ]);
+  const action = resolveLedgerUpsertAction(existing);
 
-    return 'CREATED';
+  if (existing === undefined) {
+    return createLedgerEntryWithRaceRecovery(client, row, data);
+  }
+
+  if (action === 'RESTORE') {
+    await restoreRetiredLedgerEntry(client, existing, row, data);
+
+    return 'RESTORED';
   }
 
   await updateRecord(client, 'updateBookEntry', existing.id, {
@@ -117,6 +133,64 @@ export const upsertLedgerRow = async (
 
   return 'UPDATED';
 };
+
+// `sourceKey` is unique over soft-deleted rows too (the manifest unique index
+// carries no WHERE clause), so a row retired by `retireLedgerRow` still holds
+// the key: revive it in place instead of inserting a duplicate. The mutation
+// path renders user filters without a soft-delete predicate, so updating by id
+// reaches the retired row and `deletedAt: null` clears the tombstone.
+const restoreRetiredLedgerEntry = async (
+  client: ReturnType<typeof coreClient>,
+  retired: LedgerEntry,
+  row: ReturnType<typeof buildLedgerRow>,
+  data: RecordShape,
+): Promise<void> => {
+  await updateRecord(client, 'updateBookEntry', retired.id, {
+    ...data,
+    deletedAt: null,
+    cells: mergeLedgerCells(retired.cells ?? undefined, row.cells),
+  });
+};
+
+const createLedgerEntryWithRaceRecovery = async (
+  client: ReturnType<typeof coreClient>,
+  row: ReturnType<typeof buildLedgerRow>,
+  data: RecordShape,
+): Promise<'CREATED' | 'UPDATED' | 'RESTORED'> => {
+  try {
+    await createRecords(client, 'createBookEntries', [
+      { ...data, cells: row.cells },
+    ]);
+
+    return 'CREATED';
+  } catch (error) {
+    if (!isLedgerUniqueViolation(error)) {
+      throw error;
+    }
+  }
+
+  // Two concurrent events for the same source both passed the empty find; the
+  // loser of the create race adopts the winner's row and replays the merge.
+  // The winner of an insert race is live by definition, so no widening needed.
+  const winner = await findOneRecord<LedgerEntry>(
+    client,
+    'bookEntries',
+    { id: true, cells: true },
+    { sourceKey: { eq: row.sourceKey } },
+  );
+
+  if (winner === undefined) {
+    return createLedgerEntryWithRaceRecovery(client, row, data);
+  }
+
+  await updateRecord(client, 'updateBookEntry', winner.id, {
+    ...data,
+    cells: mergeLedgerCells(winner.cells ?? undefined, row.cells),
+  });
+
+  return 'UPDATED';
+};
+
 
 // A deleted source is not erased from the book: the row is soft-deleted so the
 // export of a closed year keeps its trail.

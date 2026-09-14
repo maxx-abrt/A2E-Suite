@@ -488,7 +488,7 @@ authorization and persistence checks pass.
       pre-existing record (id/title/position intact, column added nullable,
       no duplicate seeds). Prod-server-composition checks (F08/F09) deferred
       behind the first production deployment, maintainer-confirmed.
-- [ ] **P0.5 Release/recovery:** required migration failure blocks deployment;
+- [x] **P0.5 Release/recovery:** required migration failure blocks deployment;
       rehearse DB/file backup restoration and verify server/worker readiness
       (audit F10). Choose supported DB versions and CI source before release.
 

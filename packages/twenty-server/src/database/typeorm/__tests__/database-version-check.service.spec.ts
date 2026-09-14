@@ -26,13 +26,13 @@ describe('DatabaseVersionCheckService', () => {
   });
 
   it('passes on a supported version', async () => {
-    query.mockResolvedValue([[{ version: '16.9' }]]);
+    query.mockResolvedValue([{ server_version: '16.9' }]);
 
     await expect(service.onModuleInit()).resolves.toBeUndefined();
   });
 
   it('rejects a version below the minimum', async () => {
-    query.mockResolvedValue([[{ version: '13.20' }]]);
+    query.mockResolvedValue([{ server_version: '13.20' }]);
 
     await expect(service.onModuleInit()).rejects.toThrow(
       /minimum is 14/,
