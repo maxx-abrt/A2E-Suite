@@ -30,9 +30,9 @@ type UninstallImpact = {
     objectNameSingular: string;
     viewName: string;
   }[];
-  approximateRecordLossByObject: {
+  recordLossByObject: {
     objectNameSingular: string;
-    approximateCount: number;
+    recordCount: number;
   }[];
   crossAppDependents: {
     dependentApplicationName: string;
@@ -252,22 +252,27 @@ export class ApplicationUninstallPreflightService {
         ];
       });
 
-    const approximateCountByTableName =
-      await this.objectRecordCountService.getApproximateRecordCountByTableName(
-        workspaceId,
-      );
-
     // targetTableName is a deprecated column with stale values; the live
     // table name is derived, matching how getRecordCounts counts records.
-    const approximateRecordLossByObject = ownedObjects.map(
-      (flatObjectMetadata) => ({
-        objectNameSingular: flatObjectMetadata.nameSingular,
-        approximateCount:
-          approximateCountByTableName.get(
-            computeObjectTargetTable(flatObjectMetadata),
-          ) ?? 0,
-      }),
+    const ownedTableNames = ownedObjects.map((flatObjectMetadata) =>
+      computeObjectTargetTable(flatObjectMetadata),
     );
+
+    // Exact counts: reltuples reports -1 on never-ANALYZEd tables, which let
+    // a populated app pass preflight as empty (C3 data-loss gate).
+    const recordCountByTableName =
+      await this.objectRecordCountService.getExactRecordCountByTableNames(
+        workspaceId,
+        ownedTableNames,
+      );
+
+    const recordLossByObject = ownedObjects.map((flatObjectMetadata) => ({
+      objectNameSingular: flatObjectMetadata.nameSingular,
+      recordCount:
+        recordCountByTableName.get(
+          computeObjectTargetTable(flatObjectMetadata),
+        ) ?? 0,
+    }));
 
     const crossAppDependents = this.computeCrossAppDependents({
       applicationId: application.id,
@@ -283,7 +288,7 @@ export class ApplicationUninstallPreflightService {
       })),
       ownedFieldsOnStandardObjects,
       ownedViewsOnStandardObjects,
-      approximateRecordLossByObject,
+      recordLossByObject,
       crossAppDependents,
     };
   }
@@ -313,8 +318,8 @@ export class ApplicationUninstallPreflightService {
       applicationUniversalIdentifier,
     });
 
-    const objectsWithData = impact.approximateRecordLossByObject
-      .filter(({ approximateCount }) => approximateCount > 0)
+    const objectsWithData = impact.recordLossByObject
+      .filter(({ recordCount }) => recordCount > 0)
       .map(({ objectNameSingular }) => objectNameSingular);
 
     // C3: no supported export/retention path exists yet, so removing an app

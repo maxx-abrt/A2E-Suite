@@ -93,9 +93,7 @@ describe('ApplicationUninstallPreflightService', () => {
     } as unknown as WorkspaceCacheService;
 
     objectRecordCountService = {
-      getApproximateRecordCountByTableName: jest
-        .fn()
-        .mockResolvedValue(new Map()),
+      getExactRecordCountByTableNames: jest.fn().mockResolvedValue(new Map()),
     } as unknown as ObjectRecordCountService;
 
     preflightService = new ApplicationUninstallPreflightService(
@@ -106,7 +104,7 @@ describe('ApplicationUninstallPreflightService', () => {
   });
 
   describe('computeUninstallImpact', () => {
-    it('lists owned objects and their approximate record counts', async () => {
+    it('lists owned objects and their exact record counts', async () => {
       injectFlatMaps({
         flatObjectMetadataMaps: {
           byUniversalIdentifier: {
@@ -127,8 +125,8 @@ describe('ApplicationUninstallPreflightService', () => {
       });
 
       // count maps are keyed by the derived live table name ('_'-prefixed
-      // for non-standard apps), matching pg_class.relname
-      (objectRecordCountService.getApproximateRecordCountByTableName as jest.Mock)
+      // for non-standard apps), matching the physical table name
+      (objectRecordCountService.getExactRecordCountByTableNames as jest.Mock)
         .mockResolvedValue(new Map([['_invoice', 42]]));
 
       const impact = await preflightService.computeUninstallImpact({
@@ -142,8 +140,8 @@ describe('ApplicationUninstallPreflightService', () => {
           nameSingular: 'invoice',
         },
       ]);
-      expect(impact.approximateRecordLossByObject).toEqual([
-        { objectNameSingular: 'invoice', approximateCount: 42 },
+      expect(impact.recordLossByObject).toEqual([
+        { objectNameSingular: 'invoice', recordCount: 42 },
       ]);
       expect(impact.ownedFieldsOnStandardObjects).toEqual([]);
       expect(impact.ownedViewsOnStandardObjects).toEqual([]);
@@ -298,7 +296,7 @@ describe('ApplicationUninstallPreflightService', () => {
         },
       });
 
-      (objectRecordCountService.getApproximateRecordCountByTableName as jest.Mock)
+      (objectRecordCountService.getExactRecordCountByTableNames as jest.Mock)
         .mockResolvedValue(new Map([['_invoice', 7]]));
 
       await expect(
@@ -379,8 +377,8 @@ describe('ApplicationUninstallPreflightService', () => {
       });
 
       expect(impact.ownedObjects).toHaveLength(1);
-      expect(impact.approximateRecordLossByObject).toEqual([
-        { objectNameSingular: 'invoice', approximateCount: 0 },
+      expect(impact.recordLossByObject).toEqual([
+        { objectNameSingular: 'invoice', recordCount: 0 },
       ]);
     });
 

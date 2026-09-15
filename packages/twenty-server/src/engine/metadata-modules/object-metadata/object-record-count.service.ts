@@ -46,6 +46,34 @@ export class ObjectRecordCountService {
     return countByTableName;
   }
 
+  // A data-destroying gate must not read planner statistics: reltuples stays
+  // -1 until the first ANALYZE, so a freshly populated table counts as empty.
+  // Exact counts are only paid for the caller-named tables.
+  async getExactRecordCountByTableNames(
+    workspaceId: string,
+    tableNames: string[],
+  ): Promise<Map<string, number>> {
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+    const countByTableName = new Map<string, number>();
+
+    for (const tableName of tableNames) {
+      // Identifiers cannot be bound as parameters; the allow-list keeps the
+      // inlined name injection-safe.
+      if (!/^[a-z0-9_]+$/.test(tableName)) {
+        throw new Error(`Invalid table name '${tableName}'`);
+      }
+
+      const rows: { exact_count: number }[] =
+        await this.coreDataSource.query(
+          `SELECT count(*)::int AS exact_count FROM "${schemaName}"."${tableName}"`,
+        );
+
+      countByTableName.set(tableName, Number(rows[0]?.exact_count ?? 0));
+    }
+
+    return countByTableName;
+  }
+
   async getRecordCounts(workspaceId: string): Promise<ObjectRecordCountDTO[]> {
     const { flatObjectMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(

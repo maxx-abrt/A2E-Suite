@@ -141,15 +141,9 @@ const deleteCouponRecords = async () => {
   );
 };
 
-// The preflight relies on pg_class.reltuples, refreshed by ANALYZE; a
-// just-inserted row is invisible to it until statistics are recomputed.
-const analyzeCouponTable = async () => {
-  const { schema, tableName } = await resolveCouponTable();
-
-  await globalThis.testDataSource.query(
-    `ANALYZE "${schema}"."${tableName}"`,
-  );
-};
+// Exact count(*) preflight sees just-inserted rows without statistics
+// refresh; these specs deliberately never ANALYZE so the refusal cannot
+// depend on planner estimates again.
 
 describe('Uninstall application data-loss preflight', () => {
   beforeEach(async () => {
@@ -174,7 +168,6 @@ describe('Uninstall application data-loss preflight', () => {
 
   it('refuses to uninstall an application whose owned objects still hold records', async () => {
     await insertCouponRecord();
-    await analyzeCouponTable();
 
     const { data, errors } = await uninstallApplication({
       universalIdentifier: TEST_APP_ID,
@@ -198,7 +191,6 @@ describe('Uninstall application data-loss preflight', () => {
     // recovery path: once the records are gone the same uninstall succeeds,
     // so this test leaves no orphaned metadata behind in the shared workspace
     await deleteCouponRecords();
-    await analyzeCouponTable();
 
     const retry = await uninstallApplication({
       universalIdentifier: TEST_APP_ID,
@@ -212,7 +204,6 @@ describe('Uninstall application data-loss preflight', () => {
   it('allows the uninstall once the owned objects are empty again', async () => {
     await insertCouponRecord();
     await deleteCouponRecords();
-    await analyzeCouponTable();
 
     const { data, errors } = await uninstallApplication({
       universalIdentifier: TEST_APP_ID,
@@ -242,8 +233,8 @@ describe('Uninstall application data-loss preflight', () => {
     // GraphQL calls need the real clock
     jest.useRealTimers();
 
-    await insertCouponRecord();
-
+    // no record inserted: C3 refuses uninstall of an app holding data, and
+    // this case is about reinstall restoring defaults, not data retention
     const uninstall = await uninstallApplication({
       universalIdentifier: TEST_APP_ID,
       expectToFail: false,
