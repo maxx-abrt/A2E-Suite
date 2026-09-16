@@ -107,7 +107,7 @@ export const toSubventionRecord = (
   amountHint: aid.amountHint ?? null,
   // LINKS composite : lien principal vers la fiche officielle, lien secondaire
   // vers le dépôt du dossier quand la source le distingue.
-  links: {
+  officialLinks: {
     primaryLinkUrl: aid.url,
     primaryLinkLabel: 'Fiche officielle',
     secondaryLinks:

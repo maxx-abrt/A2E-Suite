@@ -79,7 +79,7 @@ test('la ligne de catalogue porte la clé de source et les liens', () => {
   assert.equal(record.catalogVersion, 42);
   assert.equal(record.lastSeenAt, '2026-06-01T00:00:00.000Z');
   assert.equal(record.searchText, aid.searchText);
-  assert.deepEqual(record.links, {
+  assert.deepEqual(record.officialLinks, {
     primaryLinkUrl: aid.url,
     primaryLinkLabel: 'Fiche officielle',
     secondaryLinks: [

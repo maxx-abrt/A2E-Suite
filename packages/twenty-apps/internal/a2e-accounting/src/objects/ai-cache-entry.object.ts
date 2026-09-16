@@ -35,7 +35,9 @@ export default defineObject({
       name: 'cacheKey',
       label: 'Clé de cache',
       icon: 'IconKey',
-      defaultValue: "''",
+      // Unique index forbids a default value (server validator): the cache
+      // key is always computed by score-subventions, never defaulted.
+      isNullable: true,
       isUnique: true,
     },
     {

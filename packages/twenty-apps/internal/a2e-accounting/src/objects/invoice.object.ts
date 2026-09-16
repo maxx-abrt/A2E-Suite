@@ -158,6 +158,7 @@ export default defineObject({
       label: 'Pièces jointes',
       icon: 'IconPaperclip',
       isNullable: true,
+      universalSettings: { maxNumberOfValues: 10 },
     },
     {
       universalIdentifier: 'b11a0100-0001-4000-8000-000000000010',

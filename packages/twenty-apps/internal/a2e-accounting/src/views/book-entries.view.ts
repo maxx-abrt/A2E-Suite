@@ -11,7 +11,9 @@ const field = FIELD_IDS.bookEntry;
 const id = (position: number) => viewFieldId('08', 0, position);
 
 // The ledger view: chronological, with the provenance column visible so a
-// machine-written row is never mistaken for a hand-written one.
+// machine-written row is never mistaken for a hand-written one. Label column
+// first: the platform requires the label identifier at the lowest view
+// position, chronology is carried by the entryDate sort below.
 export default defineView({
   universalIdentifier: VIEW_IDS.bookEntries,
   name: 'Livre — écritures',
@@ -21,17 +23,17 @@ export default defineView({
   fields: [
     {
       universalIdentifier: id(0),
-      fieldMetadataUniversalIdentifier: field.entryDate,
+      fieldMetadataUniversalIdentifier: field.label,
       position: 0,
       isVisible: true,
-      size: 140,
+      size: 260,
     },
     {
       universalIdentifier: id(1),
-      fieldMetadataUniversalIdentifier: field.label,
+      fieldMetadataUniversalIdentifier: field.entryDate,
       position: 1,
       isVisible: true,
-      size: 260,
+      size: 140,
     },
     {
       universalIdentifier: id(2),

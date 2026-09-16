@@ -172,6 +172,7 @@ export default defineObject({
       label: 'Justificatifs',
       icon: 'IconReceipt',
       isNullable: true,
+      universalSettings: { maxNumberOfValues: 10 },
     },
     {
       universalIdentifier: RELATION_IDS.bookEntrySheet,

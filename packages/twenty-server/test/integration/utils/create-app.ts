@@ -66,6 +66,15 @@ export const createApp = async (
     rawBody: true,
   });
 
+  // Production body-parser limits (main.ts), not Nest's 100kb default, so
+  // large payloads — e.g. application sync manifests — don't get rejected
+  // with 413 before reaching GraphQL.
+  app.useBodyParser('json', { limit: settings.storage.maxFileSize });
+  app.useBodyParser('urlencoded', {
+    limit: settings.storage.maxFileSize,
+    extended: true,
+  });
+
   // The production CORS setup, not the Nest wildcard default, so integration
   // tests exercise the credentialed-origin allowlist the deployment runs.
   applyCredentialedCors(app, app.get(TwentyConfigService));

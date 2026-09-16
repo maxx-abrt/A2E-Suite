@@ -104,6 +104,7 @@ export default defineObject({
         'Les justificatifs suivent le mouvement jusque dans le journal automatique.',
       icon: 'IconReceipt',
       isNullable: true,
+      universalSettings: { maxNumberOfValues: 10 },
     },
     {
       universalIdentifier: 'b11a0400-0001-4000-8000-00000000000a',

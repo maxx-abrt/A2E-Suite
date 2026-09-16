@@ -347,7 +347,7 @@ export default defineObject({
     {
       universalIdentifier: 'b11a0b00-0001-4000-8000-000000000019',
       type: FieldType.LINKS,
-      name: 'links',
+      name: 'officialLinks',
       label: 'Liens',
       description: 'Fiche officielle en lien principal, dépôt en lien secondaire.',
       icon: 'IconLink',

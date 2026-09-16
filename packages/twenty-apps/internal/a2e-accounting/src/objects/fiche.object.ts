@@ -196,6 +196,7 @@ export default defineObject({
       label: 'Exports',
       icon: 'IconFileTypePdf',
       isNullable: true,
+      universalSettings: { maxNumberOfValues: 10 },
     },
     {
       universalIdentifier: 'b11a0900-0001-4000-8000-00000000000a',

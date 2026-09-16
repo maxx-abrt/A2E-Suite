@@ -58,8 +58,9 @@ export class ObjectRecordCountService {
 
     for (const tableName of tableNames) {
       // Identifiers cannot be bound as parameters; the allow-list keeps the
-      // inlined name injection-safe.
-      if (!/^[a-z0-9_]+$/.test(tableName)) {
+      // inlined name injection-safe. Uppercase is required: custom tables keep
+      // the camelCase name (e.g. `_invoiceLine`).
+      if (!/^[a-zA-Z0-9_]+$/.test(tableName)) {
         throw new Error(`Invalid table name '${tableName}'`);
       }
 

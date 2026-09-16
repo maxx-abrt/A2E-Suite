@@ -170,6 +170,7 @@ export default defineObject({
       label: 'Pièces du dossier',
       icon: 'IconPaperclip',
       isNullable: true,
+      universalSettings: { maxNumberOfValues: 20 },
     },
     {
       universalIdentifier: RELATION_IDS.savedSubventionSubvention,

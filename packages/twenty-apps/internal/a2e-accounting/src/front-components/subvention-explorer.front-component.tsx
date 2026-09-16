@@ -227,7 +227,7 @@ type Subvention = {
   isCallForProject?: boolean | null;
   rateMax?: number | null;
   amountHint?: string | null;
-  links?: { primaryLinkUrl?: string | null } | null;
+  officialLinks?: { primaryLinkUrl?: string | null } | null;
 };
 
 type MatchResult = {
@@ -322,7 +322,7 @@ export const SubventionExplorer = () => {
               isCallForProject: true,
               rateMax: true,
               amountHint: true,
-              links: { primaryLinkUrl: true },
+              officialLinks: { primaryLinkUrl: true },
             },
           },
         },
@@ -624,9 +624,9 @@ export const SubventionExplorer = () => {
                   >
                     Suivre ce dispositif
                   </button>
-                  {subvention.links?.primaryLinkUrl ? (
+                  {subvention.officialLinks?.primaryLinkUrl ? (
                     <a
-                      href={subvention.links.primaryLinkUrl}
+                      href={subvention.officialLinks.primaryLinkUrl}
                       target="_blank"
                       rel="noreferrer"
                       style={{ ...styles.button, textDecoration: 'none' }}

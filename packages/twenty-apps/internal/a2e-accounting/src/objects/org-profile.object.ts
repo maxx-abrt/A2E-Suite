@@ -119,7 +119,7 @@ export default defineObject({
     {
       universalIdentifier: 'b11a0a00-0001-4000-8000-000000000008',
       type: FieldType.ADDRESS,
-      name: 'address',
+      name: 'headOfficeAddress',
       label: 'Adresse du siège',
       icon: 'IconMapPin',
       isNullable: true,
@@ -336,6 +336,7 @@ export default defineObject({
       label: 'Logo',
       icon: 'IconPhoto',
       isNullable: true,
+      universalSettings: { maxNumberOfValues: 1 },
     },
     {
       universalIdentifier: 'b11a0a00-0001-4000-8000-000000000020',
