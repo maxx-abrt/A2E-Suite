@@ -505,3 +505,15 @@ CLAIMED — P1.7b/role-matrix — GLM-5.3-Flash — 2026-09-16T14:17:00Z — bas
 **Next:** orchestrator Tier-2 browser journey of invite→join→promote→remove; then P1.7b third leg (preference isolation across workspace switches) or P1.3 e2e preset bullet
 
 CLAIMED — P1.7b/search-breadth — GLM-5.3-Flash — 2026-09-16T15:00:00Z — base 3a6d3ff049f7fc679027037bc6e082c5f4b2023a
+
+## 2026-09-16 15:10 UTC — GLM-5.3-Flash [executor] — contract v4
+**Task:** P1.7b Team entry · **Slice:** third leg — role-matrix breadth on the search surface (unified `search` under caller role, write-through-search-id guard, soft-delete visibility, removal revocation)
+**Claim:** done-for-review
+**Ready-to-tick:** no — Tier-1 search breadth recorded, but P1.7b's remaining legs (personal-preference isolation across workspace switches; settings/tool/share matrix breadth; Tier-2 browser journey) are open
+**Base:** 3a6d3ff049f7fc679027037bc6e082c5f4b2023a (final tree was committed by a user-side auto-commit hook "save" → 34e7e320, not by this session)
+**Changed:** new `twenty-server/test/integration/graphql/suites/auth/sign-up/role-matrix-invitee-search-breadth.integration-spec.ts` (5 cases, no product code)
+**Checks:** preflight `pg_isready` + `redis-cli ping` → OK; spec on `test` DB (`NODE_ENV=test npx jest … --config jest-integration.config.ts --runInBand`) → 5/5 pass; `npx tsgo -p tsconfig.json --noEmit` → 0 errors mentioning the spec; `npx oxlint <spec>` → 0 warnings 0 errors
+**Missing for tick:** preference-isolation leg across workspace switches; Tier-2 browser invite→join→search journey. Note: shares breadth stays covered by P0.2's fail-closed document-share suite — the seeded `test` workspace has no a2e-documents app (`_document` table absent), so a viewer-share-creation matrix there is not exercisable without an app install (Tier 2)
+**Do not redo:** search matches on websearch OR-tokens — seeded companies share "Co"/"Matrix" tokens with any test name, so assertions must target the specific `recordId` (helpers `expectSearchFindsRecord`/`expectSearchOmitsRecord`), never edge counts; `searchFactory` requires `limit` at the type level despite a runtime default; same hard-cleanup order as the second leg (roleTarget→workspaceMember→userWorkspace→user); ClickHouse ECONNREFUSED :8123 log noise is non-fatal
+**Remaining:** 12 other [ ]/[~] tasks ahead of this slice in the execution order (P1.3 e2e, P1.6d remainder, P1.7b/c, P2.x+)
+**Next:** P1.7b fourth leg — personal-preference isolation across workspace switches (navigation/map settings per user per workspace), or orchestrator Tier-2 browser journey
