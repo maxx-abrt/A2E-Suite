@@ -530,10 +530,14 @@ persona, and the conventions every later phase relies on.
 - [x] Onboarding flow: template picker step (skippable, defaults `crm` to
       preserve current behavior)
 - [x] Settings → General: "Change workspace template" (re-runnable, additive)
-- [ ] Complete preset orchestration through existing server service (not a
+- [~] Complete preset orchestration through existing server service (not a
       new logic-function): partial-state reporting, owned navigation and optional
-      samples; current service logs install failures and has no sample seeder.
-      P1.6 owns the repair.
+      samples; partial states + delegated sample-seeding step shipped
+      (spec 15/15).
+      — 2026-09-16 orchestrator: unit green, but live scratch shows app
+      post-install hooks completing while seeding 0 rows (phase-01-report
+      2026-09-16 orchestrator entry) — "succeeded (delegated)" can over-report
+      until the hook failure is fixed; e2e bullet below still open.
 - [ ] e2e: create workspace with `individual` preset → CRM nav hidden,
       Documents installed and usable. Existing spec was not browser-verified
       in the phase report; also test restoration to CRM and customized nav.
@@ -565,12 +569,16 @@ persona, and the conventions every later phase relies on.
       prerequisites, samples and customization; allow blank/CRM, optional app
       exclusion, continue with successful steps and retry later. Empty catalogue
       cannot discard template choice. Both entrypoints use the same operation.
-- [ ] **P1.6d Starter bundles (after P1.6b and each app's safe slice):** meeting
+- [~] **P1.6d Starter bundles (after P1.6b and each app's safe slice):** meeting
       notes/project brief/PRD/one-on-one; project delivery/event retroplanning;
       Bilan cashflow/donation/grant/custom sheets and fiches. Add proposed
       student/journal/team/non-profit/small-business bundles with previewed
       contents and only compatible ready apps; keep CRM-only available. These
       persona bundle contents are proposals, not observed shipped presets.
+      — 2026-09-16 orchestrator: Bilan starter sheets/fiches payloads +
+      post-install hook shipped (unit green) but live install seeds 0 rows
+      (phase-01-report 2026-09-16 orchestrator entry); persona bundles
+      unshipped.
 - [~] **P1.6e Workspace reuse (after P1.6c):** save/edit/duplicate authorized
       content templates, instantiate from first-open and later gallery, delete
       template without deleting copies; permission-aware attachment/ID remapping.
@@ -591,10 +599,22 @@ persona, and the conventions every later phase relies on.
       uninstall proceeds and drops data) — refusal path unverifiable until
       fixed; remaining legs (readiness, dependency display, export) untouched;
       phase-01-report 2026-09-14 entries.
-- [ ] **P1.7b Team entry (after P1.6c/P0.2):** invitations join the configured
+      — 2026-09-16 orchestrator: C3 refusal VERIFIED live (exact-counts fix
+      works): orgProfile created on a never-ANALYZEd table → impact query
+      returns exact recordLossByObject, uninstall refuses FORBIDDEN with
+      userFriendlyMessage and the record survives; after destroyOrgProfile,
+      uninstall succeeds and drops the table. Readiness/dependency-display/
+      export legs still open; phase-01-report 2026-09-16 orchestrator entry.
+- [~] **P1.7b Team entry (after P1.6c/P0.2):** invitations join the configured
       workspace; member/viewer/admin matrix, role changes and removed-member
       behavior apply to templates, projects, search, tools and shares. Preserve
       personal preferences across workspace switches without leaking records.
+      — 2026-09-16 orchestrator: six executor legs verified green
+      (invitation-join, role matrix, federated search, preference isolation,
+      tool+settings, template permission gate — related front suites re-run
+      142/142, gate integration 3/3); Tier-2 browser journey
+      (invite→join→matrix→templates live) still open; phase-01-report
+      2026-09-16 entries.
 - [ ] **P1.7c First-use acceptance:** E01–E04 and E12 run with empty, populated
       and customized workspaces, no-AI configuration and missing optional apps.
       Demo content is optional and never becomes a financial transaction.
@@ -693,9 +713,13 @@ App: `a2e-documents`.
 ### P3.2 Editor upgrades
 - [x] Slash-command extensions: toggle/heading/code/quote/callout/divider/
       image (upload → FILES), @mention (users + objects), /link to records
-- [ ] Persist inline comment threads/anchors under document permissions;
-      current `EditorCommentsThreadStore` is in-memory. Reload and a second
+- [~] Persist inline comment threads/anchors under document permissions;
+      storage shipped (`documentCommentThread` object + optional persistence
+      in `EditorCommentsThreadStore`). Reload and a second
       session must preserve contents, resolution and author permissions.
+      — 2026-09-16 orchestrator: unit green (a2e-documents lib 12/12 +
+      related front suites); browser reload/second-session preservation still
+      open; phase-03-report 2026-09-16 18:38/19:12 entries.
 - [x] ToC/outline panel; word count; typewriter mode option
 - [ ] Complete template instantiation + gallery composition: helper and LIST
       view exist, but browser does not select template content. Fetch authorized
@@ -703,9 +727,13 @@ App: `a2e-documents`.
 - [ ] Persist revision history; current `EditorVersionHistoryStore` is an
       in-memory ring buffer. Retention, block diff and restore-as-new-revision
       must survive reload and respect permissions (E05).
-- [ ] Validate export of nonempty content with supported custom blocks:
+- [~] Validate export of nonempty content with supported custom blocks:
       existing PDF path is browser print, DOCX/Markdown helpers exist. Define
       fidelity/fallback warnings; do not claim full PDF export from a button.
+      — 2026-09-16 orchestrator: `isDocumentEmptyForExport` +
+      `collectExportFidelityWarnings` shipped (unit green; export menu hidden
+      for empty docs); nonempty-content export validation in a browser still
+      open; phase-03-report 2026-09-16 19:25 entry.
 - [ ] Repair public snapshot sharing: record-level rights, validated plaintext
       or ciphertext-only representation, consistent guest format, display/copy
       URL, revoke, expiry and passphrase UX. P0.2 gates E05.
@@ -960,6 +988,14 @@ No accounting server-domain module exists at baseline. Start with the existing
       reserved names address/links, view-field refs, unique TEXT index);
       alternate-API stamping and concurrent proofs unverified; phase-04-report
       2026-09-14 entries.
+      — 2026-09-16 orchestrator: blockage LIFTED — manifest fixed (executor
+      2026-09-16 12:10), installs clean on scratch as 0.1.1 (scratch-only
+      bump, reverted): 14 objects, 15 workspace tables, 11 logic functions
+      live; manifest-sync + preflight integration re-run 6/6. The gate proofs
+      themselves (schema/relations on fresh+populated, replay, numbering,
+      rounding, period-close races, alternate API) remain UNVERIFIED live;
+      populated-install proofs additionally blocked by the post-install
+      seeding failure (phase-01-report 2026-09-16 orchestrator entry).
 - [~] Implement protected organization bank data and role/field access; review
       export/retention/uninstall behavior with finance/privacy reviewers.
       Field descriptions and UI locks are not security enforcement.
@@ -968,6 +1004,9 @@ No accounting server-domain module exists at baseline. Start with the existing
       ORM guard chain source-verified; live role-assignment proof BLOCKED by
       the same install failure above; reviewer sign-off pending; phase-04-report
       2026-09-14 entries.
+      — 2026-09-16 orchestrator: install blockage lifted (bullet above) — the
+      live finance-user iban-denial proof is now runnable but still
+      unverified; reviewer sign-off still pending.
 - [ ] Resolve catalogue storage scope and CERFA report/receipt terminology
       (C6/D03/D04). Financial compliance is not certified by reference code.
 # P7 — Accounting & Finance (full A2EMoney/Bilan port)
