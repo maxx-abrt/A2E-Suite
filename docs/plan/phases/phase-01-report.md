@@ -503,3 +503,5 @@ CLAIMED — P1.7b/role-matrix — GLM-5.3-Flash — 2026-09-16T14:17:00Z — bas
 **Missing for tick:** P1.7b legs beyond record-level matrix: role changes applying across templates/projects/search/tools/shares breadth, personal preferences across workspace switches; Tier-2 browser journey. Note: spec needs seeded non-light workspace (Guest/Member roles + Phil guest member); ClickHouse ECONNREFUSED :8123 log noise is non-fatal
 **Do not redo:** role resolution reads live DB per request (no permission-cache layer in this tree) — role change applies to an existing token without re-minting; `updateWorkspaceMemberRole`/`deleteUserFromWorkspace` mutations take workspaceMember IDs, resolved in spec via workspaceMember→user join; afterAll hard-cleans invitee (roleTarget→workspaceMember→userWorkspace→user) because deleteUser by the removed user token itself fails post-removal
 **Next:** orchestrator Tier-2 browser journey of invite→join→promote→remove; then P1.7b third leg (preference isolation across workspace switches) or P1.3 e2e preset bullet
+
+CLAIMED — P1.7b/search-breadth — GLM-5.3-Flash — 2026-09-16T15:00:00Z — base 3a6d3ff049f7fc679027037bc6e082c5f4b2023a
