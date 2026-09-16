@@ -26,7 +26,12 @@ describe('WorkspaceTemplateService', () => {
 
   const buildRegistration = (
     id: string,
-    manifest?: { application: { requiredServerVersionRange?: string | null } },
+    manifest?: {
+      application: {
+        requiredServerVersionRange?: string | null;
+        postInstallLogicFunction?: { universalIdentifier: string };
+      };
+    },
   ) => ({ id, manifest }) as unknown as ApplicationRegistrationEntity;
 
   const workspaceUpdate = jest.fn().mockResolvedValue(undefined);
@@ -153,6 +158,65 @@ describe('WorkspaceTemplateService', () => {
         'succeeded',
         'succeeded',
       ]);
+    });
+
+    it('reports sample seeding as delegated when a succeeded install carries a post-install hook', async () => {
+      findOneByUniversalIdentifierGlobal.mockImplementation(
+        (universalIdentifier: string) =>
+          Promise.resolve(
+            buildRegistration(`registration-${universalIdentifier}`, {
+              application: {
+                requiredServerVersionRange: null,
+                postInstallLogicFunction: {
+                  universalIdentifier: 'post-install-uid',
+                },
+              },
+            }),
+          ),
+      );
+
+      const result = await service.applyWorkspaceTemplateOperation({
+        workspaceId,
+        idempotencyKey: 'op-seed-1',
+        template: WorkspaceTemplate.INDIVIDUAL,
+        sampleContentEnabled: true,
+      });
+
+      const seedStep = result.steps.find((step) => step.kind === 'seed-samples');
+
+      expect(seedStep?.status).toBe('succeeded');
+    });
+
+    it('reports sample seeding as skipped when no succeeded install carries a post-install hook', async () => {
+      findOneByUniversalIdentifierGlobal.mockResolvedValue(
+        buildRegistration('registration-1'),
+      );
+
+      const result = await service.applyWorkspaceTemplateOperation({
+        workspaceId,
+        idempotencyKey: 'op-seed-2',
+        template: WorkspaceTemplate.INDIVIDUAL,
+        sampleContentEnabled: true,
+      });
+
+      const seedStep = result.steps.find((step) => step.kind === 'seed-samples');
+
+      expect(seedStep?.status).toBe('skipped');
+    });
+
+    it('never reports seeding as done when the only install failed', async () => {
+      findOneByUniversalIdentifierGlobal.mockResolvedValue(null);
+
+      const result = await service.applyWorkspaceTemplateOperation({
+        workspaceId,
+        idempotencyKey: 'op-seed-3',
+        template: WorkspaceTemplate.INDIVIDUAL,
+        sampleContentEnabled: true,
+      });
+
+      const seedStep = result.steps.find((step) => step.kind === 'seed-samples');
+
+      expect(seedStep?.status).toBe('skipped');
     });
 
     it('marks a missing app registration as a failed step with APP_NOT_REGISTERED instead of silently skipping', async () => {

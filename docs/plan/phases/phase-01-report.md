@@ -517,3 +517,93 @@ CLAIMED — P1.7b/search-breadth — GLM-5.3-Flash — 2026-09-16T15:00:00Z — 
 **Do not redo:** search matches on websearch OR-tokens — seeded companies share "Co"/"Matrix" tokens with any test name, so assertions must target the specific `recordId` (helpers `expectSearchFindsRecord`/`expectSearchOmitsRecord`), never edge counts; `searchFactory` requires `limit` at the type level despite a runtime default; same hard-cleanup order as the second leg (roleTarget→workspaceMember→userWorkspace→user); ClickHouse ECONNREFUSED :8123 log noise is non-fatal
 **Remaining:** 12 other [ ]/[~] tasks ahead of this slice in the execution order (P1.3 e2e, P1.6d remainder, P1.7b/c, P2.x+)
 **Next:** P1.7b fourth leg — personal-preference isolation across workspace switches (navigation/map settings per user per workspace), or orchestrator Tier-2 browser journey
+
+## 2026-09-16 16:10 UTC — GLM-5.3-Flash [executor]
+**Task:** P1.7b Team entry · **Slice:** fourth leg — personal-preference isolation across workspace switches (per-workspace member prefs, user-locale scoping, self-removal preserves other memberships) · **Claim:** done-for-review
+**Changed:** new `twenty-server/test/integration/graphql/suites/auth/sign-up/role-matrix-invitee-preference-isolation.integration-spec.ts` (4 cases, no product code)
+**Checks:** preflight `pg_isready` + `redis-cli ping` → OK; spec on `test` DB (`NODE_ENV=test npx jest … --config jest-integration.config.ts --runInBand`) → 4/4 pass; `npx tsgo -p tsconfig.json --noEmit` → 0 errors in the spec; `npx oxlint <spec>` → 0 warnings 0 errors; post-run DB check → no invitee debris left
+**Missing for tick:** settings/tool/share matrix breadth legs; Tier-2 browser journey (invite→join→customize→switch→verify). Note: YCombinator workspace needed a seeded personal invitation — the spec seeds `appToken` rows directly into both workspaces (seed util defaults to Apple)
+**Do not redo:** core user mutations (`currentUser`, `updateWorkspaceMemberSettings`, `deleteUserFromWorkspace`) live on the `/metadata` endpoint, NOT `/graphql` (request-utils take `{query, variables}` wrappers — a bare `gql` AST fails `print()`); member enums are `HOUR_24`/`DAY_FIRST`/`MONTH_FIRST` (not `MILITARY`/`SYSTEM`-style legacy); `createWorkspaceMember` defaults fresh members to `colorScheme 'System'` + user locale; a fresh second membership inherits the USER locale (en) even when another membership carries fr-FR — that is the asserted contract; the `updateWorkspaceMemberSettings` locale path writes ONLY the userWorkspace row, never `user.locale`
+**Remaining:** 12 other [ ]/[~] tasks ahead of this slice in the execution order (P1.3 e2e, P1.6d remainder, P1.7b settings/share breadth legs, P1.7c, P2.x+)
+**Next:** orchestrator Tier-2 browser journey (invite→join→customize→switch workspaces), or P1.7b remaining breadth legs (settings/tools/shares beyond record-level)
+
+## 2026-09-16 16:51 UTC — GLM-5.3-Flash [executor]
+**Task:** P1.7b Team entry · **Slice:** fifth leg — role-matrix breadth on the tool index + settings surface (unified `getToolIndex`/`getToolInputSchema` under caller role, Member≠settings separation, removal revocation) · **Claim:** done-for-review
+**Changed:** new `twenty-server/test/integration/graphql/suites/auth/sign-up/role-matrix-invitee-tool-and-settings-breadth.integration-spec.ts` (3 cases, no product code)
+**Checks:** preflight `pg_isready` + `redis-cli ping` → OK; spec on `test` DB (`NODE_ENV=test npx jest … --config jest-integration.config.ts --runInBand`, 6 GB heap) → 3/3 pass, re-run → 3/3; `npx tsgo -p tsconfig.json --noEmit` → 0 errors mentioning the spec; `npx oxlint <spec>` → 0/0; post-run DB check → no invitee debris
+**Missing for tick:** settings breadth beyond ROLES/WORKSPACE_MEMBERS (same guard class, exercised via the existing seeded-token suites); Tier-2 browser journey (invite→join→customize→switch→verify). Note: role TOOL breadth (`canAccessAllTools`) is gated at role level via `checkRolesPermissions(ROLES/DATA_MODEL/…)` inside each provider — Guest sees `find_one_company`-class read tools but no write/ROLE/METADATA/WEBHOOK/WORKFLOW entries and a null write schema; Member unlocks writes but NOT settings (`canUpdateAllSettings=false`) — asserted via sendInvitations + getRoles FORBIDDEN on the SAME token
+**Do not redo:** `updateWorkspaceMemberRole`/`deleteUserFromWorkspace` need the workspace-schema `workspaceMember.id` (NOT `core.userWorkspace.id` — first run failed with "Workspace member not found" until the lookup joined the schema table); `expect` bodies: `getToolInputSchema` returns `null` (not absent) for a denied tool; hard-cleanup order roleTarget→userWorkspace→user (no workspaceMember row delete needed — deleteUserFromWorkspace already removed it); ClickHouse ECONNREFUSED :8123 log noise is non-fatal
+**Remaining:** 12 other [ ]/[~] tasks ahead of this slice in the execution order (P1.3 e2e, P1.6d remainder, P1.7b Tier-2 browser journey, P1.7c, P2.x+)
+**Next:** orchestrator Tier-2 browser journey (invite→join→customize→switch workspaces), or P1.3's e2e preset-acceptance bullet
+
+CLAIMED — P1.6e/gallery-entrypoint — GLM-5.3-Flash — 2026-09-16T16:58:00Z — base 5774f4c19966a246ba6e5cb49a7fd9354728bcef
+
+## 2026-09-16 17:02 UTC — GLM-5.3-Flash [executor] — contract v4
+**Task:** P1.6e Workspace reuse · **Slice:** gallery entrypoint — template gallery section in the document browser (instantiate-from-gallery; populated-workspace regression left to Tier 2) · **Claim:** done-for-review
+**Ready-to-tick:** no — gallery live-behavior needs a browser against a running app (Tier 2, orchestrator)
+**Base:** 5774f4c19966a246ba6e5cb49a7fd9354728bcef
+**Changed:** `a2e-documents/src/lib/template-gallery.ts` (new: generic `collectGalleryTemplates` — TEMPLATE kind, non-archived, fr-locale title sort); `src/lib/__tests__/template-gallery.test.ts` (4 cases); `document-browser.front-component.tsx` (+32: "Modèles" section above the tree with empty-state, gallery rows gain a `utiliser` instantiate button via optional `onInstantiate` on `DocumentRow`).
+**Checks:** `node --test template-gallery.test.ts` → 4/4; lib suite sweep → 46/46; `npx tsc --noEmit` in the app → 0 errors; `yarn lint` → 0/0; `npx twenty dev:build .` → OK 14 files with typecheck.
+**Missing for tick:** browser verification of the gallery section + instantiate-from-gallery against `yarn start` (Tier 2, orchestrator — same gap as prior P1.6e slices); the "edit template" leg still needs the recorded product call (edit = template record page today).
+**Do not redo:** gallery helper is pure and generic — reuse it for any future new-document/gallery surface; archived templates deliberately excluded (restore from trash first); tree rows and actions untouched.
+**Remaining:** >20 other [ ]/[~] tasks in the execution order (grep truncated at 40 bullets, P4.2+ unseen).
+**Next:** orchestrator Tier-2 gallery journey; executors — P1.3's e2e preset-acceptance bullet or P1.7c first-use acceptance.
+
+CLAIMED — P1.7b/template-permission-gate — GLM-5.3-Flash — 2026-09-16T17:14:24Z — base 5774f4c19966a246ba6e5cb49a7fd9354728bcef
+
+## 2026-09-16 17:29 UTC — GLM-5.3-Flash [executor] — contract v4
+**Task:** P1.7b Team entry · **Slice:** sixth leg — role-matrix breadth on the templates surface: the workspace-wide setup operation was reachable by ANY workspace member (permit-all `NoPermissionGuard` on `applyWorkspaceTemplate`/`applyWorkspaceTemplateOperation`/`workspaceTemplatePreview`) — closed with `SettingsPermissionGuard(APPLICATIONS)`, matching `installApplication`/`uninstallApplication` · **Claim:** done-for-review
+**Ready-to-tick:** no — front re-export/regen unaffected but the Settings/onboarding browser journey after the gate (Tier 2) is still open; P1.7b keeps remaining Tier-2 legs
+**Base:** 5774f4c19966a246ba6e5cb49a7fd9354728bcef
+**Changed:** `twenty-server/src/engine/core-modules/onboarding/onboarding.resolver.ts` (3 guards swapped + `PermissionsGraphqlApiExceptionFilter` + comment WHY); `onboarding.module.ts` (+`PermissionsModule` import for the guard's DI); new `test/integration/graphql/suites/auth/sign-up/role-matrix-invitee-template-permission-gate.integration-spec.ts` (3 cases)
+**Checks:** preflight `pg_isready` + `redis-cli ping` → OK; new integration spec on `test` DB (`NODE_ENV=test npx jest --config jest-integration.config.ts --runInBand`) → 3/3 pass (Guest denied preview+both applies; SAME token promoted to Member still denied; seeded Apple admin preview succeeds with `blocked:false`); `npx tsgo -p tsconfig.json --noEmit` → 0 errors; `npx oxlint` on 3 touched files → 0/0; `workspace-template.service.spec.ts` → 12/12 (unit behavior unchanged); post-run DB check → no invitee debris
+**Missing for tick:** browser verification that the onboarding/Settings template pickers still work for the workspace admin under the new gate, and that a Guest sees a permission error not a blank screen (Tier 2, orchestrator); the gate semantic — Member is denied too because both seeded roles carry `canUpdateAllSettings=false` and the guard falls back to flags — is a deliberate product call to confirm
+**Do not redo:** the onboarding first-run path is safe: the guard returns true for `PENDING_CREATION`/`ONGOING_CREATION` workspaces, so sign-up-time applies never hit the permission check; the spec's Member-denial is the same "Member ≠ settings" contract asserted by the fifth leg — do not "fix" it by granting Member the APPLICATIONS flag; `deleteUserFromWorkspace` cleanup order roleTarget→userWorkspace→user as prior legs; ClickHouse ECONNREFUSED :8123 noise is non-fatal
+**Remaining:** 12 other [ ]/[~] tasks ahead in the execution order (P1.3 e2e, P1.6d remainder, P1.7b Tier-2 journey, P1.7c, P2.x+)
+**Next:** orchestrator Tier-2 (browser journey incl. admin template apply post-gate); executors — P1.3's e2e preset-acceptance bullet, P1.7c first-use acceptance, or P1.7a's remaining legs (readiness surface, dependency display, export)
+
+CLAIMED — P1.7a/uninstall-impact-query — GLM-5.3-Flash — 2026-09-16T17:47:30Z — base 5774f4c19966a246ba6e5cb49a7fd9354728bcef
+
+## 2026-09-16 17:52 UTC — GLM-5.3-Flash [executor] — contract v4
+**Task:** P1.7a App management · **Slice:** dependency impact display (server leg) — expose the existing `computeUninstallImpact` as a GraphQL query so the front can show what an uninstall removes before attempting it
+**Claim:** done-for-review
+**Ready-to-tick:** no — front consumption + browser rendering of the impact surface (Tier 2) still open; export flow leg needs its product decision
+**Base:** 5774f4c19966a246ba6e5cb49a7fd9354728bcef
+**Changed:** new `twenty-server/.../application-manifest/dtos/application-uninstall-impact.dto.ts` (5 @ObjectType DTOs mirroring the service's `UninstallImpact`); `application-install.resolver.ts` (+`applicationUninstallImpact` query with `SettingsPermissionGuard(APPLICATIONS)`, +preflight service injection)
+**Checks:** `cd packages/twenty-server && npx jest .../application-uninstall-preflight.service.spec.ts --config=jest.config.mjs` → 8/8; `npx tsgo -p tsconfig.json --noEmit` → 0 errors (excluding pre-existing TS2742 noise); `npx oxlint` type-aware on both touched files → 0/0
+**Missing for tick:** front wiring (impact panel in Settings → Applications uninstall confirmation) + browser verification — Tier 2/next slice; schema regen (`nx run twenty-front:graphql:generate`) is orchestrator/front-slice work; export flow needs the product call on export format
+**Do not redo:** the query deliberately does NOT throw on populated/dependent apps — refusal stays in `uninstallApplication` via `assertUninstallAllowed`; no module changes were needed (`ApplicationInstallModule` already imports `ApplicationManifestModule`, which exports the preflight service); keep the query read-only report semantics, never a parallel activation state
+**Remaining:** 12 other [ ]/[~] tasks ahead in the execution order (P1.3 e2e, P1.6d remainder, P1.7a export leg, P1.7b Tier-2 journey, P1.7c, P2.x+)
+**Next:** front slice — consume `applicationUninstallImpact` in the uninstall confirmation dialog (matches the P1.7a C3 pattern already shipped for refusal wording), then orchestrator schema regen + Tier-2
+
+CLAIMED — P1.7a/uninstall-impact-front — GLM-5.3-Flash — 2026-09-16T17:56:30Z — base 5774f4c19966a246ba6e5cb49a7fd9354728bcef
+
+## 2026-09-16 18:08 UTC — GLM-5.3-Flash [executor] — contract v4
+**Task:** P1.7a App management · **Slice:** dependency impact display (front leg) — consume `applicationUninstallImpact` in the uninstall confirmation dialog
+**Claim:** done-for-review
+**Ready-to-tick:** no — browser journey of the dialog against `yarn start` is Tier 2; schema regen still pending
+**Base:** 5774f4c19966a246ba6e5cb49a7fd9354728bcef
+**Changed:** new `twenty-front/src/pages/settings/applications/graphql/queries/applicationUninstallImpact.ts` (hand-written document, codegen note — mirrors the P1.6c a2e-workspace pattern); new `hooks/useApplicationUninstallImpact.ts` (hook + exported `ApplicationUninstallImpact` type mirroring the 5 DTO shapes); `tabs/SettingsApplicationDetailAboutTab.tsx` (+`universalIdentifier` prop, query gated on a state set only when the Uninstall button opens the modal — no page-mount fetch; impact rendered in the dialog subtitle: deleted objects/record counts in danger color, fields/views in secondary, cross-app dependents flagged); `SettingsApplicationDetails.tsx` (+pass `universalIdentifier`)
+**Checks:** `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → 0 errors; `npx oxlint` type-aware on the 4 files → 0/0; `npx oxfmt --check` → clean (AboutTab auto-fixed once); `npx jest --findRelatedTests <AboutTab + new hook> --config=jest.config.mjs` → 41/41 (2 suites)
+**Missing for tick:** browser verification of the dialog rendering with real impact data (Tier 2, orchestrator); `npx nx run twenty-front:graphql:generate` + switching the hand-written document to the generated `*Document`; Lingui `fr` catalog compile is maintained by the i18n pipeline
+**Do not redo:** the query is gated by local state set in `openUninstallModal`, NOT by modal visibility — do not "simplify" to an unconditional fetch (the report surface would run for admins browsing app details); empty impact (no objects/fields/views/records/dependents) renders no list, keeping the default warning text alone; marketplace preview page (`SettingsAvailableApplicationDetails`) never passes `onUninstall`, so it is unaffected
+**Remaining:** 12 other [ ]/[~] tasks ahead in the execution order (P1.3 e2e, P1.6d remainder, P1.7a export leg, P1.7b Tier-2 journey, P1.7c, P2.x+)
+**Next:** orchestrator schema regen + Tier-2 browser pass; then P1.6d second bullet (Projects starter bundle) is the next executor-ready slice
+
+CLAIMED — P1.6d/projects-seeder — GLM-5.3-Flash — 2026-09-16T19:13:40Z — base 5774f4c19966a246ba6e5cb49a7fd9354728bcef
+
+RETRACTED — P1.6d/projects-seeder — GLM-5.3-Flash — 2026-09-16T19:15:30Z — claim was mistaken: slice already done-for-review in 2026-09-14 18:30 entry (post-install.ts + starter-projects.ts committed at aa4979e7). No work performed, no files touched. Next executor slice re-selected below.
+
+CLAIMED — P1.3/preset-orchestration — GLM-5.3-Flash — 2026-09-16T19:42:00Z — base 5774f4c19966a246ba6e5cb49a7fd9354728bcef
+
+## 2026-09-16 19:52 UTC — GLM-5.3-Flash [executor] — contract v4
+**Task:** P1.3 Onboarding presets · **Slice:** complete preset orchestration — partial-state reporting, owned navigation and optional samples (first unmet bullet; install-failure logging was already fixed by P1.6b)
+**Claim:** done-for-review
+**Ready-to-tick:** no — live seed of starter content via a real post-install hook on a running server is Tier 2
+**Base:** 5774f4c19966a246ba6e5cb49a7fd9354728bcef
+**Changed:** `twenty-server/src/engine/core-modules/onboarding/workspace-template.service.ts` (`seed-samples` step no longer a hardcoded skip with a stale "seeder arrives with P1.6d" comment: new `resolveSampleSeedingStep` inspects the succeeded install steps' registration manifests for `postInstallLogicFunction` — P1.6d moved sample seeding into app-owned post-install hooks, so the step reports `succeeded` (delegated seeding) or `skipped` (no hook) instead of faking a skip; failed installs can never report seeding); `__tests__/workspace-template.service.spec.ts` (+3 cases: delegated→succeeded, no-hook→skipped, failed-install→skipped; `buildRegistration` manifest type widened).
+**Checks:** `npx jest src/engine/core-modules/onboarding/__tests__/workspace-template.service.spec.ts --config=jest.config.mjs` → 15/15 (12 pre-existing + 3 new); `npx tsgo -p tsconfig.json --noEmit` → 0 errors in touched files; `npx oxlint <both files> --type-aware` → 0/0.
+**Missing for tick:** Tier-2 live check that a2e-documents' async post-install hook actually seeds on template apply (`shouldRunSynchronously: false` — the install step resolves before seeding completes; if the contract needs seeding-in-result semantics, that hook flag or the step's reporting needs a product call); P1.3's e2e browser bullet remains open.
+**Do not redo:** no parallel server-side seeder — seeding stays app-owned via post-install hooks (provenance/idempotency live in the apps); `sampleContentEnabled` definitions are all `false` today, so the step only enters when the client passes the flag; first draft used a nonexistent `isNonEmptyString` guard from twenty-shared/utils — only `isDefined`/`isNonEmptyArray` exist, verify before importing.
+**Remaining:** 12 other [ ]/[~] tasks ahead in the execution order (P1.3 e2e, P1.6d D02-gated leg, P1.7a export, P1.7b Tier-2, P1.7c, P2.x+)
+**Next:** P1.3's e2e preset-acceptance bullet (browser, Tier 2) or P1.7c first-use acceptance; orchestrator — the sync-vs-async post-install question above.

@@ -3,6 +3,7 @@ import { useAtom, useStore } from 'jotai';
 
 import { BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { EditorCommentsThreadStore } from '@/blocknote-editor/comments/EditorCommentsThreadStore';
+import { useDocumentCommentThreadPersistence } from '@/blocknote-editor/comments/hooks/useDocumentCommentThreadPersistence';
 import { useResolveCommentUsers } from '@/blocknote-editor/comments/hooks/useResolveCommentUsers';
 import { BlockEditor } from '@/blocknote-editor/components/BlockEditor';
 import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
@@ -135,16 +136,35 @@ export const RichTextFieldEditor = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fieldName, recordId]);
 
+  // Thread persistence only exists for a2e-documents `document` records; the
+  // same editor also renders core note/email bodies whose schema has no
+  // documentCommentThread object, so those keep the in-memory store.
+  const isDocumentRecord = objectNameSingular === 'document';
+  const documentThreadPersistence = useDocumentCommentThreadPersistence({
+    documentId: recordId,
+  });
+
   const commentThreadStore = useMemo(
     () =>
       new EditorCommentsThreadStore({
         currentUserId: currentWorkspaceMember?.id ?? '',
+        persistence: isDocumentRecord ? documentThreadPersistence : undefined,
       }),
     // Editor (and its captured thread store) is created once per record field;
-    // identity changes would orphan existing threads.
+    // identity changes would orphan existing threads. The persistence
+    // callbacks are useCallback-stable and close over recordId-scoped state,
+    // so capturing the first instance is safe.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [recordId, fieldName, currentWorkspaceMember?.id],
+    [recordId, fieldName, currentWorkspaceMember?.id, isDocumentRecord],
   );
+
+  useEffect(() => {
+    if (!isDocumentRecord) {
+      return;
+    }
+
+    void commentThreadStore.loadFromPersistence();
+  }, [commentThreadStore, isDocumentRecord]);
 
   const commentsExtension = useMemo(
     () =>

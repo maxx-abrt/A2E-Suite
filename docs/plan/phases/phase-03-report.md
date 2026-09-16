@@ -648,3 +648,44 @@ touched, no entity/migration changes.
 - P3.3 is now complete; next phase section per PLAN.md is P4 (Projects &
   Tasks 2.0) — start with its first unticked item after re-reading the
   phase-04 docs if any exist.
+
+CLAIMED — P3.2/comment-thread-storage — GLM-5.3-Flash — 2026-09-16T18:32:00Z — base 5774f4c19966a246ba6e5cb49a7fd9354728bcef
+CLAIMED — P3.2/comment-thread-front-adapter — GLM-5.3-Flash — 2026-09-16T18:49:30Z — base 5774f4c19966a246ba6e5cb49a7fd9354728bcef
+
+## 2026-09-16 19:12 UTC — GLM-5.3-Flash [executor] — contract v4
+**Task:** P3.2 Editor upgrades · **Slice:** comment-persistence front leg — `EditorCommentsThreadStore` gains an optional persistence adapter backed by the P3.2 `documentCommentThread` object, wired in `RichTextFieldEditor` for `document` records
+**Claim:** done-for-review
+**Ready-to-tick:** no — schema regen + live reload/second-session acceptance (Tier 2) still open; GraphQL documents are hand-written
+**Base:** 5774f4c19966a246ba6e5cb49a7fd9354728bcef
+**Changed:** `twenty-front/.../comments/EditorCommentsThreadStore.ts` (+optional `persistence` in options: `loadFromPersistence` hydrate + save/delete hooks after every mutating op — no adapter = exact prior in-memory behavior); new `comments/utils/mapDocumentCommentThread.ts` (server row ↔ blocknote `ThreadData` mappers, ISO-string→Date conversion); new `comments/hooks/useDocumentCommentThreadPersistence.ts` (hand-written find/create/update/delete documents vs the workspace-schema object — codegen note mirrors the a2e-workspace pattern; saveThread upserts by `threadId`, delete is a no-op when no row); `RichTextFieldEditor.tsx` (+persistence only when `objectNameSingular === 'document'` — core note/email editors keep the memory store since their schema has no thread object; hydration in a post-mount effect); `__tests__/EditorCommentsThreadStore.test.ts` (+7 cases: mappers 3, persistence round-trip/hydrate/delete/no-adapter 4)
+**Checks:** `npx jest <store spec> --config=packages/twenty-front/jest.config.mjs` → 7/7; `npx jest --findRelatedTests <RichTextFieldEditor + store>` → 142/142 (17 suites); `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → 0 errors; `npx oxlint <5 touched files> --type-aware` → 0 warnings 0 errors (fixed one exhaustive-deps + one unused-var it caught); `npx oxfmt` → applied
+**Missing for tick:** `npx nx run twenty-front:graphql:generate` against a server with the a2e-documents 0.x app installed, then switch the hand-written documents to generated exports (orchestrator/front slice); Tier-2 browser journey: create comment → reload → thread body back; second session sees resolution + reactions; CASCADE check (delete document → rows gone)
+**Do not redo:** `threadId` is the join key between editor threads and server rows (the record `id` is NOT the thread id) — keep the find-by-threadId upsert; hydration must stay opt-in per object (`document` only) or core note/email editors will query a nonexistent object; `loadThreads` uses `no-cache` — do not "optimize" it back to cache-first or stale resolution state shows after another session resolves; persistence calls are fire-after-emit (UI updates first, server write is awaited inside the store methods)
+**Remaining:** 12 other [ ]/[~] tasks ahead in this execution order (P3.2 live-reload acceptance + remaining legs, P1.3 e2e, P1.6d D02-gated leg, P1.7a export, P1.7b Tier-2, P1.7c, P2.x+)
+**Next:** orchestrator — schema regen + Tier-2 reload/second-session journey; then P3.2's remaining editor-upgrade legs or P4 first slice
+CLAIMED — P3.2/comment-thread-front-adapter — GLM-5.3-Flash — 2026-09-16T18:49:30Z — base 5774f4c19966a246ba6e5cb49a7fd9354728bcef
+
+## 2026-09-16 18:38 UTC — GLM-5.3-Flash [executor] — contract v4
+**Task:** P3.2 Editor upgrades · **Slice:** comment-persistence storage leg — durable server-side storage for blocknote comment threads as an app-owned object (front adapter is the next micro-step)
+**Claim:** done-for-review
+**Ready-to-tick:** no — front store adapter + live sync/reload acceptance still open; this slice only lands the storage primitive
+**Base:** 5774f4c19966a246ba6e5cb49a7fd9354728bcef
+**Changed:** new `a2e-documents/src/objects/document-comment-thread.object.ts` (threadId unique TEXT = editor-side thread id; comments RAW_JSON projecting the blocknote `ThreadData.comments` array incl. reactions; resolved/resolvedBy/metadata columns mirroring `ThreadData`); `src/objects/document.object.ts` (+one-to-many `commentThreads` inverse); `src/constants/universal-identifiers.ts` (+c31a0200 namespace UIDs for object/fields/relation pair)
+**Checks:** `npx tsc --noEmit` in app → 0; `yarn lint` → 0/0; `node --test src/lib/__tests__/*.test.ts` → 46/46; `npx twenty dev:build .` → OK 14 files; scripted manifest assertion → 2 objects, relation UIDs mutually referencing, joinColumn `documentId`, onDelete CASCADE, `threadId` isUnique
+**Missing for tick:** front leg — `EditorCommentsThreadStore` gains a persistence adapter reading/writing this object via the existing GraphQL client (next executor slice); then live reload + second-session acceptance (Tier 2) and `twenty dev:build`-then-sync on a populated workspace to observe table creation
+**Do not redo:** storage lives in app metadata per the P3.1 spike decision (no server schema change); anchor marks stay inside the document body (blocknote-managed) — only thread/comment bodies + resolution + reactions are server rows; CASCADE means deleting a document deletes its threads (permission inheritance by construction)
+**Remaining:** 12 other [ ]/[~] tasks ahead in this execution order (P3.2 front adapter + remaining legs, P1.3 e2e, P1.6d D02-gated leg, P1.7a export, P1.7b Tier-2, P1.7c, P2.x+)
+**Next:** front adapter slice — back `EditorCommentsThreadStore` with the `documentCommentThread` object (hand-written GraphQL document like the P1.7a front pattern), then reload-persistence test
+CLAIMED — P3.2/export-fidelity — GLM-5.3-Flash — 2026-09-16T19:18:00Z — base 5774f4c19966a246ba6e5cb49a7fd9354728bcef
+
+## 2026-09-16 19:25 UTC — GLM-5.3-Flash [executor] — contract v4
+**Task:** P3.2 Editor upgrades · **Slice:** export validation + fidelity/fallback warnings — empty documents refuse export; DOCX/Markdown actions surface per-format degradation warnings (PDF/print renders the live DOM, no warnings)
+**Claim:** done-for-review
+**Ready-to-tick:** no — warnings + empty-gate behavior in a real editor (menu screenshot/journey) is Tier-2; also the earlier finding stands: print path adds `a2e-print-editor` to body and never removes it
+**Base:** 5774f4c19966a246ba6e5cb49a7fd9354728bcef
+**Changed:** new `twenty-front/.../export/utils/exportFidelity.ts` (`isDocumentEmptyForExport` — whitespace-only text is empty, payload-only blocks (image/table/file) and non-array content count as content, malformed entries skipped; `collectExportFidelityWarnings` — recursive callout/file/mention detection, per-format allow-list, machine keys localized in the component); new `utils/__tests__/exportFidelity.test.ts` (12 cases); `BlockEditorExportMenu.tsx` (+warning lines under each format action in `font.color.tertiary`, menu returns null for empty documents so the export icon disappears until there is content)
+**Checks:** `npx jest src/modules/blocknote-editor --config=packages/twenty-front/jest.config.mjs` → 13 suites 79/79 (12 new); `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → 0 errors; `npx oxlint <3 files> --type-aware` → 0/0 (dropped a useMemo the exhaustive-deps rule flagged as always-re-evaluating — `editor.document` identity changes per render and scans are cheap); `npx oxfmt` → applied
+**Missing for tick:** Tier-2 browser pass of the menu (warning copy fr rendering, empty-doc icon hidden, export flows still download); fr translations for the 3 new msg strings arrive with the next `lingui extract` — do not hand-edit catalogs
+**Do not redo:** warnings are machine keys typed `ExportFidelityWarning` and localized only in the component (util stays Lingui-free/testable); PDF intentionally has no warning (print shows exactly what renders); empty gate hides the whole menu, not individual actions — do not "improve" to per-action disabling
+**Remaining:** 12 other [ ]/[~] tasks ahead in this execution order (P3.2 share/atomic-save/tree legs, P1.3 e2e, P1.6d D02-gated leg, P1.7a export, P1.7b Tier-2, P1.7c, P2.x+)
+**Next:** P3.2 atomic expected-revision save leg or the P1.6d D02 persona-bundle product decision (product-gated); orchestrator — Tier-2 export menu pass

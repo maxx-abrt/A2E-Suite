@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
@@ -27,6 +28,7 @@ import { OnboardingInviteSuggestionsModule } from 'src/modules/onboarding-invite
     KeyValuePairModule,
     UserVarsModule,
     OnboardingInviteSuggestionsModule,
+    PermissionsModule,
     WorkspaceCacheModule,
     WorkspaceMigrationModule,
     TypeOrmModule.forFeature([WorkspaceEntity, UserWorkspaceEntity]),

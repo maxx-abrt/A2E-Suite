@@ -26,6 +26,7 @@ import {
 import {
   type ApplyTemplateResult,
   type ApplyTemplateStep,
+  type OperationStepStatus,
   type TemplateKeyVersion,
   type TemplatePreview,
   type TemplatePreviewApp,
@@ -409,9 +410,13 @@ export class WorkspaceTemplateService {
       }
 
       if (step.kind === 'seed-samples') {
-        // Sample seeding is repeat-safe by design: the seeder arrives with
-        // P1.6d; until then the step is an explicit skip, not a fake success.
-        step.status = 'skipped';
+        const seedStep = await this.resolveSampleSeedingStep({
+          workspaceId,
+          steps,
+        });
+
+        step.status = seedStep.status;
+        step.localizedMessage = seedStep.localizedMessage;
 
         continue;
       }
@@ -460,6 +465,66 @@ export class WorkspaceTemplateService {
     }
 
     return steps;
+  }
+
+  // Sample seeding is app-owned since P1.6d: post-install hooks seeded starter
+  // content during the install steps, so this step only reports that outcome.
+  // No parallel server-side seeder — that would duplicate a primitive that
+  // already exists and would bypass the app's own provenance checks.
+  private async resolveSampleSeedingStep({
+    workspaceId,
+    steps,
+  }: {
+    workspaceId: string;
+    steps: ApplyTemplateStep[];
+  }): Promise<{ status: OperationStepStatus; localizedMessage?: string }> {
+    // Only succeeded installs ran their post-install hook: a failed install
+    // seeded nothing, and reporting seeding as done would fake success.
+    const installedAppUniversalIdentifiers = steps
+      .filter(
+        (candidateStep) =>
+          candidateStep.kind === 'install-app' &&
+          candidateStep.status === 'succeeded',
+      )
+      .map((installedAppStep) => installedAppStep.targetUniversalIdentifier)
+      .filter(isDefined);
+
+    if (installedAppUniversalIdentifiers.length === 0) {
+      return { status: 'skipped' };
+    }
+
+    const appsWithPostInstallSeed = await Promise.all(
+      installedAppUniversalIdentifiers.map(async (applicationUniversalIdentifier) => {
+        const registration =
+          await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
+            applicationUniversalIdentifier,
+          );
+
+        return isDefined(
+          registration?.manifest?.application?.postInstallLogicFunction,
+        );
+      }),
+    );
+
+    const seededByPostInstall = appsWithPostInstallSeed.some(Boolean);
+
+    if (!seededByPostInstall) {
+      return {
+        status: 'skipped',
+        localizedMessage:
+          'No sample content is defined for the installed apps.',
+      };
+    }
+
+    this.logger.log(
+      `Sample seeding for workspace ${workspaceId} delegated to app post-install hooks`,
+    );
+
+    return {
+      status: 'succeeded',
+      localizedMessage:
+        'Starter content was provided by the installed apps.',
+    };
   }
 
   private async getStoredOperation({

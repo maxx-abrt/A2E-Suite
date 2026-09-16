@@ -14,7 +14,9 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
+import { ApplicationUninstallImpactDTO } from 'src/engine/core-modules/application/application-manifest/dtos/application-uninstall-impact.dto';
 import { UninstallApplicationInput } from 'src/engine/core-modules/application/application-manifest/dtos/uninstall-application.input';
+import { ApplicationUninstallPreflightService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall-preflight.service';
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
 import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
@@ -47,7 +49,22 @@ export class ApplicationInstallResolver {
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly marketplaceQueryService: MarketplaceQueryService,
     private readonly metricsService: MetricsService,
+    private readonly applicationUninstallPreflightService: ApplicationUninstallPreflightService,
   ) {}
+
+  // Read-only C3 report: what an uninstall would remove. Never throws on
+  // populated/dependent apps — the refusal happens in uninstallApplication.
+  @Query(() => ApplicationUninstallImpactDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  async applicationUninstallImpact(
+    @Args('universalIdentifier') universalIdentifier: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ApplicationUninstallImpactDTO> {
+    return this.applicationUninstallPreflightService.computeUninstallImpact({
+      workspaceId,
+      applicationUniversalIdentifier: universalIdentifier,
+    });
+  }
 
   @Query(() => [ApplicationDTO])
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))

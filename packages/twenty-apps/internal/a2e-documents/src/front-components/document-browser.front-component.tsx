@@ -11,6 +11,7 @@ import {
 } from '../lib/document-tree.ts';
 import { buildAppendPosition } from '../lib/fractional-position.ts';
 import { buildTemplateCopyPayload } from '../lib/instantiate-template.ts';
+import { collectGalleryTemplates } from '../lib/template-gallery.ts';
 import {
   buildSaveAsTemplatePayload,
   buildTemplateDuplicatePayload,
@@ -387,6 +388,11 @@ const DocumentBrowser = () => {
 
   const searchableNodes = useMemo(() => flattenNodes(documents), [documents]);
 
+  const galleryTemplates = useMemo(
+    () => collectGalleryTemplates(searchableNodes),
+    [searchableNodes],
+  );
+
   const matchingSearch = searchInput.trim().toLowerCase();
 
   return (
@@ -452,6 +458,21 @@ const DocumentBrowser = () => {
                     onToggleFavorite={toggleFavorite}
                   />
                 ))
+            )}
+          </DocumentSection>
+          <DocumentSection title="Modèles">
+            {galleryTemplates.length === 0 ? (
+              <DocumentEmpty label="Aucun modèle — créez-en un depuis l'arborescence" />
+            ) : (
+              galleryTemplates.map((templateNode) => (
+                <DocumentRow
+                  key={`gallery-${templateNode.id}`}
+                  documentNode={templateNode}
+                  onOpen={openDocument}
+                  onToggleFavorite={toggleFavorite}
+                  onInstantiate={instantiateTemplate}
+                />
+              ))
             )}
           </DocumentSection>
           <DocumentSection title="Arborescence">
@@ -575,12 +596,14 @@ type DocumentRowProps = {
   documentNode: DocumentNode;
   onOpen: (documentId: string) => void;
   onToggleFavorite: (documentNode: DocumentNode) => Promise<void>;
+  onInstantiate?: (templateDocument: DocumentNode) => Promise<void>;
 };
 
 const DocumentRow = ({
   documentNode,
   onOpen,
   onToggleFavorite,
+  onInstantiate,
 }: DocumentRowProps) => (
   <li style={{ padding: appTheme.spacing1 }}>
     <button
@@ -591,6 +614,15 @@ const DocumentRow = ({
       {documentNode.kind === DOCUMENT_KIND.TEMPLATE ? '📄 ' : '📝 '}
       {documentNode.title}
     </button>
+    {documentNode.kind === DOCUMENT_KIND.TEMPLATE && onInstantiate && (
+      <button
+        type="button"
+        onClick={() => void onInstantiate(documentNode)}
+        style={ghostButtonStyle}
+      >
+        utiliser
+      </button>
+    )}
     <button
       type="button"
       onClick={() => onToggleFavorite(documentNode)}

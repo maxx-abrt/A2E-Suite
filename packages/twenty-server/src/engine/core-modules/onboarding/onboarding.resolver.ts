@@ -1,6 +1,8 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
+import { PermissionFlagType } from 'twenty-shared/constants';
+
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -24,8 +26,10 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { OnboardingInviteSuggestionsService } from 'src/modules/onboarding-invite-suggestions/services/onboarding-invite-suggestions.service';
 
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
@@ -90,8 +94,12 @@ export class OnboardingResolver {
     return { success: true };
   }
 
+  // Template operations install apps and rewrite workspace-wide navigation, the
+  // same blast radius as installApplication — gated like it, not left open to
+  // any workspace member.
   @Mutation(() => OnboardingStepSuccessDTO)
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseFilters(PermissionsGraphqlApiExceptionFilter)
   async applyWorkspaceTemplate(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -107,7 +115,8 @@ export class OnboardingResolver {
   }
 
   @Mutation(() => ApplyTemplateResultDTO)
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseFilters(PermissionsGraphqlApiExceptionFilter)
   async applyWorkspaceTemplateOperation(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -132,7 +141,8 @@ export class OnboardingResolver {
   }
 
   @Query(() => TemplatePreviewDTO)
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseFilters(PermissionsGraphqlApiExceptionFilter)
   async workspaceTemplatePreview(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,

@@ -7,10 +7,16 @@ import type {
   ThreadStoreAuth,
 } from '@blocknote/core/comments';
 
-// Threads live in memory per editor instance: the comment marks anchoring
-// threads are persisted inside the document body by blocknote itself, so
-// anchors survive reloads, but thread bodies currently do not (P3.2 v1
-// limitation — no server-side comment storage yet).
+// Threads can optionally be persisted through an adapter so bodies survive
+// reloads; the anchor marks themselves already travel inside the document
+// body, managed by blocknote. Without an adapter the store stays the
+// P3.2 v1 in-memory behavior.
+export type EditorCommentsThreadPersistence = {
+  loadThreads: () => Promise<ThreadData[]>;
+  saveThread: (thread: ThreadData) => Promise<void>;
+  deleteThread: (threadId: string) => Promise<void>;
+};
+
 class EditorCommentsThreadStoreAuth implements ThreadStoreAuth {
   private readonly currentUserId: string;
 
@@ -57,6 +63,7 @@ class EditorCommentsThreadStoreAuth implements ThreadStoreAuth {
 
 type EditorCommentsThreadStoreOptions = {
   currentUserId: string;
+  persistence?: EditorCommentsThreadPersistence;
 };
 
 type CreateThreadOptions = {
@@ -90,12 +97,31 @@ export class EditorCommentsThreadStore implements ThreadStore {
   readonly auth: ThreadStoreAuth;
 
   private readonly currentUserId: string;
+  private readonly persistence?: EditorCommentsThreadPersistence;
   private readonly threads = new Map<string, ThreadData>();
   private readonly subscribers = new Set<ThreadSubscriber>();
 
   constructor(options: EditorCommentsThreadStoreOptions) {
     this.currentUserId = options.currentUserId;
+    this.persistence = options.persistence;
     this.auth = new EditorCommentsThreadStoreAuth(options.currentUserId);
+  }
+
+  // Hydration is async while construction is not (the editor instantiates
+  // the store synchronously); the owner calls this once after mount.
+  async loadFromPersistence(): Promise<void> {
+    if (!this.persistence) {
+      return;
+    }
+
+    const persistedThreads = await this.persistence.loadThreads();
+
+    this.threads.clear();
+    for (const thread of persistedThreads) {
+      this.threads.set(thread.id, thread);
+    }
+
+    this.emit();
   }
 
   async createThread(options: CreateThreadOptions): Promise<ThreadData> {
@@ -125,6 +151,8 @@ export class EditorCommentsThreadStore implements ThreadStore {
     this.threads.set(thread.id, thread);
     this.emit();
 
+    await this.persistence?.saveThread(thread);
+
     return thread;
   }
 
@@ -147,6 +175,8 @@ export class EditorCommentsThreadStore implements ThreadStore {
     thread.updatedAt = now;
     this.emit();
 
+    await this.persistence?.saveThread(thread);
+
     return comment;
   }
 
@@ -167,6 +197,8 @@ export class EditorCommentsThreadStore implements ThreadStore {
     comment.updatedAt = new Date();
     thread.updatedAt = comment.updatedAt;
     this.emit();
+
+    await this.persistence?.saveThread(thread);
   }
 
   async deleteComment(options: {
@@ -180,11 +212,15 @@ export class EditorCommentsThreadStore implements ThreadStore {
     );
     thread.updatedAt = new Date();
     this.emit();
+
+    await this.persistence?.saveThread(thread);
   }
 
   async deleteThread(options: { threadId: string }): Promise<void> {
     this.threads.delete(options.threadId);
     this.emit();
+
+    await this.persistence?.deleteThread(options.threadId);
   }
 
   async resolveThread(options: { threadId: string }): Promise<void> {
@@ -196,6 +232,8 @@ export class EditorCommentsThreadStore implements ThreadStore {
     thread.resolvedBy = this.currentUserId;
     thread.updatedAt = now;
     this.emit();
+
+    await this.persistence?.saveThread(thread);
   }
 
   async unresolveThread(options: { threadId: string }): Promise<void> {
@@ -207,6 +245,8 @@ export class EditorCommentsThreadStore implements ThreadStore {
     thread.resolvedBy = this.currentUserId;
     thread.updatedAt = now;
     this.emit();
+
+    await this.persistence?.saveThread(thread);
   }
 
   async addReaction(options: {
@@ -233,6 +273,8 @@ export class EditorCommentsThreadStore implements ThreadStore {
     }
 
     this.emit();
+
+    await this.persistence?.saveThread(this.getThreadOrThrow(options.threadId));
   }
 
   async deleteReaction(options: {
@@ -256,6 +298,8 @@ export class EditorCommentsThreadStore implements ThreadStore {
       .filter((reaction) => reaction.userIds.length > 0);
 
     this.emit();
+
+    await this.persistence?.saveThread(this.getThreadOrThrow(options.threadId));
   }
 
   getThread(threadId: string): ThreadData {

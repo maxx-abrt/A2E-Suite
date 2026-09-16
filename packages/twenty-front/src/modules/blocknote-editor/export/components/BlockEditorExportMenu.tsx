@@ -9,6 +9,11 @@ import {
   slugifyExportFileName,
   triggerFileDownload,
 } from '@/blocknote-editor/export/utils/exportBlocksToMarkdown';
+import {
+  collectExportFidelityWarnings,
+  isDocumentEmptyForExport,
+  type ExportFidelityWarning,
+} from '@/blocknote-editor/export/utils/exportFidelity';
 import { IconFileExport } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -48,6 +53,14 @@ const StyledExportContainer = styled.div`
   position: relative;
 `;
 
+const StyledExportWarning = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
+  display: block;
+  font-size: ${themeCssVariables.font.size.xs};
+  padding: 0 ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[1]};
+  white-space: normal;
+`;
+
 const MARKDOWN_MIME_TYPE = 'text/markdown;charset=utf-8';
 const DOCX_MIME_TYPE =
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
@@ -66,6 +79,31 @@ export const BlockEditorExportMenu = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const baseFileName = slugifyExportFileName(documentTitle);
+
+  // Computed per render on purpose: `editor.document` identity changes with the
+  // document and the scans are linear in a typically small block count.
+  const documentBlocks = editor?.document ?? [];
+
+  const isEmptyDocument = isDocumentEmptyForExport(documentBlocks);
+
+  const formatWarnings = {
+    pdf: collectExportFidelityWarnings(documentBlocks, 'pdf'),
+    docx: collectExportFidelityWarnings(documentBlocks, 'docx'),
+    markdown: collectExportFidelityWarnings(documentBlocks, 'markdown'),
+  };
+
+  const formatWarningLabels: Record<ExportFidelityWarning, string> = {
+    'callout-degrades': t`Callouts degrade to plain paragraphs`,
+    'file-omitted': t`File blocks are omitted`,
+    'mention-degrades': t`Mentions degrade to plain text`,
+  };
+
+  const renderWarnings = (format: keyof typeof formatWarnings) =>
+    formatWarnings[format].map((warning) => (
+      <StyledExportWarning key={warning}>
+        {formatWarningLabels[warning]}
+      </StyledExportWarning>
+    ));
 
   const handleExportMarkdown = useCallback(async () => {
     if (!isDefined(editor)) {
@@ -112,18 +150,25 @@ export const BlockEditorExportMenu = ({
     return null;
   }
 
+  if (isEmptyDocument) {
+    return null;
+  }
+
   return (
     <StyledExportContainer>
       {isMenuOpen && (
         <StyledExportMenu>
           <StyledExportActionButton onClick={handleExportPdf}>
             {t`Export as PDF (print)`}
+            {renderWarnings('pdf')}
           </StyledExportActionButton>
           <StyledExportActionButton onClick={handleExportDocx}>
             {t`Export as DOCX`}
+            {renderWarnings('docx')}
           </StyledExportActionButton>
           <StyledExportActionButton onClick={handleExportMarkdown}>
             {t`Export as Markdown`}
+            {renderWarnings('markdown')}
           </StyledExportActionButton>
         </StyledExportMenu>
       )}

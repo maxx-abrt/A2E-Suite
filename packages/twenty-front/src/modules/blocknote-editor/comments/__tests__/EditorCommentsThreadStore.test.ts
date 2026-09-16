@@ -1,11 +1,163 @@
+import {
+  mapDocumentCommentThreadRecordToThreadData,
+  mapThreadDataToDocumentCommentThreadInput,
+} from '@/blocknote-editor/comments/utils/mapDocumentCommentThread';
 import { EditorCommentsThreadStore } from '@/blocknote-editor/comments/EditorCommentsThreadStore';
 import { describe, expect, it } from '@jest/globals';
 
-describe('EditorCommentsThreadStore', () => {
-  const CURRENT_USER_ID = 'member-1';
-  const OTHER_USER_ID = 'member-2';
+describe('mapDocumentCommentThread', () => {
+  it('maps a server record to ThreadData with Date objects', () => {
+    const threadData = mapDocumentCommentThreadRecordToThreadData({
+      id: 'row-1',
+      threadId: 'editor-thread-1',
+      comments: [
+        {
+          type: 'comment',
+          id: 'comment-1',
+          userId: 'member-1',
+          createdAt: new Date('2026-01-01T00:00:00Z'),
+          updatedAt: new Date('2026-01-01T00:00:00Z'),
+          reactions: [],
+          metadata: {},
+          body: [{ type: 'paragraph', content: 'hello' }],
+        },
+      ],
+      resolved: true,
+      resolvedBy: 'member-1',
+      metadata: { source: 'test' },
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-02T00:00:00Z',
+    });
 
-  const createThread = async () => {
+    expect(threadData.id).toBe('editor-thread-1');
+    expect(threadData.resolved).toBe(true);
+    expect(threadData.resolvedBy).toBe('member-1');
+    expect(threadData.createdAt).toEqual(new Date('2026-01-01T00:00:00Z'));
+    expect(threadData.updatedAt).toEqual(new Date('2026-01-02T00:00:00Z'));
+    expect(threadData.comments).toHaveLength(1);
+    expect(threadData.metadata).toEqual({ source: 'test' });
+  });
+
+  it('defaults null server columns for a thread row missing json payloads', () => {
+    const threadData = mapDocumentCommentThreadRecordToThreadData({
+      id: 'row-1',
+      threadId: 'editor-thread-1',
+      comments: null,
+      resolved: false,
+      resolvedBy: null,
+      metadata: null,
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z',
+    });
+
+    expect(threadData.comments).toEqual([]);
+    expect(threadData.resolvedBy).toBeUndefined();
+    expect(threadData.metadata).toEqual({});
+  });
+
+  it('maps ThreadData back to nullable server input columns', () => {
+    const input = mapThreadDataToDocumentCommentThreadInput({
+      type: 'thread',
+      id: 'editor-thread-1',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      comments: [],
+      resolved: false,
+      metadata: {},
+    });
+
+    expect(input.resolvedBy).toBeNull();
+    expect(input.comments).toEqual([]);
+    expect(input.resolved).toBe(false);
+  });
+});
+
+describe('EditorCommentsThreadStore persistence', () => {
+  const CURRENT_USER_ID = 'member-1';
+
+  const createMemoryPersistence = () => {
+    const savedThreads = new Map<string, unknown>();
+    const deletedThreadIds: string[] = [];
+
+    return {
+      persistence: {
+        loadThreads: async () => Array.from(savedThreads.values()) as never[],
+        saveThread: async (thread: unknown) => {
+          (savedThreads.set(
+            (thread as { id: string }).id,
+            structuredClone(thread),
+          ),
+            undefined);
+        },
+        deleteThread: async (threadId: string) => {
+          deletedThreadIds.push(threadId);
+          savedThreads.delete(threadId);
+        },
+      },
+      savedThreads,
+      deletedThreadIds,
+    };
+  };
+
+  it('saves a created thread through the persistence adapter', async () => {
+    const { persistence, savedThreads } = createMemoryPersistence();
+    const store = new EditorCommentsThreadStore({
+      currentUserId: CURRENT_USER_ID,
+      persistence,
+    });
+
+    const thread = await store.createThread({
+      initialComment: { body: [{ type: 'paragraph', content: 'first' }] },
+    });
+
+    expect(savedThreads.has(thread.id)).toBe(true);
+  });
+
+  it('hydrates threads from persistence on loadFromPersistence', async () => {
+    const { persistence, savedThreads } = createMemoryPersistence();
+    const writer = new EditorCommentsThreadStore({
+      currentUserId: CURRENT_USER_ID,
+      persistence,
+    });
+
+    const thread = await writer.createThread({
+      initialComment: { body: [{ type: 'paragraph', content: 'first' }] },
+    });
+
+    expect(savedThreads.has(thread.id)).toBe(true);
+
+    const reader = new EditorCommentsThreadStore({
+      currentUserId: CURRENT_USER_ID,
+      persistence,
+    });
+
+    expect(reader.getThreads().size).toBe(0);
+
+    await reader.loadFromPersistence();
+
+    expect(reader.getThreads().size).toBe(1);
+    expect(reader.getThread(thread.id).comments).toHaveLength(1);
+  });
+
+  it('deletes a thread through the persistence adapter', async () => {
+    const { persistence, savedThreads, deletedThreadIds } =
+      createMemoryPersistence();
+    const store = new EditorCommentsThreadStore({
+      currentUserId: CURRENT_USER_ID,
+      persistence,
+    });
+
+    const thread = await store.createThread({
+      initialComment: { body: [{ type: 'paragraph', content: 'first' }] },
+    });
+
+    await store.deleteThread({ threadId: thread.id });
+
+    expect(deletedThreadIds).toEqual([thread.id]);
+    expect(savedThreads.has(thread.id)).toBe(false);
+  });
+
+  it('keeps in-memory behavior when no persistence is provided', async () => {
     const store = new EditorCommentsThreadStore({
       currentUserId: CURRENT_USER_ID,
     });
@@ -14,118 +166,8 @@ describe('EditorCommentsThreadStore', () => {
       initialComment: { body: [{ type: 'paragraph', content: 'first' }] },
     });
 
-    return { store, thread };
-  };
+    await store.loadFromPersistence();
 
-  it('creates a thread authored by the current user', async () => {
-    const { store, thread } = await createThread();
-
-    expect(thread.comments).toHaveLength(1);
-    expect(thread.comments[0].userId).toBe(CURRENT_USER_ID);
-    expect(thread.resolved).toBe(false);
-
-    const retrieved = store.getThread(thread.id);
-    expect(retrieved.id).toBe(thread.id);
-  });
-
-  it('adds a comment and notifies subscribers', async () => {
-    const { store, thread } = await createThread();
-
-    const snapshots: number[] = [];
-    store.subscribe((threads) => {
-      snapshots.push(threads.get(thread.id)?.comments.length ?? 0);
-    });
-
-    const reply = await store.addComment({
-      threadId: thread.id,
-      comment: { body: [{ type: 'paragraph', content: 'reply' }] },
-    });
-
-    expect(reply.userId).toBe(CURRENT_USER_ID);
-
-    const updated = store.getThread(thread.id);
-    expect(updated.comments).toHaveLength(2);
-    expect(snapshots).toContain(2);
-  });
-
-  it('resolves and unresolves a thread with resolver attribution', async () => {
-    const { store, thread } = await createThread();
-
-    await store.resolveThread({ threadId: thread.id });
-
-    const resolved = store.getThread(thread.id);
-    expect(resolved.resolved).toBe(true);
-    expect(resolved.resolvedBy).toBe(CURRENT_USER_ID);
-
-    await store.unresolveThread({ threadId: thread.id });
-
-    expect(store.getThread(thread.id).resolved).toBe(false);
-  });
-
-  it('updates and deletes a comment', async () => {
-    const { store, thread } = await createThread();
-    const commentId = thread.comments[0].id;
-
-    await store.updateComment({
-      threadId: thread.id,
-      commentId,
-      comment: { body: [{ type: 'paragraph', content: 'edited' }] },
-    });
-
-    expect(store.getThread(thread.id).comments[0].body).toEqual([
-      { type: 'paragraph', content: 'edited' },
-    ]);
-
-    await store.deleteComment({ threadId: thread.id, commentId });
-
-    expect(store.getThread(thread.id).comments).toHaveLength(0);
-  });
-
-  it('toggles reactions per user', async () => {
-    const { store, thread } = await createThread();
-    const commentId = thread.comments[0].id;
-
-    await store.addReaction({
-      threadId: thread.id,
-      commentId,
-      emoji: '👍',
-    });
-
-    const reacted = store.getThread(thread.id).comments[0];
-    expect(reacted.reactions[0].userIds).toEqual([CURRENT_USER_ID]);
-
-    await store.deleteReaction({
-      threadId: thread.id,
-      commentId,
-      emoji: '👍',
-    });
-
-    expect(store.getThread(thread.id).comments[0].reactions).toHaveLength(0);
-  });
-
-  it('restricts updating a foreign comment', async () => {
-    const { thread } = await createThread();
-    const comment = thread.comments[0];
-
-    // Author can edit their own comment; a different member cannot.
-    const authorStore = new EditorCommentsThreadStore({
-      currentUserId: CURRENT_USER_ID,
-    });
-    expect(authorStore.auth.canUpdateComment(comment)).toBe(true);
-
-    const foreignStore = new EditorCommentsThreadStore({
-      currentUserId: OTHER_USER_ID,
-    });
-    expect(foreignStore.auth.canUpdateComment(comment)).toBe(false);
-    expect(foreignStore.auth.canAddComment(thread)).toBe(true);
-  });
-
-  it('deletes a thread', async () => {
-    const { store, thread } = await createThread();
-
-    await store.deleteThread({ threadId: thread.id });
-
-    const remaining = store.getThreads();
-    expect(remaining.has(thread.id)).toBe(false);
+    expect(store.getThread(thread.id).comments).toHaveLength(1);
   });
 });

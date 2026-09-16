@@ -327,6 +327,7 @@ export const SettingsApplicationDetails = () => {
             onUninstall={handleUninstall}
             isUninstalling={isUninstalling}
             state={application.state}
+            universalIdentifier={application.universalIdentifier}
           />
         );
       case 'content':

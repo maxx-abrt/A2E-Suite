@@ -138,6 +138,18 @@ export default defineObject({
       universalSettings: oneToMany,
     },
     {
+      universalIdentifier: RELATION_IDS.documentCommentThreads,
+      type: FieldType.RELATION,
+      name: 'commentThreads',
+      label: 'Fils de discussion',
+      icon: 'IconMessage',
+      relationTargetObjectMetadataUniversalIdentifier:
+        OBJECT_IDS.documentCommentThread,
+      relationTargetFieldMetadataUniversalIdentifier:
+        RELATION_IDS.commentThreadDocument,
+      universalSettings: oneToMany,
+    },
+    {
       universalIdentifier: RELATION_IDS.documentCompany,
       type: FieldType.RELATION,
       name: 'company',
