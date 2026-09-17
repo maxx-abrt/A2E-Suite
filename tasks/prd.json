@@ -305,12 +305,13 @@
         "Quality gate: no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 15,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md literal deps: after P0.1/P1.6a — both [x] (P0.1 DONE 2026-09-13; P1.6a verified 2026-09-17). Execution order position: after P3 repair and the P4 existing slice.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-17T17:51:10.873Z"
+    "updatedAt": "2026-09-17T18:00:32.561Z"
   }
 }

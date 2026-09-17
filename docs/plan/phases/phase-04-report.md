@@ -309,3 +309,240 @@ CLAIMED — P4.2-cmdk/cmd-k-create-task-search-provider — deepseek-v4.1-flash 
 **Do not redo:** the search wiring — `A2eProjectsSearchProviderService` is registered purely via the existing `@RegisteredSearchProvider` decorator + module provider; `SearchProviderRegistryService` (DiscoveryService) + `AppSearchService` already group by app id and cap at 5, so no resolver/DTO/Cmd+K-host change is needed. One provider covers both object types on purpose (tasks on standard `task`, projects on the app's `project`). Permission resolution must stay ambient (`resolveRolePermissionConfig({authContext,userWorkspaceRoleMap,apiKeyRoleMap})` passed to `getRepository`); a null config ⇒ `undefined` ⇒ empty object permissions ⇒ fails closed, never `shouldBypassPermissionChecks`. The command mirrors `create-project-command` exactly (Command execute-on-mount, `AppPath.RecordShowPage` with `objectNameSingular: 'task'`); "go to project" already exists as `go-to-projects`.
 **Remaining:** P4.2 dependency picker, board view, calendar view, retroplanning, My-tasks page, project-page widget set; then P4C and the P4.1 live-lifecycle leftovers.
 **Next:** orchestrator — Tier-2 install for the live Cmd+K create-task + grouped task/project search proof, then tick P4.2-cmdk; or executor — the next P4.2 bullet.
+
+CLAIMED — P4C.1/ownership-compatibility-spike — deepseek-v4.1-flash — 2026-09-17T17:52:00Z — base 7e74c40e7f6e74a4172b5b9187460185cd426a41
+
+## 2026-09-17 — P4C.1 calendar ownership/compatibility spike — findings (report-only)
+
+Base commit `7e74c40e`. Method: read-only inspection of standard metadata, creation
+drivers, import/sync and front-end calendar UI at that commit. No metadata or
+service was modified — this section is the deliverable and feeds PLAN.md **D05**.
+Paths below are relative to the repo root, backticked so no doc link can rot.
+
+### 1. Standard metadata inventory (as it actually is)
+
+- The event store is the workspace standard object **`calendarEvent`**
+  (`packages/twenty-server/src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts`,
+  metadata in `.../utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts`).
+  Fields: `title, isCanceled, isFullDay, startsAt, endsAt, externalCreatedAt,
+  externalUpdatedAt, description, location, iCalUid, conferenceSolution,
+  conferenceLink` + system fields and four reverse relations
+  (`calendarChannelEventAssociations`, `calendarEventParticipants`,
+  `calendarEventTargets`, `callRecordings`).
+- **No `recurrenceRule`/RRULE field exists on `calendarEvent`.** Repo-wide grep
+  for `recurrenceRule` returns nothing in the calendar module. Recurrence is only
+  an association string, `calendarChannelEventAssociation.recurringEventExternalId`
+  (metadata `compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts`),
+  and is only populated by the CalDAV parser
+  (`.../drivers/caldav/utils/parse-ical-event.util.ts`).
+- **No owner/connected-account column on `calendarEvent`.** Linkage is indirect:
+  `calendarEvent` → `calendarChannelEventAssociation.calendarEventId` /
+  `.calendarChannelId` → core `calendarChannel.connectedAccountId` + `workspaceId`.
+- `calendarChannel` is a **core metadata entity**, not a workspace standard
+  object (`packages/twenty-server/src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity.ts`;
+  also `CoreObjectNameSingular`). It carries `visibility`
+  (`CalendarChannelVisibility`: `METADATA` default, `SHARE_EVERYTHING`),
+  `isSyncEnabled`, sync stage/cursor, webhook fields and `connectedAccountId`.
+- `calendarEventParticipant`
+  (`.../compute-calendar-event-participant-standard-flat-field-metadata.util.ts`)
+  has `handle, displayName, isOrganizer, responseStatus`
+  (`NEEDS_ACTION|DECLINED|TENTATIVE|ACCEPTED`) with optional `person` /
+  `workspaceMember` relations, matched asynchronously after import.
+- `calendarEvent` object metadata is `isSystem: true, isUICreatable: false`
+  (`.../object-metadata/create-standard-flat-object-metadata.util.ts:224-226`),
+  and every event field is `isUIEditable: false`. Standard record CRUD UI does
+  **not** create or edit events.
+
+### 2. Ownership and sharing as implemented
+
+- Storage is workspace-wide; **reads are filtered per-user at query time** by
+  `packages/twenty-server/src/modules/calendar/common/query-hooks/calendar-event/services/apply-calendar-events-visibility-restrictions.service.ts`
+  (wired for `calendarEvent.findMany` / `findOne`). Rules:
+  1. any `SHARE_EVERYTHING` channel → keep full event;
+  2. user owns the connected account behind one of the event's channels → keep full;
+  3. else any `METADATA` channel → redact `title` + `description` to
+     `FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED`;
+  4. **no channel association → `splice` the event out (invisible to everyone)**.
+- The timeline API re-implements the same logic
+  (`.../engine/core-modules/calendar/timeline-calendar-event.service.ts`).
+  `myCalendarChannels`, `updateCalendarChannel` and create-path ownership all
+  enforce `connectedAccount.userWorkspaceId`
+  (`.../calendar-channel/calendar-channel-metadata.service.ts`).
+- Net sharing model today: **owner-full / workspace-redacted (METADATA)** by
+  default, **workspace-full** when the owner opts into `SHARE_EVERYTHING`.
+
+### 3. Existing creation drivers (writes)
+
+Creation is real and provider-side, but only through dedicated paths — not the
+standard UI:
+
+- Metadata mutation `createCalendarEvent`
+  (`.../calendar-event-creation-manager/resolvers/create-calendar-event.resolver.ts`),
+  guarded by `PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL`; composer service
+  `.../services/calendar-event-composer.service.ts`; dispatcher
+  `.../services/create-calendar-event.service.ts`.
+- Workflow action `CREATE_CALENDAR_EVENT`
+  (`.../workflow-executor/workflow-actions/create-calendar-event/`).
+- Tool `CreateCalendarEventTool` (used by AI/action tools,
+  `.../engine/core-modules/tool/tools/calendar-tool/create-calendar-event-tool.ts`).
+- Front-end composer (`packages/twenty-front/src/modules/activities/calendar/hooks/useCalendarEventComposer.ts`,
+  mutation `createCalendarEvent.ts`) reachable from a record's related-record
+  action and the calendar widget header.
+- Provider create drivers: Google `events.insert` (`calendar.events` scope),
+  Microsoft Graph `POST /me/calendar/events` (`Calendars.ReadWrite`), CalDAV
+  `createCalendarObject`. Provider-creation support = `get-missing-create-event-scopes.util.ts`;
+  account eligibility = `isCalendarCreationEnabledForAccount.ts`.
+
+### 4. Import/sync (reads)
+
+- Pull-only for all three providers: Google (`events.list` + `syncToken` +
+  `watch` webhook), Microsoft (`/me/calendar/events/delta` + subscription),
+  CalDAV (sync-token/CTag). Two-phase list-fetch → detail-import via Redis sets,
+  crons `calendar-event-list-fetch.cron.job.ts` (`*/5`) and
+  `calendar-events-import.cron.job.ts` (`*/1`), plus webhook-triggered pulls.
+- Persistence `CalendarSaveEventsService` upserts event + association by
+  external id; orphan events are deleted when the provider deletes them.
+- **There is no provider-side update or delete push for any provider.** Grep
+  for `events.patch|events.delete|updateCalendarObject|deleteCalendarObject`
+  finds only unrelated workflow/ORM symbols. A locally edited or deleted event
+  is therefore overwritten/re-created by the next pull.
+
+### 5. Calendar UI (front-end)
+
+- **No `modules/calendar/`, no `AppPath.Calendar`, no `/calendar` route.**
+  `packages/twenty-shared/src/types/AppPath.ts` has none. Calendar is a
+  **view type** (`ViewType.CALENDAR` / `CALENDAR_WIDGET`,
+  `ViewCalendarLayout = DAY|WEEK|MONTH`).
+- Generic record calendar grid (any object with a date field), custom-built on
+  `@dnd-kit/react` (no FullCalendar): `packages/twenty-front/src/modules/object-record/record-calendar/`.
+  Supports create (+ per day), inline field edit and drag-to-move between days.
+- Calendar-event agenda widget (month/day-grouped list):
+  `packages/twenty-front/src/modules/activities/calendar/`. Events are shown in
+  a side-panel record page; **no update/delete UI or mutations** exist
+  (only `createCalendarEvent`).
+- Composer supports `title, description, location, startsAt, endsAt, isFullDay,
+  timeZone, attendees, sendInvitations, addConferencing, connectedAccountId`
+  (`generated-metadata/graphql.ts` `CreateCalendarEventInput`) — **no recurrence
+  and no attendee-response editing**. Settings page `accounts/calendars` exposes
+  visibility + contact auto-creation; `isSyncEnabled` is fetched but not
+  rendered as a control.
+
+### 6. Provider capability matrix (create/update/delete/recurrence/attendee)
+
+| Capability | Google | Microsoft | CalDAV (IMAP_SMTP_CALDAV) | Local, no provider |
+| --- | --- | --- | --- | --- |
+| Import (pull) | yes | yes | yes | n/a |
+| Create push | yes (`events.insert`) | yes (Graph `POST`) | yes (`createCalendarObject`) | **no path today** |
+| Update push | **no** | **no** | **no** | **no path today** |
+| Delete push | **no** | **no** | **no** | **no path today** |
+| Recurrence read | association id only, no rule stored | same | `recurringEventExternalId` parsed | n/a |
+| Recurrence create/edit | **no** | **no** | **no** | **no** |
+| Attendee create | yes (`sendInvitations`) | yes | iCal-dependent | **no** |
+| Attendee response | import only (`responseStatus`) | import only | import only | n/a |
+
+Provider availability also gated by config defaults **false**:
+`CALENDAR_PROVIDER_GOOGLE_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`
+(`.../twenty-config/config-variables.ts`), plus a Google Calendar
+availability probe.
+
+### 7. App activation boundary (what an app can and cannot own)
+
+- Apps may **extend** standard objects with app-owned fields/relations/views
+  (SDK `defineField` + `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`; precedent in
+  `packages/twenty-apps/public/last-contact/src/fields/last-contact-for-opportunities-on-calendar-event.field.ts`
+  which adds a relation to standard `calendarEvent`). They may not create/own an
+  object named `calendarEvent` (workspace name collision → `OBJECT_ALREADY_EXISTS`).
+- Apps may declare roles with `objectPermissions` / `fieldPermissions` / RLS
+  predicates on standard objects, but **cannot attach permissions to another
+  app's role** (including standard admin).
+- There is **no whole-app enable/disable**; the `Application` entity only has
+  lifecycle `state` (`INSTALLING|INSTALLED|UPGRADING|UNINSTALLING`). Boundaries
+  that do exist: per-entity `isActive`/overrides preserved across upgrades, a
+  global cache kill-switch, per-app settings/variables, and uninstall.
+- Query hooks and provider drivers are **server-side core code** — an app cannot
+  register a post-query visibility hook or a calendar sync driver. Apps can add
+  page-layout widgets, command-menu items, nav items/views, front components,
+  logic functions and (server-registered) search providers.
+- A full calendar **page/route** cannot be contributed by an app.
+
+### 8. Decisions (for D05)
+
+- **D5.1 Local-event path — one object, provider-optional.** Local and imported
+  events both live in standard `calendarEvent`; do **not** add an app-owned event
+  object (parallel backend) and do not fork the save path. Required additive
+  core work before local events are usable: (a) an origin/ownership marker
+  distinguishing local from imported (prefer an additive standard field via a
+  generated migration, because read filtering is server-side and an app cannot
+  change it); (b) extend
+  `ApplyCalendarEventsVisibilityRestrictionsService` (+ timeline service and the
+  `findOne` hook) to resolve local events by creator
+  (`createdBy.workspaceMemberId`) and workspace default instead of dropping
+  channel-less rows — otherwise a local event is invisible to everyone;
+  (c) make `CreateCalendarEventService`/composer provider-optional (persist
+  locally, skip the provider call) or add a local create mutation, since today it
+  requires a connected account + sync-enabled channel.
+- **D5.2 App activation boundary.** Keep the **local-event path and the calendar
+  surface in core** (`twenty-front` + `twenty-server`), because local-event
+  visibility depends on server query hooks and a page/route cannot be app-owned.
+  An app (Bureau/`a2e-calendar`, name still open) owns only opt-in extras:
+  links from events to app objects, templates, logic functions, page-layout
+  widgets, command-menu items and search providers. Activation is **install +
+  per-entity `isActive`**; there is no whole-app toggle, so nothing that must
+  always work may be app-gated. Do not create a duplicate event object; the
+  Bureau packaging decision remains open and is informed, not settled, here.
+- **D5.3 Calendar sharing rights.** Reuse the existing model verbatim — channel
+  `visibility` (`METADATA` default → owner-full/others-redacted; `SHARE_EVERYTHING`
+  → workspace-full) plus per-user connected-account ownership. For local events
+  (no channel) apply the **same semantics with the creator as owner** and a
+  single workspace-level default share setting; do not introduce a second
+  sharing model or per-event ACLs in this phase.
+- **D5.4 Provider capability matrix.** Adopt section 6 as the contract: create
+  is pushable; update/delete are read-back-only; recurrence is import metadata
+  only (no rule store, no create/edit); attendee create is provider-dependent and
+  attendee response is import-only. Unsupported provider actions must surface
+  read-only in the UI (P4C.4). Timezone handling exists (user timezone +
+  composer time zone); **quiet-hours rules have no primitive** and stay deferred
+  to P4C.4/P8.
+
+### 9. Gaps recorded before any metadata/service extension
+
+1. No provider-independent (**local**) create path; composer hard-requires a
+   connected account + sync-enabled channel.
+2. Channel-less `calendarEvent` rows are dropped by the visibility hook → local
+   events need a core read-filter change, not just a new mutation.
+3. No `recurrenceRule`/RRULE storage on `calendarEvent`; recurrence only as a
+   CalDAV-populated association id, with no UI.
+4. No provider-side update/delete push (all providers) — local edits cannot be
+   persisted to a provider and are overwritten by the next pull.
+5. No front-end `updateCalendarEvent`/`deleteCalendarEvent` mutation or form.
+6. No calendar page/route; calendar is a view type + agenda widget only.
+7. `calendarEvent` is `isUICreatable: false` with all fields `isUIEditable:
+   false` — standard CRUD cannot create/edit.
+8. No reminder model and no quiet-hours/timezone rules beyond display/composer
+   time zone; reminder delivery is P8-dependent.
+9. `isSyncEnabled` is not exposed as a calendar settings control.
+10. Apps cannot add routes, query hooks or sync drivers; and there is no
+    per-app enable/disable — so local-event ownership must stay core.
+
+### 10. Non-decisions / open questions
+
+- App **name and packaging** (Bureau vs `a2e-calendar`) remain open and are
+  explicitly *not* inferred from Bureau here.
+- Whether local events need a dedicated standard field vs a core-owned marker,
+  and the exact workspace default share setting, require maintainer/product
+  confirmation before P4C.2.
+- No Tier-2 live evidence was collected (spike is code/read inspection only).
+- `Inspiration apps (bureaubilan)` was not read, per the executor contract.
+
+
+## 2026-09-17 18:05 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** P4C.1 P4C.1: calendar ownership/compatibility spike (report-only) · **Slice:** the task's only deliverable — the recorded ownership/capability decision in section "P4C.1 calendar ownership/compatibility spike — findings"
+**Claim:** done-for-review
+**Ready-to-tick:** yes — spike is report-only; docs-only quality gate green, no package touched so lint/tsgo are N/A.
+**Base:** 7e74c40e7f6e74a4172b5b9187460185cd426a41
+**Changed:** `docs/plan/phases/phase-04-report.md` (findings + this report); `.ralph-tui/progress.md`.
+**Checks:** `node docs/scripts/check-docs.mjs` → `PASS: 19 maintained documents, 130 local inline links, balanced code fences` (exit 0). No package changed → `lint`/`tsgo` N/A by design (reported as such); no `yarn start` (Tier 2 orchestrator-only).
+**Missing for tick:** none for a report-only slice. Tier-2 live verification is not applicable to a decision record; the exhaustive import/Webhook and provider-push claims are source-read at base `7e74c40e`, not live-install-proven. Maintainer/product confirmation of the open items in findings §10 (app packaging name; local-field-vs-marker; workspace default share setting) is a downstream decision, not a blocker.
+**Do not redo:** the recorded decisions — local events reuse standard `calendarEvent` (no parallel backend), app boundary stays off the core local-event path (apps cannot add routes/query-hooks/sync drivers, no whole-app toggle), sharing reuses channel `visibility` + per-user ownership, capability matrix = create pushable / update+delete read-back-only / recurrence import-metadata-only / attendee create provider-dependent. The gap list (§9) is the input for P4C.2+; do not re-derive it.
+**Remaining:** P4C.2 core UX, P4C.3 recurrence, P4C.4 reminders/team, P4C.5 task/project links (4 tasks in this execution-order block), plus the P4.2 and P4.1 live-lifecycle leftovers.
+**Next:** orchestrator — tick P4C.1 after review (no code to merge beyond docs); or executor — P4C.2 core UX, treating findings §9 gaps 1–3/6–7 and decisions D5.1/D5.3 as the starting contract, and marking D05 resolved in PLAN.md only after maintainer confirmation of §10.

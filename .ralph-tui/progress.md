@@ -185,6 +185,23 @@ after each iteration and it's included in prompts for context.
   declared once in `TRASH_OBJECT_TARGETS`, handler client injectable for
   `node --test`).
 
+- **Calendar events are workspace-stored but read-filtered per user, and an app
+  cannot change that:** `calendarEvent` has no owner/connected-account column;
+  ownership is resolved at query time through
+  `calendarChannelEventAssociation` → core `calendarChannel.connectedAccountId`
+  → `userWorkspaceId` (`apply-calendar-events-visibility-restrictions.service.ts`
+  + the timeline service). Default channel visibility `METADATA` = owner full /
+  other users get title+description redacted; `SHARE_EVERYTHING` = workspace
+  full; **an event with no channel association is spliced out (invisible to
+  everyone)**. Query hooks and sync drivers are core server code an app cannot
+  register, and there is **no whole-app enable/disable** (only the `Application`
+  lifecycle `state`, per-entity `isActive`, a global kill-switch). So any local
+  (non-imported) event path must be core-owned, reuse the standard object, and
+  attach a channel/association or first extend the visibility service — an app
+  field/mutation alone cannot make a local event visible. Apps may still extend
+  standard objects (e.g. `last-contact` adds a relation to `calendarEvent`) but
+  may not own an object named `calendarEvent`.
+
 ---
 
 
@@ -355,4 +372,16 @@ after each iteration and it's included in prompts for context.
   - Server-side `oxlint --type-aware` works from `packages/twenty-server` with `-c .oxlintrc.json` (0/0). The app package's pinned oxlint 0.16.12 still rejects `--type-aware`; `nx lint:diff-with-main twenty-server` diffs committed history only, so uncommitted edits need the direct command.
   - Tier-0 gates green: 116/116 app `node --test` (8 new), 9/9 server jest, app `tsc --noEmit` exit 0, server `tsgo --noEmit` exit 0, oxlint 0 errors both packages (1 pre-existing warning in untouched `fields/task-labels.field.ts`), oxfmt clean on all 7 touched code files (lib-inclusive config), `twenty dev:build .` 26 files with the new command + front component in the manifest.
   - Still open: Tier-2 live Cmd+K create-task + grouped search proof (orchestrator).
+---
+
+## 2026-09-17 - P4C.1 calendar ownership/compatibility spike (report-only)
+- Report-only decision record appended to `docs/plan/phases/phase-04-report.md`, feeding PLAN.md D05. No code touched. Inspected at base `7e74c40e`: standard `calendarEvent`/`calendarChannelEventAssociation`/`calendarEventParticipant` metadata + core `calendarChannel`; the create drivers (`createCalendarEvent` mutation, `CREATE_CALENDAR_EVENT` workflow action, `CreateCalendarEventTool`, front composer); the pull-only import/sync pipeline (Google syncToken/watch, Microsoft delta/subscription, CalDAV CTag); and the calendar UI (`record-calendar` Day/Week/Month grid, `activities/calendar` agenda widget, no `/calendar` route).
+- Decisions (D5.1–D5.4): local events reuse standard `calendarEvent` (no parallel backend) and require core additive work (origin marker + visibility-service change + provider-optional composer) because channel-less events are dropped and apps cannot register query hooks; app boundary stays off the core local-event path (apps cannot add routes/hooks/drivers; no whole-app toggle); sharing reuses channel `visibility` + per-user ownership, creator = owner for local; capability matrix = create pushable, update/delete read-back-only, recurrence import-metadata-only, attendee create provider-dependent, response import-only. Recorded 10 concrete gaps before any metadata/service extension.
+- Files changed: `docs/plan/phases/phase-04-report.md` (findings + report); `.ralph-tui/progress.md`.
+- **Learnings:**
+  - The decisive constraint for P4C is that local events cannot be app-owned: read filtering is a server post-query hook on `calendarEvent.findMany/findOne` (plus the timeline service), and an association-less event is silently dropped. Any "local event" slice must touch core, not just add an app field/mutation.
+  - `calendarEvent` is `isSystem: true, isUICreatable: false` with all fields `isUIEditable: false`; there is **no** `recurrenceRule`/RRULE field (recurrence is only `recurringEventExternalId`, CalDAV-parsed), and **no** provider-side update/delete push exists (only create). This is the real state P4C.2–P4C.4 must build on.
+  - A public app (`last-contact`) already adds a relation to standard `calendarEvent`, so "app extends standard object" is supported; "app owns a `calendarEvent`-named object" is not (workspace name collision).
+  - Quality gate for a docs-only slice: `node docs/scripts/check-docs.mjs` → `PASS: 19 maintained documents, 130 local inline links, balanced code fences`. The phase report is not in `MAINTAINED_DOCUMENTS`; lint/tsgo are N/A (no package changed), Tier 2 untouched.
+  - Still open (not blockers): app packaging name, local-field-vs-marker, workspace default share setting (§10 of the findings).
 ---
