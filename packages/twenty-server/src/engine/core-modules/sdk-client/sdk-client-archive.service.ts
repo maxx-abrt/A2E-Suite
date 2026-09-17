@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import * as fs from 'fs/promises';
+import { join } from 'path';
 
 import { FileFolder } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
@@ -52,13 +53,40 @@ export class SdkClientArchiveService {
       applicationUniversalIdentifier,
     });
 
+    const stagingPath = `${targetPackagePath}.staging-${process.pid}-${Date.now()}`;
+
     await fs.rm(targetPackagePath, { recursive: true, force: true });
-    await fs.mkdir(targetPackagePath, { recursive: true });
+    await fs.rm(stagingPath, { recursive: true, force: true });
+    await fs.mkdir(stagingPath, { recursive: true });
 
     const { default: unzipper } = await import('unzipper');
-    const directory = await unzipper.Open.buffer(archiveBuffer);
 
-    await directory.extract({ path: targetPackagePath });
+    try {
+      const directory = await unzipper.Open.buffer(archiveBuffer);
+
+      await directory.extract({ path: stagingPath });
+
+      // Extraction into the live path races the server/worker pair on the same
+      // tmpdir: a lock TTL expiry lets the second holder's rm delete the first
+      // holder's half-written package. Extract to staging, require the two files
+      // `import 'twenty-client-sdk/core'` resolves through, then swap in one
+      // rename so the live path is either absent or complete.
+      await fs.access(join(stagingPath, 'package.json'));
+      await fs.access(join(stagingPath, 'dist', 'core.mjs'));
+    } catch (error) {
+      await fs.rm(stagingPath, { recursive: true, force: true });
+
+      throw error;
+    }
+
+    try {
+      await fs.rename(stagingPath, targetPackagePath);
+    } catch {
+      // Another holder replaced the target after our rm: replace it anyway so
+      // this holder's verified copy wins over an unknown-completeness one.
+      await fs.rm(targetPackagePath, { recursive: true, force: true });
+      await fs.rename(stagingPath, targetPackagePath);
+    }
   }
 
   async downloadArchiveBuffer({

@@ -9,8 +9,10 @@ import {
   useSelectedRecordIds,
 } from 'twenty-sdk/front-component';
 
+import { DOCUMENT_KIND } from '../constants/field-vocabulary.ts';
 import { buildAppendPosition } from '../lib/fractional-position.ts';
 import { extractOutline } from '../lib/document-outline.ts';
+import { buildTemplateCopyPayload } from '../lib/instantiate-template.ts';
 
 // LA PAGE DOCUMENT (P3.3 task 2).
 //
@@ -35,9 +37,13 @@ type DocumentChildNode = {
 type DocumentPageRecord = {
   id: string;
   title: string;
+  kind?: string | null;
   icon?: string | null;
   coverColor?: string | null;
-  content?: { markdown?: string | null } | null;
+  content?: {
+    blocknote?: string | null;
+    markdown?: string | null;
+  } | null;
   children?: { edges: { node: DocumentChildNode }[] };
 };
 
@@ -105,9 +111,10 @@ const DocumentPage = () => {
         __args: { id: documentId },
         id: true,
         title: true,
+        kind: true,
         icon: true,
         coverColor: true,
-        content: true,
+        content: { blocknote: true, markdown: true },
         children: { edges: { node: { id: true, title: true, icon: true } } },
       },
     } as never);
@@ -148,6 +155,49 @@ const DocumentPage = () => {
     await loadRecord();
   };
 
+  // First-open entrypoint: instantiating from the template's own page creates
+  // the DOCUMENT copy and lands on it, so editing the copy can never mutate
+  // the template (same contract as the browser's "utiliser" action).
+  const instantiateTemplate = async (): Promise<void> => {
+    if (record === null) {
+      return;
+    }
+
+    const client = new CoreApiClient();
+    const copyPayload = buildTemplateCopyPayload(record);
+
+    const result = await client.mutation({
+      createDocuments: {
+        __args: {
+          data: [
+            {
+              title: copyPayload.title,
+              kind: copyPayload.kind,
+              position: copyPayload.position,
+              content: copyPayload.content,
+            },
+          ],
+        },
+        id: true,
+      },
+    } as never);
+
+    const created = (
+      result as {
+        createDocuments?: { id?: string }[];
+      }
+    ).createDocuments?.[0];
+
+    if (created?.id === undefined) {
+      return;
+    }
+
+    await navigate(AppPath.RecordShowPage, {
+      objectNameSingular: 'documents',
+      objectRecordId: created.id,
+    });
+  };
+
   if (documentId === null) {
     return null;
   }
@@ -164,6 +214,30 @@ const DocumentPage = () => {
         gap: appTheme.spacing4,
       }}
     >
+      {record?.kind === DOCUMENT_KIND.TEMPLATE && (
+        <section
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: appTheme.spacing2,
+            padding: appTheme.spacing2,
+            border: `1px solid ${appTheme.border}`,
+            borderRadius: appTheme.radius,
+          }}
+        >
+          <span style={{ color: appTheme.textSecondary }}>
+            Ceci est un modèle — le modifier ne touche pas les copies créées.
+          </span>
+          <button
+            type="button"
+            onClick={() => void instantiateTemplate()}
+            style={{ ...ghostButtonStyle, color: appTheme.blue }}
+          >
+            Utiliser ce modèle
+          </button>
+        </section>
+      )}
       <div
         style={{
           height: COVER_HEIGHT,

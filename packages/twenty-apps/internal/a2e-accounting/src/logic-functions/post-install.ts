@@ -1,5 +1,6 @@
 import { definePostInstallLogicFunction } from 'twenty-sdk/define';
 
+import { runInstallStep, type InstallStepOutcome } from '../lib/install-steps.ts';
 import {
   DEFAULT_INVOICE_PREFIX,
   DEFAULT_QUOTE_PREFIX,
@@ -189,32 +190,56 @@ const seedStarterFiches = async (
 const handler = async () => {
   const client = coreClient();
 
-  const categoriesCreated = await seedCategories(client);
-  const ledgerSheet = await ensureLedgerSheet(client);
-  const orgProfileCreated = await seedOrgProfile(client);
-  const starterSheetsCreated = await seedStarterSheets(client);
-  const starterFichesCreated = await seedStarterFiches(client);
+  const stepOutcomes: InstallStepOutcome<unknown>[] = [];
+
+  const step = async <TResult>(
+    stepName: string,
+    run: () => Promise<TResult>,
+  ) => {
+    const outcome = await runInstallStep(stepName, run, (failed) =>
+      stepOutcomes.push(failed),
+    );
+
+    return outcome;
+  };
+
+  const [categoriesOutcome, ledgerOutcome, orgProfileOutcome, sheetsOutcome, fichesOutcome] =
+    await Promise.all([
+      step('financeCategories', () => seedCategories(client)),
+      step('ledgerSheet', () => ensureLedgerSheet(client)),
+      step('orgProfile', () => seedOrgProfile(client)),
+      step('starterSheets', () => seedStarterSheets(client)),
+      step('starterFiches', () => seedStarterFiches(client)),
+    ]);
 
   // The catalogue is filled at install: a treasurer opening Subventions for
   // the first time must see real aids, not an empty table waiting for a cron.
-  let catalogue: unknown = { skipped: true };
-
-  try {
-    catalogue = await refreshSubventions();
-  } catch (error) {
-    console.error(
-      '[bilan] Ingestion initiale du catalogue impossible',
-      error instanceof Error ? error.message : error,
-    );
-  }
+  const catalogueOutcome = await step('subventionCatalogue', () =>
+    refreshSubventions(),
+  );
 
   const summary = {
-    categoriesCreated,
-    ledgerSheetId: ledgerSheet.id,
-    orgProfileCreated,
-    starterSheetsCreated,
-    starterFichesCreated,
-    catalogue,
+    steps: {
+      financeCategories: categoriesOutcome.status,
+      ledgerSheet: ledgerOutcome.status,
+      orgProfile: orgProfileOutcome.status,
+      starterSheets: sheetsOutcome.status,
+      starterFiches: fichesOutcome.status,
+      subventionCatalogue: catalogueOutcome.status,
+    },
+    failures: stepOutcomes.map((outcome) => ({
+      step: outcome.step,
+      error: outcome.error ?? 'Erreur inconnue.',
+    })),
+    categoriesCreated: categoriesOutcome.status === 'OK' ? categoriesOutcome.result : null,
+    ledgerSheetId: ledgerOutcome.status === 'OK' ? ledgerOutcome.result?.id : null,
+    orgProfileCreated: orgProfileOutcome.status === 'OK' ? orgProfileOutcome.result : null,
+    starterSheetsCreated: sheetsOutcome.status === 'OK' ? sheetsOutcome.result : null,
+    starterFichesCreated: fichesOutcome.status === 'OK' ? fichesOutcome.result : null,
+    catalogue:
+      catalogueOutcome.status === 'OK'
+        ? catalogueOutcome.result
+        : { skipped: true },
   };
 
   console.log('[bilan] Installation terminée', summary);

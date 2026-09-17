@@ -594,6 +594,21 @@ CLAIMED — P1.6d/projects-seeder — GLM-5.3-Flash — 2026-09-16T19:13:40Z —
 
 RETRACTED — P1.6d/projects-seeder — GLM-5.3-Flash — 2026-09-16T19:15:30Z — claim was mistaken: slice already done-for-review in 2026-09-14 18:30 entry (post-install.ts + starter-projects.ts committed at aa4979e7). No work performed, no files touched. Next executor slice re-selected below.
 
+CLAIMED — P1.6d/bilan-post-install-diagnostics — GLM-5.3-Flash — 2026-09-17T07:25:00Z — base 0cf91b682203810201c6be96ba3c7944105b5880
+
+## 2026-09-17 08:50 UTC — GLM-5.3-Flash [executor] — contract v4
+**Task:** P1.6d Starter bundles · **Slice:** orchestrator-pinned diagnostics — per-step try/catch + structured failure reporting in the Bilan post-install hook (phase-01 2026-09-16 20:45 "pin a debug brief" leg)
+**Claim:** done-for-review
+**Ready-to-tick:** no — live re-install to watch the new per-step summary land in queue logs is Tier 2; root cause of the empty SDK layer needs that live run to confirm
+**Base:** 0cf91b682203810201c6be96ba3c7944105b5880
+**Changed:** new `a2e-accounting/src/lib/install-steps.ts` (`runInstallStep` — step name + error/stack captured, failure never blocks later steps); new `src/lib/__tests__/install-steps.test.ts` (4 cases); `src/logic-functions/post-install.ts` (five un-guarded awaits + catalogue try/catch → six named `runInstallStep` calls; summary now `{ steps: {…status}, failures: [{step,error}], …counts }` so the worker log names the failing step exactly)
+**Checks:** `yarn typecheck` (app) → exit 0; `yarn test:unit` → 100/100 (4 new); `yarn lint` → 0/0; `npx twenty dev:build .` → succeeded (28 files); verified the built `post-install.mjs` bundles `install-steps.ts` inline (no new runtime import beyond the existing `twenty-client-sdk/core`)
+**Diagnosis evidence (read-only, no services started):** every SDK layer under `$TMPDIR/logic-function-executor-tmpdir/sdk/<workspace>-<app>/node_modules/twenty-client-sdk/` is an EMPTY directory tree — 0 files, no `package.json`, no `dist/core.mjs`, no `.twenty-layer-ready` sentinel (Bilan's layer dir not even created). The stored archive `.local-storage/<ws>/b11a0000…/generated-sdk-client/twenty-client-sdk.zip` is VALID (965 KB, real generated `dist/core.mjs` referencing `TWENTY_API_URL`, exports intact; `isSdkLayerStale=t` + checksum present on the application row). So at handler runtime `import 'twenty-client-sdk/core'` resolves into an empty package → module load fails → first un-guarded await killed the whole chain, surfacing only in worker stdout. Suspicion shifts from token/auth to `downloadAndExtractToPackage` extraction/sentinel (layer-manager L74-133) or a worker/server $TMPDIR mismatch.
+**Missing for tick:** Tier-2: reinstall Bilan on the running server, read the new per-step summary in the logic-function queue logs — it will name the exact failing step and error; then fix the empty-extraction root cause (inspect `downloadAndExtractToPackage` unzipper extraction + sentinel write, verify worker vs server tmpdir); P1.3 sync-vs-async over-report stays as previously recorded
+**Do not redo:** the handler's step order and idempotency are unchanged; seeding stays app-owned; do NOT "fix" by catching at module scope — the runner is the pattern; the stored archive and DB checksum row are healthy, don't regenerate them
+**Remaining:** 12 other [ ]/[~] tasks ahead in the execution order (P1.3 e2e, P1.6d remainder, P1.7a export leg, P1.7b Tier-2 journey, P1.7c, P2.x+)
+**Next:** Tier-2 live reinstall (orchestrator/next session with app up) reading the new `steps`/`failures` summary; then the extraction root-cause fix
+
 CLAIMED — P1.3/preset-orchestration — GLM-5.3-Flash — 2026-09-16T19:42:00Z — base 5774f4c19966a246ba6e5cb49a7fd9354728bcef
 
 ## 2026-09-16 19:52 UTC — GLM-5.3-Flash [executor] — contract v4
@@ -617,3 +632,33 @@ CLAIMED — P1.3/preset-orchestration — GLM-5.3-Flash — 2026-09-16T19:42:00Z
 **Answers to the 19:52 sync-vs-async question:** the hook is async (`shouldRunSynchronously: false`), so "delegated seeding succeeded" in the template step is an over-report while the hook fails silently — P1.3 bullet stays `[~]` until the hook works or the step reports hook failure.
 **Actions:** PLAN.md — P1.7a `[~]` annotation repaired with the live C3 proof; P1.7b → `[~]` (six legs green, Tier-2 browser journey open); P1.6d → `[~]` (payloads shipped, live seeding fails); P1.3 orchestration bullet → `[~]` with the over-report caveat. No `[x]` — every task keeps an open leg. P7.0 follow-up in phase-04-report 2026-09-16 entry.
 **Next:** pin `docs/tasks/` brief: diagnose the Bilan post-install hook's failing step (per-step try/catch + logging), decide sync-vs-async semantics with the P1.3 step; then P7.0 live gate proofs on the populated install.
+
+CLAIMED — P1.6d/sdk-layer-extraction-fix — GLM-5.3-Flash — 2026-09-17T09:22:00Z — base 0cf91b682203810201c6be96ba3c7944105b5880
+
+## 2026-09-17 09:25 UTC — GLM-5.3-Flash [executor] — contract v4
+**Task:** P1.6d Starter bundles · **Slice:** follow-up to orchestrator-pinned diagnostics — fix the empty-SDK-layer root cause (staged extraction + completeness verification + atomic swap in `downloadAndExtractToPackage`)
+**Claim:** done-for-review
+**Ready-to-tick:** no — root cause fixed with strong evidence, but the Tier-2 live reinstall (post-install summary naming the failing step, seeding actually landing) still needs the running server
+**Base:** 0cf91b682203810201c6be96ba3c7944105b5880
+**Changed:** `twenty-server/src/engine/core-modules/sdk-client/sdk-client-archive.service.ts` (extraction no longer writes the live path directly: extract to a pid/timestamp-staged sibling, verify `package.json` + `dist/core.mjs` exist — the two files `import 'twenty-client-sdk/core'` resolves through — then one `rename` into place; rename-failure retry replaces a concurrently-written target; staging debris removed on any pre-swap error)
+**Checks:** root-cause evidence — standalone unzip of BOTH on-disk archives (incl. the Bilan `b11a0000…` one) extracts 105 files with the correct layout, while every live layer under `$TMPDIR/logic-function-executor-tmpdir/sdk/` is dirs-with-zero-files and NO `.twenty-layer-ready` sentinel → the locked critical section (`fs.rm` → extract → sentinel, `LAYER_BUILD_LOCK_TTL_MS` 5.5s, non-owner-checked `releaseLock`) loses its lock mid-extract when server+worker run the same app, the second holder `rm`s the first's half-written package; `npx jest src/engine/core-modules/sdk-client --config=jest.config.mjs` → 11/11; `npx tsgo -p tsconfig.json --noEmit` → 0 errors; `npx oxlint <file> --type-aware` → 0/0; `npx nx lint:diff-with-main twenty-server` → success
+**Missing for tick:** Tier-2: reinstall Bilan on the running server and confirm the per-step summary from the previous entry now reports all steps succeeded and sheets/fiches seed >0 rows; optionally clear the stale empty layer dirs from $TMPDIR (self-heals anyway: no sentinel + isSdkLayerStale=true forces a rebuild)
+**Do not redo:** the previous entry's install-steps handler and its tests; the on-disk archives and DB checksum rows are healthy — no regeneration; do not lengthen `LAYER_BUILD_LOCK_TTL_MS` instead (extraction time is unbounded when generation runs on-the-fly; the swap makes correctness TTL-independent)
+**Remaining:** 12 other [ ]/[~] tasks ahead in the execution order (P1.3 e2e, P1.6d remainder, P1.7a export leg, P1.7b Tier-2 journey, P1.7c, P2.x+)
+**Next:** Tier-2 live reinstall reading the `steps`/`failures` summary; if seeding still fails, the next suspect is `coreClient()` auth in the worker, not extraction
+
+CLAIMED — P1.6e/first-open-entrypoint — GLM-5.3-Flash — 2026-09-17T09:53:40Z — base 0cf91b682203810201c6be96ba3c7944105b5880
+
+## 2026-09-17 10:00 UTC — GLM-5.3-Flash [executor] — contract v4
+**Task:** P1.6e Workspace reuse · **Slice:** first-open entrypoint — a TEMPLATE record opened directly (search result, tree click, direct link) now offers instantiation on its own page (gallery leg was already done-for-review 2026-09-16 17:02)
+**Claim:** done-for-review
+**Ready-to-tick:** no — banner + instantiate-and-navigate on the template's own record page needs a browser against `yarn start` (Tier 2); populated-workspace regression equally Tier 2
+**Base:** 0cf91b682203810201c6be96ba3c7944105b5880
+**Changed:** `a2e-documents/src/front-components/document-page.front-component.tsx` (+kind/composite content on the record query — was `content: true`, the composite field the SDK types reject; new template banner with "Utiliser ce modèle" when `kind === TEMPLATE`; `instantiateTemplate` reuses `buildTemplateCopyPayload` + creates the DOCUMENT copy and navigates to it — copy-never-mutates-template contract identical to the browser action)
+**Checks:** `npx tsc --noEmit` in the app → 0 errors; `node --test src/lib/__tests__/*.test.ts` → 46/46; `yarn lint` → 0/0; `npx twenty dev:build .` → succeeded (14 files)
+**Missing for tick:** browser verification of the banner (only on kind=TEMPLATE, hidden on plain documents) and that "Utiliser" lands on the fresh copy (Tier 2, orchestrator); "edit template" semantics still needs the recorded product call noted by the gallery entry
+**Do not redo:** the banner reads `record.kind` from the SAME query that feeds the page — do not add a second fetch; instantiate deliberately does NOT refresh the current page (it navigates away); `DEFAULT_TEMPLATE_COPY_POSITION 'V'` matches the browser's append behavior, keep both in sync if changed
+**Remaining:** 12 other [ ]/[~] tasks ahead in the execution order (P1.3 e2e, P1.6d remainder, P1.7a export leg, P1.7b Tier-2 journey, P1.7c, P2.x+)
+**Next:** Tier-2 browser journey (orchestrator); next executor slice — P1.7c first-use acceptance has executor-runnable legs, else P2.1 realtime auth repair
+
+CLAIMED — P1.6b/concurrent-same-key-test — GLM-5.3-Flash — 2026-09-17T10:14:59Z — base 0cf91b682203810201c6be96ba3c7944105b5880
