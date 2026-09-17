@@ -3,6 +3,7 @@ import { DiscoveryModule } from '@nestjs/core';
 
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { SearchResolver } from 'src/engine/core-modules/search/search.resolver';
+import { A2eProjectsSearchProviderService } from 'src/engine/core-modules/search/services/a2e-projects-search-provider.service';
 import { AppSearchService } from 'src/engine/core-modules/search/services/app-search.service';
 import { DocumentSearchProviderService } from 'src/engine/core-modules/search/services/document-search-provider.service';
 import { SearchProviderRegistryService } from 'src/engine/core-modules/search/services/search-provider-registry.service';
@@ -23,6 +24,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
     SearchProviderRegistryService,
     AppSearchService,
     DocumentSearchProviderService,
+    A2eProjectsSearchProviderService,
   ],
 })
 export class SearchModule {}

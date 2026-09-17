@@ -1,0 +1,74 @@
+# Iteration 17 Log
+
+## Metadata
+
+- **Task ID**: P4.2-time-tracker
+- **Task Title**: P4.2: time tracker — start/stop on task, entries list, per-project rollup
+- **Description**: As a project member, I want to track time on tasks and see per-project rollups, so that effort is visible.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-17T17:39:38.707Z
+- **Ended At**: 2026-09-17T17:41:51.798Z
+- **Duration**: 2m 13s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ git log --oneline -5
+[94m[bash][0m $ grep -n "P4.2-time-tracker" docs/plan/phases/phase-04-report.md | tail -30
+[94m[bash][0m $ grep -n "P4.2-time-tracker" PLAN.md
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ git diff --stat
+[94m[bash][0m $ wc -l packages/twenty-apps/internal/a2e-projects/src/lib/time-tracker.ts packages/twenty-apps/intern...
+[94m[bash][0m $ grep -rn "time.tracker\|time-tracker\|time entry\|time-entry\|rollup" PLAN.md tasks/prd.json | head ...
+[94m[bash][0m $ git diff packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts packages/...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/time-tracker.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/time-tracker.test.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src[0m pattern: [96mtimeEntr|time-entr[0m
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/objects/ && echo "---" && cat packages/twenty-apps...
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-apps/internal/a2e-projects/src/front-components/project-gantt.front-...
+[94m[bash][0m $ grep -rn "useSelectedRecordIds\|__args\|client.query\|client.mutation" packages/twenty-apps/internal...
+[94m[bash][0m $ 575,615p' packages/twenty-apps/internal/a2e-documents/src/front-components/document-browser.front-co...
+[94m[bash][0m $ sed -n '15,40p' packages/twenty-apps/internal/a2e-projects/src/logic-functions/handlers/purge-trash-...
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/package.json
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -20
+[94m[bash][0m $ echo "=== EXIT $? ==="
+[94m[bash][0m $ echo "=== EXIT $? ==="
+[94m[bash][0m $ cat .oxfmtrc.jsonc 2>/dev/null | head -40
+[94m[bash][0m $ ls -la .oxfmtrc* 2>/dev/null
+[94m[bash][0m $ echo "=== EXIT $? ==="
+[94m[bash][0m $ echo "=== EXIT $? ==="
+[94m[bash][0m $ python3 - <<'EOF' import json d=json.load(open('.twenty/output/manifest.json')) def walk(o):     if ...
+[94m[bash][0m $ git status --porcelain | head -30
+[94m[bash][0m $ npx oxlint --type-aware 2>&1 | tail -3
+[94m[bash][0m $ echo "=== EXIT $? ==="
+[94m[bash][0m $ grep -n "P2.3" PLAN.md | head
+[94m[bash][0m $ grep -rln "presence\|Presence" packages/twenty-apps/internal --include="*.ts" --include="*.tsx" 2>/d...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ ls packages/twenty-apps/internal/
+[94m[bash][0m $ head -30 .ralph-tui/progress.md
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -5 .ralph-tui/progress.md | cat -A | tail -5
+[94m[bash][0m $ tail -3 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -22 docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ grep -n "CLAIMED — P4.2-time-tracker" docs/plan/phases/phase-04-report.md
+Verified and completed the P4.2 time-tracker slice (resumed a stalled run; no second claim).
+
+- **Implementation**: `lib/time-tracker.ts` (pure timer state machine + `buildProjectTimeRollup`/`buildTimeRollupByProject`), `time-tracker.front-component.tsx` (start/stop + entries list), `project-time-rollup.front-component.tsx` (per-project widget), `open-time-tracker.command-menu-item.ts` (RECORD_SELECTION on task), plus 3 universal identifiers and the project page `Temps` widget. Reuses the existing `timeEntry` object — no duplicate.
+- **Checks green**: `yarn test:unit` 109/109 (14 new), `yarn typecheck` exit 0, `yarn lint` 0 errors (1 pre-existing warning), `oxfmt --check` clean on 7 files, `twenty dev:build .` succeeded (24 files, manifest carries both components + command + widget). `nx lint:diff-with-main` can't find the non-Nx app project and oxlint 0.16.12 rejects `--type-aware` (package gates substitute).
+- **Report**: `done-for-review`, `Ready-to-tick: yes`; only the Tier-2 live install proof remains (orchestrator). Appended to `docs/plan/phases/phase-04-report.md` and `.ralph-tui/progress.md` (plus one reusable pattern).
+
+<promise>COMPLETE</promise>

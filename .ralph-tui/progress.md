@@ -45,6 +45,23 @@ after each iteration and it's included in prompts for context.
   state (the session is not lost); malformed storage reads as "no state", never
   throws. This proved the whole state machine with `node:test` and no server.
 
+- **App Cmd+K search = one provider per app, registered by decorator:**
+  implement `SearchProvider`, annotate the class with
+  `@RegisteredSearchProvider({ appUniversalIdentifier })` and add it to
+  `SearchModule` providers — `SearchProviderRegistryService` (DiscoveryService)
+  discovers it and `AppSearchService` already groups by app id and caps at
+  `MAX_RECORDS_PER_APP=5`. Never touch the resolver/DTO/Cmd+K host. Resolve
+  permissions from the ambient context
+  (`resolveRolePermissionConfig({authContext,userWorkspaceRoleMap,apiKeyRoleMap})`
+  → `getRepository(..., config)`); a null config must stay `undefined` so the
+  query fails closed (empty object permissions), never
+  `shouldBypassPermissionChecks`. Result `path` uses the record-show route with
+  the object name **singular**: `/object/<nameSingular>/<id>` (matches
+  `AppPath.RecordShowPage`), and a new search service is testable at Tier 0 by
+  stubbing `WorkspaceOrmManager` + `withWorkspaceContext`.
+  A single provider may serve several object types from one app (tasks on the
+  standard `task` object + the app's own `project`).
+
 - **Integration tests + ESM-only deps:** a static `import` of
   `application-install.service.ts` (and anything reaching `@file-type/pdf`)
   fails jest's resolver under `jest-integration.config.ts`. Resolve the
@@ -326,4 +343,16 @@ after each iteration and it's included in prompts for context.
   - `deleteTimeEntry` (singular, `__args: { id }`) matches the `deleteDocument` convention in a2e-documents; the trash purge cron still uses the plural `deleteTimeEntries`.
   - Tier-0 gates green: 109/109 `node --test` (14 new), `tsc --noEmit` exit 0, oxlint 0 errors (1 pre-existing warning), oxfmt clean on all 7 touched files (lib-inclusive config; root ignores `**/lib/**`), `twenty dev:build .` 24 files with `time-tracker`, `project-time-rollup`, the command and the page widget in the manifest. `nx lint:diff-with-main` has no `a2e-projects` project and oxlint 0.16.12 rejects `--type-aware`.
   - Still open: Tier-2 live start/stop→entry-row and `Temps` rollup proof (orchestrator).
+---
+
+## 2026-09-17 - P4.2-cmdk (Cmd+K create task + tasks/projects search provider)
+- Delivered the task's only bullet. **Create task**: a GLOBAL command item `createTask` (`…0011-…0008`) + front component `createTaskCommand` (`…0013-…000b`) that calls `createTasks` and navigates to the record show page, mirroring `create-project-command` one-for-one; "go to project" already shipped as `go-to-projects`, so it was validated, not rebuilt. **Search**: one `A2eProjectsSearchProviderService` registered for the a2e-projects app id, ILIKE over `task.title` + non-archived `project.name` under the caller's resolved role config, returning items labelled `Tâche`/`Projet` with `/object/task|project/<id>` deep links. Tests: 8 command-availability (all commands validate, ids registered in `COMMAND_MENU_ITEM_IDS`, front components registered, availability scopes, registry uniqueness/uuid shape) + 9 server provider tests (registration, blank short-circuit, grouping+links, ilike/archived filter, caller-role + fail-closed, workspace scoping, wildcard escaping, malformed-record filtering).
+- Files changed: `packages/twenty-apps/internal/a2e-projects/src/command-menu-items/create-task.command-menu-item.ts` (new); `.../src/front-components/create-task-command.front-component.tsx` (new); `.../src/lib/__tests__/command-availability.test.ts` (new, 8); `.../src/constants/universal-identifiers.ts` (+2 ids); `packages/twenty-server/src/engine/core-modules/search/services/a2e-projects-search-provider.service.ts` (new); `.../search/services/__tests__/a2e-projects-search-provider.service.spec.ts` (new, 9); `.../search/search.module.ts` (+provider); `docs/plan/phases/phase-04-report.md`; `.ralph-tui/progress.md`.
+- **Learnings:**
+  - Resumed a stalled run again (17:45:55Z claim, no report, matching dirty files): verified against acceptance, re-ran every gate, reported `done-for-review` — no second claim, no redo.
+  - The search-provider registry/grouping/cap is already complete server-side; a new app provider only needs the decorator + module registration. Do not add a parallel search framework.
+  - `AppPath.RecordShowPage = /object/:objectNameSingular/:objectRecordId` — search deep links must use the **singular** name. a2e-documents' provider uses `/object/documents/…` (plural), which looks like a latent pre-existing bug; out of scope, left untouched.
+  - Server-side `oxlint --type-aware` works from `packages/twenty-server` with `-c .oxlintrc.json` (0/0). The app package's pinned oxlint 0.16.12 still rejects `--type-aware`; `nx lint:diff-with-main twenty-server` diffs committed history only, so uncommitted edits need the direct command.
+  - Tier-0 gates green: 116/116 app `node --test` (8 new), 9/9 server jest, app `tsc --noEmit` exit 0, server `tsgo --noEmit` exit 0, oxlint 0 errors both packages (1 pre-existing warning in untouched `fields/task-labels.field.ts`), oxfmt clean on all 7 touched code files (lib-inclusive config), `twenty dev:build .` 26 files with the new command + front component in the manifest.
+  - Still open: Tier-2 live Cmd+K create-task + grouped search proof (orchestrator).
 ---
