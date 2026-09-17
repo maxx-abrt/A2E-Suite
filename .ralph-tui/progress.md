@@ -22,6 +22,11 @@ after each iteration and it's included in prompts for context.
 - **Template nav safety in integration tests:** prefer TEAM/NON_PROFIT whose
   `hiddenStandardNavigationMenuItemUniversalIdentifiers` is empty — applying
   them never rewrites the shared seeded workspace navigation.
+- **Post-install seeding truth:** `seed-samples` may only report `succeeded`
+  for a synchronous post-install hook (`shouldRunSynchronously: true`) — then
+  `ApplicationInstallService` awaited it and a failure would have failed the
+  install step. Async hooks are enqueued and return immediately, so the step
+  must report `failed` / `SEED_FAILED` with retry info, never `succeeded`.
 
 ---
 
@@ -33,4 +38,13 @@ after each iteration and it's included in prompts for context.
   - The unit spec mocks `CacheLockService.withLock` through; this is the only coverage exercising the real Redis lock + real KeyValuePair persistence.
   - `ApplicationInstallService` cannot be statically imported from an integration spec (see Codebase Patterns); resolve it from the container.
   - LOCAL-source registrations let the install step succeed without a published tarball.
+---
+
+## 2026-09-17 - P1.6b-seed-samples-truth
+- Made the `seed-samples` step report truthfully: `resolveSampleSeedingStep` now returns `succeeded` only for a synchronous post-install hook, and `failed` / `SEED_FAILED` + retry guidance for the async hooks every a2e app ships (the old code reported `succeeded` from the mere presence of a hook, before seeding had run).
+- Files changed: `packages/twenty-server/src/engine/core-modules/onboarding/workspace-template.service.ts`; `.../__tests__/workspace-template.service.spec.ts`; `test/integration/graphql/suites/onboarding/concurrent-same-key-retry.integration-spec.ts`; `docs/plan/05-template-contracts.md`; `docs/plan/phases/phase-01-report.md`.
+- **Learnings:**
+  - `shouldRunSynchronously` defaults to `false` in the SDK manifest build, so "hook exists" never means "hook ran"; only `=== true` is awaited by `ApplicationInstallService`.
+  - The front (`A2eWorkspaceTemplatePreview`) only renders `localizedMessage` for `FAILED` steps, so the truthful status has to be `failed` for the admin to see retry info.
+  - Retry re-runs only non-succeeded steps; the seed step's re-resolution never re-enqueues the install hook, so no duplicate seeds (unit + real-DB spec cover it).
 ---

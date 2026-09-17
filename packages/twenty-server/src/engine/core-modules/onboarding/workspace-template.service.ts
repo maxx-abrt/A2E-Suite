@@ -26,6 +26,7 @@ import {
 import {
   type ApplyTemplateResult,
   type ApplyTemplateStep,
+  type OperationStepErrorCode,
   type OperationStepStatus,
   type TemplateKeyVersion,
   type TemplatePreview,
@@ -416,6 +417,7 @@ export class WorkspaceTemplateService {
         });
 
         step.status = seedStep.status;
+        step.errorCode = seedStep.errorCode;
         step.localizedMessage = seedStep.localizedMessage;
 
         continue;
@@ -467,7 +469,7 @@ export class WorkspaceTemplateService {
     return steps;
   }
 
-  // Sample seeding is app-owned since P1.6d: post-install hooks seeded starter
+  // Sample seeding is app-owned since P1.6d: post-install hooks seed starter
   // content during the install steps, so this step only reports that outcome.
   // No parallel server-side seeder — that would duplicate a primitive that
   // already exists and would bypass the app's own provenance checks.
@@ -477,7 +479,11 @@ export class WorkspaceTemplateService {
   }: {
     workspaceId: string;
     steps: ApplyTemplateStep[];
-  }): Promise<{ status: OperationStepStatus; localizedMessage?: string }> {
+  }): Promise<{
+    status: OperationStepStatus;
+    errorCode?: OperationStepErrorCode;
+    localizedMessage?: string;
+  }> {
     // Only succeeded installs ran their post-install hook: a failed install
     // seeded nothing, and reporting seeding as done would fake success.
     const installedAppUniversalIdentifiers = steps
@@ -493,22 +499,22 @@ export class WorkspaceTemplateService {
       return { status: 'skipped' };
     }
 
-    const appsWithPostInstallSeed = await Promise.all(
-      installedAppUniversalIdentifiers.map(async (applicationUniversalIdentifier) => {
-        const registration =
-          await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
-            applicationUniversalIdentifier,
-          );
+    const postInstallHooks = await Promise.all(
+      installedAppUniversalIdentifiers.map(
+        async (applicationUniversalIdentifier) => {
+          const registration =
+            await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
+              applicationUniversalIdentifier,
+            );
 
-        return isDefined(
-          registration?.manifest?.application?.postInstallLogicFunction,
-        );
-      }),
+          return registration?.manifest?.application?.postInstallLogicFunction;
+        },
+      ),
     );
 
-    const seededByPostInstall = appsWithPostInstallSeed.some(Boolean);
+    const definedPostInstallHooks = postInstallHooks.filter(isDefined);
 
-    if (!seededByPostInstall) {
+    if (definedPostInstallHooks.length === 0) {
       return {
         status: 'skipped',
         localizedMessage:
@@ -516,14 +522,37 @@ export class WorkspaceTemplateService {
       };
     }
 
+    // A synchronous hook is past proof: ApplicationInstallService awaits it
+    // during the install step and aborts the install on error, so a succeeded
+    // install means the hook ran to completion. An asynchronous hook is only
+    // enqueued, so the operation resolves before seeding runs and cannot
+    // confirm the samples landed — reporting `succeeded` here would fake a
+    // completed preset (contract §5 2026-09-17).
+    const hasAsynchronousPostInstallHook = definedPostInstallHooks.some(
+      (postInstallLogicFunction) =>
+        postInstallLogicFunction.shouldRunSynchronously !== true,
+    );
+
+    if (hasAsynchronousPostInstallHook) {
+      this.logger.warn(
+        `Sample seeding for workspace ${workspaceId} is delegated to an asynchronous post-install hook and cannot be confirmed; reporting the seed-samples step as failed`,
+      );
+
+      return {
+        status: 'failed',
+        errorCode: 'SEED_FAILED',
+        localizedMessage:
+          'Sample content is created in the background and could not be confirmed yet. Retry the setup later.',
+      };
+    }
+
     this.logger.log(
-      `Sample seeding for workspace ${workspaceId} delegated to app post-install hooks`,
+      `Sample seeding for workspace ${workspaceId} completed during the synchronous post-install hooks`,
     );
 
     return {
       status: 'succeeded',
-      localizedMessage:
-        'Starter content was provided by the installed apps.',
+      localizedMessage: 'Starter content was provided by the installed apps.',
     };
   }
 

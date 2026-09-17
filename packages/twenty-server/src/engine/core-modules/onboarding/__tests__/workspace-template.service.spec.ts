@@ -29,7 +29,10 @@ describe('WorkspaceTemplateService', () => {
     manifest?: {
       application: {
         requiredServerVersionRange?: string | null;
-        postInstallLogicFunction?: { universalIdentifier: string };
+        postInstallLogicFunction?: {
+          universalIdentifier: string;
+          shouldRunSynchronously?: boolean;
+        };
       };
     },
   ) => ({ id, manifest }) as unknown as ApplicationRegistrationEntity;
@@ -160,7 +163,7 @@ describe('WorkspaceTemplateService', () => {
       ]);
     });
 
-    it('reports sample seeding as delegated when a succeeded install carries a post-install hook', async () => {
+    it('reports sample seeding as failed with SEED_FAILED and retry info when a succeeded install carries an asynchronous post-install hook', async () => {
       findOneByUniversalIdentifierGlobal.mockImplementation(
         (universalIdentifier: string) =>
           Promise.resolve(
@@ -169,6 +172,7 @@ describe('WorkspaceTemplateService', () => {
                 requiredServerVersionRange: null,
                 postInstallLogicFunction: {
                   universalIdentifier: 'post-install-uid',
+                  shouldRunSynchronously: false,
                 },
               },
             }),
@@ -182,9 +186,108 @@ describe('WorkspaceTemplateService', () => {
         sampleContentEnabled: true,
       });
 
-      const seedStep = result.steps.find((step) => step.kind === 'seed-samples');
+      const seedStep = result.steps.find(
+        (step) => step.kind === 'seed-samples',
+      );
+
+      // The hook is only enqueued, so seeding has not run when the operation
+      // resolves — reporting `succeeded` would fake a completed preset.
+      expect(seedStep?.status).toBe('failed');
+      expect(seedStep?.errorCode).toBe('SEED_FAILED');
+      expect(seedStep?.localizedMessage).toContain('Retry');
+    });
+
+    it('reports sample seeding as succeeded only when the post-install hook ran synchronously during the install', async () => {
+      findOneByUniversalIdentifierGlobal.mockImplementation(
+        (universalIdentifier: string) =>
+          Promise.resolve(
+            buildRegistration(`registration-${universalIdentifier}`, {
+              application: {
+                requiredServerVersionRange: null,
+                postInstallLogicFunction: {
+                  universalIdentifier: 'post-install-uid',
+                  shouldRunSynchronously: true,
+                },
+              },
+            }),
+          ),
+      );
+
+      const result = await service.applyWorkspaceTemplateOperation({
+        workspaceId,
+        idempotencyKey: 'op-seed-sync',
+        template: WorkspaceTemplate.INDIVIDUAL,
+        sampleContentEnabled: true,
+      });
+
+      const seedStep = result.steps.find(
+        (step) => step.kind === 'seed-samples',
+      );
 
       expect(seedStep?.status).toBe('succeeded');
+      expect(seedStep?.errorCode).toBeUndefined();
+    });
+
+    it('re-runs only the failed seed step on a same-key retry, without reinstalling apps or re-seeding content', async () => {
+      const storedOperation: ApplyTemplateResult = {
+        operationId: 'op-seed-retry',
+        requestedTemplateKeyVersion: {
+          key: WorkspaceTemplate.INDIVIDUAL,
+          version: 1,
+        },
+        appliedTemplateKeyVersion: {
+          key: WorkspaceTemplate.INDIVIDUAL,
+          version: 1,
+        },
+        steps: [
+          {
+            kind: 'install-app',
+            targetUniversalIdentifier: A2E_DOCUMENTS_UNIVERSAL_IDENTIFIER,
+            status: 'succeeded',
+          },
+          { kind: 'navigation-visibility', status: 'succeeded' },
+          {
+            kind: 'seed-samples',
+            status: 'failed',
+            errorCode: 'SEED_FAILED',
+            localizedMessage: 'previous attempt',
+          },
+          { kind: 'set-workspace-template', status: 'succeeded' },
+        ],
+      };
+
+      keyValuePairGet.mockResolvedValue([{ value: storedOperation }]);
+      findOneByUniversalIdentifierGlobal.mockImplementation(
+        (universalIdentifier: string) =>
+          Promise.resolve(
+            buildRegistration(`registration-${universalIdentifier}`, {
+              application: {
+                requiredServerVersionRange: null,
+                postInstallLogicFunction: {
+                  universalIdentifier: 'post-install-uid',
+                  shouldRunSynchronously: false,
+                },
+              },
+            }),
+          ),
+      );
+
+      const result = await service.applyWorkspaceTemplateOperation({
+        workspaceId,
+        idempotencyKey: 'op-seed-retry',
+        template: WorkspaceTemplate.INDIVIDUAL,
+        sampleContentEnabled: true,
+      });
+
+      // The succeeded install is returned as-is, so the app's post-install
+      // hook is never re-enqueued and no sample content is duplicated.
+      expect(installApplication).not.toHaveBeenCalled();
+      expect(
+        result.steps.find((step) => step.kind === 'install-app')?.status,
+      ).toBe('succeeded');
+      expect(
+        result.steps.find((step) => step.kind === 'seed-samples')?.status,
+      ).toBe('failed');
     });
 
     it('reports sample seeding as skipped when no succeeded install carries a post-install hook', async () => {
@@ -199,7 +302,9 @@ describe('WorkspaceTemplateService', () => {
         sampleContentEnabled: true,
       });
 
-      const seedStep = result.steps.find((step) => step.kind === 'seed-samples');
+      const seedStep = result.steps.find(
+        (step) => step.kind === 'seed-samples',
+      );
 
       expect(seedStep?.status).toBe('skipped');
     });
@@ -214,7 +319,9 @@ describe('WorkspaceTemplateService', () => {
         sampleContentEnabled: true,
       });
 
-      const seedStep = result.steps.find((step) => step.kind === 'seed-samples');
+      const seedStep = result.steps.find(
+        (step) => step.kind === 'seed-samples',
+      );
 
       expect(seedStep?.status).toBe('skipped');
     });

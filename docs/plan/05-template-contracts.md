@@ -206,6 +206,17 @@ type ApplyTemplateResult = {
   > `SEED_FAILED` code reachable, and re-run the Tier-2 install before claiming
   > seeding works. The doc's repeat-safe provenance rule above remains the
   > target contract, not current behavior.
+  >
+  > 2026-09-17 (P1.6b seed-samples truth — server-side over-report fixed): the
+  > step now reports `succeeded` **only** for a synchronous hook
+  > (`shouldRunSynchronously: true`), which `ApplicationInstallService` awaits
+  > during the install step and aborts on error. An asynchronous hook (the SDK
+  > build default, and what every a2e app ships) is merely enqueued, so the
+  > operation resolves before seeding runs and cannot confirm the rows landed:
+  > the step reports `failed` / `SEED_FAILED` with retry guidance instead of
+  > `succeeded`. Same-key retry re-runs only the non-succeeded steps and never
+  > re-enqueues the hook, so no duplicate seeds. Live seeding (rows actually
+  > landing) remains the orchestrator's Tier-2 reinstall, not a claim here.
 
 ### 5.1 Provenance on template-instantiated content
 

@@ -264,11 +264,16 @@ describe('concurrent same-key setup-operation retry (real DB + real CacheLock)',
       status: 'SUCCEEDED',
     });
 
-    // The delegated seed step is captured once and returned as-is from the
-    // persisted operation: the post-install hook is never re-enqueued.
+    // The post-install hook is asynchronous, so seeding has not run when the
+    // operation resolves: the step truthfully reports SEED_FAILED rather than
+    // a fake success. The succeeded install is returned as-is from the
+    // persisted operation, so the hook is never re-enqueued.
     expect(
-      firstResult.steps.find((step) => step.kind === 'SEED_SAMPLES')?.status,
-    ).toBe('SUCCEEDED');
+      firstResult.steps.find((step) => step.kind === 'SEED_SAMPLES'),
+    ).toMatchObject({
+      status: 'FAILED',
+      errorCode: 'SEED_FAILED',
+    });
 
     expect(await countStoredOperations(idempotencyKey)).toBe(1);
     expect(await readWorkspaceTemplate()).toBe('TEAM');
@@ -358,7 +363,8 @@ describe('concurrent same-key setup-operation retry (real DB + real CacheLock)',
     });
     expect(await readWorkspaceTemplate()).toBe('NON_PROFIT');
 
-    // A fully succeeded operation retried again re-runs nothing at all.
+    // Retrying again re-installs nothing: only the non-succeeded (async seed)
+    // step is re-resolved, which never enqueues the hook itself.
     installApplicationSpy.mockClear();
 
     const thirdResult = await applyOperation({

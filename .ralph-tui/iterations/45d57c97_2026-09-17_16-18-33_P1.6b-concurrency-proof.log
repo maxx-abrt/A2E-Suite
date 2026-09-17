@@ -1,0 +1,132 @@
+# Iteration 1 Log
+
+## Metadata
+
+- **Task ID**: P1.6b-concurrency-proof
+- **Task Title**: P1.6b: real-DB concurrency check of the same-key setup-operation retry
+- **Description**: As a workspace admin, I want the resumable template setup operation to stay correct when concurrent requests reuse one idempotency key, so that retries never duplicate installs or seeds.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-17T14:18:33.370Z
+- **Ended At**: 2026-09-17T14:25:48.180Z
+- **Duration**: 7m 14s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "P1.6b" PLAN.md
+[94m[bash][0m $ git diff --stat docs/plan/phases/phase-02-report.md tasks/prd.json
+[94m[bash][0m $ grep -rn "concurrency-proof" PLAN.md tasks/prd.json docs/plan/phases/ 2>/dev/null | head -50
+[94m[bash][0m $ git diff docs/plan/phases/phase-02-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ ls docs/plan/phases/
+[94m[bash][0m $ grep -n "P1.6b\|concurrency" docs/plan/phases/phase-01-report.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ ls packages/twenty-server/src/engine/core-modules/onboarding/ && echo "---" && ls packages/twenty-se...
+[94m[bash][0m $ ls packages/twenty-server/test/integration/graphql/suites/ 2>/dev/null
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/cache-lock/cache-lock.service.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/onboarding/onboarding.resolver.ts
+[94m[bash][0m $ ls packages/twenty-server/test/integration/metadata/suites/utils/ 2>/dev/null | head -40
+[94m[bash][0m $ grep -rn "setupApplicationForSync" packages/twenty-server/test/integration --include=*.ts -l | head ...
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-server/test/integration/metadata/suites/application/successful-unins...
+[94m[bash][0m $ grep -rln "setupApplicationForSync" packages/twenty-server/test packages/twenty-server/src 2>/dev/nu...
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-server/test/integration/metadata/suites/application/utils/
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/test/integration/utils/get-app-provider-by-class-name.util.ts
+[94m[bash][0m $ find packages/twenty-server/src -path "*application-install*" -name "*.ts" | head -30
+[94m[read][0m
+[94m[bash][0m $ grep -rn "sourceType" packages/twenty-server/src/engine/core-modules/application/application-registr...
+[94m[read][0m
+[94m[bash][0m $ grep -n "createApplicationRegistration" -A30 packages/twenty-server/src/engine/core-modules/applicat...
+[94m[bash][0m $ grep -n "findOneByUniversalIdentifierGlobal" -A30 packages/twenty-server/src/engine/core-modules/app...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "testDataSource\|global.app" packages/twenty-server/test/integration/utils/*.ts | head -20
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-server/src/engine/core-modules/application/application-package/appli...
+[94m[bash][0m $ grep -n "concurren\|same-key\|idempot\|CacheLock" docs/plan/05-template-contracts.md | head -30
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ redis-cli ping
+[94m[bash][0m $ grep -n "\"jest\"\|integration" packages/twenty-server/package.json | head -20
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/jest-integration.config.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/test/integration/utils/setup-test.ts
+[94m[bash][0m $ grep -n "sourceType\|manifest\|universalIdentifier" packages/twenty-server/src/engine/core-modules/a...
+[94m[bash][0m $ grep -rn "APPLE_JANE_ADMIN_ACCESS_TOKEN\|SEED_APPLE_WORKSPACE_ID" packages/twenty-server/test/integr...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "APPLE_JANE_ADMIN_ACCESS_TOKEN" packages/twenty-server/test/integration --include=*.ts | he...
+[94m[bash][0m $ sed -n '120,150p' packages/twenty-server/src/engine/core-modules/application/application-registratio...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-server/src/engine/core-modules/onboarding/enums/workspace-template.enum.ts
+Now I'll write the integration spec. Let me first confirm the wire enum names for step kinds/statuses and verify no existing file.
+[94m[write][0m "import gql from 'graphql-tag';
+import { v4 as uuidv4 } from 'uuid';
+
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+
+import { Applicati... (11503 chars)"
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/onboarding/concurrent-s...
+[94m[bash][0m $ grep -n "file-type" packages/twenty-server/package.json
+[94m[bash][0m $ cat node_modules/file-type/package.json | head -40
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/onboarding/template-una...
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/onboarding/concurrent-s...
+[94m[edit][0m
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/onboarding/concurrent-s...
+[94m[bash][0m $ grep -n "PG_DATABASE_URL\|DATABASE_URL" packages/twenty-server/.env.test 2>/dev/null | head
+[94m[bash][0m $ psql "postgresql://postgres:postgres@localhost:5432/default" -c "SELECT 'x'" 2>&1 | head -3
+[94m[bash][0m $ "
+[94m[bash][0m $ echo "EXIT:$?"
+[94m[bash][0m $ echo "OXFMT_EXIT:$?"
+[94m[bash][0m $ echo "OXLINT_EXIT:$?"
+[94m[bash][0m $ npx oxfmt test/integration/graphql/suites/onboarding/concurrent-same-key-retry.integration-spec.ts 2...
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-server 2>&1 | tail -25
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/onboarding/concurrent-s...
+[94m[bash][0m $ npx jest src/engine/core-modules/onboarding --config=jest.config.mjs 2>&1 | tail -25
+[94m[read][0m
+[94m[bash][0m $ git status --porcelain
+[94m[edit][0m
+[94m[bash][0m $ echo "TSGO_EXIT:$?"
+[94m[bash][0m $ "
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ resolve it from the container.\n  - LOCAL-source registrations let the install step succeed without ...
+[94m[bash][0m $ git diff --stat docs/plan/phases/phase-01-report.md .ralph-tui/progress.md
+Done. Slice complete and self-verified.
+
+**What I did:** added a real-DB/Tier-1 integration spec proving the CacheLock serializes concurrent same-key setup-operation retries:
+`packages/twenty-server/test/integration/graphql/suites/onboarding/concurrent-same-key-retry.integration-spec.ts`
+
+- **Concurrency:** two concurrent same-key `applyWorkspaceTemplateOperation` calls → exactly 1 `installApplication` call, identical results, 1 persisted `template-operation:<key>` row.
+- **No duplicate installs/seeds:** succeeded install/seed steps are never re-run; a fully-succeeded retry re-runs nothing (spy count 0).
+- **Partial/failure:** registration failure captured as `FAILED/APP_NOT_REGISTERED`; retry re-runs only the failed app and then sets the template.
+
+**Checks (all green):**
+- `NODE_ENV=test npx jest --config jest-integration.config.ts …concurrent-same-key-retry.integration-spec.ts --runInBand` → 2/2
+- `npx jest src/engine/core-modules/onboarding --config=jest.config.mjs` → 58/58
+- `npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx oxlint --type-aware` → 0/0; `npx oxfmt --check` → clean; `npx nx lint:diff-with-main twenty-server` → success (reports "No changed files" for uncommitted edits, so oxlint/oxfmt ran directly)
+- Post-run DB restored: 0 a2e registrations, 0 `template-operation:*` rows, `workspaceTemplate` back to NULL
+
+**Notes for orchestrator:** service contract untouched (result persistence, additive input, legacy mutation shape all as-is); registrations are global and deleted in `afterAll` so P1.7c is unaffected. Report + Ralph bridge appended to `docs/plan/phases/phase-01-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

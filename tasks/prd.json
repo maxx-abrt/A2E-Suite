@@ -39,9 +39,10 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "Same literal deps as P1.6b-concurrency-proof (P1.6a/P0.4, both [x]). Related live finding: P1.3's 2026-09-16 orchestrator note — 'succeeded (delegated)' can over-report until the hook failure is fixed; the hook root cause is already fixed pending Tier-2 live reinstall (phase-01 report 2026-09-16 late entry), so this story covers the server-side step-status truth only.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P2.5-provider-validation",
@@ -298,6 +299,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-17T14:25:48.181Z"
+    "updatedAt": "2026-09-17T14:33:04.265Z"
   }
 }

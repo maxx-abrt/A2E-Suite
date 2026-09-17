@@ -3,10 +3,10 @@
   "sessionId": "45d57c97-9f0d-4994-b4f8-0d49439c6465",
   "status": "running",
   "startedAt": "2026-09-17T14:18:16.671Z",
-  "updatedAt": "2026-09-17T14:25:48.182Z",
-  "currentIteration": 0,
+  "updatedAt": "2026-09-17T14:33:04.265Z",
+  "currentIteration": 1,
   "maxIterations": 20,
-  "tasksCompleted": 0,
+  "tasksCompleted": 1,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -16,7 +16,18 @@
     "totalTasks": 0,
     "tasks": []
   },
-  "iterations": [],
+  "iterations": [
+    {
+      "iteration": 1,
+      "status": "completed",
+      "taskId": "P1.6b-concurrency-proof",
+      "taskTitle": "P1.6b: real-DB concurrency check of the same-key setup-operation retry",
+      "taskCompleted": true,
+      "durationMs": 434810,
+      "startedAt": "2026-09-17T14:18:33.370Z",
+      "endedAt": "2026-09-17T14:25:48.180Z"
+    }
+  ],
   "skippedTaskIds": [],
   "cwd": "/Users/maxaubert/Projets/A2E Suite",
   "activeTaskIds": [],
