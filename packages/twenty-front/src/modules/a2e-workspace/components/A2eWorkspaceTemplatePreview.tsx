@@ -64,9 +64,9 @@ const StyledStepItem = styled.li`
 const StyledStepIcon = styled.span<{ status: ApplyTemplateStep['status'] }>`
   align-items: center;
   color: ${({ status }) =>
-    status === 'succeeded'
+    status === 'SUCCEEDED'
       ? themeCssVariables.color.green
-      : status === 'failed'
+      : status === 'FAILED'
         ? themeCssVariables.color.red
         : themeCssVariables.font.color.tertiary};
   display: flex;
@@ -83,10 +83,10 @@ const StyledApplyButton = styled.div`
 `;
 
 const STEP_KIND_LABELS: Record<ApplyTemplateStep['kind'], string> = {
-  'install-app': 'app installation',
-  'navigation-visibility': 'navigation update',
-  'seed-samples': 'sample content',
-  'set-workspace-template': 'template activation',
+  INSTALL_APP: 'app installation',
+  NAVIGATION_VISIBILITY: 'navigation update',
+  SEED_SAMPLES: 'sample content',
+  SET_WORKSPACE_TEMPLATE: 'template activation',
 };
 
 const StepStatusIcon = ({
@@ -94,11 +94,11 @@ const StepStatusIcon = ({
 }: {
   status: ApplyTemplateStep['status'];
 }) => {
-  if (status === 'succeeded') {
+  if (status === 'SUCCEEDED') {
     return <IconCheck size={themeCssVariables.icon.size.sm} />;
   }
 
-  if (status === 'failed') {
+  if (status === 'FAILED') {
     return <IconX size={themeCssVariables.icon.size.sm} />;
   }
 
@@ -257,7 +257,7 @@ export const A2eWorkspaceTemplatePreview = ({
                   </StyledRowSubText>
                 )}
               </StyledRowText>
-              {step.status === 'failed' && (
+              {step.status === 'FAILED' && (
                 <StyledBlockedText>
                   {isDefined(step.localizedMessage)
                     ? step.localizedMessage
@@ -273,7 +273,7 @@ export const A2eWorkspaceTemplatePreview = ({
           <MainButton
             title={
               hasSteps &&
-              operationResult!.steps.some((step) => step.status === 'failed')
+              operationResult!.steps.some((step) => step.status === 'FAILED')
                 ? t`Retry failed steps`
                 : t`Apply template`
             }

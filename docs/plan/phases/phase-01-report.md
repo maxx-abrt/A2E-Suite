@@ -662,3 +662,31 @@ CLAIMED — P1.6e/first-open-entrypoint — GLM-5.3-Flash — 2026-09-17T09:53:4
 **Next:** Tier-2 browser journey (orchestrator); next executor slice — P1.7c first-use acceptance has executor-runnable legs, else P2.1 realtime auth repair
 
 CLAIMED — P1.6b/concurrent-same-key-test — GLM-5.3-Flash — 2026-09-17T10:14:59Z — base 0cf91b682203810201c6be96ba3c7944105b5880
+
+CLAIMED — P1.7c/first-use-unavailable-apps — deepseek-v4.1-flash — 2026-09-17T10:35:00Z — base 57354bc89dfed3031c523d1d3b63065c4a5d2e08
+
+## 2026-09-17 10:39 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** P1.7c First-use acceptance · **Slice:** server-side E01/E02/E03 leg — first-use setup when a preset's required apps are unregistered (zero app availability)
+**Claim:** done-for-review
+**Ready-to-tick:** no — P1.7c is broad and browser/Tier-2 legs (E01 picker, E04, E12) remain; this slice records only the server acceptance on the seeded populated workspace
+**Base:** 57354bc89dfed3031c523d1d3b63065c4a5d2e08
+**Changed:** new `packages/twenty-server/test/integration/graphql/suites/onboarding/template-unavailable-apps-first-use.integration-spec.ts` (3 cases, no product code)
+**Checks:** preflight `pg_isready` + `redis-cli ping` → OK; spec on `test` DB (`NODE_ENV=test npx jest --config jest-integration.config.ts … --runInBand`, 6 GB heap) → 3/3 pass; post-run DB check → `workspaceTemplate` restored to NULL, 0 `template-operation:*` rows, 0 a2e app rows; `npx tsgo -p tsconfig.json --noEmit` → exit 0, 0 errors; `npx oxlint --type-aware <spec>` → 0 warnings 0 errors
+**Missing for tick:** browser legs (E01 onboarding picker with an empty catalogue, E04 template instances, E12 no-AI/narrow-screen); app-optional deselection (E01) is untestable until P1.6d marks an app optional (`optionalApplicationUniversalIdentifiers` is empty); E03 INDIVIDUAL/CRM switch is not exercised because INDIVIDUAL deletes standard nav rows — restoring them needs the full standard-application sync (per the invitation-join leg warning)
+**Do not redo:** GraphQL serializes these registered enums by MEMBER NAME — wire values are `INSTALL_APP`/`NAVIGATION_VISIBILITY`/`SET_WORKSPACE_TEMPLATE`, `FAILED`/`SKIPPED`, `APP_NOT_REGISTERED`, NOT the lower-case internal values. **Discovered defect (P1.6c, not this slice):** `twenty-front/src/modules/a2e-workspace/types/apply-template-operation.types.ts` and `A2eWorkspaceTemplatePreview.tsx` `STEP_KIND_LABELS` / `StepStatusIcon` compare against `'install-app'`/`'failed'`, so against a live server every step kind/status/errorCode falls through — hand-written docs were never Tier-2 verified. Fix direction: type the front on the SCREAMING_SNAKE enum names (and switch to generated `*Document`s when `graphql:generate` runs). The spec deliberately uses only CRM + NON_PROFIT (their definitions hide no nav rows) so the shared seeded workspace is never mutated.
+**Remaining:** 12 other [ ]/[~] tasks ahead in the execution order (P1.3 e2e, P1.6d remainder, P1.7a export leg, P1.7b Tier-2 journey, P1.7c browser legs, P2.x+)
+**Next:** fix the P1.6c wire-enum mismatch (front), then orchestrator Tier-2 first-use browser journey; executors — P1.7a install-later readiness surface or P2.1 realtime auth repair
+
+CLAIMED — P1.6c/wire-enum-names — deepseek-v4.1-flash — 2026-09-17T10:41:00Z — base 57354bc89dfed3031c523d1d3b63065c4a5d2e08
+
+## 2026-09-17 10:52 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** P1.6c Front onboarding/Settings · **Slice:** fix the wire-enum mismatch discovered by the P1.7c server leg (front typed/matched the server's lower-case internal values instead of the GraphQL enum names)
+**Claim:** done-for-review
+**Ready-to-tick:** no — defect fixed and type-guarded, but P1.6c still needs the orchestrator Tier-2 step (schema regen + real browser apply/retry)
+**Base:** 57354bc89dfed3031c523d1d3b63065c4a5d2e08
+**Changed:** `twenty-front/src/modules/a2e-workspace/types/apply-template-operation.types.ts` (`OperationStepKind`/`OperationStepStatus` now the wire names `INSTALL_APP`/…/`FAILED`/`SKIPPED`, WHY-comment explains GraphQL cannot carry hyphenated values); `components/A2eWorkspaceTemplatePreview.tsx` (`STEP_KIND_LABELS` keys, `StyledStepIcon` and `StepStatusIcon` comparisons, the two `step.status === 'failed'` checks); `hooks/__tests__/useApplyWorkspaceTemplateOperation.test.tsx` (fixtures use the wire names)
+**Checks:** `npx tsgo -p tsconfig.json --noEmit` (twenty-front) → exit 0, 0 errors (the union now makes the old lower-case comparisons a type error — that is the regression guard, no component test existed before); `npx jest src/modules/a2e-workspace --config=jest.config.mjs` → 9/9; `npx jest --findRelatedTests <component> <types> --config=jest.config.mjs` → 44/44 (3 suites, incl. DomainShell noise-free pass); `npx oxlint --type-aware` on the 3 files → 0/0; `npx oxfmt --check` on the 3 files → clean; repo-wide grep for the lower-case wire strings → no matches
+**Missing for tick:** Tier-2 — `npx nx run twenty-front:graphql:generate` against a running server then switching both hand-written a2e-workspace documents to the generated `*Document` exports; real browser onboarding + Settings apply/retry. No dedicated component render test exists for the preview (the TS union is the current guard) — optional follow-up
+**Do not redo:** the wire values are the enum MEMBER NAMES — do not "restore" lower-case kinds/statuses and do not fix this server-side with `registerEnumType` valuesMap: GraphQL enum value names cannot contain hyphens, so lower-case internal values are unreachable over the wire. `errorCode` was already uppercase and needed no change; preview `action: 'hide' | 'restore'` and the app flags are plain booleans/strings, unaffected
+**Remaining:** 12 other [ ]/[~] tasks ahead in the execution order (P1.3 e2e, P1.6d remainder, P1.7a export leg, P1.7b Tier-2 journey, P1.7c browser legs, P2.x+)
+**Next:** orchestrator Tier-2 schema regen + apply/retry browser pass; executors — P1.7a install-later readiness surface or P2.1 realtime auth repair

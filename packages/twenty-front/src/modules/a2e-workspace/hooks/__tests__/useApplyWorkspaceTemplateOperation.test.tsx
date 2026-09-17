@@ -29,11 +29,11 @@ jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
 const OPERATION_IDEMPOTENCY_KEY = 'fixed-uuid';
 
 const buildStep = (status: string) => ({
-  kind: 'install-app',
+  kind: 'INSTALL_APP',
   targetUniversalIdentifier: 'documents',
   status,
-  errorCode: status === 'failed' ? 'INSTALL_FAILED' : null,
-  localizedMessage: status === 'failed' ? 'install boom' : null,
+  errorCode: status === 'FAILED' ? 'INSTALL_FAILED' : null,
+  localizedMessage: status === 'FAILED' ? 'install boom' : null,
 });
 
 const buildMock = (variables: Record<string, unknown>): MockedResponse => ({
@@ -47,7 +47,7 @@ const buildMock = (variables: Record<string, unknown>): MockedResponse => ({
         operationId: 'op-1',
         requestedTemplateKeyVersion: { key: 'INDIVIDUAL', version: 1 },
         appliedTemplateKeyVersion: { key: 'INDIVIDUAL', version: 1 },
-        steps: [buildStep('succeeded'), buildStep('succeeded')],
+        steps: [buildStep('SUCCEEDED'), buildStep('SUCCEEDED')],
         __typename: 'ApplyTemplateResult',
       },
     },

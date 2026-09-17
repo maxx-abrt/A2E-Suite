@@ -1,19 +1,22 @@
-// Mirror of the server contract in
-// packages/twenty-server/src/engine/core-modules/onboarding/types/apply-template-operation.types.ts
-// (kept in sync; the generated metadata does not carry these types yet).
+// Wire mirror of the server contract in
+// packages/twenty-server/src/engine/core-modules/onboarding/types/apply-template-operation.types.ts.
+// The server stores lower-case internal values but registers the enums with
+// registerEnumType, so GraphQL serializes the MEMBER NAMES — these are the
+// values the API actually returns. (GraphQL enum value names cannot contain
+// hyphens, so the lower-case server values are not reachable over the wire.)
 
 export type OperationStepKind =
-  | 'install-app'
-  | 'navigation-visibility'
-  | 'seed-samples'
-  | 'set-workspace-template';
+  | 'INSTALL_APP'
+  | 'NAVIGATION_VISIBILITY'
+  | 'SEED_SAMPLES'
+  | 'SET_WORKSPACE_TEMPLATE';
 
 export type OperationStepStatus =
-  | 'pending'
-  | 'running'
-  | 'succeeded'
-  | 'failed'
-  | 'skipped';
+  | 'PENDING'
+  | 'RUNNING'
+  | 'SUCCEEDED'
+  | 'FAILED'
+  | 'SKIPPED';
 
 export type OperationStepErrorCode =
   | 'APP_NOT_REGISTERED'
