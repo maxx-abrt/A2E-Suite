@@ -1,0 +1,77 @@
+{
+  "name": "P1.6a — Template & setup-operation contracts (C1/C2) completion",
+  "description": "Re-verify docs/plan/05-template-contracts.md against current source, close the P1.6a cycle-rejection and provenance contract gaps, and check in typed §7 fixtures with conformance tests. Documentation + typed-fixture deliverable only; no P1.6b/c implementation.",
+  "branchName": "ralph/p16a-template-contracts-completion",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Re-verify contract spec against current source (drift audit)",
+      "description": "As an executor implementing P1.6b, I want every symbol and version claim in docs/plan/05-template-contracts.md re-verified against current source so that the contract I build on is not stale.",
+      "acceptanceCriteria": [
+        "Every file link in the doc resolves; every named symbol (WorkspaceTemplate, WORKSPACE_TEMPLATE_DEFINITIONS, TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS, ApplicationVersionValidationService methods, ApplicationRegistrationService, ApplyTemplateRequest/ApplyTemplateStep/ApplyTemplateResult/TemplatePreview) exists and its shape matches the doc",
+        "apply-template-operation.types.ts conforms to §4–§6; any divergence is either corrected in the types (additive, with a // why-comment referencing the doc section) or recorded as a dated doc correction",
+        "§3/§7 version claims match the actual app packages (a2e-documents, a2e-projects, a2e-accounting application.config.ts / package versions) — including the post-09-13 accounting manifest fixes",
+        "§2 ownership inventory still holds against workspace-template.service.ts current behavior (including the known seed-hook failure recorded 2026-09-16 in docs/plan/phases/phase-01-report.md — the doc must state this as a known P1.6b obligation, not claim seeding works)",
+        "Drift corrections carry a dated note (2026-09-17: …) appended in place, preserving prior text per repo handoff convention",
+        "A dated entry is appended to docs/plan/phases/phase-01-report.md; PLAN.md is not edited; nothing is committed",
+        "npx nx lint:diff-with-main twenty-server passes (run only for packages actually touched)",
+        "npx tsgo -p tsconfig.json --noEmit passes when run inside packages/twenty-server (only if packages were touched)",
+        "If twenty-shared is touched: npx nx build twenty-shared --skip-nx-cache runs first and succeeds"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "Unverified claims must be recorded as UNVERIFIED with a reason (FR-6), never left implicitly stale.",
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
+    },
+    {
+      "id": "US-002",
+      "title": "Close contract gaps — cycle rejection and provenance shape",
+      "description": "As an executor implementing P1.6e content templates, I want the contract to state normative cycle-rejection rules and the exact provenance shape on instantiated content so that later slices do not invent conflicting rules.",
+      "acceptanceCriteria": [
+        "Rejection matrix (§7) gains a row covering cycles: workspace presets are flat app lists (no dependency graph — stated explicitly); content-template descriptors (P1.6e) must reject relation/reference cycles at load time, with the same \"reject at load time\" severity as cross-workspace content",
+        "A provenance subsection specifies the exact shape carried by template-instantiated content (at minimum: source template key + version + instantiating operationId), consistent with §5's createdRecordUniversalIdentifiers sample provenance and referencing C1's \"fresh content IDs with source-template/version provenance\"",
+        "apply-template-operation.types.ts is extended additively only if the provenance shape needs a server-side type now; otherwise the subsection records that the type lands with P1.6d/e (default: type now only if it has a consumer in the existing types file, otherwise document-only)",
+        "The \"Deliberate gaps\" section (§8) is updated so every P1.6a-bullet requirement (version, compatibility, inputs, provenance, preview fixtures; unknown IDs, cycles, unavailable requirements, cross-workspace content) is either specified or has an explicit gap entry",
+        "Rejection rules are expressed as normative must statements with typed error codes consistent with OperationStepErrorCode (extending it additively if cycles need a code)",
+        "A dated entry is appended to docs/plan/phases/phase-01-report.md; PLAN.md is not edited; nothing is committed",
+        "npx nx lint:diff-with-main twenty-server passes (run only for packages actually touched)",
+        "npx tsgo -p tsconfig.json --noEmit passes when run inside packages/twenty-server (only if packages were touched)",
+        "If twenty-shared is touched: npx nx build twenty-shared --skip-nx-cache runs first and succeeds"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "No app→app dependency field in SDK manifests — §8 keeps ordering preset-flat (Non-Goal).",
+      "dependsOn": [
+        "US-001"
+      ]
+    },
+    {
+      "id": "US-003",
+      "title": "Executable §7 fixtures with conformance tests",
+      "description": "As an executor implementing P1.6b, I want the §7 fixtures checked in as typed data with unit tests so the contract examples are machine-verified and cannot drift.",
+      "acceptanceCriteria": [
+        "Fixture module created under packages/twenty-server/src/engine/core-modules/onboarding/__tests__/fixtures/ typed against apply-template-operation.types.ts (named exports, no any); if the onboarding module has an existing fixtures convention, follow that instead",
+        "Fixtures cover: the §7 preview example, the §7 result example, and one fixture per rejection-matrix row (including the US-002 cycles row and cross-workspace content)",
+        "A unit spec asserts: every fixture conforms to its contract type; the individual preview fixture's app universal identifiers match onboarding-installable-app-universal-identifiers.ts / workspace-template-definitions.constant.ts; its navigation-change UUIDs match the definition's managed identifiers",
+        "The doc's §7 JSON blocks are updated to match the checked-in fixtures exactly (or annotated as generated from them), so markdown and code cannot diverge",
+        "Fixtures use only universal identifiers and default values — never record IDs, user IDs, share URLs, tokens or live finance rows (C1 §3 construction rule)",
+        "Targeted jest run passes: npx jest <spec> --config=packages/twenty-server/jest.config.mjs",
+        "npx nx lint:diff-with-main twenty-server passes",
+        "npx tsgo -p tsconfig.json --noEmit passes when run inside packages/twenty-server",
+        "If twenty-shared is touched: npx nx build twenty-shared --skip-nx-cache runs first and succeeds",
+        "A dated entry is appended to docs/plan/phases/phase-01-report.md; PLAN.md is not edited; nothing is committed"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": "No service, resolver, DTO or schema behavior may change (FR-1); no GraphQL regeneration, migrations or i18n catalog changes.",
+      "dependsOn": [
+        "US-001",
+        "US-002"
+      ]
+    }
+  ],
+  "metadata": {
+    "updatedAt": "2026-09-17T12:13:47.882Z"
+  }
+}

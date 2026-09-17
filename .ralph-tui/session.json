@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "sessionId": "6453f712-e1ad-43a9-b269-09d298d04ade",
+  "status": "running",
+  "startedAt": "2026-09-17T12:08:57.969Z",
+  "updatedAt": "2026-09-17T12:13:47.882Z",
+  "currentIteration": 0,
+  "maxIterations": 20,
+  "tasksCompleted": 0,
+  "isPaused": false,
+  "agentPlugin": "opencode",
+  "model": "opencode-go/deepseek-v4.1-flash",
+  "trackerState": {
+    "plugin": "json",
+    "executionScopes": [],
+    "prdPath": "./tasks/prd.json",
+    "totalTasks": 3,
+    "tasks": [
+      {
+        "id": "US-001",
+        "title": "Re-verify contract spec against current source (drift audit)",
+        "status": "open",
+        "completedInSession": false
+      },
+      {
+        "id": "US-002",
+        "title": "Close contract gaps — cycle rejection and provenance shape",
+        "status": "open",
+        "completedInSession": false
+      },
+      {
+        "id": "US-003",
+        "title": "Executable §7 fixtures with conformance tests",
+        "status": "open",
+        "completedInSession": false
+      }
+    ]
+  },
+  "iterations": [],
+  "skippedTaskIds": [],
+  "cwd": "/Users/maxaubert/Projets/A2E Suite",
+  "activeTaskIds": [],
+  "subagentPanelVisible": true
+}

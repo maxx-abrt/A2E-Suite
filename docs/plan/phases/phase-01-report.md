@@ -718,3 +718,17 @@ CLAIMED — P1.7a/install-readiness-front — deepseek-v4.1-flash — 2026-09-17
 **Do not redo:** readiness stays a SEPARATE query — never add it to the cached `MarketplaceApp`/catalog DTO (server-global cache would leak workspace state, per the server leg); the card only blocks on a resolved report (`isDefined(readiness) && !ready`) so unknown/loading readiness never blocks; `blockedReason` wire values are the shared strings `APP_NOT_REGISTERED`/`VERSION_INCOMPATIBLE` (`null` when ready); the hook batches all available identifiers in one request and skips on an empty list
 **Remaining:** 12 other [ ]/[~] tasks ahead in the execution order (P1.3 e2e, P1.6d remainder, P1.7a export leg, P1.7b Tier-2 journey, P1.7c browser legs, P2.x+)
 **Next:** orchestrator schema regen + Tier-2 browser pass on the A2E Suite section; executors — the P1.7a export/confirmation leg needs the product call on export format, else P1.7c browser legs
+
+CLAIMED — US-001/drift-audit — deepseek-v4.1-flash — 2026-09-17T12:10:30Z — base 91cb20a94e54eec1fd30cd00faa4fd62bb104947
+
+## 2026-09-17 12:24 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-001 Re-verify contract spec against current source (drift audit) · **Slice:** whole US-001 acceptance set (doc-only re-verification of `docs/plan/05-template-contracts.md`)
+**Claim:** done-for-review
+**Ready-to-tick:** yes — all US-001 acceptance bullets met with source evidence; no package touched, so lint/tsgo/build gates are N/A
+**Base:** 91cb20a94e54eec1fd30cd00faa4fd62bb104947
+**Changed:** `docs/plan/05-template-contracts.md` (header audit note + 4 dated in-place drift corrections: §3 third app package, §4 deselect field, §2/§5/§8 sample-seeding truth); `docs/plan/phases/phase-01-report.md` (this entry + CLAIMED line)
+**Checks:** `node docs/scripts/check-docs.mjs` → PASS (19 maintained, 130 links, fences balanced) BEFORE and AFTER edits; symbol/version verification by direct source read + grep (no test gate applies — zero code touched)
+**Missing for tick:** none for US-001. Note for the orchestrator: the `seed-samples` step's truthful-reporting defect is now recorded in the doc as a P1.6b obligation; it is NOT fixed here (FR-1: no service behavior change)
+**Do not redo:** doc's `a2e-accounting 0.1.0` is CORRECT — the `0.1.1` in the 2026-09-16 orchestrator log was a reverted scratch bump (report line 628); do not "fix" it to 0.1.1. §7 fixture UUIDs all match source (`19126a9c-…` documents app; nav rows b001/b004/b005). The §4 type snippet stays the abstract contract — the server's actual field is negative `deselectedOptionalAppUniversalIdentifiers` and must not be "aligned" by renaming the input (breaking change)
+**Remaining:** US-002, US-003 in this PRD; 12 other [ ]/[~] PLAN tasks ahead
+**Next:** US-002 — close cycle-rejection + provenance gaps in the same doc (§7 matrix row, provenance subsection, §8 traceability)

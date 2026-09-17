@@ -6,6 +6,25 @@ requirement, not existing SDK exports", this doc records the actual
 representation chosen for P1.6b/c. Normative language: **must** = enforced in
 P1.6b, **may** = open follow-up.
 
+> 2026-09-17: re-verified against source at `91cb20a9` (drift audit, US-001).
+> Corrections below are appended in place; prior text is kept per repo handoff
+> convention. Verified as still accurate: every file link resolves
+> (`node docs/scripts/check-docs.mjs` → PASS, 19 maintained / 130 links);
+> `WorkspaceTemplate`, `WORKSPACE_TEMPLATE_DEFINITIONS`,
+> `TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS`,
+> `ApplyTemplateRequest`/`ApplyTemplateStep`/`ApplyTemplateResult`/
+> `TemplatePreview`, `ApplicationRegistrationService.findOneByUniversalIdentifierGlobal`,
+> `ApplicationVersionValidationService.validateServerCompatibility`/
+> `validateWorkspaceCompatibility`/`validateVersionProgression`, and the §7
+> fixture UUIDs (app `19126a9c-…`, nav rows `20202020-b001/b004/b005-…`) all
+> exist with the documented shape. Drift corrections requiring a P1.6b/c
+> decision: §3 (third app package a2e-projects), §4 (deselect field is
+> negative), §2/§5/§8 (sample seeding is app-owned, async, and currently
+> broken — do not treat `seed-samples: succeeded` as proof). No `UNVERIFIED`
+> claims remain: the async post-install failure has a recorded root-cause
+> suspect but no live re-verification since the fixes — flagged as a P1.6b
+> obligation rather than asserted working.
+
 ## 1. Template identity and classification (C1)
 
 Three lifecycle-distinct template kinds — never interchange them:
@@ -40,6 +59,16 @@ Established by reading how the template service mutates state:
   user-added fields/views, user nav rows, favorites, roles created by users,
   active workflow runs.
 
+  > 2026-09-17: inventory re-verified against `workspace-template.service.ts`.
+  > App-owned and standard-row boundaries hold: installs go through
+  > `ApplicationInstallService.installApplication` (workspace migration), nav
+  > toggling only touches rows in the allow-list constant, and the sole
+  > workspace-state mutation is `workspace.workspaceTemplate`. The one caveat
+  > is sample content: it is no longer created by the template service at all
+  > but by app post-install hooks — see the §5 2026-09-17 note; the hook
+  > currently seeds 0 rows, so "templates create sample content" is **not**
+  > true today.
+
 Rule: a template operation may create app-owned metadata only by installing a
 registered application, and may mutate workspace state only through the
 template-managed allow-list above. Direct object/field/view creation inside a
@@ -54,6 +83,19 @@ preset is forbidden — it belongs in an app manifest or a P1.6e content templat
 - App versions: from the app package (a2e-documents `0.2.0`,
   a2e-accounting `0.1.0`); progression enforced by `validateVersionProgression`
   (no downgrade, no same-version reinstall as upgrade).
+
+  > 2026-09-17: the published internal app set is **three** packages, not two —
+  > add a2e-projects `0.1.1` (`packages/twenty-apps/internal/a2e-projects/package.json`).
+  > All three still declare `engines.twenty >=2.19.0` (projections of
+  > `requiredServerVersionRange`). The Bilan (a2e-accounting) manifest is
+  > `0.1.0` on disk: the `0.1.0`→`0.1.1` bump seen in the 2026-09-16
+  > orchestrator log was a scratch version used to exercise app:install and was
+  > reverted before commit (phase-01-report.md line 628), so the doc's `0.1.0`
+  > is correct. The post-09-13 accounting manifest fixes were landed under the
+  > unchanged `0.1.0` version (reserved names, FILES `maxNumberOfValues`,
+  > relation targets, view-field refs) — see phase-01-report.md 2026-09-16
+  > 12:10 entry. Not yet reflected in `WORKSPACE_TEMPLATE_DEFINITIONS`: no
+  > preset lists a2e-projects (`4f759655-84f8-434d-9c76-ee1850e8c1a4`).
 - App→app dependencies: **the SDK manifest has no dependency field today.**
   Preset definitions therefore encode inter-app ordering as a flat list;
   P1.6b must reject a preset that lists the same app twice and must treat
@@ -76,6 +118,18 @@ type ApplyTemplateRequest = {
   idempotencyKey: string;         // same key retried = same operation, no duplicate seeds
 };
 ```
+
+> 2026-09-17: the implemented field is the **negative** `deselectedOptionalAppUniversalIdentifiers?: string[]`
+> (`dtos/apply-workspace-template.input.ts`), not the doc's positive
+> `selectedAppUniversalIdentifiers`. The negative form was chosen so an omitted
+> field means "install everything" (a whitelist default would silently drop
+> apps); the server derives required apps as
+> `applicationUniversalIdentifiers` minus `optionalApplicationUniversalIdentifiers`
+> minus the deselected list, and rejects a deselection of any app outside
+> `optionalApplicationUniversalIdentifiers` (`TEMPLATE_REQUIRED_APP_DESELECTED`
+> when it is a required app, else `TEMPLATE_APP_NOT_IN_DEFINITION`).
+> `WorkspaceTemplateService.applyWorkspaceTemplateOperation` owns the accepted
+> shape; the doc type above stays the abstract contract.
 
 Validation **must** reject: unknown `templateKey`/version, an app ID not in the
 template's definition (or its managed-nav allow-list), a selected app that is
@@ -117,6 +171,27 @@ type ApplyTemplateResult = {
 - Partial failure keeps successful steps; retry with the same idempotency key
   re-runs only non-succeeded steps. Sample seeding must be
   repeat-safe: skip when provenance (template key+version) already present.
+
+  > 2026-09-17 (known P1.6b obligation — seeding does **not** work today):
+  > sample seeding is no longer a server-side seeder. Since P1.6d it is
+  > **app-owned** via each app manifest's `postInstallLogicFunction`, and
+  > `WorkspaceTemplateService.resolveSampleSeedingStep` only inspects the
+  > succeeded install steps' registration manifests to report the outcome. Two
+  > live defects make the current report an over-report: (1) the post-install
+  > hooks run **asynchronously**
+  > (`shouldRunSynchronously: false`, e.g. Bilan `b11a0000-0012-4000-8000-000000000001`),
+  > so the `install-app` step resolves and `seed-samples` reports `succeeded`
+  > before seeding has run; (2) the Bilan hook fails silently at runtime — an
+  > orchestrator Tier-2 run on 2026-09-16 (phase-01-report.md line 631)
+  > observed 0 seeded rows on both fresh install and reinstall, with the
+  > suspected `coreClient()` auth/context in the worker still unproven (a
+  > per-step `runInstallStep` logging fix and an SDK-layer extraction fix have
+  > since landed, but no live re-verification is recorded). **P1.6b must not
+  > treat the current `seed-samples: succeeded` as proof of seeding**: either
+  > report hook completion truthfully (await / hook-failure status) or keep the
+  > `SEED_FAILED` code reachable, and re-run the Tier-2 install before claiming
+  > seeding works. The doc's repeat-safe provenance rule above remains the
+  > target contract, not current behavior.
 
 ## 6. Preview contract
 
@@ -196,6 +271,13 @@ Rejection matrix (each must produce a localized, typed error, not a throw):
   until the SDK adds it (do not invent one in server code).
 - No sample seeder exists; `seed-samples` step is specified but its content
   arrives with P1.6d (per-app safe slices).
+
+  > 2026-09-17: superseded — P1.6d shipped app-owned post-install seeders
+  > (a2e-documents, a2e-projects, a2e-accounting payloads + hook exist and unit
+  > tests are green), but live seeding still writes 0 rows and the hook is
+  > async, so the `seed-samples` step over-reports `succeeded` (phase-01-report.md
+  > 2026-09-16 entries). What remains for P1.6b is **truthful reporting /
+  > sync semantics**, not the seeder content — see the §5 2026-09-17 note.
 - Content templates (P1.6e) reuse §4 idempotency and §2 provenance rules; their
   descriptor schema is out of scope here.
 - `ApplyTemplateResult` persistence (async progress queryable by another
