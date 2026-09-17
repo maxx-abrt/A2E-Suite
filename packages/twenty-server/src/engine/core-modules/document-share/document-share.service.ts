@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { randomBytes } from 'crypto';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository, type FindOperator } from 'typeorm';
 
 import { DocumentShareDTO } from 'src/engine/core-modules/document-share/dtos/document-share.dto';
 import { DocumentShareEntity } from 'src/engine/core-modules/document-share/document-share.entity';
@@ -13,8 +13,11 @@ import {
   DocumentShareExceptionCode,
 } from 'src/engine/core-modules/document-share/document-share.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 const SHARE_TOKEN_LENGTH_BYTES = 24;
 // Input bounds: a share is a duplication of content, not a storage vector.
@@ -34,6 +37,10 @@ type DocumentWorkspaceRepository = {
     where: { id: string };
     select: { id: true; archivedAt: true };
   }): Promise<DocumentAuthorizationRecord | null>;
+  find(options: {
+    where: { id: FindOperator<string> };
+    select: { id: true };
+  }): Promise<DocumentAuthorizationRecord[]>;
 };
 
 @Injectable()
@@ -120,23 +127,41 @@ export class DocumentShareService {
     };
   }
 
-  // Authorization for create: the caller (ambient workspace auth context) must
-  // be able to READ the shared document. Under caller permissions an
-  // unreadable or unknown id yields no row — both become forbidden, so share
-  // creation cannot probe record existence.
-  private async assertCallerCanReadDocument({
+  // The workspace repository only enforces caller permissions when the role
+  // permission config is resolved from the ambient auth context and passed to
+  // getRepository; without it an app-defined object is denied outright (the
+  // same pitfall P0.2 fixed in the search provider). Must run inside the
+  // workspace context.
+  private resolveCallerRolePermissionConfig():
+    | RolePermissionConfig
+    | undefined {
+    const workspaceContext = getWorkspaceContext();
+
+    return (
+      resolveRolePermissionConfig({
+        authContext: workspaceContext.authContext,
+        userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
+        apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
+      }) ?? undefined
+    );
+  }
+
+  // Caller-permissioned read of the shared document. An unknown or unreadable
+  // id yields no row (the permission layer filters it out), and any failure
+  // (e.g. app not installed) collapses to null so callers fail closed instead
+  // of leaking install/authorization state.
+  private async findReadableDocument({
     documentRecordId,
   }: {
     documentRecordId: string;
-  }): Promise<void> {
-    let document: DocumentAuthorizationRecord | null;
-
+  }): Promise<DocumentAuthorizationRecord | null> {
     try {
-      document = (await this.workspaceOrmManager.executeInWorkspaceContext(
+      return (await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const documentRepository =
             this.workspaceOrmManager.getRepository<DocumentWorkspaceRepository>(
               'document',
+              this.resolveCallerRolePermissionConfig(),
             );
 
           return documentRepository.findOne({
@@ -146,10 +171,20 @@ export class DocumentShareService {
         },
       )) as unknown as DocumentAuthorizationRecord | null;
     } catch {
-      // Fail closed: an unreadable document source (e.g. app not installed)
-      // must not degrade into a server error that leaks install state.
-      document = null;
+      return null;
     }
+  }
+
+  // Authorization for create: the caller (ambient workspace auth context) must
+  // be able to READ the shared document. Under caller permissions an
+  // unreadable or unknown id yields no row — both become forbidden, so share
+  // creation cannot probe record existence.
+  private async assertCallerCanReadDocument({
+    documentRecordId,
+  }: {
+    documentRecordId: string;
+  }): Promise<void> {
+    const document = await this.findReadableDocument({ documentRecordId });
 
     if (!isDefined(document)) {
       throw new DocumentShareException(
@@ -163,6 +198,74 @@ export class DocumentShareService {
         'Archived documents cannot be shared',
         DocumentShareExceptionCode.DOCUMENT_SHARE_INVALID_INPUT,
       );
+    }
+  }
+
+  // Batch equivalent for listings: only ids the caller may read survive, so a
+  // share token for a document outside the caller's record rights never leaves
+  // the workspace. Empty set on any failure (fail closed).
+  private async findReadableDocumentIds({
+    documentRecordIds,
+  }: {
+    documentRecordIds: string[];
+  }): Promise<Set<string>> {
+    const uniqueIds = [...new Set(documentRecordIds)];
+
+    if (uniqueIds.length === 0) {
+      return new Set();
+    }
+
+    try {
+      const documents =
+        (await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+          const documentRepository =
+            this.workspaceOrmManager.getRepository<DocumentWorkspaceRepository>(
+              'document',
+              this.resolveCallerRolePermissionConfig(),
+            );
+
+          return documentRepository.find({
+            where: { id: In(uniqueIds) },
+            select: { id: true },
+          });
+        })) as unknown as { id: string }[];
+
+      return new Set(documents.map((document) => document.id));
+    } catch {
+      return new Set();
+    }
+  }
+
+  // The guest path has no caller, so record-level rights are re-validated
+  // against the record's current state: the source must still exist and be
+  // unarchived under a system context. A missing object (deleted document or
+  // uninstalled app) and an archived document both deny without telling the
+  // guest which condition matched.
+  private async isSourceDocumentLive({
+    documentRecordId,
+    workspaceId,
+  }: {
+    documentRecordId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    try {
+      const document =
+        (await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+          const documentRepository =
+            this.workspaceOrmManager.getRepository<DocumentWorkspaceRepository>(
+              'document',
+              { shouldBypassPermissionChecks: true },
+            );
+
+          return documentRepository.findOne({
+            where: { id: documentRecordId },
+            select: { id: true, archivedAt: true },
+          });
+        }, buildSystemAuthContext(workspaceId))) as unknown as DocumentAuthorizationRecord | null;
+
+      return isDefined(document) && !isDefined(document.archivedAt);
+    } catch {
+      return false;
     }
   }
 
@@ -185,14 +288,15 @@ export class DocumentShareService {
     expiresAt: Date | null;
     workspace: WorkspaceEntity;
   }): Promise<DocumentShareDTO> {
-    const { bodySnapshot: validatedBodySnapshot } =
-      this.validateRepresentation({
+    const { bodySnapshot: validatedBodySnapshot } = this.validateRepresentation(
+      {
         titleSnapshot,
         bodySnapshot,
         encryptedBody,
         bodyIv,
         bodySalt,
-      });
+      },
+    );
 
     await this.assertCallerCanReadDocument({ documentRecordId });
 
@@ -249,7 +353,13 @@ export class DocumentShareService {
       where: { workspaceId },
     });
 
-    return shares.map((share) => this.toDto(share));
+    const readableDocumentIds = await this.findReadableDocumentIds({
+      documentRecordIds: shares.map((share) => share.documentRecordId),
+    });
+
+    return shares
+      .filter((share) => readableDocumentIds.has(share.documentRecordId))
+      .map((share) => this.toDto(share));
   }
 
   private toDto(share: DocumentShareEntity): DocumentShareDTO {
@@ -294,6 +404,18 @@ export class DocumentShareService {
       throw new DocumentShareException(
         'This share link has expired',
         DocumentShareExceptionCode.DOCUMENT_SHARE_EXPIRED,
+      );
+    }
+
+    const isSourceLive = await this.isSourceDocumentLive({
+      documentRecordId: share.documentRecordId,
+      workspaceId: share.workspaceId,
+    });
+
+    if (!isSourceLive) {
+      throw new DocumentShareException(
+        'Share link not found',
+        DocumentShareExceptionCode.DOCUMENT_SHARE_NOT_FOUND,
       );
     }
 

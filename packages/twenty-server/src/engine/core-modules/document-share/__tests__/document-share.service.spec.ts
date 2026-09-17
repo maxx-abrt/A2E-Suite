@@ -3,7 +3,26 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { DocumentShareService } from 'src/engine/core-modules/document-share/document-share.service';
 import { DocumentShareEntity } from 'src/engine/core-modules/document-share/document-share.entity';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+
+// The share authorization must read the CALLER's record permissions from the
+// ambient workspace context; mocking the resolver keeps the focus on how the
+// service wires it into getRepository.
+jest.mock(
+  'src/engine/twenty-orm/storage/orm-workspace-context.storage',
+  () => ({
+    getWorkspaceContext: jest.fn(),
+  }),
+);
+
+jest.mock(
+  'src/engine/twenty-orm/utils/resolve-role-permission-config.util',
+  () => ({
+    resolveRolePermissionConfig: jest.fn(),
+  }),
+);
 
 describe('DocumentShareService', () => {
   let service: DocumentShareService;
@@ -14,6 +33,15 @@ describe('DocumentShareService', () => {
   const repositoryDelete = jest.fn();
 
   const workspaceOrmManagerFindOne = jest.fn();
+  const workspaceOrmManagerFind = jest.fn();
+  const workspaceOrmManagerGetRepository = jest.fn(() => ({
+    findOne: workspaceOrmManagerFindOne,
+    find: workspaceOrmManagerFind,
+  }));
+
+  const getWorkspaceContextMock = getWorkspaceContext as jest.Mock;
+  const resolveRolePermissionConfigMock =
+    resolveRolePermissionConfig as jest.Mock;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -32,9 +60,7 @@ describe('DocumentShareService', () => {
           provide: WorkspaceOrmManager,
           useValue: {
             executeInWorkspaceContext: (fn: () => Promise<unknown>) => fn(),
-            getRepository: () => ({
-              findOne: workspaceOrmManagerFindOne,
-            }),
+            getRepository: workspaceOrmManagerGetRepository,
           },
         },
       ],
@@ -47,6 +73,19 @@ describe('DocumentShareService', () => {
     repositorySave.mockReset();
     repositoryDelete.mockReset();
     workspaceOrmManagerFindOne.mockReset();
+    workspaceOrmManagerFind.mockReset();
+    workspaceOrmManagerGetRepository.mockClear();
+    getWorkspaceContextMock.mockReset();
+    resolveRolePermissionConfigMock.mockReset();
+
+    getWorkspaceContextMock.mockReturnValue({
+      authContext: { type: 'user' },
+      userWorkspaceRoleMap: {},
+      apiKeyRoleMap: {},
+    });
+    resolveRolePermissionConfigMock.mockReturnValue({
+      intersectionOf: ['role-1'],
+    });
   });
 
   const workspace = { id: 'workspace-1' } as never;
@@ -55,6 +94,7 @@ describe('DocumentShareService', () => {
   beforeEach(() => {
     // Default: the caller can read the shared document.
     workspaceOrmManagerFindOne.mockResolvedValue(readableDocument);
+    workspaceOrmManagerFind.mockResolvedValue([{ id: 'doc-1' }]);
   });
 
   it('should create a plaintext share and derive the protected flag from ciphertext presence', async () => {
@@ -231,7 +271,7 @@ describe('DocumentShareService', () => {
     expect(repositorySave).not.toHaveBeenCalled();
   });
 
-  it('should run the document lookup without permission bypass', async () => {
+  it('should resolve the caller record permissions and pass them to the document lookup', async () => {
     repositoryFindOne.mockResolvedValue(null);
     repositorySave.mockImplementation(async (entity) => entity);
 
@@ -246,10 +286,41 @@ describe('DocumentShareService', () => {
       workspace,
     });
 
+    expect(getWorkspaceContextMock).toHaveBeenCalled();
+    // Without this config the app-defined `document` object is denied outright.
+    expect(workspaceOrmManagerGetRepository).toHaveBeenCalledWith('document', {
+      intersectionOf: ['role-1'],
+    });
     expect(workspaceOrmManagerFindOne).toHaveBeenCalledWith({
       where: { id: 'doc-1' },
       select: { id: true, archivedAt: true },
     });
+  });
+
+  it('should fail closed when the caller has no resolvable role', async () => {
+    resolveRolePermissionConfigMock.mockReturnValue(null);
+    // A caller with no role sees no document row through the permission layer.
+    workspaceOrmManagerFindOne.mockResolvedValue(null);
+    repositoryFindOne.mockResolvedValue(null);
+
+    await expect(
+      service.createDocumentShare({
+        documentRecordId: 'doc-1',
+        titleSnapshot: 'Compte rendu',
+        bodySnapshot: '',
+        encryptedBody: null,
+        bodyIv: null,
+        bodySalt: null,
+        expiresAt: null,
+        workspace,
+      }),
+    ).rejects.toThrow('You do not have access to this document');
+
+    expect(workspaceOrmManagerGetRepository).toHaveBeenCalledWith(
+      'document',
+      undefined,
+    );
+    expect(repositorySave).not.toHaveBeenCalled();
   });
 
   it('should reject a duplicate share for the same document', async () => {
@@ -290,6 +361,7 @@ describe('DocumentShareService', () => {
     repositoryFindOne.mockResolvedValue({
       shareToken: 'token',
       documentRecordId: 'doc-1',
+      workspaceId: 'workspace-1',
       titleSnapshot: 'Compte rendu',
       bodySnapshot: null,
       encryptedBody: 'ciphertext-base64',
@@ -310,6 +382,7 @@ describe('DocumentShareService', () => {
     repositoryFindOne.mockResolvedValue({
       shareToken: 'token',
       documentRecordId: 'doc-1',
+      workspaceId: 'workspace-1',
       titleSnapshot: 'Compte rendu',
       // Legacy row that carries both representations.
       bodySnapshot: 'plaintext-leak',
@@ -323,6 +396,69 @@ describe('DocumentShareService', () => {
 
     expect(guestShare.bodySnapshot).toBeNull();
     expect(guestShare.encryptedBody).toBe('ciphertext-base64');
+  });
+
+  it('should deny the guest path when the source document is archived', async () => {
+    repositoryFindOne.mockResolvedValue({
+      shareToken: 'token',
+      documentRecordId: 'doc-1',
+      workspaceId: 'workspace-1',
+      titleSnapshot: 'Compte rendu',
+      bodySnapshot: '{"type":"doc"}',
+      encryptedBody: null,
+      bodyIv: null,
+      bodySalt: null,
+      expiresAt: null,
+    });
+    workspaceOrmManagerFindOne.mockResolvedValue({
+      id: 'doc-1',
+      archivedAt: new Date('2026-01-01T00:00:00Z'),
+    });
+
+    await expect(service.getShareForGuest('token')).rejects.toThrow(
+      'Share link not found',
+    );
+  });
+
+  it('should deny the guest path when the source document no longer exists', async () => {
+    repositoryFindOne.mockResolvedValue({
+      shareToken: 'token',
+      documentRecordId: 'doc-1',
+      workspaceId: 'workspace-1',
+      titleSnapshot: 'Compte rendu',
+      bodySnapshot: '{"type":"doc"}',
+      encryptedBody: null,
+      bodyIv: null,
+      bodySalt: null,
+      expiresAt: null,
+    });
+    workspaceOrmManagerFindOne.mockResolvedValue(null);
+
+    await expect(service.getShareForGuest('token')).rejects.toThrow(
+      'Share link not found',
+    );
+  });
+
+  it('should deny the guest path when the documents app is not installed', async () => {
+    repositoryFindOne.mockResolvedValue({
+      shareToken: 'token',
+      documentRecordId: 'doc-1',
+      workspaceId: 'workspace-1',
+      titleSnapshot: 'Compte rendu',
+      bodySnapshot: '{"type":"doc"}',
+      encryptedBody: null,
+      bodyIv: null,
+      bodySalt: null,
+      expiresAt: null,
+    });
+    // Object metadata is gone after an uninstall: getRepository throws.
+    workspaceOrmManagerGetRepository.mockImplementationOnce(() => {
+      throw new Error('Object "document" does not exist in this workspace');
+    });
+
+    await expect(service.getShareForGuest('token')).rejects.toThrow(
+      'Share link not found',
+    );
   });
 
   it('should throw DOCUMENT_SHARE_NOT_FOUND for unknown tokens', async () => {
@@ -364,8 +500,58 @@ describe('DocumentShareService', () => {
     expect(repositoryFind).toHaveBeenCalledWith({
       where: { workspaceId: 'workspace-1' },
     });
+    expect(workspaceOrmManagerGetRepository).toHaveBeenCalledWith('document', {
+      intersectionOf: ['role-1'],
+    });
     expect(shares).toHaveLength(1);
     expect(shares[0].shareToken).toBe('token-1');
     expect(shares[0].isPassphraseProtected).toBe(false);
+  });
+
+  it('should hide shares whose document is outside the caller record rights', async () => {
+    repositoryFind.mockResolvedValue([
+      {
+        id: 'share-1',
+        shareToken: 'token-1',
+        documentRecordId: 'readable-doc',
+        expiresAt: null,
+        encryptedBody: null,
+        createdAt: new Date('2026-01-01T00:00:00Z'),
+      },
+      {
+        id: 'share-2',
+        shareToken: 'token-2',
+        documentRecordId: 'restricted-doc',
+        expiresAt: null,
+        encryptedBody: null,
+        createdAt: new Date('2026-01-01T00:00:00Z'),
+      },
+    ]);
+    // The permission layer only returns the readable document.
+    workspaceOrmManagerFind.mockResolvedValue([{ id: 'readable-doc' }]);
+
+    const shares = await service.findManyDocumentShares('workspace-1');
+
+    expect(shares.map((share) => share.shareToken)).toEqual(['token-1']);
+  });
+
+  it('should fail closed on listings when the document lookup fails', async () => {
+    repositoryFind.mockResolvedValue([
+      {
+        id: 'share-1',
+        shareToken: 'token-1',
+        documentRecordId: 'doc-1',
+        expiresAt: null,
+        encryptedBody: null,
+        createdAt: new Date('2026-01-01T00:00:00Z'),
+      },
+    ]);
+    workspaceOrmManagerFind.mockRejectedValue(
+      new Error('Object "document" does not exist in this workspace'),
+    );
+
+    const shares = await service.findManyDocumentShares('workspace-1');
+
+    expect(shares).toEqual([]);
   });
 });

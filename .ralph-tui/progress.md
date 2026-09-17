@@ -45,6 +45,18 @@ after each iteration and it's included in prompts for context.
   with `updatedFields` including both `<name>` and `<name>Id` (the diff adds
   both; the custom `joinColumnName` is not the event key). Keep the decision in
   a loader-injected pure lib so it stays `node --test`-able with no server.
+- **`getRepository(name)` with no `RolePermissionConfig` denies every
+  non-system object:** the workspace repository resolves permissions only from
+  the config passed in; `undefined` → `{}` object permissions +
+  `shouldBypassPermissionChecks:false`, so select on an app-defined object
+  (e.g. `document`) throws and the caller sees PERMISSION_DENIED. A
+  caller-permissioned read MUST resolve it from the ambient context —
+  `resolveRolePermissionConfig({ authContext, userWorkspaceRoleMap, apiKeyRoleMap })`
+  on `getWorkspaceContext()` inside `executeInWorkspaceContext` — and pass the
+  result; system/guest paths deliberately pass
+  `{ shouldBypassPermissionChecks: true }` plus an explicit
+  `buildSystemAuthContext(workspaceId)`. P2.5 (search provider) and P3.2
+  (document-share) are the two fixed instances.
 
 ---
 
@@ -96,4 +108,14 @@ after each iteration and it's included in prompts for context.
   - `computeUpdatedFieldsFromDiff` emits `<name>` and `<name>Id` (`parent`, `parentId`), never the custom `joinColumnName` (`parentDocumentId`); a trigger listing all three is safe because the filter matches any one.
   - Reading the parent of a moved document is a genql query `documents(filter:{id:{eq}}){ edges { node { id parent { id } } } }`; the relation-diff fallback (`diff.parent.after.id`) covers events whose raw record omits the join column.
   - Verify-as-you-go: `yarn lint` + `npx oxfmt --check` + `npx tsc --noEmit` + `node --test` + `npx twenty dev:build .` (16 files, manifest shows the new trigger).
+---
+
+## 2026-09-17 - P3.2-snapshot-sharing
+- Enforced record-level rights on public snapshot sharing in the server core module: `createDocumentShare` now actually resolves the caller's `RolePermissionConfig` and passes it to `getRepository('document')` (it previously passed nothing, so the app object was denied outright and every create was fail-closed into FORBIDDEN); `findManyDocumentShares` filters out shares whose source document is outside the caller's record rights; `getShareForGuest` re-validates the source lifecycle (exists, unarchived, app installed) under a system context and denies with NOT_FOUND otherwise.
+- Files changed: `packages/twenty-server/src/engine/core-modules/document-share/document-share.service.ts`; `.../document-share/__tests__/document-share.service.spec.ts`; `docs/plan/phases/phase-03-report.md`; `.ralph-tui/progress.md`.
+- **Learnings:**
+  - The document-share module carried the exact P2.5 permission bug (see Codebase Patterns): `executeInWorkspaceContext` alone is NOT enough — `getRepository` needs the resolved caller config or the app object is denied.
+  - The guest path has no caller, so "record-level rights" there means re-checking the record's current state under `buildSystemAuthContext(share.workspaceId)` with `{ shouldBypassPermissionChecks: true }`; deny archived/deleted/uninstalled with the same NOT_FOUND as an unknown token (no oracle).
+  - Positive share creation cannot be exercised at Tier 1: the `document` object only exists once a2e-documents is installed, so the ORM-contract unit seam is the proof (same limit P2.5 recorded).
+  - Remaining P3.2 work is the owner-side UX bullet in `a2e-documents` (`shareDocument` still discards the returned token); passphrase crypto must be ported into the front-component sandbox (no twenty-shared/twenty-front imports).
 ---
