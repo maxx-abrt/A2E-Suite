@@ -1,0 +1,132 @@
+# Iteration 16 Log
+
+## Metadata
+
+- **Task ID**: P4.2-time-tracker
+- **Task Title**: P4.2: time tracker — start/stop on task, entries list, per-project rollup
+- **Description**: As a project member, I want to track time on tasks and see per-project rollups, so that effort is visible.
+- **Status**: completed
+- **Task Completed**: No
+- **Promise Detected**: No
+- **Started At**: 2026-09-17T17:34:48.944Z
+- **Ended At**: 2026-09-17T17:39:33.695Z
+- **Duration**: 4m 44s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "P4.2-time-tracker" PLAN.md
+I'll start with the mandatory clean-start check and task verification.
+[94m[bash][0m $ grep -n "P4.2" PLAN.md | head -50
+[94m[bash][0m $ grep -rn "time tracker\|time-tracker\|Time tracker\|time entry\|time-entry" PLAN.md | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "P4.2-time-tracker" tasks/prd.json .ralph-tui/session.json 2>/dev/null | head
+[94m[bash][0m $ grep -rln "P4.2-time-tracker\|time tracker" docs/plan/phases/ 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -n "P4.2-time-tracker\|time tracker\|time-tracker\|time entry\|time-entry" docs/plan/phases/pha...
+[94m[bash][0m $ wc -l docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+No existing claim for this task. Let me explore the app structure before claiming.
+[94m[bash][0m $ 2>/dev/null
+[94m[bash][0m $ find . -type d -name "a2e-projects" -not -path "*/node_modules/*" 2>/dev/null
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-projects/a2e-projects/src -type f | sort
+[94m[bash][0m $ ls -la packages/twenty-apps/internal/a2e-projects/
+[94m[bash][0m $ ls -R packages/twenty-apps/internal/a2e-projects/src
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/time-entry.object.ts
+[94m[bash][0m $ done
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[bash][0m $ grep -rln "presence\|Presence" packages/twenty-apps/internal/ --include=*.ts --include=*.tsx 2>/dev/...
+[94m[bash][0m $ find packages/twenty-apps/internal -maxdepth 1 -type d
+Now let me check the P2.3 presence primitives and page-layout patterns.
+[94m[bash][0m $ sed -n '650,700p' PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/page-layouts/project.page-layout.ts
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-sdk/src -path "*front-component*" -name "*.ts" | head -40
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/tsconfig.json
+[94m[bash][0m $ cat packages/twenty-sdk/package.json 2>/dev/null | head -80
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/front-component/index.ts
+[94m[bash][0m $ done 2>/dev/null | head -200
+[94m[bash][0m $ cat packages/twenty-sdk/src/sdk/front-component/hooks/useRecordId.ts
+[94m[bash][0m $ find packages/twenty-apps -name "*.page-layout.ts" -not -path "*/node_modules/*" | head -30
+[94m[bash][0m $ grep -rln "objectUniversalIdentifier.*task\|task.*page-layout" packages/twenty-apps --include="*.pag...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/src/views/current-tasks.view.ts | head -60
+[94m[read][0m
+[94m[bash][0m $ grep -rln "STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task\b\|STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task\...
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-sdk/src -name "*page-layout*" -not -path "*/node_modules/*" | head -20
+[94m[bash][0m $ ls packages/twenty-sdk/src/sdk/define/command-menu-items/ 2>/dev/null
+[94m[bash][0m $ grep -rn "availabilityType" packages/twenty-apps --include="*.command-menu-item.ts" 2>/dev/null | gr...
+[94m[bash][0m $ grep -rn "CommandMenuItemManifest" packages/twenty-shared/src --include="*.ts" | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/task-tree.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-tree.test.ts
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+Now I have enough context. Let me claim the slice before touching code.
+[94m[bash][0m $ cat >> docs/plan/phases/phase-04-report.md <<'EOF'  CLAIMED — P4.2-time-tracker/time-tracker-core — ...
+[94m[bash][0m $ grep -n "CLAIMED — P4.2-time-tracker/time-tracker-core" docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ tail -5 docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ grep -rn "localStorage" packages/twenty-apps --include="*.tsx" --include="*.ts" 2>/dev/null | grep -...
+[94m[bash][0m $ ls packages/twenty-sdk/src/sdk/front-component/globals/
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/task-project.field.ts
+[94m[write][0m "// PURE RULES OF THE TIME TRACKER.
+//
+// The running timer is one link (task, optional project, start instant); a
+// stopped timer becomes one `timeEntry` row (the pre-existing P4.1 object —
+// no sec... (8679 chars)"
+Now let me write the pure time-tracker lib.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/time-tracker.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/time-tracker.ts
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  buildProjectTimeRollup,
+  buildTimeRollupByProject,
+  computeElapsedMinutes,
+  formatDuration,
+  isTimerRunningFo... (7424 chars)"
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -30
+[94m[bash][0m $ grep -rn "create[A-Z][a-z]*:\|delete[A-Z][a-z]*:\|update[A-Z][a-z]*:" packages/twenty-apps/internal ...
+[94m[bash][0m $ sed -n '130,200p' packages/twenty-apps/internal/a2e-documents/src/front-components/document-page.fro...
+[94m[bash][0m $ grep -rln "useTranslate" packages/twenty-apps --include="*.tsx" 2>/dev/null | grep -v node_modules |...
+[94m[write][0m "import { useCallback, useEffect, useMemo, useState } from 'react';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useSelecte... (10217 chars)"
+[94m[write][0m "import { useCallback, useEffect, useState } from 'react';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useSelectedRecordId... (4963 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/frontComponentManifestType.ts
+[94m[write][0m "import {
+  defineCommandMenuItem,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import {
+  COMMAND_MENU_ITEM_IDS,
+  FRONT_COMPONENT_IDS,
+} from '../constants/universal-identifi... (861 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/page-layouts/project.page-layout.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/page-layouts/project.page-layout.ts
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -30
+[94m[bash][0m $ yarn lint 2>&1 | tail -30
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/.oxlintrc.json
+[94m[bash][0m $ cat > /var/folders/31/flrpby692pjc8k6vskbtrnn40000gn/T/opencode/oxfmt.a2e.json <<'EOF' {   "$schema"...
+[94m[bash][0m $ npx oxfmt --check -c /var/folders/31/flrpby692pjc8k6vskbtrnn40000gn/T/opencode/oxfmt.a2e.json src/li...
+[94m[bash][0m $ npx oxfmt -c /var/folders/31/flrpby692pjc8k6vskbtrnn40000gn/T/opencode/oxfmt.a2e.json src/lib/time-t...
+[94m[bash][0m $ npx oxfmt --check -c /var/folders/31/flrpby692pjc8k6vskbtrnn40000gn/T/opencode/oxfmt.a2e.json src/li...
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -10 && echo "=== TESTS ===" && yarn test:unit 2>&1 | tail -12
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -25
+[94m[bash][0m $ ls .twenty/output
+[94m[bash][0m $ python3 - <<'EOF' import json p=".twenty/output/manifest.json" d=json.load(open(p)) print("frontComp...
+[94m[bash][0m $ cd /Users/maxaubert/Projets/A2E\ Suite && npx oxlint --version 2>&1 | tail -1
+
+--- STDERR ---
+[93m[1m! [0mpermission requested: external_directory (/Users/maxaubert/Projets/*); auto-rejecting

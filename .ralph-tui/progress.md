@@ -36,6 +36,15 @@ after each iteration and it's included in prompts for context.
   Tier-2 `app:install`. Cross-check the built `.twenty/output/manifest.json`
   with the same walk.
 
+- **Ephemeral UI state (a running timer/counter) = pure transition lib + a
+  storage link:** express every browser transition as a pure function in
+  `src/lib/*.ts` (`startTimer`/`stopTimer`/`computeElapsed…`, taking `now: Date`
+  as an argument so tests pin time), persist only the serialized link
+  (`serializeTimer`/`parseTimer` under one `TIMER_STORAGE_KEY`) and let the
+  `.tsx` own persistence + rendering. A failed write must keep the in-memory
+  state (the session is not lost); malformed storage reads as "no state", never
+  throws. This proved the whole state machine with `node:test` and no server.
+
 - **Integration tests + ESM-only deps:** a static `import` of
   `application-install.service.ts` (and anything reaching `@file-type/pdf`)
   fails jest's resolver under `jest-integration.config.ts`. Resolve the
@@ -305,4 +314,16 @@ after each iteration and it's included in prompts for context.
   - Absolute day positions must be `day * DAY_WIDTH` in the timeline origin (not `(day - window.startDay)`), because the axis/grid live inside the horizontally scrolled content; the window only selects which ticks mount.
   - Tier-0 gates green: 95/95 `node --test` (15 new), `tsc --noEmit` exit 0, oxlint 0 errors (1 pre-existing warning), oxfmt clean on 5 touched files (lib-inclusive config; root ignores `**/lib/**`), `twenty dev:build .` 20 files with `project-gantt` + the widget in the manifest. `nx lint:diff-with-main` has no `a2e-projects` project and oxlint rejects `--type-aware`.
   - Still open: the Tier-2 install/open-the-widget proof (orchestrator), and the DOM-level render assertion if the orchestrator wants one.
+---
+
+## 2026-09-17 - P4.2-time-tracker
+- Delivered the task's only bullet: task-scoped start/stop timer, entries list, and a per-project rollup widget, all over the pre-existing `timeEntry` object (no duplicate object/migration). Pure lib `lib/time-tracker.ts` owns the state machine (single running session, sub-minute/corrupt start floored at `MINIMUM_LOGGED_MINUTES`, elapsed floor + skew guard) and the aggregation (`buildProjectTimeRollup` by task with a `sans-tache` bucket, `buildTimeRollupByProject` by project with a `sans-projet` bucket). `front-components/time-tracker.front-component.tsx` persists one running timer in localStorage so a remount resumes, refreshes only while running, creates the entry on stop (keeping the timer if the write fails) and lists/deletes task entries. `front-components/project-time-rollup.front-component.tsx` loads the project's entries and renders the pure rollup as relative bars. Mounted by a RECORD_SELECTION command item `open-time-tracker` on `task`, plus a `Temps` FRONT_COMPONENT widget on the project page.
+- Files changed: `packages/twenty-apps/internal/a2e-projects/src/lib/time-tracker.ts` (new); `.../src/lib/__tests__/time-tracker.test.ts` (new, 14); `.../src/front-components/time-tracker.front-component.tsx` (new); `.../src/front-components/project-time-rollup.front-component.tsx` (new); `.../src/command-menu-items/open-time-tracker.command-menu-item.ts` (new); `.../src/constants/universal-identifiers.ts` (+3 ids); `.../src/page-layouts/project.page-layout.ts` (+Temps widget); `docs/plan/phases/phase-04-report.md`; `.ralph-tui/progress.md`.
+- **Learnings:**
+  - Resumed a stalled run: the `CLAIMED` line existed with no report and the matching files were dirty; verified the work against acceptance, re-ran every gate, and reported `done-for-review` without creating a second claim or redoing the code.
+  - The stored unit is whole `timeEntry.minutes`; a stopped session writes `spentAt = now` and a formatted `label`, so the entries list is self-describing without a join to the task for display.
+  - The command-menu mount is the "presence-adjacent" answer here: a2e front components have no app-level P2.3 presence API (roster/avatar primitives are twenty-front-side), so the tracker mounts on the existing task side-panel surface and declares **no** new presence system.
+  - `deleteTimeEntry` (singular, `__args: { id }`) matches the `deleteDocument` convention in a2e-documents; the trash purge cron still uses the plural `deleteTimeEntries`.
+  - Tier-0 gates green: 109/109 `node --test` (14 new), `tsc --noEmit` exit 0, oxlint 0 errors (1 pre-existing warning), oxfmt clean on all 7 touched files (lib-inclusive config; root ignores `**/lib/**`), `twenty dev:build .` 24 files with `time-tracker`, `project-time-rollup`, the command and the page widget in the manifest. `nx lint:diff-with-main` has no `a2e-projects` project and oxlint 0.16.12 rejects `--type-aware`.
+  - Still open: Tier-2 live start/stop→entry-row and `Temps` rollup proof (orchestrator).
 ---

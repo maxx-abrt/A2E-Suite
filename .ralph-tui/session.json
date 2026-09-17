@@ -3,10 +3,10 @@
   "sessionId": "45d57c97-9f0d-4994-b4f8-0d49439c6465",
   "status": "running",
   "startedAt": "2026-09-17T14:18:16.671Z",
-  "updatedAt": "2026-09-17T17:34:43.415Z",
-  "currentIteration": 14,
+  "updatedAt": "2026-09-17T17:41:51.799Z",
+  "currentIteration": 16,
   "maxIterations": 20,
-  "tasksCompleted": 11,
+  "tasksCompleted": 12,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -156,6 +156,26 @@
       "durationMs": 460280,
       "startedAt": "2026-09-17T17:18:41.925Z",
       "endedAt": "2026-09-17T17:26:22.205Z"
+    },
+    {
+      "iteration": 15,
+      "status": "completed",
+      "taskId": "P4.2-gantt",
+      "taskTitle": "P4.2: Gantt/timeline view front component",
+      "taskCompleted": true,
+      "durationMs": 495692,
+      "startedAt": "2026-09-17T17:26:27.722Z",
+      "endedAt": "2026-09-17T17:34:43.414Z"
+    },
+    {
+      "iteration": 16,
+      "status": "completed",
+      "taskId": "P4.2-time-tracker",
+      "taskTitle": "P4.2: time tracker — start/stop on task, entries list, per-project rollup",
+      "taskCompleted": false,
+      "durationMs": 284751,
+      "startedAt": "2026-09-17T17:34:48.944Z",
+      "endedAt": "2026-09-17T17:39:33.695Z"
     }
   ],
   "skippedTaskIds": [],

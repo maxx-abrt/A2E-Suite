@@ -1,6 +1,9 @@
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 
-import { OBJECT_IDS } from '../constants/universal-identifiers.ts';
+import {
+  FRONT_COMPONENT_IDS,
+  OBJECT_IDS,
+} from '../constants/universal-identifiers.ts';
 
 // Project record page: metadata widgets only for now. The overview
 // front-component widget (health/milestones/activity) is a P4.2 task — it
@@ -43,6 +46,19 @@ export default definePageLayout({
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:
               'c31a0000-0013-4000-8000-000000000006',
+          },
+        },
+        {
+          // Per-project time rollup (P4.2 time tracker): the project's
+          // `timeEntry` rows grouped by task. Read-only widget — the
+          // start/stop surface is the task-scoped command menu component.
+          universalIdentifier: 'c31a0200-000a-4000-8000-00000000000a',
+          title: 'Temps',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              FRONT_COMPONENT_IDS.projectTimeRollup,
           },
         },
       ],
