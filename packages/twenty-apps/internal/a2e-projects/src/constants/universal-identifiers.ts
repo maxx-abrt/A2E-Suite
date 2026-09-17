@@ -59,6 +59,7 @@ export const LOGIC_FUNCTION_IDS = {
   postInstall: 'c31a0000-0012-4000-8000-000000000003',
   purgeTrash: 'c31a0000-0012-4000-8000-000000000005',
   taskHumanId: 'c31a0000-0012-4000-8000-000000000007',
+  recurringTaskGenerator: 'c31a0000-0012-4000-8000-000000000009',
 } as const;
 
 // Task-extension fields live on the standard task object (app fields,

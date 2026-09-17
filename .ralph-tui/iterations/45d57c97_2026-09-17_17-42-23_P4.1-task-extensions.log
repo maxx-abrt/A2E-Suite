@@ -1,0 +1,247 @@
+# Iteration 11 Log
+
+## Metadata
+
+- **Task ID**: P4.1-task-extensions
+- **Task Title**: P4.1: atomic task human-ID allocator + task app-field integrity/lifecycle tests
+- **Description**: As a project member, I want concurrent task creation to allocate unique <projectKey>-<n> human IDs, so that replays and concurrent requests never collide.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-17T15:42:23.458Z
+- **Ended At**: 2026-09-17T16:08:19.973Z
+- **Duration**: 25m 56s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ rg -n "P4.1-task-extensions" PLAN.md
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ git diff --stat && echo "===PHASE04 tail===" && tail -100 docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ ls -la packages/twenty-apps/internal/a2e-projects/src/ && echo "===LOGIC FN===" && ls -R packages/tw...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/package.json
+The tree is dirty with the previous session's work for this same task (slice `atomic-human-id-allocator`, claimed and reported `done-for-review`). That matches an active CLAIMED entry. My slice is the remaining acceptance gap: integrity/lifecycle tests.
+
+Let me read the current state before touching anything.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/task-human-id.ts
+[94m[read][0m
+[94m[bash][0m $ ls -R packages/twenty-apps/internal/a2e-projects/src/fields packages/twenty-apps/internal/a2e-projec...
+[94m[bash][0m $ done
+[94m[bash][0m $ find packages/twenty-apps/internal -name "*.test.ts" -o -name "*.spec.ts" | sort && echo "===__tests...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-human-id.test.ts && echo "====...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-accounting/src/lib/__tests__/protected-bank-fields.test.ts && ...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-accounting/src/lib/protected-bank-fields.ts && echo "=====ROLE...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/ && echo "===twenty-sdk define===" && find packages/tw...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/node_modules/twenty-sdk/dist/define/index.d.ts | head...
+[94m[bash][0m $ grep -rln "manifest.json\|\.twenty\|defineField" packages/twenty-apps/internal/a2e-accounting/src pa...
+[94m[bash][0m $ echo "---done---"
+[94m[bash][0m $ EOF node --experimental-strip-types /tmp/probe-field.ts 2>&1 | head -60
+[94m[bash][0m $ rm packages/twenty-apps/internal/a2e-projects/probe-field.ts
+[94m[bash][0m $ done
+[94m[bash][0m $ grep -n "task-extensions\|P4.1\|time-tracking\|time-entry\|blockedBy\|t-shirt\|subtask" PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -rn "estimateLabel\|estimate\b" packages/twenty-apps/internal/a2e-projects/src --include=*.ts -...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/src/logic-functions/post-install.ts && echo "=====PUR...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/starter-projects.ts
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-projects/src/front-components packages/twenty-apps/internal/a...
+[94m[bash][0m $ grep -n "task\b\|note\b\|workspaceMember\|company" packages/twenty-apps/internal/a2e-projects/node_m...
+[94m[bash][0m $ redis-cli ping 2>&1
+[94m[bash][0m $ sed -n '3100,3360p' packages/twenty-apps/internal/a2e-projects/node_modules/twenty-sdk/dist/define/i...
+[94m[bash][0m $ grep -rln "20202020-1ba1-48ba-bc83-ef7e5990ed10" packages/twenty-server/src --include=*.ts 2>/dev/nu...
+[94m[bash][0m $ rm packages/twenty-apps/internal/a2e-projects/probe-all.ts
+[94m[bash][0m $ done
+[94m[bash][0m $ grep -rn "labelsOnTask\|subtasks\|tasksOnProject\|blockedTasks" packages/twenty-apps/internal/a2e-pr...
+[94m[bash][0m $ rm packages/twenty-apps/internal/a2e-projects/probe-integrity.ts
+[94m[bash][0m $ rm packages/twenty-apps/internal/a2e-projects/probe-integrity.ts
+[94m[bash][0m $ find packages/twenty-apps/internal/real-estate -name "*.object.ts" | head
+[94m[bash][0m $ git log --oneline -8 -- packages/twenty-apps/internal/a2e-projects/src/objects/ packages/twenty-apps...
+[94m[bash][0m $ cat packages/twenty-apps/internal/real-estate/src/objects/showing.object.ts
+[94m[bash][0m $ cat packages/twenty-apps/internal/real-estate/src/fields/opportunities-on-property.field.ts
+[94m[bash][0m $ grep -n "declare function defineObject\|declare function defineField\|type ObjectManifest\|ObjectFie...
+[94m[bash][0m $ echo "exit $?"
+[94m[bash][0m $ which jq && jq -r '.objectMetadata[] | .universalIdentifier + "  " + (.nameSingular // .labelSingula...
+[94m[bash][0m $ jq -r 'keys' packages/twenty-apps/internal/a2e-projects/.twenty/output/manifest.json
+[94m[bash][0m $ jq -r '.objects[] | "OBJECT " + .universalIdentifier + " " + .nameSingular + "\n" + ((.fields[] | " ...
+[94m[bash][0m $ jq -r '.objects[0] | keys' packages/twenty-apps/internal/a2e-projects/.twenty/output/manifest.json
+[94m[bash][0m $ jq '.objects[] | select(.nameSingular=="project") | .fields' packages/twenty-apps/internal/a2e-proje...
+[94m[bash][0m $ jq -r '.fields[] | "FIELD \(.name) obj=\(.objectUniversalIdentifier) \(.type) \(.universalIdentifier...
+[94m[bash][0m $ grep -rln "relationTargetFieldMetadataUniversalIdentifier" packages/twenty-server/src | head -20
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/fields/ 2>/dev/null
+[94m[bash][0m $ git show 01a8b941 --stat | head -40
+[94m[bash][0m $ grep -rln "relationTargetFieldMetadataUniversalIdentifier" packages/twenty-server/src/engine/core-mo...
+[94m[bash][0m $ tail -60 .ralph-tui/progress.md
+[94m[bash][0m $ grep -rn "c31a0700-0002-4000-8000-00000000000[234]\|labelsOnTask\|labelTaskLabels\|milestoneTasks\|R...
+[94m[bash][0m $ grep -rn "memberProjects\|companyProjects\|milestoneProjects\|projectMembers\b\|workspaceMemberProje...
+I've found the integrity picture. Let me verify no references break, then implement. First, a scope decision: the integrity tests must assert a resolvable relation graph, and I found the graph is broken (3 unresolved inverse ids + misplaced inverse fields). Let me confirm references before fixing.
+[94m[todowrite][0m
+This requires fixing the relation graph so integrity tests can pass. Let me set up a task list and implement.
+Before editing, let me claim the slice per the contract.
+[94m[bash][0m $ cat >> docs/plan/phases/phase-04-report.md <<'EOF'  CLAIMED — P4.1-task-extensions/task-field-integr...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/label.object.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/task-label.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/task-label.object.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/task-label.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project.object.ts
+Now relocate the misplaced inverse fields. Starting with project.object.ts:
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project.object.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project.object.ts
+[94m[bash][0m $ grep -n "OBJECT_IDS\|oneToMany" packages/twenty-apps/internal/a2e-projects/src/objects/project.objec...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/milestone.object.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/milestone.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/milestone.object.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/milestone.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project-member.object.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project-member.object.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project-member.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project-member.object.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project-member.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/time-entry.object.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/time-entry.object.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/time-entry.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/time-entry.object.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/time-entry.object.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/time-entry.object.ts
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { OBJECT_IDS, RELATION_IDS } from '../constants/universal-identifiers.... (984 chars)"
+Now create the standalone inverse field files:
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { OBJECT_IDS, RELATION_IDS } from '../constants/universal-identifiers.... (819 chars)"
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  RelationType,
+} from 'twenty-sdk/define';
+
+import { OBJECT_IDS, RELATION_IDS } from '../constants/universal-identifiers.ts';
+
+// Inverse of milestone.project, de... (789 chars)"
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { OBJECT_IDS, RELATION_IDS } from '../constants/universal-identifiers.... (853 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/milestone-tasks.field.ts
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  RelationType,
+} from 'twenty-sdk/define';
+
+import { OBJECT_IDS, RELATION_IDS } from '../constants/universal-identifiers.ts';
+
+// Inverse of projectMember.project... (807 chars)"
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { OBJECT_IDS, RELATION_IDS } from '../constants/universal-identifiers.... (943 chars)"
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { OBJECT_IDS, RELATION_IDS } from '../constants/universal-identifiers.... (814 chars)"
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  RelationType,
+} from 'twenty-sdk/define';
+
+import { OBJECT_IDS, RELATION_IDS } from '../constants/universal-identifiers.ts';
+
+// Inverse of timeEntry.project, de... (726 chars)"
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { OBJECT_IDS, RELATION_IDS } from '../constants/universal-identifiers.... (899 chars)"
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { RELATION_IDS, TASK_FIELD_IDS } from '../constants/universal-identifi... (938 chars)"
+[94m[bash][0m $ echo "exit ${PIPESTATUS[0]}"
+[94m[bash][0m $ echo "TSC_EXIT=$?"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+import { OBJECT_IDS, RELATION_IDS, TASK_FIELD_ID... (18845 chars)"
+Now the integrity test suite:
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+import { OBJECT_IDS, RELATION_IDS, TASK_FIELD_ID... (17604 chars)"
+The test file has structural issues (standalone field ownership, duplicate-check bug). Let me rewrite it cleanly:
+[94m[edit][0m
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/*.test.ts" "src/logic-functions/__tests__/...
+[94m[edit][0m
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/*.test.ts" "src/logic-functions/__tests__/...
+[94m[bash][0m $ echo "TSC_EXIT=$?"
+[94m[bash][0m $ echo "LINT_EXIT=$?"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project-member.object.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project-member.object.ts
+[94m[bash][0m $ echo "OXFMT_EXIT=$?"
+[94m[bash][0m $ npx oxfmt src/objects/label.object.ts src/objects/task-label.object.ts src/objects/project.object.ts...
+[94m[bash][0m $ yarn lint 2>&1 | tail -3
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -20
+[94m[bash][0m $ '
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ git diff --stat packages/twenty-apps/internal/a2e-projects/src/objects/ && git diff packages/twenty-...
+[94m[bash][0m $ git diff packages/twenty-apps/internal/a2e-projects/src/objects/project.object.ts packages/twenty-ap...
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ model = real-estate `*-on-*.field.ts`). **Remaining:** P4.1 milestone-object bullet (stale — already...
+[94m[bash][0m $ grep -n "^## Codebase Patterns\|^## \|^---" .ralph-tui/progress.md | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ package gates are `node --test` + `tsc --noEmit` + `yarn lint` + `npx oxfmt --check` + `npx twenty d...
+[94m[bash][0m $ git status --porcelain | grep -v "^??"
+[94m[todowrite][0m
+Done. Slice: P4.1 task app-field integrity/lifecycle tests (`done-for-review`, `Ready-to-tick: no — live Tier-2 lifecycle remains`).
+
+**What I found and fixed:** the integrity suite I wrote exposed a genuinely broken relation graph (install-blocking `Relation field target metadata not found` plus inverse fields attached to the wrong object). Rather than codify defects, I repaired the graph:
+- `label.object.ts` / `task-label.object.ts` junction ids pointed at a self/missing id.
+- Moved 8 inverse O2M fields out of `project`/`milestone`/`project-member`/`time-entry` object files into standalone `src/fields/*.field.ts` on their real target objects (the `defineObject` embedded-field form omits `objectUniversalIdentifier`, so inverses landed on the FK object).
+- Added the missing `task.subtasks` and `milestone.tasks` inverses.
+
+**Tests added:** `src/lib/__tests__/task-field-integrity.test.ts` — 13 tests: id uniqueness, exact 6 objects (no duplicate junction/milestone/time-entry), every relation target object+field resolves, every relation is a symmetric M2O/O2M pair owned by its target, plus the eight task fields' contracts (project SET_NULL, select status retained, priority/estimate sets, labels CASCADE junction, subtask self-relation, blockIssue→note, humanId TEXT, time tracking).
+
+**Checks:** `yarn test:unit` 33/33; `npx tsc --noEmit` exit 0; `yarn lint` 0 errors (1 pre-existing warning); `npx oxfmt --check` clean; `npx twenty dev:build .` succeeded; manifest walk 55 fields / 0 unresolved / 0 ownership mismatches.
+
+**Missing for tick:** live installed UI/API lifecycle CRUD and live concurrent human-id proof (Tier 2, orchestrator). Reports appended to `docs/plan/phases/phase-04-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

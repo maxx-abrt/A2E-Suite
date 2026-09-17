@@ -110,6 +110,29 @@ after each iteration and it's included in prompts for context.
   receives an injectable `Pick<CoreApiClient,'query'|'mutation'>` client so
   `node --test` can enforce that contract with no live server. Instances:
   `a2e-accounting` invoice numbering, `a2e-projects` task human ids.
+- **An app "workflow recipe" ships as a manifest-declared LOGIC_FUNCTION
+  action + an app-source recipe definition:** the application manifest has no
+  workflow entity (`Manifest` in `twenty-shared/src/application/manifestType.ts`
+  has no `workflows`), so an app cannot emit a workflow. What it CAN emit is a
+  logic function carrying `workflowActionTriggerSettings`, which the engine's
+  `LogicFunctionWorkflowAction` executes as a `LOGIC_FUNCTION` step and the
+  builder lists as an action. Declare the whole recipe in the engine's own
+  vocabulary (a `CRON`/`DAYS` trigger + one step) as app source and validate
+  its shape in unit tests; materializing it into a live `workflow` +
+  `workflowVersion` stays a workspace/orchestrator action (Tier 2), not a
+  `dev:build` side effect.
+- **Workflow-action inputSchema is inferred only from inline handler types:**
+  `manifest-build` calls `getInputSchemaFromSourceCode`, which parses the logic
+  function file's first top-level function/arrow and only understands inline
+  type literals (imported aliases fall back to the default empty schema). Keep
+  the action's handler as the first and only function in the file with an
+  inline param type, and delegate the real body to an importable handler.
+- **oxfmt ignores `**/lib/**` by default (root `.oxfmtrc.jsonc`):** passing a
+  path under `src/lib/` to `npx oxfmt --check` silently reports "excluded by
+  ignore rules". To actually format/verify those files, run with a config whose
+  `ignorePatterns` do not include `**/lib/**`. Also expect `**/lib/**` sources
+  (e.g. `src/lib/recurring-task-generator.ts`) to be untested by the standard
+  formatter gate.
 
 ---
 
@@ -211,4 +234,14 @@ after each iteration and it's included in prompts for context.
   - Inverse relations must be standalone fields on the relation target (see Codebase Patterns); embedding them inside the FK object silently misplaces them and a missing target-field id blocks install.
   - `node --test --experimental-strip-types` can import `twenty-sdk/define` field/object modules and read `{success, config}` — a Tier-0 manifest-integrity seam with no server.
   - Menu/diff gates: `a2e-projects` is not an Nx project and oxlint 0.16.12 rejects `--type-aware`; package gates are `node --test` + `tsc --noEmit` + `yarn lint` + `npx oxfmt --check` + `npx twenty dev:build .`.
+---
+
+## 2026-09-17 - P4.1-recurring-generator
+- Implemented the "recurring task generator" recipe on the existing workflow engine: pure UTC recurrence math (anchored DAILY/WEEKLY/MONTHLY, half-open window, skip-ahead index, cap, stable recurrence key); a recipe definition expressed as a native CRON/DAYS trigger + one LOGIC_FUNCTION step; a `recurring-task-generator` logic function exposed as a workflow action (`workflowActionTriggerSettings`) whose manifest inputSchema is inferred from its inline handler type; and an idempotent handler that creates each due task and skips project+title+dueAt duplicates on replay.
+- Files changed: `packages/twenty-apps/internal/a2e-projects/src/lib/recurring-task-generator.ts` (new); `.../src/workflow-templates/recurring-task-generator.workflow.ts` (new); `.../src/logic-functions/recurring-task-generator.logic-function.ts` (new); `.../src/logic-functions/handlers/recurring-task-generator-handler.ts` (new); `.../src/lib/__tests__/recurring-task-generator.test.ts` (new, 13); `.../src/lib/__tests__/recurring-task-generator-workflow.test.ts` (new, 5); `.../src/logic-functions/__tests__/recurring-task-generator-handler.test.ts` (new, 6); `.../src/constants/universal-identifiers.ts`; `docs/plan/phases/phase-04-report.md`; `.ralph-tui/progress.md`.
+- **Learnings:**
+  - See new Codebase Patterns entries: workflow recipe = manifest-declared LOGIC_FUNCTION action + app-source definition; inputSchema inference needs an inline handler param; oxfmt ignores `**/lib/**`.
+  - `npx twenty dev:build .` succeeded (16 files) and the built manifest now carries `recurring-task-generator` @ `c31a0000-0012-4000-8000-000000000009` with label/icon + inferred inputSchema — the manifest-declaration assertion.
+  - Tier-0 gates green: 57/57 `node --test`, `tsc --noEmit` exit 0, oxlint 0/0 (1 pre-existing warning), oxfmt clean on all touched files (strict lib-inclusive config). `nx lint:diff-with-main` has no `a2e-projects` project and oxlint 0.16.12 rejects `--type-aware` (package gates substitute).
+  - Still open: live materialization/execution of the recipe (Tier 2 orchestrator), the task-extension live lifecycle tests, and the stale already-satisfied milestone bullet.
 ---
