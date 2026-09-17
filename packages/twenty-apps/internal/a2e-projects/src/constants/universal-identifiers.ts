@@ -84,6 +84,7 @@ export const TASK_FIELD_IDS = {
 export const COMMAND_MENU_ITEM_IDS = {
   createProject: 'c31a0000-0011-4000-8000-000000000004',
   goToProjects: 'c31a0000-0011-4000-8000-000000000005',
+  openSubtasks: 'c31a0000-0011-4000-8000-000000000006',
 } as const;
 
 export const NAVIGATION_MENU_ITEM_IDS = {
@@ -94,6 +95,7 @@ export const NAVIGATION_MENU_ITEM_IDS = {
 export const FRONT_COMPONENT_IDS = {
   createProjectCommand: 'c31a0000-0013-4000-8000-000000000004',
   goToProjects: 'c31a0000-0013-4000-8000-000000000005',
+  taskSubtasks: 'c31a0000-0013-4000-8000-000000000007',
 } as const;
 
 export const VIEW_IDS = {

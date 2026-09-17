@@ -227,9 +227,10 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 11,
-      "passes": false,
+      "passes": true,
       "notes": "No literal (after X) dependency. Board/My-tasks/calendar view definitions already exist in source (2026-09-12 ledger) — validate, do not recreate; those validation legs are Tier 2 (orchestrator) and not part of this story.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P4.2-gantt",
@@ -307,6 +308,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-17T17:18:36.406Z"
+    "updatedAt": "2026-09-17T17:26:22.206Z"
   }
 }
