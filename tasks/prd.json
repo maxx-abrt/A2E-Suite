@@ -1,79 +1,303 @@
 {
-  "name": "P1.6a — Template & setup-operation contracts (C1/C2) completion",
-  "description": "Re-verify docs/plan/05-template-contracts.md against current source, close the P1.6a cycle-rejection and provenance contract gaps, and check in typed §7 fixtures with conformance tests. Documentation + typed-fixture deliverable only; no P1.6b/c implementation.",
-  "branchName": "ralph/p16a-template-contracts-completion",
+  "name": "A2E Suite — dependency-ready executor slices (P1–P4C)",
+  "description": "Extracted 2026-09-17 from PLAN.md ('Current delivery order', 'Current-state ledger', 'Execution order and agent handoffs') + phase-report starting states. Only [ ]/[~] bullets whose literal (after X) dependencies are [x]/DONE in PLAN.md, scoped to Tier 0/1 (no yarn start, no browser/e2e/multi-session, no 621-spec sweep, no Tier-2 evidence). Quality gates appended to every story. Deferred items (needs-orchestrator and P7-blocked) and gated tasks are listed in the generating session summary, not silently dropped. Note: no pre-existing prd.json existed to merge; the earlier tasks/prd-p16a-*.md stories (US-001..003) are done-for-review and P1.6a is ticked (commit 9b50ab87).",
+  "branchName": "ralph/a2e-dependency-ready-slices",
   "userStories": [
     {
-      "id": "US-001",
-      "title": "Re-verify contract spec against current source (drift audit)",
-      "description": "As an executor implementing P1.6b, I want every symbol and version claim in docs/plan/05-template-contracts.md re-verified against current source so that the contract I build on is not stale.",
+      "id": "P1.6b-concurrency-proof",
+      "title": "P1.6b: real-DB concurrency check of the same-key setup-operation retry",
+      "description": "As a workspace admin, I want the resumable template setup operation to stay correct when concurrent requests reuse one idempotency key, so that retries never duplicate installs or seeds.",
       "acceptanceCriteria": [
-        "Every file link in the doc resolves; every named symbol (WorkspaceTemplate, WORKSPACE_TEMPLATE_DEFINITIONS, TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS, ApplicationVersionValidationService methods, ApplicationRegistrationService, ApplyTemplateRequest/ApplyTemplateStep/ApplyTemplateResult/TemplatePreview) exists and its shape matches the doc",
-        "apply-template-operation.types.ts conforms to §4–§6; any divergence is either corrected in the types (additive, with a // why-comment referencing the doc section) or recorded as a dated doc correction",
-        "§3/§7 version claims match the actual app packages (a2e-documents, a2e-projects, a2e-accounting application.config.ts / package versions) — including the post-09-13 accounting manifest fixes",
-        "§2 ownership inventory still holds against workspace-template.service.ts current behavior (including the known seed-hook failure recorded 2026-09-16 in docs/plan/phases/phase-01-report.md — the doc must state this as a known P1.6b obligation, not claim seeding works)",
-        "Drift corrections carry a dated note (2026-09-17: …) appended in place, preserving prior text per repo handoff convention",
-        "A dated entry is appended to docs/plan/phases/phase-01-report.md; PLAN.md is not edited; nothing is committed",
-        "npx nx lint:diff-with-main twenty-server passes (run only for packages actually touched)",
-        "npx tsgo -p tsconfig.json --noEmit passes when run inside packages/twenty-server (only if packages were touched)",
-        "If twenty-shared is touched: npx nx build twenty-shared --skip-nx-cache runs first and succeeds"
+        "Real-DB concurrency check of the CacheLock-serialized same-key retry (unit coverage currently mocks the lock through — phase-01 report 2026-09-14 07:00): concurrent same-key requests produce exactly one operation outcome",
+        "Test same-key retries/concurrent requests: no duplicate installs and no duplicate seeds",
+        "Async post-install completion, registration failure and partial results behave per the landed per-step capture (retry re-runs only failed/pending steps; succeeded steps returned as-is)",
+        "Do not redo: result persistence stays via KeyValuePairService (workspace-scoped template-operation:<key> keys); ApplyWorkspaceTemplateInput is extended additively, never replaced; legacy applyWorkspaceTemplate GraphQL shape untouched",
+        "Quality gate: npx nx lint:diff-with-main <touched-package> clean; when edits are uncommitted, run oxlint --type-aware + oxfmt --check directly on touched files (phase-report precedent)",
+        "Quality gate: npx tsgo -p tsconfig.json --noEmit passes in every touched package",
+        "Quality gate: unit tests pass via npx jest <spec> --config=packages/twenty-server/jest.config.mjs; integration coverage uses NODE_ENV=test (Tier 1)",
+        "Quality gate: Tier 0/1 only — no yarn start / browser / multi-session evidence claimed (Tier 2 is orchestrator-only per the executor contract)",
+        "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "Unverified claims must be recorded as UNVERIFIED with a reason (FR-6), never left implicitly stale.",
+      "notes": "PLAN.md literal deps: after P1.6a/P0.4 — both [x] (P1.6a verified 2026-09-17, commit 9b50ab87; P0.4 DONE 2026-09-13). Starting state: operation + preview + per-step capture, typed failure codes, 12 unit tests landed 2026-09-14 (done-for-review). Remaining P1.6b legs are this story plus P1.6b-seed-samples-truth. C2 (PLAN.md) binds the request/result contract.",
       "dependsOn": [],
       "completionNotes": "Completed by agent"
     },
     {
-      "id": "US-002",
-      "title": "Close contract gaps — cycle rejection and provenance shape",
-      "description": "As an executor implementing P1.6e content templates, I want the contract to state normative cycle-rejection rules and the exact provenance shape on instantiated content so that later slices do not invent conflicting rules.",
+      "id": "P1.6b-seed-samples-truth",
+      "title": "P1.6b: seed-samples step reports truthfully (no fake completed preset)",
+      "description": "As a workspace admin, I want a failed seeding step to surface as failed with retry info, so that a preset is never reported complete when its samples did not land.",
       "acceptanceCriteria": [
-        "Rejection matrix (§7) gains a row covering cycles: workspace presets are flat app lists (no dependency graph — stated explicitly); content-template descriptors (P1.6e) must reject relation/reference cycles at load time, with the same \"reject at load time\" severity as cross-workspace content",
-        "A provenance subsection specifies the exact shape carried by template-instantiated content (at minimum: source template key + version + instantiating operationId), consistent with §5's createdRecordUniversalIdentifiers sample provenance and referencing C1's \"fresh content IDs with source-template/version provenance\"",
-        "apply-template-operation.types.ts is extended additively only if the provenance shape needs a server-side type now; otherwise the subsection records that the type lands with P1.6d/e (default: type now only if it has a consumer in the existing types file, otherwise document-only)",
-        "The \"Deliberate gaps\" section (§8) is updated so every P1.6a-bullet requirement (version, compatibility, inputs, provenance, preview fixtures; unknown IDs, cycles, unavailable requirements, cross-workspace content) is either specified or has an explicit gap entry",
-        "Rejection rules are expressed as normative must statements with typed error codes consistent with OperationStepErrorCode (extending it additively if cycles need a code)",
-        "A dated entry is appended to docs/plan/phases/phase-01-report.md; PLAN.md is not edited; nothing is committed",
-        "npx nx lint:diff-with-main twenty-server passes (run only for packages actually touched)",
-        "npx tsgo -p tsconfig.json --noEmit passes when run inside packages/twenty-server (only if packages were touched)",
-        "If twenty-shared is touched: npx nx build twenty-shared --skip-nx-cache runs first and succeeds"
+        "No fake completed preset or duplicate seeds: the seed-samples step reports failed/skipped per-step status with localized error/retry info when seeding fails, never 'succeeded' (truthful-reporting defect recorded in docs/plan/05-template-contracts.md as a P1.6b obligation; US-001 deliberately did not fix it — FR-1 no service behavior change)",
+        "Retrying the same operation key creates no duplicate seeds",
+        "Same-key serialization through the CacheLock is not regressed (coordinates with P1.6b-concurrency-proof)",
+        "Quality gate: npx nx lint:diff-with-main <touched-package> clean; when edits are uncommitted, run oxlint --type-aware + oxfmt --check directly on touched files (phase-report precedent)",
+        "Quality gate: npx tsgo -p tsconfig.json --noEmit passes in every touched package",
+        "Quality gate: unit tests pass via npx jest <spec> --config=packages/twenty-server/jest.config.mjs; integration coverage uses NODE_ENV=test (Tier 1)",
+        "Quality gate: Tier 0/1 only — no yarn start / browser / multi-session evidence claimed (Tier 2 is orchestrator-only per the executor contract)",
+        "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 2,
-      "passes": true,
-      "notes": "No app→app dependency field in SDK manifests — §8 keeps ordering preset-flat (Non-Goal).",
-      "dependsOn": [
-        "US-001"
-      ],
-      "completionNotes": "Completed by agent"
+      "passes": false,
+      "notes": "Same literal deps as P1.6b-concurrency-proof (P1.6a/P0.4, both [x]). Related live finding: P1.3's 2026-09-16 orchestrator note — 'succeeded (delegated)' can over-report until the hook failure is fixed; the hook root cause is already fixed pending Tier-2 live reinstall (phase-01 report 2026-09-16 late entry), so this story covers the server-side step-status truth only.",
+      "dependsOn": []
     },
     {
-      "id": "US-003",
-      "title": "Executable §7 fixtures with conformance tests",
-      "description": "As an executor implementing P1.6b, I want the §7 fixtures checked in as typed data with unit tests so the contract examples are machine-verified and cannot drift.",
+      "id": "P2.5-provider-validation",
+      "title": "P2.5: validate existing records + real document provider through caller permissions",
+      "description": "As a workspace member, I want Cmd+K search to honor my permissions for records and documents, so that restricted users never see unauthorized titles.",
       "acceptanceCriteria": [
-        "Fixture module created under packages/twenty-server/src/engine/core-modules/onboarding/__tests__/fixtures/ typed against apply-template-operation.types.ts (named exports, no any); if the onboarding module has an existing fixtures convention, follow that instead",
-        "Fixtures cover: the §7 preview example, the §7 result example, and one fixture per rejection-matrix row (including the US-002 cycles row and cross-workspace content)",
-        "A unit spec asserts: every fixture conforms to its contract type; the individual preview fixture's app universal identifiers match onboarding-installable-app-universal-identifiers.ts / workspace-template-definitions.constant.ts; its navigation-change UUIDs match the definition's managed identifiers",
-        "The doc's §7 JSON blocks are updated to match the checked-in fixtures exactly (or annotated as generated from them), so markdown and code cannot diverge",
-        "Fixtures use only universal identifiers and default values — never record IDs, user IDs, share URLs, tokens or live finance rows (C1 §3 construction rule)",
-        "Targeted jest run passes: npx jest <spec> --config=packages/twenty-server/jest.config.mjs",
-        "npx nx lint:diff-with-main twenty-server passes",
-        "npx tsgo -p tsconfig.json --noEmit passes when run inside packages/twenty-server",
-        "If twenty-shared is touched: npx nx build twenty-shared --skip-nx-cache runs first and succeeds",
-        "A dated entry is appended to docs/plan/phases/phase-01-report.md; PLAN.md is not edited; nothing is committed"
+        "Validate existing records + real document provider through caller permissions; the document provider is no longer a stub",
+        "Assert actual query/filter behavior under caller auth — P0.2's caller-context repair (ILIKE escaping, no permission bypass, workspace scoping; DONE 2026-09-13) is the baseline to verify against",
+        "Restricted-member and cross-workspace cases covered in tests (no leaked titles)",
+        "Quality gate: npx nx lint:diff-with-main <touched-package> clean; when edits are uncommitted, run oxlint --type-aware + oxfmt --check directly on touched files (phase-report precedent)",
+        "Quality gate: npx tsgo -p tsconfig.json --noEmit passes in every touched package",
+        "Quality gate: unit tests pass via npx jest <spec> --config=packages/<pkg>/jest.config.mjs; integration coverage uses NODE_ENV=test (Tier 1)",
+        "Quality gate: Tier 0/1 only — no yarn start / browser / multi-session evidence claimed (Tier 2 is orchestrator-only per the executor contract)",
+        "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 3,
-      "passes": true,
-      "notes": "No service, resolver, DTO or schema behavior may change (FR-1); no GraphQL regeneration, migrations or i18n catalog changes.",
-      "dependsOn": [
-        "US-001",
-        "US-002"
+      "passes": false,
+      "notes": "No literal (after X) dependency; P0.2 [x] DONE 2026-09-13 supplies the repaired auth context. Named executor-ready by phase-02 report ('next Tier-0/1 slices are ... P2.5 real-provider validation').",
+      "dependsOn": []
+    },
+    {
+      "id": "P3.3-tree-loading",
+      "title": "P3.3: document tree lazy/paginated loading, server cycle validation, personal favorites, archive tests",
+      "description": "As a workspace member, I want deep document trees to load lazily and stay correct under moves and archives, so that navigation stays fast and never loses or duplicates content.",
+      "acceptanceCriteria": [
+        "Lazy/paginated loading at every depth (browser query currently loads roots plus one child level)",
+        "Server cycle validation on move/reparent",
+        "Deterministic sibling ordering",
+        "Accessible move controls already landed done-for-review (keyboard up/down/indent/outdent via buildKeyboardMovePayload, phase-03 report 2026-09-17 11:48) — do not rebuild; buildMoveDocumentPayload stays the only position/cycle authority",
+        "Favorites verified personal rather than a shared flag",
+        "Archive/restore/purge tested across deep trees and more than one API page",
+        "Quality gate: npx nx lint:diff-with-main <touched-package> clean; when edits are uncommitted, run oxlint --type-aware + oxfmt --check directly on touched files (phase-report precedent)",
+        "Quality gate: npx tsgo -p tsconfig.json --noEmit passes in every touched package (app package: npx tsc --noEmit / yarn typecheck)",
+        "Quality gate: unit tests pass (a2e-documents: node --test src/lib/__tests__/*.test.ts; front: npx jest <spec> --config=packages/twenty-front/jest.config.mjs)",
+        "Quality gate: Tier 0/1 only — no yarn start / browser / multi-session evidence claimed (Tier 2 is orchestrator-only per the executor contract)",
+        "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
-      "completionNotes": "Completed by agent"
+      "priority": 4,
+      "passes": false,
+      "notes": "No literal (after X) dependency. Named next executor slice by phase-03 report 2026-09-17 11:48 ('P3.3 lazy/paginated tree loading at every depth (browser query → per-parent fetch + cursor)'). Browser tree acceptance remains Tier 2 (orchestrator).",
+      "dependsOn": []
+    },
+    {
+      "id": "P3.2-snapshot-sharing",
+      "title": "P3.2: public snapshot sharing — server-side rights, revoke/expiry and guest-format enforcement",
+      "description": "As a guest with a share link, I want snapshot shares to enforce record-level rights and honor revoke/expiry, so that protected content never leaks through a public URL.",
+      "acceptanceCriteria": [
+        "Record-level rights on public snapshot sharing",
+        "Validated plaintext or ciphertext-only representation (consistent with P0.2's server-side enforcement: full triple XOR plaintext, bounded lengths, guest path never returns plaintext for passphrase-protected shares — extend, do not duplicate)",
+        "Consistent guest format",
+        "Revoke and expiry enforced",
+        "Display/copy URL and passphrase UX wired; browser acceptance legs are Tier 2 (orchestrator) — cover the server legs with unit/integration tests",
+        "Quality gate: npx nx lint:diff-with-main <touched-package> clean; when edits are uncommitted, run oxlint --type-aware + oxfmt --check directly on touched files (phase-report precedent)",
+        "Quality gate: npx tsgo -p tsconfig.json --noEmit passes in every touched package",
+        "Quality gate: unit tests pass via npx jest <spec> --config=packages/<pkg>/jest.config.mjs; integration coverage uses NODE_ENV=test (Tier 1)",
+        "Quality gate: Tier 0/1 only — no yarn start / browser / multi-session evidence claimed (Tier 2 is orchestrator-only per the executor contract)",
+        "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": "PLAN.md literal: 'P0.2 gates E05' — P0.2 [x] DONE 2026-09-13. Named executor-ready by phase-03 report 2026-09-17 11:41 ('P3.2 public snapshot sharing ... or the P3.3 tree lazy-loading leg'). E05 browser journey stays with the orchestrator.",
+      "dependsOn": []
+    },
+    {
+      "id": "P3.3-record-note-copy",
+      "title": "P3.3: record→document integration copies actual note body with source link and permission checks",
+      "description": "As a workspace member, I want 'save record as document' to copy the selected note's actual body with a source link, so the document reflects the note content instead of a title snapshot.",
+      "acceptanceCriteria": [
+        "Preserve existing company/person relation fields",
+        "Implement actual selected-note body copy with source link and permission checks (existing record command/title snapshot is not note-body copying; the earlier executor deliberately deferred body copy — this bullet requires it)",
+        "Test both record types and open from search/relation/side-panel (unit/integration legs; browser journey proof is Tier 2 — orchestrator)",
+        "Quality gate: npx nx lint:diff-with-main <touched-package> clean; when edits are uncommitted, run oxlint --type-aware + oxfmt --check directly on touched files (phase-report precedent)",
+        "Quality gate: npx tsgo -p tsconfig.json --noEmit passes in every touched package (app package: npx tsc --noEmit / yarn typecheck)",
+        "Quality gate: unit tests pass (a2e-documents: node --test src/lib/__tests__/*.test.ts)",
+        "Quality gate: Tier 0/1 only — no yarn start / browser / multi-session evidence claimed (Tier 2 is orchestrator-only per the executor contract)",
+        "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": "No literal (after X) dependency. Starting state: save-record-as-document command shipped as title snapshot only (phase-03 report); document.company/person relations exist since P3.1 with SET_NULL — write path populates them, no migration needed.",
+      "dependsOn": []
+    },
+    {
+      "id": "P3.2-template-instantiation",
+      "title": "P3.2: template instantiation fetches authorized body and remaps IDs/anchors",
+      "description": "As a workspace member, I want instantiating a template to fetch its authorized body and remap identifiers, so the copy is independent and selecting it shows real content.",
+      "acceptanceCriteria": [
+        "Complete template instantiation + gallery composition: helper and LIST view exist, but browser does not select template content",
+        "Fetch authorized body (permission-checked)",
+        "Remap IDs/anchors (validate/remap relations and block/comment identifiers per C1)",
+        "Prove copy independence at unit level: editing a copy does not mutate its template (E04 browser journey is Tier 2 — orchestrator)",
+        "Quality gate: npx nx lint:diff-with-main <touched-package> clean; when edits are uncommitted, run oxlint --type-aware + oxfmt --check directly on touched files (phase-report precedent)",
+        "Quality gate: npx tsgo -p tsconfig.json --noEmit passes in every touched package (app package: npx tsc --noEmit / yarn typecheck)",
+        "Quality gate: unit tests pass (a2e-documents lib tests; front: npx jest <spec> --config=packages/twenty-front/jest.config.mjs)",
+        "Quality gate: Tier 0/1 only — no yarn start / browser / multi-session evidence claimed (Tier 2 is orchestrator-only per the executor contract)",
+        "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": "No literal (after X) dependency; C1 contract is P1.6a [x]. Coordinates with (do not duplicate) the P1.6e save→template + duplicate payloads already landed (phase-01 2026-09-14: unit 42/42).",
+      "dependsOn": []
+    },
+    {
+      "id": "P4.1-task-extensions",
+      "title": "P4.1: atomic task human-ID allocator + task app-field integrity/lifecycle tests",
+      "description": "As a project member, I want concurrent task creation to allocate unique <projectKey>-<n> human IDs, so that replays and concurrent requests never collide.",
+      "acceptanceCriteria": [
+        "Make the human-ID function an atomic allocator (logic-functions/task-human-id.logic-function.ts currently allocates with separate read/write requests — not atomic)",
+        "Concurrent/replayed allocations yield unique human IDs (E06 concurrent-ID requirement; unit/integration proof at Tier 1, live concurrent proof stays Tier 2)",
+        "UI/API integrity and lifecycle tests for the existing task app fields: project relation, status, priority, labels, estimate (t-shirt), subtask parent relation, blockedBy self-relation, time-tracking entries object",
+        "Keep the existing select-status approach unless a demonstrated requirement needs more (no custom-status object)",
+        "Do not create duplicate objects: project-member junction, milestone and time-entry objects already exist in source (2026-09-12 reconciliation) — validate installed relations, do not recreate",
+        "Quality gate: npx nx lint:diff-with-main <touched-package> clean; when edits are uncommitted, run oxlint --type-aware + oxfmt --check directly on touched files (phase-report precedent)",
+        "Quality gate: npx tsgo -p tsconfig.json --noEmit passes in every touched package (app package: npx tsc --noEmit / yarn typecheck)",
+        "Quality gate: unit tests pass (a2e-projects: node --test; server-side logic-function coverage via npx jest --config=packages/twenty-server/jest.config.mjs)",
+        "Quality gate: Tier 0/1 only — no yarn start / browser / multi-session evidence claimed (Tier 2 is orchestrator-only per the executor contract)",
+        "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": "PLAN.md P4.1 task-extensions bullet is → PARTIAL (2026-09-12): fields/labels/subtask relation/time-entry object/human-ID function exist in source; the open work is the atomic allocator plus integrity/lifecycle tests. Milestone-object bullet is already satisfied in source (stale — not extracted).",
+      "dependsOn": []
+    },
+    {
+      "id": "P4.1-recurring-generator",
+      "title": "P4.1: 'recurring task generator' workflow template on the existing workflow engine",
+      "description": "As a workspace member, I want a recurring task generator workflow template, so that repeating work is created automatically without a second automation system.",
+      "acceptanceCriteria": [
+        "Workflow template 'recurring task generator' implemented using the existing workflow engine (no second event bus / no new engine per C5)",
+        "Ships with the a2e-projects app (manifest-declared workflow definition; dev:build manifest assertion green)",
+        "Unit tests cover the generator step logic",
+        "Quality gate: npx nx lint:diff-with-main <touched-package> clean; when edits are uncommitted, run oxlint --type-aware + oxfmt --check directly on touched files (phase-report precedent)",
+        "Quality gate: npx tsgo -p tsconfig.json --noEmit passes in every touched package (app package: npx tsc --noEmit / yarn typecheck)",
+        "Quality gate: unit tests pass (a2e-projects: node --test src/**/__tests__)",
+        "Quality gate: Tier 0/1 only — no yarn start / browser / multi-session evidence claimed (Tier 2 is orchestrator-only per the executor contract)",
+        "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": "No literal (after X) dependency in PLAN.md for this bullet.",
+      "dependsOn": []
+    },
+    {
+      "id": "P4.3-trash",
+      "title": "P4.3: projects trash — 7-day restore + purge cron mirroring the P3 pattern",
+      "description": "As a workspace member, I want deleted project items to be restorable for 7 days, so that mistakes are recoverable.",
+      "acceptanceCriteria": [
+        "Trash: 7-day restore + purge cron (mirror P3 pattern — the a2e-documents app has the reference trash/purge pattern)",
+        "Unit tests cover restore and purge retention behavior",
+        "Quality gate: npx nx lint:diff-with-main <touched-package> clean; when edits are uncommitted, run oxlint --type-aware + oxfmt --check directly on touched files (phase-report precedent)",
+        "Quality gate: npx tsgo -p tsconfig.json --noEmit passes in every touched package (app package: npx tsc --noEmit / yarn typecheck)",
+        "Quality gate: unit tests pass (a2e-projects: node --test src/**/__tests__)",
+        "Quality gate: Tier 0/1 only — no yarn start / browser / multi-session evidence claimed (Tier 2 is orchestrator-only per the executor contract)",
+        "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": "No literal (after X) dependency; 'mirror P3 pattern' references the existing documents pattern, not an open P3 dependency.",
+      "dependsOn": []
+    },
+    {
+      "id": "P4.2-subtasks-dependencies-ui",
+      "title": "P4.2: subtasks & dependencies UI with cycle validation",
+      "description": "As a project member, I want a nested subtask list and a dependency picker that rejects cycles, so that task structure stays valid.",
+      "acceptanceCriteria": [
+        "Nested subtask list UI on the existing subtask parent relation",
+        "Dependency picker for the blockedBy self-relation",
+        "Cycle validation on dependency selection (client-side rejection; do not fork a second cycle algorithm — reuse/extend the existing validation)",
+        "Unit tests cover the picker and cycle rejection",
+        "Quality gate: npx nx lint:diff-with-main <touched-package> clean; when edits are uncommitted, run oxlint --type-aware + oxfmt --check directly on touched files (phase-report precedent)",
+        "Quality gate: npx tsgo -p tsconfig.json --noEmit passes in every touched package (app package: npx tsc --noEmit / yarn typecheck)",
+        "Quality gate: unit tests pass (a2e-projects: node --test src/**/__tests__; front: npx jest <spec> --config=packages/twenty-front/jest.config.mjs)",
+        "Quality gate: Tier 0/1 only — no yarn start / browser / multi-session evidence claimed (Tier 2 is orchestrator-only per the executor contract)",
+        "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": "No literal (after X) dependency. Board/My-tasks/calendar view definitions already exist in source (2026-09-12 ledger) — validate, do not recreate; those validation legs are Tier 2 (orchestrator) and not part of this story.",
+      "dependsOn": []
+    },
+    {
+      "id": "P4.2-gantt",
+      "title": "P4.2: Gantt/timeline view front component",
+      "description": "As a project member, I want a Gantt/timeline view of project tasks, so that I can see schedule and dependencies over time.",
+      "acceptanceCriteria": [
+        "Gantt/timeline view (front component; framer-motion-free, virtualized)",
+        "Unit/Storybook tests cover the component rendering and virtualization behavior",
+        "Quality gate: npx nx lint:diff-with-main <touched-package> clean; when edits are uncommitted, run oxlint --type-aware + oxfmt --check directly on touched files (phase-report precedent)",
+        "Quality gate: npx tsgo -p tsconfig.json --noEmit passes in every touched package (app package: npx tsc --noEmit / yarn typecheck)",
+        "Quality gate: unit tests pass (front: npx jest <spec> --config=packages/twenty-front/jest.config.mjs; app: node --test)",
+        "Quality gate: Tier 0/1 only — no yarn start / browser / multi-session evidence claimed (Tier 2 is orchestrator-only per the executor contract)",
+        "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": "No literal (after X) dependency. The 1k-task Gantt benchmark with recorded hardware (P4 acceptance) is a later measurement slice, not this component story.",
+      "dependsOn": []
+    },
+    {
+      "id": "P4.2-time-tracker",
+      "title": "P4.2: time tracker — start/stop on task, entries list, per-project rollup",
+      "description": "As a project member, I want to track time on tasks and see per-project rollups, so that effort is visible.",
+      "acceptanceCriteria": [
+        "Time tracker: start/stop on task (presence-adjacent), entries list, per-project rollup widget",
+        "Reuse the existing time-entry object (2026-09-12 reconciliation — no duplicate object)",
+        "Unit tests cover timer state transitions and the rollup aggregation",
+        "Quality gate: npx nx lint:diff-with-main <touched-package> clean; when edits are uncommitted, run oxlint --type-aware + oxfmt --check directly on touched files (phase-report precedent)",
+        "Quality gate: npx tsgo -p tsconfig.json --noEmit passes in every touched package (app package: npx tsc --noEmit / yarn typecheck)",
+        "Quality gate: unit tests pass (a2e-projects: node --test; front: npx jest <spec> --config=packages/twenty-front/jest.config.mjs)",
+        "Quality gate: Tier 0/1 only — no yarn start / browser / multi-session evidence claimed (Tier 2 is orchestrator-only per the executor contract)",
+        "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
+      ],
+      "priority": 13,
+      "passes": false,
+      "notes": "No literal (after X) dependency. 'Presence-adjacent' uses the existing P2.3 presence primitives — no new presence system.",
+      "dependsOn": []
+    },
+    {
+      "id": "P4.2-cmdk",
+      "title": "P4.2: Cmd+K create task / go to project + tasks/projects search provider",
+      "description": "As a workspace member, I want Cmd+K commands and search for tasks and projects, so that I can navigate and create without leaving the keyboard.",
+      "acceptanceCriteria": [
+        "Cmd+K: create task, go to project; search provider for tasks/projects",
+        "Follow the existing P1.4 search-provider registry + P1.2 command-menu pattern (no parallel search framework); anatomy rule: required command menu items registered in COMMAND_MENU_ITEM_IDS",
+        "Unit tests cover the provider grouping/filtering and command availability",
+        "Quality gate: npx nx lint:diff-with-main <touched-package> clean; when edits are uncommitted, run oxlint --type-aware + oxfmt --check directly on touched files (phase-report precedent)",
+        "Quality gate: npx tsgo -p tsconfig.json --noEmit passes in every touched package (app package: npx tsc --noEmit / yarn typecheck)",
+        "Quality gate: unit tests pass (a2e-projects: node --test; front: npx jest <spec> --config=packages/twenty-front/jest.config.mjs)",
+        "Quality gate: Tier 0/1 only — no yarn start / browser / multi-session evidence claimed (Tier 2 is orchestrator-only per the executor contract)",
+        "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
+      ],
+      "priority": 14,
+      "passes": false,
+      "notes": "No literal (after X) dependency.",
+      "dependsOn": []
+    },
+    {
+      "id": "P4C.1",
+      "title": "P4C.1: calendar ownership/compatibility spike (report-only)",
+      "description": "As the platform team, I need a recorded decision on calendar local-event ownership and provider capability before any metadata/service extension, so that no parallel calendar backend is built.",
+      "acceptanceCriteria": [
+        "Inspect standard calendarEvent/channel/participant metadata, existing creation drivers, import/sync and calendar UI",
+        "Decide a local-event path, app activation boundary, calendar sharing rights and provider capability matrix (create/update/delete/recurrence/attendee support)",
+        "Record actual gaps before extending metadata/services; no parallel calendar backend",
+        "Findings appended to the phase report (spike is report-only; informs D05 — PLAN.md Unresolved decisions)",
+        "Quality gate: docs changed only — node docs/scripts/check-docs.mjs PASS; no package touched so lint/tsgo gates are N/A (report them as such)",
+        "Quality gate: Tier 0/1 only — no yarn start / browser / multi-session evidence claimed (Tier 2 is orchestrator-only per the executor contract)",
+        "Quality gate: no i18n catalog files committed; no AI attribution in commits"
+      ],
+      "priority": 15,
+      "passes": false,
+      "notes": "PLAN.md literal deps: after P0.1/P1.6a — both [x] (P0.1 DONE 2026-09-13; P1.6a verified 2026-09-17). Execution order position: after P3 repair and the P4 existing slice.",
+      "dependsOn": []
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-17T12:25:45.082Z"
+    "updatedAt": "2026-09-17T14:25:48.181Z"
   }
 }

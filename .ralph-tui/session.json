@@ -1,75 +1,24 @@
 {
   "version": 1,
-  "sessionId": "6453f712-e1ad-43a9-b269-09d298d04ade",
+  "sessionId": "45d57c97-9f0d-4994-b4f8-0d49439c6465",
   "status": "running",
-  "startedAt": "2026-09-17T12:08:57.969Z",
-  "updatedAt": "2026-09-17T12:25:45.645Z",
-  "currentIteration": 3,
+  "startedAt": "2026-09-17T14:18:16.671Z",
+  "updatedAt": "2026-09-17T14:25:48.182Z",
+  "currentIteration": 0,
   "maxIterations": 20,
-  "tasksCompleted": 3,
+  "tasksCompleted": 0,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
   "trackerState": {
     "plugin": "json",
     "executionScopes": [],
-    "prdPath": "./tasks/prd.json",
-    "totalTasks": 3,
-    "tasks": [
-      {
-        "id": "US-001",
-        "title": "Re-verify contract spec against current source (drift audit)",
-        "status": "completed",
-        "completedInSession": true
-      },
-      {
-        "id": "US-002",
-        "title": "Close contract gaps — cycle rejection and provenance shape",
-        "status": "completed",
-        "completedInSession": true
-      },
-      {
-        "id": "US-003",
-        "title": "Executable §7 fixtures with conformance tests",
-        "status": "completed",
-        "completedInSession": true
-      }
-    ]
+    "totalTasks": 0,
+    "tasks": []
   },
-  "iterations": [
-    {
-      "iteration": 1,
-      "status": "completed",
-      "taskId": "US-001",
-      "taskTitle": "Re-verify contract spec against current source (drift audit)",
-      "taskCompleted": true,
-      "durationMs": 264628,
-      "startedAt": "2026-09-17T12:09:23.253Z",
-      "endedAt": "2026-09-17T12:13:47.881Z"
-    },
-    {
-      "iteration": 2,
-      "status": "completed",
-      "taskId": "US-002",
-      "taskTitle": "Close contract gaps — cycle rejection and provenance shape",
-      "taskCompleted": true,
-      "durationMs": 419401,
-      "startedAt": "2026-09-17T12:13:53.426Z",
-      "endedAt": "2026-09-17T12:20:52.827Z"
-    },
-    {
-      "iteration": 3,
-      "status": "completed",
-      "taskId": "US-003",
-      "taskTitle": "Executable §7 fixtures with conformance tests",
-      "taskCompleted": true,
-      "durationMs": 286773,
-      "startedAt": "2026-09-17T12:20:58.307Z",
-      "endedAt": "2026-09-17T12:25:45.080Z"
-    }
-  ],
+  "iterations": [],
   "skippedTaskIds": [],
   "cwd": "/Users/maxaubert/Projets/A2E Suite",
   "activeTaskIds": [],
-  "subagentPanelVisible": true
+  "subagentPanelVisible": false
 }
