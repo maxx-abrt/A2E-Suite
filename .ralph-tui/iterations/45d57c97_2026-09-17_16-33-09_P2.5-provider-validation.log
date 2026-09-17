@@ -1,0 +1,198 @@
+# Iteration 3 Log
+
+## Metadata
+
+- **Task ID**: P2.5-provider-validation
+- **Task Title**: P2.5: validate existing records + real document provider through caller permissions
+- **Description**: As a workspace member, I want Cmd+K search to honor my permissions for records and documents, so that restricted users never see unauthorized titles.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-17T14:33:09.775Z
+- **Ended At**: 2026-09-17T14:43:15.943Z
+- **Duration**: 10m 6s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96mP2.5-provider-validation[0m
+[94m[bash][0m $ git diff --stat HEAD && echo "---" && git log --oneline -5
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96mP2\.5[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md
+[94m[bash][0m $ grep -n "P0.2" "/Users/maxaubert/Projets/A2E Suite/PLAN.md" | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md
+[94m[bash][0m $ grep -rn "P2.5" "/Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md" | tail -20
+[94m[bash][0m $ ls -R "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/search"
+[94m[bash][0m $ grep -rln "RegisteredSearchProvider\|SearchProviderRegistryService\|AppSearchService" "/Users/maxaub...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/search/services/app-search.service.ts
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git log --oneline -8 -- packages/twenty-server/src/engine...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/search/services/search.service.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/search/search.resolver.ts
+[94m[bash][0m $ find test/integration -type d -iname "*search*"
+[94m[bash][0m $ grep -rln "search" test/integration/graphql/suites/ 2>/dev/null | head -30
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && ls -la test/integration/graphql/su...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && wc -l test/integration/graphql/sui...
+[94m[read][0m
+[94m[bash][0m $ grep -n "P0.2" docs/plan/phases/phase-02-report.md | head
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git show --stat acf3a90a | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-00-report.md
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && ls test/integration/graphql/suites...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -rln "installApplication\|ins...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -n "getRepository\|rolePermis...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/workspace-orm.manager.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -n "getRepository" src/engine...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -rln "resolveRolePermissionCo...
+[94m[bash][0m $ grep -rn "getRepository" src/engine/twenty-orm/datasource/*.ts | head
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/datasource/workspace-data-source.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/datasource/workspace-data-source.ts
+[94m[bash][0m $ find src/engine/twenty-orm -name "resolve-object-records-permissions*"
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -rn "objectRecordsPermissions...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/repository/workspace-repository.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/repository/workspace-repository.ts
+[94m[bash][0m $ grep -rln "validateOperationIsPermittedOrThrow" src/engine/twenty-orm | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/repository/permissions.utils.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "document search provider\|real document search\|...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "executeInWorkspaceContext\|resolveRolePermissio...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && find packages/twenty-apps/internal/a2e-documents -type f ...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents" && find src -typ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/objects/document.object.ts
+[94m[read][0m
+[94m[bash][0m $ ls test/integration/utils/ | head -60
+[94m[bash][0m $ grep -rln "a2e-documents" src | grep -i seed | head
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/test/integration/utils/create-app.ts
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -rn "isSystem" src/engine/met...
+[94m[bash][0m $ grep -rn "isSystem" packages 2>/dev/null | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/storage/orm-workspace-context.storage.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/types/role-permission-config.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/utils/resolve-role-ids-for-user.util.ts
+[94m[bash][0m $ redis-cli ping 2>&1
+[94m[read][0m
+[94m[bash][0m $ grep -rn "SEED_APPLE_WORKSPACE_ID\|SEED_APPLE_.*TOKEN" test/integration/graphql/constants/*.ts 2>/de...
+[94m[bash][0m $ ls test/integration/*.ts test/*.ts 2>/dev/null
+[94m[bash][0m $ grep -rn "globalSetup\|setupFilesAfterEnv" jest-integration.config.ts jest.config.mjs 2>/dev/null
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -rln "SEED_YCOMBINATOR_WORKSP...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -rn "makeGraphqlAPIRequestWit...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/search/types/search-provider.type.ts
+[94m[read][0m
+Now I understand the architecture. Let me verify my key finding: the document provider passes **no** role permission config, so the repository gets empty permissions and denies select for the non-system `document` object.
+Now I'll claim the slice per the contract.
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ cat >> "/Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md" <<'EOF'  CLAIMED — P...
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[read][0m
+[94m[write][0m "import { getRegisteredSearchProviderMetadata } from 'src/engine/core-modules/search/decorators/registered-search-provider.decorator';
+import { DocumentSearchProviderService } from 'src/engine/core-mod... (7151 chars)"
+[94m[bash][0m $ npx jest src/engine/core-modules/search/services/__tests__/document-search-provider.service.spec.ts ...
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/engine/core-modules/search/services/__tests__/document-search-provider.service.spec.ts ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/test/integration/utils/setup-test.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/jest-integration.config.ts
+[94m[bash][0m $ find test/integration -name "*install-application*" -o -name "*application-install*" | head
+[94m[bash][0m $ sed -n '1,80p' test/integration/metadata/suites/application/utils/setup-application-for-sync.util.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -rn "SEED_YCOMBINATOR_WORKSPA...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/test/integration/graphql/utils/generate-api-key-token.util.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -rln "generateApiKeyToken\|cr...
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -rln "jwt.sign\|signAccessTok...
+[94m[bash][0m $ grep -i "APP_SECRET\|ACCESS_TOKEN" .env.test 2>/dev/null | sed 's/=.*/=<redacted>/'
+[94m[bash][0m $ find src/engine/workspace-manager/dev-seeder -name "*workspace-member*"
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -i "APP_SECRET" .env.test
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -rn "ACCESS_TOKEN_SECRET\|APP...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/jwt/services/jwt-wrapper.service.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/jwt/services/jwt-wrapper.service.ts
+[94m[bash][0m $ grep -rn "validateAccessToken\|userWorkspaceId\|type ===\|JwtTokenTypeEnum" src/engine/core-modules/...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -n "USER_DATA_SEED_IDS" -A 12...
+[94m[bash][0m $ grep -rn "canReadAllObjectRecords" src/engine/metadata-modules/role/services/role.service.ts | head
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -n "canReadAllObjectRecords\|...
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -rn "initPermissions\|light:"...
+[94m[bash][0m $ find src/database -name "*seed*" | head
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -n "light\|Light\|option" src...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -i "PG_DATABASE_URL\|DATABASE...
+[94m[bash][0m $ " 2>&1 | head -30
+[94m[bash][0m $ " 2>&1 | head
+[94m[bash][0m $ " 2>&1 | head -20
+[94m[bash][0m $ " 2>&1 | head
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -rn "isSearchable\|rocket" sr...
+[94m[bash][0m $ " 2>&1
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/test/integration/graphql/utils/search.util.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/test/integration/graphql/utils/search-factory.util.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/test/integration/graphql/utils/create-one-operation.util.ts
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -rn "destroyOneOperation\|del...
+[94m[bash][0m $ grep -rn "AccessTokenJwtPayload" src/engine/core-modules/auth/types/*.ts src/engine/core-modules/aut...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "CommonPropertiesJwtPayload" src/engine/core-modules/auth/types/*.ts | head
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -rn "forgeLegacyHs256Token" t...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -rn "enum AuthProviderEnum" -...
+[94m[bash][0m $ "
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -rn "name:\|labelIdentifier\|...
+[94m[bash][0m $ grep -rln "ROCKET_CUSTOM_OBJECT_SEED" src | head
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && cat src/engine/workspace-manager/d...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -rn "rocket" src/engine/works...
+[94m[write][0m "import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-ope... (7373 chars)"
+Now let me write the Tier-1 integration spec for restricted-member and cross-workspace search isolation.
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/search/search-caller-pe...
+All 5 integration tests pass. Now let me run the full search unit suite, typecheck, and lint.
+[94m[bash][0m $ npx jest src/engine/core-modules/search --config=packages/twenty-server/jest.config.mjs 2>&1 | tail ...
+[94m[bash][0m $ echo "EXIT:$?"
+[94m[bash][0m $ npx oxfmt --check src/engine/core-modules/search/services/document-search-provider.service.ts src/en...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/engine/core-modules/search/services/document-search-pr...
+[94m[bash][0m $ npx oxfmt src/engine/core-modules/search/services/__tests__/document-search-provider.service.spec.ts...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/engine/core-modules/search/services/document-search-pr...
+[94m[bash][0m $ npx jest src/engine/core-modules/search/services/__tests__/document-search-provider.service.spec.ts ...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git status --porcelain
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ executor — P3.3-tree-loading or P3.2-snapshot-sharing are the next Tier-0/1 slices. EOF tail -3 "/Us...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && test -f .ralph-tui/progress.md && head -30 .ralph-tui/pro...
+Now the Ralph progress bridge (section 9b). Let me check the existing progress file.
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && tail -25 .ralph-tui/progress.md
+[94m[bash][0m $ the provider fix is proven at the ORM-contract seam instead. --- EOF tail -5 "/Users/maxaubert/Proje...
+[94m[read][0m
+Done. Summary of the P2.5 slice:
+
+**Finding (the validation caught a real defect):** `document-search-provider.service.ts` queried `getRepository('document')` with **no** `RolePermissionConfig`. That resolves to empty object permissions + `shouldBypassPermissionChecks:false`, so `validateOperationIsPermittedOrThrow` denied select on the non-system `document` object — every caller silently got a caught `PERMISSION_DENIED` and an empty "A2E Documents" group. The provider was un-stubbed but effectively dead.
+
+**Fix:** resolve the caller role permission config from the ambient `getWorkspaceContext()` (same seam `SearchService` uses) and pass it to `getRepository`. No bypass, ambient context stays the only workspace source.
+
+**Tests:**
+- Unit (`document-search-provider.service.spec.ts`): caller role → `intersectionOf`, no-role → fail-closed, no bypass, ambient-workspace scoping ignoring caller `workspaceId`, ILIKE escaping, mapping. 8/8.
+- Tier-1 integration (`search-caller-permissions.integration-spec.ts`, new): seeded "Object-restricted" member never gets rocket titles but still finds a readable pet; a YCombinator member never sees Apple titles and finds its own. 5/5.
+
+**Checks:** search unit 4 suites/18; tsgo exit 0; oxlint 0/0; oxfmt clean; no PLAN.md/locale/commit.
+
+**Not ticked:** document-provider validation through the `searchAppRecords` GraphQL path needs a2e-documents installed (Tier 2/app-install harness); cross-workspace document leg is unit-only.
+
+Reports appended to `docs/plan/phases/phase-02-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

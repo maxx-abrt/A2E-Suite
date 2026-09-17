@@ -98,6 +98,27 @@ export const buildRestoreDocumentPayload = (options: {
   ),
 });
 
+// The parent link comes from the sibling map key, not the row: a lazily
+// loaded page knows the parent it was fetched for even when the query does
+// not select the join column.
+export const collectDocumentsByIdFromSiblings = (
+  siblingsByParentId: Map<string | null, TreeDocument[]>,
+): Map<string, TreeDocument> => {
+  const documentsById = new Map<string, TreeDocument>();
+
+  for (const [parentId, siblings] of siblingsByParentId) {
+    for (const sibling of siblings) {
+      documentsById.set(sibling.id, {
+        id: sibling.id,
+        parentDocumentId: parentId,
+        position: sibling.position ?? null,
+      });
+    }
+  }
+
+  return documentsById;
+};
+
 export type TreeDocumentNode = TreeDocument & {
   children?: { edges: { node: TreeDocumentNode }[] };
 };

@@ -27,6 +27,24 @@ after each iteration and it's included in prompts for context.
   `ApplicationInstallService` awaited it and a failure would have failed the
   install step. Async hooks are enqueued and return immediately, so the step
   must report `failed` / `SEED_FAILED` with retry info, never `succeeded`.
+- **App relation with a custom `joinColumnName` is not filterable by that
+  column:** the workspace GraphQL layer names the join-column input/filter key
+  from the field name (`computeMorphOrRelationFieldJoinColumnName` →
+  `<name>Id`), while `settings.joinColumnName` only drives the physical column
+  via the ORM relation shape. So `manyToOne('parentDocumentId')` on a `parent`
+  field yields a schema key `parentId` but a physical column
+  `parentDocumentId` → a raw `parentId` filter compiles to
+  `"documents"."parentId"` and fails. Read relations through the target id
+  (`parent: { id: { is: 'NULL' } }` / `{ eq }`, a LEFT JOIN) and write through
+  `<name>Id`; never use the custom join column as a GraphQL key.
+- **App logic-function database triggers are post-commit:** a
+  `databaseEventTriggerSettings` handler runs after the row is stored, so it
+  cannot reject a write. Server-side "validation" must repair instead — detect
+  the bad state and rewrite it (e.g. restore the previous parent) in a way that
+  cannot loop (the repair's own event is a no-op). Trigger on relation fields
+  with `updatedFields` including both `<name>` and `<name>Id` (the diff adds
+  both; the custom `joinColumnName` is not the event key). Keep the decision in
+  a loader-injected pure lib so it stays `node --test`-able with no server.
 
 ---
 
@@ -58,4 +76,24 @@ after each iteration and it's included in prompts for context.
   - Seeded restricted-role fixtures already exist: the Apple workspace "Object-restricted" role (assigned to Tim) denies rocket read / pet update, with known userWorkspace/user ids — restricted-member tests need no signup flow.
   - Cross-workspace integration is cheap at Tier 1: forge an HS256 ACCESS token for the seeded YCombinator Tim via `forgeLegacyHs256Token(payload, workspaceId)` (`.env.test` APP_SECRET matches the util's hardcoded default) and call `search` with it.
   - The seeded `document` object only exists once a2e-documents is installed, so its GraphQL path stays out of Tier-1 reach; the provider fix is proven at the ORM-contract seam instead.
+---
+
+## 2026-09-17 - P3.3-tree-loading
+- Implemented lazy/paginated document tree loading: the browser now fetches only root pages up front and each parent's children on expand through its own `first`/`after` cursor page (`pageInfo.hasNextPage`/`endCursor`), with "Charger plus" for deeper pages and a post-mutation reload that drops cached pages and refetches roots + open levels.
+- Files changed: `packages/twenty-apps/internal/a2e-documents/src/lib/document-tree-loading.ts` (new); `.../src/lib/__tests__/document-tree-loading.test.ts` (new); `.../src/lib/document-tree.ts`; `.../src/lib/document-tree-keyboard.ts`; `.../src/front-components/document-browser.front-component.tsx`; `docs/plan/phases/phase-03-report.md`.
+- **Learnings:**
+  - App relations with a custom `joinColumnName` are unreadable through the join-column filter key (see Codebase Patterns) — use nested `parent: { id: ... }` filters; this also fixes the pre-existing invalid `parent: { is: 'NULL' }` root query.
+  - GraphQL mutation inputs for app relations use `<name>Id` (`parentId`), not the custom `joinColumnName` — the browser now translates `buildMoveDocumentPayload`'s `parentDocumentId` to the wire key; `document-page.front-component.tsx` still has the old key (separate slice).
+  - The front-component sandbox has no `--type-aware` oxlint flag (oxlint 0.16); the package gate is `yarn lint` + `tsc --noEmit` + `node --test` + `twenty dev:build`.
+  - Cursor pages need a total order: `position`, then `title`, then `id` as the final tiebreaker keeps `after` stable when the first two tie.
+---
+
+## 2026-09-17 - P3.3-tree-loading (server cycle guard)
+- Added server-side cycle validation for document moves: a new pure lib (`isDocumentParentCycle`, `readDocumentParentChange`, `resolveDocumentCycleRepairParentId`, `repairDocumentParentCycle`) plus the `guard-document-parent-cycle` database-event logic function on `document.updated`.
+- Files changed: `packages/twenty-apps/internal/a2e-documents/src/lib/document-cycle.ts` (new); `.../src/lib/__tests__/document-cycle.test.ts` (new); `.../src/logic-functions/guard-document-parent-cycle.ts` (new); `.../src/constants/universal-identifiers.ts`; `docs/plan/phases/phase-03-report.md`.
+- **Learnings:**
+  - Database events are post-commit (see Codebase Patterns): the guard repairs (restore previous parent, else root) rather than rejects. The repair's own update is a no-op (previous is acyclic; root short-circuits), so no event loop.
+  - `computeUpdatedFieldsFromDiff` emits `<name>` and `<name>Id` (`parent`, `parentId`), never the custom `joinColumnName` (`parentDocumentId`); a trigger listing all three is safe because the filter matches any one.
+  - Reading the parent of a moved document is a genql query `documents(filter:{id:{eq}}){ edges { node { id parent { id } } } }`; the relation-diff fallback (`diff.parent.after.id`) covers events whose raw record omits the join column.
+  - Verify-as-you-go: `yarn lint` + `npx oxfmt --check` + `npx tsc --noEmit` + `node --test` + `npx twenty dev:build .` (16 files, manifest shows the new trigger).
 ---

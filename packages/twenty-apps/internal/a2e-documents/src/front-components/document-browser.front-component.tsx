@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { AppPath, navigate } from 'twenty-sdk/front-component';
@@ -7,6 +7,7 @@ import { DOCUMENT_KIND } from '../constants/field-vocabulary.ts';
 import { OBJECT_IDS } from '../constants/universal-identifiers.ts';
 import {
   buildMoveDocumentPayload,
+  collectDocumentsByIdFromSiblings,
   collectSiblingsByParentId,
   type TreeDocument,
 } from '../lib/document-tree.ts';
@@ -14,6 +15,16 @@ import {
   buildKeyboardMovePayload,
   type TreeMoveDirection,
 } from '../lib/document-tree-keyboard.ts';
+import {
+  hasNextChildrenPage,
+  mergeTreeChildrenPage,
+  needsInitialChildrenFetch,
+  nestTreeFromChildrenMap,
+  TREE_CHILDREN_PAGE_SIZE,
+  type TreeChildrenPage,
+  type TreeNestedNode,
+  type TreeParentPageState,
+} from '../lib/document-tree-loading.ts';
 import { buildAppendPosition } from '../lib/fractional-position.ts';
 import { buildTemplateCopyPayload } from '../lib/instantiate-template.ts';
 import { collectGalleryTemplates } from '../lib/template-gallery.ts';
@@ -31,6 +42,10 @@ import { isPastTrashRetention } from '../lib/trash-retention.ts';
 // genuinely novel tree UX). Sections: quick search, favorites, tree
 // (drag to reparent/reorder via fractional index), trash with restore —
 // the 7-day purge itself runs as the purge-archived-documents cron.
+//
+// The tree loads lazily: only root pages are fetched up front, and expanding
+// a node fetches that parent's children through its own cursor page. Deep
+// trees therefore cost no more than the levels the user actually opens.
 
 export const DOCUMENT_BROWSER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
   'c31a0000-0013-4000-8000-000000000001';
@@ -42,13 +57,11 @@ type DocumentNode = {
   icon?: string | null;
   isFavorite: boolean;
   archivedAt: string | null;
-  parentDocumentId?: string | null;
   position?: string | null;
   content?: {
     blocknote?: string | null;
     markdown?: string | null;
   } | null;
-  children?: { edges: { node: DocumentNode }[] };
 };
 
 const appTheme = {
@@ -72,8 +85,68 @@ const openDocument = (documentId: string): void => {
   });
 };
 
-const flattenNodes = (nodes: DocumentNode[]): DocumentNode[] => {
-  const flattened: DocumentNode[] = [];
+// Siblings are ordered by the fractional index, then title, then id — the
+// final id tiebreaker keeps cursor pages stable when position and title tie.
+const SIBLING_ORDER_BY = [
+  { position: 'AscNullsFirst' },
+  { title: 'Asc' },
+  { id: 'Asc' },
+];
+
+// A parent is filtered through the relation's target id, not the join column
+// key: the workspace schema exposes `parent { id }` while a custom join column
+// name (parentDocumentId) is not a valid filter key.
+const fetchDocumentsPage = async (options: {
+  parentId: string | null;
+  after: string | null;
+}): Promise<TreeChildrenPage<DocumentNode>> => {
+  const client = new CoreApiClient();
+
+  const filter =
+    options.parentId === null
+      ? { parent: { id: { is: 'NULL' } } }
+      : { parent: { id: { eq: options.parentId } } };
+
+  const result = (await client.query({
+    documents: {
+      __args: {
+        filter,
+        orderBy: SIBLING_ORDER_BY,
+        first: TREE_CHILDREN_PAGE_SIZE,
+        ...(options.after === null ? {} : { after: options.after }),
+      },
+      edges: {
+        node: {
+          id: true,
+          title: true,
+          kind: true,
+          icon: true,
+          isFavorite: true,
+          archivedAt: true,
+          position: true,
+          content: { blocknote: true, markdown: true },
+        },
+      },
+      pageInfo: { hasNextPage: true, endCursor: true },
+    },
+  } as never)) as {
+    documents?: {
+      edges?: { node: DocumentNode }[];
+      pageInfo?: { hasNextPage?: boolean; endCursor?: string | null };
+    };
+  };
+
+  return {
+    nodes: result?.documents?.edges?.map((edge) => edge.node) ?? [],
+    hasNextPage: result?.documents?.pageInfo?.hasNextPage ?? false,
+    endCursor: result?.documents?.pageInfo?.endCursor ?? null,
+  };
+};
+
+type DocumentTreeNode = TreeNestedNode<DocumentNode>;
+
+const flattenNodes = (nodes: DocumentTreeNode[]): DocumentTreeNode[] => {
+  const flattened: DocumentTreeNode[] = [];
 
   for (const node of nodes) {
     flattened.push(node);
@@ -85,65 +158,162 @@ const flattenNodes = (nodes: DocumentNode[]): DocumentNode[] => {
   return flattened;
 };
 
+type DocumentTreeState = {
+  childrenByParentId: Map<string | null, DocumentNode[]>;
+  pageStateByParentId: Map<string | null, TreeParentPageState>;
+  loadingParentIds: Set<string | null>;
+  expandedIds: Set<string>;
+  onToggleExpanded: (documentId: string) => void;
+  onLoadMoreChildren: (parentId: string | null) => void;
+};
+
 const DocumentBrowser = () => {
-  const [documents, setDocuments] = useState<DocumentNode[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [childrenByParentId, setChildrenByParentId] = useState<
+    Map<string | null, DocumentNode[]>
+  >(new Map());
+  const [pageStateByParentId, setPageStateByParentId] = useState<
+    Map<string | null, TreeParentPageState>
+  >(new Map());
+  const [loadingParentIds, setLoadingParentIds] = useState<Set<string | null>>(
+    new Set(),
+  );
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [searchInput, setSearchInput] = useState('');
   const [draggedDocumentId, setDraggedDocumentId] = useState<string | null>(
     null,
   );
 
-  const loadDocuments = useCallback(async () => {
-    setIsLoading(true);
+  // Async readers (the page loader and the post-mutation reload) must observe
+  // the latest maps without being re-created on every keystroke.
+  const pageStateByParentIdRef = useRef(pageStateByParentId);
+  const loadingParentIdsRef = useRef(loadingParentIds);
+  const expandedIdsRef = useRef(expandedIds);
 
-    try {
-      const client = new CoreApiClient();
-      const result = (await client.query({
-        documents: {
-          __args: {
-            filter: { parent: { is: 'NULL' } },
-            orderBy: [{ position: 'AscNullsFirst' }, { title: 'Asc' }],
-          },
-          edges: {
-            node: {
-              id: true,
-              title: true,
-              kind: true,
-              icon: true,
-              isFavorite: true,
-              archivedAt: true,
-              position: true,
-              content: { blocknote: true, markdown: true },
-              children: {
-                __args: {
-                  orderBy: [{ position: 'AscNullsFirst' }, { title: 'Asc' }],
-                },
-                edges: {
-                  node: {
-                    id: true,
-                    title: true,
-                    kind: true,
-                    icon: true,
-                    isFavorite: true,
-                    archivedAt: true,
-                    position: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      } as never)) as { documents?: { edges: { node: DocumentNode }[] } };
+  const loadChildrenPage = useCallback(
+    async (parentId: string | null, options?: { append?: boolean }) => {
+      if (loadingParentIdsRef.current.has(parentId)) {
+        return;
+      }
 
-      setDocuments(result?.documents?.edges?.map((edge) => edge.node) ?? []);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+      const isAppend = options?.append === true;
+      const currentState = pageStateByParentIdRef.current.get(parentId);
+      const after = isAppend ? (currentState?.endCursor ?? null) : null;
+
+      loadingParentIdsRef.current = new Set([
+        ...loadingParentIdsRef.current,
+        parentId,
+      ]);
+      setLoadingParentIds(loadingParentIdsRef.current);
+
+      try {
+        const page = await fetchDocumentsPage({ parentId, after });
+
+        setChildrenByParentId((current) => {
+          const next = new Map(current);
+          const loaded = isAppend ? (next.get(parentId) ?? []) : [];
+
+          next.set(parentId, mergeTreeChildrenPage(loaded, page.nodes));
+
+          return next;
+        });
+
+        pageStateByParentIdRef.current = new Map(
+          pageStateByParentIdRef.current,
+        ).set(parentId, {
+          isLoaded: true,
+          endCursor: page.endCursor,
+          hasNextPage: page.hasNextPage,
+        });
+        setPageStateByParentId(pageStateByParentIdRef.current);
+      } finally {
+        const nextLoadingParentIds = new Set(loadingParentIdsRef.current);
+
+        nextLoadingParentIds.delete(parentId);
+        loadingParentIdsRef.current = nextLoadingParentIds;
+        setLoadingParentIds(nextLoadingParentIds);
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
-    void loadDocuments();
-  }, [loadDocuments]);
+    void loadChildrenPage(null);
+  }, [loadChildrenPage]);
+
+  // A mutation can move a node across parents or change sibling order, so the
+  // cached pages are dropped and the roots plus the currently open levels are
+  // refetched — collapsed subtrees stay unloaded.
+  const reloadTree = useCallback(async () => {
+    const expandedDocumentIds = [...expandedIdsRef.current];
+
+    setChildrenByParentId(new Map());
+    pageStateByParentIdRef.current = new Map();
+    setPageStateByParentId(pageStateByParentIdRef.current);
+
+    await loadChildrenPage(null);
+
+    for (const documentId of expandedDocumentIds) {
+      await loadChildrenPage(documentId);
+    }
+  }, [loadChildrenPage]);
+
+  const toggleExpanded = useCallback(
+    (documentId: string) => {
+      const isCurrentlyExpanded = expandedIdsRef.current.has(documentId);
+      const nextExpandedIds = new Set(expandedIdsRef.current);
+
+      if (isCurrentlyExpanded) {
+        nextExpandedIds.delete(documentId);
+      } else {
+        nextExpandedIds.add(documentId);
+      }
+
+      expandedIdsRef.current = nextExpandedIds;
+      setExpandedIds(nextExpandedIds);
+
+      if (
+        !isCurrentlyExpanded &&
+        needsInitialChildrenFetch(
+          pageStateByParentIdRef.current.get(documentId),
+        )
+      ) {
+        void loadChildrenPage(documentId);
+      }
+    },
+    [loadChildrenPage],
+  );
+
+  const loadMoreChildren = useCallback(
+    (parentId: string | null) => {
+      void loadChildrenPage(parentId, { append: true });
+    },
+    [loadChildrenPage],
+  );
+
+  const treeState = useMemo<DocumentTreeState>(
+    () => ({
+      childrenByParentId,
+      pageStateByParentId,
+      loadingParentIds,
+      expandedIds,
+      onToggleExpanded: toggleExpanded,
+      onLoadMoreChildren: loadMoreChildren,
+    }),
+    [
+      childrenByParentId,
+      pageStateByParentId,
+      loadingParentIds,
+      expandedIds,
+      toggleExpanded,
+      loadMoreChildren,
+    ],
+  );
+
+  const documents = useMemo(
+    () => nestTreeFromChildrenMap(childrenByParentId),
+    [childrenByParentId],
+  );
+  const rootNodes = childrenByParentId.get(null) ?? [];
 
   const siblingsByParentId = useMemo(
     () => collectSiblingsByParentId(documents),
@@ -174,7 +344,7 @@ const DocumentBrowser = () => {
       },
     } as never);
 
-    await loadDocuments();
+    await reloadTree();
   };
 
   // Save-as-template = copy the document body into a fresh TEMPLATE record:
@@ -202,7 +372,7 @@ const DocumentBrowser = () => {
       },
     } as never);
 
-    await loadDocuments();
+    await reloadTree();
   };
 
   const duplicateTemplate = async (
@@ -227,7 +397,7 @@ const DocumentBrowser = () => {
       },
     } as never);
 
-    await loadDocuments();
+    await reloadTree();
   };
 
   const createChild = async (
@@ -244,7 +414,7 @@ const DocumentBrowser = () => {
               ...(parentDocumentId === null
                 ? { position: buildAppendPosition(lastRootPosition(documents)) }
                 : {
-                    parentDocumentId,
+                    parentId: parentDocumentId,
                     position: buildAppendPosition(
                       lastChildPosition(documents, parentDocumentId),
                     ),
@@ -256,7 +426,7 @@ const DocumentBrowser = () => {
       },
     } as never);
 
-    await loadDocuments();
+    await reloadTree();
   };
 
   // Drop semantics: dropping ON a node makes it a child (append last);
@@ -267,7 +437,7 @@ const DocumentBrowser = () => {
     targetSiblings: TreeDocument[];
     insertIndex: number;
   }): Promise<void> => {
-    const documentsById = collectDocumentsById(documents);
+    const documentsById = collectDocumentsByIdFromSiblings(siblingsByParentId);
 
     let payload;
 
@@ -287,12 +457,18 @@ const DocumentBrowser = () => {
 
     await client.mutation({
       updateDocument: {
-        __args: { id: options.documentId, data: payload },
+        __args: {
+          id: options.documentId,
+          data: {
+            parentId: payload.parentDocumentId,
+            position: payload.position,
+          },
+        },
         id: true,
       },
     } as never);
 
-    await loadDocuments();
+    await reloadTree();
   };
 
   // Non-drag equivalent of the drop handlers, for keyboard users (C7). The
@@ -317,12 +493,18 @@ const DocumentBrowser = () => {
 
     await client.mutation({
       updateDocument: {
-        __args: { id: documentNode.id, data: payload },
+        __args: {
+          id: documentNode.id,
+          data: {
+            parentId: payload.parentDocumentId,
+            position: payload.position,
+          },
+        },
         id: true,
       },
     } as never);
 
-    await loadDocuments();
+    await reloadTree();
   };
 
   const toggleFavorite = async (documentNode: DocumentNode): Promise<void> => {
@@ -338,7 +520,7 @@ const DocumentBrowser = () => {
       },
     } as never);
 
-    await loadDocuments();
+    await reloadTree();
   };
 
   const archiveDocument = async (documentNode: DocumentNode): Promise<void> => {
@@ -354,7 +536,7 @@ const DocumentBrowser = () => {
       },
     } as never);
 
-    await loadDocuments();
+    await reloadTree();
   };
 
   const restoreDocument = async (
@@ -369,7 +551,7 @@ const DocumentBrowser = () => {
           id: documentNode.id,
           data: {
             archivedAt: null,
-            parentDocumentId: targetParentId,
+            parentId: targetParentId,
             position: buildAppendPosition(
               targetParentId === null
                 ? lastRootPosition(documents)
@@ -381,7 +563,7 @@ const DocumentBrowser = () => {
       },
     } as never);
 
-    await loadDocuments();
+    await reloadTree();
   };
 
   const destroyDocument = async (documentNode: DocumentNode): Promise<void> => {
@@ -394,7 +576,7 @@ const DocumentBrowser = () => {
       },
     } as never);
 
-    await loadDocuments();
+    await reloadTree();
   };
 
   // Shares snapshot the CURRENT body: later edits stay private until a new
@@ -418,7 +600,7 @@ const DocumentBrowser = () => {
       },
     } as never);
 
-    await loadDocuments();
+    await reloadTree();
   };
 
   const archivedNodes = useMemo(
@@ -434,6 +616,7 @@ const DocumentBrowser = () => {
   );
 
   const matchingSearch = searchInput.trim().toLowerCase();
+  const isLoadingRoots = rootNodes.length === 0 && loadingParentIds.has(null);
 
   return (
     <div
@@ -464,7 +647,7 @@ const DocumentBrowser = () => {
         onChange={(event) => setSearchInput(event.target.value)}
         style={searchInputStyle}
       />
-      {isLoading ? (
+      {isLoadingRoots ? (
         <p style={{ color: appTheme.textSecondary }}>Chargement…</p>
       ) : (
         <>
@@ -516,12 +699,13 @@ const DocumentBrowser = () => {
             )}
           </DocumentSection>
           <DocumentSection title="Arborescence">
-            {documents.map((node) => (
+            {rootNodes.map((node) => (
               <DocumentTreeItem
                 key={node.id}
                 documentNode={node}
                 depth={0}
                 parentId={null}
+                treeState={treeState}
                 draggedDocumentId={draggedDocumentId}
                 onDragStart={setDraggedDocumentId}
                 onDragEnd={() => setDraggedDocumentId(null)}
@@ -537,6 +721,17 @@ const DocumentBrowser = () => {
                 onToggleFavorite={toggleFavorite}
               />
             ))}
+            {hasNextChildrenPage(pageStateByParentId.get(null)) && (
+              <li style={{ padding: appTheme.spacing1 }}>
+                <button
+                  type="button"
+                  onClick={() => loadMoreChildren(null)}
+                  style={ghostButtonStyle}
+                >
+                  Charger plus
+                </button>
+              </li>
+            )}
           </DocumentSection>
           <DocumentSection title="Corbeille">
             {archivedNodes.length === 0 ? (
@@ -558,37 +753,25 @@ const DocumentBrowser = () => {
   );
 };
 
-const lastRootPosition = (documents: DocumentNode[]): string | undefined =>
+const lastRootPosition = (documents: DocumentTreeNode[]): string | undefined =>
   documents[documents.length - 1]?.position ?? undefined;
 
 const lastChildPosition = (
-  documents: DocumentNode[],
+  documents: DocumentTreeNode[],
   parentDocumentId: string,
 ): string | undefined => {
-  const parentNode = documents.find((node) => node.id === parentDocumentId);
+  const parentNode = flattenNodes(documents).find(
+    (node) => node.id === parentDocumentId,
+  );
   const childNodes =
     parentNode?.children?.edges?.map((edge) => edge.node) ?? [];
 
   return childNodes[childNodes.length - 1]?.position ?? undefined;
 };
 
-const collectDocumentsById = (
-  documents: DocumentNode[],
-): Map<string, TreeDocument> => {
-  const documentsById = new Map<string, TreeDocument>();
-
-  for (const node of flattenNodes(documents)) {
-    documentsById.set(node.id, {
-      id: node.id,
-      parentDocumentId: node.parentDocumentId ?? null,
-      position: node.position ?? null,
-    });
-  }
-
-  return documentsById;
-};
-
-const collectArchivedNodes = (documents: DocumentNode[]): DocumentNode[] =>
+const collectArchivedNodes = (
+  documents: DocumentTreeNode[],
+): DocumentTreeNode[] =>
   flattenNodes(documents).filter((node) => node.archivedAt !== null);
 
 const ghostButtonStyle = {
@@ -680,6 +863,7 @@ type DocumentTreeItemProps = {
   documentNode: DocumentNode;
   depth: number;
   parentId: string | null;
+  treeState: DocumentTreeState;
   draggedDocumentId: string | null;
   onDragStart: (documentId: string) => void;
   onDragEnd: () => void;
@@ -708,6 +892,7 @@ const DocumentTreeItem = ({
   documentNode,
   depth,
   parentId,
+  treeState,
   draggedDocumentId,
   onDragStart,
   onDragEnd,
@@ -722,9 +907,12 @@ const DocumentTreeItem = ({
   onKeyboardMove,
   onToggleFavorite,
 }: DocumentTreeItemProps) => {
-  const [isExpanded, setIsExpanded] = useState(depth < 1);
-  const childNodes =
-    documentNode.children?.edges?.map((edge) => edge.node) ?? [];
+  const childNodes = treeState.childrenByParentId.get(documentNode.id) ?? [];
+  const isExpanded = treeState.expandedIds.has(documentNode.id);
+  const areChildrenLoading = treeState.loadingParentIds.has(documentNode.id);
+  const hasMoreChildren = hasNextChildrenPage(
+    treeState.pageStateByParentId.get(documentNode.id),
+  );
 
   const handleDropOnSelf = async (event: React.DragEvent): Promise<void> => {
     event.preventDefault();
@@ -761,18 +949,15 @@ const DocumentTreeItem = ({
           gap: appTheme.spacing1,
         }}
       >
-        {childNodes.length > 0 ? (
-          <button
-            type="button"
-            aria-expanded={isExpanded}
-            onClick={() => setIsExpanded(!isExpanded)}
-            style={ghostButtonStyle}
-          >
-            {isExpanded ? '▾' : '▸'}
-          </button>
-        ) : (
-          <span style={{ width: '1em' }} />
-        )}
+        <button
+          type="button"
+          aria-expanded={isExpanded}
+          aria-label={`Afficher les sous-documents de ${documentNode.title}`}
+          onClick={() => treeState.onToggleExpanded(documentNode.id)}
+          style={ghostButtonStyle}
+        >
+          {isExpanded ? '▾' : '▸'}
+        </button>
         <button
           type="button"
           draggable
@@ -915,6 +1100,7 @@ const DocumentTreeItem = ({
                 documentNode={childNode}
                 depth={depth + 1}
                 parentId={documentNode.id}
+                treeState={treeState}
                 draggedDocumentId={draggedDocumentId}
                 onDragStart={onDragStart}
                 onDragEnd={onDragEnd}
@@ -931,6 +1117,20 @@ const DocumentTreeItem = ({
               />
             </div>
           ))}
+          {areChildrenLoading && (
+            <li style={{ color: appTheme.textSecondary }}>Chargement…</li>
+          )}
+          {hasMoreChildren && (
+            <li>
+              <button
+                type="button"
+                onClick={() => treeState.onLoadMoreChildren(documentNode.id)}
+                style={ghostButtonStyle}
+              >
+                Charger plus
+              </button>
+            </li>
+          )}
         </ul>
       )}
     </li>

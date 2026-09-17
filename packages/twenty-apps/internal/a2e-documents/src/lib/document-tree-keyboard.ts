@@ -1,5 +1,6 @@
 import {
   buildMoveDocumentPayload,
+  collectDocumentsByIdFromSiblings,
   type MoveDocumentPayload,
   type TreeDocument,
 } from './document-tree.ts';
@@ -14,24 +15,6 @@ type MoveTarget = {
   parentId: string | null;
   siblings: TreeDocument[];
   insertIndex: number;
-};
-
-const documentsByIdFromSiblings = (
-  siblingsByParentId: Map<string | null, TreeDocument[]>,
-): Map<string, TreeDocument> => {
-  const documentsById = new Map<string, TreeDocument>();
-
-  for (const [parentId, siblings] of siblingsByParentId) {
-    for (const sibling of siblings) {
-      documentsById.set(sibling.id, {
-        id: sibling.id,
-        parentDocumentId: parentId,
-        position: sibling.position ?? null,
-      });
-    }
-  }
-
-  return documentsById;
 };
 
 const resolveMoveTarget = (
@@ -115,7 +98,9 @@ export const buildKeyboardMovePayload = (options: {
     return null;
   }
 
-  const documentsById = documentsByIdFromSiblings(options.siblingsByParentId);
+  const documentsById = collectDocumentsByIdFromSiblings(
+    options.siblingsByParentId,
+  );
   const target = resolveMoveTarget(
     {
       direction: options.direction,
