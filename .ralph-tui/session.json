@@ -3,10 +3,10 @@
   "sessionId": "45d57c97-9f0d-4994-b4f8-0d49439c6465",
   "status": "running",
   "startedAt": "2026-09-17T14:18:16.671Z",
-  "updatedAt": "2026-09-17T17:26:22.206Z",
-  "currentIteration": 13,
+  "updatedAt": "2026-09-17T17:34:43.415Z",
+  "currentIteration": 14,
   "maxIterations": 20,
-  "tasksCompleted": 10,
+  "tasksCompleted": 11,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -146,6 +146,16 @@
       "durationMs": 296292,
       "startedAt": "2026-09-17T17:13:40.114Z",
       "endedAt": "2026-09-17T17:18:36.406Z"
+    },
+    {
+      "iteration": 14,
+      "status": "completed",
+      "taskId": "P4.2-subtasks-dependencies-ui",
+      "taskTitle": "P4.2: subtasks & dependencies UI with cycle validation",
+      "taskCompleted": true,
+      "durationMs": 460280,
+      "startedAt": "2026-09-17T17:18:41.925Z",
+      "endedAt": "2026-09-17T17:26:22.205Z"
     }
   ],
   "skippedTaskIds": [],

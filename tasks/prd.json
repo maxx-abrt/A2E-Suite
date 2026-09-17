@@ -246,9 +246,10 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 12,
-      "passes": false,
+      "passes": true,
       "notes": "No literal (after X) dependency. The 1k-task Gantt benchmark with recorded hardware (P4 acceptance) is a later measurement slice, not this component story.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P4.2-time-tracker",
@@ -308,6 +309,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-17T17:26:22.206Z"
+    "updatedAt": "2026-09-17T17:34:43.415Z"
   }
 }

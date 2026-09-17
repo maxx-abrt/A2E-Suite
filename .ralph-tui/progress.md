@@ -7,6 +7,16 @@ after each iteration and it's included in prompts for context.
 
 *Add reusable patterns discovered during development here.*
 
+- **Front-component layout/virtualization is tested as a pure lib, not a DOM:**
+  the app packages have no RTL/jsdom/Storybook and `node --experimental-strip-types`
+  cannot parse `.tsx` JSX. Put the render model (time range, bars, order) and the
+  virtualization windows (`compute*Window` → `{startIndex,endIndex,offsetY,…}`,
+  viewport + overscan, clamped to bounds) in `src/lib/*.ts` returning plain data,
+  keep the `.tsx` a thin renderer over it, and test the lib with `node:test` — a
+  1k-row fixture asserting the mounted row count stays bounded stands in for a
+  DOM virtualization test. Viewport dimensions are read defensively from the
+  scroll container (remote-DOM `clientWidth` may be 0 → fall back to declared size).
+
 - **App inverse relation fields must be standalone, on the relation target:**
   `defineObject({fields})` uses `ObjectFieldManifest` = `FieldManifest` with
   `objectUniversalIdentifier` omitted, so an inverse O2M declared *inside* an
@@ -283,4 +293,16 @@ after each iteration and it's included in prompts for context.
   - **Gotcha:** the existing `task.blockIssue` field is task ➜ **note** (`note-blocked-tasks` inverse), so the PRD's "blockedBy self-relation" does not match source — the dependency-picker slice must decide (blocking note vs new task↔task self-relation) before building.
   - Tier-0 gates green: 80/80 `node --test` (11 new), `tsc --noEmit` exit 0, oxlint 0 errors (1 pre-existing warning), oxfmt clean on all 5 touched files (lib-inclusive config; root ignores `**/lib/**`), `twenty dev:build .` 18 files with `task-subtasks` + the command in the manifest. `nx lint:diff-with-main` has no `a2e-projects` project and oxlint 0.16.12 rejects `--type-aware`.
   - Still open: the dependency picker + its cycle tests, and the Tier-2 live nested-list/reparent proof (orchestrator install).
+---
+
+## 2026-09-17 - P4.2-gantt (Gantt/timeline view front component)
+- Delivered the task's only bullet: a framer-motion-free, virtualized Gantt front component for the project record page. Pure lib `lib/project-gantt.ts` owns the timeline math (createdAt➜dueAt bounds with milestone collapse, padded minimum range, clamped day offsets, deterministic bar order, `parentTask` dependency links, row + day overscan windows, and a `buildGanttModel` that returns only the visible rows/ticks). `front-components/project-gantt.front-component.tsx` queries the project's tasks with pagination, renders a sticky axis + label column, absolutely positioned bars/diamonds, SVG parent➜child elbows limited to visible rows, and a "Charger plus" button. Registered as a `Gantt` FRONT_COMPONENT widget on the project page Timeline tab.
+- Files changed: `packages/twenty-apps/internal/a2e-projects/src/lib/project-gantt.ts` (new); `.../src/lib/__tests__/project-gantt.test.ts` (new, 15); `.../src/front-components/project-gantt.front-component.tsx` (new); `.../src/constants/universal-identifiers.ts` (+`projectGantt` id); `.../src/page-layouts/project.page-layout.ts` (+Gantt widget); `docs/plan/phases/phase-04-report.md`; `.ralph-tui/progress.md`.
+- **Learnings:**
+  - No `.tsx` in node:test: JSX cannot be stripped, so the testable unit is the pure model. That satisfies "rendering + virtualization" behavior at Tier 0 without adding test infra; a real DOM assertion is Tier 2.
+  - Task has no start field (native: dueAt only, plus createdAt), so the bar start is `createdAt`; a task with a single date renders as a milestone marker. Do not invent a start field for the Gantt story.
+  - Dependency arrows use the existing `parentTask` self-relation (`readTaskParentId` reused from `lib/task-tree.ts`); `blockIssue` is task➜note and is NOT a dependency edge (prior gotcha).
+  - Absolute day positions must be `day * DAY_WIDTH` in the timeline origin (not `(day - window.startDay)`), because the axis/grid live inside the horizontally scrolled content; the window only selects which ticks mount.
+  - Tier-0 gates green: 95/95 `node --test` (15 new), `tsc --noEmit` exit 0, oxlint 0 errors (1 pre-existing warning), oxfmt clean on 5 touched files (lib-inclusive config; root ignores `**/lib/**`), `twenty dev:build .` 20 files with `project-gantt` + the widget in the manifest. `nx lint:diff-with-main` has no `a2e-projects` project and oxlint rejects `--type-aware`.
+  - Still open: the Tier-2 install/open-the-widget proof (orchestrator), and the DOM-level render assertion if the orchestrator wants one.
 ---

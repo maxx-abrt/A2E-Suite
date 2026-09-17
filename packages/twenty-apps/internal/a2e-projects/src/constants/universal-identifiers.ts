@@ -96,6 +96,7 @@ export const FRONT_COMPONENT_IDS = {
   createProjectCommand: 'c31a0000-0013-4000-8000-000000000004',
   goToProjects: 'c31a0000-0013-4000-8000-000000000005',
   taskSubtasks: 'c31a0000-0013-4000-8000-000000000007',
+  projectGantt: 'c31a0000-0013-4000-8000-000000000008',
 } as const;
 
 export const VIEW_IDS = {
