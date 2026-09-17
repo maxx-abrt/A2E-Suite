@@ -59,9 +59,10 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "No literal (after X) dependency; P0.2 [x] DONE 2026-09-13 supplies the repaired auth context. Named executor-ready by phase-02 report ('next Tier-0/1 slices are ... P2.5 real-provider validation').",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P3.3-tree-loading",
@@ -299,6 +300,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-17T14:33:04.265Z"
+    "updatedAt": "2026-09-17T14:43:15.946Z"
   }
 }

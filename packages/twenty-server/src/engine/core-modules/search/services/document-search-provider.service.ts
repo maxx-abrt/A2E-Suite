@@ -8,6 +8,8 @@ import {
   type SearchProvider,
   type SearchProviderResult,
 } from 'src/engine/core-modules/search/types/search-provider.type';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 // APPLICATION_UNIVERSAL_IDENTIFIER of the a2e-documents app
@@ -47,8 +49,12 @@ export class DocumentSearchProviderService implements SearchProvider {
   // tree but is meaningless for search ranking.
   // Runs under the CALLER's auth context (ambient AsyncLocalStorage from the
   // GraphQL middleware) with normal repository permissions: a role or row
-  // predicate that hides a document must also hide it from Cmd+K. Never
-  // re-introduce a system context or shouldBypassPermissionChecks here.
+  // predicate that hides a document must also hide it from Cmd+K. The role
+  // permission config MUST be resolved from that ambient context and passed to
+  // getRepository — without it the repository has empty object permissions,
+  // which denies select on the non-system `document` object (every caller gets
+  // a caught PERMISSION_DENIED and an empty Cmd+K group). Never re-introduce a
+  // system context or shouldBypassPermissionChecks here.
   async search(params: SearchProviderParams): Promise<SearchProviderResult> {
     const searchInput = params.searchInput.trim();
 
@@ -60,9 +66,18 @@ export class DocumentSearchProviderService implements SearchProvider {
     // select projection returns exactly DocumentSearchRecord rows.
     const records = (await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
+        const context = getWorkspaceContext();
+        const rolePermissionConfig =
+          resolveRolePermissionConfig({
+            authContext: context.authContext,
+            userWorkspaceRoleMap: context.userWorkspaceRoleMap,
+            apiKeyRoleMap: context.apiKeyRoleMap,
+          }) ?? undefined;
+
         const documentRepository =
           this.workspaceOrmManager.getRepository<DocumentWorkspaceRepository>(
             'document',
+            rolePermissionConfig,
           );
 
         return documentRepository.find({

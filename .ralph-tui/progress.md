@@ -48,3 +48,14 @@ after each iteration and it's included in prompts for context.
   - The front (`A2eWorkspaceTemplatePreview`) only renders `localizedMessage` for `FAILED` steps, so the truthful status has to be `failed` for the admin to see retry info.
   - Retry re-runs only non-succeeded steps; the seed step's re-resolution never re-enqueues the install hook, so no duplicate seeds (unit + real-DB spec cover it).
 ---
+
+## 2026-09-17 - P2.5-provider-validation
+- Repaired the real document search provider's caller-permission path: it queried `getRepository('document')` with NO role permission config, which resolves to empty object permissions and denies select on the non-system `document` object — every caller got a caught `PERMISSION_DENIED` and an empty "A2E Documents" Cmd+K group. It now resolves `resolveRolePermissionConfig(getWorkspaceContext())` (the same seam `SearchService` uses) and passes it to the repository; no bypass, ambient context remains the only workspace source.
+- Added Tier-1 integration coverage for the records `search` resolver's no-leak contract: seeded "Object-restricted" role (Apple Tim) cannot read rockets but can read pets, and a YCombinator member cannot see Apple titles.
+- Files changed: `packages/twenty-server/src/engine/core-modules/search/services/document-search-provider.service.ts`; `.../services/__tests__/document-search-provider.service.spec.ts`; `packages/twenty-server/test/integration/graphql/suites/search/search-caller-permissions.integration-spec.ts` (new); `docs/plan/phases/phase-02-report.md`.
+- **Learnings:**
+  - `getRepository(name)` with no `RolePermissionConfig` yields `{}` object permissions + `shouldBypassPermissionChecks:false` → `validateOperationIsPermittedOrThrow` denies select for any non-system object. A caller-context provider MUST resolve and pass the config; "ambient auth context" alone is not enough.
+  - Seeded restricted-role fixtures already exist: the Apple workspace "Object-restricted" role (assigned to Tim) denies rocket read / pet update, with known userWorkspace/user ids — restricted-member tests need no signup flow.
+  - Cross-workspace integration is cheap at Tier 1: forge an HS256 ACCESS token for the seeded YCombinator Tim via `forgeLegacyHs256Token(payload, workspaceId)` (`.env.test` APP_SECRET matches the util's hardcoded default) and call `search` with it.
+  - The seeded `document` object only exists once a2e-documents is installed, so its GraphQL path stays out of Tier-1 reach; the provider fix is proven at the ORM-contract seam instead.
+---

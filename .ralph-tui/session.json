@@ -3,10 +3,10 @@
   "sessionId": "45d57c97-9f0d-4994-b4f8-0d49439c6465",
   "status": "running",
   "startedAt": "2026-09-17T14:18:16.671Z",
-  "updatedAt": "2026-09-17T14:33:04.265Z",
-  "currentIteration": 1,
+  "updatedAt": "2026-09-17T14:43:15.946Z",
+  "currentIteration": 2,
   "maxIterations": 20,
-  "tasksCompleted": 1,
+  "tasksCompleted": 2,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -26,6 +26,16 @@
       "durationMs": 434810,
       "startedAt": "2026-09-17T14:18:33.370Z",
       "endedAt": "2026-09-17T14:25:48.180Z"
+    },
+    {
+      "iteration": 2,
+      "status": "completed",
+      "taskId": "P1.6b-seed-samples-truth",
+      "taskTitle": "P1.6b: seed-samples step reports truthfully (no fake completed preset)",
+      "taskCompleted": true,
+      "durationMs": 430557,
+      "startedAt": "2026-09-17T14:25:53.707Z",
+      "endedAt": "2026-09-17T14:33:04.264Z"
     }
   ],
   "skippedTaskIds": [],

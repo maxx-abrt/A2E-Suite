@@ -1,0 +1,116 @@
+# Iteration 2 Log
+
+## Metadata
+
+- **Task ID**: P1.6b-seed-samples-truth
+- **Task Title**: P1.6b: seed-samples step reports truthfully (no fake completed preset)
+- **Description**: As a workspace admin, I want a failed seeding step to surface as failed with retry info, so that a preset is never reported complete when its samples did not land.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-17T14:25:53.707Z
+- **Ended At**: 2026-09-17T14:33:04.264Z
+- **Duration**: 7m 10s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite[0m pattern: [96mP1.6b-seed-samples-truth[0m
+[94m[bash][0m $ grep -n "P1.6b" PLAN.md
+[94m[bash][0m $ grep -n "P1.6b-seed-samples-truth" tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -n "CLAIMED\|P1.6b-seed-samples-truth\|P1.6b-concurrency-proof" docs/plan/phases/phase-01-repor...
+[94m[bash][0m $ ls -la docs/plan/phases/ && echo "---" && wc -l docs/plan/phases/phase-01-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ grep -n "seed\|Seed\|sample" docs/plan/05-template-contracts.md
+[94m[bash][0m $ grep -rn "resolveSampleSeedingStep" packages/twenty-server/src/ --include=*.ts
+[94m[bash][0m $ ls packages/twenty-server/src/engine/core-modules/onboarding/
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96mresolveSampleSeedingStep[0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[bash][0m $ grep -rn "postInstallLogicFunction\|shouldRunSynchronously\|runInstallStep\|runPostInstall" packages...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "seed-samples\|resolveSampleSeedingStep\|postInstallLogicFunction\|shouldRunSynchronously\|S...
+[94m[bash][0m $ ls packages/twenty-server/src/engine/core-modules/onboarding/__tests__/ packages/twenty-server/src/e...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[bash][0m $ grep -n "delegated\|seed-samples\|SEED_FAILED\|post-install" docs/plan/phases/phase-01-report.md | h...
+[94m[bash][0m $ grep -rn "shouldRunSynchronously" packages/twenty-shared/src packages/twenty-server/src packages/twe...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/postInstallLogicFunctionApplicationType.ts
+[94m[read][0m
+[94m[bash][0m $ grep -rln "postInstall" packages/twenty-apps/ 2>/dev/null | head -20
+[94m[bash][0m $ grep -rn "shouldRunSynchronously\|definePostInstall\|postInstall" packages/twenty-apps/internal/a2e-...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ grep -rn "seed-samples\|SEED_FAILED\|SEED_SAMPLES\|seedSamples" packages/twenty-front/src packages/t...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "postInstallLogicFunction" packages/twenty-shared/src/application/*.ts
+[94m[bash][0m $ grep -rln "seed-samples\|SEED_SAMPLES\|SeedSamples" packages/twenty-server/test packages/twenty-serv...
+[94m[bash][0m $ grep -n "manifest" packages/twenty-server/src/engine/core-modules/application/application-registrati...
+[94m[bash][0m $ redis-cli ping 2>&1
+[94m[bash][0m $ grep -rn "import.*Manifest" packages/twenty-server/src/engine/core-modules/application/application-r...
+[94m[bash][0m $ echo "local: $(date)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+I have enough context. Let me claim the slice in the phase report.
+[94m[bash][0m $ grep -n "CLAIMED — P1.6b-seed-samples-truth" docs/plan/phases/phase-01-report.md
+[94m[todowrite][0m
+[94m[edit][0m
+Now let me implement the service change:
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[bash][0m $ npx jest src/engine/core-modules/onboarding/__tests__/workspace-template.service.spec.ts --config=pa...
+[94m[bash][0m $ echo "EXIT: $?"
+[94m[bash][0m $ npx jest src/engine/core-modules/onboarding --config=packages/twenty-server/jest.config.mjs 2>&1 | t...
+[94m[bash][0m $ echo "EXIT: $?"
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/engine/core-modules/onboarding/workspace-template.serv...
+[94m[bash][0m $ npx oxfmt src/engine/core-modules/onboarding/workspace-template.service.ts src/engine/core-modules/o...
+[94m[bash][0m $ git diff --stat && echo "---" && git diff packages/twenty-server/src/engine/core-modules/onboarding/...
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -20
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-server 2>&1 | tail -25
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/onboarding/concurrent-s...
+[94m[bash][0m $ " 2>&1 | tail -3
+[94m[bash][0m $ ls packages/twenty-server/.env* 2>/dev/null
+[94m[bash][0m $ psql "postgres://postgres:postgres@localhost:5432/twenty" -tc "SELECT 1" 2>&1 | head -2
+[94m[bash][0m $ " 2>&1 | tail -3
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ grep -rn "SEED_FAILED\|seed-samples" docs/ PLAN.md 2>/dev/null | head
+[94m[bash][0m $ grep -rln "SEED_SAMPLES\|seed-samples\|SEED_FAILED" packages/twenty-front/src 2>/dev/null | grep -i ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[bash][0m $ npx jest src/engine/core-modules/onboarding --config=packages/twenty-server/jest.config.mjs 2>&1 | t...
+[94m[bash][0m $ head -30 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ grep -n "SEED_FAILED" packages/twenty-server/src/engine/core-modules/onboarding/workspace-template.s...
+[94m[todowrite][0m
+Slice done and reported (`done-for-review`, Ready-to-tick: yes).
+
+**What changed** — `resolveSampleSeedingStep` (workspace-template.service.ts:476) had been reporting `succeeded` from the mere presence of a post-install hook, before the async hook ever ran. It now:
+- `succeeded` only for a synchronous hook (`shouldRunSynchronously === true`), which `ApplicationInstallService` awaits and aborts on error;
+- `failed` + `SEED_FAILED` + localized retry guidance for async hooks (the SDK default; all a2e apps ship `false`) — never `succeeded`;
+- `skipped` unchanged for zero succeeded installs / no hook. `step.errorCode` is now copied through.
+
+**Verified (Tier 0/1)**: onboarding jest 60/60; tsgo exit 0; oxlint 0/0 + oxfmt clean; real-DB `concurrent-same-key-retry` integration spec 2/2 (cache lock + no duplicate installs); check-docs PASS; lint:diff clean (uncommitted edits covered directly by oxlint/oxfmt).
+
+**Coordination**: updated the sibling concurrency spec's async-seed assertion from `SUCCEEDED` to `FAILED+SEED_FAILED` without weakening its install-count/CacheLock proof. Gating `appliedTemplateKeyVersion` on the seed step is deliberately out of scope (task note: step-status truth only) and flagged as an open product call under `Next`.
+
+Tier-2 live reinstall confirming seeded rows > 0 remains for the orchestrator.
+
+<promise>COMPLETE</promise>
