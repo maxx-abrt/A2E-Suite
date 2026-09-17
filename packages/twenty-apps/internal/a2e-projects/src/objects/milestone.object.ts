@@ -47,6 +47,17 @@ export default defineObject({
       isNullable: true,
     },
     {
+      // Trash lifecycle field (P4.3): present = in the corbeille, restore
+      // clears it, the purge cron destroys past 7 days (P3 mirror).
+      universalIdentifier: 'c31a0300-0001-4000-8000-000000000004',
+      type: FieldType.DATE_TIME,
+      name: 'archivedAt',
+      label: 'Archivé le',
+      description: 'Présent = dans la corbeille (restauration 7 jours)',
+      icon: 'IconArchive',
+      isNullable: true,
+    },
+    {
       universalIdentifier: RELATION_IDS.projectMilestone,
       type: FieldType.RELATION,
       name: 'project',

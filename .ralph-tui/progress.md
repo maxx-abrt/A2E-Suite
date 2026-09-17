@@ -133,6 +133,21 @@ after each iteration and it's included in prompts for context.
   `ignorePatterns` do not include `**/lib/**`. Also expect `**/lib/**` sources
   (e.g. `src/lib/recurring-task-generator.ts`) to be untested by the standard
   formatter gate.
+- **App-level trash lifecycle (P3 pattern) = a nullable `archivedAt` field +
+  data retention policy + purge cron:** app-owned objects mark the corbeille
+  with a DATE_TIME `archivedAt` (present = trashed, restore writes `null`)
+  instead of native soft-delete, so the trash list stays queryable across the
+  whole archive window. Keep the policy as data (`TRASH_RETENTION_DAYS`,
+  `isPastTrashRetention`) so the cron and the archive/restore payload builders
+  read one window; an empty/unparsable timestamp NEVER purges (a broken clock
+  must not destroy a visible record). The cron is an app logic function that
+  queries per object `filter: { archivedAt: { is: 'NOT_NULL' } }`, filters by
+  retention, then calls the generated `delete<Plural>` mutation (the default
+  function role has no destroy). Standard objects keep Twenty's native trash —
+  never add a parallel `archivedAt` to `task`. Instances: `a2e-documents`
+  (`purge-archived-documents`), `a2e-projects` (`purge-projects-trash`; targets
+  declared once in `TRASH_OBJECT_TARGETS`, handler client injectable for
+  `node --test`).
 
 ---
 
@@ -244,4 +259,15 @@ after each iteration and it's included in prompts for context.
   - `npx twenty dev:build .` succeeded (16 files) and the built manifest now carries `recurring-task-generator` @ `c31a0000-0012-4000-8000-000000000009` with label/icon + inferred inputSchema — the manifest-declaration assertion.
   - Tier-0 gates green: 57/57 `node --test`, `tsc --noEmit` exit 0, oxlint 0/0 (1 pre-existing warning), oxfmt clean on all touched files (strict lib-inclusive config). `nx lint:diff-with-main` has no `a2e-projects` project and oxlint 0.16.12 rejects `--type-aware` (package gates substitute).
   - Still open: live materialization/execution of the recipe (Tier 2 orchestrator), the task-extension live lifecycle tests, and the stale already-satisfied milestone bullet.
+---
+
+## 2026-09-17 - P4.3-trash
+- Implemented the a2e-projects trash lifecycle mirroring the P3 documents pattern: a nullable `archivedAt` DATE_TIME corbeille field on the app-owned objects (project, milestone, timeEntry, label), a pure retention policy lib (`TRASH_RETENTION_DAYS`, `isInTrash`, `isPastTrashRetention`, `isRestorable`, `buildArchivePayload`, `buildRestorePayload`), and a real purge cron that replaces the previous no-op stub.
+- The cron handler `purgeExpiredTrash` queries each owned object with `filter: { archivedAt: { is: 'NOT_NULL' } }`, deletes only rows past the 7-day window via the generated `delete<Plural>` mutation, and returns per-object counts; the client is injectable so `node --test` exercises the whole sweep with no server. `TRASH_OBJECT_TARGETS` declares the four objects once. Standard `task` is intentionally excluded — Twenty's native trash already covers it, and an app `archivedAt` there would be a duplicate system.
+- Files changed: `packages/twenty-apps/internal/a2e-projects/src/lib/trash-retention.ts` (new); `.../src/lib/__tests__/trash-retention.test.ts` (new, 8); `.../src/logic-functions/handlers/purge-trash-handler.ts` (new); `.../src/logic-functions/__tests__/purge-trash-handler.test.ts` (new, 4); `.../src/logic-functions/purge-trash.logic-function.ts`; `.../src/objects/{project,milestone,time-entry,label}.object.ts`; `docs/plan/phases/phase-04-report.md`; `.ralph-tui/progress.md`.
+- **Learnings:**
+  - Retain the P3 contract exactly: policy as data, unparsable/empty `archivedAt` never purges, purge via `delete<Plural>` (role has no destroy) so native trash cleanup does the final hard delete.
+  - `dev:build` succeeded (16 files) and the manifest now carries 4 `archivedAt` fields; nothing sets the field yet — an archive/restore action surface is P4.2 UX, the field is editable on the native record page meanwhile.
+  - Tier-0 gates green: 69/69 `node --test`, `tsc --noEmit` exit 0, oxlint 0 errors (1 pre-existing warning), oxfmt clean on all touched files (lib-inclusive config; root ignores `**/lib/**`). `nx lint:diff-with-main` has no `a2e-projects` project and oxlint 0.16.12 rejects `--type-aware` (package gates substitute).
+  - Still open: Tier-2 live archive→restore→purge proof (orchestrator); P4.2 archive/restore UI.
 ---
