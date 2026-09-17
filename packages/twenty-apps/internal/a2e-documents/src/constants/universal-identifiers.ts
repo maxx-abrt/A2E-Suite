@@ -59,7 +59,8 @@ export const FRONT_COMPONENT_IDS = {
   documentBrowser: 'c31a0000-0013-4000-8000-000000000001',
   documentPage: 'c31a0000-0013-4000-8000-000000000002',
   createDocumentCommand: 'c31a0000-0013-4000-8000-000000000003',
-  saveRecordAsDocumentCommand: 'c31a0000-0013-4000-8000-000000000004',
+  saveCompanyAsDocumentCommand: 'c31a0000-0013-4000-8000-000000000004',
+  savePersonAsDocumentCommand: 'c31a0000-0013-4000-8000-000000000005',
 } as const;
 
 export const VIEW_IDS = {

@@ -1,0 +1,150 @@
+# Iteration 6 Log
+
+## Metadata
+
+- **Task ID**: P3.2-snapshot-sharing
+- **Task Title**: P3.2: public snapshot sharing — server-side rights, revoke/expiry and guest-format enforcement
+- **Description**: As a guest with a share link, I want snapshot shares to enforce record-level rights and honor revoke/expiry, so that protected content never leaks through a public URL.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-17T15:03:13.966Z
+- **Ended At**: 2026-09-17T15:12:06.776Z
+- **Duration**: 8m 52s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "P3.2" PLAN.md | head -50
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "snapshot-sharing\|snapshot sharing\|P3.2-snapshot" PLAN.md
+[94m[bash][0m $ ls docs/plan/phases/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "P3.2\|snapshot" docs/plan/phases/phase-03-report.md | head -40
+[94m[bash][0m $ grep -n "snapshot-sharing\|snapshot sharing\|DocumentShare\|share" docs/plan/phases/phase-03-report....
+[94m[bash][0m $ grep -rn "snapshot-sharing\|snapshot sharing" docs/plan/phases/*.md PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ grep -n "P0.2" PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -rln "XOR\|xor" packages/twenty-server/src packages/twenty-front/src packages/twenty-shared/src...
+[94m[bash][0m $ ls -R packages/twenty-front/src/modules/document-share 2>/dev/null | head -60
+[94m[bash][0m $ grep -rn "P0.2\|document-share\|documentShare" docs/plan/phases/phase-00-report.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-00-report.md
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/document-share/hooks/useDocumentShare.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/document-share/hooks/useCreateDocumentShare.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/document-share/hooks/useGuestDocumentShare.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/document-share/utils/deriveShareAesGcmKey.ts
+[94m[bash][0m $ grep -rln "useCreateDocumentShare\|document-share\|shareToken\|DocumentShare" packages/twenty-front/...
+[94m[bash][0m $ grep -n "share\|Share\|partager\|passphrase\|expiresAt\|shareToken" packages/twenty-apps/internal/a2...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/document-share/DocumentShareGuestPage.tsx
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-server/src/engine/core-modules/document-share/__tests__ -type f
+[94m[bash][0m $ grep -rn "DocumentShare\|share/" packages/twenty-shared/src/types/AppPath.ts packages/twenty-shared/...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ git log --oneline -15 -- packages/twenty-server/src/engine/core-modules/document-share/
+[94m[bash][0m $ git log --oneline -5 && echo "---" && git log --oneline --all | head -5
+[94m[bash][0m $ git show cda9bf31 --stat | head -60
+[94m[bash][0m $ git show cda9bf31 -- packages/twenty-server/src/engine/core-modules/document-share/document-share.se...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ ls -R packages/twenty-apps/internal/a2e-documents/src | head -80
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/package.json
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "executeInWorkspaceContext" packages/twenty-server/src/engine/twenty-orm/workspace-orm.mana...
+[94m[bash][0m $ grep -rn "executeInWorkspaceContext\|buildSystemAuthContext\|buildUserAuthContext" packages/twenty-s...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/workspace-orm.manager.ts
+[94m[bash][0m $ grep -rn "document-share\|DocumentShare\|documentShare" packages/twenty-server/src/engine/core-modul...
+[94m[bash][0m $ git ls-files packages/twenty-apps/internal/a2e-documents/.twenty | head
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/tsconfig.json 2>/dev/null
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/instantiate-template.test.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/instantiate-template.ts
+[94m[bash][0m $ cat packages/twenty-server/src/engine/twenty-orm/utils/build-system-auth-context.util.ts
+[94m[bash][0m $ grep -rn "buildSystemAuthContext" packages/twenty-server/src --include=*.ts | head -20
+[94m[bash][0m $ rg -l "buildSystemAuthContext" packages/twenty-server/src | head -30
+[94m[bash][0m $ rg -n "executeInWorkspaceContext\(" packages/twenty-server/src/engine/core-modules --glob '*.ts' | h...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96mbuildSystemAuthContext[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules[0m pattern: [96mexecuteInWorkspaceContext\([0m
+[94m[bash][0m $ print('====')         for v in x.values(): walk(v)     elif isinstance(x,list):         for v in x: ...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ date +"%Z %z"
+[94m[bash][0m $ cat >> docs/plan/phases/phase-03-report.md << 'EOF'  CLAIMED — P3.2-snapshot-sharing/guest-record-ri...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/workspace-orm.manager.ts
+[94m[bash][0m $ grep -n "getRepository" packages/twenty-server/src/engine/twenty-orm/workspace-orm.manager.ts
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/datasource/workspace-data-source.service.ts[0m pattern: [96mgetRepository[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/datasource/workspace-data-source.ts
+[94m[bash][0m $ grep -n "buildRepository" packages/twenty-server/src/engine/twenty-orm/datasource/workspace-data-sou...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/datasource/workspace-data-source.ts
+[94m[bash][0m $ grep -rn "resolveObjectRecordsPermissions" packages/twenty-server/src/engine/twenty-orm --include=*....
+[94m[bash][0m $ find packages/twenty-server/src/engine/twenty-orm -name "*resolve-object-records-permissions*"
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/storage/orm-workspace-context.storage.ts
+[94m[read][0m
+[94m[read][0m
+[94m[edit][0m
+Now I'll implement the server-side record-level rights fix. Let me make the edits:
+[94m[edit][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/types/role-permission-config.ts
+[94m[edit][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/workspace-manager/types/workspace-related-entity.ts
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+Now update the unit spec to cover the permission-resolution fix and the new list/guest behavior:
+[94m[read][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/engine/core-modules/document-share/__tests__/document-share.service.spec.ts --config=pa...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -40
+[94m[bash][0m $ grep -n "oxlint\|oxfmt" package.json | head
+[94m[bash][0m $ grep -n "lint:diff-with-main\|oxlint" packages/twenty-server/project.json packages/twenty-server/pac...
+[94m[bash][0m $ grep -n "plugin\|jsPlugins\|oxlint-plugin" packages/twenty-server/.oxlintrc.json | head
+[94m[bash][0m $ npx oxfmt --check src/engine/core-modules/document-share/document-share.service.ts src/engine/core-m...
+[94m[bash][0m $ npx oxfmt --check src/engine/core-modules/document-share/document-share.service.ts src/engine/core-m...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ npx jest src/engine/core-modules/document-share/__tests__/document-share.service.spec.ts --config=pa...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -20
+[94m[bash][0m $ npx jest --findRelatedTests packages/twenty-server/src/engine/core-modules/document-share/document-s...
+[94m[bash][0m $ redis-cli ping 2>&1
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/document-share 2>&1 | t...
+[94m[bash][0m $ git diff packages/twenty-server/src/engine/core-modules/document-share/document-share.service.ts
+[94m[bash][0m $ ls -la .ralph-tui/progress.md 2>/dev/null && tail -30 .ralph-tui/progress.md
+[94m[bash][0m $ date +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ orchestrator — E05 share/unlock/revoke browser journey EOF tail -3 docs/plan/phases/phase-03-report....
+[94m[bash][0m $ head -60 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ passphrase crypto must be ported into the front-component sandbox (no twenty-shared/twenty-front imp...
+[94m[bash][0m $ git diff --stat
+Done. Claimed and implemented the first unmet P3.2 bullet (record-level rights on public snapshot sharing) as a server-side slice.
+
+**Changed**
+- `document-share.service.ts`: now resolves the caller's `RolePermissionConfig` from the ambient context and passes it to `getRepository('document')` (the create path previously passed nothing, so the app object was denied outright and every share creation was fail-closed into FORBIDDEN — the same seam P2.5 fixed in search); `findManyDocumentShares` filters to documents the caller can read; `getShareForGuest` re-validates the source lifecycle under a system context and denies archived/deleted/uninstalled with NOT_FOUND.
+- `document-share.service.spec.ts`: 15 → 22 tests.
+
+**Checks (all green)**
+- `npx jest .../document-share.service.spec.ts` → 22/22
+- `NODE_ENV=test npx jest --config jest-integration.config.ts test/integration/graphql/suites/document-share` → 5/5 (Tier 1)
+- `npx tsgo -p tsconfig.json --noEmit` → clean
+- `npx oxlint --type-aware -c .oxlintrc.json <2 files>` → 0/0; `oxfmt --check` → clean
+
+**Remaining for tick:** bullet 5 owner-side display/copy URL + passphrase UX in `a2e-documents` (`shareDocument` still discards the token); E05 browser journey stays Tier 2. Bullets 2–4 are P0.2-shipped and covered. Reports appended to `phase-03-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

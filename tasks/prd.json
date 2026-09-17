@@ -124,9 +124,10 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "notes": "No literal (after X) dependency. Starting state: save-record-as-document command shipped as title snapshot only (phase-03 report); document.company/person relations exist since P3.1 with SET_NULL — write path populates them, no migration needed.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P3.2-template-instantiation",
@@ -302,6 +303,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-17T15:12:06.777Z"
+    "updatedAt": "2026-09-17T15:30:15.425Z"
   }
 }

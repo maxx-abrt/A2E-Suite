@@ -1,0 +1,250 @@
+# Iteration 7 Log
+
+## Metadata
+
+- **Task ID**: P3.3-record-note-copy
+- **Task Title**: P3.3: record→document integration copies actual note body with source link and permission checks
+- **Description**: As a workspace member, I want 'save record as document' to copy the selected note's actual body with a source link, so the document reflects the note content instead of a title snapshot.
+- **Status**: completed
+- **Task Completed**: No
+- **Promise Detected**: No
+- **Started At**: 2026-09-17T15:12:12.290Z
+- **Ended At**: 2026-09-17T15:25:00.651Z
+- **Duration**: 12m 48s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the mandatory clean-start check and context gathering.
+[94m[bash][0m $ grep -n "P3.3-record-note-copy" PLAN.md
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "P3.3" PLAN.md | head -50
+[94m[bash][0m $ grep -rn "P3.3-record-note-copy\|record-note-copy" tasks/ .ralph-tui/ 2>/dev/null | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ ls docs/plan/phases/ && echo "---" && tail -80 docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ grep -n "CLAIMED\|Y3.3\|note-copy\|note body" docs/plan/phases/phase-03-report.md | tail -40
+[94m[bash][0m $ ls -R packages/twenty-apps/internal/a2e-documents/src 2>/dev/null || find . -type d -name "a2e-docum...
+No conflict/claim for my task. Let me explore the existing implementation.
+[94m[bash][0m $ grep -rln "save.*document\|record.*document\|snapshot" --include="*.ts" --include="*.tsx" packages/t...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/objects/document.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/instantiate-template.ts
+[94m[read][0m
+[94m[bash][0m $ grep -n "note\|snapshot\|save-record\|title" docs/plan/phases/phase-03-report.md | head -60
+[94m[bash][0m $ grep -rn "saveRecordAsDocument\|save-record-as-document\|SAVE_RECORD_AS_DOCUMENT\|saveRecordAsDocume...
+[94m[bash][0m $ grep -n "enregistrer\|Enregistrer\|save record\|save-company\|record command\|title snapshot\|P3.3 t...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ grep -rn "bodyV2\|noteTarget\|nameSingular: 'note'\|class NoteWorkspaceEntity\|NoteWorkspaceEntity" ...
+[94m[bash][0m $ ls packages/twenty-server/src/modules/note/ 2>/dev/null && echo "---" && find packages/twenty-server...
+[94m[bash][0m $ grep -n "noteTargets\|note\b\|Note" packages/twenty-server/src/modules/company/standard-objects/comp...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/save-document-as-template.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/starter-templates.ts
+[94m[read][0m
+[94m[bash][0m $ grep -rln "blocknote" packages/twenty-shared/src 2>/dev/null | head
+[94m[bash][0m $ grep -rn '"type":"paragraph"\|"type": "paragraph"\|blocks.*content.*type' packages/twenty-apps --inc...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/composite-types/rich-text.composite-type.ts
+[94m[bash][0m $ grep -rn "JSON.parse\|JSON.stringify" packages/twenty-front/src/modules/blocknote-editor/utils/*.ts ...
+[94m[bash][0m $ head -60 packages/twenty-front/src/modules/blocknote-editor/blocks/Schema.ts
+[94m[bash][0m $ grep -rn '"type":"link"\|type: .link.\|type: .paragraph.' packages/twenty-front/src/modules/blocknot...
+[94m[bash][0m $ grep -rn "selected note\|selected-note\|note body\|note-body\|Save as document\|save as document\|En...
+[94m[bash][0m $ grep -n "STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS" packages/twenty-sdk/dist/define/index.d.ts | head
+[94m[bash][0m $ grep -rn "objectPermissions\|targetObjectReadPermissions\|targetObjectWritePermissions" packages/twe...
+[94m[bash][0m $ grep -rn "canAccessFullAdminPanel\|objectPermissions\|isInSidePanel\|selectedRecords" packages/twent...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "objectPermissions\|targetObjectReadPermissions\|targetObjectWritePermissions\|selectedReco...
+[94m[bash][0m $ grep -rln "targetObjectReadPermissions" packages/twenty-front/src --include="*.ts" | head
+[94m[bash][0m $ grep -rln "targetObjectReadPermissions\|canReadObjectRecords\|conditionalAvailabilityExpression" pac...
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-sdk/src/sdk 2>/dev/null
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "targetObjectReadPermissions\|objectPermissions\|canCreateObjectRecords\|CommandMenuContext...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/CommandMenuContextApi.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/ObjectPermissions.ts
+[94m[bash][0m $ grep -rn "conditionalAvailabilityExpression" packages/twenty-sdk/src/sdk/define --include="*.ts" | g...
+[94m[bash][0m $ grep -rn "enum AppPath\|RecordShowPage =" packages/twenty-shared/src/app-path/*.ts 2>/dev/null
+[94m[bash][0m $ grep -rn "RecordShowPage\|AppPath" packages/twenty-sdk/src/sdk/front-component --include="*.ts" | he...
+[94m[bash][0m $ grep -rn "targetObjectReadPermissions" packages/twenty-front/src --include="*.ts" --include="*.tsx" ...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "bodyV2" packages/twenty-front/src --include="*.ts" --include="*.tsx" | grep -v "__tests__\...
+[94m[bash][0m $ grep -rn "noteTargets\|targetCompanyId\|targetPersonId" packages/twenty-front/src packages/twenty-ap...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/hooks/__mocks__/personFragments.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/activities/types/Activity.ts
+[94m[bash][0m $ find packages/twenty-front/node_modules/@blocknote/core -name "types.d.ts" -path "*inlineContent*" 2...
+[94m[bash][0m $ find packages/twenty-front/node_modules/@blocknote/core -name "*.d.ts" 2>/dev/null | xargs grep -ln ...
+[94m[bash][0m $ ls packages/twenty-front/node_modules/@blocknote 2>/dev/null
+[94m[bash][0m $ find node_modules/@blocknote/core/types -name "*.d.ts" | xargs grep -ln "Link<" 2>/dev/null | head -...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/node_modules/@blocknote/core/types/src/schema/inlineContent/types.d.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/fractional-position.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/package.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/field-vocabulary.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts
+[94m[bash][0m $ grep -rn "RecordShowPage" packages/twenty-shared/src/utils/navigation/getAppPath.ts packages/twenty-...
+[94m[bash][0m $ grep -rn "objectNameSingular: 'companies'\|objectNameSingular: 'people'\|objectNamePlural\|objectNam...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/navigation/getAppPath.ts
+[94m[bash][0m $ grep -rn "RecordShowPage" packages/twenty-front/src --include="*.tsx" --include="*.ts" | grep -v "__...
+[94m[bash][0m $ grep -rn "objectNameSingular" packages/twenty-front/src/modules/settings/data-model/object-details/c...
+[94m[bash][0m $ grep -rn "objectNameSingular\|objectNamePlural" packages/twenty-front/src/pages/object-record/Record...
+[94m[bash][0m $ grep -rn "nameSingular\|namePlural\|objectName" packages/twenty-front/src/modules/object-record/hook...
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-sdk/src/sdk/define/front-components
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/command-menu-items/command-menu-item-config.ts
+[94m[bash][0m $ find packages/twenty-sdk/src/sdk/define -name "*.ts" | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/front-component/front-component-config.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/front-component/define-front-component.ts
+[94m[bash][0m $ grep -rln "frontComponentUniversalIdentifier\|FrontComponentRenderer\|front-component" packages/twen...
+[94m[bash][0m $ grep -rn "useSelectedRecordIds\|selectedRecordIds" packages/twenty-front/src/modules/front-component...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "component\b\|props\|params\|frontComponent" packages/twenty-front/src/modules/front-compon...
+[94m[bash][0m $ grep -rn "ComponentType\|componentProps\|props={{ ...\|<Remote\|loadRemote\|remoteComponent\|builtCo...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "commandMenuItemId\|commandMenuItem\|availabilityObject\|objectNameSingular" packages/twent...
+[94m[bash][0m $ grep -rn "useSelectedRecordIds\|useNumber\|selectedRecordIds\|useObjectName\|useCommand" packages/tw...
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-sdk/src/sdk/front-component/index.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/front-component/types/FrontComponentExecutionContext.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/front-component/hooks/useSelectedRecordIds.ts
+[94m[bash][0m $ find . -maxdepth 3 -type d -name "twenty-front-component-renderer" 2>/dev/null | head
+[94m[bash][0m $ grep -rn "props\|component(" packages/twenty-front-component-renderer/src --include="*.tsx" --includ...
+[94m[bash][0m $ grep -rn "default\|render(\|createElement\|<Component\|props" packages/twenty-front-component-render...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "renderContainer\|root.render\|createRoot\|ReactDOM\|component(" packages/twenty-sdk/src/cl...
+[94m[bash][0m $ find packages/twenty-sdk/src/cli/utilities/build -path "*front-component*" -name "*.ts" | head -20
+[94m[bash][0m $ find packages/twenty-shared/src/application -name "*command-menu-item*" -o -name "*front-component*"...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/frontComponentManifestType.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ grep -rn "FrontComponentRenderer\|frontComponent" packages/twenty-front/src/modules/command-menu-ite...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/command-menu-item/hooks/useCommandMenuItemClick.ts
+[94m[bash][0m $ grep -rln "mountCommand\|engineComponentKey\|frontComponentId" packages/twenty-front/src/modules/com...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/.gitignore 2>/dev/null
+Let me verify the actual build output to confirm how the command component receives the source object.
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents/dist -type f 2>/dev/null | head -20
+[94m[bash][0m $ tail -c 800 packages/twenty-apps/internal/a2e-documents/.twenty/output/src/front-components/save-rec...
+[94m[bash][0m $ wc -l packages/twenty-apps/internal/a2e-documents/.twenty/output/src/front-components/save-record-as...
+[94m[read][0m
+[94m[bash][0m $ grep -o "component:[A-Za-z_$][A-Za-z0-9_$]*" packages/twenty-apps/internal/a2e-documents/.twenty/out...
+[94m[bash][0m $ grep -o ".\{80\}sourceObjectNameSingular.\{200\}" packages/twenty-apps/internal/a2e-documents/.twent...
+[94m[bash][0m $ grep -o ".\{60\}createRoot.\{160\}" packages/twenty-apps/internal/a2e-documents/.twenty/output/src/f...
+[94m[bash][0m $ grep -o "component:[a-zA-Z_$]*}.\{0,200\}" packages/twenty-apps/internal/a2e-documents/.twenty/outpu...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/roles/default-function.role.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/fields/company-documents.field.ts
+[94m[bash][0m $ grep -rn "class CoreApiClient" packages/twenty-client-sdk --include="*.ts" | head
+[94m[bash][0m $ grep -rln "RECORD_SELECTION\|availabilityObjectUniversalIdentifier" packages/twenty-apps --include="...
+[94m[bash][0m $ ls packages/twenty-apps/public/people-data-labs/src/front-components 2>/dev/null
+[94m[bash][0m $ find packages/twenty-apps/public/people-data-labs/src -name "*enrich*"
+[94m[read][0m
+[94m[bash][0m $ grep -rn "front-component\.tsx\|frontComponentPattern\|glob\|sourceComponentPath" packages/twenty-sd...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/cli/utilities/build/manifest/manifest-build.ts
+[94m[bash][0m $ cat packages/twenty-apps/examples/document-generator/src/front-components/*.tsx 2>/dev/null | head -...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-client-sdk/src/core/generated/index.ts
+[94m[bash][0m $ find packages/twenty-front/src/generated -name "*.ts*" | head
+[94m[bash][0m $ grep -n "  company(" packages/twenty-front/src/generated/graphql.ts | head
+[94m[bash][0m $ grep -rn "findOneRecord\|findOne" packages/twenty-front/src/modules/object-record/graphql --include=...
+[94m[bash][0m $ grep -rn "RecordShowPage" packages/twenty-front/src/modules/object-record/hooks/*.ts | head
+[94m[bash][0m $ grep -rn "queryName\|buildFindOne\|filter" packages/twenty-front/src/modules/object-record/hooks/use...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/hooks/useFindOneRecordQuery.ts
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-front/src/modules/object-record/record-show/hooks/useRecordShowPageRe...
+[94m[bash][0m $ grep -rn "\[objectMetadataItem.nameSingular\]\|data?\.\|findOneRecordQuery" packages/twenty-front/sr...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/hooks/useFindOneRecord.ts
+[94m[bash][0m $ grep -rln "ObjectRecordQueryArgs\|filter.*RecordGqlOperationFilter\|FindOne\|resolve.*findMany" pack...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "FindOneResolverArgs\|FindManyResolverArgs\|filter\|id" packages/twenty-server/src/engine/ap...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "__args" packages/twenty-client-sdk/src packages/twenty-sdk/src --include="*.ts" | grep -v ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-client-sdk/src/generate/generate-core-client.ts
+[94m[bash][0m $ grep -rn "document?:\|documents?:\|noteTargets" packages/twenty-apps/internal/a2e-documents/node_mod...
+[94m[bash][0m $ grep -rln "FindOne\|findOne\|RecordQueryArgs\|filter.*input" packages/twenty-server/src/engine/api/g...
+[94m[read][0m
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-client-sdk/src/generate/client-wrapper.ts 2>/dev/null
+[94m[bash][0m $ cat packages/twenty-server/src/engine/api/graphql/workspace-resolver-builder/factories/create-many-r...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/cli/utilities/build/manifest/manifest-build.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/cli/utilities/build/manifest/manifest-build.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/.oxlintrc.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/tsconfig.json
+[94m[bash][0m $ cat packages/twenty-sdk/src/sdk/front-component/components/Command.tsx 2>/dev/null | head -60
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/front-component/command/Command.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-client-sdk/src/generate/genql/runtime/generateGraphqlOperation.ts
+[94m[todowrite][0m
+I have enough context. Let me set up my todo list and start implementing.
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+First, let me claim the slice per contract before writing any code.
+[94m[bash][0m $ date +"%Y-%m-%dT%H:%M:%SZ"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ grep -n "P3.3-record-note-copy\|record-note-body-copy" docs/plan/phases/phase-03-report.md
+[94m[write][0m "import { buildAppendPosition } from './fractional-position.ts';
+
+// "Save as document" from a record copies the linked notes' real bodies into a
+// fresh document instead of snapshotting the record ti... (7614 chars)"
+Now let me write the pure lib.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/record-note-copy.ts
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  buildNoteSourceHref,
+  buildRecordNoteCopyContent,
+  buildRecordNoteCopyPayload,
+  buildRecordSourceHref,
+  build... (8522 chars)"
+[94m[bash][0m $ node --test src/lib/__tests__/*.test.ts 2>&1 | tail -20
+[94m[bash][0m $ sed -n '460,520p' packages/twenty-sdk/src/cli/utilities/build/common/conditional-availability/__test...
+Now let me check how conditional availability expressions are transformed before wiring them.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/cli/utilities/build/manifest/manifest-build.ts
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+import { Command } from 'twenty-sdk/front-component';
+import {
+  AppPath,
+  navigate,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component... (4112 chars)"
+[94m[write][0m "import { defineFrontComponent } from 'twenty-sdk/define';
+
+import { FRONT_COMPONENT_IDS } from '../constants/universal-identifiers.ts';
+import { createSaveRecordAsDocumentCommand } from './save-record... (570 chars)"
+[94m[write][0m "import { defineFrontComponent } from 'twenty-sdk/define';
+
+import { FRONT_COMPONENT_IDS } from '../constants/universal-identifiers.ts';
+import { createSaveRecordAsDocumentCommand } from './save-record... (566 chars)"
+[94m[bash][0m $ rm "packages/twenty-apps/internal/a2e-documents/src/front-components/save-record-as-document-command...
+[94m[write][0m "import {
+  defineCommandMenuItem,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  targetObjectReadPermissions,
+} from 'twenty-sdk/define';
+
+import { FRONT_COMPONENT_IDS } from '../constants/universal-ident... (1126 chars)"
+[94m[write][0m "import {
+  defineCommandMenuItem,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  targetObjectReadPermissions,
+} from 'twenty-sdk/define';
+
+import { FRONT_COMPONENT_IDS } from '../constants/universal-ident... (1120 chars)"
+[94m[bash][0m $ npx tsc --noEmit 2>&1 | tail -30
+[94m[edit][0m
+[94m[bash][0m $ npx tsc --noEmit 2>&1 | tail -30 && echo "TSC_EXIT=$?"
+[94m[bash][0m $ node --test src/lib/__tests__/*.test.ts 2>&1 | tail -8
+[94m[bash][0m $ yarn lint 2>&1 | tail -20
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -40
+[94m[bash][0m $ python3 -c " import json m=json.load(open('.twenty/output/manifest.json')) for fc in m.get('frontCom...
+[94m[bash][0m $ grep -c "firstName" .twenty/output/src/front-components/save-person-as-document-command.front-compon...
+[94m[bash][0m $ tail -c 500 .twenty/output/src/front-components/save-company-as-document-command.front-component.mjs...
+[94m[bash][0m $ npx oxfmt --check src/lib/record-note-copy.ts src/lib/__tests__/record-note-copy.test.ts src/front-c...
+[94m[bash][0m $ npx oxfmt src/lib/record-note-copy.ts src/lib/__tests__/record-note-copy.test.ts src/front-component...
+[94m[bash][0m $ done
+[94m[bash][0m $ npx oxfmt --check src/lib/fractional-position.ts src/lib/instantiate-template.ts 2>&1 | tail -10
+
+--- STDERR ---
+[93m[1m! [0mpermission requested: external_directory (/Users/maxaubert/Projets/A2E\ Suite/*); auto-rejecting

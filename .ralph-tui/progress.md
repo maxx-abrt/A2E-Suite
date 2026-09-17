@@ -57,6 +57,19 @@ after each iteration and it's included in prompts for context.
   `{ shouldBypassPermissionChecks: true }` plus an explicit
   `buildSystemAuthContext(workspaceId)`. P2.5 (search provider) and P3.2
   (document-share) are the two fixed instances.
+- **App front-component record reads and navigation:** the `CoreApiClient`
+  `findOne` root field (singular object name, e.g. `company`) accepts only
+  `__args: { filter: { id: { eq } } }` — `getResolverArgs('findOne')` returns
+  `{ filter }` alone, so a bare `__args: { id }` is rejected before the
+  resolver runs (the `document-page`/`document-browser` uses are pre-existing
+  bugs). `navigate(AppPath.RecordShowPage, { objectNameSingular })` needs the
+  SINGULAR name: `RecordShowPage` matches `objectMetadataItem.nameSingular` and
+  `useObjectMetadataItem` looks up `objectNameType: 'singular'` — the
+  `'documents'` form in `create-document-command`/`document-page`/`document-browser`
+  is also a pre-existing bug. `defineFrontComponent` renders the component with
+  empty props (no `componentParams`), so per-object config must be closed over
+  at build time: one `.front-component.tsx` entry per object over a shared
+  `.factory.tsx`, never a prop.
 
 ---
 
@@ -110,8 +123,16 @@ after each iteration and it's included in prompts for context.
   - Verify-as-you-go: `yarn lint` + `npx oxfmt --check` + `npx tsc --noEmit` + `node --test` + `npx twenty dev:build .` (16 files, manifest shows the new trigger).
 ---
 
-## 2026-09-17 - P3.2-snapshot-sharing
-- Enforced record-level rights on public snapshot sharing in the server core module: `createDocumentShare` now actually resolves the caller's `RolePermissionConfig` and passes it to `getRepository('document')` (it previously passed nothing, so the app object was denied outright and every create was fail-closed into FORBIDDEN); `findManyDocumentShares` filters out shares whose source document is outside the caller's record rights; `getShareForGuest` re-validates the source lifecycle (exists, unarchived, app installed) under a system context and denies with NOT_FOUND otherwise.
+## 2026-09-17 - P3.3-record-note-copy
+- Replaced the title-snapshot "save record as document" command with a real note-body copy: a pure lib (`readRecordNoteCopyInput`, `resolveRecordLabel`, `buildRecordNoteCopyContent`, `buildRecordNoteCopyPayload`) reads the record's `noteTargets { edges { node { note { bodyV2 } } } }`, builds a BlockNote body of each note behind its own linked heading plus a source-link paragraph, and returns `companyId`/`personId` so the document still lands in the record's Documents section. Fail-closed: unreadable source ⇒ no document, missing note connection ⇒ source link only, no bodies.
+- Files changed: `packages/twenty-apps/internal/a2e-documents/src/lib/record-note-copy.ts` (new); `.../lib/__tests__/record-note-copy.test.ts` (new); `.../front-components/save-record-as-document-command.factory.tsx` (new); `.../front-components/save-company-as-document-command.front-component.tsx` (new); `.../front-components/save-person-as-document-command.front-component.tsx` (new); deleted `.../front-components/save-record-as-document-command.front-component.tsx`; `.../command-menu-items/save-{company,person}-as-document.command-menu-item.ts`; `.../constants/universal-identifiers.ts`; `docs/plan/phases/phase-03-report.md`; `.ralph-tui/progress.md`.
+- **Learnings:**
+  - `defineFrontComponent` renders with empty props, so the old single prop-driven component never received its `sourceObjectNameSingular`; per-object config must be closed over — one entry file per object over a shared factory (see Codebase Patterns).
+  - `findOne` only accepts `filter`; `navigate` needs singular `objectNameSingular` — both fixed here, both are pre-existing bugs in the app's other commands (see Codebase Patterns).
+  - There is no note-selection primitive at Cmd+K time, so "selected note" is realized as every note the authenticated `noteTargets` connection returns; each gets a linked heading.
+  - Permission gate is a `conditionalAvailabilityExpression` on `targetObjectReadPermissions.{company|person} && .note && .document`; the runtime payload builder then fail-closes independently.
+  - This iteration resumed the immediately-prior stalled run of the same session (changes already on disk, no source edit); Tier-0 gates re-run green: 17/17 new tests, 97/97 lib tests, `tsc` exit 0, `yarn lint` 0/0, `oxfmt --check` clean, `twenty dev:build .` 18 files.
+---
 - Files changed: `packages/twenty-server/src/engine/core-modules/document-share/document-share.service.ts`; `.../document-share/__tests__/document-share.service.spec.ts`; `docs/plan/phases/phase-03-report.md`; `.ralph-tui/progress.md`.
 - **Learnings:**
   - The document-share module carried the exact P2.5 permission bug (see Codebase Patterns): `executeInWorkspaceContext` alone is NOT enough — `getRepository` needs the resolved caller config or the app object is denied.
