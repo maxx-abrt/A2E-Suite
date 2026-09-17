@@ -97,3 +97,35 @@ export const buildRestoreDocumentPayload = (options: {
     positionBoundsAt(options.targetSiblings, options.targetSiblings.length),
   ),
 });
+
+export type TreeDocumentNode = TreeDocument & {
+  children?: { edges: { node: TreeDocumentNode }[] };
+};
+
+const toTreeDocument = (node: TreeDocumentNode): TreeDocument => ({
+  id: node.id,
+  parentDocumentId: node.parentDocumentId ?? null,
+  position: node.position ?? null,
+});
+
+// Sibling lists are read from the nested edges, not from the parentDocumentId
+// column: the browser query selects roots with a single child level and does
+// not select child.parentDocumentId, so the nesting is the only reliable
+// parent link at this depth.
+export const collectSiblingsByParentId = (
+  roots: TreeDocumentNode[],
+): Map<string | null, TreeDocument[]> => {
+  const siblingsByParentId = new Map<string | null, TreeDocument[]>();
+
+  const visit = (parentId: string | null, nodes: TreeDocumentNode[]): void => {
+    siblingsByParentId.set(parentId, nodes.map(toTreeDocument));
+
+    for (const node of nodes) {
+      visit(node.id, node.children?.edges.map((edge) => edge.node) ?? []);
+    }
+  };
+
+  visit(null, roots);
+
+  return siblingsByParentId;
+};

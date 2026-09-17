@@ -733,3 +733,22 @@ CLAIMED — P3.2/atomic-expected-revision-save — deepseek-v4.1-flash — 2026-
 **Environment note (not mine):** during this session the working tree gained deletions of `.claude/**` and `.cursor/**` and an untracked `.ralph-tui/` directory (timestamps 13:38 local, no matching claim). I did not create or revert them — the orchestrator should decide whether to restore them. My own `Changed` list is exact.
 **Remaining:** 12 other [ ]/[~] tasks in the delivery order (P1.3 e2e, P1.6d D02-gated leg, P1.7a export, P1.7b Tier-2, P1.7c browser legs, P2.1 bullet 5, P2.4/P2.5 e2e, P3.2 share/tree legs, P3.3+)
 **Next:** executor — P3.2 public snapshot sharing (record-level rights, revoke/expiry/passphrase UX; P0.2 gates E05) or the P3.3 tree lazy-loading leg; orchestrator — Tier-2 two-session conflict banner pass plus the existing schema-regen/revision-history scroll.
+
+CLAIMED — P3.3/tree-keyboard-move-controls — deepseek-v4.1-flash — 2026-09-17T11:46:00Z — base 5868a0e9405ff9e5668e2f9fb05ae89c794e031d
+
+## 2026-09-17 11:48 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** P3.3 Tree & navigation UX · **Slice:** accessible move controls (C7 non-drag alternative) — keyboard up/down/indent/outdent for the document tree, reusing the existing fractional-index move payload builder
+**Claim:** done-for-review
+**Ready-to-tick:** no — pure logic + wiring are green, but the bullet's browser acceptance (buttons visible/focusable, mutation reparents the node) is Tier 2 and the same bullet's lazy/paginated-loading and favorites-personal gaps remain
+**Base:** 5868a0e9405ff9e5668e2f9fb05ae89c794e031d
+**Changed:**
+- `a2e-documents/src/lib/document-tree.ts` (+`TreeDocumentNode`, `collectSiblingsByParentId` — sibling lists derived from the nested child edges because the browser query does not select child `parentDocumentId`; `null` key = root level)
+- new `a2e-documents/src/lib/document-tree-keyboard.ts` (`buildKeyboardMovePayload`: up/down reorder in place, indent adopts the previous sibling as parent (append last), outdent reinserts after the former parent under the grandparent; derives `documentsById` from the sibling map and returns `null` at bounds or when `buildMoveDocumentPayload` rejects a cycle, so the UI never needs to pre-check)
+- new `a2e-documents/src/lib/__tests__/document-tree-keyboard.test.ts` (11 cases: grouping, up/down incl. bounds, indent with/without a previous sibling, outdent to root and to grandparent, unknown id)
+- `a2e-documents/src/front-components/document-browser.front-component.tsx` (+`siblingsByParentId` memo, `moveDocumentByKeyboard` mutation seam, `parentId`/`onKeyboardMove` threaded through `DocumentTreeItem`, four labelled buttons ▲▼⇥⇤ with `aria-label` naming the document)
+**Checks:** `npx tsc --noEmit` (a2e-documents) → exit 0; `node --test src/lib/__tests__/*.test.ts` → 57/57 (11 new); `yarn lint` (oxlint) → 0 warnings/0 errors; `npx twenty dev:build .` → Build succeeded (14 files); `npx oxfmt --check` on the 4 files → clean (applied once)
+**Missing for tick:** Tier-2 browser pass — focus the move buttons, confirm up/down/indent/outdent reparent and that a root cannot be un-indented; the bullet's remaining gaps stay open: lazy/paginated loading at every depth (browser still loads roots + one child level), server-side cycle validation, and verifying `isFavorite` is personal rather than the shared object flag
+**Do not redo:** `buildMoveDocumentPayload` stays the only position/cycle authority — the keyboard lib delegates to it, do not add a second position algorithm; `collectSiblingsByParentId` reads nesting, not `parentDocumentId`, because the browser query omits that column on children; drag handlers are unchanged, the buttons are additive
+**Environment note (not mine):** `git status` shows `M .ralph-tui/config.toml` (a tracked file from HEAD 5868a0e) which I did not touch; it changed under me during the session. My `Changed` list is exact and excludes it.
+**Remaining:** 12 other [ ]/[~] tasks ahead in the execution order (P1.3 e2e, P1.6d D02-gated leg, P1.7a export, P1.7b/c Tier-2, P2.1 bullet 5, P2.4/P2.5 e2e, P3.2 share + P3.3 tree legs, P3.4+)
+**Next:** executor — P3.3 lazy/paginated tree loading at every depth (browser query → per-parent fetch + cursor), or P3.2 public snapshot sharing if the passphrase crypto is first lifted out of twenty-front; orchestrator — Tier-2 keyboard-move browser pass

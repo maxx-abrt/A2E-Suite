@@ -7,8 +7,13 @@ import { DOCUMENT_KIND } from '../constants/field-vocabulary.ts';
 import { OBJECT_IDS } from '../constants/universal-identifiers.ts';
 import {
   buildMoveDocumentPayload,
+  collectSiblingsByParentId,
   type TreeDocument,
 } from '../lib/document-tree.ts';
+import {
+  buildKeyboardMovePayload,
+  type TreeMoveDirection,
+} from '../lib/document-tree-keyboard.ts';
 import { buildAppendPosition } from '../lib/fractional-position.ts';
 import { buildTemplateCopyPayload } from '../lib/instantiate-template.ts';
 import { collectGalleryTemplates } from '../lib/template-gallery.ts';
@@ -139,6 +144,11 @@ const DocumentBrowser = () => {
   useEffect(() => {
     void loadDocuments();
   }, [loadDocuments]);
+
+  const siblingsByParentId = useMemo(
+    () => collectSiblingsByParentId(documents),
+    [documents],
+  );
 
   // Instantiation = copy the template body into a fresh DOCUMENT record, so
   // editing the copy never mutates the template.
@@ -278,6 +288,36 @@ const DocumentBrowser = () => {
     await client.mutation({
       updateDocument: {
         __args: { id: options.documentId, data: payload },
+        id: true,
+      },
+    } as never);
+
+    await loadDocuments();
+  };
+
+  // Non-drag equivalent of the drop handlers, for keyboard users (C7). The
+  // payload builder returns null at the bounds so the buttons stay inert there.
+  const moveDocumentByKeyboard = async (
+    documentNode: DocumentNode,
+    parentId: string | null,
+    direction: TreeMoveDirection,
+  ): Promise<void> => {
+    const payload = buildKeyboardMovePayload({
+      documentId: documentNode.id,
+      direction,
+      parentId,
+      siblingsByParentId,
+    });
+
+    if (payload === null) {
+      return;
+    }
+
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateDocument: {
+        __args: { id: documentNode.id, data: payload },
         id: true,
       },
     } as never);
@@ -481,6 +521,7 @@ const DocumentBrowser = () => {
                 key={node.id}
                 documentNode={node}
                 depth={0}
+                parentId={null}
                 draggedDocumentId={draggedDocumentId}
                 onDragStart={setDraggedDocumentId}
                 onDragEnd={() => setDraggedDocumentId(null)}
@@ -492,6 +533,7 @@ const DocumentBrowser = () => {
                 onShare={shareDocument}
                 onArchive={archiveDocument}
                 onMove={moveDocument}
+                onKeyboardMove={moveDocumentByKeyboard}
                 onToggleFavorite={toggleFavorite}
               />
             ))}
@@ -637,6 +679,7 @@ const DocumentRow = ({
 type DocumentTreeItemProps = {
   documentNode: DocumentNode;
   depth: number;
+  parentId: string | null;
   draggedDocumentId: string | null;
   onDragStart: (documentId: string) => void;
   onDragEnd: () => void;
@@ -653,12 +696,18 @@ type DocumentTreeItemProps = {
     targetSiblings: TreeDocument[];
     insertIndex: number;
   }) => Promise<void>;
+  onKeyboardMove: (
+    documentNode: DocumentNode,
+    parentId: string | null,
+    direction: TreeMoveDirection,
+  ) => Promise<void>;
   onToggleFavorite: (documentNode: DocumentNode) => Promise<void>;
 };
 
 const DocumentTreeItem = ({
   documentNode,
   depth,
+  parentId,
   draggedDocumentId,
   onDragStart,
   onDragEnd,
@@ -670,6 +719,7 @@ const DocumentTreeItem = ({
   onShare,
   onArchive,
   onMove,
+  onKeyboardMove,
   onToggleFavorite,
 }: DocumentTreeItemProps) => {
   const [isExpanded, setIsExpanded] = useState(depth < 1);
@@ -736,6 +786,38 @@ const DocumentTreeItem = ({
         >
           {documentNode.kind === DOCUMENT_KIND.TEMPLATE ? '📄 ' : '📝 '}
           {documentNode.title}
+        </button>
+        <button
+          type="button"
+          onClick={() => void onKeyboardMove(documentNode, parentId, 'up')}
+          style={ghostButtonStyle}
+          aria-label={`Monter ${documentNode.title}`}
+        >
+          ▲
+        </button>
+        <button
+          type="button"
+          onClick={() => void onKeyboardMove(documentNode, parentId, 'down')}
+          style={ghostButtonStyle}
+          aria-label={`Descendre ${documentNode.title}`}
+        >
+          ▼
+        </button>
+        <button
+          type="button"
+          onClick={() => void onKeyboardMove(documentNode, parentId, 'indent')}
+          style={ghostButtonStyle}
+          aria-label={`Indenter ${documentNode.title}`}
+        >
+          ⇥
+        </button>
+        <button
+          type="button"
+          onClick={() => void onKeyboardMove(documentNode, parentId, 'outdent')}
+          style={ghostButtonStyle}
+          aria-label={`Désindenter ${documentNode.title}`}
+        >
+          ⇤
         </button>
         <button
           type="button"
@@ -832,6 +914,7 @@ const DocumentTreeItem = ({
               <DocumentTreeItem
                 documentNode={childNode}
                 depth={depth + 1}
+                parentId={documentNode.id}
                 draggedDocumentId={draggedDocumentId}
                 onDragStart={onDragStart}
                 onDragEnd={onDragEnd}
@@ -843,6 +926,7 @@ const DocumentTreeItem = ({
                 onShare={onShare}
                 onArchive={onArchive}
                 onMove={onMove}
+                onKeyboardMove={onKeyboardMove}
                 onToggleFavorite={onToggleFavorite}
               />
             </div>
