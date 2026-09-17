@@ -556,11 +556,12 @@ persona, and the conventions every later phase relies on.
       installed/uninstalled behavior and caller permissions are P9 acceptance.
 
 ### P1.6 Reusable templates and unified setup (R01/R04/R06/R09)
-- [ ] **P1.6a Contract task (after P0.1):** specify C1/C2 using actual SDK
+- [x] **P1.6a Contract task (after P0.1):** specify C1/C2 using actual SDK
       manifests, workflow definitions and existing template service. Inventory
       which metadata is app-owned versus workspace/user-owned. Deliver version,
       compatibility, inputs, provenance and preview fixtures; reject unknown
       IDs, cycles, unavailable requirements and cross-workspace content.
+      (verified 2026-09-17, see phase-01 report, commit 9b50ab87)
 - [ ] **P1.6b Backend operation (after P1.6a/P0.4):** implement one authorized,
       resumable setup operation from preset + checkbox choices. Test same-key
       retries/concurrent requests, async post-install completion, registration
