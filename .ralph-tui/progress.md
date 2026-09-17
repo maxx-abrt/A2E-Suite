@@ -70,6 +70,15 @@ after each iteration and it's included in prompts for context.
   empty props (no `componentParams`), so per-object config must be closed over
   at build time: one `.front-component.tsx` entry per object over a shared
   `.factory.tsx`, never a prop.
+- **Instantiate a content template by re-keying the blocknote block tree:**
+  `content.blocknote` is a JSON array of blocks (top-level `id` + nested
+  `children`); block ids are the anchors block/comment state hangs off, so a
+  copy must mint fresh ids or it aliases the template. Re-key only the block
+  tree, let any string equal to a known old id follow its mapped target (covers
+  internal references buried in `props`), and never remap `threadId` — the
+  `documentCommentThread` contract keeps comment identifiers stable. The
+  authorized query is the permission gate: a null fetch (record absent from the
+  caller's scoped result) means fail closed, not "empty template".
 
 ---
 
@@ -139,4 +148,14 @@ after each iteration and it's included in prompts for context.
   - The guest path has no caller, so "record-level rights" there means re-checking the record's current state under `buildSystemAuthContext(share.workspaceId)` with `{ shouldBypassPermissionChecks: true }`; deny archived/deleted/uninstalled with the same NOT_FOUND as an unknown token (no oracle).
   - Positive share creation cannot be exercised at Tier 1: the `document` object only exists once a2e-documents is installed, so the ORM-contract unit seam is the proof (same limit P2.5 recorded).
   - Remaining P3.2 work is the owner-side UX bullet in `a2e-documents` (`shareDocument` still discards the returned token); passphrase crypto must be ported into the front-component sandbox (no twenty-shared/twenty-front imports).
+---
+
+## 2026-09-17 - P3.2-template-instantiation
+- Completed template instantiation: the payload builder now re-keys every blocknote block anchor and reads the body through a fail-closed authorized source, so a copy is independent and its block/comment state cannot alias the template.
+- Files changed: `packages/twenty-apps/internal/a2e-documents/src/lib/instantiate-template.ts`; `.../src/lib/__tests__/instantiate-template.test.ts`; `.../src/front-components/document-browser.front-component.tsx`; `.../src/front-components/document-page.front-component.tsx`; `docs/plan/phases/phase-03-report.md`; `.ralph-tui/progress.md`.
+- **Learnings:**
+  - Blocknote body is a JSON array of blocks; re-key top-level + nested `children` ids, follow internal references by remapping any string equal to a known old id, and skip `threadId` (comment identifiers stay stable per the object contract). See Codebase Patterns.
+  - Malformed/non-array/empty blocknote is refused (`null`) rather than copied through; the markdown projection survives so a corrupt body still yields a readable copy.
+  - The authorized query is the permission gate — `readAuthorizedTemplateCopySource` returns null only when the record was absent from the caller's result, so an empty template is not mistaken for a denial.
+  - Tier-0 gates green: 16/16 new tests, 107/107 lib tests, `tsc --noEmit` exit 0, `yarn lint` 0/0, `oxfmt --check` clean on the `.tsx` files (oxfmt ignores `.ts` here), `twenty dev:build .` 18 files. `--type-aware` is still unsupported by oxlint 0.16.12; `nx lint:diff-with-main` has no `a2e-documents` project.
 ---

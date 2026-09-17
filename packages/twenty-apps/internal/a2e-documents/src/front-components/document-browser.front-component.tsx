@@ -26,7 +26,10 @@ import {
   type TreeParentPageState,
 } from '../lib/document-tree-loading.ts';
 import { buildAppendPosition } from '../lib/fractional-position.ts';
-import { buildTemplateCopyPayload } from '../lib/instantiate-template.ts';
+import {
+  buildTemplateCopyPayload,
+  readAuthorizedTemplateCopySource,
+} from '../lib/instantiate-template.ts';
 import { collectGalleryTemplates } from '../lib/template-gallery.ts';
 import {
   buildSaveAsTemplatePayload,
@@ -321,12 +324,19 @@ const DocumentBrowser = () => {
   );
 
   // Instantiation = copy the template body into a fresh DOCUMENT record, so
-  // editing the copy never mutates the template.
+  // editing the copy never mutates the template. The body was fetched through
+  // the caller's authorized tree query; a null source fails closed.
   const instantiateTemplate = async (
     templateDocument: DocumentNode,
   ): Promise<void> => {
     const client = new CoreApiClient();
-    const copyPayload = buildTemplateCopyPayload(templateDocument);
+    const copySource = readAuthorizedTemplateCopySource(templateDocument);
+
+    if (copySource === null) {
+      return;
+    }
+
+    const copyPayload = buildTemplateCopyPayload(copySource);
 
     await client.mutation({
       createDocuments: {

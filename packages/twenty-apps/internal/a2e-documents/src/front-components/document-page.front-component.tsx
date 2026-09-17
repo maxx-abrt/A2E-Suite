@@ -12,7 +12,10 @@ import {
 import { DOCUMENT_KIND } from '../constants/field-vocabulary.ts';
 import { buildAppendPosition } from '../lib/fractional-position.ts';
 import { extractOutline } from '../lib/document-outline.ts';
-import { buildTemplateCopyPayload } from '../lib/instantiate-template.ts';
+import {
+  buildTemplateCopyPayload,
+  readAuthorizedTemplateCopySource,
+} from '../lib/instantiate-template.ts';
 
 // LA PAGE DOCUMENT (P3.3 task 2).
 //
@@ -164,7 +167,15 @@ const DocumentPage = () => {
     }
 
     const client = new CoreApiClient();
-    const copyPayload = buildTemplateCopyPayload(record);
+    const copySource = readAuthorizedTemplateCopySource(record);
+
+    // The record was read through the caller's authorized query, so a null
+    // source would mean the body is no longer readable — fail closed.
+    if (copySource === null) {
+      return;
+    }
+
+    const copyPayload = buildTemplateCopyPayload(copySource);
 
     const result = await client.mutation({
       createDocuments: {
