@@ -5,7 +5,7 @@ import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 
-import { manyToOne, oneToMany } from '../constants/field-vocabulary.ts';
+import { manyToOne } from '../constants/field-vocabulary.ts';
 import {
   LABEL_IDENTIFIER_IDS,
   OBJECT_IDS,
@@ -66,18 +66,6 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: RELATION_IDS.taskTimeEntries,
-      type: FieldType.RELATION,
-      name: 'timeEntries',
-      label: 'Temps',
-      icon: 'IconClock',
-      description: 'Temps enregistré sur cette tâche',
-      relationTargetObjectMetadataUniversalIdentifier: OBJECT_IDS.timeEntry,
-      relationTargetFieldMetadataUniversalIdentifier:
-        RELATION_IDS.timeEntryTask,
-      universalSettings: oneToMany,
-    },
-    {
       universalIdentifier: RELATION_IDS.timeEntryProject,
       type: FieldType.RELATION,
       name: 'project',
@@ -90,18 +78,6 @@ export default defineObject({
         ...manyToOne('timeEntryProjectId'),
         onDelete: OnDeleteAction.SET_NULL,
       },
-    },
-    {
-      universalIdentifier: RELATION_IDS.projectTimeEntries,
-      type: FieldType.RELATION,
-      name: 'timeEntries',
-      label: 'Temps',
-      icon: 'IconClock',
-      description: 'Temps enregistré sur ce projet',
-      relationTargetObjectMetadataUniversalIdentifier: OBJECT_IDS.timeEntry,
-      relationTargetFieldMetadataUniversalIdentifier:
-        RELATION_IDS.timeEntryProject,
-      universalSettings: oneToMany,
     },
     {
       universalIdentifier: RELATION_IDS.timeEntryWorkspaceMember,
@@ -118,18 +94,6 @@ export default defineObject({
         ...manyToOne('timeEntryTeamMemberId'),
         onDelete: OnDeleteAction.CASCADE,
       },
-    },
-    {
-      universalIdentifier: RELATION_IDS.workspaceMemberTimeEntries,
-      type: FieldType.RELATION,
-      name: 'timeEntries',
-      label: 'Temps',
-      icon: 'IconClock',
-      description: 'Temps enregistré par ce membre',
-      relationTargetObjectMetadataUniversalIdentifier: OBJECT_IDS.timeEntry,
-      relationTargetFieldMetadataUniversalIdentifier:
-        RELATION_IDS.timeEntryWorkspaceMember,
-      universalSettings: oneToMany,
     },
   ],
 });

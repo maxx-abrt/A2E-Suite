@@ -5,9 +5,8 @@ import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 
-import { manyToOne, oneToMany } from '../constants/field-vocabulary.ts';
+import { manyToOne } from '../constants/field-vocabulary.ts';
 import {
-  LABEL_IDENTIFIER_IDS,
   OBJECT_IDS,
   RELATION_IDS,
 } from '../constants/universal-identifiers.ts';
@@ -72,19 +71,6 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: RELATION_IDS.projectMembers,
-      type: FieldType.RELATION,
-      name: 'members',
-      label: 'Membres',
-      icon: 'IconUsers',
-      description: 'Équipe du projet (rattachements)',
-      relationTargetObjectMetadataUniversalIdentifier:
-        OBJECT_IDS.projectMember,
-      relationTargetFieldMetadataUniversalIdentifier:
-        RELATION_IDS.projectMemberProject,
-      universalSettings: oneToMany,
-    },
-    {
       universalIdentifier: RELATION_IDS.projectMemberWorkspaceMember,
       type: FieldType.RELATION,
       name: 'workspaceMember',
@@ -99,19 +85,6 @@ export default defineObject({
         ...manyToOne('membershipWorkspaceMemberId'),
         onDelete: OnDeleteAction.CASCADE,
       },
-    },
-    {
-      universalIdentifier: RELATION_IDS.workspaceMemberProjectMemberships,
-      type: FieldType.RELATION,
-      name: 'projectMemberships',
-      label: 'Appartenances',
-      icon: 'IconUsers',
-      description: 'Projets où ce membre est rattaché',
-      relationTargetObjectMetadataUniversalIdentifier:
-        OBJECT_IDS.projectMember,
-      relationTargetFieldMetadataUniversalIdentifier:
-        RELATION_IDS.projectMemberWorkspaceMember,
-      universalSettings: oneToMany,
     },
   ],
 });

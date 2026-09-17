@@ -1,10 +1,6 @@
-import {
-  defineObject,
-  FieldType,
-  OnDeleteAction,
-} from 'twenty-sdk/define';
+import { defineObject, FieldType, OnDeleteAction } from 'twenty-sdk/define';
 
-import { manyToOne, oneToMany } from '../constants/field-vocabulary.ts';
+import { manyToOne } from '../constants/field-vocabulary.ts';
 import {
   LABEL_IDENTIFIER_IDS,
   OBJECT_IDS,
@@ -63,18 +59,6 @@ export default defineObject({
         ...manyToOne('milestoneProjectId'),
         onDelete: OnDeleteAction.SET_NULL,
       },
-    },
-    {
-      universalIdentifier: RELATION_IDS.milestoneProjects,
-      type: FieldType.RELATION,
-      name: 'milestones',
-      label: 'Jalons',
-      icon: 'IconTarget',
-      description: 'Jalons de ce projet',
-      relationTargetObjectMetadataUniversalIdentifier: OBJECT_IDS.milestone,
-      relationTargetFieldMetadataUniversalIdentifier:
-        RELATION_IDS.projectMilestone,
-      universalSettings: oneToMany,
     },
   ],
 });

@@ -167,9 +167,10 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md P4.1 task-extensions bullet is → PARTIAL (2026-09-12): fields/labels/subtask relation/time-entry object/human-ID function exist in source; the open work is the atomic allocator plus integrity/lifecycle tests. Milestone-object bullet is already satisfied in source (stale — not extracted).",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P4.1-recurring-generator",
@@ -304,6 +305,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-17T15:35:54.445Z"
+    "updatedAt": "2026-09-17T16:08:19.975Z"
   }
 }

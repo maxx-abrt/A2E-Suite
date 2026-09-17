@@ -7,6 +7,25 @@ after each iteration and it's included in prompts for context.
 
 *Add reusable patterns discovered during development here.*
 
+- **App inverse relation fields must be standalone, on the relation target:**
+  `defineObject({fields})` uses `ObjectFieldManifest` = `FieldManifest` with
+  `objectUniversalIdentifier` omitted, so an inverse O2M declared *inside* an
+  object file is attached to that object, not the relation target (a self/other
+  relation the server accepts by id but installs wrong). Declare every inverse
+  as a standalone `src/fields/*.field.ts` with
+  `objectUniversalIdentifier: <target object>` and target
+  `relationTargetFieldMetadataUniversalIdentifier` = the FK field's id
+  (model: `real-estate/src/fields/*-on-*.field.ts`). A missing target field id
+  hard-fails install with `Relation field target metadata not found`.
+- **Tier-0 app manifest integrity is testable without a server:** `defineField`/
+  `defineObject` handlers run under `node --test --experimental-strip-types` and
+  return `{ success, config }`; import the object/field modules, build an
+  id→field map, and assert target objects/fields resolve, every relation is a
+  symmetric M2O/O2M pair whose inverse lives on the target, and select option
+  ids are unique. This catches the install-blocking relation defects before the
+  Tier-2 `app:install`. Cross-check the built `.twenty/output/manifest.json`
+  with the same walk.
+
 - **Integration tests + ESM-only deps:** a static `import` of
   `application-install.service.ts` (and anything reaching `@file-type/pdf`)
   fails jest's resolver under `jest-integration.config.ts`. Resolve the
@@ -79,6 +98,18 @@ after each iteration and it's included in prompts for context.
   `documentCommentThread` contract keeps comment identifiers stable. The
   authorized query is the permission gate: a null fetch (record absent from the
   caller's scoped result) means fail closed, not "empty template".
+- **Race-safe counter allocation over the Core API = a CAS hidden in
+  `updateMany<Plural>`:** there is no atomic increment/upsert, but
+  `updateManyX` renders the caller filter into the UPDATE `WHERE` and returns
+  only the rows it wrote, so pinning the *expected* counter value in the filter
+  makes it a compare-and-swap: an empty response means a rival already bumped
+  it. Bump `expected → expected+1`, add an `is: 'NULL'` arm for rows seeded
+  before the field existed, re-READ on a lost CAS (never guess the winner) and
+  retry with a cap. Allocate before writing the allocated value so a failed
+  write burns a number (a gap) instead of reusing one. The `.ts` handler
+  receives an injectable `Pick<CoreApiClient,'query'|'mutation'>` client so
+  `node --test` can enforce that contract with no live server. Instances:
+  `a2e-accounting` invoice numbering, `a2e-projects` task human ids.
 
 ---
 
@@ -158,4 +189,26 @@ after each iteration and it's included in prompts for context.
   - Malformed/non-array/empty blocknote is refused (`null`) rather than copied through; the markdown projection survives so a corrupt body still yields a readable copy.
   - The authorized query is the permission gate — `readAuthorizedTemplateCopySource` returns null only when the record was absent from the caller's result, so an empty template is not mistaken for a denial.
   - Tier-0 gates green: 16/16 new tests, 107/107 lib tests, `tsc --noEmit` exit 0, `yarn lint` 0/0, `oxfmt --check` clean on the `.tsx` files (oxfmt ignores `.ts` here), `twenty dev:build .` 18 files. `--type-aware` is still unsupported by oxlint 0.16.12; `nx lint:diff-with-main` has no `a2e-documents` project.
+---
+
+## 2026-09-17 - P4.1-task-extensions
+- Made the task human-id function an atomic allocator: `project.taskCounter` is now bumped by a CAS (`updateManyProjects` filter pins the expected counter, `is: NULL` arm covers pre-field projects) with re-read + retry, and the human id is allocated BEFORE the task write so a failed write burns a number instead of reusing one.
+- Extracted the idempotent assignment flow and the pure rules into a loader-injected handler + lib so `node --test` proves concurrent uniqueness with no live server.
+- Files changed: `packages/twenty-apps/internal/a2e-projects/src/lib/task-human-id.ts` (new); `.../src/lib/__tests__/task-human-id.test.ts` (new); `.../src/logic-functions/handlers/task-human-id-handler.ts` (new); `.../src/logic-functions/__tests__/task-human-id-handler.test.ts` (new); `.../src/logic-functions/task-human-id.logic-function.ts`; `.../package.json`; `docs/plan/phases/phase-04-report.md`; `.ralph-tui/progress.md`.
+- **Learnings:**
+  - The app package had no `test:unit` script; added one mirroring `a2e-accounting` but covering both `src/lib/__tests__/*.test.ts` and `src/logic-functions/__tests__/*.test.ts`.
+  - The CAS pattern is reusable and now documented in Codebase Patterns (also used by `a2e-accounting` invoice numbering).
+  - `project.taskCounter` semantics stay "last n attributed" (`<KEY>-<counter+1>`); the accounting counter means "next number" — do not unify them without migrating existing task ids.
+  - The concurrency proof works at unit level because a stubbed `query` snapshots the row synchronously: `Promise.all` of two assignments reads the same stale counter, the loser's CAS returns `[]`, it re-reads and retries.
+  - Still open for P4.1: UI/API integrity + lifecycle tests for the eight task app fields (needs the app installed — Tier 1→2, orchestrator), the recurring-generator workflow, and the (stale, already-satisfied) milestone bullet.
+---
+
+## 2026-09-17 - P4.1-task-extensions (integrity + lifecycle)
+- Added a Tier-0 task app-field integrity/lifecycle suite and repaired the relation graph it proved broken: 13 tests assert id uniqueness, exact 6 objects, every relation target object+field resolves, every relation is a symmetric M2O/O2M pair owned by its target object, and the per-field contract (project SET_NULL, projectStatus/priority/estimate selects, labels junction CASCADE, subtask self-relation, blockIssue→note, humanId TEXT, timeEntry task/project/member).
+- Fixed: `label.object.ts`/`task-label.object.ts` junction ids pointed at a self/missing id; moved 8 inverse O2M fields out of project/milestone/project-member/time-entry object files into standalone field files on their real target objects; added the missing `task.subtasks` and `milestone.tasks` inverses. The built manifest now walks clean (55 fields, 0 unresolved, 0 ownership mismatches).
+- Files changed: `a2e-projects/src/lib/__tests__/task-field-integrity.test.ts` (new); `src/objects/{label,task-label,project,milestone,project-member,time-entry}.object.ts`; new `src/fields/{lead-projects,company-projects,project-milestones,milestone-tasks,project-members,workspace-member-project-memberships,task-time-entries,project-time-entries,workspace-member-time-entries,task-subtasks}.field.ts`; `docs/plan/phases/phase-04-report.md`; `.ralph-tui/progress.md`.
+- **Learnings:**
+  - Inverse relations must be standalone fields on the relation target (see Codebase Patterns); embedding them inside the FK object silently misplaces them and a missing target-field id blocks install.
+  - `node --test --experimental-strip-types` can import `twenty-sdk/define` field/object modules and read `{success, config}` — a Tier-0 manifest-integrity seam with no server.
+  - Menu/diff gates: `a2e-projects` is not an Nx project and oxlint 0.16.12 rejects `--type-aware`; package gates are `node --test` + `tsc --noEmit` + `yarn lint` + `npx oxfmt --check` + `npx twenty dev:build .`.
 ---

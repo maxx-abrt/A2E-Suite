@@ -1,7 +1,4 @@
-import {
-  defineObject,
-  FieldType,
-} from 'twenty-sdk/define';
+import { defineObject, FieldType } from 'twenty-sdk/define';
 
 import { oneToMany } from '../constants/field-vocabulary.ts';
 import {
@@ -42,7 +39,7 @@ export default defineObject({
       defaultValue: "'gray'",
     },
     {
-      universalIdentifier: 'c31a0700-0002-4000-8000-000000000003',
+      universalIdentifier: RELATION_IDS.labelTaskLabels,
       type: FieldType.RELATION,
       name: 'taskLabel',
       label: 'Rattachements',

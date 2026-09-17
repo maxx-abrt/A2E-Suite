@@ -6,7 +6,11 @@ import {
 } from 'twenty-sdk/define';
 
 import { manyToOne } from '../constants/field-vocabulary.ts';
-import { OBJECT_IDS, RELATION_IDS } from '../constants/universal-identifiers.ts';
+import {
+  OBJECT_IDS,
+  RELATION_IDS,
+  TASK_FIELD_IDS,
+} from '../constants/universal-identifiers.ts';
 
 // task ↔ label junction. Both FKs CASCADE so deleting a task or a label
 // never orphans rows; the label.side inverse (labelTaskLabels / labelsOnTask
@@ -35,15 +39,14 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: 'c31a0700-0002-4000-8000-000000000004',
+      universalIdentifier: RELATION_IDS.labelsOnTask,
       type: FieldType.RELATION,
       name: 'task',
       label: 'Tâche',
       icon: 'IconDate',
       relationTargetObjectMetadataUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.universalIdentifier,
-      relationTargetFieldMetadataUniversalIdentifier:
-        RELATION_IDS.labelsOnTask,
+      relationTargetFieldMetadataUniversalIdentifier: TASK_FIELD_IDS.taskLabels,
       universalSettings: {
         ...manyToOne('taskLabelTaskId'),
         onDelete: OnDeleteAction.CASCADE,

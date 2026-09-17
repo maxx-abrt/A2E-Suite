@@ -7,7 +7,6 @@ import {
 
 import {
   manyToOne,
-  oneToMany,
   projectHealthOptions,
   projectStatusOptions,
 } from '../constants/field-vocabulary.ts';
@@ -26,8 +25,7 @@ export default defineObject({
   namePlural: 'projects',
   labelSingular: 'Projet',
   labelPlural: 'Projets',
-  description:
-    'Projet : statut, santé, équipe, jalons, budget et dates clés.',
+  description: 'Projet : statut, santé, équipe, jalons, budget et dates clés.',
   icon: 'IconKanban',
   labelIdentifierFieldMetadataUniversalIdentifier:
     LABEL_IDENTIFIER_IDS.projectName,
@@ -136,25 +134,14 @@ export default defineObject({
       label: 'Responsable',
       icon: 'IconUser',
       relationTargetObjectMetadataUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember
+          .universalIdentifier,
       relationTargetFieldMetadataUniversalIdentifier:
         RELATION_IDS.memberProjects,
       universalSettings: {
         ...manyToOne('projectLeadId'),
         onDelete: OnDeleteAction.SET_NULL,
       },
-    },
-    {
-      universalIdentifier: RELATION_IDS.memberProjects,
-      type: FieldType.RELATION,
-      name: 'projects',
-      label: 'Projets',
-      icon: 'IconKanban',
-      description: 'Projets dirigés par ce membre',
-      relationTargetObjectMetadataUniversalIdentifier: OBJECT_IDS.project,
-      relationTargetFieldMetadataUniversalIdentifier:
-        RELATION_IDS.projectLead,
-      universalSettings: oneToMany,
     },
     {
       universalIdentifier: RELATION_IDS.projectCompany,
@@ -170,18 +157,6 @@ export default defineObject({
         ...manyToOne('companyId'),
         onDelete: OnDeleteAction.SET_NULL,
       },
-    },
-    {
-      universalIdentifier: RELATION_IDS.companyProjects,
-      type: FieldType.RELATION,
-      name: 'projects',
-      label: 'Projets',
-      icon: 'IconKanban',
-      description: 'Projets liés à cette entreprise',
-      relationTargetObjectMetadataUniversalIdentifier: OBJECT_IDS.project,
-      relationTargetFieldMetadataUniversalIdentifier:
-        RELATION_IDS.projectCompany,
-      universalSettings: oneToMany,
     },
   ],
 });

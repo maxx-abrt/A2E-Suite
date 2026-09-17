@@ -1,0 +1,138 @@
+# Iteration 9 Log
+
+## Metadata
+
+- **Task ID**: P3.2-template-instantiation
+- **Task Title**: P3.2: template instantiation fetches authorized body and remaps IDs/anchors
+- **Description**: As a workspace member, I want instantiating a template to fetch its authorized body and remap identifiers, so the copy is independent and selecting it shows real content.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-17T15:30:20.937Z
+- **Ended At**: 2026-09-17T15:35:54.444Z
+- **Duration**: 5m 33s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ ls .ralph-tui/ 2>/dev/null
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "P3.2-template-instantiation" PLAN.md
+[94m[bash][0m $ git log --oneline -5
+[94m[bash][0m $ grep -n -i "template" PLAN.md | head -50
+[94m[bash][0m $ grep -rn "P3.2-template-instantiation" docs/ tasks/ .ralph-tui/ 2>/dev/null | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "P3.2\|template-instantiation\|template" docs/plan/phases/phase-03-report.md | tail -50
+[94m[bash][0m $ tail -80 docs/plan/phases/phase-03-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/lib/ packages/twenty-apps/internal/a2e-documents/...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/instantiate-template.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/template-gallery.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/save-document-as-template.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m
+[94m[bash][0m $ ls -la .ralph-tui/iterations/ | tail -20
+[94m[bash][0m $ git log --oneline -8 -- packages/twenty-apps/internal/a2e-documents/src/front-components/document-br...
+[94m[bash][0m $ grep -rn "documentCommentThread\|documentComment" packages/twenty-apps/internal/a2e-documents/src/ -...
+[94m[bash][0m $ ls packages/twenty-front/src/modules/blocknote-editor/stores/ 2>/dev/null
+[94m[bash][0m $ grep -rln "EditorCommentsThreadStore" packages/twenty-front/src/ | head -20
+[94m[bash][0m $ ls -R packages/twenty-apps/internal/a2e-documents/src | head -80
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "remap\|blockId\|block id\|randomUUID" packages/twenty-apps/internal/a2e-documents/src/lib/...
+[94m[bash][0m $ grep -rln "remap" packages/twenty-front/src/modules/blocknote-editor/ packages/twenty-front/src/modu...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/record-note-copy.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/document-outline.ts
+[94m[bash][0m $ grep -rn "blockId\|reference\|anchor" packages/twenty-front/src/modules/blocknote-editor/comments/ |...
+[94m[bash][0m $ grep -rn "comment" packages/twenty-front/src/modules/blocknote-editor/ --include=*.tsx --include=*.t...
+[94m[bash][0m $ ls packages/twenty-front/node_modules/@blocknote/core/types/src/comments/ 2>/dev/null
+[94m[bash][0m $ grep -rn "comments\|Comment" packages/twenty-front/src/modules/object-record/record-field/ui/meta-ty...
+[94m[bash][0m $ ls node_modules/@blocknote/core 2>/dev/null | head
+[94m[bash][0m $ grep -rn "blockId\|reference" node_modules/@blocknote/core/types/src/comments/*.d.ts 2>/dev/null | h...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/node_modules/@blocknote/core/types/src/comments/mark.d.ts
+[94m[bash][0m $ grep -rn "CommentData\|metadata\|id" node_modules/@blocknote/core/types/src/comments/types.d.ts | he...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/starter-templates.ts
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/package.json 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/views/templates.view.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/objects/document.object.ts
+[94m[read][0m
+[94m[bash][0m $ ls node_modules/@blocknote/core/src/comments/ 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/node_modules/@blocknote/core/src/comments/mark.ts
+[94m[bash][0m $ grep -rn "comment" node_modules/@blocknote/core/src/comments/extension.ts | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/node_modules/@blocknote/core/src/comments/extension.ts
+[94m[bash][0m $ git show 2c9971b3 --stat | head -40
+[94m[bash][0m $ git show c9a9efe8 -- packages/twenty-apps/internal/a2e-documents/src/front-components/document-brows...
+[94m[bash][0m $ ls node_modules/twenty-client-sdk/dist 2>/dev/null | head
+[94m[bash][0m $ grep -rn "getResolverArgs" packages/twenty-sdk/src 2>/dev/null | head
+[94m[read][0m
+[94m[bash][0m $ git show 2c9971b3 -- packages/twenty-apps/internal/a2e-documents/src/front-components/document-brows...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/fractional-position.ts
+[94m[read][0m
+[94m[bash][0m $ grep -rn "blocknote" packages/twenty-front/src/modules/blocknote-editor/ --include=*.ts | grep -v te...
+[94m[bash][0m $ grep -rn "JSON.stringify\|JSON.parse" packages/twenty-front/src/modules/blocknote-editor/ | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/parseInitialBlocknote.ts
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "DEFAULT_TEMPLATE_COPY_POSITION\|TEMPLATE_TITLE_PREFIX" packages/twenty-apps/internal/a2e-d...
+[94m[bash][0m $ grep -rn "buildTemplateCopyPayload\|readAuthorizedTemplateCopySource\|instantiate-template" packages...
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ grep -n "template-instantiation\|template-body\|P3.2/instantiate" docs/plan/phases/phase-03-report.m...
+[94m[bash][0m $ stat -f "%Sm" -t "%Y-%m-%dT%H:%M:%SZ" docs/plan/phases/phase-03-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ tail -3 docs/plan/phases/phase-03-report.md
+[94m[todowrite][0m
+[94m[write][0m "import { DOCUMENT_KIND } from '../constants/field-vocabulary.ts';
+
+// Template instantiation is payload construction only: the copy is a fresh
+// DOCUMENT record whose body is the template's, with eve... (6689 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/instantiate-template.ts
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  DEFAULT_TEMPLATE_COPY_POSITION,
+  buildTemplateCopyPayload,
+  buildTemplateCopyTitle,
+  readAuthorizedTemplateCop... (7221 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ node --test src/lib/__tests__/instantiate-template.test.ts
+[94m[bash][0m $ node --test src/lib/__tests__/*.test.ts 2>&1 | tail -15
+[94m[bash][0m $ echo "tsc exit: $?"
+[94m[edit][0m
+[94m[bash][0m $ node --test src/lib/__tests__/instantiate-template.test.ts 2>&1 | tail -8
+[94m[bash][0m $ echo "tsc exit: $?"
+[94m[bash][0m $ echo "oxfmt exit: $?"
+[94m[bash][0m $ echo "lint exit: ${pipestatus[1]}"
+[94m[bash][0m $ done
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -25
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/lib/instantiate-template.ts src/lib/__tests__/instanti...
+[94m[bash][0m $ npx nx lint:diff-with-main a2e-documents 2>&1 | tail -15
+[94m[bash][0m $ git status --porcelain
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ node --test src/lib/__tests__/*.test.ts 2>&1 | tail -8
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ tail -40 .ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -3 .ralph-tui/progress.md | cat -A | tail -3
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ grep -c "P3.2-template-instantiation/template-body-remap" docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ git diff --stat -- packages/twenty-apps/internal/a2e-documents
+[94m[todowrite][0m
+Slice done: template instantiation now fetches the body through a fail-closed authorized source and re-keys every blocknote block anchor (internal references follow, `threadId` never remapped), with unit proof that editing a copy never mutates its template.
+
+- 16/16 new tests, 107/107 lib tests, `tsc --noEmit` 0, `yarn lint` 0/0, `oxfmt` clean on the 2 `.tsx`, `twenty dev:build .` succeeded (18 files).
+- Known limits recorded: `--type-aware` unsupported by oxlint 0.16.12, no `a2e-documents` Nx project (package gates used), Tier-2 browser journey left for the orchestrator.
+- Report appended to `docs/plan/phases/phase-03-report.md`; progress entry appended to `.ralph-tui/progress.md`. No commits.
+
+<promise>COMPLETE</promise>
