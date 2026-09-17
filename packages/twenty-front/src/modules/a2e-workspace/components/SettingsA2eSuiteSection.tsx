@@ -1,10 +1,12 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useMemo } from 'react';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 import { A2eSuiteApplicationCard } from '~/modules/a2e-workspace/components/A2eSuiteApplicationCard';
 import { useA2eSuiteApplications } from '~/modules/a2e-workspace/hooks/useA2eSuiteApplications';
+import { useApplicationInstallReadiness } from '~/pages/settings/applications/hooks/useApplicationInstallReadiness';
 import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
 
 const StyledCardsGrid = styled.div`
@@ -21,6 +23,15 @@ export const SettingsA2eSuiteSection = () => {
   const { t } = useLingui();
   const { installedApplications, availableApplications } =
     useA2eSuiteApplications();
+
+  const availableUniversalIdentifiers = useMemo(
+    () => availableApplications.map((application) => application.id),
+    [availableApplications],
+  );
+
+  const { readinessByIdentifier } = useApplicationInstallReadiness({
+    universalIdentifiers: availableUniversalIdentifiers,
+  });
 
   if (
     installedApplications.length === 0 &&
@@ -44,6 +55,7 @@ export const SettingsA2eSuiteSection = () => {
             <A2eSuiteApplicationCard
               key={application.id}
               application={application}
+              readiness={readinessByIdentifier.get(application.id) ?? null}
             />
           ))}
         </StyledCardsGrid>

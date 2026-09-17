@@ -12,6 +12,7 @@ import { ApplicationPackageModule } from 'src/engine/core-modules/application/ap
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { ApplicationInstallResolver } from 'src/engine/core-modules/application/application-install/application-install.resolver';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { ApplicationInstallReadinessService } from 'src/engine/core-modules/application/application-install/services/application-install-readiness.service';
 import { InstallApplicationCommand } from 'src/engine/core-modules/application/application-install/commands/install-application.command';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
@@ -45,6 +46,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   providers: [
     ApplicationInstallResolver,
     ApplicationInstallService,
+    ApplicationInstallReadinessService,
     InstallApplicationCommand,
   ],
   exports: [ApplicationInstallService],

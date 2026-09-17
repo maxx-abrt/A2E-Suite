@@ -13,6 +13,8 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { ApplicationInstallReadinessDTO } from 'src/engine/core-modules/application/application-install/dtos/application-install-readiness.dto';
+import { ApplicationInstallReadinessService } from 'src/engine/core-modules/application/application-install/services/application-install-readiness.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationUninstallImpactDTO } from 'src/engine/core-modules/application/application-manifest/dtos/application-uninstall-impact.dto';
 import { UninstallApplicationInput } from 'src/engine/core-modules/application/application-manifest/dtos/uninstall-application.input';
@@ -46,6 +48,7 @@ export class ApplicationInstallResolver {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly applicationInstallService: ApplicationInstallService,
+    private readonly applicationInstallReadinessService: ApplicationInstallReadinessService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly marketplaceQueryService: MarketplaceQueryService,
     private readonly metricsService: MetricsService,
@@ -72,6 +75,19 @@ export class ApplicationInstallResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     return this.applicationService.findManyApplications(workspaceId);
+  }
+
+  @Query(() => [ApplicationInstallReadinessDTO])
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  async applicationInstallReadiness(
+    @Args('universalIdentifiers', { type: () => [String] })
+    universalIdentifiers: string[],
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ApplicationInstallReadinessDTO[]> {
+    return this.applicationInstallReadinessService.getInstallReadiness({
+      workspaceId,
+      universalIdentifiers,
+    });
   }
 
   @Query(() => ApplicationDTO)

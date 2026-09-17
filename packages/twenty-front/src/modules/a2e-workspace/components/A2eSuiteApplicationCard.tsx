@@ -11,10 +11,13 @@ import { IconDownload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { isDefined } from 'twenty-shared/utils';
 import { type MarketplaceApp } from '~/generated-metadata/graphql';
+import { type ApplicationInstallReadiness } from '~/pages/settings/applications/hooks/useApplicationInstallReadiness';
 
 type A2eSuiteApplicationCardProps = {
   application: MarketplaceApp;
+  readiness?: ApplicationInstallReadiness | null;
 };
 
 const StyledLinkContainer = styled.div`
@@ -43,10 +46,27 @@ const StyledFooterContainer = styled.div`
   width: 100%;
 `;
 
+const StyledBlockedReason = styled.span`
+  color: ${themeCssVariables.color.red};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
 export const A2eSuiteApplicationCard = ({
   application,
+  readiness,
 }: A2eSuiteApplicationCardProps) => {
   const { install, isInstalling } = useInstallMarketplaceApp();
+
+  // Readiness is unknown until its query resolves; only a resolved report can
+  // block the install, so the button stays enabled while loading.
+  const isBlocked = isDefined(readiness) && !readiness.ready;
+
+  const blockedReasonLabel =
+    readiness?.blockedReason === 'APP_NOT_REGISTERED'
+      ? t`Not registered on this server`
+      : readiness?.blockedReason === 'VERSION_INCOMPATIBLE'
+        ? t`Incompatible server version`
+        : null;
 
   // Marketplace catalog cards carry the application universal identifier in
   // `id`, which is what the install mutation takes.
@@ -68,7 +88,13 @@ export const A2eSuiteApplicationCard = ({
             <StyledDescription>{application.description}</StyledDescription>
             <StyledFooterContainer>
               <StyledSettingsCardThirdLine>
-                {t`Part of A2E Suite`}
+                {isDefined(blockedReasonLabel) ? (
+                  <StyledBlockedReason>
+                    {blockedReasonLabel}
+                  </StyledBlockedReason>
+                ) : (
+                  t`Part of A2E Suite`
+                )}
               </StyledSettingsCardThirdLine>
               <Button
                 Icon={IconDownload}
@@ -78,7 +104,7 @@ export const A2eSuiteApplicationCard = ({
                 onClick={() => {
                   void install({ universalIdentifier: application.id });
                 }}
-                disabled={isInstalling}
+                disabled={isInstalling || isBlocked}
               />
             </StyledFooterContainer>
           </div>
