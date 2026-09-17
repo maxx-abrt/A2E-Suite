@@ -3,10 +3,10 @@
   "sessionId": "6453f712-e1ad-43a9-b269-09d298d04ade",
   "status": "running",
   "startedAt": "2026-09-17T12:08:57.969Z",
-  "updatedAt": "2026-09-17T12:25:45.082Z",
-  "currentIteration": 2,
+  "updatedAt": "2026-09-17T12:25:45.645Z",
+  "currentIteration": 3,
   "maxIterations": 20,
-  "tasksCompleted": 2,
+  "tasksCompleted": 3,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -31,8 +31,8 @@
       {
         "id": "US-003",
         "title": "Executable §7 fixtures with conformance tests",
-        "status": "open",
-        "completedInSession": false
+        "status": "completed",
+        "completedInSession": true
       }
     ]
   },
@@ -56,6 +56,16 @@
       "durationMs": 419401,
       "startedAt": "2026-09-17T12:13:53.426Z",
       "endedAt": "2026-09-17T12:20:52.827Z"
+    },
+    {
+      "iteration": 3,
+      "status": "completed",
+      "taskId": "US-003",
+      "taskTitle": "Executable §7 fixtures with conformance tests",
+      "taskCompleted": true,
+      "durationMs": 286773,
+      "startedAt": "2026-09-17T12:20:58.307Z",
+      "endedAt": "2026-09-17T12:25:45.080Z"
     }
   ],
   "skippedTaskIds": [],

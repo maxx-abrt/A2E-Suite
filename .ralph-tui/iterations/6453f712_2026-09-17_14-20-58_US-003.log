@@ -1,0 +1,126 @@
+# Iteration 3 Log
+
+## Metadata
+
+- **Task ID**: US-003
+- **Task Title**: Executable §7 fixtures with conformance tests
+- **Description**: As an executor implementing P1.6b, I want the §7 fixtures checked in as typed data with unit tests so the contract examples are machine-verified and cannot drift.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-17T12:20:58.307Z
+- **Ended At**: 2026-09-17T12:25:45.080Z
+- **Duration**: 4m 46s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git log --oneline -5
+I'll start with the required clean-start check and understand the task.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-003" PLAN.md
+[94m[bash][0m $ ls docs/plan/phases/ && echo "---" && ls docs/plan/phases/phase-01-report.md 2>/dev/null && echo "ex...
+Ralph engine's own files are dirty (expected). Let me find US-003 in PLAN.md and the phase report.
+[94m[bash][0m $ grep -rn "US-003" docs/ tasks/ 2>/dev/null | head -50
+[94m[bash][0m $ grep -rn "US-00" PLAN.md | head -50
+[94m[bash][0m $ grep -n "P1.6" PLAN.md | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd-p16a-template-setup-operation-contracts-c1c2-completion.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ ls packages/twenty-server/src/engine/core-modules/onboarding/ && echo "---TYPES---" && ls packages/t...
+Both prerequisites are done and committed. No existing US-003 claim. Let me claim the slice.
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-server/src/engine/core-modules/onboarding/constants/
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "^#" docs/plan/05-template-contracts.md
+Now let me read the contract doc, especially §7.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/onboarding/onboarding.exception.ts
+[94m[read][0m
+Let me examine the exception codes and existing test conventions.
+[94m[bash][0m $ find packages/twenty-server/src -type f \( -name "*.fixture.ts" -o -name "*.fixtures.ts" -o -name "f...
+[94m[bash][0m $ cat packages/twenty-server/jest.config.mjs 2>/dev/null | head -60
+Let me check existing fixture conventions in the server package.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/database/clickhouse/seeds/fixtures.ts
+[94m[bash][0m $ find packages/twenty-server/src/engine/core-modules -path "*__tests__*" -name "*.ts" | head -20
+[94m[grep][0m [95mpackages/twenty-server/src[0m pattern: [96mONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS[0m
+[94m[bash][0m $ grep -rn "8da4b8b5-5edf-4880-b51f-ab6e679ec617\|4a1178c1-3535-4a47-b592-231d3216b36f\|66a504cc-0a75-...
+[94m[bash][0m $ ls packages/twenty-apps/internal/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/onboarding/onboarding.service.ts
+[94m[bash][0m $ tail -c 200 docs/plan/phases/phase-01-report.md | od -c | tail -5
+No active conflicting claims. US-001/US-002 are done and committed. Claiming US-003 now.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ grep -n "US-003" docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ grep -rn "CLAIMED" docs/plan/phases/phase-01-report.md | tail -6
+[94m[todowrite][0m
+Claim is the sole US-003 entry. Let me plan the work.
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-server/src/engine/core-modules/onboarding/dtos/ && echo "---" && cat packages/twe...
+[94m[write][0m "// Machine-checked examples from docs/plan/05-template-contracts.md §7. The doc's
+// JSON blocks mirror these values; the conformance spec
+// (`apply-template-operation-fixtures.spec.ts`) fails when t... (7710 chars)"
+Now I'll create the fixture module.
+[94m[write][0m "import { isDefined } from 'twenty-shared/utils';
+
+import {
+  individualTemplateApplyResult,
+  individualTemplatePreview,
+  templateRejectionFixtures,
+  type TemplateContentRejectionCode,
+  type Templa... (9143 chars)"
+Now the conformance spec.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+Now annotate the doc §7 as mirroring the checked-in fixtures.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[todowrite][0m
+[94m[bash][0m $ npx jest src/engine/core-modules/onboarding/__tests__/apply-template-operation-fixtures.spec.ts --co...
+Tests pass. Now typecheck and lint.
+[94m[bash][0m $ echo "EXIT:${pipestatus[1]}"
+[94m[edit][0m
+The `satisfies` narrowing hides optional props. I'll type the fixtures explicitly against the contract types.
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/engine/core-modules/onboarding/__tests__/apply-template-operation-fixtures.spec.ts --co...
+[94m[bash][0m $ echo "EXIT:${pipestatus[1]}"
+Now lint.
+[94m[bash][0m $ echo "EXIT:${pipestatus[1]}"
+[94m[bash][0m $ echo "OXFMT_EXIT:${pipestatus[1]}"
+[94m[bash][0m $ echo "OXLINT_EXIT:${pipestatus[1]}"
+Formatting needs fixing — running oxfmt.
+[94m[bash][0m $ echo "EXIT:${pipestatus[1]}"
+[94m[bash][0m $ echo "OXLINT_EXIT:${pipestatus[1]}"
+[94m[bash][0m $ npx jest src/engine/core-modules/onboarding/__tests__/apply-template-operation-fixtures.spec.ts --co...
+[94m[bash][0m $ echo "EXIT:${pipestatus[1]}"
+[94m[bash][0m $ echo "EXIT:${pipestatus[1]}"
+[94m[read][0m
+All gates green. Let me review the final formatted files.
+[94m[bash][0m $ git status --porcelain
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[bash][0m $ echo "EXIT:${pipestatus[1]}"
+[94m[todowrite][0m
+All gates green. Now the report entries.
+[94m[bash][0m $ head -40 .ralph-tui/progress.md 2>/dev/null
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ grep -n "US-003" .ralph-tui/progress.md
+Final self-verification.
+[94m[bash][0m $ git diff --name-only | grep -c "PLAN.md" || true
+[94m[todowrite][0m
+US-003 complete — `done-for-review`, ready-to-tick.
+
+**Delivered**
+- New typed fixture module `.../onboarding/__tests__/fixtures/apply-template-operation.fixtures.ts`: `TemplatePreview` preview example, `ApplyTemplateResult` result example, and `templateRejectionFixtures` (one per each of the 9 §7 matrix rows, incl. US-002 cycles + cross-workspace).
+- New `.../onboarding/__tests__/apply-template-operation-fixtures.spec.ts` (7 cases) asserting shape/enum conformance, row coverage, preview↔`WORKSPACE_TEMPLATE_DEFINITIONS[INDIVIDUAL]` (apps + managed nav), known-app identifiers, content codes outside the step/onboarding enums, and FR-4 (no record/user IDs, share URLs, tokens).
+- Doc §7 annotated as mirroring the fixtures; §8 preview-fixtures row marked landed.
+
+**Checks:** jest 7/7 PASS · tsgo exit 0 · oxlint/oxfmt clean · check-docs PASS. `nx lint:diff-with-main` exits 0 but diffs `main...HEAD` so it covered none of the uncommitted new files — direct oxlint/oxfmt used instead. `twenty-shared` untouched.
+
+**Changed:** 2 new files + `docs/plan/05-template-contracts.md` + phase report + `.ralph-tui/progress.md`. PLAN.md untouched, nothing committed.
+
+<promise>COMPLETE</promise>
