@@ -40,11 +40,12 @@
         "If twenty-shared is touched: npx nx build twenty-shared --skip-nx-cache runs first and succeeds"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "No app→app dependency field in SDK manifests — §8 keeps ordering preset-flat (Non-Goal).",
       "dependsOn": [
         "US-001"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-003",
@@ -72,6 +73,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-17T12:13:47.882Z"
+    "updatedAt": "2026-09-17T12:20:52.828Z"
   }
 }

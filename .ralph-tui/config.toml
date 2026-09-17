@@ -1,27 +1,19 @@
-# Ralph TUI Configuration
-# A2E-Suite — executor loop
-
 configVersion = "2.1"
+maxIterations = 20
+iterationDelay = 5000
 agent = "opencode"
 model = "opencode-go/deepseek-v4.1-flash"
 tracker = "json"
-
-maxIterations = 20
-iterationDelay = 5000
-preflightTimeoutMs = 30000
-subagentTracingDetail = "minimal"
-
+prompt_template = ".ralph-tui/prompt.hbs"
 autoCommit = true
 commitMessageTemplate = "agent: {{taskId}} {{taskTitle}}"
-prompt_template = ".ralph-tui/prompt.hbs"
-
-[trackerOptions]
-path = "./prd.json"
+subagentTracingDetail = "minimal"
+preflightTimeoutMs = 30000
+defaultAgent = "opencode"
 
 [agentOptions]
-# left empty intentionally — no OpenCode-plugin-specific overrides
-# documented for agentOptions keys; verify with `ralph-tui config help`
-# if you need to pass extra flags to the opencode subprocess
+[trackerOptions]
+path = "./prd.json"
 
 [errorHandling]
 strategy = "retry"

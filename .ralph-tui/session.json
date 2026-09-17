@@ -3,10 +3,10 @@
   "sessionId": "6453f712-e1ad-43a9-b269-09d298d04ade",
   "status": "running",
   "startedAt": "2026-09-17T12:08:57.969Z",
-  "updatedAt": "2026-09-17T12:13:47.882Z",
-  "currentIteration": 0,
+  "updatedAt": "2026-09-17T12:20:52.828Z",
+  "currentIteration": 1,
   "maxIterations": 20,
-  "tasksCompleted": 0,
+  "tasksCompleted": 1,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -19,8 +19,8 @@
       {
         "id": "US-001",
         "title": "Re-verify contract spec against current source (drift audit)",
-        "status": "open",
-        "completedInSession": false
+        "status": "completed",
+        "completedInSession": true
       },
       {
         "id": "US-002",
@@ -36,7 +36,18 @@
       }
     ]
   },
-  "iterations": [],
+  "iterations": [
+    {
+      "iteration": 1,
+      "status": "completed",
+      "taskId": "US-001",
+      "taskTitle": "Re-verify contract spec against current source (drift audit)",
+      "taskCompleted": true,
+      "durationMs": 264628,
+      "startedAt": "2026-09-17T12:09:23.253Z",
+      "endedAt": "2026-09-17T12:13:47.881Z"
+    }
+  ],
   "skippedTaskIds": [],
   "cwd": "/Users/maxaubert/Projets/A2E Suite",
   "activeTaskIds": [],

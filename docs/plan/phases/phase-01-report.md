@@ -732,3 +732,17 @@ CLAIMED — US-001/drift-audit — deepseek-v4.1-flash — 2026-09-17T12:10:30Z 
 **Do not redo:** doc's `a2e-accounting 0.1.0` is CORRECT — the `0.1.1` in the 2026-09-16 orchestrator log was a reverted scratch bump (report line 628); do not "fix" it to 0.1.1. §7 fixture UUIDs all match source (`19126a9c-…` documents app; nav rows b001/b004/b005). The §4 type snippet stays the abstract contract — the server's actual field is negative `deselectedOptionalAppUniversalIdentifiers` and must not be "aligned" by renaming the input (breaking change)
 **Remaining:** US-002, US-003 in this PRD; 12 other [ ]/[~] PLAN tasks ahead
 **Next:** US-002 — close cycle-rejection + provenance gaps in the same doc (§7 matrix row, provenance subsection, §8 traceability)
+
+CLAIMED — US-002/cycle-rejection-provenance — deepseek-v4.1-flash — 2026-09-17T12:16:36Z — base d13d7c54d1c08a030ada669233fc66e6e8bf7f6a
+
+## 2026-09-17 12:20 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-002 Close contract gaps — cycle rejection and provenance shape · **Slice:** whole US-002 acceptance set (doc-only)
+**Claim:** done-for-review
+**Ready-to-tick:** yes — all applicable acceptance bullets met with source evidence; no package touched, so lint/tsgo/build gates are N/A
+**Base:** d13d7c54d1c08a030ada669233cf66e6e8bf7f6a
+**Changed:** `docs/plan/05-template-contracts.md` (US-002 header note; new §5.1 provenance shape; §7 rejection matrix rewritten as normative "must" rows with typed codes + explicit cycles/flat-preset row; §8 rewritten as P1.6a requirement traceability + genuine gaps); `docs/plan/phases/phase-01-report.md` (CLAIMED + this entry); `.ralph-tui/progress.md` (Ralph bridge entry)
+**Checks:** `node docs/scripts/check-docs.mjs` → PASS (19 maintained, 130 local inline links, fences balanced) after edits; code gates N/A — `git status` shows zero package files touched
+**Missing for tick:** none. Design decision recorded in the doc: no server-side `TemplateContentProvenance` type added (no consumer in `apply-template-operation.types.ts`, AC-3 default = document-only); cycles are a load-time descriptor rejection, so `OperationStepErrorCode` is NOT extended — the two `TEMPLATE_CONTENT_*` codes are named as P1.6e typed siblings (§7/§8)
+**Do not redo:** §7 codes reference real enums today (`TEMPLATE_UNKNOWN`, `TEMPLATE_VERSION_CONFLICT`, `TEMPLATE_APP_NOT_IN_DEFINITION`, `TEMPLATE_REQUIRED_APP_DESELECTED`, `TEMPLATE_IDEMPOTENCY_CONFLICT` in `onboarding.exception.ts`; `APP_NOT_REGISTERED`/`VERSION_INCOMPATIBLE` in `apply-template-operation.types.ts`). The two `TEMPLATE_CONTENT_*` codes are intentionally document-only placeholders for the P1.6e descriptor loader — do NOT add them to `OperationStepErrorCode` (a step code for a pre-step failure would make the typed surface lie). §5.1 shape is fixed: `sourceTemplateKey` + `sourceTemplateVersion` + `operationId`
+**Remaining:** US-003 in this PRD; 12 other [ ]/[~] PLAN tasks ahead
+**Next:** US-003 — check in typed §7 fixtures (including the new cycle + cross-workspace rows) with conformance tests

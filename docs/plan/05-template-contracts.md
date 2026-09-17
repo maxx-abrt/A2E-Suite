@@ -25,6 +25,20 @@ P1.6b, **may** = open follow-up.
 > suspect but no live re-verification since the fixes — flagged as a P1.6b
 > obligation rather than asserted working.
 
+> 2026-09-17 (US-002): closed the two P1.6a contract gaps. §7's rejection
+> matrix is now normative ("must" per row) with the typed code each rule
+> produces, and gains an explicit **cycles** row: workspace presets are flat app
+> lists (no dependency graph → no preset cycle), while P1.6e content-template
+> descriptors must reject relation/reference cycles **at load time** — the same
+> severity as cross-workspace content. New §5.1 fixes the exact provenance shape
+> carried by template-instantiated content (source template key + version +
+> instantiating `operationId`), tied to §5's `createdRecordUniversalIdentifiers`
+> and C1. §8 now maps every P1.6a bullet requirement to "specified" or an
+> explicit gap. Document-only: no package type added (`TemplateContentProvenance`
+> has no consumer in `apply-template-operation.types.ts`), and the two
+> `TEMPLATE_CONTENT_*` codes are load-time descriptor rejections, so they are not
+> added to `OperationStepErrorCode`.
+
 ## 1. Template identity and classification (C1)
 
 Three lifecycle-distinct template kinds — never interchange them:
@@ -193,6 +207,44 @@ type ApplyTemplateResult = {
   > seeding works. The doc's repeat-safe provenance rule above remains the
   > target contract, not current behavior.
 
+### 5.1 Provenance on template-instantiated content
+
+C1 requires "instantiate fresh content IDs with source-template/version
+provenance". Every record a template creates is a fresh row, and **must** carry
+exactly this provenance shape — this is how a later operation tells "template
+copy at version N" from "user-authored content" without a parallel ownership
+table:
+
+```ts
+type TemplateContentProvenance = {
+  sourceTemplateKey: string;     // workspace-preset key, or P1.6e descriptor key
+  sourceTemplateVersion: number; // definition/descriptor version instantiated
+  operationId: string;           // the ApplyTemplateResult.operationId that created it
+};
+```
+
+- **Workspace-preset samples:** `ApplyTemplateStep.createdRecordUniversalIdentifiers`
+  on the `seed-samples` step **must** list the fresh record IDs, and each of
+  those records **must** carry `TemplateContentProvenance` whose `operationId`
+  equals `ApplyTemplateResult.operationId` and whose key+version equal the
+  applied template. That tuple is the repeat-safety key in §5: a retry of the
+  same operation **must** skip records whose provenance already matches, so no
+  duplicate seeds.
+- **Content templates (P1.6e):** instantiated records reuse the same shape —
+  the descriptor's `sourceTemplateKey`/`sourceTemplateVersion` plus the
+  instantiating `operationId`. Editing a copy **must not** mutate its template,
+  must not rewrite provenance to a different source, and must not propagate
+  back (C1: no implicit live propagation).
+- Provenance is carried **per record**. It is not a new operation table (C2:
+  installed application state stays the single activation truth) and not a
+  second ownership enum.
+
+No server-side `TemplateContentProvenance` type is added to
+`apply-template-operation.types.ts` now: that file has no consumer for it, and
+the P1.6d seeders already tag their rows app-side (`isTemplate`, `systemKey`,
+project `key`). The server-side shape lands with the first read-back consumer
+in P1.6b/c/e (recorded in §8).
+
 ## 6. Preview contract
 
 Before apply, a resolved preview **must** return:
@@ -254,23 +306,63 @@ Result after a required-app install failure and successful retry of the rest:
 }
 ```
 
-Rejection matrix (each must produce a localized, typed error, not a throw):
+Rejection matrix. Every row is a normative **must** that produces a localized,
+typed error and never a throw. Codes come from the two typed surfaces already
+in source: `OnboardingExceptionCode` for pre-step / load-time rejections
+(`TEMPLATE_*`), `OperationStepErrorCode` for step failures.
 
-| Input | Result |
-| --- | --- |
-| Unknown `templateKey` | reject before any step |
-| Selected app not in template definition | reject |
-| Deselect a required app | reject |
-| Required app unregistered / version incompatible | step `failed` with `APP_NOT_REGISTERED`/`VERSION_INCOMPATIBLE`; blocked preview |
-| Same idempotency key retried | return existing operation result; no duplicate seeds |
-| Template content referencing another workspace's record | invalid descriptor; reject at load time |
+Workspace presets are **flat app lists** — there is no app→app dependency graph
+in the SDK manifest (§8 Non-Goal, stated explicitly), so a preset cannot contain
+a cycle and needs no cycle check. Cycles are a **content-template** (P1.6e)
+concern only, where descriptor relation/reference references form a directed
+graph.
+
+| Input | Result (normative) | Typed code |
+| --- | --- | --- |
+| Unknown `templateKey` | **must** reject before any step | `TEMPLATE_UNKNOWN` |
+| Version differs from the previewed one | **must** reject before any step | `TEMPLATE_VERSION_CONFLICT` |
+| Selected/deselected app not in template definition | **must** reject before any step | `TEMPLATE_APP_NOT_IN_DEFINITION` |
+| Deselect a required app | **must** reject before any step | `TEMPLATE_REQUIRED_APP_DESELECTED` |
+| Required app unregistered / version incompatible | **must** fail that step and block apply (preview stays visible) | `APP_NOT_REGISTERED` / `VERSION_INCOMPATIBLE` (step) |
+| Same idempotency key retried with the same configuration | **must** return the existing operation result; **must not** create duplicate seeds | — (idempotent, not an error) |
+| Same idempotency key reused with a different configuration | **must** reject | `TEMPLATE_IDEMPOTENCY_CONFLICT` |
+| Template content referencing another workspace's record | **must** be invalid by construction; **must** reject at descriptor load time | `TEMPLATE_CONTENT_CROSS_WORKSPACE` (P1.6e) |
+| Content-template descriptor whose relations/references form a cycle | **must** be invalid; **must** reject at load time, same severity as cross-workspace content | `TEMPLATE_CONTENT_CYCLE` (P1.6e) |
+
+The two `TEMPLATE_CONTENT_*` codes are load-time descriptor rejections, not
+operation steps, so they are deliberately **not** members of
+`OperationStepErrorCode` (adding a step code for a pre-step failure would make
+the typed surface lie). They are typed siblings that land with the P1.6e
+descriptor validator — see §8. The `OnboardingExceptionCode` /
+`OperationStepErrorCode` values above all exist in source today.
 
 ## 8. Deliberate gaps (handed to later slices)
 
+P1.6a's bullet is "deliver version, compatibility, inputs, provenance and
+preview fixtures; reject unknown IDs, cycles, unavailable requirements and
+cross-workspace content". Traceability — **specified** = this doc fixes the
+contract; **gap** = behavior lands in a named later slice:
+
+| P1.6a requirement | Status |
+| --- | --- |
+| version | **specified** §1 (stable key + integer, bump rule), §4/§7 rejection |
+| compatibility | **specified** §3 (app→server `engines.twenty`, app version progression), §6/§7 blocked preview |
+| inputs | **specified** §4 (request fields + idempotency key; implemented negative deselect form) |
+| provenance | **specified** §5.1 (per-record source key + version + operationId) |
+| preview fixtures | **specified** §6/§7 as examples; typed, machine-checked fixtures land with US-003 (P1.6b) |
+| unknown IDs | **specified** §4/§7 (`TEMPLATE_UNKNOWN`, `TEMPLATE_APP_NOT_IN_DEFINITION`) |
+| cycles | **specified** §7 for content templates; **gap** — the P1.6e descriptor loader that enforces it does not exist yet |
+| unavailable requirements | **specified** §3/§6/§7 (blocked preview; `APP_NOT_REGISTERED` / `VERSION_INCOMPATIBLE`) |
+| cross-workspace content | **specified** §4/§7 as invalid by construction; **gap** — descriptor-load enforcement lands with P1.6e |
+
+Genuine gaps (do not invent a workaround):
+
 - No app→app dependency field in the SDK manifest — ordering stays preset-flat
-  until the SDK adds it (do not invent one in server code).
-- No sample seeder exists; `seed-samples` step is specified but its content
-  arrives with P1.6d (per-app safe slices).
+  until the SDK adds it (do not invent one in server code). This is exactly why
+  workspace presets cannot contain cycles: they are a flat list of apps, not a
+  dependency graph.
+- The `seed-samples` step is specified but its content is app-owned, not a
+  server-side seeder (see §5).
 
   > 2026-09-17: superseded — P1.6d shipped app-owned post-install seeders
   > (a2e-documents, a2e-projects, a2e-accounting payloads + hook exist and unit
@@ -278,7 +370,12 @@ Rejection matrix (each must produce a localized, typed error, not a throw):
   > async, so the `seed-samples` step over-reports `succeeded` (phase-01-report.md
   > 2026-09-16 entries). What remains for P1.6b is **truthful reporting /
   > sync semantics**, not the seeder content — see the §5 2026-09-17 note.
-- Content templates (P1.6e) reuse §4 idempotency and §2 provenance rules; their
-  descriptor schema is out of scope here.
+- Content templates (P1.6e) reuse §4 idempotency and the §5.1 provenance shape,
+  but their **descriptor schema is out of scope here**. The cycle check and the
+  two content-descriptor typed codes (`TEMPLATE_CONTENT_CYCLE`,
+  `TEMPLATE_CONTENT_CROSS_WORKSPACE`) land with the P1.6e descriptor loader.
+  The provenance shape is fixed in §5.1; no server-side
+  `TemplateContentProvenance` type is added to `apply-template-operation.types.ts`
+  now because it has no consumer there (the P1.6d seeders tag rows app-side).
 - `ApplyTemplateResult` persistence (async progress queryable by another
   session) is P1.6b's decision — this contract only fixes the shape.
