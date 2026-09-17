@@ -509,9 +509,16 @@ persona, and the conventions every later phase relies on.
       source now contains the full document app work described in P3.
 - [x] Add `packages/twenty-apps/README-A2E.md`: local app authoring,
       publishing, naming and UUID discipline (historical completion).
-- [ ] Verify app install/uninstall on a populated scratch workspace under C3.
+- [~] Verify app install/uninstall on a populated scratch workspace under C3.
       Historical verification was source audit only; records/files/relations,
       hook failure and reinstall still need real acceptance (P0.4/P1.7).
+      — 2026-09-17 orchestrator (phase-04-report): a2e-projects install +
+      five upgrades (0.1.4→0.1.10) accepted live on the populated `Apple`
+      workspace alongside A2E Documents; the first attempt exposed 17 shared
+      universal identifiers with Documents (install aborted) — renumbered to
+      the `c31b*` namespace with maintainer approval. Post-install seeding,
+      hook/trigger execution and idempotent re-run verified; uninstall still
+      unverified (destructive, out of this pass).
 
 ### P1.2 Module registry (settings surface)
 - [x] Server: `workspace-module` concept — per-workspace enable/disable state
@@ -794,23 +801,38 @@ Optional advanced authoring is not a prerequisite to this repair slice.
       milestone object now exist in source, alongside the project fields.
       Validate installed relations, permissions and layouts; do not create
       duplicate objects based on the older phase report.)
-- [ ] `task` extensions (app fields on standard task): project relation,
+- [x] `task` extensions (app fields on standard task): project relation,
       status (custom-status object w/ color + isDone), priority, labels,
       estimate (t-shirt), subtask parent relation, blockedBy self-relation,
       human id (`<projectKey>-<n>` computed), time-tracking entries object
-      → PARTIAL (2026-09-12 reconciliation: task fields, labels/junction,
-      subtask relation, time-entry object and human-ID function exist.
-      The identifier function is not an atomic allocator; UI/API integrity
-      and lifecycle tests remain. Keep the existing select-status approach
-      unless a demonstrated requirement needs more.)
-- [ ] Milestone object: name, dueDate, project, doneAt
-- [ ] Workflow template: "recurring task generator" (uses existing workflow
-      engine)
+      → TICKED 2026-09-17 orchestrator (phase-04-report, orchestrator entry):
+      live on the populated `Apple` workspace after app install v0.1.10 —
+      single `OVF-1`, two simultaneous creations → `OVF-2`/`OVF-3` (no
+      duplicate), edit re-trigger keeps the id and counter; status/priority/
+      estimate, label+junction, parentTask, blockIssue→note, timeEntry
+      create/read/delete and project rollup all exercised over GraphQL.
+      Cascade: 10 starter tasks auto-numbered LIV-1..5 / EVT-1..5.
+      Remaining caveat (not a blocker): `blockIssue` is task→note, not a
+      task self-relation — dependency picker decision still open (see P4.2).
+- [x] Milestone object: name, dueDate, project, doneAt
+      — 2026-09-17 orchestrator: fields present in installed metadata
+      (`name`, `dueAt`, `doneAt`, project FK); created live (3 per starter
+      project, 1 on the trash probe) and read back.
+- [x] Workflow template: "recurring task generator" (uses existing workflow
+      engine) — 2026-09-17 orchestrator (phase-04-report): recipe
+      materialized on the live engine (workflow + v1 ACTIVE via
+      createWorkflowVersionStep/createWorkflowVersionEdge), native CRON
+      fired the trigger (WorkflowTriggerJob → RunWorkflowJob), run 1
+      `created:1`, replays `created:0, skipped:1` (duplicate-free).
 
 ### P4.2 Views & UX
 - [ ] Board view (kanban by custom status — extend view types if needed;
       prefer existing kanban view on task with status grouping)
-- [ ] Gantt/timeline view (front component; framer-motion-free, virtualized)
+- [~] Gantt/timeline view (front component; framer-motion-free, virtualized)
+      — 2026-09-17 orchestrator: widget + page-layout entry installed and
+      the live task query (project filter, null-variant orderBy, pagination,
+      pageInfo fields) verified; DOM render and the 1k-task benchmark are
+      still open (keep `[~]`).
 - [ ] Calendar view of tasks/due dates (link into existing calendar module
       surface)
 - [ ] Retroplanning (R04, after P4.1/C1): choose a reusable project recipe,
@@ -824,11 +846,24 @@ Optional advanced authoring is not a prerequisite to this repair slice.
       lists)
 - [ ] Project page: overview widgets (health, milestones, members, activity)
       + tabs (tasks/board/gantt/files/docs)
-- [ ] Subtasks & dependencies UI: nested list + dependency picker with
-      cycle validation
-- [ ] Time tracker: start/stop on task (presence-adjacent), entries list,
-      per-project rollup widget
-- [ ] Cmd+K: create task, go to project; search provider for tasks/projects
+- [~] Subtasks & dependencies UI: nested list + dependency picker with
+      cycle validation — 2026-09-17 orchestrator: nested list slice live
+      (roots via `parentTask: {is:NULL}`, children via `parentTask {id}`,
+      reparent write verified); dependency picker + its cycle tests NOT
+      built, and `blockIssue` is task→note so the dependency edge needs a
+      maintainer decision before the picker (keep `[~]`).
+- [~] Time tracker: start/stop on task (presence-adjacent), entries list,
+      per-project rollup widget — 2026-09-17 orchestrator: data layer live
+      (`createTimeEntries`→row, task `timeEntries` filter + null-variant
+      orderBy, `deleteTimeEntry`, project `timeEntries` rollup query); the
+      browser start/stop heartbeat itself is not DOM-verified here.
+- [~] Cmd+K: create task, go to project; search provider for tasks/projects
+      — 2026-09-17 orchestrator: create-task mutation live (`createTasks`
+      then record page); "go to projects" pre-existing. BLOCKED half:
+      `searchAppRecords` returns `[]` live even after a clean server
+      restart, for the new provider AND the pre-existing documents provider
+      — app-search federation is not live-functional; needs a follow-up
+      brief (phase-04-report has the details).
 
 ### P4.3 Integrations
 - [ ] Calendar links: P4C.5 owns opt-in task/event synchronization and source
@@ -836,7 +871,11 @@ Optional advanced authoring is not a prerequisite to this repair slice.
       implement a competing two-way link in this task.
 - [ ] Documents: doc relation on project; project overview shows linked docs
 - [ ] AI seed: "extract tasks from document" (P9 tool stub)
-- [ ] Trash: 7-day restore + purge cron (mirror P3 pattern)
+- [x] Trash: 7-day restore + purge cron (mirror P3 pattern)
+      — 2026-09-17 orchestrator (phase-04-report): archive → trash query,
+      restore inside the window clears `archivedAt`, deployed purge handler
+      live `{purged:2, projects:1, milestones:1}`, expired rows soft-deleted,
+      a same-day archived label untouched (retention respected).
 
 **Acceptance.** E06: template → project/member assignment → standard tasks/
 subtasks → board → deadline/calendar → doc/file links → time rollup. Existing
@@ -854,12 +893,17 @@ Gantt with recorded hardware and responsiveness; no “smooth” claim from sour
 opt-in external account capabilities. Extend existing calendar/connected-account
 primitives; app packaging/name is decided in P4C.1, not inferred from Bureau.
 
-- [ ] **P4C.1 Ownership/compatibility spike (after P0.1/P1.6a):** inspect
+- [x] **P4C.1 Ownership/compatibility spike (after P0.1/P1.6a):** inspect
       standard calendarEvent/channel/participant metadata, existing creation
       drivers, import/sync and calendar UI. Decide a local-event path, app
       activation boundary, calendar sharing rights and provider capability
       matrix (create/update/delete/recurrence/attendee support). Record actual
       gaps before extending metadata/services; no parallel calendar backend.
+      — 2026-09-17 orchestrator (phase-04-report §P4C.1 findings + entry):
+      report-only deliverable reviewed; spot-checked live metadata
+      (calendarEvent `isUICreatable=false`, 0 of 24 fields recurrence-named).
+      Decisions D5.1–D5.4 feed P4C.2; §10 open items still need product
+      confirmation before P4C.2 starts.
 - [ ] **P4C.2 Core UX (after P4C.1/P0.2):** day/week/month plus accessible
       agenda fallback, today/range navigation, all-day/multi-day/timed events,
       title/location/description/color, timezone-aware creation/edit/delete,
