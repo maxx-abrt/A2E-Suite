@@ -150,6 +150,18 @@ export default defineObject({
       universalSettings: oneToMany,
     },
     {
+      universalIdentifier: RELATION_IDS.documentRevisions,
+      type: FieldType.RELATION,
+      name: 'revisions',
+      label: 'Versions',
+      icon: 'IconHistory',
+      relationTargetObjectMetadataUniversalIdentifier:
+        OBJECT_IDS.documentRevision,
+      relationTargetFieldMetadataUniversalIdentifier:
+        RELATION_IDS.revisionDocument,
+      universalSettings: oneToMany,
+    },
+    {
       universalIdentifier: RELATION_IDS.documentCompany,
       type: FieldType.RELATION,
       name: 'company',

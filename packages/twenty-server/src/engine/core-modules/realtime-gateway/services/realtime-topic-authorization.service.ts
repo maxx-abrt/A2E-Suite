@@ -56,17 +56,10 @@ export class RealtimeTopicAuthorizationService {
       );
     }
 
-    const { flatWorkspaceMemberMaps } =
-      await this.workspaceCacheService.getOrRecompute(payload.workspaceId, [
-        'flatWorkspaceMemberMaps',
-      ]);
-
-    const workspaceMemberId =
-      flatWorkspaceMemberMaps.idByUserId[payload.userId];
-
-    if (!isDefined(workspaceMemberId)) {
-      throw new Error('User is not a member of the workspace');
-    }
+    const workspaceMemberId = await this.resolveWorkspaceMemberIdOrThrow({
+      workspaceId: payload.workspaceId,
+      userId: payload.userId,
+    });
 
     return {
       userId: payload.userId,
@@ -74,6 +67,44 @@ export class RealtimeTopicAuthorizationService {
       workspaceMemberId,
       isWorkspaceAgnostic: false,
     };
+  }
+
+  // Live sockets outlive a membership change, so membership is revalidated on
+  // each heartbeat as well as at subscribe: a removed member must lose the
+  // topics already granted, and a re-joined member gets a new member id, which
+  // forces a fresh subscribe that re-resolves the context.
+  async assertStillAMember(
+    socketContext: RealtimeAuthenticatedSocketContext,
+  ): Promise<void> {
+    const workspaceMemberId = await this.resolveWorkspaceMemberIdOrThrow({
+      workspaceId: socketContext.workspaceId,
+      userId: socketContext.userId,
+    });
+
+    if (workspaceMemberId !== socketContext.workspaceMemberId) {
+      throw new Error('Workspace membership changed; resubscribe required');
+    }
+  }
+
+  private async resolveWorkspaceMemberIdOrThrow({
+    workspaceId,
+    userId,
+  }: {
+    workspaceId: string;
+    userId: string;
+  }): Promise<string> {
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    const workspaceMemberId = flatWorkspaceMemberMaps.idByUserId[userId];
+
+    if (!isDefined(workspaceMemberId)) {
+      throw new Error('User is not a member of the workspace');
+    }
+
+    return workspaceMemberId;
   }
 
   assertTopicAuthorized(

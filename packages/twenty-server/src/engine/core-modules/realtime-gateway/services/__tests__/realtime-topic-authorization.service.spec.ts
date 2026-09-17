@@ -268,4 +268,45 @@ describe('RealtimeTopicAuthorizationService', () => {
       ).toThrow('Workspace-agnostic tokens cannot subscribe to topics');
     });
   });
+
+  describe('assertStillAMember', () => {
+    it('resolves while the workspace membership is unchanged', async () => {
+      const { service } = createService();
+
+      await expect(
+        service.assertStillAMember(buildSocketContext()),
+      ).resolves.toBeUndefined();
+    });
+
+    it('rejects a member removed after subscribing', async () => {
+      const { service } = createService({
+        workspaceCacheService: {
+          getOrRecompute: jest.fn().mockResolvedValue({
+            flatWorkspaceMemberMaps: { byId: {}, idByUserId: {} },
+          }),
+        },
+      });
+
+      await expect(
+        service.assertStillAMember(buildSocketContext()),
+      ).rejects.toThrow('User is not a member of the workspace');
+    });
+
+    it('rejects when the member id changed since subscribe (rejoin)', async () => {
+      const { service } = createService({
+        workspaceCacheService: {
+          getOrRecompute: jest.fn().mockResolvedValue({
+            flatWorkspaceMemberMaps: {
+              byId: {},
+              idByUserId: { [USER_ID]: '99999999-1c25-4d02-bf25-6aeccf7ea419' },
+            },
+          }),
+        },
+      });
+
+      await expect(
+        service.assertStillAMember(buildSocketContext()),
+      ).rejects.toThrow('Workspace membership changed; resubscribe required');
+    });
+  });
 });

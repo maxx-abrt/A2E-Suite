@@ -28,7 +28,7 @@ const jestConfig = {
   moduleFileExtensions: ['js', 'mjs', 'json', 'ts'],
   rootDir: '.',
   testEnvironment: 'node',
-  testRegex: 'realtime-gateway.integration-spec\\.ts$',
+  testRegex: 'realtime-.*integration-spec\\.ts$',
   modulePathIgnorePatterns: ['<rootDir>/dist'],
   testTimeout: 20000,
   maxWorkers: 1,

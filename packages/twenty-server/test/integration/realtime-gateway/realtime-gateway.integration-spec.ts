@@ -11,6 +11,7 @@ import { RealtimeGatewayService } from 'src/engine/core-modules/realtime-gateway
 import { RealtimePublisherService } from 'src/engine/core-modules/realtime-gateway/services/realtime-publisher.service';
 import { RealtimeTopicAuthorizationService } from 'src/engine/core-modules/realtime-gateway/services/realtime-topic-authorization.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import IORedis from 'ioredis';
 
@@ -127,6 +128,10 @@ describe('Realtime Gateway (isolated app)', () => {
         RealtimeGatewayService,
         RealtimePublisherService,
         RealtimeTopicAuthorizationService,
+        {
+          provide: MetricsService,
+          useValue: { incrementCounterBy: () => {} },
+        },
         {
           provide: JwtWrapperService,
           useValue: {

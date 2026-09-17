@@ -6,10 +6,13 @@ import { EditorCommentsThreadStore } from '@/blocknote-editor/comments/EditorCom
 import { useDocumentCommentThreadPersistence } from '@/blocknote-editor/comments/hooks/useDocumentCommentThreadPersistence';
 import { useResolveCommentUsers } from '@/blocknote-editor/comments/hooks/useResolveCommentUsers';
 import { BlockEditor } from '@/blocknote-editor/components/BlockEditor';
+import { BlockEditorSaveConflictBanner } from '@/blocknote-editor/co-editing/components/BlockEditorSaveConflictBanner';
+import { useDocumentSaveConflictGuard } from '@/blocknote-editor/co-editing/hooks/useDocumentSaveConflictGuard';
 import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
 import { useAttachmentSync } from '@/blocknote-editor/hooks/useAttachmentSync';
 import { useReplaceBlockEditorContent } from '@/blocknote-editor/hooks/useReplaceBlockEditorContent';
 import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
+import { useDocumentRevisionPersistence } from '@/blocknote-editor/version-history/hooks/useDocumentRevisionPersistence';
 import { prepareBodyWithSignedUrls } from '@/blocknote-editor/utils/prepareBodyWithSignedUrls';
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { CommentsExtension } from '@blocknote/core/comments';
@@ -37,6 +40,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type RichTextFieldEditorProps = {
   recordId: string;
@@ -143,6 +147,18 @@ export const RichTextFieldEditor = ({
   const documentThreadPersistence = useDocumentCommentThreadPersistence({
     documentId: recordId,
   });
+  const documentRevisionPersistence = useDocumentRevisionPersistence({
+    documentId: recordId,
+  });
+
+  // Expected-revision save guard: only the a2e-documents editor gets conflict
+  // feedback; note/email rich text keeps the plain last-write-wins draft.
+  const saveConflictGuard = useDocumentSaveConflictGuard(isDocumentRecord);
+  // A conflict is read inside the debounced persist, which can fire after the
+  // render that raised it; the ref keeps the gate current without retriggering
+  // the debounce.
+  // oxlint-disable-next-line twenty/no-state-useref
+  const isSaveConflictActiveRef = useRef(false);
 
   const commentThreadStore = useMemo(
     () =>
@@ -198,7 +214,35 @@ export const RichTextFieldEditor = ({
     fieldName,
   );
 
-  const { updateDraft, markDirty, flush, draftResyncKey } =
+  // Shared by the normal persist and the conflict "keep my changes" action so
+  // both write the exact same prepared body; returns it so the conflict guard's
+  // expected revision matches what lands in the cache.
+  const persistBlocknoteBody = useCallback(
+    (blocknote: string): string => {
+      const preparedBlocknote = prepareBodyWithSignedUrls(blocknote);
+
+      if (onPersistBody) {
+        onPersistBody(preparedBlocknote);
+        return preparedBlocknote;
+      }
+
+      updateOneRecord({
+        idToUpdate: recordId,
+        objectNameSingular,
+        updateOneRecordInput: {
+          [fieldName]: {
+            blocknote: preparedBlocknote,
+            markdown: null,
+          },
+        },
+      });
+
+      return preparedBlocknote;
+    },
+    [fieldName, objectNameSingular, onPersistBody, recordId, updateOneRecord],
+  );
+
+  const { draft, updateDraft, markDirty, flush, draftResyncKey } =
     useRecordSeededDraft({
       upstreamDraft: { blocknote: fieldValue?.blocknote ?? '' },
       persistDebounceMs: 300,
@@ -206,23 +250,12 @@ export const RichTextFieldEditor = ({
       onPersist: ({ blocknote }) => {
         if (isRecordFieldReadOnly === true) return;
 
-        const preparedBlocknote = prepareBodyWithSignedUrls(blocknote);
+        // A concurrent revision overlap holds the save until the user picks a
+        // side; the draft stays in the editor and is never silently dropped.
+        if (isSaveConflictActiveRef.current) return;
 
-        if (onPersistBody) {
-          onPersistBody(preparedBlocknote);
-          return;
-        }
-
-        updateOneRecord({
-          idToUpdate: recordId,
-          objectNameSingular,
-          updateOneRecordInput: {
-            [fieldName]: {
-              blocknote: preparedBlocknote,
-              markdown: null,
-            },
-          },
-        });
+        const persistedBody = persistBlocknoteBody(blocknote);
+        saveConflictGuard.notePersisted(persistedBody);
       },
     });
 
@@ -257,6 +290,59 @@ export const RichTextFieldEditor = ({
     replaceBlockEditorContent,
     recordId,
   ]);
+
+  // Keep the debounced persist gate current with the latest conflict state.
+  useEffect(() => {
+    isSaveConflictActiveRef.current = saveConflictGuard.conflict !== null;
+  }, [saveConflictGuard.conflict]);
+
+  // Observe the record body against the local draft. The cache also carries our
+  // own optimistic writes, so a body equal to the draft is an echo and only a
+  // differing body is classified as a concurrent revision.
+  const remoteRecordBody = fieldValue?.blocknote ?? '';
+  const { observeRevision } = saveConflictGuard;
+
+  useEffect(() => {
+    observeRevision(remoteRecordBody, draft.blocknote);
+  }, [remoteRecordBody, draft.blocknote, observeRevision]);
+
+  const handleKeepLocalChanges = () => {
+    const localBody = JSON.stringify(editor.document);
+    const persistedBody = persistBlocknoteBody(localBody);
+
+    saveConflictGuard.notePersisted(persistedBody);
+    saveConflictGuard.clearConflict();
+  };
+
+  const handleUseSavedVersion = () => {
+    const remoteBody = saveConflictGuard.conflict?.remoteBody;
+
+    if (!isDefined(remoteBody)) {
+      return;
+    }
+
+    const remoteBlocks = parseInitialBlocknote(remoteBody) ?? [
+      { type: 'paragraph' as const, content: '' },
+    ];
+
+    isApplyingUpstreamBodyRef.current = true;
+    try {
+      if (
+        !isDeeplyEqual(editor.document, remoteBlocks as typeof editor.document)
+      ) {
+        editor.replaceBlocks(
+          editor.document,
+          remoteBlocks as typeof editor.document,
+        );
+      }
+    } finally {
+      isApplyingUpstreamBodyRef.current = false;
+    }
+
+    updateDraft({ blocknote: remoteBody });
+    saveConflictGuard.resetBase(remoteBody);
+    saveConflictGuard.clearConflict();
+  };
 
   const handleBodyChange = async (newStringifiedBody: string) => {
     const oldRecord = store.get(recordStoreFamilyState.atomFamily(recordId));
@@ -352,13 +438,27 @@ export const RichTextFieldEditor = ({
   };
 
   return (
-    <BlockEditor
-      onFocus={handleBlockEditorFocus}
-      onBlur={handleBlockEditorBlur}
-      onChange={handleEditorChange}
-      editor={editor}
-      documentRecordId={recordId}
-      readonly={isRecordFieldReadOnly}
-    />
+    <>
+      {isDocumentRecord && saveConflictGuard.conflict !== null ? (
+        <BlockEditorSaveConflictBanner
+          conflictingBlockCount={
+            saveConflictGuard.conflict.conflictingBlockIds.length
+          }
+          onKeepLocal={handleKeepLocalChanges}
+          onUseRemote={handleUseSavedVersion}
+        />
+      ) : null}
+      <BlockEditor
+        onFocus={handleBlockEditorFocus}
+        onBlur={handleBlockEditorBlur}
+        onChange={handleEditorChange}
+        editor={editor}
+        documentRecordId={recordId}
+        versionHistoryPersistence={
+          isDocumentRecord ? documentRevisionPersistence : undefined
+        }
+        readonly={isRecordFieldReadOnly}
+      />
+    </>
   );
 };

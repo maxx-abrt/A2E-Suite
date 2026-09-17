@@ -35,6 +35,11 @@ export const useEditorVersionHistory = (
       return undefined;
     }
 
+    // Seed from the store: persisted history may hydrate before this effect
+    // subscribes (async load vs synchronous mount), and the panel must show it
+    // immediately rather than only after the next snapshot.
+    setVersions(versionHistoryStore.getVersions());
+
     const unsubscribe = versionHistoryStore.subscribe(() => {
       setVersions(versionHistoryStore.getVersions());
     });

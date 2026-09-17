@@ -14,6 +14,7 @@
 export const OBJECT_IDS = {
   document: 'c31a0100-0000-4000-8000-000000000000',
   documentCommentThread: 'c31a0200-0000-4000-8000-000000000000',
+  documentRevision: 'c31a0300-0000-4000-8000-000000000000',
 } as const;
 
 // Both sides of every relation, grouped by the record that owns the foreign key.
@@ -26,11 +27,14 @@ export const RELATION_IDS = {
   personDocuments: 'c31a0100-0002-4000-8000-000000000006',
   commentThreadDocument: 'c31a0200-0002-4000-8000-000000000001',
   documentCommentThreads: 'c31a0200-0002-4000-8000-000000000002',
+  revisionDocument: 'c31a0300-0002-4000-8000-000000000001',
+  documentRevisions: 'c31a0300-0002-4000-8000-000000000002',
 } as const;
 
 export const LABEL_IDENTIFIER_IDS = {
   documentTitle: 'c31a0100-0001-4000-8000-000000000001',
   commentThreadId: 'c31a0200-0001-4000-8000-000000000001',
+  revisionVersionId: 'c31a0300-0001-4000-8000-000000000001',
 } as const;
 
 export const LOGIC_FUNCTION_IDS = {

@@ -2,6 +2,8 @@ import { Injectable, Logger, type OnModuleDestroy } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
 import { REALTIME_REDIS_CHANNEL_PREFIX } from '../realtime-gateway.constants';
@@ -29,7 +31,10 @@ export class RealtimePublisherService implements OnModuleDestroy {
   private readonly subscribedRedisTopics = new Set<string>();
   private redisSubscriberClient: import('ioredis').Redis | null = null;
 
-  constructor(private readonly redisClientService: RedisClientService) {}
+  constructor(
+    private readonly redisClientService: RedisClientService,
+    private readonly metricsService: MetricsService,
+  ) {}
 
   async publish(topic: string, payload: unknown): Promise<void> {
     const envelope = serializeRealtimeEnvelope({
@@ -43,6 +48,11 @@ export class RealtimePublisherService implements OnModuleDestroy {
       await this.redisClientService
         .getClient()
         .publish(`${REALTIME_REDIS_CHANNEL_PREFIX}${topic}`, envelope);
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.RealtimeMessagePublished,
+        amount: 1,
+      });
     } catch (error) {
       this.logger.error(`Failed to publish realtime topic ${topic}`, error);
     }
@@ -70,6 +80,16 @@ export class RealtimePublisherService implements OnModuleDestroy {
         await this.ensureSubscriberClient().subscribe(redisTopic);
       } catch (error) {
         this.subscribedRedisTopics.delete(redisTopic);
+        // A rejected subscribe must not stay registered: the gateway drops
+        // the returned unsubscribe on failure, so a retry after recovery
+        // would fan out to this dead registration too and deliver events for
+        // a topic that was never acked.
+        topicSubscribers.delete(subscriber);
+
+        if (topicSubscribers.size === 0) {
+          this.subscribersByTopic.delete(topic);
+        }
+
         this.logger.error(
           `Failed to subscribe redis topic ${redisTopic}`,
           error,

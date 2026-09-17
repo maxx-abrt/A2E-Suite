@@ -11,13 +11,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { randomUUID } from 'node:crypto';
 import type { IncomingMessage } from 'node:http';
 import type { Duplex } from 'node:stream';
-import { WebSocketServer, type WebSocket } from 'ws';
+import { WebSocket, WebSocketServer } from 'ws';
 
 import {
   REALTIME_HEARTBEAT_INTERVAL_MS,
   REALTIME_MAX_SUBSCRIPTIONS_PER_SOCKET,
   REALTIME_WS_PATH,
 } from 'src/engine/core-modules/realtime-gateway/realtime-gateway.constants';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { PresenceService } from 'src/engine/core-modules/realtime-gateway/services/presence.service';
 import { RealtimeTopicAuthorizationService } from 'src/engine/core-modules/realtime-gateway/services/realtime-topic-authorization.service';
 import { RealtimePublisherService } from 'src/engine/core-modules/realtime-gateway/services/realtime-publisher.service';
@@ -33,12 +35,24 @@ import { isRequestOriginAllowed } from 'src/engine/core-modules/user-session/uti
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type Request } from 'express';
 
-type RealtimeSocketState = {
+export type RealtimeSocketState = {
   authContext: RealtimeAuthenticatedSocketContext | null;
   connectionId: string;
   subscriptionsByTopic: Map<string, () => void>;
   seqByTopic: Map<string, number>;
   isAlive: boolean;
+};
+
+// The heartbeat only needs the ws surface it touches, so unit tests can drive
+// it with a fake socket instead of fabricating a real upgrade handshake.
+export type RealtimeHeartbeatSocket = Pick<
+  WebSocket,
+  'ping' | 'terminate' | 'close' | 'send' | 'readyState'
+>;
+
+export type RealtimeHeartbeatClient = {
+  webSocket: RealtimeHeartbeatSocket;
+  socketState: RealtimeSocketState;
 };
 
 const EMPTY_SOCKET_CONTEXT: RealtimeAuthenticatedSocketContext | null = null;
@@ -65,6 +79,7 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
     private readonly presenceService: PresenceService,
     private readonly userSessionCookieService: UserSessionCookieService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   onModuleInit(): void {
@@ -148,18 +163,19 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
     );
 
     this.heartbeatInterval = setInterval(() => {
-      for (const webSocket of this.enumerateClients()) {
+      const clients = [...this.enumerateClients()].flatMap((webSocket) => {
         const socketState = this.socketStates.get(webSocket);
 
-        if (!isDefined(socketState) || !socketState.isAlive) {
-          webSocket.terminate();
+        return isDefined(socketState) ? [{ webSocket, socketState }] : [];
+      });
 
-          continue;
-        }
-
-        socketState.isAlive = false;
-        webSocket.ping();
-      }
+      void this.runHeartbeatCycle(clients).catch((error: unknown) => {
+        this.logger.error(
+          `Realtime heartbeat cycle failed: ${
+            error instanceof Error ? error.message : 'unknown error'
+          }`,
+        );
+      });
     }, REALTIME_HEARTBEAT_INTERVAL_MS);
 
     this.webSocketServer.on('close', () => {
@@ -184,16 +200,100 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
     return this.webSocketServer?.clients ?? [];
   }
 
-  private handleConnection(
-    webSocket: WebSocket,
-    request: IncomingMessage,
-  ): void {
+  // Public so unit tests can drive one heartbeat pass with fake sockets; the
+  // interval only assembles the client list and delegates here.
+  async runHeartbeatCycle(
+    clients: ReadonlyArray<RealtimeHeartbeatClient>,
+  ): Promise<void> {
+    await Promise.all(
+      clients.map(async ({ webSocket, socketState }) => {
+        if (!socketState.isAlive) {
+          webSocket.terminate();
+
+          return;
+        }
+
+        socketState.isAlive = false;
+        webSocket.ping();
+
+        await this.revalidateSocketMembership(webSocket, socketState);
+      }),
+    );
+  }
+
+  private async revalidateSocketMembership(
+    webSocket: RealtimeHeartbeatSocket,
+    socketState: RealtimeSocketState,
+  ): Promise<void> {
+    if (!isDefined(socketState.authContext)) {
+      return;
+    }
+
+    try {
+      await this.topicAuthorizationService.assertStillAMember(
+        socketState.authContext,
+      );
+    } catch (error) {
+      await this.revokeSocket(
+        webSocket,
+        socketState,
+        error instanceof Error ? error.message : 'Workspace membership revoked',
+      );
+    }
+  }
+
+  private async revokeSocket(
+    webSocket: RealtimeHeartbeatSocket,
+    socketState: RealtimeSocketState,
+    message: string,
+  ): Promise<void> {
+    if (
+      [...socketState.subscriptionsByTopic.keys()].some((topic) =>
+        this.isPresenceTopic(topic),
+      )
+    ) {
+      // Presence cleanup is best-effort; the revocation below must proceed
+      // even when the presence backend is unreachable.
+      try {
+        await this.presenceService.leave(this.toPresenceIdentity(socketState));
+      } catch (error) {
+        this.logger.warn(
+          `Failed to clear presence while revoking a socket: ${
+            error instanceof Error ? error.message : 'unknown error'
+          }`,
+        );
+      }
+    }
+
+    for (const unsubscribe of socketState.subscriptionsByTopic.values()) {
+      unsubscribe();
+    }
+
+    socketState.subscriptionsByTopic.clear();
+    socketState.seqByTopic.clear();
+    socketState.authContext = null;
+
+    // 4403 (policy violation) tells the client this was an authorization
+    // close, not a transport failure; a still-valid session reconnects and
+    // re-authenticates harmlessly.
+    this.sendError(webSocket, message);
+    webSocket.close(4403, message);
+  }
+
+  // Public so unit tests can exercise the connect/disconnect metric emission
+  // with a fake socket, matching the runHeartbeatCycle testing seam.
+  handleConnection(webSocket: WebSocket, request: IncomingMessage): void {
     this.socketStates.set(webSocket, {
       authContext: EMPTY_SOCKET_CONTEXT,
       connectionId: randomUUID(),
       subscriptionsByTopic: new Map(),
       seqByTopic: new Map(),
       isAlive: true,
+    });
+
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.RealtimeSocketConnected,
+      amount: 1,
     });
 
     webSocket.on('pong', () => {
@@ -220,6 +320,11 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
         }
 
         this.socketStates.delete(webSocket);
+
+        this.metricsService.incrementCounterBy({
+          key: MetricsKeys.RealtimeSocketDisconnected,
+          amount: 1,
+        });
       }
     });
 
@@ -482,8 +587,11 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private sendEnvelope(webSocket: WebSocket, envelope: RealtimeEnvelope): void {
-    if (webSocket.readyState !== webSocket.OPEN) {
+  private sendEnvelope(
+    webSocket: RealtimeHeartbeatSocket,
+    envelope: RealtimeEnvelope,
+  ): void {
+    if (webSocket.readyState !== WebSocket.OPEN) {
       return;
     }
 
@@ -493,7 +601,7 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
   // The topic is echoed back so the client can attribute the failure to the
   // subscribe that caused it instead of reporting a bare transport error.
   private sendError(
-    webSocket: WebSocket,
+    webSocket: RealtimeHeartbeatSocket,
     message: string,
     topic?: string,
   ): void {

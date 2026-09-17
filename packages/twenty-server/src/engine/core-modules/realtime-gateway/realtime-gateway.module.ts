@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { PresenceResolver } from 'src/engine/core-modules/realtime-gateway/presence.resolver';
 import { PresenceService } from 'src/engine/core-modules/realtime-gateway/services/presence.service';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
@@ -19,6 +20,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   imports: [
     JwtModule,
     RedisClientModule,
+    MetricsModule,
     UserSessionModule,
     WorkspaceCacheModule,
     CoreEntityCacheModule,

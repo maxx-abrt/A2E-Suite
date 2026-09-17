@@ -26,7 +26,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useMentionMenu } from '@/mention/hooks/useMentionMenu';
 import { BlockEditorExportMenu } from '@/blocknote-editor/export/components/BlockEditorExportMenu';
 import { BlockEditorVersionHistoryPanel } from '@/blocknote-editor/version-history/components/BlockEditorVersionHistoryPanel';
-import { EditorVersionHistoryStore } from '@/blocknote-editor/version-history/EditorVersionHistoryStore';
+import {
+  EditorVersionHistoryStore,
+  type EditorVersionHistoryPersistence,
+} from '@/blocknote-editor/version-history/EditorVersionHistoryStore';
 import { IconX } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -36,6 +39,10 @@ type BlockEditorProps = {
   // Defined only for full-page document editors: co-editing carets need a
   // stable record id to scope presence topics and version checks.
   documentRecordId?: string;
+  // Present only for a2e-documents `document` records: version snapshots are
+  // persisted there so history survives a reload. Other editors
+  // (note/email/dashboard rich text) keep the in-memory store.
+  versionHistoryPersistence?: EditorVersionHistoryPersistence;
   onFocus?: () => void;
   onBlur?: () => void;
   onPaste?: (event: ClipboardEvent) => void;
@@ -176,6 +183,7 @@ export const BlockEditor = ({
   editor,
   documentTitle = 'document',
   documentRecordId,
+  versionHistoryPersistence,
   onFocus,
   onBlur,
   onChange,
@@ -236,11 +244,29 @@ export const BlockEditor = ({
   }, [editor, publishCursor, coEditingEnabled]);
 
   // Same lifecycle contract as the comments thread store: created once per
-  // editor instance; recreating it per render would drop all snapshots.
+  // editor instance; recreating it per render would drop all snapshots. The
+  // persistence adapter's callbacks are useCallback-stable and close over
+  // record-scoped state, so capturing the first instance is safe.
   const versionHistoryStore = useMemo(
-    () => new EditorVersionHistoryStore(),
+    () =>
+      new EditorVersionHistoryStore({
+        persistence: versionHistoryPersistence,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
+
+  // Hydration is async (the store is built synchronously); run it once per
+  // store when a persistence adapter is present.
+  const hasVersionHistoryPersistence = isDefined(versionHistoryPersistence);
+  useEffect(() => {
+    if (!hasVersionHistoryPersistence) {
+      return;
+    }
+
+    void versionHistoryStore.loadFromPersistence();
+  }, [versionHistoryStore, hasVersionHistoryPersistence]);
+
   const { colorScheme } = useContext(ThemeContext);
   const { t } = useLingui();
 
