@@ -496,7 +496,19 @@ benchmark (server latency depends on the DB, out of front scope), and record
 numbers in the report; alternatively mark the item blocked on a live server.
 
 
-## 2026-09-10 13:20 UTC — Zoo (GLM-5.3-Flash)
+CLAIMED — P2.1/realtime-auth-repair — GLM-5.3-Flash — 2026-09-16T20:46:00Z — base a87620c7b63137c0dae390d43d4255b63246272c
+
+## 2026-09-17 00:00 UTC — GLM-5.3-Flash [executor] — contract v4
+**Task:** P2.1 Realtime gateway · **Slice:** bullet 1 — repair `/realtime` authentication to the current HTTP session/origin contract
+**Claim:** done-for-review
+**Ready-to-tick:** no — the work was already committed by P0.3 (phase-00 report 2026-09-12); this session verified it green and changed nothing. Real-session (Tier-2) handshake proof still missing for tick, and the realtime integration run hung this session (see Checks).
+**Base:** a87620c7b63137c0dae390d43d4255b63246272c
+**Changed:** none — verification-only session; `git status --porcelain` clean after run, only this report file.
+**Checks:** `npx jest realtime-gateway --config=jest.config.mjs` (twenty-server) → 26/26 passed (session-token path, per-subscribe membership revalidation, non-ACCESS JWT rejection, agnostic-token rejection, envelope/topic utils, presence). `NODE_ENV=test npx jest --config jest-integration-realtime.config.ts` → HUNG: jest process alive 3h+ at 0.0% CPU (open ws/Redis handle keeps the process up; killed pids 28752/28726/28725). Pre-existing condition in an untouched spec — the spec last passed 4/4 per phase-00 2026-09-12 entry. Postgres+Redis preflight both green. Untouched code evidence: `realtime-gateway.service.ts` upgrade path rejects missing/disallowed origins via the shared `isRequestOriginAllowed` HTTP util and destroys the socket; auth per subscribe resolves the HttpOnly session cookie through `UserSessionCookieService.extractSessionTokenFromRequest` or verifies an ACCESS-only JWT, membership revalidated every subscribe via `WorkspaceCacheService.getOrRecompute` (never cached across subscribes) — `realtime-topic-authorization.service.ts`.
+**Missing for tick:** Tier-2 real handshake against `yarn start` (browser client, revoked-session negative test); decide whether the hung integration spec needs a forced-exit fix (its afterAll may leave the publisher's duplicate Redis connection open) — flagging for orchestrator; bullets 2 (fan-out outage/recovery + rejected acks live) and 3 (record/channel ACLs at subscribe on revocation) of P2.1 remain open.
+**Do not redo:** the auth repair — it is committed and green; `assertTopicAuthorized` is the single seam for future record/channel ACLs (P0.3 scope decision).
+**Remaining:** 25+ other [ ]/[~] tasks in the delivery order (P1.3 e2e, P1.7a export leg, P1.7b Tier-2, P1.7c, P2.1 bullets 2–5, P2.4 e2e, P2.5 perf, P3.x, P4.x, P4C.x, P5+).
+**Next:** orchestrator — rerun `jest-integration-realtime.config.ts` manually to confirm the hang is reproducible (suspect missing ws/Redis close in afterAll); executor — P2.1 bullet 2 (Redis fan-out outage/recovery verification) or P2.5 p95 budget once a populated workspace exists.
 **Task(s):** P2.5 Performance budget: < 150ms interaction latency on 10k-record workspace (PLAN.md line 186)
 **Status:** done
 
