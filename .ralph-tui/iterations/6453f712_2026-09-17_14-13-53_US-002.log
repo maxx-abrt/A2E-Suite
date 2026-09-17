@@ -1,0 +1,85 @@
+# Iteration 2 Log
+
+## Metadata
+
+- **Task ID**: US-002
+- **Task Title**: Close contract gaps — cycle rejection and provenance shape
+- **Description**: As an executor implementing P1.6e content templates, I want the contract to state normative cycle-rejection rules and the exact provenance shape on instantiated content so that later slices do not inv...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-17T12:13:53.426Z
+- **Ended At**: 2026-09-17T12:20:52.827Z
+- **Duration**: 6m 59s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ ls .ralph-tui/ 2>/dev/null
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-002" PLAN.md
+[94m[bash][0m $ grep -n "US-002\|CLAIMED" docs/plan/phases/phase-01-report.md | tail -40
+[94m[bash][0m $ grep -n "US-001\|US-002\|US-003" docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ cat tasks/prd.json 2>/dev/null | head -120
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[grep][0m pattern: [96mOperationStepErrorCode[0m
+[94m[bash][0m $ find packages/twenty-server -name "apply-template-operation.types.ts" -o -name "*apply-template*" | ...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "fresh content IDs\|source-template\|provenance" docs/plan/ | head -40
+[94m[bash][0m $ ls docs/plan/
+[94m[bash][0m $ grep -n "C1\|C2\|content template\|content-template" docs/plan/03-integration-blueprint.md | head -4...
+[94m[bash][0m $ grep -rn "C1" docs/plan/*.md docs/product-experience.md PLAN.md 2>/dev/null | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -rn "TemplateErrorCode\|TemplateRejection\|reject" packages/twenty-server/src/engine/core-modul...
+[94m[bash][0m $ grep -rn "TEMPLATE_REQUIRED_APP_DESELECTED\|TEMPLATE_APP_NOT_IN_DEFINITION\|CONTENT_CYCLE\|CYCLE" pa...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/onboarding/onboarding.exception.ts
+[94m[read][0m
+[94m[bash][0m $ grep -rn "P1.6e\|content template\|content-template" docs/plan/phases/phase-01-report.md | tail -30
+[94m[bash][0m $ grep -rln "contentTemplate\|ContentTemplate\|content-template\|templateDescriptor\|TemplateDescripto...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents -name "starter-templates.ts" -not -path "*/dist/*"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/starter-templates.ts
+[94m[bash][0m $ 
+[94m[read][0m
+[94m[bash][0m $ grep -rn "OperationStepErrorCode" packages/twenty-front/src --include=*.ts --include=*.tsx | grep -v...
+[94m[bash][0m $ cat .ralph-tui/progress.md 2>/dev/null | head -60
+[94m[bash][0m $ printf '\nCLAIMED — US-002/cycle-rejection-provenance — deepseek-v4.1-flash — %s — base d13d7c54d1c0...
+[94m[bash][0m $ grep -n "CLAIMED — US-002" docs/plan/phases/phase-01-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+Now I'll make the doc edits. First, the §5 provenance subsection:
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[bash][0m $ git diff --stat
+[94m[bash][0m $ node docs/scripts/check-docs.mjs
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ grep -rn "TEMPLATE_UNKNOWN\|TEMPLATE_VERSION_CONFLICT\|TEMPLATE_IDEMPOTENCY_CONFLICT\|TEMPLATE_BLOCK...
+[94m[bash][0m $ grep -rn "TEMPLATE_UNKNOWN\|TEMPLATE_BLOCKED" packages/twenty-server/src --include="*.ts" | grep -v ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[bash][0m $ node docs/scripts/check-docs.mjs
+[94m[bash][0m $ 12 other [ ]/[~] PLAN tasks ahead **Next:** US-003 — check in typed §7 fixtures (including the new c...
+Now append the phase report entry:
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ tail -20 .ralph-tui/progress.md
+[94m[bash][0m $ code lint/tsgo gates are N/A when zero package files change (git status proves it). --- EOF echo don...
+[94m[bash][0m $ node docs/scripts/check-docs.mjs
+[94m[bash][0m $ git log --oneline -1
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+Done. US-002 implemented doc-only in `docs/plan/05-template-contracts.md`:
+
+- **§7 rejection matrix** — rewritten as normative `must` rows, each with its typed code; added the cycles row: workspace presets are flat app lists (no dependency graph, stated explicitly), P1.6e content-template descriptors must reject relation/reference cycles at load time, same severity as cross-workspace content.
+- **§5.1 provenance shape** — `sourceTemplateKey` + `sourceTemplateVersion` + `operationId`, tied to §5's `createdRecordUniversalIdentifiers` and C1.
+- **§8** — P1.6a requirement traceability table covering all nine bullets (specified vs explicit gap).
+- No server type added: `TemplateContentProvenance` has no consumer in `apply-template-operation.types.ts`, and cycles are load-time rejections, so `OperationStepErrorCode` is intentionally not extended (documented as P1.6e typed siblings).
+
+Checks: `node docs/scripts/check-docs.mjs` → PASS (19 docs, 130 links, fences balanced). Code lint/tsgo/build N/A — zero package files touched. Phase report + `.ralph-tui/progress.md` appended; PLAN.md untouched, nothing committed.
+
+<promise>COMPLETE</promise>

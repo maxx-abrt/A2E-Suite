@@ -3,10 +3,10 @@
   "sessionId": "6453f712-e1ad-43a9-b269-09d298d04ade",
   "status": "running",
   "startedAt": "2026-09-17T12:08:57.969Z",
-  "updatedAt": "2026-09-17T12:20:52.828Z",
-  "currentIteration": 1,
+  "updatedAt": "2026-09-17T12:25:45.082Z",
+  "currentIteration": 2,
   "maxIterations": 20,
-  "tasksCompleted": 1,
+  "tasksCompleted": 2,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -25,8 +25,8 @@
       {
         "id": "US-002",
         "title": "Close contract gaps — cycle rejection and provenance shape",
-        "status": "open",
-        "completedInSession": false
+        "status": "completed",
+        "completedInSession": true
       },
       {
         "id": "US-003",
@@ -46,6 +46,16 @@
       "durationMs": 264628,
       "startedAt": "2026-09-17T12:09:23.253Z",
       "endedAt": "2026-09-17T12:13:47.881Z"
+    },
+    {
+      "iteration": 2,
+      "status": "completed",
+      "taskId": "US-002",
+      "taskTitle": "Close contract gaps — cycle rejection and provenance shape",
+      "taskCompleted": true,
+      "durationMs": 419401,
+      "startedAt": "2026-09-17T12:13:53.426Z",
+      "endedAt": "2026-09-17T12:20:52.827Z"
     }
   ],
   "skippedTaskIds": [],

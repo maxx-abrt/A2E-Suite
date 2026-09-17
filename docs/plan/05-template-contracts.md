@@ -269,6 +269,14 @@ apply will use, so preview cannot lie.
 
 ## 7. Fixtures (normative examples)
 
+> 2026-09-17 (US-003): the JSON blocks below mirror the checked-in fixtures in
+> `packages/twenty-server/src/engine/core-modules/onboarding/__tests__/fixtures/apply-template-operation.fixtures.ts`.
+> That module is the machine-verified source of truth — `npx jest
+> apply-template-operation-fixtures.spec.ts --config=packages/twenty-server/jest.config.mjs`
+> fails when the preview/result values drift from `apply-template-operation.types.ts`
+> or from the onboarding/template constants. Edit the fixture first, then mirror
+> the JSON here; the conformance spec is what makes the two unable to diverge.
+
 Preview, `individual` on a fresh workspace with a2e-accounting unregistered
 (optional there), a2e-documents 0.2.0 compatible:
 
@@ -309,7 +317,10 @@ Result after a required-app install failure and successful retry of the rest:
 Rejection matrix. Every row is a normative **must** that produces a localized,
 typed error and never a throw. Codes come from the two typed surfaces already
 in source: `OnboardingExceptionCode` for pre-step / load-time rejections
-(`TEMPLATE_*`), `OperationStepErrorCode` for step failures.
+(`TEMPLATE_*`), `OperationStepErrorCode` for step failures. Each row has exactly
+one fixture in `templateRejectionFixtures` (same order), plus the two
+`TEMPLATE_CONTENT_*` descriptor-load rows modelled symbolically — the fixture
+never embeds a workspace record ID (C1 §3).
 
 Workspace presets are **flat app lists** — there is no app→app dependency graph
 in the SDK manifest (§8 Non-Goal, stated explicitly), so a preset cannot contain
@@ -349,7 +360,7 @@ contract; **gap** = behavior lands in a named later slice:
 | compatibility | **specified** §3 (app→server `engines.twenty`, app version progression), §6/§7 blocked preview |
 | inputs | **specified** §4 (request fields + idempotency key; implemented negative deselect form) |
 | provenance | **specified** §5.1 (per-record source key + version + operationId) |
-| preview fixtures | **specified** §6/§7 as examples; typed, machine-checked fixtures land with US-003 (P1.6b) |
+| preview fixtures | **specified** §6/§7 as examples; **landed** 2026-09-17 (US-003) as typed, machine-checked fixtures in `onboarding/__tests__/fixtures/apply-template-operation.fixtures.ts` — the §7 JSON mirrors them |
 | unknown IDs | **specified** §4/§7 (`TEMPLATE_UNKNOWN`, `TEMPLATE_APP_NOT_IN_DEFINITION`) |
 | cycles | **specified** §7 for content templates; **gap** — the P1.6e descriptor loader that enforces it does not exist yet |
 | unavailable requirements | **specified** §3/§6/§7 (blocked preview; `APP_NOT_REGISTERED` / `VERSION_INCOMPATIBLE`) |
