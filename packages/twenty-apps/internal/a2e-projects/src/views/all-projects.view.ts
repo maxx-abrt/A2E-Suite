@@ -14,12 +14,12 @@ import {
 // Field metadata ids from src/objects/project.object.ts, kept here as view
 // data (views reference fields by universal identifier only).
 const field = {
-  name: 'c31a0200-0001-4000-8000-000000000001',
-  status: 'c31a0200-0001-4000-8000-000000000003',
-  health: 'c31a0200-0001-4000-8000-000000000004',
-  lead: 'c31a0200-0002-4000-8000-000000000001',
-  dueAt: 'c31a0200-0001-4000-8000-000000000006',
-  budget: 'c31a0200-0001-4000-8000-000000000009',
+  name: 'c31b0200-0001-4000-8000-000000000001',
+  status: 'c31b0200-0001-4000-8000-000000000003',
+  health: 'c31b0200-0001-4000-8000-000000000004',
+  lead: 'c31b0200-0002-4000-8000-000000000001',
+  dueAt: 'c31b0200-0001-4000-8000-000000000006',
+  budget: 'c31b0200-0001-4000-8000-000000000009',
 };
 
 const fieldId = (position: number) => viewFieldId('02', 0, position);
@@ -78,7 +78,7 @@ export default defineView({
   ],
   sorts: [
     {
-      universalIdentifier: 'c31a0200-0006-4000-8000-000000000001',
+      universalIdentifier: 'c31b0200-0006-4000-8000-000000000001',
       fieldMetadataUniversalIdentifier: field.name,
       direction: ViewSortDirection.ASC,
     },

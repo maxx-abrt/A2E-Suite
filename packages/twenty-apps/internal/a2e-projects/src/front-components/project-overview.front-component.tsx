@@ -5,6 +5,8 @@ import {
   useSelectedRecordIds,
 } from 'twenty-sdk/front-component';
 
+import { FRONT_COMPONENT_IDS } from '../constants/universal-identifiers.ts';
+
 type OverviewProject = {
   id: string;
   name: string;
@@ -76,7 +78,7 @@ const ProjectOverview = () => {
 };
 
 export default defineFrontComponent({
-  universalIdentifier: 'c31a0000-0013-4000-8000-000000000006',
+  universalIdentifier: FRONT_COMPONENT_IDS.projectOverview,
   name: 'project-overview-widget',
   description:
     "Aperçu du projet : clé, statut et compteurs de tâches/jalons depuis les données natives.",

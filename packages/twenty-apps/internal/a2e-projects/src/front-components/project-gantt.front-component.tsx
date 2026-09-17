@@ -97,8 +97,8 @@ const fetchTaskPage = async (options: {
         filter: { project: { id: { eq: options.projectId } } },
         orderBy: [
           { dueAt: 'AscNullsFirst' },
-          { createdAt: 'Asc' },
-          { id: 'Asc' },
+          { createdAt: 'AscNullsFirst' },
+          { id: 'AscNullsFirst' },
         ],
         first: TASK_PAGE_SIZE,
         ...(options.after === null ? {} : { after: options.after }),

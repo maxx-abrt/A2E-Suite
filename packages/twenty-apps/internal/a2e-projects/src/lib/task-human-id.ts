@@ -14,16 +14,19 @@ export type TaskHumanIdSource = {
 export type TaskHumanIdTarget = {
   id: string;
   humanId?: string | null;
+  projectId?: string | null;
   project?: { id?: string | null } | null;
 };
 
 export const hasTaskHumanId = (task: TaskHumanIdTarget): boolean =>
   typeof task.humanId === 'string' && task.humanId.length > 0;
 
+// Database event payloads carry the join column (`projectId`); a Core API
+// read can carry the relation (`project { id }`). Both are project joins.
 export const readTaskProjectId = (
   task: TaskHumanIdTarget,
 ): string | undefined => {
-  const projectId = task.project?.id;
+  const projectId = task.project?.id ?? task.projectId;
 
   return typeof projectId === 'string' && projectId.length > 0
     ? projectId

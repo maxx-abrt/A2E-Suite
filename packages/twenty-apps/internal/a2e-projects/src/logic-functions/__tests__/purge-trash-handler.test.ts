@@ -7,8 +7,9 @@ import {
 } from '../handlers/purge-trash-handler.ts';
 
 // Le contrat avec le Core API : la requête d'un objet rend ses lignes encore
-// archivées (`archivedAt: NOT_NULL`), et la mutation générée de l'objet
-// supprime une ligne par id. Le stub n'instancie jamais le client généré
+// archivées (`archivedAt: NOT_NULL`), et la mutation générée plurielle de
+// l'objet supprime par filtre (`filter: { id: { eq } }` — elle n'accepte pas
+// d'`id` direct, vérifié live). Le stub n'instancie jamais le client généré
 // (il lève avant génération) et reproduit exactement cette frontière.
 
 const NOW = Date.parse('2026-09-17T12:00:00.000Z');
@@ -34,14 +35,14 @@ const buildClient = (rowsByObject: Record<string, Row[]>) => {
     },
     mutation: async (selection: Record<string, unknown>) => {
       const deleteMutation = Object.keys(selection)[0];
-      const entry = selection[deleteMutation] as { __args: { id: string } };
+      const entry = selection[deleteMutation] as {
+        __args: { filter: { id: { eq: string } } };
+      };
+      const recordId = entry.__args.filter.id.eq;
 
-      deleted[deleteMutation] = [
-        ...(deleted[deleteMutation] ?? []),
-        entry.__args.id,
-      ];
+      deleted[deleteMutation] = [...(deleted[deleteMutation] ?? []), recordId];
 
-      return { [deleteMutation]: { id: entry.__args.id } };
+      return { [deleteMutation]: { id: recordId } };
     },
   };
 

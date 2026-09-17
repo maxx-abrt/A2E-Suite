@@ -7,7 +7,7 @@ import {
   assignTaskHumanId,
 } from '../handlers/task-human-id-handler.ts';
 
-// The CAS contract with the Core API: `updateManyProjects` renders the caller
+// The CAS contract with the Core API: `updateProjects` renders the caller
 // filter into the UPDATE WHERE and returns only the rows it wrote. The stub
 // enforces exactly that boundary — no live server, and the generated client is
 // never instantiated (it throws before generation). Reads snapshot the row
@@ -20,13 +20,21 @@ type ProjectRow = {
   taskCounter: number | null;
 };
 
+type CasFilter = { eq: number } | { is: 'NULL' };
+
 type CasArgs = {
-  filter: { taskCounter: { or: { eq: number }[] } };
+  filter: { taskCounter: CasFilter };
   data: { taskCounter: number };
 };
 
+type CasCall = {
+  filter: 'eq' | 'isNull';
+  expected: number;
+  sequence: number;
+};
+
 const buildClient = (project: ProjectRow) => {
-  const casCalls: { expected: number; sequence: number }[] = [];
+  const casCalls: CasCall[] = [];
   const taskWrites: { id: string; humanId: string }[] = [];
 
   const client = {
@@ -57,22 +65,29 @@ const buildClient = (project: ProjectRow) => {
         return { updateTask: { id: entry.__args.id } };
       }
 
-      const entry = selection.updateManyProjects as { __args: CasArgs };
-      const expected = entry.__args.filter.taskCounter.or[0].eq;
+      const entry = selection.updateProjects as { __args: CasArgs };
+      const counterFilter = entry.__args.filter.taskCounter;
+      const isNullAttempt = 'is' in counterFilter;
+      const expected = isNullAttempt ? 0 : counterFilter.eq;
       const sequence = entry.__args.data.taskCounter;
 
-      casCalls.push({ expected, sequence });
+      casCalls.push({
+        filter: isNullAttempt ? 'isNull' : 'eq',
+        expected,
+        sequence,
+      });
 
-      const matches =
-        project.taskCounter === null || project.taskCounter === expected;
+      const matches = isNullAttempt
+        ? project.taskCounter === null
+        : project.taskCounter === counterFilter.eq;
 
       if (!matches) {
-        return { updateManyProjects: [] };
+        return { updateProjects: [] };
       }
 
       project.taskCounter = sequence;
 
-      return { updateManyProjects: [{ id: project.id }] };
+      return { updateProjects: [{ id: project.id }] };
     },
   };
 
@@ -85,7 +100,7 @@ test('the winner allocates the next slot once and the CAS pins the expected coun
 
   const allocated = await allocateTaskHumanId('p1', client);
 
-  assert.deepEqual(casCalls, [{ expected: 12, sequence: 13 }]);
+  assert.deepEqual(casCalls, [{ filter: 'eq', expected: 12, sequence: 13 }]);
   assert.equal(allocated?.humanId, 'PRJ-13');
   assert.equal(allocated?.sequence, 13);
   assert.equal(project.taskCounter, 13);
@@ -118,14 +133,28 @@ test('concurrent task creations never share a human id', async () => {
   assert.deepEqual(taskWrites.map((write) => write.id).sort(), ['t1', 't2']);
 });
 
-test('a NULL counter is bumped to the first slot, never reused', async () => {
+test('a NULL counter falls back to the conditional NULL attempt, first slot', async () => {
   const project: ProjectRow = { id: 'p1', key: 'LIV', taskCounter: null };
   const { client, casCalls } = buildClient(project);
 
   const allocated = await allocateTaskHumanId('p1', client);
 
-  assert.deepEqual(casCalls, [{ expected: 0, sequence: 1 }]);
+  assert.deepEqual(casCalls, [
+    { filter: 'eq', expected: 0, sequence: 1 },
+    { filter: 'isNull', expected: 0, sequence: 1 },
+  ]);
   assert.equal(allocated?.humanId, 'LIV-1');
+  assert.equal(project.taskCounter, 1);
+});
+
+test('a zero counter takes the first slot through the eq attempt alone', async () => {
+  const project: ProjectRow = { id: 'p1', key: 'NUL', taskCounter: 0 };
+  const { client, casCalls } = buildClient(project);
+
+  const allocated = await allocateTaskHumanId('p1', client);
+
+  assert.deepEqual(casCalls, [{ filter: 'eq', expected: 0, sequence: 1 }]);
+  assert.equal(allocated?.humanId, 'NUL-1');
   assert.equal(project.taskCounter, 1);
 });
 
@@ -145,7 +174,7 @@ test('giving up after the attempt cap throws instead of guessing', async () => {
         edges: [{ node: { id: 'p1', key: 'PRJ', taskCounter: 99 } }],
       },
     }),
-    mutation: async () => ({ updateManyProjects: [] }),
+    mutation: async () => ({ updateProjects: [] }),
   };
 
   await assert.rejects(

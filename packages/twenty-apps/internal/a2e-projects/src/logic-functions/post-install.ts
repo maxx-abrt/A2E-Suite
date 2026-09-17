@@ -50,7 +50,9 @@ const createStarterProject = async (
             key: starterProject.key,
             status: starterProject.status,
             health: starterProject.health,
-            description: starterProject.description,
+            // `description` is RICH_TEXT: the scalar string is a live-input
+            // error ("Invalid object value"), the markdown arm is the shape.
+            description: { markdown: starterProject.description },
           },
         ],
       },
@@ -75,7 +77,7 @@ const createStarterProject = async (
         __args: {
           data: tasks.map((starterTask) => ({
             title: starterTask.title,
-            position: 'V',
+            position: 'last',
             projectId,
             projectStatus: starterTask.projectStatus,
           })),

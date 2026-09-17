@@ -129,7 +129,7 @@ const fetchTaskEntries = async (taskId: string): Promise<TimeEntryRecord[]> => {
     timeEntries: {
       __args: {
         filter: { task: { id: { eq: taskId } } },
-        orderBy: [{ spentAt: 'DescNullsLast' }, { createdAt: 'Desc' }],
+        orderBy: [{ spentAt: 'DescNullsLast' }, { createdAt: 'DescNullsLast' }],
         first: ENTRIES_PAGE_SIZE,
       },
       edges: {

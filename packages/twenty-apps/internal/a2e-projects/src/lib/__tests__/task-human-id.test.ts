@@ -27,6 +27,17 @@ test('a task without a joined project exposes no project id', () => {
   assert.equal(readTaskProjectId({ id: 't1', project: { id: '' } }), undefined);
 });
 
+test('the join column shape of live database events is read too', () => {
+  // task.* payloads carry `projectId`, not `project { id }` (Tier-2 gap).
+  assert.equal(readTaskProjectId({ id: 't1', projectId: 'p1' }), 'p1');
+  assert.equal(readTaskProjectId({ id: 't1', projectId: '' }), undefined);
+  assert.equal(readTaskProjectId({ id: 't1', projectId: null }), undefined);
+  assert.equal(
+    readTaskProjectId({ id: 't1', projectId: 'p1', project: { id: 'p2' } }),
+    'p2',
+  );
+});
+
 test('the counter normalizes missing and malformed values to "no task yet"', () => {
   assert.equal(readTaskCounter({ taskCounter: 7 }), 7);
   assert.equal(readTaskCounter({ taskCounter: 0 }), 0);

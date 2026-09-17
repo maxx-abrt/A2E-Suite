@@ -1,8 +1,10 @@
 // Universal identifiers for A2E Projects.
 //
 // One UUIDv4-class identifier per declarable thing, committed forever
-// (additive-only law). The namespace mirrors A2E Documents' scheme:
-// c31a{OO}00-{KK}00-4000-8000-0000000000{NN} where OO is the object index
+// (additive-only law). The scheme is shaped like A2E Documents' but uses a
+// distinct namespace so both apps install side by side (Documents owns
+// c31a*, Projects owns c31b*):
+// c31b{OO}00-{KK}00-4000-8000-0000000000{NN} where OO is the object index
 // (OBJECT_INDEX below: 02 project, 03 milestone, 04 projectMember,
 // 05 timeEntry, 06 label; 00 = app-level) and KK the family:
 //   0000 object · 0001 own field · 0002 relation field · 0003 view ·
@@ -14,104 +16,105 @@
 // (circular imports resolve to undefined at manifest build time).
 
 export const OBJECT_IDS = {
-  project: 'c31a0200-0000-4000-8000-000000000000',
-  milestone: 'c31a0300-0000-4000-8000-000000000000',
-  projectMember: 'c31a0400-0000-4000-8000-000000000000',
-  timeEntry: 'c31a0500-0000-4000-8000-000000000000',
-  label: 'c31a0600-0000-4000-8000-000000000000',
-  taskLabel: 'c31a0700-0000-4000-8000-000000000000',
+  project: 'c31b0200-0000-4000-8000-000000000000',
+  milestone: 'c31b0300-0000-4000-8000-000000000000',
+  projectMember: 'c31b0400-0000-4000-8000-000000000000',
+  timeEntry: 'c31b0500-0000-4000-8000-000000000000',
+  label: 'c31b0600-0000-4000-8000-000000000000',
+  taskLabel: 'c31b0700-0000-4000-8000-000000000000',
 } as const;
 
 // Both sides of every relation, grouped by the record that owns the foreign key.
 export const RELATION_IDS = {
-  projectLead: 'c31a0200-0002-4000-8000-000000000001',
-  memberProjects: 'c31a0200-0002-4000-8000-000000000002',
-  projectCompany: 'c31a0200-0002-4000-8000-000000000003',
-  companyProjects: 'c31a0200-0002-4000-8000-000000000004',
-  projectMilestone: 'c31a0300-0002-4000-8000-000000000001',
-  milestoneProjects: 'c31a0300-0002-4000-8000-000000000002',
-  projectMemberProject: 'c31a0400-0002-4000-8000-000000000001',
-  projectMembers: 'c31a0400-0002-4000-8000-000000000002',
-  projectMemberWorkspaceMember: 'c31a0400-0002-4000-8000-000000000003',
-  workspaceMemberProjectMemberships: 'c31a0400-0002-4000-8000-000000000004',
-  timeEntryProject: 'c31a0500-0002-4000-8000-000000000001',
-  projectTimeEntries: 'c31a0500-0002-4000-8000-000000000002',
-  timeEntryTask: 'c31a0500-0002-4000-8000-000000000003',
-  taskTimeEntries: 'c31a0500-0002-4000-8000-000000000004',
-  timeEntryWorkspaceMember: 'c31a0500-0002-4000-8000-000000000005',
-  workspaceMemberTimeEntries: 'c31a0500-0002-4000-8000-000000000006',
-  taskLabelLabel: 'c31a0700-0002-4000-8000-000000000001',
-  labelTaskLabels: 'c31a0700-0002-4000-8000-000000000002',
-  labelsOnTask: 'c31a0700-0002-4000-8000-000000000004',
-  subtasks: 'c31a0100-0002-4000-8000-000000000003',
-  milestoneTasks: 'c31a0300-0002-4000-8000-000000000003',
+  projectLead: 'c31b0200-0002-4000-8000-000000000001',
+  memberProjects: 'c31b0200-0002-4000-8000-000000000002',
+  projectCompany: 'c31b0200-0002-4000-8000-000000000003',
+  companyProjects: 'c31b0200-0002-4000-8000-000000000004',
+  projectMilestone: 'c31b0300-0002-4000-8000-000000000001',
+  milestoneProjects: 'c31b0300-0002-4000-8000-000000000002',
+  projectMemberProject: 'c31b0400-0002-4000-8000-000000000001',
+  projectMembers: 'c31b0400-0002-4000-8000-000000000002',
+  projectMemberWorkspaceMember: 'c31b0400-0002-4000-8000-000000000003',
+  workspaceMemberProjectMemberships: 'c31b0400-0002-4000-8000-000000000004',
+  timeEntryProject: 'c31b0500-0002-4000-8000-000000000001',
+  projectTimeEntries: 'c31b0500-0002-4000-8000-000000000002',
+  timeEntryTask: 'c31b0500-0002-4000-8000-000000000003',
+  taskTimeEntries: 'c31b0500-0002-4000-8000-000000000004',
+  timeEntryWorkspaceMember: 'c31b0500-0002-4000-8000-000000000005',
+  workspaceMemberTimeEntries: 'c31b0500-0002-4000-8000-000000000006',
+  taskLabelLabel: 'c31b0700-0002-4000-8000-000000000001',
+  labelTaskLabels: 'c31b0700-0002-4000-8000-000000000002',
+  labelsOnTask: 'c31b0700-0002-4000-8000-000000000004',
+  subtasks: 'c31b0100-0002-4000-8000-000000000003',
+  milestoneTasks: 'c31b0300-0002-4000-8000-000000000003',
 } as const;
 
 export const LABEL_IDENTIFIER_IDS = {
-  projectName: 'c31a0200-0001-4000-8000-000000000001',
-  milestoneName: 'c31a0300-0001-4000-8000-000000000001',
-  projectMemberId: 'c31a0400-0001-4000-8000-000000000001',
-  timeEntryLabel: 'c31a0500-0001-4000-8000-000000000001',
-  labelName: 'c31a0600-0001-4000-8000-000000000001',
+  projectName: 'c31b0200-0001-4000-8000-000000000001',
+  milestoneName: 'c31b0300-0001-4000-8000-000000000001',
+  projectMemberId: 'c31b0400-0001-4000-8000-000000000001',
+  timeEntryLabel: 'c31b0500-0001-4000-8000-000000000001',
+  labelName: 'c31b0600-0001-4000-8000-000000000001',
 } as const;
 
 export const LOGIC_FUNCTION_IDS = {
-  postInstall: 'c31a0000-0012-4000-8000-000000000003',
-  purgeTrash: 'c31a0000-0012-4000-8000-000000000005',
-  taskHumanId: 'c31a0000-0012-4000-8000-000000000007',
-  recurringTaskGenerator: 'c31a0000-0012-4000-8000-000000000009',
+  postInstall: 'c31b0000-0012-4000-8000-000000000003',
+  purgeTrash: 'c31b0000-0012-4000-8000-000000000005',
+  taskHumanId: 'c31b0000-0012-4000-8000-000000000007',
+  recurringTaskGenerator: 'c31b0000-0012-4000-8000-000000000009',
 } as const;
 
 // Task-extension fields live on the standard task object (app fields,
-// real-estate personType.field.ts pattern). `c31a0201` = family key issued
-// from the A2E namespace block, next to the object family (`c31a0200`).
+// real-estate personType.field.ts pattern). `c31b0201` = family key issued
+// from the A2E namespace block, next to the object family (`c31b0200`).
 export const TASK_FIELD_IDS = {
-  project: 'c31a0201-0001-4000-8000-000000000001',
-  tasksOnProject: 'c31a0201-0002-4000-8000-000000000001',
-  projectStatus: 'c31a0201-0001-4000-8000-000000000002',
-  projectPriority: 'c31a0201-0001-4000-8000-000000000003',
-  priority: 'c31a0201-0001-4000-8000-000000000003',
-  estimate: 'c31a0201-0001-4000-8000-000000000004',
-  blockIssue: 'c31a0201-0001-4000-8000-000000000005',
-  blockedTasks: 'c31a0201-0002-4000-8000-000000000002',
-  estimateLabel: 'c31a0201-0001-4000-8000-000000000006',
-  milestone: 'c31a0201-0001-4000-8000-000000000007',
-  parentTask: 'c31a0201-0001-4000-8000-000000000008',
-  taskLabels: 'c31a0201-0002-4000-8000-000000000003',
-  humanId: 'c31a0201-0001-4000-8000-000000000009',
+  project: 'c31b0201-0001-4000-8000-000000000001',
+  tasksOnProject: 'c31b0201-0002-4000-8000-000000000001',
+  projectStatus: 'c31b0201-0001-4000-8000-000000000002',
+  projectPriority: 'c31b0201-0001-4000-8000-000000000003',
+  priority: 'c31b0201-0001-4000-8000-000000000003',
+  estimate: 'c31b0201-0001-4000-8000-000000000004',
+  blockIssue: 'c31b0201-0001-4000-8000-000000000005',
+  blockedTasks: 'c31b0201-0002-4000-8000-000000000002',
+  estimateLabel: 'c31b0201-0001-4000-8000-000000000006',
+  milestone: 'c31b0201-0001-4000-8000-000000000007',
+  parentTask: 'c31b0201-0001-4000-8000-000000000008',
+  taskLabels: 'c31b0201-0002-4000-8000-000000000003',
+  humanId: 'c31b0201-0001-4000-8000-000000000009',
 } as const;
 
 export const COMMAND_MENU_ITEM_IDS = {
-  createProject: 'c31a0000-0011-4000-8000-000000000004',
-  goToProjects: 'c31a0000-0011-4000-8000-000000000005',
-  openSubtasks: 'c31a0000-0011-4000-8000-000000000006',
-  openTimeTracker: 'c31a0000-0011-4000-8000-000000000007',
-  createTask: 'c31a0000-0011-4000-8000-000000000008',
+  createProject: 'c31b0000-0011-4000-8000-000000000004',
+  goToProjects: 'c31b0000-0011-4000-8000-000000000005',
+  openSubtasks: 'c31b0000-0011-4000-8000-000000000006',
+  openTimeTracker: 'c31b0000-0011-4000-8000-000000000007',
+  createTask: 'c31b0000-0011-4000-8000-000000000008',
 } as const;
 
 export const NAVIGATION_MENU_ITEM_IDS = {
-  projects: 'c31a0000-0010-4000-8000-000000000003',
-  myTasks: 'c31a0000-0010-4000-8000-000000000005',
+  projects: 'c31b0000-0010-4000-8000-000000000003',
+  myTasks: 'c31b0000-0010-4000-8000-000000000005',
 } as const;
 
 export const FRONT_COMPONENT_IDS = {
-  createProjectCommand: 'c31a0000-0013-4000-8000-000000000004',
-  goToProjects: 'c31a0000-0013-4000-8000-000000000005',
-  taskSubtasks: 'c31a0000-0013-4000-8000-000000000007',
-  projectGantt: 'c31a0000-0013-4000-8000-000000000008',
-  timeTracker: 'c31a0000-0013-4000-8000-000000000009',
-  projectTimeRollup: 'c31a0000-0013-4000-8000-00000000000a',
-  createTaskCommand: 'c31a0000-0013-4000-8000-00000000000b',
+  createProjectCommand: 'c31b0000-0013-4000-8000-000000000004',
+  goToProjects: 'c31b0000-0013-4000-8000-000000000005',
+  projectOverview: 'c31b0000-0013-4000-8000-000000000006',
+  taskSubtasks: 'c31b0000-0013-4000-8000-000000000007',
+  projectGantt: 'c31b0000-0013-4000-8000-000000000008',
+  timeTracker: 'c31b0000-0013-4000-8000-000000000009',
+  projectTimeRollup: 'c31b0000-0013-4000-8000-00000000000a',
+  createTaskCommand: 'c31b0000-0013-4000-8000-00000000000b',
 } as const;
 
 export const VIEW_IDS = {
-  allProjects: 'c31a0200-0003-4000-8000-000000000001',
-  allMilestones: 'c31a0300-0003-4000-8000-000000000001',
-  allLabels: 'c31a0600-0003-4000-8000-000000000001',
-  taskBoard: 'c31a0100-0003-4000-8000-000000000001',
-  taskCalendar: 'c31a0100-0003-4000-8000-000000000002',
-  taskMyTasks: 'c31a0100-0003-4000-8000-000000000003',
-  currentTasks: 'c31a0100-0003-4000-8000-000000000004',
+  allProjects: 'c31b0200-0003-4000-8000-000000000001',
+  allMilestones: 'c31b0300-0003-4000-8000-000000000001',
+  allLabels: 'c31b0600-0003-4000-8000-000000000001',
+  taskBoard: 'c31b0100-0003-4000-8000-000000000001',
+  taskCalendar: 'c31b0100-0003-4000-8000-000000000002',
+  taskMyTasks: 'c31b0100-0003-4000-8000-000000000003',
+  currentTasks: 'c31b0100-0003-4000-8000-000000000004',
 } as const;
 
 // View fields are positional, so their identifiers are derived. The middle
@@ -121,7 +124,7 @@ export const viewFieldId = (
   viewIndex: number,
   position: number,
 ): string =>
-  `c31a${objectIndex}00-0004-4000-8000-${viewIndex
+  `c31b${objectIndex}00-0004-4000-8000-${viewIndex
     .toString(16)
     .padStart(2, '0')}${position.toString(16).padStart(10, '0')}`;
 

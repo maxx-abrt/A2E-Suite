@@ -20,7 +20,7 @@ const taskField = {
 };
 
 // App task ➜ project relation (task-project.field.ts).
-const taskProjectField = 'c31a0201-0001-4000-8000-000000000001';
+const taskProjectField = 'c31b0201-0001-4000-8000-000000000001';
 
 // "Tâches courantes" table filtered to open work: status ≠ DONE and
 // either no assignee or assigned to me (the meFilter placeholder is
@@ -75,7 +75,7 @@ export default defineView({
   ],
   filters: [
     {
-      universalIdentifier: 'c31a0100-0005-4000-8000-000000000002',
+      universalIdentifier: 'c31b0100-0005-4000-8000-000000000002',
       fieldMetadataUniversalIdentifier: taskField.assignee,
       operand: ViewFilterOperand.IS,
       // "assigned to me" uses the native current-workspace-member filter
@@ -88,7 +88,7 @@ export default defineView({
   ],
   sorts: [
     {
-      universalIdentifier: 'c31a0100-0006-4000-8000-000000000001',
+      universalIdentifier: 'c31b0100-0006-4000-8000-000000000001',
       fieldMetadataUniversalIdentifier: taskField.dueAt,
       direction: ViewSortDirection.ASC,
     },

@@ -35,7 +35,7 @@ export default defineObject({
       defaultValue: "''",
     },
     {
-      universalIdentifier: 'c31a0500-0001-4000-8000-000000000002',
+      universalIdentifier: 'c31b0500-0001-4000-8000-000000000002',
       type: FieldType.NUMBER,
       name: 'minutes',
       label: 'Minutes',
@@ -43,7 +43,7 @@ export default defineObject({
       defaultValue: 0,
     },
     {
-      universalIdentifier: 'c31a0500-0001-4000-8000-000000000003',
+      universalIdentifier: 'c31b0500-0001-4000-8000-000000000003',
       type: FieldType.DATE_TIME,
       name: 'spentAt',
       label: 'Passé le',
@@ -53,7 +53,7 @@ export default defineObject({
     {
       // Trash lifecycle field (P4.3): present = in the corbeille, restore
       // clears it, the purge cron destroys past 7 days (P3 mirror).
-      universalIdentifier: 'c31a0500-0001-4000-8000-000000000004',
+      universalIdentifier: 'c31b0500-0001-4000-8000-000000000004',
       type: FieldType.DATE_TIME,
       name: 'archivedAt',
       label: 'Archivé le',

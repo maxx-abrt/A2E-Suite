@@ -13,21 +13,21 @@ import {
 
 const PROJECT_MEMBER_ROLE_OPTIONS = [
   {
-    universalIdentifier: 'c31a0400-0005-4000-8000-000000000001',
+    universalIdentifier: 'c31b0400-0005-4000-8000-000000000001',
     value: 'MEMBER',
     label: 'Membre',
     position: 0,
     color: 'blue' as const,
   },
   {
-    universalIdentifier: 'c31a0400-0005-4000-8000-000000000002',
+    universalIdentifier: 'c31b0400-0005-4000-8000-000000000002',
     value: 'LEAD',
     label: 'Responsable',
     position: 1,
     color: 'purple' as const,
   },
   {
-    universalIdentifier: 'c31a0400-0005-4000-8000-000000000003',
+    universalIdentifier: 'c31b0400-0005-4000-8000-000000000003',
     value: 'GUEST',
     label: 'Observateur',
     position: 2,
@@ -48,7 +48,7 @@ export default defineObject({
   icon: 'IconUsers',
   fields: [
     {
-      universalIdentifier: 'c31a0400-0001-4000-8000-000000000002',
+      universalIdentifier: 'c31b0400-0001-4000-8000-000000000002',
       type: FieldType.SELECT,
       name: 'memberRole',
       label: 'Rôle',

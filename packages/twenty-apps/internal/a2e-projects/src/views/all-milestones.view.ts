@@ -13,10 +13,10 @@ import {
 
 // Field metadata ids from src/objects/milestone.object.ts.
 const field = {
-  name: 'c31a0300-0001-4000-8000-000000000001',
-  dueAt: 'c31a0300-0001-4000-8000-000000000002',
-  doneAt: 'c31a0300-0001-4000-8000-000000000003',
-  project: 'c31a0300-0002-4000-8000-000000000001',
+  name: 'c31b0300-0001-4000-8000-000000000001',
+  dueAt: 'c31b0300-0001-4000-8000-000000000002',
+  doneAt: 'c31b0300-0001-4000-8000-000000000003',
+  project: 'c31b0300-0002-4000-8000-000000000001',
 };
 
 const fieldId = (position: number) => viewFieldId('03', 0, position);
@@ -61,7 +61,7 @@ export default defineView({
   ],
   sorts: [
     {
-      universalIdentifier: 'c31a0300-0006-4000-8000-000000000001',
+      universalIdentifier: 'c31b0300-0006-4000-8000-000000000001',
       fieldMetadataUniversalIdentifier: field.dueAt,
       direction: ViewSortDirection.ASC,
     },

@@ -9,7 +9,7 @@ import { AppPath, navigate } from 'twenty-sdk/front-component';
 // Bean counters: `Command` runs `execute` on mount then unmounts, mirroring
 // a2e-documents' create-document-command.
 export const CREATE_PROJECT_COMMAND_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
-  'c31a0000-0013-4000-8000-000000000004';
+  'c31b0000-0013-4000-8000-000000000004';
 
 type CreateProjectCommandParams = {
   name?: string;

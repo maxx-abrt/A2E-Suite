@@ -19,21 +19,21 @@ export default defineField({
   defaultValue: `'TODO'`,
   options: [
     {
-      id: 'c31a0201-0005-4000-8000-000000000051',
+      id: 'c31b0201-0005-4000-8000-000000000051',
       value: 'TODO',
       label: 'À faire',
       position: 0,
       color: 'gray',
     },
     {
-      id: 'c31a0201-0005-4000-8000-000000000052',
+      id: 'c31b0201-0005-4000-8000-000000000052',
       value: 'IN_PROGRESS',
       label: 'En cours',
       position: 1,
       color: 'blue',
     },
     {
-      id: 'c31a0201-0005-4000-8000-000000000053',
+      id: 'c31b0201-0005-4000-8000-000000000053',
       value: 'DONE',
       label: 'Terminé',
       position: 2,

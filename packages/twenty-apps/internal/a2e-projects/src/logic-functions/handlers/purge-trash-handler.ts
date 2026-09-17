@@ -59,13 +59,20 @@ const readArchivedRecords = async (
   return (result?.[queryKey]?.edges ?? []).map((edge) => edge.node);
 };
 
+// The generated plural delete takes a REQUIRED filter, not an id (live-
+// verified); `filter: { id: { eq } }` targets the single row. The plural
+// (soft) delete is the one the default function role can call — destroy is
+// not granted, and the native trash cleanup does the final hard delete.
 const deleteRecord = async (
   client: CoreClientLike,
   deleteMutation: string,
   recordId: string,
 ): Promise<void> => {
   await client.mutation({
-    [deleteMutation]: { __args: { id: recordId }, id: true },
+    [deleteMutation]: {
+      __args: { filter: { id: { eq: recordId } } },
+      id: true,
+    },
   } as never);
 };
 

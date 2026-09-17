@@ -17,10 +17,10 @@ export default defineField({
   icon: 'IconAbc',
   isNullable: true,
   options: [
-    { id: 'c31a0201-0005-4000-8000-000000000081', value: 'XS', label: 'XS', position: 0, color: 'sky' },
-    { id: 'c31a0201-0005-4000-8000-000000000082', value: 'S', label: 'S', position: 1, color: 'green' },
-    { id: 'c31a0201-0005-4000-8000-000000000083', value: 'M', label: 'M', position: 2, color: 'yellow' },
-    { id: 'c31a0201-0005-4000-8000-000000000084', value: 'L', label: 'L', position: 3, color: 'orange' },
-    { id: 'c31a0201-0005-4000-8000-000000000085', value: 'XL', label: 'XL', position: 4, color: 'red' },
+    { id: 'c31b0201-0005-4000-8000-000000000081', value: 'XS', label: 'XS', position: 0, color: 'sky' },
+    { id: 'c31b0201-0005-4000-8000-000000000082', value: 'S', label: 'S', position: 1, color: 'green' },
+    { id: 'c31b0201-0005-4000-8000-000000000083', value: 'M', label: 'M', position: 2, color: 'yellow' },
+    { id: 'c31b0201-0005-4000-8000-000000000084', value: 'L', label: 'L', position: 3, color: 'orange' },
+    { id: 'c31b0201-0005-4000-8000-000000000085', value: 'XL', label: 'XL', position: 4, color: 'red' },
   ],
 } as never) as ReturnType<typeof defineField>;

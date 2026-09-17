@@ -19,7 +19,7 @@ const taskField = {
 };
 
 // App task ➜ project relation (task-project.field.ts).
-const taskProjectField = 'c31a0201-0001-4000-8000-000000000001';
+const taskProjectField = 'c31b0201-0001-4000-8000-000000000001';
 
 // Native calendar view on task dueAt — the "Calendar view of tasks/due
 // dates" bullet, using Twenty's native calendar rendering.
@@ -61,7 +61,7 @@ export default defineView({
   ],
   filters: [
     {
-      universalIdentifier: 'c31a0100-0005-4000-8000-000000000003',
+      universalIdentifier: 'c31b0100-0005-4000-8000-000000000003',
       fieldMetadataUniversalIdentifier: taskField.status,
       operand: ViewFilterOperand.IS_NOT,
       value: 'DONE',

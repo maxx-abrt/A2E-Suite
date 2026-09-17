@@ -26,7 +26,7 @@ export const RECURRING_TASK_GENERATOR_STEP_LABEL =
 // the step id stable lets a re-materialized recipe be recognized rather than
 // duplicated.
 export const RECURRING_TASK_GENERATOR_STEP_ID =
-  'c31a0000-0014-4000-8000-000000000001';
+  'c31b0000-0014-4000-8000-000000000001';
 
 export const RECURRING_TASK_GENERATOR_DEFAULT_SCHEDULE = {
   day: 1,

@@ -39,7 +39,7 @@ export default defineObject({
       defaultValue: "''",
     },
     {
-      universalIdentifier: 'c31a0200-0001-4000-8000-000000000002',
+      universalIdentifier: 'c31b0200-0001-4000-8000-000000000002',
       type: FieldType.TEXT,
       name: 'key',
       label: 'Clé',
@@ -50,7 +50,7 @@ export default defineObject({
     {
       // Persisted join counter for task human ids (<KEY>-<n>): the number is
       // minted once and never recomputed, so deleted tasks leave no gap.
-      universalIdentifier: 'c31a0200-0001-4000-8000-000000000010',
+      universalIdentifier: 'c31b0200-0001-4000-8000-000000000010',
       type: FieldType.NUMBER,
       name: 'taskCounter',
       label: 'Compteur de tâches',
@@ -59,7 +59,7 @@ export default defineObject({
       defaultValue: 0,
     },
     {
-      universalIdentifier: 'c31a0200-0001-4000-8000-000000000003',
+      universalIdentifier: 'c31b0200-0001-4000-8000-000000000003',
       type: FieldType.SELECT,
       name: 'status',
       label: 'Statut',
@@ -68,7 +68,7 @@ export default defineObject({
       options: projectStatusOptions,
     },
     {
-      universalIdentifier: 'c31a0200-0001-4000-8000-000000000004',
+      universalIdentifier: 'c31b0200-0001-4000-8000-000000000004',
       type: FieldType.SELECT,
       name: 'health',
       label: 'Santé',
@@ -77,7 +77,7 @@ export default defineObject({
       options: projectHealthOptions,
     },
     {
-      universalIdentifier: 'c31a0200-0001-4000-8000-000000000005',
+      universalIdentifier: 'c31b0200-0001-4000-8000-000000000005',
       type: FieldType.DATE_TIME,
       name: 'startsAt',
       label: 'Début',
@@ -85,7 +85,7 @@ export default defineObject({
       isNullable: true,
     },
     {
-      universalIdentifier: 'c31a0200-0001-4000-8000-000000000006',
+      universalIdentifier: 'c31b0200-0001-4000-8000-000000000006',
       type: FieldType.DATE_TIME,
       name: 'dueAt',
       label: 'Échéance',
@@ -93,7 +93,7 @@ export default defineObject({
       isNullable: true,
     },
     {
-      universalIdentifier: 'c31a0200-0001-4000-8000-000000000007',
+      universalIdentifier: 'c31b0200-0001-4000-8000-000000000007',
       type: FieldType.TEXT,
       name: 'color',
       label: 'Couleur',
@@ -102,7 +102,7 @@ export default defineObject({
       isNullable: true,
     },
     {
-      universalIdentifier: 'c31a0200-0001-4000-8000-000000000008',
+      universalIdentifier: 'c31b0200-0001-4000-8000-000000000008',
       type: FieldType.RICH_TEXT,
       name: 'description',
       label: 'Description',
@@ -110,7 +110,7 @@ export default defineObject({
       isNullable: true,
     },
     {
-      universalIdentifier: 'c31a0200-0001-4000-8000-000000000009',
+      universalIdentifier: 'c31b0200-0001-4000-8000-000000000009',
       type: FieldType.CURRENCY,
       name: 'budget',
       label: 'Budget',
@@ -119,7 +119,7 @@ export default defineObject({
       isNullable: true,
     },
     {
-      universalIdentifier: 'c31a0200-0001-4000-8000-00000000000a',
+      universalIdentifier: 'c31b0200-0001-4000-8000-00000000000a',
       type: FieldType.CURRENCY,
       name: 'spent',
       label: 'Dépensé',
@@ -130,7 +130,7 @@ export default defineObject({
     {
       // Trash lifecycle field (P4.3): present = in the corbeille, restore
       // clears it, the purge cron destroys past 7 days (P3 mirror).
-      universalIdentifier: 'c31a0200-0001-4000-8000-00000000000b',
+      universalIdentifier: 'c31b0200-0001-4000-8000-00000000000b',
       type: FieldType.DATE_TIME,
       name: 'archivedAt',
       label: 'Archivé le',

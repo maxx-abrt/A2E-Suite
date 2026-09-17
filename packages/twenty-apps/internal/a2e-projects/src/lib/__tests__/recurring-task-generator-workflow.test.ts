@@ -83,7 +83,7 @@ test('the schedule and step id can be overridden per recipe instance', () => {
   const workflow = buildRecurringTaskGeneratorWorkflow({
     template,
     schedule: { day: 7, hour: 6, minute: 30 },
-    stepId: 'c31a0000-0014-4000-8000-000000000002',
+    stepId: 'c31b0000-0014-4000-8000-000000000002',
   });
 
   assert.deepEqual(workflow.trigger.settings.schedule, {
@@ -91,7 +91,7 @@ test('the schedule and step id can be overridden per recipe instance', () => {
     hour: 6,
     minute: 30,
   });
-  assert.equal(workflow.steps[0]?.id, 'c31a0000-0014-4000-8000-000000000002');
+  assert.equal(workflow.steps[0]?.id, 'c31b0000-0014-4000-8000-000000000002');
   assert.equal(validateRecurringTaskGeneratorWorkflow(workflow).valid, true);
 });
 

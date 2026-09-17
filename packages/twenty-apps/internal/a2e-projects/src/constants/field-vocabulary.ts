@@ -39,7 +39,7 @@ const option = (
   position: number,
   color: OptionColor,
 ) => ({
-  id: `c31a0200-0005-4000-8000-0000000000${suffix}`,
+  id: `c31b0200-0005-4000-8000-0000000000${suffix}`,
   value,
   label,
   position,

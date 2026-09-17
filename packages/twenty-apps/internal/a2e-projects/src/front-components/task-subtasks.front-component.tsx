@@ -104,8 +104,8 @@ const fetchTaskChildrenPage = async (options: {
         filter,
         orderBy: [
           { position: 'AscNullsFirst' },
-          { createdAt: 'Asc' },
-          { id: 'Asc' },
+          { createdAt: 'AscNullsFirst' },
+          { id: 'AscNullsFirst' },
         ],
         first: TASK_CHILDREN_PAGE_SIZE,
         ...(options.after === null ? {} : { after: options.after }),
@@ -299,7 +299,7 @@ const TaskSubtasks = () => {
     await client.mutation({
       createTasks: {
         __args: {
-          data: [{ title: 'Nouvelle sous-tâche', parentTaskId, position: 'V' }],
+          data: [{ title: 'Nouvelle sous-tâche', parentTaskId, position: 'last' }],
         },
         id: true,
       },

@@ -18,12 +18,14 @@ import {
 // de humanId déclenche un nouvel événement task.updated qui rejouerait
 // l'allocation si l'idempotence n'était pas vérifiée en tête de flux.
 //
-// La primitive de CAS du Core API : `updateManyProjects` rend le filtre
-// d'appel en WHERE du UPDATE et ne retourne QUE les lignes réellement
-// écrites. Faire porter la valeur attendue du compteur par ce filtre fait du
-// filtre un compare-and-swap : un concurrent a déjà incrémenté ssi la réponse
-// est vide. L'arm `is: NULL` couvre les projets créés avant l'existence du
-// champ (compteur absent lu comme 0), la valeur bumpée restant unique.
+// La primitive de CAS du Core API : `updateProjects(filter, data)` compile en
+// un seul `UPDATE … WHERE <filtre> RETURNING` (workspace-repository
+// `morphAndExecute`) et ne retourne QUE les lignes réellement écrites. Faire
+// porter la valeur attendue du compteur par ce filtre fait du filtre un
+// compare-and-swap : un concurrent a déjà incrémenté ssi la réponse est vide.
+// Les filtres NUMBER n'acceptent ni `or` ni valeur NULL dans `eq` (vérifié
+// live), donc le cas compteur NULL est une seconde tentative conditionnelle
+// `is: NULL` ; les deux tentatives restent chacune un UPDATE atomique.
 //
 // L'allocation précède l'écriture du humanId : une écriture de tâche qui
 // échoue brûle un numéro (un trou est acceptable), jamais ne le réutilise.
@@ -56,28 +58,36 @@ const readProject = async (
   return result?.projects?.edges?.[0]?.node;
 };
 
+type CounterFilter = { eq: number } | { is: 'NULL' };
+
 const casBumpProjectCounter = async (
   client: CoreClientLike,
   projectId: string,
   expected: number,
   sequence: number,
 ): Promise<boolean> => {
-  const result = (await client.mutation({
-    updateManyProjects: {
-      __args: {
-        filter: {
-          id: { eq: projectId },
-          taskCounter: {
-            or: [{ eq: expected }, { is: 'NULL' as const }],
-          },
+  const attempt = async (taskCounter: CounterFilter): Promise<boolean> => {
+    const result = (await client.mutation({
+      updateProjects: {
+        __args: {
+          filter: { id: { eq: projectId }, taskCounter },
+          data: { taskCounter: sequence },
         },
-        data: { taskCounter: sequence },
+        id: true,
       },
-      id: true,
-    },
-  } as never)) as { updateManyProjects?: { id: string }[] };
+    } as never)) as { updateProjects?: { id: string }[] };
 
-  return (result?.updateManyProjects?.length ?? 0) > 0;
+    return (result?.updateProjects?.length ?? 0) > 0;
+  };
+
+  if (await attempt({ eq: expected })) {
+    return true;
+  }
+
+  // A project created before the counter existed reads as 0 but stores NULL.
+  // NUMBER filters accept `is` but no `or` (live-verified), so NULL is a
+  // second conditional attempt — itself a single UPDATE ... WHERE.
+  return expected === 0 && (await attempt({ is: 'NULL' }));
 };
 
 const updateTaskHumanId = async (

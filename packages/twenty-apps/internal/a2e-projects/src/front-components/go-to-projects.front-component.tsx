@@ -6,7 +6,7 @@ import { AppPath, navigate } from 'twenty-sdk/front-component';
 // Navigates to the object index page; a dedicated dashboard page is a
 // later P4.2 deliverable (My-tasks / project overview).
 export const GO_TO_PROJECTS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
-  'c31a0000-0013-4000-8000-000000000005';
+  'c31b0000-0013-4000-8000-000000000005';
 
 const GoToProjectsCommand = () => {
   const execute = async (): Promise<void> => {

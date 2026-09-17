@@ -15,28 +15,28 @@ export default defineField({
   isNullable: true,
   options: [
     {
-      id: 'c31a0201-0005-4000-8000-000000000061',
+      id: 'c31b0201-0005-4000-8000-000000000061',
       value: 'URGENT',
       label: 'Urgent',
       position: 0,
       color: 'red',
     },
     {
-      id: 'c31a0201-0005-4000-8000-000000000062',
+      id: 'c31b0201-0005-4000-8000-000000000062',
       value: 'HIGH',
       label: 'Haute',
       position: 1,
       color: 'orange',
     },
     {
-      id: 'c31a0201-0005-4000-8000-000000000063',
+      id: 'c31b0201-0005-4000-8000-000000000063',
       value: 'MEDIUM',
       label: 'Moyenne',
       position: 2,
       color: 'sky',
     },
     {
-      id: 'c31a0201-0005-4000-8000-000000000064',
+      id: 'c31b0201-0005-4000-8000-000000000064',
       value: 'LOW',
       label: 'Basse',
       position: 3,

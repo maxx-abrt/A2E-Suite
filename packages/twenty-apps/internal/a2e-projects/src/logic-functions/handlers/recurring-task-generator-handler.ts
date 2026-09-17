@@ -62,7 +62,7 @@ const createRecurringTask = async (
             title: occurrence.title,
             dueAt: occurrence.dueAt,
             projectId: occurrence.projectId,
-            position: 'V',
+            position: 'last',
             ...(occurrence.projectStatus === undefined
               ? {}
               : { projectStatus: occurrence.projectStatus }),

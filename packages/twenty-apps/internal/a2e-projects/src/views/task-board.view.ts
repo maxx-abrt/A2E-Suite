@@ -18,7 +18,7 @@ const taskField = {
 };
 
 // App task ➜ project relation (task-project.field.ts).
-const taskProjectField = 'c31a0201-0001-4000-8000-000000000001';
+const taskProjectField = 'c31b0201-0001-4000-8000-000000000001';
 
 // Native kanban grouped by the task status select (drag = status update),
 // the "Board view" bullet.
@@ -66,20 +66,20 @@ export default defineView({
   ],
   groups: [
     {
-      universalIdentifier: 'c31a0100-0007-4000-8000-000000000001',
+      universalIdentifier: 'c31b0100-0007-4000-8000-000000000001',
       // Task status options: TODO / IN_PROGRESS / DONE.
       fieldValue: 'TODO',
       isVisible: true,
       position: 0,
     },
     {
-      universalIdentifier: 'c31a0100-0007-4000-8000-000000000002',
+      universalIdentifier: 'c31b0100-0007-4000-8000-000000000002',
       fieldValue: 'IN_PROGRESS',
       isVisible: true,
       position: 1,
     },
     {
-      universalIdentifier: 'c31a0100-0007-4000-8000-000000000003',
+      universalIdentifier: 'c31b0100-0007-4000-8000-000000000003',
       fieldValue: 'DONE',
       isVisible: true,
       position: 2,

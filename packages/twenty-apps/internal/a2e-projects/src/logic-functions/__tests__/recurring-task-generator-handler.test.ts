@@ -103,13 +103,13 @@ test('each due occurrence becomes one task carrying title, due date and project'
       title: 'Revue hebdo',
       dueAt: '2026-09-02T09:00:00.000Z',
       projectId: 'project-1',
-      position: 'V',
+      position: 'last',
     },
     {
       title: 'Revue hebdo',
       dueAt: '2026-09-03T09:00:00.000Z',
       projectId: 'project-1',
-      position: 'V',
+      position: 'last',
     },
   ]);
   assert.deepEqual(filters, [
@@ -196,7 +196,7 @@ test('the recipe project status is written onto the generated task', async () =>
     dueAt: '2026-09-02T09:00:00.000Z',
     projectId: 'project-1',
     projectStatus: 'IN_PROGRESS',
-    position: 'V',
+    position: 'last',
   });
 });
 

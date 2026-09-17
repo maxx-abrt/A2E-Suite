@@ -13,8 +13,8 @@ import {
 
 // Field metadata ids from src/objects/label.object.ts.
 const field = {
-  name: 'c31a0600-0001-4000-8000-000000000001',
-  color: 'c31a0600-0001-4000-8000-000000000002',
+  name: 'c31b0600-0001-4000-8000-000000000001',
+  color: 'c31b0600-0001-4000-8000-000000000002',
 };
 
 const fieldId = (position: number) => viewFieldId('06', 0, position);
@@ -45,7 +45,7 @@ export default defineView({
   ],
   sorts: [
     {
-      universalIdentifier: 'c31a0600-0006-4000-8000-000000000001',
+      universalIdentifier: 'c31b0600-0006-4000-8000-000000000001',
       fieldMetadataUniversalIdentifier: field.name,
       direction: ViewSortDirection.ASC,
     },

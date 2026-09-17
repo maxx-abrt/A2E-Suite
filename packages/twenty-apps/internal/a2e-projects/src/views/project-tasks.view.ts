@@ -13,7 +13,7 @@ import { TASK_FIELD_IDS, viewFieldId } from '../constants/universal-identifiers.
 // the object's universal identifier directly (same primitive a view on an
 // app object would reference).
 export default defineView({
-  universalIdentifier: 'c31a0201-0003-4000-8000-000000000001',
+  universalIdentifier: 'c31b0201-0003-4000-8000-000000000001',
   name: 'Tâches projet',
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.universalIdentifier,
