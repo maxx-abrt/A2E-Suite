@@ -51,6 +51,7 @@ describe('DriveFileList', () => {
         onRename={jest.fn()}
         onArchive={jest.fn()}
         onRestore={jest.fn()}
+        onPreview={jest.fn()}
       />,
       { wrapper: Wrapper },
     );
@@ -75,6 +76,7 @@ describe('DriveFileList', () => {
         onRename={onRename}
         onArchive={jest.fn()}
         onRestore={jest.fn()}
+        onPreview={jest.fn()}
       />,
       { wrapper: Wrapper },
     );
@@ -103,6 +105,7 @@ describe('DriveFileList', () => {
         onRename={jest.fn()}
         onArchive={onArchive}
         onRestore={jest.fn()}
+        onPreview={jest.fn()}
       />,
       { wrapper: Wrapper },
     );
@@ -129,6 +132,7 @@ describe('DriveFileList', () => {
         onRename={jest.fn()}
         onArchive={jest.fn()}
         onRestore={onRestore}
+        onPreview={jest.fn()}
       />,
       { wrapper: Wrapper },
     );

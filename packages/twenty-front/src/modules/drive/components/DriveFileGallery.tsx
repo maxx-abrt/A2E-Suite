@@ -4,10 +4,12 @@ import { IconArchive, IconRestore, IconStar } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DriveFileCategoryIcon } from '@/drive/components/DriveFileCategoryIcon';
+import { DriveFilePreviewFallback } from '@/drive/components/DriveFilePreviewFallback';
 import {
   getDriveFileCategory,
   getDriveFileName,
 } from '@/drive/utils/driveFileFilter';
+import { canOpenDriveFilePreview } from '@/drive/utils/driveFilePreview';
 import { type DriveFile } from '@/drive/types/DriveRecord';
 
 const StyledGrid = styled.ul`
@@ -44,6 +46,23 @@ const StyledThumbnail = styled.div`
   display: flex;
   height: 72px;
   justify-content: center;
+`;
+
+const StyledPreviewButton = styled.button`
+  align-items: center;
+  background: ${themeCssVariables.background.transparent.lighter};
+  border: none;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  cursor: pointer;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+
+  &:hover {
+    background: ${themeCssVariables.background.transparent.light};
+  }
 `;
 
 const StyledCardName = styled.span`
@@ -92,6 +111,7 @@ export type DriveFileGalleryProps = {
   onToggleStar: (file: DriveFile) => void;
   onArchive: (file: DriveFile) => void;
   onRestore: (file: DriveFile) => void;
+  onPreview: (file: DriveFile) => void;
 };
 
 export const DriveFileGallery = ({
@@ -102,6 +122,7 @@ export const DriveFileGallery = ({
   onToggleStar,
   onArchive,
   onRestore,
+  onPreview,
 }: DriveFileGalleryProps) => {
   const { t } = useLingui();
 
@@ -143,10 +164,21 @@ export const DriveFileGallery = ({
               )}
             </StyledCardHeader>
             <StyledThumbnail>
-              <DriveFileCategoryIcon
-                category={getDriveFileCategory(file)}
-                size={28}
-              />
+              {canOpenDriveFilePreview(file) ? (
+                <StyledPreviewButton
+                  type="button"
+                  aria-label={t`Preview ${fileName}`}
+                  data-testid={`drive-file-card-preview-${file.id}`}
+                  onClick={() => onPreview(file)}
+                >
+                  <DriveFileCategoryIcon
+                    category={getDriveFileCategory(file)}
+                    size={28}
+                  />
+                </StyledPreviewButton>
+              ) : (
+                <DriveFilePreviewFallback file={file} size={28} />
+              )}
             </StyledThumbnail>
             <StyledCardName>{fileName}</StyledCardName>
             <StyledCardActions>

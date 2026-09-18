@@ -25,11 +25,13 @@ const StatefulToolbar = ({
   onChangeViewMode,
   onToggleIncludeSubfolders,
   onCreateFolder,
+  onUpload,
 }: {
   onChangeFilters: (filters: DriveFileFilters) => void;
   onChangeViewMode: (viewMode: 'list' | 'gallery') => void;
   onToggleIncludeSubfolders: (value: boolean) => void;
   onCreateFolder: () => void;
+  onUpload: () => void;
 }) => {
   const [filters, setFilters] = useState<DriveFileFilters>(
     DEFAULT_DRIVE_FILE_FILTERS,
@@ -47,6 +49,7 @@ const StatefulToolbar = ({
       includeSubfolders={false}
       onToggleIncludeSubfolders={onToggleIncludeSubfolders}
       onCreateFolder={onCreateFolder}
+      onUpload={onUpload}
     />
   );
 };
@@ -56,6 +59,7 @@ const renderToolbar = () => {
   const onChangeViewMode = jest.fn();
   const onToggleIncludeSubfolders = jest.fn();
   const onCreateFolder = jest.fn();
+  const onUpload = jest.fn();
 
   render(
     <StatefulToolbar
@@ -63,6 +67,7 @@ const renderToolbar = () => {
       onChangeViewMode={onChangeViewMode}
       onToggleIncludeSubfolders={onToggleIncludeSubfolders}
       onCreateFolder={onCreateFolder}
+      onUpload={onUpload}
     />,
     { wrapper: Wrapper },
   );
@@ -72,6 +77,7 @@ const renderToolbar = () => {
     onChangeViewMode,
     onToggleIncludeSubfolders,
     onCreateFolder,
+    onUpload,
   };
 };
 
@@ -140,5 +146,13 @@ describe('DriveToolbar', () => {
 
     await userEvent.click(screen.getByTestId('drive-create-folder'));
     expect(onCreateFolder).toHaveBeenCalled();
+  });
+
+  it('opens the keyboard upload picker', async () => {
+    const { onUpload } = renderToolbar();
+
+    await userEvent.click(screen.getByTestId('drive-upload-button'));
+
+    expect(onUpload).toHaveBeenCalled();
   });
 });

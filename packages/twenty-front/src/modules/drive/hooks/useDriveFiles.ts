@@ -17,6 +17,7 @@ export const useDriveFiles = () => {
       sourceApp: true,
       description: true,
       archivedAt: true,
+      file: true,
       targetTaskId: true,
       targetNoteId: true,
       targetPersonId: true,

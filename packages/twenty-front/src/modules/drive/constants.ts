@@ -12,6 +12,8 @@ export const DRIVE_FILTER_ALL = 'ALL';
 // than hidden; these are the ones the filter offers as a quick choice.
 export const DRIVE_SOURCE_APPS = ['crm', 'documents', 'chat', 'drive'] as const;
 
+export const DRIVE_SOURCE_APP_DRIVE = 'drive';
+
 export const DRIVE_SOURCE_APP_UNKNOWN = 'unknown';
 
 // Morph targets of the standard `attachment` object, in the order the filter

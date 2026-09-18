@@ -5,6 +5,7 @@ import {
   IconLayoutGrid,
   IconLayoutList,
   IconSearch,
+  IconUpload,
 } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -115,6 +116,7 @@ export type DriveToolbarProps = {
   includeSubfolders: boolean;
   onToggleIncludeSubfolders: (value: boolean) => void;
   onCreateFolder: () => void;
+  onUpload: () => void;
 };
 
 export const DriveToolbar = ({
@@ -125,6 +127,7 @@ export const DriveToolbar = ({
   includeSubfolders,
   onToggleIncludeSubfolders,
   onCreateFolder,
+  onUpload,
 }: DriveToolbarProps) => {
   const { t } = useLingui();
 
@@ -224,6 +227,15 @@ export const DriveToolbar = ({
           <IconLayoutGrid size={16} />
         </StyledToggleButton>
       </StyledToggleGroup>
+
+      <StyledActionButton
+        type="button"
+        data-testid="drive-upload-button"
+        onClick={onUpload}
+      >
+        <IconUpload size={16} />
+        {t`Upload`}
+      </StyledActionButton>
 
       <StyledActionButton
         type="button"

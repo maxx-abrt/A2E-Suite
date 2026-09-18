@@ -5,10 +5,12 @@ import { IconArchive, IconPencil, IconRestore, IconStar } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DriveFileCategoryIcon } from '@/drive/components/DriveFileCategoryIcon';
+import { DriveFilePreviewFallback } from '@/drive/components/DriveFilePreviewFallback';
 import {
   getDriveFileCategory,
   getDriveFileName,
 } from '@/drive/utils/driveFileFilter';
+import { canOpenDriveFilePreview } from '@/drive/utils/driveFilePreview';
 import { type DriveFile } from '@/drive/types/DriveRecord';
 
 const StyledList = styled.ul`
@@ -41,6 +43,24 @@ const StyledName = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const StyledPreviewButton = styled.button`
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  font-size: inherit;
+  gap: ${themeCssVariables.spacing[2]};
+  min-width: 0;
+  padding: 0;
+
+  &:hover ${StyledName} {
+    text-decoration: underline;
+  }
 `;
 
 const StyledNameInput = styled.input`
@@ -87,6 +107,7 @@ export type DriveFileListProps = {
   onRename: (fileId: string, name: string) => void;
   onArchive: (file: DriveFile) => void;
   onRestore: (file: DriveFile) => void;
+  onPreview: (file: DriveFile) => void;
 };
 
 const DriveFileRow = ({
@@ -98,6 +119,7 @@ const DriveFileRow = ({
   onRename,
   onArchive,
   onRestore,
+  onPreview,
 }: {
   file: DriveFile;
   isSelected: boolean;
@@ -107,6 +129,7 @@ const DriveFileRow = ({
   onRename: (fileId: string, name: string) => void;
   onArchive: (file: DriveFile) => void;
   onRestore: (file: DriveFile) => void;
+  onPreview: (file: DriveFile) => void;
 }) => {
   const { t } = useLingui();
   const [isRenaming, setIsRenaming] = useState(false);
@@ -134,27 +157,42 @@ const DriveFileRow = ({
         onChange={() => onToggleSelection(file.id)}
       />
       <StyledNameCell>
-        <DriveFileCategoryIcon category={getDriveFileCategory(file)} />
         {isRenaming ? (
-          <StyledNameInput
-            autoFocus
-            value={draftName}
-            aria-label={t`File name`}
-            data-testid={`drive-file-rename-input-${file.id}`}
-            onChange={(event) => setDraftName(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') {
-                commitRename();
-              }
-              if (event.key === 'Escape') {
-                setIsRenaming(false);
-                setDraftName(fileName);
-              }
-            }}
-            onBlur={commitRename}
-          />
+          <>
+            <DriveFileCategoryIcon category={getDriveFileCategory(file)} />
+            <StyledNameInput
+              autoFocus
+              value={draftName}
+              aria-label={t`File name`}
+              data-testid={`drive-file-rename-input-${file.id}`}
+              onChange={(event) => setDraftName(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  commitRename();
+                }
+                if (event.key === 'Escape') {
+                  setIsRenaming(false);
+                  setDraftName(fileName);
+                }
+              }}
+              onBlur={commitRename}
+            />
+          </>
+        ) : canOpenDriveFilePreview(file) ? (
+          <StyledPreviewButton
+            type="button"
+            aria-label={t`Preview ${fileName}`}
+            data-testid={`drive-file-preview-${file.id}`}
+            onClick={() => onPreview(file)}
+          >
+            <DriveFileCategoryIcon category={getDriveFileCategory(file)} />
+            <StyledName>{fileName}</StyledName>
+          </StyledPreviewButton>
         ) : (
-          <StyledName>{fileName}</StyledName>
+          <>
+            <DriveFilePreviewFallback file={file} />
+            <StyledName>{fileName}</StyledName>
+          </>
         )}
       </StyledNameCell>
 
@@ -215,6 +253,7 @@ export const DriveFileList = ({
   onRename,
   onArchive,
   onRestore,
+  onPreview,
 }: DriveFileListProps) => {
   const { t } = useLingui();
 
@@ -239,6 +278,7 @@ export const DriveFileList = ({
           onRename={onRename}
           onArchive={onArchive}
           onRestore={onRestore}
+          onPreview={onPreview}
         />
       ))}
     </StyledList>

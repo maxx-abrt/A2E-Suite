@@ -1,3 +1,4 @@
+import { AudioPreview } from '@/activities/files/components/AudioPreview';
 import { UnavailableFilePreview } from '@/activities/files/components/UnavailableFilePreview';
 import { VideoPreview } from '@/activities/files/components/VideoPreview';
 import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/const/previewable-extensions.const';
@@ -166,22 +167,29 @@ const MIME_TYPE_MAPPING: Record<
   (typeof PREVIEWABLE_EXTENSIONS)[number],
   string
 > = {
+  aac: 'audio/aac',
   bmp: 'image/bmp',
   csv: 'text/csv',
   odt: 'application/vnd.oasis.opendocument.text',
   doc: 'application/msword',
   docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  flac: 'audio/flac',
   gif: 'image/gif',
   htm: 'text/html',
   html: 'text/html',
   jpg: 'image/jpeg',
   jpeg: 'image/jpeg',
+  m4a: 'audio/mp4',
+  mp3: 'audio/mpeg',
+  oga: 'audio/ogg',
+  ogg: 'audio/ogg',
   pdf: 'application/pdf',
   png: 'image/png',
   ppt: 'application/vnd.ms-powerpoint',
   pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
   tiff: 'image/tiff',
   txt: 'text/plain',
+  wav: 'audio/wav',
   xls: 'application/vnd.ms-excel',
   xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   mp4: 'video/mp4',
@@ -209,6 +217,7 @@ export const DocumentViewer = ({
 
   const mimeType = isPreviewable ? MIME_TYPE_MAPPING[fileExtension] : undefined;
   const isVideo = mimeType?.startsWith('video/') === true;
+  const isAudio = mimeType?.startsWith('audio/') === true;
 
   useEffect(() => {
     if (fileExtension === 'csv') {
@@ -247,6 +256,18 @@ export const DocumentViewer = ({
           key={documentUrl}
           videoName={documentName}
           videoUrl={documentUrl}
+        />
+      </StyledDocumentViewerContainer>
+    );
+  }
+
+  if (isAudio) {
+    return (
+      <StyledDocumentViewerContainer>
+        <AudioPreview
+          key={documentUrl}
+          audioName={documentName}
+          audioUrl={documentUrl}
         />
       </StyledDocumentViewerContainer>
     );

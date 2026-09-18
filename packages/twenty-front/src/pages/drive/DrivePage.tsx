@@ -5,6 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconArchive, IconTrash } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { downloadFile } from '@/activities/files/utils/downloadFile';
+import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { DriveBreadcrumb } from '@/drive/components/DriveBreadcrumb';
 import { DriveBulkActions } from '@/drive/components/DriveBulkActions';
 import { DriveChildFolders } from '@/drive/components/DriveChildFolders';
@@ -14,13 +16,18 @@ import { DriveFolderActions } from '@/drive/components/DriveFolderActions';
 import { DriveFolderTree } from '@/drive/components/DriveFolderTree';
 import { DriveToolbar } from '@/drive/components/DriveToolbar';
 import { DriveTrashedFolders } from '@/drive/components/DriveTrashedFolders';
+import { DriveUploadDropZone } from '@/drive/components/DriveUploadDropZone';
+import { DriveUploadQueuePanel } from '@/drive/components/DriveUploadQueuePanel';
 import {
   DEFAULT_DRIVE_FILE_FILTERS,
   DRIVE_FOLDER_ROOT_LABEL,
+  DRIVE_SOURCE_APP_DRIVE,
 } from '@/drive/constants';
 import { useDriveActions } from '@/drive/hooks/useDriveActions';
 import { useDriveFiles } from '@/drive/hooks/useDriveFiles';
 import { useDriveFolders } from '@/drive/hooks/useDriveFolders';
+import { useDriveUploadQueue } from '@/drive/hooks/useDriveUploadQueue';
+import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
 import {
   type DriveFile,
   type DriveFileFilters,
@@ -34,7 +41,11 @@ import {
   listDriveMoveTargets,
 } from '@/drive/utils/driveFolderTree';
 import { filterDriveFiles } from '@/drive/utils/driveFileFilter';
+import { getDriveFilePreviewValue } from '@/drive/utils/driveFilePreview';
 import { isDriveRecordInTrash } from '@/drive/utils/driveTrash';
+import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const StyledPage = styled.div`
   background: ${themeCssVariables.background.primary};
@@ -139,7 +150,12 @@ export const DrivePage = () => {
     loading: foldersLoading,
     error: foldersError,
   } = useDriveFolders();
-  const { files, loading: filesLoading, error: filesError } = useDriveFiles();
+  const {
+    files,
+    loading: filesLoading,
+    error: filesError,
+    refetch: refetchFiles,
+  } = useDriveFiles();
   const {
     renameDriveFolder,
     renameDriveFile,
@@ -152,6 +168,16 @@ export const DrivePage = () => {
     createDriveFolder,
   } = useDriveActions();
 
+  const { openFileUpload } = useFileUpload();
+  const {
+    tasks: uploadTasks,
+    enqueueFiles,
+    retryTask: retryUploadTask,
+    cancelTask: cancelUploadTask,
+    dismissTask: dismissUploadTask,
+    clearFinishedTasks: clearFinishedUploadTasks,
+  } = useDriveUploadQueue({ onUploaded: refetchFiles });
+
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<DriveViewMode>('list');
   const [filters, setFilters] = useState<DriveFileFilters>(
@@ -161,6 +187,11 @@ export const DrivePage = () => {
   const [isTrashView, setIsTrashView] = useState(false);
   const [selectedFileIds, setSelectedFileIds] = useState<string[]>([]);
   const [actionError, setActionError] = useState<string | null>(null);
+
+  const setFilePreview = useSetAtomState(filePreviewState);
+  const isAttachmentPreviewEnabled = useAtomStateValue(
+    isAttachmentPreviewEnabledState,
+  );
 
   const liveFolders = useMemo(
     () => folders.filter((folder) => !isDriveRecordInTrash(folder.archivedAt)),
@@ -273,6 +304,37 @@ export const DrivePage = () => {
 
   const handleRenameFile = (fileId: string, name: string) => {
     void runAction(() => renameDriveFile(fileId, name));
+  };
+
+  // Preview reuses the global `filePreviewState` modal (DocumentViewer), the
+  // same primitive every FILES field uses. When previews are disabled by client
+  // config, clicking downloads instead, mirroring FilesDisplay.
+  const handlePreviewFile = (file: DriveFile) => {
+    const previewValue = getDriveFilePreviewValue(file);
+
+    if (!isDefined(previewValue)) {
+      return;
+    }
+
+    if (isAttachmentPreviewEnabled) {
+      setFilePreview(previewValue);
+      return;
+    }
+
+    if (isDefined(previewValue.url)) {
+      downloadFile(previewValue.url, previewValue.label ?? 'file');
+    }
+  };
+
+  const handleUploadFiles = (filesToUpload: File[]) => {
+    void enqueueFiles(filesToUpload, {
+      folderId: selectedFolderId,
+      sourceApp: DRIVE_SOURCE_APP_DRIVE,
+    });
+  };
+
+  const handleOpenUploadPicker = () => {
+    openFileUpload({ multiple: true, onUpload: handleUploadFiles });
   };
 
   const handleArchiveFile = (file: DriveFile) => {
@@ -405,102 +467,115 @@ export const DrivePage = () => {
         />
       </StyledSidebar>
 
-      <StyledMain>
-        {isTrashView ? (
-          <>
-            <StyledTrashTitle>
-              <IconArchive size={18} />
-              {t`Trash`}
-            </StyledTrashTitle>
-            <DriveBulkActions
-              selectedCount={selectedFileIds.length}
-              moveTargetFolders={moveTargetFolders}
-              isTrashView
-              onMove={handleBulkMove}
-              onArchive={handleBulkArchive}
-              onRestore={handleBulkRestore}
-              onClearSelection={resetSelection}
-            />
-            <DriveTrashedFolders
-              folders={trashedFolders}
-              onRestore={handleRestoreFolder}
-            />
-          </>
-        ) : (
-          <>
-            <StyledHeader>
-              <DriveBreadcrumb
-                breadcrumb={breadcrumb}
-                rootLabel={DRIVE_FOLDER_ROOT_LABEL}
-                onSelectFolder={handleSelectFolder}
+      <DriveUploadDropZone onUploadFiles={handleUploadFiles}>
+        <StyledMain>
+          {isTrashView ? (
+            <>
+              <StyledTrashTitle>
+                <IconArchive size={18} />
+                {t`Trash`}
+              </StyledTrashTitle>
+              <DriveBulkActions
+                selectedCount={selectedFileIds.length}
+                moveTargetFolders={moveTargetFolders}
+                isTrashView
+                onMove={handleBulkMove}
+                onArchive={handleBulkArchive}
+                onRestore={handleBulkRestore}
+                onClearSelection={resetSelection}
               />
-              {isDefined(selectedFolder) && (
-                <DriveFolderActions
-                  folder={selectedFolder}
-                  onRename={handleRenameFolder}
-                  onArchive={handleArchiveFolder}
+              <DriveTrashedFolders
+                folders={trashedFolders}
+                onRestore={handleRestoreFolder}
+              />
+            </>
+          ) : (
+            <>
+              <StyledHeader>
+                <DriveBreadcrumb
+                  breadcrumb={breadcrumb}
+                  rootLabel={DRIVE_FOLDER_ROOT_LABEL}
+                  onSelectFolder={handleSelectFolder}
+                />
+                {isDefined(selectedFolder) && (
+                  <DriveFolderActions
+                    folder={selectedFolder}
+                    onRename={handleRenameFolder}
+                    onArchive={handleArchiveFolder}
+                  />
+                )}
+              </StyledHeader>
+              <DriveToolbar
+                viewMode={viewMode}
+                onChangeViewMode={setViewMode}
+                filters={filters}
+                onChangeFilters={setFilters}
+                includeSubfolders={includeSubfolders}
+                onToggleIncludeSubfolders={setIncludeSubfolders}
+                onCreateFolder={handleCreateFolder}
+                onUpload={handleOpenUploadPicker}
+              />
+              <DriveBulkActions
+                selectedCount={selectedFileIds.length}
+                moveTargetFolders={moveTargetFolders}
+                isTrashView={false}
+                onMove={handleBulkMove}
+                onArchive={handleBulkArchive}
+                onRestore={handleBulkRestore}
+                onClearSelection={resetSelection}
+              />
+              {filters.search === '' && (
+                <DriveChildFolders
+                  folders={childFolders}
+                  onSelectFolder={handleSelectFolder}
                 />
               )}
-            </StyledHeader>
-            <DriveToolbar
-              viewMode={viewMode}
-              onChangeViewMode={setViewMode}
-              filters={filters}
-              onChangeFilters={setFilters}
-              includeSubfolders={includeSubfolders}
-              onToggleIncludeSubfolders={setIncludeSubfolders}
-              onCreateFolder={handleCreateFolder}
-            />
-            <DriveBulkActions
-              selectedCount={selectedFileIds.length}
-              moveTargetFolders={moveTargetFolders}
-              isTrashView={false}
-              onMove={handleBulkMove}
-              onArchive={handleBulkArchive}
-              onRestore={handleBulkRestore}
-              onClearSelection={resetSelection}
-            />
-            {filters.search === '' && (
-              <DriveChildFolders
-                folders={childFolders}
-                onSelectFolder={handleSelectFolder}
-              />
-            )}
-          </>
-        )}
+            </>
+          )}
 
-        {isDefined(actionError) && <StyledStatus>{actionError}</StyledStatus>}
-        {hasError && <StyledStatus>{t`Could not load Drive`}</StyledStatus>}
+          {isDefined(actionError) && <StyledStatus>{actionError}</StyledStatus>}
+          {hasError && <StyledStatus>{t`Could not load Drive`}</StyledStatus>}
 
-        {loading && files.length === 0 ? (
-          <StyledStatus>{t`Loading…`}</StyledStatus>
-        ) : (
-          <StyledFiles>
-            {viewMode === 'list' ? (
-              <DriveFileList
-                files={visibleFiles}
-                selectedFileIds={selectedFileIds}
-                isTrashView={isTrashView}
-                onToggleSelection={handleToggleSelection}
-                onToggleStar={handleToggleStar}
-                onRename={handleRenameFile}
-                onArchive={handleArchiveFile}
-                onRestore={handleRestoreFile}
-              />
-            ) : (
-              <DriveFileGallery
-                files={visibleFiles}
-                selectedFileIds={selectedFileIds}
-                isTrashView={isTrashView}
-                onToggleSelection={handleToggleSelection}
-                onToggleStar={handleToggleStar}
-                onArchive={handleArchiveFile}
-                onRestore={handleRestoreFile}
-              />
-            )}
-          </StyledFiles>
-        )}
-      </StyledMain>
+          <DriveUploadQueuePanel
+            tasks={uploadTasks}
+            onRetry={retryUploadTask}
+            onCancel={cancelUploadTask}
+            onDismiss={dismissUploadTask}
+            onClearFinished={clearFinishedUploadTasks}
+          />
+
+          {loading && files.length === 0 ? (
+            <StyledStatus>{t`Loading…`}</StyledStatus>
+          ) : (
+            <StyledFiles>
+              {viewMode === 'list' ? (
+                <DriveFileList
+                  files={visibleFiles}
+                  selectedFileIds={selectedFileIds}
+                  isTrashView={isTrashView}
+                  onToggleSelection={handleToggleSelection}
+                  onToggleStar={handleToggleStar}
+                  onRename={handleRenameFile}
+                  onArchive={handleArchiveFile}
+                  onRestore={handleRestoreFile}
+                  onPreview={handlePreviewFile}
+                />
+              ) : (
+                <DriveFileGallery
+                  files={visibleFiles}
+                  selectedFileIds={selectedFileIds}
+                  isTrashView={isTrashView}
+                  onToggleSelection={handleToggleSelection}
+                  onToggleStar={handleToggleStar}
+                  onArchive={handleArchiveFile}
+                  onRestore={handleRestoreFile}
+                  onPreview={handlePreviewFile}
+                />
+              )}
+            </StyledFiles>
+          )}
+        </StyledMain>
+      </DriveUploadDropZone>
     </StyledPage>
   );
 };
