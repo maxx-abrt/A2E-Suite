@@ -20,6 +20,8 @@ export enum AppPath {
 
   // Onboarded
   AiChat = '/chat/:threadId?',
+  // Native workspace chat (a2e-chat objects). Distinct from AiChat's `/chat`.
+  Discussions = '/discussions',
   Index = '/',
   // Mobile only: the navigation menu is a page there rather than a drawer.
   Home = '/home',

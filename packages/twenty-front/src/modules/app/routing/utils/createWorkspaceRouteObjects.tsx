@@ -41,6 +41,12 @@ const AiChatPage = lazy(() =>
   })),
 );
 
+const ChatPage = lazy(() =>
+  import('~/pages/chat/ChatPage').then((module) => ({
+    default: module.ChatPage,
+  })),
+);
+
 const MobileHomePage = lazy(() =>
   import('~/pages/mobile-home/MobileHomePage').then((module) => ({
     default: module.MobileHomePage,
@@ -124,6 +130,14 @@ export const createWorkspaceRouteObjects = ({
       element: (
         <LazyRoute>
           <AiChatPage />
+        </LazyRoute>
+      ),
+    },
+    {
+      path: AppPath.Discussions,
+      element: (
+        <LazyRoute>
+          <ChatPage />
         </LazyRoute>
       ),
     },

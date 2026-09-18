@@ -3,10 +3,10 @@
   "sessionId": "d04cf6b4-18b1-4a08-a6a1-78012d99bf9d",
   "status": "running",
   "startedAt": "2026-09-18T19:06:36.433Z",
-  "updatedAt": "2026-09-18T20:13:31.217Z",
-  "currentIteration": 5,
+  "updatedAt": "2026-09-18T20:29:25.724Z",
+  "currentIteration": 6,
   "maxIterations": 20,
-  "tasksCompleted": 4,
+  "tasksCompleted": 5,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -66,6 +66,16 @@
       "durationMs": 958135,
       "startedAt": "2026-09-18T19:35:13.412Z",
       "endedAt": "2026-09-18T19:51:11.547Z"
+    },
+    {
+      "iteration": 6,
+      "status": "completed",
+      "taskId": "P5.1-chat-attachments-tests",
+      "taskTitle": "P5.1: chat attachments + integration tests (pagination, isolation, unread counts)",
+      "taskCompleted": true,
+      "durationMs": 1334629,
+      "startedAt": "2026-09-18T19:51:16.579Z",
+      "endedAt": "2026-09-18T20:13:31.208Z"
     }
   ],
   "skippedTaskIds": [],
