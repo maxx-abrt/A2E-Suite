@@ -1,0 +1,212 @@
+# Iteration 21 Log
+
+## Metadata
+
+- **Task ID**: P4.2-retroplanning
+- **Task Title**: P4.2: retroplanning — reusable project recipe, deadline preview, idempotent task generation
+- **Description**: As a project lead, I want to pick a project recipe, set a deadline and preview generated tasks before creating them, so that standard tasks and subtasks land correctly dated and re-planning never clob...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-18T17:24:28.567Z
+- **Ended At**: 2026-09-18T17:34:06.941Z
+- **Duration**: 9m 38s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ ls docs/plan/phases/ 2>/dev/null | head -50
+I'll start with the mandatory clean-start check and locate my task.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -rn "P4.2-retroplanning\|P4.2: retroplanning" docs/plan/phases/ PLAN.md | head -30
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96mP4.2-retroplanning[0m
+[94m[bash][0m $ grep -rni "retroplanning\|P4\.2" PLAN.md | head -40
+[94m[bash][0m $ ls docs/plan/ && echo "---tasks---" && ls docs/tasks/ 2>/dev/null | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -n "P4.1-project-object-validation" tasks/prd.json
+[94m[bash][0m $ grep -n "P4.2-retroplanning\|P4.1-project-object-validation\|retroplanning" docs/plan/phases/phase-0...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -n "CLAIMED —" docs/plan/phases/phase-04-report.md | tail -30
+[94m[bash][0m $ grep -n "retroplanning\|recipe\|retroplan" docs/plan/phases/phase-04-report.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ ls -la packages/twenty-apps/internal/a2e-projects 2>/dev/null || find . -maxdepth 5 -type d -name "a...
+[94m[bash][0m $ find src -type f | sort
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/package.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/recurring-task-generator.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/starter-projects.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/logic-functions/post-install.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/
+[94m[bash][0m $ grep -rln "WorkspaceTemplate\|template instantiation\|instantiateTemplate" packages/twenty-server/sr...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/lib 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/instantiate-template.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/field-vocabulary.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/task-project.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/task-subtask.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/task-block-issue.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/task-human-id.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/application.config.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project.object.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/task-project-status.field.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/tsconfig.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/.oxlintrc.json
+[94m[bash][0m $ git log --oneline -5
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+No existing claim for `P4.2-retroplanning`; dependencies `P4.1-project-object-validation` and C1/P1.6a are met. Claiming the slice now.
+[94m[bash][0m $ tail -5 docs/plan/phases/phase-04-report.md
+[94m[read][0m
+[94m[read][0m
+[94m[todowrite][0m
+Now implementing. Let me set up the todo list and start with the field + constants.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { TASK_FIELD_IDS } from '../constants/universal-identifiers.ts';
+
+// Retroplanning pro... (972 chars)"
+Now the provenance field:
+[94m[write][0m "// Retroplanning engine (P4.2).
+//
+// A *recipe* is a reusable project plan: a set of tasks with durations, an
+// intra-recipe dependency graph (`dependsOn`), optional subtask nesting
+// (`parentKey`)... (24428 chars)"
+Now the core engine:
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/retroplanning.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/retroplanning.ts
+[94m[bash][0m $ grep -n "buildRetroplanningWarnings\|export const buildRetroplanningPreview\|export const reconcileR...
+[94m[bash][0m $ grep -n "new Map(tasks.map\|new Map(\s*$\|new Map(orderedTasks.map" packages/twenty-apps/internal/a2...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/retroplanning.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/retroplanning.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/retroplanning.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/retroplanning.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/retroplanning.ts
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+
+import {
+  buildRetroplanningPreview,
+  buildRetroplanningProvenanceValue,
+  findRetroplanningRecipe,
+  orderRetroplanningTasksByParentDepth,
+ ... (7178 chars)"
+Now the handler and logic function:
+[94m[write][0m "import { defineLogicFunction } from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+import {
+  applyRetroplanning,
+  coreClient,
+  type ApplyRetroplan... (1266 chars)"
+[94m[bash][0m $ yarn typecheck 2>&1 | head -60
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/retroplanning.ts
+Now the engine tests:
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  DEFAULT_RETROPLANNING_TIME,
+  RETROPLANNING_RECIPES,
+  buildRetroplanningPreview,
+  buildRetroplanningProvenanceV... (15376 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/retroplanning.test.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/retroplanning.test.ts
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/retroplanning.test.ts" 2>&1 | tail -60
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/retroplanning.test.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/retroplanning.test.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/retroplanning.test.ts
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/retroplanning.test.ts" 2>&1 | tail -40
+[94m[bash][0m $ grep -rn "joinColumnName.*assignee\|assigneeId" packages/twenty-server/src/modules/*/standard-object...
+[94m[bash][0m $ grep -rn "joinColumnName" packages/twenty-server/src/engine/workspace-manager/ packages/twenty-serve...
+[94m[bash][0m $ grep -rln "parentTaskId\|subtaskId" packages/twenty-apps/internal/a2e-projects packages/twenty-apps/...
+[94m[bash][0m $ grep -n "parentTask\|subtaskId\|updateTask\|assignee" packages/twenty-apps/internal/a2e-projects/src...
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { applyRetroplanning } from '../handlers/apply-retroplanning-handler.ts';
+
+// The handler is the only layer that talk... (8812 chars)"
+[94m[bash][0m $ node --test --experimental-strip-types "src/logic-functions/__tests__/apply-retroplanning-handler.te...
+[94m[bash][0m $ grep -n "human-id\|task-retroplanning\|fields/\|FIELD_MODULE\|fieldPaths" packages/twenty-apps/inter...
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -25
+[94m[bash][0m $ yarn lint 2>&1 | tail -30
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/retroplanning.ts
+[94m[write][0m "{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "singleQuote": true,
+  "trailingComma": "all",
+  "endOfLine": "lf",
+  "printWidth": 80,
+  "sortPackageJson": false,
+  "ignorePatterns... (593 chars)"
+Now formatting. Creating a lib-inclusive oxfmt config (root ignores `**/lib/**`):
+[94m[bash][0m $ npx oxfmt -c /var/folders/31/flrpby692pjc8k6vskbtrnn40000gn/T/opencode/oxfmt-lib.jsonc --check src/c...
+[94m[bash][0m $ git diff --stat
+[94m[bash][0m $ git diff -- packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-field-integrity.test.t...
+[94m[bash][0m $ grep -rn "oxfmt" docs/plan/phases/phase-04-report.md | grep -i "config\|printWidth\|tmp" | head
+The lib files use a wider print width than the root config. Let me correct the temp config and re-format:
+[94m[bash][0m $ git diff --stat -- packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-field-integrity...
+[94m[bash][0m $ git status --porcelain | head -30
+[94m[bash][0m $ git checkout -- packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-field-integrity.te...
+The lib-inclusive config at width 80 reformats pre-existing code. I'll revert that file's formatting churn and re-apply only my minimal edits:
+[94m[bash][0m $ git checkout -- "packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-field-integrity.t...
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ git diff --stat -- "packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-field-integrit...
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/task-field-integrity.test.ts" "src/lib/__t...
+[94m[bash][0m $ npx oxfmt -c /var/folders/31/flrpby692pjc8k6vskbtrnn40000gn/T/opencode/oxfmt-lib.jsonc --check src/l...
+[94m[bash][0m $ npx oxfmt -c /var/folders/31/flrpby692pjc8k6vskbtrnn40000gn/T/opencode/oxfmt-lib.jsonc --check src/l...
+[94m[bash][0m $ npx oxfmt --version
+[94m[bash][0m $ npx oxfmt --check . 2>&1 | tail -40
+[94m[bash][0m $ npx oxfmt -c /var/folders/31/flrpby692pjc8k6vskbtrnn40000gn/T/opencode/oxfmt-lib.jsonc --check src/l...
+[94m[bash][0m $ sed -i '' 's/"printWidth": 100,/"printWidth": 80,/' /var/folders/31/flrpby692pjc8k6vskbtrnn40000gn/T...
+[94m[bash][0m $ yarn lint 2>&1 | tail -12
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -30
+[94m[bash][0m $ grep -o "retroplanningProvenance\|c31b0201-0001-4000-8000-00000000000a\|\"name\": \"retroplanning\"\...
+[94m[todowrite][0m
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ git diff -- packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts packag...
+[94m[bash][0m $ date -u "+%Y-%m-%d %H:%M UTC"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+Now appending the phase report entry:
+[94m[bash][0m $ tail -20 .ralph-tui/progress.md
+[94m[bash][0m $ grep -n "^## \|^## \[" .ralph-tui/progress.md | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -14 docs/plan/phases/phase-04-report.md
+[94m[todowrite][0m
+Implemented the P4.2 retroplanning engine slice in `a2e-projects`.
+
+**Deliverable**
+- Pure engine `src/lib/retroplanning.ts`: two versioned recipes, timezone-aware backward scheduler (IANA zone + DST-safe day ordinals), subtask/dependency preview, `PAST_DATE`/`ASSIGNEE_OVERLAP` warnings, provenance mint/parse, and `reconcileRetroplanningDraft` (APPEND/REPLACE, owned-only moves, manual-edit/DONE protection, destructive-confirmation gate).
+- New nullable TEXT `task.retroplanningProvenance` (`<recipe>@v<version>:<task>:<generatedDueAt>`), Core API handler + `retroplanning` logic function generating standard tasks via existing P4.1 fields.
+- Reuses C1's pure payload/provenance contract and the existing `createTasks`/`updateTask`/`deleteTasks` mutations — no second task engine. Dependency edges stay plan-only since `blockIssue` is task→note (decision still open).
+
+**Checks (all green):** new engine tests 16/16, handler tests 6/6, `yarn test:unit` 170/170, `yarn typecheck` exit 0, `yarn lint` 0 errors (1 pre-existing warning), touched non-lib files `npx oxfmt --check` clean, `npx twenty dev:build .` succeeded (28 files).
+
+**Missing for tick (Tier 2):** live install E06 journey; the recipe-picker/preview front component is the next slice.
+
+Reports appended to `docs/plan/phases/phase-04-report.md` and `.ralph-tui/progress.md`. No commit made.
+
+<promise>COMPLETE</promise>

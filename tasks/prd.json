@@ -393,9 +393,10 @@
         "Quality gate: no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 33,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md task ID: P4.3 documents bullet. Batch-2 deferred the implementation as a cross-app ownership decision — this spike makes that decision executable; the project-overview-shows-linked-docs browser leg remains Tier 2.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P4.3-ai-extract-tasks-stub",
@@ -820,6 +821,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-18T17:34:06.942Z"
+    "updatedAt": "2026-09-18T17:42:04.886Z"
   }
 }
