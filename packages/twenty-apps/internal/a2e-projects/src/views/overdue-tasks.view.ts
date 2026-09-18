@@ -1,12 +1,17 @@
 import {
   defineView,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
   ViewFilterOperand,
   ViewOpenRecordIn,
   ViewSortDirection,
   ViewType,
 } from 'twenty-sdk/define';
 
-import { VIEW_IDS, viewFieldId } from '../constants/universal-identifiers.ts';
+import {
+  TASK_FIELD_IDS,
+  VIEW_IDS,
+  viewFieldId,
+} from '../constants/universal-identifiers.ts';
 
 // Native standard task field uuids (twenty-shared STANDARD_OBJECT_FIELDS).
 const taskField = {
@@ -16,23 +21,20 @@ const taskField = {
   assignee: '20202020-065a-4f42-a906-e20422c1753f',
 };
 
-// App task ➜ project relation (task-project.field.ts).
-const taskProjectField = 'c31b0201-0001-4000-8000-000000000001';
-
-// "My tasks" smart list 1/3 — assigned to me. The assignee filter uses the
-// native current-workspace-member placeholder, resolved to the signed-in
-// member at query time. The other two smart lists live in
-// created-by-me.view.ts and overdue-tasks.view.ts; the folder nav item
-// (my-tasks.navigation-menu-item.ts) groups all three.
-const fieldId = (position: number) => viewFieldId('01', 3, position);
+// "My tasks" smart list 3/3 — overdue. A task is overdue when its dueAt is
+// in the past and it is not done: the DATE_TIME IS_IN_PAST operand is
+// value-less, and the status comparison keeps the select-status approach
+// (no custom-status object).
+const fieldId = (position: number) => viewFieldId('01', 6, position);
 
 export default defineView({
-  universalIdentifier: VIEW_IDS.taskMyTasks,
-  name: 'Assignées à moi',
-  objectUniversalIdentifier: '20202020-1ba1-48ba-bc83-ef7e5990ed10',
+  universalIdentifier: VIEW_IDS.taskOverdue,
+  name: 'En retard',
+  objectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.universalIdentifier,
   type: ViewType.TABLE,
-  icon: 'IconCheckbox',
-  position: 2,
+  icon: 'IconAlertTriangle',
+  position: 5,
   openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
   fields: [
     {
@@ -65,7 +67,7 @@ export default defineView({
     },
     {
       universalIdentifier: fieldId(4),
-      fieldMetadataUniversalIdentifier: taskProjectField,
+      fieldMetadataUniversalIdentifier: TASK_FIELD_IDS.project,
       position: 4,
       isVisible: true,
       size: 180,
@@ -73,20 +75,21 @@ export default defineView({
   ],
   filters: [
     {
-      universalIdentifier: 'c31b0100-0005-4000-8000-000000000002',
-      fieldMetadataUniversalIdentifier: taskField.assignee,
-      operand: ViewFilterOperand.IS,
-      // "assigned to me" uses the native current-workspace-member filter
-      // value shape (compute-standard-task-view-filters util).
-      value: JSON.stringify({
-        isCurrentWorkspaceMemberSelected: true,
-        selectedRecordIds: [],
-      }),
+      universalIdentifier: 'c31b0100-0005-4000-8000-000000000007',
+      fieldMetadataUniversalIdentifier: taskField.dueAt,
+      operand: ViewFilterOperand.IS_IN_PAST,
+      value: '',
+    },
+    {
+      universalIdentifier: 'c31b0100-0005-4000-8000-000000000008',
+      fieldMetadataUniversalIdentifier: taskField.status,
+      operand: ViewFilterOperand.IS_NOT,
+      value: 'DONE',
     },
   ],
   sorts: [
     {
-      universalIdentifier: 'c31b0100-0006-4000-8000-000000000001',
+      universalIdentifier: 'c31b0100-0006-4000-8000-000000000004',
       fieldMetadataUniversalIdentifier: taskField.dueAt,
       direction: ViewSortDirection.ASC,
     },

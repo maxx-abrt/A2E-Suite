@@ -1,12 +1,17 @@
 import {
   defineView,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
   ViewFilterOperand,
   ViewOpenRecordIn,
   ViewSortDirection,
   ViewType,
 } from 'twenty-sdk/define';
 
-import { VIEW_IDS, viewFieldId } from '../constants/universal-identifiers.ts';
+import {
+  TASK_FIELD_IDS,
+  VIEW_IDS,
+  viewFieldId,
+} from '../constants/universal-identifiers.ts';
 
 // Native standard task field uuids (twenty-shared STANDARD_OBJECT_FIELDS).
 const taskField = {
@@ -16,23 +21,25 @@ const taskField = {
   assignee: '20202020-065a-4f42-a906-e20422c1753f',
 };
 
-// App task ➜ project relation (task-project.field.ts).
-const taskProjectField = 'c31b0201-0001-4000-8000-000000000001';
+// createdBy is a derived system ACTOR field, so its universal identifier is
+// read from the SDK rather than hardcoded (twenty-shared derives it).
+const createdByField =
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.fields.createdBy
+    .universalIdentifier;
 
-// "My tasks" smart list 1/3 — assigned to me. The assignee filter uses the
-// native current-workspace-member placeholder, resolved to the signed-in
-// member at query time. The other two smart lists live in
-// created-by-me.view.ts and overdue-tasks.view.ts; the folder nav item
-// (my-tasks.navigation-menu-item.ts) groups all three.
-const fieldId = (position: number) => viewFieldId('01', 3, position);
+// "My tasks" smart list 2/3 — created by me. ACTOR fields filter on the
+// workspaceMemberId sub-field with the same current-workspace-member
+// placeholder the assignee filter uses.
+const fieldId = (position: number) => viewFieldId('01', 5, position);
 
 export default defineView({
-  universalIdentifier: VIEW_IDS.taskMyTasks,
-  name: 'Assignées à moi',
-  objectUniversalIdentifier: '20202020-1ba1-48ba-bc83-ef7e5990ed10',
+  universalIdentifier: VIEW_IDS.taskCreatedByMe,
+  name: 'Créées par moi',
+  objectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.universalIdentifier,
   type: ViewType.TABLE,
-  icon: 'IconCheckbox',
-  position: 2,
+  icon: 'IconUserPlus',
+  position: 4,
   openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
   fields: [
     {
@@ -65,7 +72,7 @@ export default defineView({
     },
     {
       universalIdentifier: fieldId(4),
-      fieldMetadataUniversalIdentifier: taskProjectField,
+      fieldMetadataUniversalIdentifier: TASK_FIELD_IDS.project,
       position: 4,
       isVisible: true,
       size: 180,
@@ -73,11 +80,10 @@ export default defineView({
   ],
   filters: [
     {
-      universalIdentifier: 'c31b0100-0005-4000-8000-000000000002',
-      fieldMetadataUniversalIdentifier: taskField.assignee,
+      universalIdentifier: 'c31b0100-0005-4000-8000-000000000006',
+      fieldMetadataUniversalIdentifier: createdByField,
+      subFieldName: 'workspaceMemberId',
       operand: ViewFilterOperand.IS,
-      // "assigned to me" uses the native current-workspace-member filter
-      // value shape (compute-standard-task-view-filters util).
       value: JSON.stringify({
         isCurrentWorkspaceMemberSelected: true,
         selectedRecordIds: [],
@@ -86,7 +92,7 @@ export default defineView({
   ],
   sorts: [
     {
-      universalIdentifier: 'c31b0100-0006-4000-8000-000000000001',
+      universalIdentifier: 'c31b0100-0006-4000-8000-000000000003',
       fieldMetadataUniversalIdentifier: taskField.dueAt,
       direction: ViewSortDirection.ASC,
     },

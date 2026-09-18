@@ -94,6 +94,9 @@ export const COMMAND_MENU_ITEM_IDS = {
 export const NAVIGATION_MENU_ITEM_IDS = {
   projects: 'c31b0000-0010-4000-8000-000000000003',
   myTasks: 'c31b0000-0010-4000-8000-000000000005',
+  myTasksAssigned: 'c31b0000-0010-4000-8000-000000000006',
+  myTasksCreated: 'c31b0000-0010-4000-8000-000000000007',
+  myTasksOverdue: 'c31b0000-0010-4000-8000-000000000008',
 } as const;
 
 export const FRONT_COMPONENT_IDS = {
@@ -115,6 +118,8 @@ export const VIEW_IDS = {
   taskCalendar: 'c31b0100-0003-4000-8000-000000000002',
   taskMyTasks: 'c31b0100-0003-4000-8000-000000000003',
   currentTasks: 'c31b0100-0003-4000-8000-000000000004',
+  taskCreatedByMe: 'c31b0100-0003-4000-8000-000000000005',
+  taskOverdue: 'c31b0100-0003-4000-8000-000000000006',
 } as const;
 
 // View fields are positional, so their identifiers are derived. The middle

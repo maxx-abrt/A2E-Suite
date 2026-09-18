@@ -104,6 +104,7 @@ type NavigationMenuItemDefinition = {
   name: string;
   type: string;
   viewUniversalIdentifier?: string;
+  folderUniversalIdentifier?: string;
 };
 
 type RoleDefinition = {
@@ -164,8 +165,10 @@ const VIEW_MODULE_PATHS = [
   '../../views/all-labels.view.ts',
   '../../views/all-milestones.view.ts',
   '../../views/all-projects.view.ts',
+  '../../views/created-by-me.view.ts',
   '../../views/current-tasks.view.ts',
   '../../views/my-tasks.view.ts',
+  '../../views/overdue-tasks.view.ts',
   '../../views/project-tasks.view.ts',
   '../../views/task-board.view.ts',
   '../../views/task-calendar.view.ts',
@@ -175,6 +178,9 @@ const PAGE_LAYOUT_MODULE_PATHS = ['../../page-layouts/project.page-layout.ts'];
 
 const NAVIGATION_MENU_MODULE_PATHS = [
   '../../navigation-menu-items/my-tasks.navigation-menu-item.ts',
+  '../../navigation-menu-items/my-tasks-assigned.navigation-menu-item.ts',
+  '../../navigation-menu-items/my-tasks-created.navigation-menu-item.ts',
+  '../../navigation-menu-items/my-tasks-overdue.navigation-menu-item.ts',
   '../../navigation-menu-items/projects.navigation-menu-item.ts',
 ];
 
@@ -631,19 +637,31 @@ test('every page-layout widget references existing metadata', async () => {
 test('every VIEW navigation item and registered view identifier resolves', async () => {
   const graph = await loadGraph();
   const viewIds = new Set(graph.views.map((view) => view.universalIdentifier));
+  const folderIds = new Set(
+    graph.navigationMenuItems
+      .filter((item) => item.type === 'FOLDER')
+      .map((item) => item.universalIdentifier),
+  );
   const unresolved: string[] = [];
 
   for (const item of graph.navigationMenuItems) {
-    if (item.type !== 'VIEW') {
-      continue;
+    if (item.type === 'VIEW') {
+      if (
+        item.viewUniversalIdentifier === undefined ||
+        !viewIds.has(item.viewUniversalIdentifier)
+      ) {
+        unresolved.push(
+          `${item.name} -> view ${item.viewUniversalIdentifier ?? 'missing'}`,
+        );
+      }
     }
 
     if (
-      item.viewUniversalIdentifier === undefined ||
-      !viewIds.has(item.viewUniversalIdentifier)
+      item.folderUniversalIdentifier !== undefined &&
+      !folderIds.has(item.folderUniversalIdentifier)
     ) {
       unresolved.push(
-        `${item.name} -> view ${item.viewUniversalIdentifier ?? 'missing'}`,
+        `${item.name} -> folder ${item.folderUniversalIdentifier}`,
       );
     }
   }
