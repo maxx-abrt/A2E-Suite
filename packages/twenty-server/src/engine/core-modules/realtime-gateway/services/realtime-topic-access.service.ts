@@ -27,6 +27,16 @@ type RealtimeCaller = {
   rolePermissionConfig: RolePermissionConfig;
 };
 
+// The member identity a record/channel ACL is evaluated for. The socket path
+// reads it from the authenticated context; the mentions engine (P8.2) resolves
+// it for a mentioned member, so both share one access decision.
+export type RealtimeWorkspaceMemberIdentity = {
+  workspaceId: string;
+  userId: string;
+  workspaceMemberId: string;
+  userWorkspaceId: string;
+};
+
 // The workspace-object repository is untyped for app-defined objects; each type
 // below is exactly the projection the query selects (document-share precedent).
 type RealtimeObjectRecordRow = { id: string };
@@ -94,6 +104,42 @@ export class RealtimeTopicAccessService {
     }
   }
 
+  // Non-throwing variants for the mentions engine: a denied mention is dropped
+  // silently, never surfaced as an error to the producer.
+  async canWorkspaceMemberReadObjectRecord({
+    identity,
+    objectNameSingular,
+    recordId,
+  }: {
+    identity: RealtimeWorkspaceMemberIdentity;
+    objectNameSingular: string;
+    recordId: string;
+  }): Promise<boolean> {
+    const caller = await this.resolveCallerOrNull(identity);
+
+    return isDefined(caller)
+      ? this.canReadObjectRecord({ caller, objectNameSingular, recordId })
+      : false;
+  }
+
+  async canWorkspaceMemberReadChatChannel({
+    identity,
+    channelId,
+  }: {
+    identity: RealtimeWorkspaceMemberIdentity;
+    channelId: string;
+  }): Promise<boolean> {
+    const caller = await this.resolveCallerOrNull(identity);
+
+    return isDefined(caller)
+      ? this.canReadChatChannel({
+          caller,
+          workspaceMemberId: identity.workspaceMemberId,
+          channelId,
+        })
+      : false;
+  }
+
   async assertCanAccessChatChannel({
     socketContext,
     channelId,
@@ -105,7 +151,11 @@ export class RealtimeTopicAccessService {
 
     if (
       !isDefined(caller) ||
-      !(await this.canReadChatChannel({ caller, socketContext, channelId }))
+      !(await this.canReadChatChannel({
+        caller,
+        workspaceMemberId: socketContext.workspaceMemberId,
+        channelId,
+      }))
     ) {
       throw new Error(REALTIME_CHANNEL_ACCESS_DENIED_MESSAGE);
     }
@@ -113,11 +163,14 @@ export class RealtimeTopicAccessService {
 
   // Membership is the only source of the caller's role here, so absence of the
   // cache entries fails closed rather than defaulting to a permissive context.
-  private async resolveCallerOrNull(
-    socketContext: RealtimeAuthenticatedSocketContext,
-  ): Promise<RealtimeCaller | null> {
+  private async resolveCallerOrNull(identity: {
+    workspaceId: string;
+    userId: string;
+    workspaceMemberId?: string | undefined;
+    userWorkspaceId?: string | undefined;
+  }): Promise<RealtimeCaller | null> {
     const { workspaceId, userId, workspaceMemberId, userWorkspaceId } =
-      socketContext;
+      identity;
 
     if (!isDefined(workspaceMemberId) || !isDefined(userWorkspaceId)) {
       return null;
@@ -187,15 +240,13 @@ export class RealtimeTopicAccessService {
 
   private async canReadChatChannel({
     caller,
-    socketContext,
+    workspaceMemberId,
     channelId,
   }: {
     caller: RealtimeCaller;
-    socketContext: RealtimeAuthenticatedSocketContext;
+    workspaceMemberId: string | undefined;
     channelId: string;
   }): Promise<boolean> {
-    const { workspaceMemberId } = socketContext;
-
     if (!isDefined(workspaceMemberId)) {
       return false;
     }

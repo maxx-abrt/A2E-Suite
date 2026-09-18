@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { NotificationModule } from 'src/engine/core-modules/notification/notification.module';
 import { RealtimeGatewayModule } from 'src/engine/core-modules/realtime-gateway/realtime-gateway.module';
+import { MentionModule } from 'src/modules/mention/mention.module';
 import { ChatMentionListener } from 'src/modules/chat/listeners/chat-mention.listener';
 import { ChatRealtimeListener } from 'src/modules/chat/listeners/chat-realtime.listener';
 import { ChatResolver } from 'src/modules/chat/resolvers/chat.resolver';
@@ -16,7 +17,7 @@ import { ChatUnreadCountService } from 'src/modules/chat/services/chat-unread-co
 // (cursor-paginated message reads, typing fan-out, durable write fan-out) on
 // top of the shared WorkspaceOrmManager and the realtime gateway.
 @Module({
-  imports: [RealtimeGatewayModule, NotificationModule],
+  imports: [RealtimeGatewayModule, NotificationModule, MentionModule],
   providers: [
     ChatResolver,
     ChatMessageService,

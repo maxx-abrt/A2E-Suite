@@ -1,38 +1,23 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type NotificationRequest } from 'src/engine/core-modules/notification/types/notification-request.type';
+import { type MentionTarget } from 'src/modules/mention/types/mention.type';
+import { buildMentionNotificationPayload } from 'src/modules/mention/utils/build-mention-notification-payload.util';
+import {
+  extractChatMentionedWorkspaceMemberIds,
+  parseChatMentions,
+} from 'src/modules/mention/utils/parse-chat-mentions.util';
 
-// Markdown-lite mention wire format shared with the a2e-chat composer:
-// `@[label](workspaceMemberId)`. The full mentions engine (shared parser with
-// context snippets across docs/chat/comments) is P8.2; this skeleton only needs
-// the ids a message references so the notification request can be emitted.
-const CHAT_MENTION_PATTERN = /@\[[^\]]*\]\(([^)\s]+)\)/g;
-
-export type ChatMentionTarget = {
-  workspaceMemberId: string;
-  userId: string;
-};
+// Compatibility surface for the chat wire format now that the shared mentions
+// engine (P8.2) owns parsing and payload building: these names delegate to the
+// one parser instead of re-implementing the `@[label](workspaceMemberId)`
+// pattern, so chat, docs and comments cannot drift.
+export type ChatMentionTarget = MentionTarget;
 
 export const extractMentionedWorkspaceMemberIds = (
   body: string | null,
-): string[] => {
-  if (body === null) {
-    return [];
-  }
+): string[] => extractChatMentionedWorkspaceMemberIds(body);
 
-  const ids = new Set<string>();
-
-  for (const match of body.matchAll(CHAT_MENTION_PATTERN)) {
-    if (match[1].length > 0) {
-      ids.add(match[1]);
-    }
-  }
-
-  return [...ids];
-};
-
-// One request per mentioned user through the P8.1 producer seam. The channel and
-// message ids ride in the payload so the inbox deep-links without chat-local
-// storage; `mentionedWorkspaceMemberIds` lets P8.2 build the context snippet
-// later without re-parsing the body.
 export const buildChatMentionNotificationRequests = ({
   channelId,
   messageId,
@@ -40,6 +25,7 @@ export const buildChatMentionNotificationRequests = ({
   mentionedWorkspaceMemberIds,
   targets,
   createdAt,
+  body,
 }: {
   channelId: string;
   messageId: string;
@@ -47,18 +33,23 @@ export const buildChatMentionNotificationRequests = ({
   mentionedWorkspaceMemberIds: string[];
   targets: ChatMentionTarget[];
   createdAt?: Date;
-}): NotificationRequest[] =>
-  targets.map((target) => ({
+  body?: string | null;
+}): NotificationRequest[] => {
+  const contextSnippet = isDefined(body)
+    ? parseChatMentions(body).contextSnippet
+    : '';
+
+  return targets.map((target) => ({
     userId: target.userId,
     type: 'MENTION',
-    payload: {
-      kind: 'chat.mention',
-      channelId,
-      messageId,
+    payload: buildMentionNotificationPayload({
+      source: { surface: 'chat', channelId, messageId },
       authorId,
       mentionedWorkspaceMemberIds,
-    },
+      contextSnippet,
+    }),
     // The message moment, not the batch flush time, keeps a replayed event in
     // the same digest window.
     ...(createdAt === undefined ? {} : { createdAt }),
   }));
+};

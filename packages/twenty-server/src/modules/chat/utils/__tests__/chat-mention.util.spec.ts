@@ -53,6 +53,7 @@ describe('chat mention notification requests', () => {
           messageId: MESSAGE_ID,
           authorId: AUTHOR_MEMBER_ID,
           mentionedWorkspaceMemberIds: [ALICE_MEMBER_ID, BOB_MEMBER_ID],
+          snippet: '',
         },
         createdAt: new Date('2026-09-18T19:32:52.000Z'),
       },
@@ -65,10 +66,26 @@ describe('chat mention notification requests', () => {
           messageId: MESSAGE_ID,
           authorId: AUTHOR_MEMBER_ID,
           mentionedWorkspaceMemberIds: [ALICE_MEMBER_ID, BOB_MEMBER_ID],
+          snippet: '',
         },
         createdAt: new Date('2026-09-18T19:32:52.000Z'),
       },
     ]);
+  });
+
+  it('builds the context snippet from the message body when provided', () => {
+    const [request] = buildChatMentionNotificationRequests({
+      channelId: CHANNEL_ID,
+      messageId: MESSAGE_ID,
+      authorId: AUTHOR_MEMBER_ID,
+      mentionedWorkspaceMemberIds: [ALICE_MEMBER_ID],
+      targets: [{ workspaceMemberId: ALICE_MEMBER_ID, userId: ALICE_USER_ID }],
+      body: `Salut @[Alice](${ALICE_MEMBER_ID}), tu peux relire ?`,
+    });
+
+    expect(request.payload).toMatchObject({
+      snippet: 'Salut @Alice, tu peux relire ?',
+    });
   });
 
   it('omits createdAt when the message moment is unknown', () => {

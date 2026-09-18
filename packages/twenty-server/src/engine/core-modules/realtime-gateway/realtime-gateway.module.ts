@@ -40,6 +40,9 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     PresenceService,
     RealtimePublisherService,
     RealtimeTopicAuthorizationService,
+    // The mentions engine reuses the record/channel ACL primitive instead of
+    // re-deriving who can read a target.
+    RealtimeTopicAccessService,
   ],
 })
 export class RealtimeGatewayModule {}
