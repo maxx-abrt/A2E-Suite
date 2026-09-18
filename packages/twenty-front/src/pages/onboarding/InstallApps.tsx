@@ -6,9 +6,10 @@ import { useMarketplaceApps } from '@/marketplace/hooks/useMarketplaceApps';
 import { ONBOARDING_INSTALLABLE_APPS } from '@/onboarding/constants/OnboardingInstallableApps';
 import { InstallAppsAutoSkipEffect } from '@/onboarding/effect-components/InstallAppsAutoSkipEffect';
 import { useInstallOnboardingApps } from '@/onboarding/hooks/useInstallOnboardingApps';
+import { shouldAutoSkipInstallAppsStep } from '@/onboarding/utils/shouldAutoSkipInstallAppsStep';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCallback, useState } from 'react';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { InstallAppsContent } from '~/pages/onboarding/InstallAppsContent';
 
 const ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS =
@@ -54,15 +55,21 @@ export const InstallApps = () => {
     setHasAutoSkipFailed(true);
   }, []);
 
+  const templatePicker = (
+    <A2eWorkspaceTemplatePicker options={A2E_WORKSPACE_TEMPLATE_OPTIONS} />
+  );
+
   if (isLoading) {
     return null;
   }
 
   const hasLoadedAvailabilitySuccessfully = !isDefined(error);
-  const shouldAutoSkip =
-    hasLoadedAvailabilitySuccessfully &&
-    !isNonEmptyArray(availableApps) &&
-    !hasAutoSkipFailed;
+  const shouldAutoSkip = shouldAutoSkipInstallAppsStep({
+    hasLoadedAppsSuccessfully: hasLoadedAvailabilitySuccessfully,
+    availableAppCount: availableApps.length,
+    hasTemplateChoices: isDefined(templatePicker),
+    hasAutoSkipFailed,
+  });
 
   if (shouldAutoSkip) {
     return <InstallAppsAutoSkipEffect onError={handleAutoSkipError} />;
@@ -77,9 +84,7 @@ export const InstallApps = () => {
       onToggleApp={toggleApp}
       onInstall={installSelectedAppsAndContinue}
       onSkip={skip}
-      templatePicker={
-        <A2eWorkspaceTemplatePicker options={A2E_WORKSPACE_TEMPLATE_OPTIONS} />
-      }
+      templatePicker={templatePicker}
     />
   );
 };
