@@ -29,3 +29,17 @@ CLAIMED — P5.1-chat-realtime-publish/realtime-publish — deepseek-v4.1-flash 
 **Do not redo:** typing fan-out (`ChatTypingService`, `sendChatTypingIndicator`) already works — leave alone. The channel ACL at subscribe is P2.1-acl-enforcement (`RealtimeTopicAccessService`), already green; this slice only adds publishers, so it deliberately does not re-implement subscribe auth. The durable cursor is `chatReadCursor.lastReadAt` — per-socket seq stays non-durable by design.
 **Remaining:** P5.1 bullets 4–5 (mention notifications, attachments) + P5.2 front.
 **Next:** `P5.1-chat-mentions-skeleton` — emit mention events from `chatMessage` create through the P8.1 notification event contract.
+
+CLAIMED — P5.1-chat-mentions-skeleton/chat-mentions — deepseek-v4.1-flash — 2026-09-18T19:32:52Z — base 52ab4cf0cf4bc0025bb17bfd2c8bf3c818dbdd14
+
+## 2026-09-18 19:44 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** P5.1-chat-mentions-skeleton P5.1: chat mentions emit notification-service events (P8 skeleton) · **Slice:** bullet 4 (Notifications: mention events → notification service)
+**Claim:** done-for-review
+**Ready-to-tick:** yes
+**Base:** 52ab4cf0cf4bc0025bb17bfd2c8bf3c818dbdd14
+**Changed:** new `packages/twenty-server/src/modules/chat/utils/chat-mention.util.ts`; new `.../services/chat-mention.service.ts`; new `.../listeners/chat-mention.listener.ts`; new specs `.../utils/__tests__/chat-mention.util.spec.ts`, `.../services/__tests__/chat-mention.service.spec.ts`, `.../listeners/__tests__/chat-mention.listener.spec.ts`; edited `.../chat/chat.module.ts` (+NotificationModule import, +ChatMentionService/ChatMentionListener providers).
+**Checks:** `npx jest src/modules/chat src/engine/core-modules/notification --config=packages/twenty-server/jest.config.mjs` → 15 suites / 70 tests passed (the 3 new specs: 11 tests); `npx tsgo -p tsconfig.json --noEmit` (twenty-server, in-package) → exit 0; `npx oxlint --type-aware -c .oxlintrc.json` on the 7 touched files → 0 warnings / 0 errors; `npx oxfmt --check` on the same 7 → clean (one write pass on the 2 new specs); `npx nx lint:diff-with-main twenty-server` → "No changed files." (diffs main...HEAD; uncommitted edits use the direct oxlint/oxfmt path, phase-report precedent). No twenty-shared / migration / locale changes.
+**Missing for tick:** Tier 2 (orchestrator, E08): with an installed a2e-chat workspace, a real message whose body encodes `@[label](workspaceMemberId)` produces a `notification_requested` event and, with P8.2 UI, an inbox row. Nothing Tier 0/1 open.
+**Do not redo:** the mention wire format `@[label](workspaceMemberId)` is already fixed by the a2e-chat composer (`src/lib/message-body.ts`) — reuse it, don't invent a second syntax. Notification core (`NotificationService.requestNotifications` → `notification_requested` custom batch event) already works; this slice only adds a chat producer. Realtime fan-out stays in `ChatRealtimeListener`.
+**Remaining:** P5.1 bullet 5 (attachments) + P5.2 front; P8.2 mentions engine (shared parser + context snippets) + inbox UX.
+**Next:** `P5.1-chat-attachments` (message attachments via `attachment` + file-storage) or P8.2 mentions engine consuming the `kind: 'chat.mention'` payload.

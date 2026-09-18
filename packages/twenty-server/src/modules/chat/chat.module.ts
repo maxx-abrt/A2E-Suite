@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
 
+import { NotificationModule } from 'src/engine/core-modules/notification/notification.module';
 import { RealtimeGatewayModule } from 'src/engine/core-modules/realtime-gateway/realtime-gateway.module';
+import { ChatMentionListener } from 'src/modules/chat/listeners/chat-mention.listener';
 import { ChatRealtimeListener } from 'src/modules/chat/listeners/chat-realtime.listener';
 import { ChatResolver } from 'src/modules/chat/resolvers/chat.resolver';
+import { ChatMentionService } from 'src/modules/chat/services/chat-mention.service';
 import { ChatMessageService } from 'src/modules/chat/services/chat-message.service';
 import { ChatRealtimePublisherService } from 'src/modules/chat/services/chat-realtime-publisher.service';
 import { ChatTypingService } from 'src/modules/chat/services/chat-typing.service';
@@ -12,13 +15,15 @@ import { ChatTypingService } from 'src/modules/chat/services/chat-typing.service
 // (cursor-paginated message reads, typing fan-out, durable write fan-out) on
 // top of the shared WorkspaceOrmManager and the realtime gateway.
 @Module({
-  imports: [RealtimeGatewayModule],
+  imports: [RealtimeGatewayModule, NotificationModule],
   providers: [
     ChatResolver,
     ChatMessageService,
     ChatTypingService,
     ChatRealtimePublisherService,
     ChatRealtimeListener,
+    ChatMentionService,
+    ChatMentionListener,
   ],
 })
 export class ChatModule {}

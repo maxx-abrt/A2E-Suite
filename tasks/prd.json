@@ -498,12 +498,13 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 38,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md task ID: P5.1 bullet 4; dependsOn P5.1-chat-model + P8.1-notification-service for the event contract.",
       "dependsOn": [
         "P5.1-chat-model",
         "P8.1-notification-service"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P5.1-chat-attachments-tests",
@@ -825,6 +826,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-18T19:31:21.092Z"
+    "updatedAt": "2026-09-18T19:35:07.893Z"
   }
 }

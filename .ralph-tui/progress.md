@@ -44,3 +44,13 @@ after each iteration and it's included in prompts for context.
   - Reaction events need a `chatMessage` lookup to resolve the channel; read events need a `chatMessage` query to aggregate unread. Both run under `buildSystemAuthContext(workspaceId)` + `{ shouldBypassPermissionChecks: true }`; publishing is wrapped best-effort so fan-out can never fail the write.
   - Listener providers live in `ChatModule`; `EventEmitterModule.forRoot({ wildcard: true })` is already global in `CoreEngineModule`.
 ---
+
+## 2026-09-18 - P5.1-chat-mentions-skeleton
+- Chat @mentions now reach the one P8.1 notification service: a second `chatMessage.created` database-event listener (`ChatMentionListener`) calls `ChatMentionService.notifyMessageMentions`, which extracts mention ids from the Markdown-lite body, resolves workspaceMember→user through a system-context `workspaceMember` lookup, and calls `NotificationService.requestNotifications` with one `MENTION` request per mentioned user (payload `{ kind: 'chat.mention', channelId, messageId, authorId, mentionedWorkspaceMemberIds }`). No chat-local notification storage; P8.2 owns the shared parser/context snippets.
+- Files changed: `packages/twenty-server/src/modules/chat/utils/chat-mention.util.ts` (new), `services/chat-mention.service.ts` (new), `listeners/chat-mention.listener.ts` (new), 3 new specs, `chat.module.ts` (imports NotificationModule + 2 providers).
+- Checks: jest `src/modules/chat src/engine/core-modules/notification` 15 suites / 70 tests green; tsgo exit 0; oxlint --type-aware + oxfmt --check clean on the 7 touched files; nx lint:diff-with-main "No changed files." (uncommitted).
+- **Learnings:**
+  - Mention wire format is shared with the a2e-chat composer: `@[label](workspaceMemberId)` (app `src/lib/message-body.ts`). The server skeleton only needs the ids; P8.2 replaces this with the shared docs/chat/comments parser + snippets.
+  - Notification requests are per-`User` (`userId`), while chat mentions carry `workspaceMember` ids — one member→user hop (select `id, userId` off `workspaceMember`) is required; removed members drop out.
+  - Multiple `@OnDatabaseBatchEvent` listeners can share one object/action pair (`chatMessage.created` is handled by both `ChatRealtimeListener` and `ChatMentionListener`) — no coordination needed.
+---
