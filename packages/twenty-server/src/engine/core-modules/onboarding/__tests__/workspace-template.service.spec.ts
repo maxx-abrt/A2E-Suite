@@ -554,6 +554,52 @@ describe('WorkspaceTemplateService', () => {
           (navigationChange) => navigationChange.action === 'hide',
         ),
       ).toBe(true);
+      // P1.6d persona bundle: the registered, compatible app's proposed
+      // starter content is previewed.
+      expect(preview.samples).toEqual([
+        { label: 'Notes de réunion', locale: 'fr' },
+        { label: 'Entretien individuel', locale: 'fr' },
+      ]);
+    });
+
+    it('previews bundle contents only for ready apps', async () => {
+      const accountingUniversalIdentifier =
+        'b11a0000-0000-4000-8000-000000000001';
+
+      // Accounting is unregistered on this server; documents is ready.
+      findOneByUniversalIdentifierGlobal.mockImplementation(
+        (universalIdentifier: string) =>
+          Promise.resolve(
+            universalIdentifier === accountingUniversalIdentifier
+              ? null
+              : buildRegistration('registration-documents'),
+          ),
+      );
+
+      const preview = await service.getWorkspaceTemplatePreview({
+        workspaceId,
+        template: WorkspaceTemplate.NON_PROFIT,
+      });
+
+      // Only the documents bundle is proposed; the unready accounting bundle
+      // is withheld instead of being previewed as if it would seed.
+      expect(preview.samples).toEqual([
+        { label: 'Notes de réunion', locale: 'fr' },
+      ]);
+
+      // mockImplementation is not cleared by jest.clearAllMocks; drop it so the
+      // next test starts from the module default.
+      findOneByUniversalIdentifierGlobal.mockReset();
+    });
+
+    it('previews no bundle contents for CRM-only', async () => {
+      const preview = await service.getWorkspaceTemplatePreview({
+        workspaceId,
+        template: WorkspaceTemplate.CRM,
+      });
+
+      expect(preview.samples).toEqual([]);
+      expect(preview.blocked).toBe(false);
     });
 
     it('flags blocked when a required app is not registered', async () => {

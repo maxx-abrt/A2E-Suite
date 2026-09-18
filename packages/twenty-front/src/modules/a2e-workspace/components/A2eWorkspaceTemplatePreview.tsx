@@ -37,6 +37,19 @@ const StyledRowSubText = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
+const StyledContentList = styled.ul`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
+  margin: 0;
+  padding-left: ${themeCssVariables.spacing[6]};
+`;
+
+const StyledContentItem = styled.li`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
 const StyledBlockedText = styled.span`
   align-items: center;
   color: ${themeCssVariables.color.red};
@@ -219,16 +232,27 @@ export const A2eWorkspaceTemplatePreview = ({
         </StyledPreviewRow>
       ))}
       {isNonEmptyArray(preview.samples) && (
-        <StyledPreviewRow>
-          <Checkbox
-            aria-label={t`Include sample content`}
-            checked={sampleContentEnabled}
-            onCheckedChange={setSampleContentEnabled}
-          />
-          <StyledRowSubText>
-            {t`Add sample content (${preview.samples.length})`}
-          </StyledRowSubText>
-        </StyledPreviewRow>
+        <>
+          <StyledPreviewRow>
+            <Checkbox
+              aria-label={t`Include sample content`}
+              checked={sampleContentEnabled}
+              onCheckedChange={setSampleContentEnabled}
+            />
+            <StyledRowSubText>
+              {t`Add sample content (${preview.samples.length})`}
+            </StyledRowSubText>
+          </StyledPreviewRow>
+          {/* Previewed bundle contents: read-only proposal of what the
+              persona's ready apps will seed. */}
+          <StyledContentList data-testid="a2e-workspace-template-preview-contents">
+            {preview.samples.map((sample) => (
+              <StyledContentItem key={`${sample.locale}-${sample.label}`}>
+                {sample.label}
+              </StyledContentItem>
+            ))}
+          </StyledContentList>
+        </>
       )}
       {preview.blocked && (
         <StyledBlockedText>

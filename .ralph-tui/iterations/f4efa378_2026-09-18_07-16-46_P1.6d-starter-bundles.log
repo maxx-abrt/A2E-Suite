@@ -1,0 +1,144 @@
+# Iteration 14 Log
+
+## Metadata
+
+- **Task ID**: P1.6d-starter-bundles
+- **Task Title**: P1.6d: starter/persona bundles with previewed contents and only compatible ready apps
+- **Description**: As a workspace creator choosing a persona, I want matching starter bundles (meeting notes, project brief, retroplanning, Bilan sheets/fiches), so that my workspace starts useful for my context.
+- **Status**: completed
+- **Task Completed**: No
+- **Promise Detected**: No
+- **Started At**: 2026-09-18T05:16:46.557Z
+- **Ended At**: 2026-09-18T05:25:08.447Z
+- **Duration**: 8m 21s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "P1.6d-starter-bundles" PLAN.md
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "P1.6d" PLAN.md
+[94m[bash][0m $ ls docs/plan/phases/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "P1.6d\|P1.6b\|P1.6c" docs/plan/phases/phase-01-report.md docs/plan/phases/phase-06-report.m...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ wc -l docs/plan/phases/phase-01-report.md && echo "---TAIL---" && tail -80 docs/plan/phases/phase-01...
+[94m[grep][0m pattern: [96mWORKSPACE_TEMPLATE_DEFINITIONS[0m
+[94m[grep][0m pattern: [96mworkspace-template[0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+[94m[bash][0m $ ls packages/twenty-front/src/modules/a2e-workspace/ && echo "---" && find packages/twenty-front/src/...
+[94m[grep][0m pattern: [96mworkspaceTemplatePreview|WorkspaceTemplatePreview|TemplatePreview[0m
+[94m[bash][0m $ grep -rn "D02\|persona bundle\|starter bundle\|Starter bundle" docs/ PLAN.md | head -40
+[94m[bash][0m $ grep -rn "bundle" docs/product-experience.md docs/plan/*.md 2>/dev/null | head -40
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ ls packages/twenty-apps/internal/ && echo "---documents lib---" && ls packages/twenty-apps/internal/...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/starter-templates.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/starter-projects.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/starter-books.ts
+[94m[bash][0m $ grep -n "CLAIMED\|CONFLICT\|BLOCKED\|## 2026-09-18" docs/plan/phases/phase-01-report.md | tail -30
+[94m[bash][0m $ grep -rn "P1.6d" .ralph-tui/progress.md | tail -30 && echo "---tasks prd---" && grep -n "P1.6d" task...
+[94m[bash][0m $ grep -rn "workspaceTemplate\|WorkspaceTemplate\|persona" packages/twenty-apps/internal/a2e-documents...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/logic-functions/post-install.ts
+[94m[bash][0m $ grep -rn "sample\|Sample\|starter\|Starter" packages/twenty-sdk/src --include=*.ts | grep -iv "\.spe...
+[94m[bash][0m $ grep -rn "postInstallLogicFunction\|optionalApplication\|personaliz\|bundle" packages/twenty-sdk/src...
+[94m[grep][0m [95mpackages/twenty-sdk/src[0m pattern: [96mpostInstallLogicFunction[0m
+[94m[grep][0m [95mpackages/twenty-sdk/src[0m pattern: [96msamples|starter|bundles[0m
+[94m[bash][0m $ ls docs/plan/ | head -40
+[94m[bash][0m $ git log --oneline -20
+[94m[bash][0m $ grep -n "retroplan\|Retroplan\|rétroplan\|P4.2-retro" PLAN.md
+[94m[bash][0m $ grep -rn "retroplan\|rétroplan\|Rétroplan" docs/plan/phases/*.md | tail -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "sampleContentEnabled\|sampleContent" packages/twenty-server/src/engine/core-modules/onboard...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rln "bundle\|Bundle\|starter\|Starter\|persona" packages/twenty-apps/internal/real-estate/src ...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/ && echo "=== src root ===" && ls packages/twenty-app...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "universalIdentifier" packages/twenty-apps/internal/a2e-projects/src/application.config.ts ...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "APPLICATION_UNIVERSAL_IDENTIFIER\s*=" packages/twenty-apps/internal/a2e-projects/src/ pack...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "4f759655\|A2E_PROJECTS\|a2e-projects" packages/twenty-server/src packages/twenty-front/src...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -rln "WORKSPACE_TEMPLATE_DEFINITIONS\|applicationUniversalIdentifiers\|WorkspaceTemplate\." pac...
+[94m[bash][0m $ grep -rln "INDIVIDUAL\|SMALL_BUSINESS\|NON_PROFIT\|STUDENT" packages/twenty-server/test packages/twe...
+[94m[bash][0m $ grep -n "NON_PROFIT\|CRM\|documents\|projects\|accounting\|applicationUniversalIdentifiers\|apps\b\|...
+[94m[read][0m
+[94m[bash][0m $ grep -n "NON_PROFIT\|TEAM\|toHaveLength\|installSteps\|apps\|UNIVERSAL_IDENTIFIER" packages/twenty-s...
+[94m[bash][0m $ redis-cli ping 2>&1
+[94m[bash][0m $ grep -rn "version: 1\|version).toBe(1\|version).toEqual(1\|requestedTemplateKeyVersion" packages/twe...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "\.samples\|samples:" packages/twenty-server/src packages/twenty-server/test packages/twent...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ grep -n "CLAIMED — P1.6d" docs/plan/phases/phase-01-report.md
+[94m[todowrite][0m
+[94m[edit][0m
+Now the server types:
+[94m[write][0m "import { WorkspaceTemplate } from 'src/engine/core-modules/onboarding/enums/workspace-template.enum';
+import { type TemplatePreviewSample } from 'src/engine/core-modules/onboarding/types/apply-templat... (6816 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[edit][0m
+[94m[edit][0m
+[94m[write][0m "import { WorkspaceTemplate } from 'src/engine/core-modules/onboarding/enums/workspace-template.enum';
+import { type TemplatePreviewSample } from 'src/engine/core-modules/onboarding/types/apply-templat... (7313 chars)"
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -30
+[94m[bash][0m $ npx jest src/engine/core-modules/onboarding --config=jest.config.mjs 2>&1 | tail -40
+[94m[bash][0m $ echo "EXIT=${PIPESTATUS[0]}"
+[94m[bash][0m $ tail -20 /tmp/front-tsgo.log
+[94m[bash][0m $ tail -20 /tmp/server-tsgo.log
+[94m[bash][0m $ npx oxfmt --check src/engine/core-modules/onboarding/types/apply-template-operation.types.ts src/eng...
+[94m[bash][0m $ npx oxfmt --check src/modules/a2e-workspace/components/A2eWorkspaceTemplatePreview.tsx 2>&1 | tail -...
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-front 2>&1 | tail -25
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/onboarding/template-una...
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -15
+[94m[bash][0m $ git status --porcelain
+[94m[todowrite][0m
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ tail -30 .ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain && echo "---diffstat---" && git diff --stat
+[94m[bash][0m $ grep -n "CLAIMED —" docs/plan/phases/phase-01-report.md | tail -3
+[94m[todowrite][0m
+Implemented the P1.6d persona-bundle preview leg and reported it.
+
+**What landed**
+- Server: `WORKSPACE_TEMPLATE_DEFINITIONS` gained a preview-only `starterBundleContents` proposal per persona (CRM empty; INDIVIDUAL/STUDENT/TEAM documents; NON_PROFIT/SMALL_BUSINESS documents + Bilan), and `getWorkspaceTemplatePreview` now surfaces it via the existing `TemplatePreview.samples`, filtered to apps that are `registered && versionCompatible` (only compatible ready apps; CRM stays appliable).
+- Front: `A2eWorkspaceTemplatePreview` renders the labels as a read-only included-content list.
+- Docs/fixtures: §6 contract note + definition-conformance test enforcing "contents only from apps each preset installs".
+
+**Checks**: server `tsgo` exit 0; onboarding jest 63/63; onboarding integration spec 3/3; front `tsgo` exit 0; oxlint/oxfmt 0/0 on all touched files; `check-docs` PASS. Claim `done-for-review`, base `0d34f9bc`.
+
+**Not done / next**: no preset installs a2e-projects, so the project delivery/event-retroplanning bundle isn't previewed by any persona — adding it is an app-set change that requires updating two onboarding integration specs and (contract §1) a version bump; left for the D02 product read. Tier-2 live install/reinstall remains the orchestrator's gate.

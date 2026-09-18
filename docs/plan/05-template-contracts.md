@@ -278,6 +278,17 @@ preview but cannot apply. Preview reads registration (`ApplicationRegistrationSe
 and compatibility (`ApplicationVersionValidationService`) — the same sources
 apply will use, so preview cannot lie.
 
+> 2026-09-18 (P1.6d persona bundles): `samples` now carries the **proposed
+> starter content** of each persona's ready apps (`WORKSPACE_TEMPLATE_DEFINITIONS[…].starterBundleContents`
+> in `workspace-template-definitions.constant.ts`). The preview filters that
+> list to apps that are **registered and version-compatible** on this server
+> ("only compatible ready apps"); `CRM` has none and stays previewable/appliable.
+> These labels are proposals for the preview only — D02 owns the exact contents
+> and the supported version matrix, and the seed rows are still created solely
+> by each app's post-install hook. Definition `version` is **not** bumped by
+> this change: it adds previewed proposal metadata without changing what an
+> apply installs, hides or seeds, so no previously previewed apply goes stale.
+
 ## 7. Fixtures (normative examples)
 
 > 2026-09-17 (US-003): the JSON blocks below mirror the checked-in fixtures in

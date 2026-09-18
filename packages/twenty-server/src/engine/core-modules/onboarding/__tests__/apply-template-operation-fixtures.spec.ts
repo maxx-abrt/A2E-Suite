@@ -88,7 +88,12 @@ describe('apply-template-operation fixtures', () => {
     expect(typeof individualTemplatePreview.templateKey).toBe('string');
     expect(Number.isInteger(individualTemplatePreview.version)).toBe(true);
     expect(typeof individualTemplatePreview.blocked).toBe('boolean');
-    expect(individualTemplatePreview.samples).toEqual([]);
+
+    for (const sample of individualTemplatePreview.samples) {
+      expect(typeof sample.label).toBe('string');
+      expect(sample.label.length).toBeGreaterThan(0);
+      expect(typeof sample.locale).toBe('string');
+    }
 
     for (const app of individualTemplatePreview.apps) {
       expect(typeof app.universalIdentifier).toBe('string');
@@ -201,6 +206,52 @@ describe('apply-template-operation fixtures', () => {
           app.universalIdentifier,
         ),
       );
+    }
+
+    // The fixture previews the persona's proposed bundle for its ready apps
+    // (A2E Documents), so the sample labels are the definition's proposals.
+    expect(individualTemplatePreview.samples).toEqual(
+      individualDefinition.starterBundleContents.map((bundleContent) => ({
+        label: bundleContent.label,
+        locale: bundleContent.locale,
+      })),
+    );
+  });
+
+  it('proposes persona bundle contents only from apps each preset installs', () => {
+    for (const definition of Object.values(WORKSPACE_TEMPLATE_DEFINITIONS)) {
+      const presetAppUniversalIdentifiers = new Set(
+        definition.applicationUniversalIdentifiers,
+      );
+
+      for (const bundleContent of definition.starterBundleContents) {
+        // "Only compatible ready apps": a persona can never preview content
+        // for an app it does not install, or for one outside the suite.
+        expect(presetAppUniversalIdentifiers).toContain(
+          bundleContent.applicationUniversalIdentifier,
+        );
+        expect(bundleContent.label.length).toBeGreaterThan(0);
+        expect(bundleContent.locale.length).toBeGreaterThan(0);
+      }
+    }
+
+    // CRM-only stays available with no proposed contents.
+    expect(
+      WORKSPACE_TEMPLATE_DEFINITIONS[WorkspaceTemplate.CRM]
+        .starterBundleContents,
+    ).toEqual([]);
+
+    // Every non-CRM persona previews at least one proposed bundle item.
+    for (const persona of [
+      WorkspaceTemplate.INDIVIDUAL,
+      WorkspaceTemplate.STUDENT,
+      WorkspaceTemplate.TEAM,
+      WorkspaceTemplate.NON_PROFIT,
+      WorkspaceTemplate.SMALL_BUSINESS,
+    ]) {
+      expect(
+        WORKSPACE_TEMPLATE_DEFINITIONS[persona].starterBundleContents.length,
+      ).toBeGreaterThan(0);
     }
   });
 

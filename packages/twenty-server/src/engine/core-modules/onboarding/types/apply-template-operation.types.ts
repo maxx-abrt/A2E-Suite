@@ -57,11 +57,16 @@ export type TemplatePreviewNavigationChange = {
   action: 'hide' | 'restore';
 };
 
+export type TemplatePreviewSample = {
+  label: string;
+  locale: string;
+};
+
 export type TemplatePreview = {
   templateKey: string;
   version: number;
   apps: TemplatePreviewApp[];
   navigationChanges: TemplatePreviewNavigationChange[];
-  samples: Array<{ label: string; locale: string }>;
+  samples: TemplatePreviewSample[];
   blocked: boolean;
 };

@@ -93,7 +93,12 @@ export const individualTemplatePreview: TemplatePreview = {
       action: 'hide',
     },
   ],
-  samples: [],
+  // P1.6d persona bundle: A2E Documents is registered and compatible, so its
+  // proposed starter content is previewed.
+  samples: [
+    { label: 'Notes de réunion', locale: 'fr' },
+    { label: 'Entretien individuel', locale: 'fr' },
+  ],
   blocked: false,
 };
 

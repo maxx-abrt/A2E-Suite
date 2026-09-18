@@ -676,12 +676,32 @@ export class WorkspaceTemplateService {
       })),
     ];
 
+    // Only preview content for apps that are actually ready on this server:
+    // an unregistered or incompatible app cannot seed its bundle, so its
+    // proposed contents must not be shown as part of the persona.
+    const readyApplicationUniversalIdentifiers = new Set(
+      previewApps
+        .filter(
+          (previewApp) => previewApp.registered && previewApp.versionCompatible,
+        )
+        .map((previewApp) => previewApp.universalIdentifier),
+    );
+
     return {
       templateKey: template,
       version: definition.version,
       apps: previewApps,
       navigationChanges,
-      samples: [],
+      samples: definition.starterBundleContents
+        .filter((bundleContent) =>
+          readyApplicationUniversalIdentifiers.has(
+            bundleContent.applicationUniversalIdentifier,
+          ),
+        )
+        .map((bundleContent) => ({
+          label: bundleContent.label,
+          locale: bundleContent.locale,
+        })),
       blocked,
     };
   }

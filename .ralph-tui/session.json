@@ -3,10 +3,10 @@
   "sessionId": "f4efa378-7afd-4697-a69b-09f44239da8d",
   "status": "running",
   "startedAt": "2026-09-18T04:25:41.281Z",
-  "updatedAt": "2026-09-18T05:16:41.069Z",
-  "currentIteration": 12,
+  "updatedAt": "2026-09-18T05:29:35.684Z",
+  "currentIteration": 14,
   "maxIterations": 20,
-  "tasksCompleted": 10,
+  "tasksCompleted": 11,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -136,6 +136,26 @@
       "durationMs": 209884,
       "startedAt": "2026-09-18T05:09:44.859Z",
       "endedAt": "2026-09-18T05:13:14.743Z"
+    },
+    {
+      "iteration": 13,
+      "status": "completed",
+      "taskId": "P1.6e-workspace-reuse",
+      "taskTitle": "P1.6e: workspace reuse — gallery/first-open instantiation, delete-without-deleting-copies, populated-workspace regression",
+      "taskCompleted": true,
+      "durationMs": 200831,
+      "startedAt": "2026-09-18T05:13:20.238Z",
+      "endedAt": "2026-09-18T05:16:41.069Z"
+    },
+    {
+      "iteration": 14,
+      "status": "completed",
+      "taskId": "P1.6d-starter-bundles",
+      "taskTitle": "P1.6d: starter/persona bundles with previewed contents and only compatible ready apps",
+      "taskCompleted": false,
+      "durationMs": 501890,
+      "startedAt": "2026-09-18T05:16:46.557Z",
+      "endedAt": "2026-09-18T05:25:08.447Z"
     }
   ],
   "skippedTaskIds": [],
