@@ -413,6 +413,7 @@ export class ApplicationInstallService {
           applicationId: application.id,
           universalIdentifier,
           workspaceId: params.workspaceId,
+          previousVersion,
         });
       }
 

@@ -685,14 +685,20 @@ export class ApplicationService {
     applicationId,
     universalIdentifier,
     workspaceId,
+    previousVersion,
   }: {
     applicationId: string;
     universalIdentifier: string;
     workspaceId: string;
+    previousVersion?: string;
   }): Promise<void> {
     try {
       await this.update(applicationId, {
         state: ApplicationState.INSTALLED,
+        // The manifest sync persists the incoming version before the metadata
+        // migration validates; on a failed upgrade the row must not report a
+        // version it never applied.
+        ...(isDefined(previousVersion) ? { version: previousVersion } : {}),
         workspaceId,
       });
     } catch (error) {
