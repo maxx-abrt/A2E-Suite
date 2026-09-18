@@ -307,9 +307,10 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 29,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md task ID: P5.1 bullets 1–2; phase gate P5 on P0.3/P2 — P0.3 [x] DONE 2026-09-13; realtime-dependent legs are split into P5.1-chat-realtime-publish (dependsOn the gateway repair). Execution-order item 4 gate (real-session auth/durable persistence) applies to P5 acceptance, recorded as Tier 2 — this story is the non-realtime server leg.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P8.1-notification-service",
@@ -816,6 +817,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-18T05:39:34.108Z"
+    "updatedAt": "2026-09-18T06:02:14.890Z"
   }
 }

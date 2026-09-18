@@ -82,6 +82,7 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
 import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/channel-sync.module';
 import { CreateCalendarEventModule } from 'src/modules/calendar/calendar-event-creation-manager/create-calendar-event.module';
 import { CallRecordingModule } from 'src/modules/call-recording/call-recording.module';
+import { ChatModule } from 'src/modules/chat/chat.module';
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
 import { SendEmailModule } from 'src/modules/messaging/message-outbound-manager/send-email.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -143,6 +144,7 @@ import { FileModule } from './file/file.module';
     SendEmailModule,
     CreateCalendarEventModule,
     CallRecordingModule,
+    ChatModule,
     FileStorageModule.forRoot(),
     LoggerModule.forRootAsync({
       useFactory: loggerModuleFactory,
