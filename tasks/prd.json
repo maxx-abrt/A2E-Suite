@@ -236,11 +236,12 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 26,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md literal deps: after P1.6c — dependsOn P1.6c-front-onboarding (in-tracker). 2026-09-14 orchestrator note marks the remainder open.",
       "dependsOn": [
         "P1.6c-front-onboarding"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P1.6d-starter-bundles",
@@ -813,6 +814,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-18T05:13:14.743Z"
+    "updatedAt": "2026-09-18T05:16:41.069Z"
   }
 }

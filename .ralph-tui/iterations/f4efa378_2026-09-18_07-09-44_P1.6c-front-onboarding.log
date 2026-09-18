@@ -1,0 +1,94 @@
+# Iteration 12 Log
+
+## Metadata
+
+- **Task ID**: P1.6c-front-onboarding
+- **Task Title**: P1.6c: front onboarding/Settings — preview, exclusion, partial-continue and retry on the unified setup operation
+- **Description**: As a workspace creator, I want to preview apps, prerequisites, samples and customization during setup, so that I can configure my workspace knowingly instead of accepting hidden defaults.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-18T05:09:44.859Z
+- **Ended At**: 2026-09-18T05:13:14.743Z
+- **Duration**: 3m 29s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "P1.6c" PLAN.md | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ ls docs/plan/phases/ | head -30 && echo "---" && wc -l docs/plan/phases/phase-01-report.md 2>/dev/nu...
+[94m[bash][0m $ grep -n "P1.6c\|P1.6b" docs/plan/phases/phase-01-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ find packages/twenty-front/src/modules/a2e-workspace -type f | sort
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/hooks/useWorkspaceTemplatePreview.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+[94m[read][0m
+[94m[bash][0m $ grep -rn "A2eWorkspaceTemplatePicker\|SettingsA2eWorkspaceTemplateSection" packages/twenty-front/src...
+[94m[bash][0m $ grep -rn "A2eWorkspaceTemplatePicker\|SettingsA2eWorkspaceTemplateSection" packages/twenty-front/src...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/InstallApps.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/InstallAppsContent.tsx
+[94m[read][0m
+[94m[bash][0m $ grep -rln "InstallAppsAutoSkipEffect\|shouldAutoSkip" packages/twenty-front/src
+[94m[bash][0m $ git log --oneline -5 -- packages/twenty-front/src/modules/onboarding/effect-components/InstallAppsAu...
+[94m[bash][0m $ git show 7c02756b --stat | head -40
+[94m[bash][0m $ git show 7c02756b -- packages/twenty-front/src/pages/onboarding/InstallApps.tsx
+[94m[bash][0m $ git log --diff-filter=A --oneline -- packages/twenty-front/src/modules/onboarding/effect-components/...
+[94m[bash][0m $ git show 2b2a255a -- packages/twenty-front/src/pages/onboarding/InstallApps.tsx | head -120
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-front/src/modules/onboarding -name "*.test.*" | head -20
+[94m[read][0m
+[94m[bash][0m $ tail -20 docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ tail -40 .ralph-tui/progress.md
+[94m[bash][0m $ cat >> docs/plan/phases/phase-01-report.md <<'EOF'  CLAIMED — P1.6c-front-onboarding/empty-catalogue...
+[94m[bash][0m $ tail -4 docs/plan/phases/phase-01-report.md | grep -n "P1.6c-front-onboarding/empty-catalogue-guard"...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/onboarding/utils/getInstallAppsStepHistoryEffect.ts
+[94m[write][0m "// The install-apps onboarding step also hosts the workspace-template picker.
+// Auto-skipping an empty app catalogue would skip past that picker and silently
+// discard the template choice, so the st... (708 chars)"
+[94m[write][0m "import { shouldAutoSkipInstallAppsStep } from '@/onboarding/utils/shouldAutoSkipInstallAppsStep';
+
+const baseArgs = {
+  hasLoadedAppsSuccessfully: true,
+  availableAppCount: 0,
+  hasTemplateChoices: f... (1305 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/InstallApps.tsx
+Now update `InstallApps.tsx` to hoist the picker and apply the guard.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/InstallApps.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/InstallApps.tsx
+[94m[bash][0m $ npx jest src/modules/onboarding/utils/__tests__/shouldAutoSkipInstallAppsStep.test.ts --config=packa...
+[94m[bash][0m $ npx jest --findRelatedTests packages/twenty-front/src/pages/onboarding/InstallApps.tsx packages/twen...
+[94m[bash][0m $ echo "EXIT:${PIPESTATUS[0]}"
+[94m[bash][0m $ echo "EXIT:$?"
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-front 2>&1 | tail -15
+[94m[bash][0m $ echo "OXLINT_EXIT:$?"
+[94m[bash][0m $ echo "OXFMT_EXIT:$?"
+[94m[bash][0m $ echo "---done---"
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ executor — P1.7a install-later readiness front leg or P1.6d remainder EOF echo done
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -5 .ralph-tui/progress.md
+[94m[bash][0m $ run `npx oxlint --type-aware -c .oxlintrc.json <files>` + `npx oxfmt --check <files>` directly from ...
+[94m[bash][0m $ grep -n "P1.6c-front-onboarding/empty-catalogue-guard" docs/plan/phases/phase-01-report.md
+Done. P1.6c slice `empty-catalogue-guard` implemented and reported.
+
+**Slice:** the acceptance gap "Empty catalogue cannot discard template choice" — the A2E install-apps onboarding step auto-skipped whenever the app catalogue was empty, which short-circuited before the workspace-template picker could render.
+
+**Changed:**
+- `packages/twenty-front/src/modules/onboarding/utils/shouldAutoSkipInstallAppsStep.ts` (new) — auto-skip only when availability loaded, 0 apps, no template choices, no prior error.
+- `.../utils/__tests__/shouldAutoSkipInstallAppsStep.test.ts` (new) — 5 cases incl. empty-catalogue-with-choices never skips.
+- `packages/twenty-front/src/pages/onboarding/InstallApps.tsx` — hoisted the picker element and passed `hasTemplateChoices` to the guard.
+- `docs/plan/phases/phase-01-report.md`, `.ralph-tui/progress.md`.
+
+**Checks (all green):** jest spec 5/5; findRelatedTests 10/10; `tsgo --noEmit` exit 0; oxlint type-aware 0/0; oxfmt clean. `Ready-to-tick: no` — only the prior orchestrator Tier-2 graphql:generate + browser apply/retry remains.
+
+<promise>COMPLETE</promise>
