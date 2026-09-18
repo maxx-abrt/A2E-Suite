@@ -3,10 +3,10 @@
   "sessionId": "d04cf6b4-18b1-4a08-a6a1-78012d99bf9d",
   "status": "running",
   "startedAt": "2026-09-18T19:06:36.433Z",
-  "updatedAt": "2026-09-18T19:13:15.933Z",
-  "currentIteration": 0,
+  "updatedAt": "2026-09-18T19:23:45.977Z",
+  "currentIteration": 1,
   "maxIterations": 20,
-  "tasksCompleted": 0,
+  "tasksCompleted": 1,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -16,7 +16,18 @@
     "totalTasks": 0,
     "tasks": []
   },
-  "iterations": [],
+  "iterations": [
+    {
+      "iteration": 1,
+      "status": "completed",
+      "taskId": "P3.4-feasibility-spike",
+      "taskTitle": "P3.4: native-primitive/license feasibility check for advanced authoring blocks (report-only)",
+      "taskCompleted": true,
+      "durationMs": 390784,
+      "startedAt": "2026-09-18T19:06:45.148Z",
+      "endedAt": "2026-09-18T19:13:15.932Z"
+    }
+  ],
   "skippedTaskIds": [],
   "cwd": "/Users/maxaubert/Projets/A2E Suite",
   "activeTaskIds": [],

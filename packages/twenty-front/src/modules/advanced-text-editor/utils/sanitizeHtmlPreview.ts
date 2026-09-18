@@ -3,7 +3,12 @@ const BLOCKED_ELEMENT_SELECTOR =
 
 const URL_ATTRIBUTE_NAMES = ['href', 'src', 'xlink:href', 'action'];
 
-const isBlockedUrl = (attributeName: string, rawValue: string): boolean => {
+// Shared with the BlockNote document HTML import sanitizer so both untrusted
+// HTML paths enforce the same URL scheme policy.
+export const isBlockedUrl = (
+  attributeName: string,
+  rawValue: string,
+): boolean => {
   const value = rawValue.replace(/[\u0000-\u0020]/g, '').toLowerCase();
 
   if (attributeName === 'src' && value.startsWith('data:image/')) {

@@ -451,12 +451,13 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 36,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md literal deps: after durable save/share acceptance — encoded as dependsOn [P3.2-atomic-save, P3.2-snapshot-sharing (passes:true)]. Browser import journeys are Tier 2.",
       "dependsOn": [
         "P3.2-atomic-save",
         "P3.2-snapshot-sharing"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P5.1-chat-realtime-publish",
@@ -823,6 +824,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-18T19:13:15.933Z"
+    "updatedAt": "2026-09-18T19:23:45.977Z"
   }
 }
