@@ -1,0 +1,15 @@
+# Phase 08 — Inbox, Notifications & Activity
+
+CLAIMED — P8.1-notification-service/notification-core-service — deepseek-v4.1-flash — 2026-09-18T06:06:03Z — base 11e923d7ab7feb303dbb7670d4ac3c29b9b24363
+
+## 2026-09-18 06:11 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** P8.1-notification-service P8.1: notification core service — event consumers, digest batching, quiet hours, preference model · **Slice:** P8.1 bullets 1 & 3 (notification core service + per-user preference model); bullet 2 (realtime push) is a separate task, P8.2 is the inbox UX
+**Claim:** done-for-review
+**Ready-to-tick:** yes
+**Base:** 11e923d7ab7feb303dbb7670d4ac3c29b9b24363
+**Changed:** `packages/twenty-server/src/engine/core-modules/notification/**` (new: `notification.entity.ts`, `notification.module.ts`, 4 constants, 3 types, 4 utils, 1 service, 1 listener, 5 specs); `packages/twenty-server/src/engine/core-modules/core-engine.module.ts` (register `NotificationModule`); `packages/twenty-server/src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1789711800000-create-notification-table.ts` (new); `packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts` (register command); `docs/plan/phases/phase-08-report.md`; `.ralph-tui/progress.md`
+**Checks:** `npx jest src/engine/core-modules/notification --config=packages/twenty-server/jest.config.mjs` → 5 suites / 29 tests pass; `cd packages/twenty-server && npx tsgo -p tsconfig.json --noEmit` → exit 0; `npx oxlint --type-aware -c .oxlintrc.json src/engine/core-modules/notification src/engine/core-modules/core-engine.module.ts src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1789711800000-create-notification-table.ts src/database/commands/upgrade-version-command/instance-commands.constant.ts` (from `packages/twenty-server`) → 0 warnings / 0 errors (23 files); `npx oxfmt --check` on the same globs → all formatted; `npx nx lint:diff-with-main twenty-server` → "No changed files" (it diffs `main...HEAD`, so uncommitted edits are invisible — direct oxlint+oxfmt is the covering gate per precedent)
+**Missing for tick:** Live DB application of `CreateNotificationTableFastInstanceCommand` (Tier 1/2 `database:reset`/migrate) and a boot/install smoke — orchestrator-owned; the SQL mirrors the committed `documentShare` command (same `uuid_generate_v4()`/core-schema/FK pattern). Email *sending* (templates/transport) is P8.2 — this slice only plans digest batches. Realtime push/inbox GraphQL are P8.1-notification-realtime/P8.2.
+**Do not redo:** The notification module, preference model and specs are complete and green — extend, don't rebuild. `NotificationService.requestNotifications` is the one producer seam; do not add per-app notification paths (C5).
+**Remaining:** P8.1 bullet 2 (realtime push) + P8.2 bullets; P8.1 bullets 1 & 3 close here
+**Next:** P8.1-notification-realtime (realtime push on `workspace:<id>:inbox:<userId>` + unread badge counts; dependsOn ACL + gateway) or P8.2 inbox filters/grouping/deep-links consuming `NotificationService.findForUser`/`countUnread`
