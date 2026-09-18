@@ -3,10 +3,10 @@
   "sessionId": "d04cf6b4-18b1-4a08-a6a1-78012d99bf9d",
   "status": "running",
   "startedAt": "2026-09-18T19:06:36.433Z",
-  "updatedAt": "2026-09-18T21:56:04.277Z",
-  "currentIteration": 13,
+  "updatedAt": "2026-09-18T22:07:09.554Z",
+  "currentIteration": 15,
   "maxIterations": 20,
-  "tasksCompleted": 11,
+  "tasksCompleted": 12,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -146,6 +146,26 @@
       "durationMs": 929944,
       "startedAt": "2026-09-18T21:31:42.837Z",
       "endedAt": "2026-09-18T21:47:12.781Z"
+    },
+    {
+      "iteration": 14,
+      "status": "completed",
+      "taskId": "P8.2-activity-feed",
+      "taskTitle": "P8.2: unified activity feed — Home dashboard widgets",
+      "taskCompleted": true,
+      "durationMs": 525911,
+      "startedAt": "2026-09-18T21:47:18.365Z",
+      "endedAt": "2026-09-18T21:56:04.276Z"
+    },
+    {
+      "iteration": 15,
+      "status": "completed",
+      "taskId": "P8.2-email-notifications",
+      "taskTitle": "P8.2: email notifications — digest + instant via twenty-emails, honoring preferences and quiet hours",
+      "taskCompleted": false,
+      "durationMs": 424806,
+      "startedAt": "2026-09-18T21:56:09.809Z",
+      "endedAt": "2026-09-18T22:03:14.615Z"
     }
   ],
   "skippedTaskIds": [],

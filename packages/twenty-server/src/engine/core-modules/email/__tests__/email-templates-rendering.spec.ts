@@ -5,6 +5,8 @@ import {
   BillingTrialConvertingEmail,
   BillingTrialEndingEmail,
   CleanSuspendedWorkspaceEmail,
+  NotificationDigestEmail,
+  NotificationEmail,
   PasswordResetLinkEmail,
   PasswordUpdateNotifyEmail,
   SendApprovedAccessDomainValidation,
@@ -68,6 +70,33 @@ const TEMPLATES = [
       locale: 'en',
     }),
     expectedContent: 'Acme Inc',
+  },
+  {
+    name: 'NotificationEmail',
+    element: NotificationEmail({
+      item: {
+        title: 'You were mentioned',
+        preview: 'Can you review the budget?',
+      },
+      link: 'https://app.twenty.com/inbox',
+      locale: 'en',
+    }),
+    expectedContent: 'https://app.twenty.com/inbox',
+  },
+  {
+    name: 'NotificationDigestEmail',
+    element: NotificationDigestEmail({
+      items: [
+        { title: 'You were mentioned', preview: 'Can you review the budget?' },
+        {
+          title: 'A budget threshold was reached',
+          preview: 'Marketing is at 92%',
+        },
+      ],
+      link: 'https://app.twenty.com/inbox',
+      locale: 'en',
+    }),
+    expectedContent: 'https://app.twenty.com/inbox',
   },
   {
     name: 'PasswordResetLinkEmail',

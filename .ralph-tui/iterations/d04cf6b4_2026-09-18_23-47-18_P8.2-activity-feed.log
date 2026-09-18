@@ -1,0 +1,345 @@
+# Iteration 14 Log
+
+## Metadata
+
+- **Task ID**: P8.2-activity-feed
+- **Task Title**: P8.2: unified activity feed — Home dashboard widgets
+- **Description**: As a workspace member, I want a unified activity feed with Home widgets (recent activity, my tasks, upcoming events, contribution grid), so that the Home page reflects what is happening.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-18T21:47:18.365Z
+- **Ended At**: 2026-09-18T21:56:04.276Z
+- **Duration**: 8m 45s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ ls docs/tasks/ 2>/dev/null | head -50
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96mP8.2-activity-feed[0m
+[94m[bash][0m $ rg -n "P8.2" PLAN.md | head -30
+[94m[bash][0m $ rg -n "P8.2|activity-feed|activity feed" docs/plan/phases/phase-08-report.md | head -40
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-08-report.md[0m pattern: [96mP8\.2|activity-feed|activity feed[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96mP8\.2[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96mP4\.2-my-tasks-page|P4\.2.*my-tasks|P8\.1-notification-service[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-08-report.md
+[94m[todowrite][0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mwidgets-dock|WidgetsDock|widgetsDock|widget-dock[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mDashboardWidget|dashboard-widget|dashboardWidget|ActivityFeed|activity-feed|contribution|Contribution[0m
+[94m[bash][0m $ ls -R packages/twenty-front/src/modules/workbench-dock 2>/dev/null | head -80
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96mP2\.4[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/registry/workbenchWidgetRegistry.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/hooks/useWorkbenchWidgetRegistry.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mregisterWorkbenchWidget|WorkbenchWidgetDefinition[0m
+[94m[read][0m
+[94m[glob][0m pattern: [96mpackages/twenty-front/src/**/*Home*[0m
+[94m[glob][0m pattern: [96mpackages/twenty-front/src/modules/**/*timeline*/**[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mAppPath\.Home|Index = '/'|HomePage|DefaultHomePage[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ git log --oneline -15 -- packages/twenty-front/src/modules/workbench-dock
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages[0m pattern: [96m[Cc]ontribution|[Hh]eatmap[0m
+[94m[grep][0m pattern: [96mmy-tasks|myTasks|MyTasks[0m
+[94m[bash][0m $ ls packages/twenty-apps/ 2>/dev/null
+[94m[glob][0m pattern: [96mpackages/twenty-apps/internal/*/src/views/*.view.ts[0m
+[94m[bash][0m $ ls -R packages/twenty-apps/internal/a2e-projects/src | head -80
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/my-tasks.view.ts
+[94m[bash][0m $ ls packages/twenty-front/src/modules/activities/timeline-activities/components/
+[94m[read][0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mfindManyTimelineActivities|workspace-level|workspaceFeed|workspace feed[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mWorkbenchWidgetDock[0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "WorkbenchWidgetDock" packages/twenty-front/src --include=*.tsx --include=*.ts | grep -v lo...
+[94m[bash][0m $ grep -rn "registerWorkbenchWidget\|workbench-dock" packages/twenty-front/src --include=*.tsx --inclu...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules[0m pattern: [96mWorkbenchWidgetDock[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mfrom '~/modules/workbench-dock[0m
+[94m[bash][0m $ grep -rln "useFindManyRecords" packages/twenty-front/src/modules --include=*.tsx --include=*.ts 2>/d...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96mP4C[0m
+[94m[bash][0m $ ls packages/twenty-front/src/modules/chat/hooks packages/twenty-front/src/modules/chat/components 2>...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96m^# P4C|^### P4C|P4C —|Calendar[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src[0m pattern: [96mcalendarEvent|CalendarEvent[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/hooks/useChatChannels.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/inbox/hooks/useInboxNotifications.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/hooks/useFindManyRecords.ts
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules[0m pattern: [96museCurrentWorkspaceMember[0m
+[94m[bash][0m $ find packages/twenty-front/src/modules -iname "*currentWorkspaceMember*" -o -iname "*useCurrentWorks...
+[94m[bash][0m $ ls packages/twenty-front/src/modules/activities/tasks/hooks 2>/dev/null
+[94m[bash][0m $ grep -rln "currentWorkspaceMemberState" packages/twenty-front/src/modules --include="*.ts" --include...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/activities/tasks/hooks/useTasks.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/activities/tasks/components/TasksCard.tsx
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-shared/src/timeline/parseTimelineActivityAction.ts 2>/dev/null
+[94m[read][0m
+[94m[bash][0m $ grep -rn "TaskStatus\|'TODO'\|IN_PROGRESS" packages/twenty-shared/src --include="*.ts" 2>/dev/null |...
+[94m[bash][0m $ grep -n "status\|TODO\|IN_PROGRESS\|DONE\|options" packages/twenty-server/src/engine/workspace-manag...
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-front/jest.config.mjs 2>/dev/null | head -80
+[94m[bash][0m $ find packages/twenty-front/src/modules/inbox -name "*.stories.tsx" -o -name "*.spec.ts*" -o -name "*...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/inbox/components/InboxNotificationItem.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/inbox/components/InboxNotificationList.tsx
+[94m[bash][0m $ grep -n "CalendarEvent\|ChartBar\|ActivityHeartbeat\|TimelineEvent\|Checkbox" packages/twenty-ui/src...
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-front/tsconfig.json 2>/dev/null
+[94m[bash][0m $ find . -maxdepth 2 -name "tsconfig.base.json" -o -maxdepth 2 -name "tsconfig.json" 2>/dev/null | hea...
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M"
+[94m[bash][0m $ printf '\nCLAIMED — P8.2-activity-feed/home-dashboard-widgets — deepseek-v4.1-flash — 2026-09-18T21:...
+[94m[bash][0m $ cat packages/twenty-shared/src/timeline/TimelineActivityAction.ts
+[94m[bash][0m $ grep -rn "useAtomStateValue\|useAtomState" packages/twenty-front/src/modules/ui/theme/hooks/useUiSca...
+[94m[write][0m "export type ContributionGridCell = {
+  date: string;
+  count: number;
+  level: 0 | 1 | 2 | 3 | 4;
+};
+
+export type ContributionGridWeek = {
+  days: Array<ContributionGridCell | null>;
+};
+
+export type B... (4791 chars)"
+[94m[write][0m "export type ContributionGridCell = {
+  date: string;
+  count: number;
+  level: 0 | 1 | 2 | 3 | 4;
+};
+
+export type ContributionGridWeek = {
+  days: Array<ContributionGridCell | null>;
+};
+
+export type B... (3448 chars)"
+[94m[write][0m "export type HomeTaskSummary = {
+  id: string;
+  title: string;
+  status: string | null;
+  dueAt: string | null;
+};
+
+export const HOME_TASK_DONE_STATUS = 'DONE';
+
+const compareDueDates = (
+  firstDueAt... (1168 chars)"
+[94m[write][0m "export type HomeCalendarEventSummary = {
+  id: string;
+  title: string;
+  startsAt: string;
+  endsAt: string | null;
+  isFullDay: boolean | null;
+};
+
+export const selectUpcomingEvents = (
+  events: Ho... (579 chars)"
+[94m[write][0m "import {
+  isTimelineActivityAction,
+  type TimelineActivityAction,
+} from 'twenty-shared/timeline';
+
+export type TimelineActivitySummary = {
+  objectNameSingular: string | null;
+  action: TimelineAct... (765 chars)"
+[94m[bash][0m $ grep -rn "font.color.danger\|color.red" packages/twenty-front/src/modules --include="*.tsx" 2>/dev/n...
+[94m[write][0m "export type HomeWidgetListEntry = {
+  id: string;
+  title: string;
+  subtitle?: string;
+  trailingLabel?: string;
+  isOverdue?: boolean;
+};
+"
+[94m[write][0m "import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+import { type HomeWidgetListEntry } from '@/home-dashboard/types/HomeWidgetListEntry';
+
+const S... (2793 chars)"
+[94m[write][0m "import { useLingui } from '@lingui/react/macro';
+
+import { HomeWidgetList } from '@/home-dashboard/components/HomeWidgetList';
+import { type HomeWidgetListEntry } from '@/home-dashboard/types/HomeWidg... (578 chars)"
+[94m[write][0m "import { useLingui } from '@lingui/react/macro';
+
+import { HomeWidgetList } from '@/home-dashboard/components/HomeWidgetList';
+import { type HomeWidgetListEntry } from '@/home-dashboard/types/HomeWidg... (556 chars)"
+[94m[write][0m "import { useLingui } from '@lingui/react/macro';
+
+import { HomeWidgetList } from '@/home-dashboard/components/HomeWidgetList';
+import { type HomeWidgetListEntry } from '@/home-dashboard/types/HomeWidg... (578 chars)"
+[94m[write][0m "import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+import {
+  type ContributionGridWeek,
+  countC... (2448 chars)"
+[94m[bash][0m $ find packages/twenty-ui/src -iname "*themeCssVariables*" -o -iname "*cssVariables*" 2>/dev/null | he...
+[94m[bash][0m $ grep -n "Task =" packages/twenty-shared/src/types/CoreObjectNameSingular.ts
+[94m[bash][0m $ grep -rn "AscNullsLast\|gte:" packages/twenty-front/src/modules/activities --include="*.ts" 2>/dev/n...
+[94m[bash][0m $ grep -rn "isCanceled" packages/twenty-front/src --include="*.ts" 2>/dev/null | head -5
+[94m[bash][0m $ grep -rn "RecordGqlOperationGqlRecordFields" packages/twenty-shared/src/types/*.ts | head -3
+[94m[bash][0m $ find packages/twenty-front/src/modules/activities/calendar -name "*.ts*" | head -20
+[94m[write][0m "import { useLingui } from '@lingui/react/macro';
+import { type TimelineActivityAction } from 'twenty-shared/timeline';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+
+import { RecentAct... (2498 chars)"
+[94m[write][0m "export const formatHomeWidgetDayLabel = (timestamp: string): string => {
+  const date = new Date(timestamp);
+
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+
+  return date.toLocaleDateString... (263 chars)"
+[94m[write][0m "import { useLingui } from '@lingui/react/macro';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { currentWorkspaceMemberState } ... (2069 chars)"
+[94m[write][0m "import { useLingui } from '@lingui/react/macro';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+
+import { UpcomingEventsWidgetContent } from '@/home-dashboard/components/UpcomingEventsW... (2126 chars)"
+[94m[write][0m "import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';... (1639 chars)"
+[94m[bash][0m $ find . -maxdepth 2 -name "jest.preset.js" | head
+[94m[write][0m "import {
+  IconCalendarEvent,
+  IconChartBar,
+  IconCheckbox,
+  IconTimelineEvent,
+} from 'twenty-ui/icon';
+
+import { ContributionGridWidget } from '@/home-dashboard/components/ContributionGridWidget'... (1776 chars)"
+[94m[edit][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-front/src/modules/activities/timeline-activities/rows/message/compone...
+[94m[bash][0m $ "
+[94m[write][0m "import {
+  buildContributionGrid,
+  countContributionGridActivities,
+  getLocalDayKey,
+  getStartOfWeek,
+} from '@/home-dashboard/utils/buildContributionGrid';
+
+const today = new Date(2026, 8, 18);
+
+d... (2547 chars)"
+[94m[write][0m "import {
+  isTaskOverdue,
+  selectMyTasks,
+  type HomeTaskSummary,
+} from '@/home-dashboard/utils/selectMyTasks';
+
+const buildTask = (
+  overrides: Partial<HomeTaskSummary> & { id: string },
+): HomeTa... (1864 chars)"
+[94m[write][0m "import {
+  selectUpcomingEvents,
+  type HomeCalendarEventSummary,
+} from '@/home-dashboard/utils/selectUpcomingEvents';
+
+const buildEvent = (
+  overrides: Partial<HomeCalendarEventSummary> & { id: str... (1268 chars)"
+[94m[write][0m "import { summarizeTimelineActivity } from '@/home-dashboard/utils/summarizeTimelineActivity';
+
+describe('summarizeTimelineActivity', () => {
+  it('splits the object name and a known action', () => {
+ ... (1016 chars)"
+[94m[write][0m "import { formatHomeWidgetDayLabel } from '@/home-dashboard/utils/formatHomeWidgetDayLabel';
+
+describe('formatHomeWidgetDayLabel', () => {
+  it('formats a valid timestamp', () => {
+    const label = fo... (467 chars)"
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+
+import { HomeWidgetList } from '@/home-dashboard/components... (1283 chars)"
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+
+import { RecentActivityWidgetContent } from '@/home-dashboa... (922 chars)"
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+
+import { MyTasksWidgetContent } from '@/home-dashboard/comp... (918 chars)"
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+
+import { UpcomingEventsWidgetContent } from '@/home-dashboa... (1023 chars)"
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+
+import { ContributionGridWidgetContent } from '@/home-dashb... (1876 chars)"
+[94m[write][0m "import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { ComponentDecorator } from 'twenty-ui/testing';
+
+import { RecentActivityWidgetContent } from '@/home-dashboard/components/Rece... (917 chars)"
+[94m[write][0m "import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { ComponentDecorator } from 'twenty-ui/testing';
+
+import { MyTasksWidgetContent } from '@/home-dashboard/components/MyTasksWidg... (869 chars)"
+[94m[write][0m "import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { ComponentDecorator } from 'twenty-ui/testing';
+
+import { UpcomingEventsWidgetContent } from '@/home-dashboard/components/Upco... (896 chars)"
+[94m[write][0m "import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { ComponentDecorator } from 'twenty-ui/testing';
+
+import { ContributionGridWidgetContent } from '@/home-dashboard/components/Co... (902 chars)"
+[94m[bash][0m $ npx jest src/modules/home-dashboard --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -60
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/modules/home-dashboard --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -20
+[94m[bash][0m $ npx jest src/modules/workbench-dock --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -30
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -60
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/home-dashboard src/modules/workbench-dock/comp...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/HomeWidgetList.tsx
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx oxfmt --check src/modules/home-dashboard src/modules/workbench-dock/components/DefaultWorkbenchW...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/home-dashboard src/modules/workbench-dock/comp...
+[94m[bash][0m $ npx oxfmt src/modules/home-dashboard src/modules/workbench-dock/components/DefaultWorkbenchWidgetCon...
+[94m[bash][0m $ npx jest src/modules/home-dashboard src/modules/workbench-dock --config=packages/twenty-front/jest.c...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -20
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-front 2>&1 | tail -20
+[94m[write][0m "import { registerHomeDashboardWidgets } from '@/home-dashboard/registerHomeDashboardWidgets';
+import { getWorkbenchWidgetRegistrySnapshot } from '~/modules/workbench-dock/registry/workbenchWidgetRegis... (1283 chars)"
+[94m[bash][0m $ npx jest src/modules/home-dashboard --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -20
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/home-dashboard 2>&1 | tail -20 && npx oxfmt --...
+[94m[bash][0m $ npx oxfmt src/modules/home-dashboard/__tests__/registerHomeDashboardWidgets.test.ts && npx oxfmt --c...
+[94m[read][0m
+[94m[bash][0m $ echo "EXIT:${PIPESTATUS[0]}"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -35 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ the contributions/my-tasks queries assume `workspaceMemberId` is a filterable field on `timelineActi...
+[94m[bash][0m $ then P8.2 email notifications (twenty-emails digest/instant honoring preferences + quiet hours) or P...
+[94m[bash][0m $ git status --porcelain && echo "=== home-dashboard files ===" && find packages/twenty-front/src/modu...
+[94m[todowrite][0m
+Implemented P8.2-activity-feed by extending the P2.4 workbench-dock registry with four composed Home widgets.
+
+- `packages/twenty-front/src/modules/home-dashboard/` — new module: `MyTasksWidget` (re-registers `tasks`), `UpcomingEventsWidget` (`events`), `RecentActivityWidget` (re-registers `activity`), `ContributionGridWidget` (`contributions`), plus presentational components, pure utils, specs and Storybook stories.
+- Composition only, no new storage: recent activity = native `timelineActivity`, my tasks = standard `task` filtered to me/not done, upcoming events = `calendarEvent` (`startsAt >= now`), contributions = day-bucketed `timelineActivity`.
+- Edits: `WorkbenchWidgetDock.tsx` (side-effect import of the registrar) and `DefaultWorkbenchWidgetContent.tsx` (two new titles).
+
+Checks: home-dashboard jest 11 suites/31 tests green; workbench-dock 3/6; `tsgo --noEmit` only the 6 pre-existing `front-components` baseline errors; oxlint type-aware 0/0; oxfmt clean. Tier-2 browser proof left for the orchestrator. Reports appended to `docs/plan/phases/phase-08-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

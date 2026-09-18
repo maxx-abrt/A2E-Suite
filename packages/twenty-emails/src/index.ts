@@ -1,4 +1,9 @@
 export type { JSONContent } from '@tiptap/core';
+export type {
+  NotificationDigestEmailProps,
+  NotificationEmailItem,
+  NotificationEmailProps,
+} from './types/notification-email.type';
 // Consumers must render through this package so there is a single resolved
 // react-email version: a second, independently pinned render can silently drift
 // onto an incompatible major and ship empty email bodies.
@@ -8,6 +13,8 @@ export * from './emails/billing-subscription-renewing.email';
 export * from './emails/billing-trial-converting.email';
 export * from './emails/billing-trial-ending.email';
 export * from './emails/clean-suspended-workspace.email';
+export * from './emails/notification-digest.email';
+export * from './emails/notification.email';
 export * from './emails/password-reset-link.email';
 export * from './emails/password-update-notify.email';
 export * from './emails/send-email-verification-link.email';
