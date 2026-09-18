@@ -239,10 +239,37 @@ export class NotificationService {
     userId: string;
     notificationId: string;
   }): Promise<void> {
-    await this.notificationRepository.update(
-      { id: notificationId, workspaceId, userId, archivedAt: IsNull() },
+    await this.archiveNotifications({
+      workspaceId,
+      userId,
+      notificationIds: [notificationId],
+    });
+  }
+
+  async archiveNotifications({
+    workspaceId,
+    userId,
+    notificationIds,
+  }: {
+    workspaceId: string;
+    userId: string;
+    notificationIds: string[];
+  }): Promise<number> {
+    if (notificationIds.length === 0) {
+      return 0;
+    }
+
+    const { affected } = await this.notificationRepository.update(
+      {
+        id: In(notificationIds),
+        workspaceId,
+        userId,
+        archivedAt: IsNull(),
+      },
       { archivedAt: new Date() },
     );
+
+    return affected ?? 0;
   }
 
   private resolvePreferences(

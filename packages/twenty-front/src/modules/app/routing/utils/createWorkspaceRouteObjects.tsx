@@ -47,6 +47,12 @@ const ChatPage = lazy(() =>
   })),
 );
 
+const InboxPage = lazy(() =>
+  import('~/pages/inbox/InboxPage').then((module) => ({
+    default: module.InboxPage,
+  })),
+);
+
 const MobileHomePage = lazy(() =>
   import('~/pages/mobile-home/MobileHomePage').then((module) => ({
     default: module.MobileHomePage,
@@ -138,6 +144,14 @@ export const createWorkspaceRouteObjects = ({
       element: (
         <LazyRoute>
           <ChatPage />
+        </LazyRoute>
+      ),
+    },
+    {
+      path: AppPath.Inbox,
+      element: (
+        <LazyRoute>
+          <InboxPage />
         </LazyRoute>
       ),
     },

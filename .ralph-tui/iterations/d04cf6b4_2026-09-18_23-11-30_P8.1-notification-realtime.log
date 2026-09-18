@@ -1,0 +1,130 @@
+# Iteration 10 Log
+
+## Metadata
+
+- **Task ID**: P8.1-notification-realtime
+- **Task Title**: P8.1: realtime push on the inbox topic + unread badge counts
+- **Description**: As a workspace member, I want inbox notifications pushed live with unread badge counts, so that I see new work without refreshing.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-18T21:11:30.838Z
+- **Ended At**: 2026-09-18T21:15:37.186Z
+- **Duration**: 4m 6s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "P8.1-notification-realtime" PLAN.md
+[94m[bash][0m $ ls docs/plan/phases/ | grep -i "phase-08"
+[94m[bash][0m $ grep -n "P8\.1" PLAN.md | head -50
+[94m[bash][0m $ grep -rn "P8.1" docs/plan/ | head -50
+[94m[bash][0m $ sed -n '1230,1320p' PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-08-report.md
+[94m[bash][0m $ grep -n "P2.1" PLAN.md | head -30
+[94m[bash][0m $ grep -rn "P2.1-acl-enforcement\|P8.1-notification" docs/plan/phases/phase-02-report.md docs/plan/pha...
+[94m[bash][0m $ sed -n '636,700p' PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md
+[94m[bash][0m $ find packages/twenty-server/src/engine/core-modules/notification -type f | sort
+[94m[bash][0m $ find packages/twenty-server/src/engine/core-modules/realtime-gateway -type f | sort
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/notification/notification.entity.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "buildChatChannelTopic\|buildPresenceTopic\|build.*Topic" packages/twenty-server/src --incl...
+[94m[bash][0m $ find packages/twenty-server/src/modules/chat -type f | sort
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/utils/chat-topic.util.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/listeners/chat-realtime.listener.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/services/chat-realtime-publisher.service.ts
+[94m[bash][0m $ grep -rn "dispatchNotifications\|countUnread\|findForUser\|requestNotifications\|buildInboxTopic\|in...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/notification/notification.module.ts
+[94m[bash][0m $ done
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/chat.module.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/utils/chat-realtime-event.util.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "inbox" packages/twenty-front/src/modules/realtime 2>/dev/null | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/utils/__tests__/chat-topic.util.spec.ts
+[94m[bash][0m $ cat packages/twenty-server/src/engine/core-modules/notification/utils/group-notifications-into-diges...
+[94m[bash][0m $ cat packages/twenty-server/src/engine/core-modules/notification/utils/normalize-notification-prefere...
+[94m[bash][0m $ grep -rn "buildChatChannelTopic\|:chat:\|inbox:" packages/twenty-front/src --include="*.ts" --includ...
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ" && git log --oneline -3
+[94m[bash][0m $ tail -40 .ralph-tui/progress.md
+[94m[bash][0m $ printf '\nCLAIMED — P8.1-notification-realtime/inbox-realtime-push — deepseek-v4.1-flash — %s — base...
+[94m[bash][0m $ grep -n "inbox\|userId" packages/twenty-server/src/engine/core-modules/realtime-gateway/services/__t...
+[94m[bash][0m $ cat packages/twenty-server/src/engine/core-modules/realtime-gateway/utils/__tests__/realtime-envelop...
+[94m[todowrite][0m
+[94m[write][0m "// Inbox realtime topics follow the gateway grammar `workspace:<id>:inbox:<userId>`
+// (parse-realtime-topic.util.ts). The topic is user-scoped, so the repaired
+// gateway's ACL keeps every subscriber... (507 chars)"
+[94m[write][0m "import { type NotificationEntity } from 'src/engine/core-modules/notification/notification.entity';
+
+// Realtime payload fanned out on `workspace:<id>:inbox:<userId>`. One event
+// type carries both t... (1772 chars)"
+[94m[write][0m "import { Injectable } from '@nestjs/common';
+
+import { isDefined } from 'twenty-shared/utils';
+
+import { NotificationEntity } from 'src/engine/core-modules/notification/notification.entity';
+import { ... (2857 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/notification/notification.module.ts
+[94m[write][0m "import { parseRealtimeTopic } from 'src/engine/core-modules/realtime-gateway/utils/parse-realtime-topic.util';
+import { buildInboxTopic } from 'src/engine/core-modules/notification/utils/inbox-topic.u... (894 chars)"
+[94m[write][0m "import { type NotificationEntity } from 'src/engine/core-modules/notification/notification.entity';
+import {
+  NOTIFICATION_INBOX_UPDATED_EVENT_TYPE,
+  buildNotificationInboxRealtimeEvent,
+  toNotific... (2522 chars)"
+[94m[write][0m "import { type NotificationEntity } from 'src/engine/core-modules/notification/notification.entity';
+import { NotificationRealtimePublisherService } from 'src/engine/core-modules/notification/services/... (4283 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[todowrite][0m
+[94m[bash][0m $ npx jest src/engine/core-modules/notification --config=jest.config.mjs 2>&1 | tail -40
+[94m[bash][0m $ echo "EXIT:${pipestatus[1]}"
+[94m[bash][0m $ echo "EXIT:${pipestatus[1]}"
+[94m[bash][0m $ echo "EXIT:${pipestatus[1]}"
+[94m[bash][0m $ echo "EXIT:${pipestatus[1]}"
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ echo "EXIT:${pipestatus[1]}"
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/notification/notification.module.ts
+[94m[bash][0m $ grep -rln "NotificationModule" packages/twenty-server/src | sort
+[94m[bash][0m $ grep -o '"status": *"[a-z]*"' tasks/prd.json 2>/dev/null | sort | uniq -c
+[94m[bash][0m $ head -c 1500 tasks/prd.json
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ orchestrator ticks P8.1 and runs the Tier-2 live-badge journey. EOF tail -5 docs/plan/phases/phase-0...
+[94m[bash][0m $ sed -n '1,60p' .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ Tier-2 live badge update is orchestrator-owned. --- EOF tail -12 .ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain && echo "---claims---" && grep -n "P8.1-notification-realtime" docs/plan/phas...
+[94m[todowrite][0m
+P8.1 bullet 2 implemented — inbox notifications now push live on `workspace:<id>:inbox:<userId>` with a derived unread count.
+
+**Changed** (twenty-server `notification/` module only):
+- new `utils/inbox-topic.util.ts` — `buildInboxTopic`
+- new `utils/notification-realtime-event.util.ts` — `notification.inbox.updated` payload + entity mapper
+- new `services/notification-realtime-publisher.service.ts` — groups a dispatch batch per recipient, reads each count via `NotificationService.countUnread` (one source of truth), publishes one event per user
+- `listeners/notification-requested.listener.ts` — fans out dispatched rows, still best-effort
+- `notification.module.ts` — provides publisher, imports `RealtimeGatewayModule`
+- 3 new specs + extended listener spec
+
+**Checks:** jest notification `8 suites / 39 tests` pass; `tsgo --noEmit` exit 0; oxlint `--type-aware` 0/0; oxfmt clean; `nx lint:diff-with-main` → "No changed files" (uncommitted, so direct oxlint/oxfmt is the covering gate).
+
+**Tier 2 (orchestrator):** live browser badge update on a real socket. Read/archive-side decrement is deferred to P8.2 (no resolver calls `markAsRead` yet). Note: the pre-existing dirty `.ralph-tui/*`, `tasks/prd.json` and iteration log are Ralph's own runtime files, untouched by me.
+
+Reports appended to `docs/plan/phases/phase-08-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

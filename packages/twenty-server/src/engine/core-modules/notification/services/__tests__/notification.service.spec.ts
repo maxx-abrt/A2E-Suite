@@ -262,4 +262,36 @@ describe('NotificationService', () => {
     expect(preferences.quietHours.startMinuteOfDay).toBe(22 * 60);
     expect(preferences.quietHours.endMinuteOfDay).toBe(60);
   });
+
+  it('bulk-archives the caller own unarchived rows in one update', async () => {
+    notificationRepository.update.mockResolvedValue({ affected: 2 });
+
+    const archived = await service.archiveNotifications({
+      workspaceId: 'workspace-1',
+      userId: 'user-1',
+      notificationIds: ['notification-1', 'notification-2'],
+    });
+
+    expect(archived).toBe(2);
+    expect(notificationRepository.update).toHaveBeenCalledWith(
+      {
+        id: expect.anything(),
+        workspaceId: 'workspace-1',
+        userId: 'user-1',
+        archivedAt: expect.anything(),
+      },
+      { archivedAt: expect.any(Date) },
+    );
+  });
+
+  it('skips the archive update for an empty selection', async () => {
+    const archived = await service.archiveNotifications({
+      workspaceId: 'workspace-1',
+      userId: 'user-1',
+      notificationIds: [],
+    });
+
+    expect(archived).toBe(0);
+    expect(notificationRepository.update).not.toHaveBeenCalled();
+  });
 });

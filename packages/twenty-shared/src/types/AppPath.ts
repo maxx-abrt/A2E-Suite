@@ -22,6 +22,8 @@ export enum AppPath {
   AiChat = '/chat/:threadId?',
   // Native workspace chat (a2e-chat objects). Distinct from AiChat's `/chat`.
   Discussions = '/discussions',
+  // Native inbox for P8 notifications (core-schema rows, not an app object).
+  Inbox = '/inbox',
   Index = '/',
   // Mobile only: the navigation menu is a page there rather than a drawer.
   Home = '/home',

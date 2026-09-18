@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-value-pair.module';
 import { NotificationRequestedListener } from 'src/engine/core-modules/notification/listeners/notification-requested.listener';
 import { NotificationEntity } from 'src/engine/core-modules/notification/notification.entity';
+import { NotificationResolver } from 'src/engine/core-modules/notification/notification.resolver';
 import { NotificationRealtimePublisherService } from 'src/engine/core-modules/notification/services/notification-realtime-publisher.service';
 import { NotificationService } from 'src/engine/core-modules/notification/services/notification.service';
 import { RealtimeGatewayModule } from 'src/engine/core-modules/realtime-gateway/realtime-gateway.module';
@@ -17,6 +18,7 @@ import { RealtimeGatewayModule } from 'src/engine/core-modules/realtime-gateway/
   exports: [NotificationService],
   providers: [
     NotificationService,
+    NotificationResolver,
     NotificationRequestedListener,
     NotificationRealtimePublisherService,
   ],
