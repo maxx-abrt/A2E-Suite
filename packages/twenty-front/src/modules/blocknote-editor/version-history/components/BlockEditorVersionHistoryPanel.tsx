@@ -141,6 +141,14 @@ export const BlockEditorVersionHistoryPanel = ({
         return;
       }
 
+      // Restore-as-new-revision must survive a reload: persist the state being
+      // left and the restored body before closing, rather than waiting for the
+      // next interval snapshot.
+      versionHistoryStore.addRestoreSnapshots({
+        currentBody: JSON.stringify(editor.document),
+        restoredBody: version.body,
+      });
+
       const restoredBlocks = JSON.parse(version.body);
 
       editor.replaceBlocks(
@@ -151,7 +159,7 @@ export const BlockEditorVersionHistoryPanel = ({
       setIsEditorVersionHistoryOpen(false);
       setSelectedVersionId(undefined);
     },
-    [editor, setIsEditorVersionHistoryOpen],
+    [editor, setIsEditorVersionHistoryOpen, versionHistoryStore],
   );
 
   if (!isDefined(editor)) {

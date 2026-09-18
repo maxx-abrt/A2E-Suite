@@ -159,6 +159,81 @@ describe('EditorVersionHistoryStore', () => {
     ).toEqual(['from-server', 'local']);
   });
 
+  it('should append the left state and the restored body on restore', () => {
+    const { persistence, savedVersions } = createPersistenceMock();
+    const store = new EditorVersionHistoryStore({ persistence });
+
+    store.addSnapshot('latest');
+    const restoreSnapshots = store.addRestoreSnapshots({
+      currentBody: 'current',
+      restoredBody: 'older',
+    });
+
+    expect(restoreSnapshots.map((snapshot) => snapshot.body)).toEqual([
+      'current',
+      'older',
+    ]);
+    expect(store.getVersions().map((version) => version.body)).toEqual([
+      'latest',
+      'current',
+      'older',
+    ]);
+    expect(savedVersions.map((snapshot) => snapshot.body)).toEqual([
+      'latest',
+      'current',
+      'older',
+    ]);
+  });
+
+  it('should skip the left state when it equals the latest snapshot but still append the restored body', () => {
+    const store = new EditorVersionHistoryStore();
+
+    store.addSnapshot('current');
+    const restoreSnapshots = store.addRestoreSnapshots({
+      currentBody: 'current',
+      restoredBody: 'older',
+    });
+
+    expect(restoreSnapshots.map((snapshot) => snapshot.body)).toEqual([
+      'older',
+    ]);
+    expect(store.getVersions().map((version) => version.body)).toEqual([
+      'current',
+      'older',
+    ]);
+  });
+
+  it('should add no revision when restoring the latest body', () => {
+    const store = new EditorVersionHistoryStore();
+
+    store.addSnapshot('current');
+    const restoreSnapshots = store.addRestoreSnapshots({
+      currentBody: 'current',
+      restoredBody: 'current',
+    });
+
+    expect(restoreSnapshots).toEqual([]);
+    expect(store.getVersions().map((version) => version.body)).toEqual([
+      'current',
+    ]);
+  });
+
+  it('should prune oldest revisions when a restore appends beyond the maximum', () => {
+    const store = new EditorVersionHistoryStore({ maxVersions: 2 });
+
+    store.addSnapshot('v1');
+    store.addSnapshot('v2');
+    store.addRestoreSnapshots({
+      currentBody: 'v3',
+      restoredBody: 'v1',
+    });
+
+    expect(store.getVersions().map((version) => version.body)).toEqual([
+      'v3',
+      'v1',
+    ]);
+  });
+
   it('should not throw when a persistence write fails', async () => {
     // The store logs and swallows the rejection on purpose; silence the
     // expected error output so the suite stays readable.

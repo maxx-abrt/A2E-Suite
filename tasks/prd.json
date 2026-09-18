@@ -170,9 +170,10 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 23,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md task ID: P3.2 revision-history bullet; no literal (after X) dependency; P0.2 [x] supplies the permission baseline. Ledger: comments/history stores in packages/twenty-front/src/modules/blocknote-editor/ are in memory.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P3.2-atomic-save",
@@ -810,6 +811,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-18T05:04:23.515Z"
+    "updatedAt": "2026-09-18T05:07:43.920Z"
   }
 }

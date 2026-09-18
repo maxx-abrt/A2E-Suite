@@ -122,6 +122,33 @@ export class EditorVersionHistoryStore {
     return snapshot;
   }
 
+  // Restoring an earlier snapshot appends revisions, it never rewrites history:
+  // the state being left (so the restore can itself be undone) and the restored
+  // body (so a reload shows it as the new head) go through the same persistence
+  // seam as an interval snapshot, because the interval would only fire minutes
+  // after the restore.
+  addRestoreSnapshots({
+    currentBody,
+    restoredBody,
+  }: {
+    currentBody: string;
+    restoredBody: string;
+  }): EditorVersionSnapshot[] {
+    const snapshots: EditorVersionSnapshot[] = [];
+
+    const previousSnapshot = this.addSnapshot(currentBody);
+    if (previousSnapshot !== null) {
+      snapshots.push(previousSnapshot);
+    }
+
+    const restoredSnapshot = this.addSnapshot(restoredBody);
+    if (restoredSnapshot !== null) {
+      snapshots.push(restoredSnapshot);
+    }
+
+    return snapshots;
+  }
+
   getVersions(): EditorVersionSnapshot[] {
     return this.versions;
   }
