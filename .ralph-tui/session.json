@@ -3,10 +3,10 @@
   "sessionId": "d04cf6b4-18b1-4a08-a6a1-78012d99bf9d",
   "status": "running",
   "startedAt": "2026-09-18T19:06:36.433Z",
-  "updatedAt": "2026-09-18T22:07:09.554Z",
-  "currentIteration": 15,
+  "updatedAt": "2026-09-18T22:20:03.758Z",
+  "currentIteration": 16,
   "maxIterations": 20,
-  "tasksCompleted": 12,
+  "tasksCompleted": 13,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -166,6 +166,16 @@
       "durationMs": 424806,
       "startedAt": "2026-09-18T21:56:09.809Z",
       "endedAt": "2026-09-18T22:03:14.615Z"
+    },
+    {
+      "iteration": 16,
+      "status": "completed",
+      "taskId": "P8.2-email-notifications",
+      "taskTitle": "P8.2: email notifications — digest + instant via twenty-emails, honoring preferences and quiet hours",
+      "taskCompleted": true,
+      "durationMs": 229914,
+      "startedAt": "2026-09-18T22:03:19.637Z",
+      "endedAt": "2026-09-18T22:07:09.551Z"
     }
   ],
   "skippedTaskIds": [],

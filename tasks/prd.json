@@ -734,12 +734,13 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 48,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md task ID: P8.2 watchers bullet; dependsOn P8.1-notification-service + P2.1-acl-enforcement.",
       "dependsOn": [
         "P8.1-notification-service",
         "P2.1-acl-enforcement"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P6.1-drive-model",
@@ -835,6 +836,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-18T22:07:09.553Z"
+    "updatedAt": "2026-09-18T22:20:03.757Z"
   }
 }
