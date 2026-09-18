@@ -63,9 +63,10 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 18,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md task ID: P4.2 calendar-view bullet; no literal (after X) dependency. P4C.5 (task/event links) is a separate later task — do not preempt it.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P4.2-my-tasks-page",
@@ -805,6 +806,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-18T04:37:14.379Z"
+    "updatedAt": "2026-09-18T04:39:23.007Z"
   }
 }

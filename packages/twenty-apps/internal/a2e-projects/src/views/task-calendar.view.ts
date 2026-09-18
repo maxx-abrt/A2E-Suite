@@ -1,12 +1,14 @@
 import {
   defineView,
-  ViewFilterOperand,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
   ViewCalendarLayout,
+  ViewFilterOperand,
   ViewOpenRecordIn,
   ViewType,
 } from 'twenty-sdk/define';
 
 import {
+  TASK_FIELD_IDS,
   VIEW_IDS,
   viewFieldId,
 } from '../constants/universal-identifiers.ts';
@@ -18,18 +20,18 @@ const taskField = {
   dueAt: '20202020-fd99-40da-951b-4cb9a352fce3',
 };
 
-// App task ➜ project relation (task-project.field.ts).
-const taskProjectField = 'c31b0201-0001-4000-8000-000000000001';
-
 // Native calendar view on task dueAt — the "Calendar view of tasks/due
-// dates" bullet, using Twenty's native calendar rendering.
+// dates" bullet, using Twenty's native CALENDAR rendering on the standard
+// task object. The app task ➜ project relation scopes it to project work,
+// matching the board. This only displays due dates: no provider event is
+// created and no invitation is sent (P4C.5 owns synchronization).
 const fieldId = (position: number) => viewFieldId('01', 2, position);
 
 export default defineView({
   universalIdentifier: VIEW_IDS.taskCalendar,
   name: 'Calendrier tâches',
   objectUniversalIdentifier:
-    '20202020-1ba1-48ba-bc83-ef7e5990ed10',
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.universalIdentifier,
   type: ViewType.CALENDAR,
   icon: 'IconCalendar',
   position: 2,
@@ -53,7 +55,7 @@ export default defineView({
     },
     {
       universalIdentifier: fieldId(2),
-      fieldMetadataUniversalIdentifier: taskProjectField,
+      fieldMetadataUniversalIdentifier: TASK_FIELD_IDS.project,
       position: 2,
       isVisible: true,
       size: 180,
@@ -65,6 +67,12 @@ export default defineView({
       fieldMetadataUniversalIdentifier: taskField.status,
       operand: ViewFilterOperand.IS_NOT,
       value: 'DONE',
+    },
+    {
+      universalIdentifier: 'c31b0100-0005-4000-8000-000000000005',
+      fieldMetadataUniversalIdentifier: TASK_FIELD_IDS.project,
+      operand: ViewFilterOperand.IS_NOT_EMPTY,
+      value: '',
     },
   ],
 });
