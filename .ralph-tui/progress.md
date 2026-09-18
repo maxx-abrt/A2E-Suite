@@ -7,6 +7,7 @@ after each iteration and it's included in prompts for context.
 
 - **a2e-* app manifest tests** live in `src/lib/__tests__/*.test.ts`, run with `node --test --experimental-strip-types`. Import each declarable module and `assert.equal(module.default.success, true)` before reading `module.default.config`; view/page-layout/widget/nav/role configs all come back on `config`. Native standard field ids for views resolve via `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS[object].fields[name].universalIdentifier` — do not import twenty-shared into the standalone app.
 - **a2e-* quality gates**: `yarn test:unit` + `yarn typecheck` + `yarn lint` + `npx twenty dev:build .`. `npx nx lint:diff-with-main <app>` reports "Cannot find project" (apps are not Nx projects); format `src/lib/**` with a lib-inclusive oxfmt config because the root `.oxfmtrc.jsonc` ignores `**/lib/**`.
+- **a2e-projects view contract**: a KANBAN view's `mainGroupByFieldMetadataUniversalIdentifier` must be the app field id you intend (e.g. `TASK_FIELD_IDS.projectStatus`, not the native task `status`), and `groups[].fieldValue` must equal the target SELECT option *values*. Project-scope a task view with `ViewFilterOperand.IS_NOT_EMPTY` + `value: ''` on the relation field. Existing views can pass the manifest graph-walk yet group by the wrong field — assert the semantic target in a focused unit test, don't rely on reference-resolution alone.
 
 ---
 
@@ -18,4 +19,13 @@ after each iteration and it's included in prompts for context.
   - The SDK's `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` runtime values carry `.fields` maps (`{ fieldName: { universalIdentifier } }`), so a test can resolve view references to native task/note/company fields without importing twenty-shared. The existing task-field-integrity test cast away that shape; it is the real source of truth.
   - App package gates: `yarn test:unit`, `yarn typecheck`, `yarn lint`, `npx twenty dev:build .`; `npx nx lint:diff-with-main a2e-projects` always says "Cannot find project" (not an Nx project). Root `.oxfmtrc.jsonc` ignores `**/lib/**`, so formatting a lib test needs a lib-inclusive config copy passed with `-c`.
   - The built `.twenty/output/manifest.json` flattens page-layout tabs and view fields; a python walk of it is a cheap extra install-shape proof (0 dups, 0 unresolved target fields).
+---
+
+## 2026-09-18 - P4.2-board-view
+- Audited the pre-existing `task-board.view.ts` (KANBAN on task) and found it grouped by the native task `status`, not the app `taskProjectStatus` select, with no project scoping — acceptance-invalid despite existing. Corrected the group-by target to `TASK_FIELD_IDS.projectStatus`, switched the project column to `TASK_FIELD_IDS.project`, added an `IS_NOT_EMPTY` filter on the task→project relation, and kept the TODO/IN_PROGRESS/DONE groups.
+- Files changed: `src/views/task-board.view.ts`, new `src/lib/__tests__/task-board.test.ts` (5 tests), `docs/plan/phases/phase-04-report.md`, `.ralph-tui/progress.md`.
+- **Learnings:**
+  - A committed view can look valid (KANBAN, resolvable field references) yet violate acceptance: the existing graph walk resolves whatever field id is present, so it cannot catch "grouped by the wrong status field". Assert the semantic target (`mainGroupBy === TASK_FIELD_IDS.projectStatus`) explicitly.
+  - Kanban view contract: `mainGroupByFieldMetadataUniversalIdentifier` is the group-by field; `groups[].fieldValue` must equal the target SELECT option *values* (TODO/IN_PROGRESS/DONE), not option ids. `shouldHideEmptyGroups` is optional.
+  - Project scoping a task view reuses `ViewFilterOperand.IS_NOT_EMPTY` on the relation field with `value: ''` (server tooling documents `""` for IS_EMPTY/IS_NOT_EMPTY). Filter universal ids for task views continue the `c31b0100-0005-…` sequence.
 ---
