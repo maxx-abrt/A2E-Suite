@@ -83,6 +83,7 @@ type PageLayoutWidgetDefinition = {
   configuration?: {
     configurationType: string;
     frontComponentUniversalIdentifier?: string;
+    viewUniversalIdentifier?: string | null;
   };
 };
 
@@ -596,6 +597,7 @@ test('every view references a declared object and declared fields', async () => 
 
 test('every page-layout widget references existing metadata', async () => {
   const graph = await loadGraph();
+  const viewIds = new Set(graph.views.map((view) => view.universalIdentifier));
   const unresolved: string[] = [];
 
   for (const layout of graph.pageLayouts) {
@@ -627,11 +629,86 @@ test('every page-layout widget references existing metadata', async () => {
         ) {
           unresolved.push(`${origin} -> front component ${frontComponent}`);
         }
+
+        const view = widget.configuration?.viewUniversalIdentifier;
+
+        if (view !== undefined && view !== null && !viewIds.has(view)) {
+          unresolved.push(`${origin} -> view ${view}`);
+        }
       }
     }
   }
 
   assert.deepEqual(unresolved, []);
+});
+
+test('the project page exposes the overview, timeline and P4.2 tab set', async () => {
+  const graph = await loadGraph();
+  const viewIds = new Set(graph.views.map((view) => view.universalIdentifier));
+
+  assert.equal(graph.pageLayouts.length, 1);
+
+  const layout = graph.pageLayouts[0];
+
+  assert.equal(layout.objectUniversalIdentifier, OBJECT_IDS.project);
+
+  const tabsByTitle = new Map(
+    (layout.tabs ?? []).map((tab) => [tab.title, tab]),
+  );
+
+  // Regression guard: the pre-existing tabs are kept, not rebuilt — Home
+  // owns the fields/description/overview widgets, Timeline the activity and
+  // gantt widgets.
+  assert.ok(tabsByTitle.has('Accueil'), 'Accueil tab missing');
+  assert.ok(tabsByTitle.has('Timeline'), 'Timeline tab missing');
+
+  const widgetTitles = (title: string): string[] =>
+    (tabsByTitle.get(title)?.widgets ?? []).map((widget) => widget.title);
+
+  assert.deepEqual(widgetTitles('Accueil'), [
+    'Champs clés',
+    'Description',
+    'Aperçu',
+    'Temps',
+  ]);
+  assert.ok(widgetTitles('Timeline').includes('Gantt'));
+
+  // The P4.2 tabs compose existing metadata primitives.
+  const tasksWidget = tabsByTitle.get('Tâches')?.widgets?.[0];
+  const boardWidget = tabsByTitle.get('Tableau')?.widgets?.[0];
+  const filesWidget = tabsByTitle.get('Fichiers')?.widgets?.[0];
+
+  assert.equal(tasksWidget?.type, 'RECORD_TABLE');
+  assert.equal(
+    tasksWidget?.configuration?.viewUniversalIdentifier,
+    VIEW_IDS.projectTasks,
+  );
+  assert.equal(
+    tasksWidget?.objectUniversalIdentifier,
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.universalIdentifier,
+  );
+
+  assert.equal(boardWidget?.type, 'RECORD_TABLE');
+  assert.equal(
+    boardWidget?.configuration?.viewUniversalIdentifier,
+    VIEW_IDS.taskBoard,
+  );
+
+  assert.equal(filesWidget?.type, 'FILES');
+  assert.equal(filesWidget?.configuration?.configurationType, 'FILES');
+
+  // The docs tab waits on the P4.3 project↔document relation decision; no
+  // dead tab is shipped in the meantime.
+  assert.equal(
+    (layout.tabs ?? []).some((tab) =>
+      ['Document', 'Documents', 'Docs'].includes(tab.title),
+    ),
+    false,
+  );
+
+  for (const viewId of [VIEW_IDS.projectTasks, VIEW_IDS.taskBoard]) {
+    assert.ok(viewIds.has(viewId), `view ${viewId} not declared`);
+  }
 });
 
 test('every VIEW navigation item and registered view identifier resolves', async () => {

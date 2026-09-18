@@ -5,7 +5,11 @@ import {
   ViewType,
 } from 'twenty-sdk/define';
 
-import { TASK_FIELD_IDS, viewFieldId } from '../constants/universal-identifiers.ts';
+import {
+  TASK_FIELD_IDS,
+  VIEW_IDS,
+  viewFieldId,
+} from '../constants/universal-identifiers.ts';
 
 // The only free entry point owed to law §3 on the standard task surface.
 // SYSTEM_VIEW_KEYS / GET_VIEW_UNIVERSAL_IDENTIFIER only cover the standard
@@ -13,7 +17,7 @@ import { TASK_FIELD_IDS, viewFieldId } from '../constants/universal-identifiers.
 // the object's universal identifier directly (same primitive a view on an
 // app object would reference).
 export default defineView({
-  universalIdentifier: 'c31b0201-0003-4000-8000-000000000001',
+  universalIdentifier: VIEW_IDS.projectTasks,
   name: 'Tâches projet',
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.universalIdentifier,

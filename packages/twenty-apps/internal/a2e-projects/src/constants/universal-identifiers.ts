@@ -120,6 +120,9 @@ export const VIEW_IDS = {
   currentTasks: 'c31b0100-0003-4000-8000-000000000004',
   taskCreatedByMe: 'c31b0100-0003-4000-8000-000000000005',
   taskOverdue: 'c31b0100-0003-4000-8000-000000000006',
+  // App view on the standard task object (c31b0201 family), referenced by the
+  // project page Tâches tab.
+  projectTasks: 'c31b0201-0003-4000-8000-000000000001',
 } as const;
 
 // View fields are positional, so their identifiers are derived. The middle
