@@ -8,6 +8,7 @@ after each iteration and it's included in prompts for context.
 - **Editor capability checks:** the document/note rich-text body is twenty-front's shared BlockNote schema at `packages/twenty-front/src/modules/blocknote-editor/blocks/Schema.ts` (defaultBlockSpecs + custom `callout`/`file` + inline `mention`) — NOT the TipTap `advanced-text-editor` (that one serves forms/AI/email). Any "new editor block" question starts there.
 - **Advanced BlockNote adds are license-gated:** `@blocknote/{core,react,mantine}` are MPL-2.0, but `@blocknote/xl-docx-exporter`, `xl-pdf-exporter` and transitive `xl-multi-column` are "GPL-3.0 OR PROPRIETARY" already shipped in `twenty-front` (root AGPL-3.0). Check D07 before wiring more XL packages.
 - **`@blocknote/core` cannot be imported under `twenty-front` jest:** its transitive `prosemirror-highlight` ships untransformed ESM and `transformIgnorePatterns` excludes it, so any editor-dependent util must inject the parser (dependency inversion) and keep the BlockNote adapter in a separate, untested module. Pure DOM sanitizers use `jsdom`'s `DOMParser` and are fully testable.
+- **Chat realtime fan-out hangs off metadata database events, not a resolver:** app-owned chat CRUD (`chatChannel`/`chatMessage`/`chatReaction`/`chatReadCursor`) is metadata-engine-generated, so publishers attach via `@OnDatabaseBatchEvent('chatMessage', DatabaseEventAction.X)` in `modules/chat/listeners/` and call `RealtimePublisherService.publish(buildChatChannelTopic(...), payload)`. Relations surface as join columns on the raw event row (`chatMessage.channelId`, `chatReaction.reactionMessageId`, `chatReadCursor.readCursorChannelId`). Subscribe-time ACL stays in `RealtimeTopicAccessService`; publishing is best-effort (never fail the write).
 
 ---
 
@@ -31,4 +32,15 @@ after each iteration and it's included in prompts for context.
   - Acceptance bullet 3's "compose P1.6e/P3.2, do not duplicate" applies to the *searchable-templates* leg; the HTML sanitizer is genuinely missing, so a dedicated import sanitizer is warranted (wider tag set + warning output) as long as it shares the URL policy.
   - `isNonEmptyString` comes from `@sniptt/guards` in this area; `isDefined`/`isPlainObject` from `twenty-shared/utils` — `isPlainObject` is the right structural guard for BlockNote `unknown` blocks.
   - The UI wiring (file input → parse → create) is a separate, browser-Tier-2 slice; this lib deliberately never creates a record itself.
+---
+
+## 2026-09-18 - P5.1-chat-realtime-publish
+- Published durable chat writes over the repaired realtime gateway: a `chatMessage`/`chatReaction`/`chatReadCursor` database-event listener fans out `chat.message.created|updated|deleted`, `chat.reaction.created|deleted` and `chat.read.updated` on `workspace:<id>:chat:<channelId>` (typing already shipped via `ChatTypingService`).
+- `chat.read.updated` carries an aggregated unread count (messages after the read position, excluding own and soft-deleted), so the durable `chatReadCursor` — not a per-socket seq — remains the replay cursor.
+- Files changed: `packages/twenty-server/src/modules/chat/listeners/chat-realtime.listener.ts` (new), `services/chat-realtime-publisher.service.ts` (new), `utils/chat-realtime-event.util.ts` (new), `utils/chat-unread-count.util.ts` (new), 3 new specs, `chat.module.ts` (providers).
+- Checks: jest `src/modules/chat src/engine/core-modules/realtime-gateway` 13 suites / 90 tests green; tsgo exit 0; oxlint --type-aware + oxfmt --check clean on the 8 touched files; nx lint:diff-with-main "No changed files." (uncommitted).
+- **Learnings:**
+  - App-owned object DB events are keyed by `nameSingular` (`chatMessage.created`), and raw event `properties.after/before` carry join columns (`channelId`, `reactionMessageId`, `readCursorChannelId`) — same seam the subscribe ACL reads.
+  - Reaction events need a `chatMessage` lookup to resolve the channel; read events need a `chatMessage` query to aggregate unread. Both run under `buildSystemAuthContext(workspaceId)` + `{ shouldBypassPermissionChecks: true }`; publishing is wrapped best-effort so fan-out can never fail the write.
+  - Listener providers live in `ChatModule`; `EventEmitterModule.forRoot({ wildcard: true })` is already global in `CoreEngineModule`.
 ---

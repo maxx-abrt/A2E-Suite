@@ -15,3 +15,17 @@ CLAIMED — P5.1-chat-model/entities-and-graphql — deepseek-v4.1-flash — 202
 **Do not redo:** the entity model and server GraphQL are implemented and green — leave alone. Channel/member/reaction/readCursor CRUD is metadata-engine-generated; the custom resolver only adds the keyset `chatMessages` query and `sendChatTypingIndicator` mutation. Cursor keyset is (createdAt,id) base64url; workspace scoping is the per-workspace schema + ambient role permission config, asserted by the service spec.
 **Remaining:** P5.1 bullets 3–5 (realtime publish, mention notifications, message attachments) + P5.2 front.
 **Next:** `P5.1-chat-realtime-publish` — publish message/reaction/read events on `buildChatChannelTopic` (`workspace:<id>:chat:<channelId>`) via `RealtimePublisherService`; the gateway repair (P2.1) is committed and the topic parser already accepts `chat`.
+
+CLAIMED — P5.1-chat-realtime-publish/realtime-publish — deepseek-v4.1-flash — 2026-09-18T19:24:14Z — base 1a4959f714c4e468273fde5b1dfcf3ec216b43dd
+
+## 2026-09-18 19:31 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** P5.1-chat-realtime-publish P5.1: chat realtime — publish messages/reactions/typing/read on the channel topic · **Slice:** bullet 3 (realtime fan-out; typing already shipped with P5.1-chat-model)
+**Claim:** done-for-review
+**Ready-to-tick:** yes
+**Base:** 1a4959f714c4e468273fde5b1dfcf3ec216b43dd
+**Changed:** new `packages/twenty-server/src/modules/chat/listeners/chat-realtime.listener.ts`; new `.../services/chat-realtime-publisher.service.ts`; new `.../utils/chat-realtime-event.util.ts`; new `.../utils/chat-unread-count.util.ts`; new specs `.../services/__tests__/chat-realtime-publisher.service.spec.ts`, `.../utils/__tests__/chat-realtime-event.util.spec.ts`, `.../utils/__tests__/chat-unread-count.util.spec.ts`; edited `.../chat/chat.module.ts` (+ChatRealtimePublisherService/ChatRealtimeListener providers).
+**Checks:** `npx jest src/modules/chat src/engine/core-modules/realtime-gateway --config=packages/twenty-server/jest.config.mjs` → 13 suites / 90 tests passed (chat only: 7 suites / 30); `npx tsgo -p tsconfig.json --noEmit` (twenty-server, in-package) → exit 0; `npx oxlint --type-aware -c .oxlintrc.json` on the 8 touched files → 0 warnings / 0 errors; `npx oxfmt --check` on the same 8 → clean (one write pass on chat-unread-count.util.ts); `npx nx lint:diff-with-main twenty-server` → "No changed files." (diffs main...HEAD; uncommitted edits use the direct oxlint/oxfmt path, phase-report precedent). No twenty-shared / migration / locale changes.
+**Missing for tick:** Tier 2 (orchestrator, E08): two real sessions on an installed a2e-chat workspace receive message/reaction/read events live over `/realtime` on `workspace:<id>:chat:<channelId>` and see unread counts update. Nothing Tier 0/1 open.
+**Do not redo:** typing fan-out (`ChatTypingService`, `sendChatTypingIndicator`) already works — leave alone. The channel ACL at subscribe is P2.1-acl-enforcement (`RealtimeTopicAccessService`), already green; this slice only adds publishers, so it deliberately does not re-implement subscribe auth. The durable cursor is `chatReadCursor.lastReadAt` — per-socket seq stays non-durable by design.
+**Remaining:** P5.1 bullets 4–5 (mention notifications, attachments) + P5.2 front.
+**Next:** `P5.1-chat-mentions-skeleton` — emit mention events from `chatMessage` create through the P8.1 notification event contract.
