@@ -1,5 +1,6 @@
 import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { useChatSearchResultItems } from '@/chat/hooks/useChatSearchResultItems';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
@@ -44,6 +45,10 @@ export const SidePanelSearchRecordsPage = () => {
     searchInput: sidePanelSearch,
     skip: false,
   });
+  const { chatSearchResultItems } = useChatSearchResultItems({
+    searchInput: sidePanelSearch,
+    skip: false,
+  });
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { closeCommandMenu } = useCloseCommandMenu();
   const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
@@ -67,10 +72,19 @@ export const SidePanelSearchRecordsPage = () => {
     );
 
     return groupSearchResultItems({
-      items: [...searchResultItems, ...appSearchResultItems],
+      items: [
+        ...searchResultItems,
+        ...appSearchResultItems,
+        ...chatSearchResultItems,
+      ],
       frecencyRankByGroupKey,
     });
-  }, [searchRecordsFrecencyByObject, searchResultItems, appSearchResultItems]);
+  }, [
+    searchRecordsFrecencyByObject,
+    searchResultItems,
+    appSearchResultItems,
+    chatSearchResultItems,
+  ]);
 
   const selectableItemIds = useMemo(
     () => orderedItems.map((item) => item.id),

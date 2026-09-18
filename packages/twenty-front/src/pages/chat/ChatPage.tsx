@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -9,12 +10,16 @@ import { ChatMessageList } from '@/chat/components/ChatMessageList';
 import { ChatSidebar } from '@/chat/components/ChatSidebar';
 import { ChatThreadView } from '@/chat/components/ChatThreadView';
 import { useChatAuthorLabels } from '@/chat/hooks/useChatAuthorLabels';
+import { useChatChannelLive } from '@/chat/hooks/useChatChannelLive';
 import { useChatChannels } from '@/chat/hooks/useChatChannels';
 import { useChatMentionCandidates } from '@/chat/hooks/useChatMentionCandidates';
 import { useChatMessages } from '@/chat/hooks/useChatMessages';
 import { useChatUnreadCounts } from '@/chat/hooks/useChatUnreadCounts';
+import { useChatWorkspaceMembers } from '@/chat/hooks/useChatWorkspaceMembers';
 import { useMarkChatChannelRead } from '@/chat/hooks/useMarkChatChannelRead';
 import { useSendChatMessage } from '@/chat/hooks/useSendChatMessage';
+import { useSendChatMessageWithQueue } from '@/chat/hooks/useSendChatMessageWithQueue';
+import { useSendChatTypingIndicator } from '@/chat/hooks/useSendChatTypingIndicator';
 import { chatComposerDraftState } from '@/chat/states/chatComposerDraftState';
 import { expandedChatThreadParentIdState } from '@/chat/states/expandedChatThreadParentIdState';
 import { focusedChatThreadParentIdState } from '@/chat/states/focusedChatThreadParentIdState';
@@ -22,6 +27,10 @@ import { selectedChatChannelIdState } from '@/chat/states/selectedChatChannelIdS
 import { buildChatThreadReplyMap } from '@/chat/utils/buildChatThreadReplyMap';
 import { getChatReadState } from '@/chat/utils/getChatReadState';
 import { groupChatChannelsBySection } from '@/chat/utils/groupChatChannelsBySection';
+import { RealtimePresenceAvatarStack } from '~/modules/realtime/components/RealtimePresenceAvatarStack';
+import { RealtimeReconnectBanner } from '~/modules/realtime/components/RealtimeReconnectBanner';
+import { RealtimeTypingIndicator } from '~/modules/realtime/components/RealtimeTypingIndicator';
+import { useWorkspacePresence } from '~/modules/realtime/hooks/useWorkspacePresence';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -42,11 +51,19 @@ const StyledConversation = styled.main`
 `;
 
 const StyledConversationHeader = styled.header`
-  align-items: baseline;
+  align-items: center;
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+`;
+
+const StyledChannelHeading = styled.div`
+  align-items: baseline;
+  display: flex;
+  flex: 1;
+  gap: ${themeCssVariables.spacing[2]};
+  min-width: 0;
 `;
 
 const StyledChannelName = styled.h1`
@@ -75,6 +92,7 @@ const StyledEmptyConversation = styled.div`
 
 export const ChatPage = () => {
   const { t } = useLingui();
+  const [searchParams] = useSearchParams();
 
   const selectedChatChannelId = useAtomStateValue(selectedChatChannelIdState);
   const setSelectedChatChannelId = useSetAtomState(selectedChatChannelIdState);
@@ -95,8 +113,17 @@ export const ChatPage = () => {
 
   const { channels } = useChatChannels();
   const { unreadCountByChannelId } = useChatUnreadCounts();
-  const { messages } = useChatMessages({ channelId: selectedChatChannelId });
+  const { messages: loadedMessages } = useChatMessages({
+    channelId: selectedChatChannelId,
+  });
   const { sendChatMessage, loading: isSending } = useSendChatMessage();
+  const { submitChatMessage } = useSendChatMessageWithQueue({
+    sendChatMessage,
+  });
+  const { messages, typingWorkspaceMemberIds } = useChatChannelLive({
+    channelId: selectedChatChannelId,
+    loadedMessages,
+  });
   const {
     markChannelRead,
     lastReadMessageId,
@@ -104,6 +131,9 @@ export const ChatPage = () => {
   } = useMarkChatChannelRead({ channelId: selectedChatChannelId });
   const { searchCandidates } = useChatMentionCandidates();
   const resolveAuthorLabel = useChatAuthorLabels();
+  const { workspaceMembers } = useChatWorkspaceMembers();
+  const { onlineWorkspaceMembers } = useWorkspacePresence();
+  const { publishTyping } = useSendChatTypingIndicator();
 
   const sections = useMemo(
     () => groupChatChannelsBySection(channels),
@@ -111,6 +141,18 @@ export const ChatPage = () => {
   );
   const selectedChannel = channels.find(
     (channel) => channel.id === selectedChatChannelId,
+  );
+
+  const typingWorkspaceMembers = useMemo(
+    () =>
+      typingWorkspaceMemberIds.flatMap((workspaceMemberId) => {
+        const workspaceMember = workspaceMembers.find(
+          (member) => member.id === workspaceMemberId,
+        );
+
+        return isDefined(workspaceMember) ? [workspaceMember] : [];
+      }),
+    [typingWorkspaceMemberIds, workspaceMembers],
   );
 
   const repliesByParentId = useMemo(
@@ -126,8 +168,23 @@ export const ChatPage = () => {
     lastReadMessageId,
   });
 
-  // Select the first channel once channels load so the page is never empty.
+  // "Go to channel" deep link: the Cmd+K provider appends `channelId`, so the
+  // page lands on the named channel instead of just the discussions list.
+  const requestedChannelId = searchParams.get('channelId');
+
+  // Select the deep-linked channel, else the first channel once channels load,
+  // so the page is never empty.
   useEffect(() => {
+    if (
+      isDefined(requestedChannelId) &&
+      channels.some((channel) => channel.id === requestedChannelId) &&
+      requestedChannelId !== selectedChatChannelId
+    ) {
+      setSelectedChatChannelId(requestedChannelId);
+
+      return;
+    }
+
     if (selectedChatChannelId !== null) {
       return;
     }
@@ -137,7 +194,13 @@ export const ChatPage = () => {
     if (isDefined(firstChannel)) {
       setSelectedChatChannelId(firstChannel.id);
     }
-  }, [selectedChatChannelId, sections, setSelectedChatChannelId]);
+  }, [
+    channels,
+    requestedChannelId,
+    sections,
+    selectedChatChannelId,
+    setSelectedChatChannelId,
+  ]);
 
   // Mark-read on view. Waiting for the read cursor to load avoids re-writing
   // while the cursor is still unknown; once it equals the newest message the
@@ -169,6 +232,17 @@ export const ChatPage = () => {
     setChatComposerDraft('');
   };
 
+  const handleDraftChange = (value: string) => {
+    setChatComposerDraft(value);
+
+    if (isDefined(selectedChatChannelId)) {
+      void publishTyping({
+        channelId: selectedChatChannelId,
+        isTyping: value.trim().length > 0,
+      });
+    }
+  };
+
   const handleSubmit = async () => {
     if (
       !isDefined(selectedChatChannelId) ||
@@ -177,10 +251,12 @@ export const ChatPage = () => {
       return;
     }
 
-    await sendChatMessage({
+    await submitChatMessage({
       channelId: selectedChatChannelId,
       body: chatComposerDraft,
+      threadParentId: null,
     });
+    void publishTyping({ channelId: selectedChatChannelId, isTyping: false });
     setChatComposerDraft('');
   };
 
@@ -193,13 +269,24 @@ export const ChatPage = () => {
         onSelectChannel={handleSelectChannel}
       />
       <StyledConversation>
+        <RealtimeReconnectBanner />
         {isDefined(selectedChannel) ? (
           <>
             <StyledConversationHeader>
-              <StyledChannelName>{selectedChannel.name}</StyledChannelName>
-              {isDefined(selectedChannel.topic) && (
-                <StyledChannelTopic>{selectedChannel.topic}</StyledChannelTopic>
-              )}
+              <StyledChannelHeading>
+                <StyledChannelName>{selectedChannel.name}</StyledChannelName>
+                {isDefined(selectedChannel.topic) && (
+                  <StyledChannelTopic>
+                    {selectedChannel.topic}
+                  </StyledChannelTopic>
+                )}
+              </StyledChannelHeading>
+              <RealtimeTypingIndicator
+                workspaceMembers={typingWorkspaceMembers}
+              />
+              <RealtimePresenceAvatarStack
+                workspaceMembers={onlineWorkspaceMembers}
+              />
             </StyledConversationHeader>
             <ChatMessageList
               messages={messages}
@@ -217,7 +304,7 @@ export const ChatPage = () => {
             />
             <ChatComposer
               value={chatComposerDraft}
-              onChange={setChatComposerDraft}
+              onChange={handleDraftChange}
               onSubmit={() => {
                 void handleSubmit();
               }}
