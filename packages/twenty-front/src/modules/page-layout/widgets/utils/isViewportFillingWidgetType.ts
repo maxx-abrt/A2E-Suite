@@ -42,6 +42,7 @@ export const isViewportFillingWidgetType = (
     case WidgetType.GRAPH:
     case WidgetType.STANDALONE_RICH_TEXT:
     case WidgetType.VIEW:
+    case WidgetType.DISCUSSIONS:
       return false;
   }
 };

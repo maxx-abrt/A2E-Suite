@@ -1,5 +1,6 @@
 import {
   definePageLayout,
+  type PageLayoutWidgetUniversalConfiguration,
   PageLayoutTabLayoutMode,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
@@ -187,6 +188,29 @@ export default definePageLayout({
           title: 'Fichiers',
           type: 'FILES',
           configuration: { configurationType: 'FILES' },
+        },
+      ],
+    },
+    {
+      // Discussions tab (P5.2): reads the `discussions` relation a2e-chat adds
+      // to this project object. The widget auto-hides when a2e-chat is not
+      // installed (no relation), so the tab never dangles.
+      universalIdentifier: 'c31b0200-0009-4000-8000-000000000006',
+      title: 'Discussions',
+      position: 60,
+      icon: 'IconMessages',
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      widgets: [
+        {
+          universalIdentifier: 'c31b0200-000a-4000-8000-00000000000e',
+          title: 'Discussions',
+          // The app pins twenty-sdk 2.31, whose widget type union predates
+          // DISCUSSIONS; the server (2.39) owns the enum, so the manifest
+          // carries the literal and the config is widened to the SDK shape.
+          type: 'DISCUSSIONS',
+          configuration: {
+            configurationType: 'DISCUSSIONS',
+          } as unknown as PageLayoutWidgetUniversalConfiguration,
         },
       ],
     },

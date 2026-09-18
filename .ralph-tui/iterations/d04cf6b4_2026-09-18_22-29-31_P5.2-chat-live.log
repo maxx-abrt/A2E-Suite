@@ -1,0 +1,777 @@
+# Iteration 8 Log
+
+## Metadata
+
+- **Task ID**: P5.2-chat-live
+- **Task Title**: P5.2: chat live layer + Cmd+K (go to channel, search messages)
+- **Description**: As a workspace member, I want chat to update live with offline queueing and typing/presence indicators, and to reach channels from Cmd+K, so that chat behaves like the rest of the suite.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-18T20:29:31.267Z
+- **Ended At**: 2026-09-18T20:48:40.408Z
+- **Duration**: 19m 9s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ ls .ralph-tui/ 2>/dev/null
+I'll start with the mandatory clean-start check and gather context.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "P5.2-chat-live\|P5.2-chat-page\|P5.1-chat-realtime" docs/plan/phases/phase-05-report.md | t...
+[94m[bash][0m $ grep -n "P5.2-chat-live" PLAN.md
+Dirty files are Ralph engine metadata (expected). Now let me check the phase report for active claims and my task section.
+[94m[bash][0m $ grep -n "P5.2\|P5.1\|P5 " PLAN.md | head -60
+[94m[bash][0m $ sed -n '1,120p' docs/plan/phases/phase-05-report.md
+[94m[bash][0m $ sed -n '939,1010p' PLAN.md
+[94m[bash][0m $ ls -t .ralph-tui/iterations/ | head -10
+[94m[bash][0m $ sed -n '533,610p' tasks/prd.json
+[94m[bash][0m $ tail -60 .ralph-tui/progress.md
+[94m[bash][0m $ cat >> docs/plan/phases/phase-05-report.md <<'EOF'  CLAIMED — P5.2-chat-live/chat-live-layer — deeps...
+[94m[bash][0m $ find packages/twenty-front/src/modules/chat -type f | sort
+Both dependencies (`P5.1-chat-realtime-publish`, `P5.2-chat-page`) are `done-for-review`. No existing claim for P5.2-chat-live. Claiming the slice now.
+[94m[bash][0m $ find packages/twenty-front/src/modules -type d \( -iname "*realtime*" -o -iname "*presence*" -o -ina...
+Now let me explore the existing realtime/presence primitives I must reuse (P2.2, P2.3).
+[94m[bash][0m $ grep -rln "useRealtimeTopic\|RealtimeTopic\|buildChatChannelTopic\|OfflineComposerQueue\|offline.*qu...
+[94m[bash][0m $ find packages/twenty-front/src/modules/realtime -type f | sort
+[94m[bash][0m $ grep -rln "OfflineQueue\|offlineQueue\|useOfflineQueue\|ComposerQueue\|offline" packages/twenty-fron...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/realtime/hooks/useRealtimeTopic.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/realtime/hooks/useRealtimeOfflineQueue.ts
+The P2 primitives are all there. Let me read the key ones.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/realtime/hooks/useWorkspacePresence.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/realtime/components/RealtimeTypingIndicator.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/realtime/constants/RealtimeConstants.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/hooks/useChatMessages.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/hooks/useSendChatMessage.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/hooks/useChatChannels.ts
+Now let me look at the chat page hooks/components to understand integration points.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/components/ChatMessageList.tsx
+[94m[bash][0m $ grep -rn "buildChatChannelTopic" packages/twenty-server/src | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/utils/chat-topic.util.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/utils/chat-realtime-event.util.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/realtime/utils/realtimeConnectionManager.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/chat/ChatPage.tsx
+Let me explore the Cmd+K / search provider registry (P1.4) and command menu, plus ChatPage.
+[94m[bash][0m $ grep -rln "searchProvider\|SearchProvider\|commandMenu\|CommandMenu" packages/twenty-front/src/modul...
+[94m[bash][0m $ find packages/twenty-front/src/modules -maxdepth 1 -type d | sort | grep -iE "search|command|navigat...
+[94m[bash][0m $ grep -rln "searchProvider\|SearchProvider\|registerSearch\|searchProviders" packages/twenty-front/sr...
+[94m[bash][0m $ grep -n "P1.4" PLAN.md tasks/prd.json | head -20
+[94m[bash][0m $ find packages/twenty-front/src/modules/command-menu -type f | grep -v __stories__ | grep -v __tests_...
+[94m[bash][0m $ sed -n '552,585p' PLAN.md
+[94m[bash][0m $ grep -rn "ContentApi\|defineCommandMenu\|commandMenuItems" packages/twenty-front/src/modules/command...
+[94m[bash][0m $ grep -rln "frecency\|Frecency\|searchResult\|SearchResult\|groupedResults\|GroupedResults" packages/...
+[94m[bash][0m $ grep -rln "search provider\|SearchProvider\|search-provider\|providerId\|providerKey" packages/twent...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/services/chat-typing.service.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/realtime/states/realtimeOfflineQueueState.ts
+Let me examine the server typing service and P2.2 offline queue test to understand contracts.
+[94m[bash][0m $ grep -n "offline\|OfflineQueue\|P2.2" docs/plan/phases/phase-02-report.md | head -30
+[94m[bash][0m $ sed -n '/"id": "P2.2"/,/^    }/p' tasks/prd.json | head -60
+[94m[bash][0m $ sed -n '155,185p' docs/plan/phases/phase-02-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/realtime/hooks/useRealtimeConnectionStatus.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/realtime/components/RealtimePresenceAvatarStack.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/hooks/useChatUnreadCounts.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/hooks/useMarkChatChannelRead.ts
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-chat -type f | grep -v node_modules | sort
+[94m[bash][0m $ grep -rn "commandMenuItem\|CommandMenuItem\|searchProvider\|search" packages/twenty-apps/internal/a2...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "P1.4" docs/plan/phases/phase-01-report.md | head -20
+[94m[bash][0m $ grep -rln "searchAppRecords\|searchProvider\|SearchProvider\|search-provider" packages/twenty-server...
+[94m[bash][0m $ find packages/twenty-front/src/modules -path "*command*" -name "*.ts" | xargs grep -ln "availability...
+[94m[bash][0m $ find packages/twenty-front/src/modules/command-menu-item -name "*.ts" | xargs grep -ln "defineComman...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "sendChatTypingIndicator\|Typing\|Mutation\|Query\|@MetadataResolver\|useApolloCoreClient" p...
+[94m[bash][0m $ grep -rn "sendChatTypingIndicator\|sendChatTyping" packages/twenty-front/src packages/twenty-apps/in...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/resolvers/chat.resolver.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/dtos/send-chat-typing.input.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/graphql/queries/chatMessagesQuery.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/types/ChatMessage.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/types/ChatChannel.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/components/ChatComposer.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/utils/__tests__/getChatReadState.test.ts
+[94m[bash][0m $ grep -rn "NavigationMenuItemType" packages/twenty-sdk/src --include="*.ts" | grep -i "enum\|LINK\|VI...
+Now let me look at the app's navigation menu item types and the P4.3 spike decision for record-linked channels (likely relevant to nav wiring).
+
+[94m[bash][0m $ grep -rn "AppPath.Discussions\|Discussions" packages/twenty-front/src packages/twenty-apps/internal/...
+[94m[bash][0m $ grep -n "Discussions" packages/twenty-shared/src/types/AppPath.ts
+[94m[bash][0m $ sed -n '120,150p' packages/twenty-front/src/modules/app/routing/utils/createWorkspaceRouteObjects.ts...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/navigationMenuItemManifestType.ts
+[94m[bash][0m $ grep -rn "link\|Link\|url\|path" packages/twenty-sdk/src/sdk/define/navigation-menu-item*.ts 2>/dev/...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "type.*LINK\|LINK\b" packages/twenty-front/src/modules/navigation-menu-item --include="*.ts...
+[94m[bash][0m $ grep -rn "isNavigationMenuItemLink\|item.link\|navItem.link\|\.link " packages/twenty-front/src/modu...
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-front/src/modules/navigation-menu-item/display/sections/workspace/com...
+[94m[read][0m
+[94m[read][0m
+[94m[todowrite][0m
+Now I have enough context. Let me define the slice and set up todos. I'll start with pure utilities + tests (testable without BlockNote), then hooks/components.
+
+[94m[bash][0m $ cat packages/twenty-front/jest.config.mjs
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/realtime/testing/RealtimeMockServerHarness.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/realtime/hooks/__tests__/useRealtimeTopic.test.tsx
+Let me look at the existing `useRealtimeTopic.test.tsx` to reuse its harness wiring pattern.
+
+[94m[bash][0m $ grep -rn "useApolloCoreClient" packages/twenty-front/src/modules/chat --include="*.ts" | head
+Now let me check how Apollo mutations with `useApolloCoreClient` + `client` option are done, and verify the offline queue's created payload naming conventions by reading existing useCreateOneRecord-ish tests. Also, let me check the `AppPath` change direction: the plan says `AppPath.Discussions` needs to be linked. I'll add a chat channel search provider via `useAppSearchResultItems`-style hook.
+
+I have enough. Let me start writing the pure utilities. First, the chat realtime topic + event types.
+
+[94m[bash][0m $ grep -rn "useMutation" packages/twenty-front/src/modules --include="*.ts" -l | xargs grep -ln "apoll...
+[94m[read][0m
+[94m[write][0m "import { type ChatMessage } from '@/chat/types/ChatMessage';
+
+// Mirror of the server `chat-realtime-event.util.ts` payloads fanned out on
+// `workspace:<id>:chat:<channelId>`. Kept local to the chat ... (2319 chars)"
+Now I'll start writing. First the realtime event types and pure reducer.
+
+[94m[write][0m "// Chat realtime topics follow the gateway grammar `workspace:<id>:chat:<id>`
+// (server parse-realtime-topic.util.ts). The builder mirrors the server
+// `chat-topic.util.ts` so subscribe and publish ... (407 chars)"
+[94m[write][0m "import { isDefined } from 'twenty-shared/utils';
+
+import { type ChatMessage } from '@/chat/types/ChatMessage';
+import {
+  CHAT_MESSAGE_CREATED_EVENT_TYPE,
+  CHAT_MESSAGE_DELETED_EVENT_TYPE,
+  CHAT_MES... (2591 chars)"
+Now the pure topic builder and event reducer utilities.
+
+[94m[write][0m "import { type RealtimeOfflineQueueEntry } from '~/modules/realtime/states/realtimeOfflineQueueState';
+
+// Payload parked by the chat composer while the realtime connection is down.
+// The namespace is... (1927 chars)"
+Now the offline queue flush ordering helper. Let me first define the pending message type and a flush plan.
+
+[94m[write][0m "import { type ChatMessage } from '@/chat/types/ChatMessage';
+import {
+  CHAT_MESSAGE_CREATED_EVENT_TYPE,
+  CHAT_MESSAGE_DELETED_EVENT_TYPE,
+  CHAT_MESSAGE_UPDATED_EVENT_TYPE,
+  CHAT_READ_UPDATED_EVENT... (5664 chars)"
+Now let me write tests for the pure utilities before wiring hooks.
+
+[94m[bash][0m $ grep -rn "deletedAt" packages/twenty-front/src/modules/chat --include="*.ts" --include="*.tsx" | hea...
+I need to check `ChatMessage` type — it has no `deletedAt`, and `applyChatRealtimeEventToMessages` replacement builder assumes it. My test uses `deletedAt` override. Let me add `deletedAt` to the event message handling by extending the realtime event message type. Let me verify the actual server payload includes deletedAt, so the front type must allow it.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/types/ChatRealtimeEvent.ts
+The realtime message type should include deletedAt (server has it). I'll update the type to make the realtime message type distinct, then simplify the reducer.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/types/ChatRealtimeEvent.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/types/ChatRealtimeEvent.ts
+Wait, that comment isn't accurate/useful. Let me remove it.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/utils/applyChatRealtimeEventToMessages.ts
+Now update the reducer to drop tombstoned rows too (deletedAt not null on create/update should be treated as delete).
+
+[94m[edit][0m
+Now fix the test builder to use the wider realtime message type.
+
+[94m[write][0m "import { type RealtimeOfflineQueueEntry } from '~/modules/realtime/states/realtimeOfflineQueueState';
+
+import {
+  isPendingChatMessagePayload,
+  orderChatOfflineQueueEntries,
+} from '@/chat/utils/chat... (2571 chars)"
+The test references `messages: ChatMessage[]` in the idempotency case; `ChatRealtimeMessage[]` is assignable. Now add the offline queue tests.
+
+Now let me run the pure utility tests to validate before wiring hooks.
+
+[94m[bash][0m $ npx jest src/modules/chat/utils/__tests__/applyChatRealtimeEventToMessages.test.ts src/modules/chat/...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/utils/applyChatRealtimeEventToMessages.ts
+Missing import in the util. Fix imports there.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/utils/applyChatRealtimeEventToMessages.ts
+[94m[bash][0m $ npx jest src/modules/chat/utils/__tests__/applyChatRealtimeEventToMessages.test.ts --config=packages...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/hooks/useChatAuthorLabels.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/hooks/useChatMentionCandidates.ts
+Now the hooks. First, the chat realtime hook that subscribes and folds events into state. But the current ChatPage holds messages in `useChatMessages` (Apollo local state, no setter). I'll add a chat messages overrides/state approach.
+
+Let me reconsider architecture: The cleanest is to have `useChatMessages` accept realtime overrides. But minimal touch: create `useChatChannelLiveMessages` that wraps `useChatMessages` + `useRealtimeTopic` and returns merged messages. Actually per the acceptance the live layer subscribes via `useRealtimeTopic`. Let me create a hook that returns merged messages and unread overrides.
+
+[94m[bash][0m $ sed -n '1,30p' packages/twenty-front/src/modules/auth/states/currentWorkspaceState.ts
+Now let me create the live messages hook. It needs workspace id from `currentWorkspaceState`.
+
+[94m[write][0m "import { useCallback, useEffect, useMemo, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import... (4379 chars)"
+Now write the live hook. It wraps `useChatMessages` and adds realtime overrides + typing members.
+
+[94m[write][0m "import { useCallback, useEffect, useMemo, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import... (5142 chars)"
+The reduce conversion is convoluted. Let me simplify by applying each realtime event directly at receive time to the merged list — better: keep overrides as raw events and fold. Let me rewrite more cleanly.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/hooks/useChatChannelLive.ts
+Hmm, this is getting over-engineered. The fold effect + dedupe could hide issues and the reducer already dedupes. Let me simplify: keep a single state initialized from loaded messages and apply both loaded updates and realtime events through the reducer. Since the reducer is idempotent and keyed by id, merging loaded rows in is correct and deduping happens naturally.
+
+The problem: if a message is deleted live, then `loadedMessages` effect re-adds it if the query hasn't refetched. That's an edge case acceptable for now. Let me simplify by removing `dedupeMessagesById` — reducer already produces unique ids. And the initial loaded merge is fine.
+
+Actually there's a subtle bug: the loaded effect depends on `loadedMessages` which changes identity each render potentially (`useChatMessages` useMemo depends on `data`). It's memoized, so ok. But if `loadedMessages` is a new array on every render, infinite loop. It's memoized on `data`, safe.
+
+Let me remove dedupe.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/hooks/useChatChannelLive.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/hooks/useChatChannelLive.ts
+Now `useMemo` import is unused. Let me fix imports.
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/hooks/useChatMentionCandidates.ts
+Now the typing publish hook. It must call the server `sendChatTypingIndicator` mutation, scoped to the channel. Also expose typing member resolution.
+
+[94m[write][0m "import { useMutation } from '@apollo/client/react';
+import { gql } from '@apollo/client';
+
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+
+// Hand-written for the s... (1335 chars)"
+Now the typing publish hook + graphql mutation doc.
+
+[94m[bash][0m $ ls packages/twenty-front/src/modules/chat/graphql/
+That file mixes a hook into a graphql module. Convention in this repo puts graphql docs in `graphql/queries` and hooks in `hooks`. Let me move the mutation doc to graphql and the hook to hooks.
+
+
+
+[94m[write][0m "import { gql } from '@apollo/client';
+
+// Hand-written for the same reason as `chatMessagesQuery`: typing is a server
+// `@MetadataResolver` mutation, not part of the metadata codegen surface.
+export ... (735 chars)"
+[94m[write][0m "import { useMutation } from '@apollo/client/react';
+import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+
+import {
+  SEND_CHAT_TYPING_INDICATOR_MUTATION,
+  type SendCh... (1283 chars)"
+Now recreate the hook with the correct import, and delete the mixed file.
+
+[94m[bash][0m $ rm "packages/twenty-front/src/modules/chat/graphql/mutations/sendChatTypingIndicatorMutation.ts"
+[94m[bash][0m $ ls -la packages/twenty-front/src/modules/chat/graphql/mutations/
+Wait, I just deleted the wrong file — I recreated it in the same path with write, then deleted it. Let me check.
+
+[94m[write][0m "import { gql } from '@apollo/client';
+
+// Hand-written for the same reason as `chatMessagesQuery`: typing is a server
+// `@MetadataResolver` mutation, not part of the metadata codegen surface.
+export ... (735 chars)"
+I need to recreate it.
+
+[94m[write][0m "import { useCallback, useEffect, useRef } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type ChatMessage } from '@/chat/types/ChatMessage';
+import {
+  CHAT_OFFLINE_QUEUE_NAM... (2209 chars)"
+Now let me build the offline send queue hook that wraps `useRealtimeOfflineQueue` + online/offline send. This is the key acceptance: "offline queue (P2 primitives)".
+
+[94m[write][0m "import { useCallback, useEffect, useState } from 'react';
+
+import {
+  CHAT_OFFLINE_QUEUE_NAMESPACE,
+  type PendingChatMessagePayload,
+} from '@/chat/utils/chatOfflineQueue';
+import { orderChatOfflineQ... (2099 chars)"
+There's a design concern: the queue lives but `useChatMessages` posts via `useSendChatMessage`. I need `sendChatMessage` signature to accept `PendingChatMessagePayload`. That matches. Now `pendingCount` — I need to also surface pending messages optimistically in the pane. That's a nice-to-have; acceptance says "offline queue (P2 primitives)". I'll include pending optimistic messages.
+
+Let me refactor: `useSendChatMessageWithQueue` should also expose pending payloads as optimistic `ChatMessage`s. But without ids from server. Let me keep it focused: queue + flush ordering (unit tested) is the core. I'll surface `pendingCount` in the UI.
+
+Now, the `useRef` for draining trips `twenty/no-state-useref`. Let me check that rule. The AGENTS gotcha says "`useRef` for state trips `twenty/no-state-useref`". `isDrainingRef` is a concurrency guard, not rendering state — same pattern as `isCurrentSearch` local var. Actually the previous report said they replaced a `useRef` guard with a loading flag. Let me avoid useRef by using the entries state itself: clear() is synchronous so re-entry is bounded. But two concurrent drains could still happen across renders before state settles. Since `clear()` is synchronous state update, `entries` from the current render is stale on the next effect run but the effect deps change triggers once. Simpler: use a module-level `drainingNamespace` set. Actually within a hook instance, a `useState` boolean is fine.
+
+Let me use a state flag to be safe and lint-clean.
+
+Actually with `clear()` synchronous, the effect will re-run with empty entries and skip. Concurrent drains would need two renders with same non-empty entries before clear applies — React batches, so unlikely but let me use state.
+
+Let me rewrite without useRef.
+
+[94m[bash][0m $ grep -rn "useSearchParams\|useLocation" packages/twenty-front/src/pages --include="*.tsx" | head -10
+Now the Cmd+K chat search provider. Follow the `useAppSearchResultItems` pattern, returning `GroupableSearchResultItem[]` grouped under a "Discussions" heading, using `useFindManyRecords` on chatChannel. The path should be `AppPath.Discussions` (channel prefix open ideally). Let me check if ChatPage supports a channel query param — no. I'll make the path `/discussions` (navigate to page) and record usage; opening a specific channel would need a param. Let me add channel selection via a query param? That broadens scope. Acceptance: "go to channel". Best: use hashless route with state? Simpler and robust: keep `path: AppPath.Discussions` and select channel from the existing `selectedChatChannelIdState`? Cross-page state won't persist if not set.
+
+Let me add support for `?channelId=` on the ChatPage route — read query param, set selected. That's a small additive change enabling "go to channel".
+
+Let me check how routes read query params elsewhere.
+
+[94m[bash][0m $ grep -rn "AppPath.Discussions\|Discussions" packages/twenty-front/src --include="*.tsx" | head
+Now the search provider hook. Let me check `useFindManyRecords` return and how to make path with channel query param. I'll build `getAppPath(AppPath.Discussions)` plus `?channelId=`.
+
+Let me check `getAppPath` signature and whether query strings are supported.
+
+
+
+[94m[bash][0m $ grep -rn "export const getAppPath" packages/twenty-shared/src/utils/*.ts packages/twenty-shared/src/...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/navigation/getAppPath.ts
+Good. Now the search provider hook. It reads chat channels and maps to `GroupableSearchResultItem` with group key `chat:channel`, heading "Discussions", path `/discussions?channelId=<id>`. It should filter locally by search input.
+
+But acceptance says "search provider follows the P1.4 registry". Since there's no front registration API (the front consumes `searchAppRecords` server-side), the front provider for channels can be a local hook. However app-owned `chatChannel` records are searchable objects via `useObjectRecordSearchRecords` if `chatChannel` is searchable. Let me check whether channels are already surfaced via the object search path. If `chatChannel` is searchable, Cmd+K already shows them under the object group. The acceptance specifically wants "go to channel" and "search messages provider".
+
+Given "search messages (provider)" — messages search isn't a server provider. The cleanest within scope: add a local chat search hook that searches channels (go to channel) and messages (search messages), grouped under "Discussions"/"Messages", wired into the Cmd+K search page like `useAppSearchResultItems`. This follows the same consumption shape (a second source of `GroupableSearchResultItem`), which is the front half of P1.4.
+
+Let me check `useObjectRecordSearchRecords` to see if I can reuse it for `chatChannel` and `chatMessage`.
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/hooks/useObjectRecordSearchRecords.ts
+[94m[bash][0m $ grep -rn "isSearchable\|labelIdentifier\|name:" packages/twenty-apps/internal/a2e-chat/src/objects/*...
+`SearchDocument` hits the server search (which supports `includedObjectNameSingulars`). The server `searchAppRecords` is separate. But chat objects are metadata objects, so `useObjectRecordSearchRecords({ objectNameSingulars: ['chatChannel','chatMessage'] })` would search them if they are searchable. Let me check the a2e-chat object definitions for `isSearchable`.
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/src/objects/chat-channel.object.ts
+[94m[write][0m "import { useMemo } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
+
+import ... (2968 chars)"
+No `isSearchable` field, so I can't assume metadata search surfaces these. The server `searchAppRecords` provider registry is the documented app path. A proper app search provider would be a server-side service registered via `@RegisteredSearchProvider` in the a2e-chat app — but apps can't add Nest providers to the core server.
+
+The pragmatic front implementation consistent with P1.4's front consumption: a chat-local search hook (like `useAppSearchResultItems`) built on `useFindManyRecords` + client-side filter over channels and messages, producing grouped results fed into the existing `groupSearchResultItems`. This is additive and reuses the P1.4 grouping/frecency infra. Let me write that.
+
+First, messages query: I need message bodies. I'll use `useFindManyRecords` with a filter on body contains, but app objects' filter may support `ilike`. Let me use `useFindManyRecords` for chatChannel with filter `name: { ilike: %query% }`. Let me check the filter API used elsewhere for app objects. In `useMarkChatChannelRead` they use `filter: { channelId: { eq: ... } }`. So field filters work. For text search, `{ ilike: `%${query}%` }` is standard Twenty.
+
+Let me write the hook with two record sources and pure mapping to testable groupable items.
+
+
+
+[94m[bash][0m $ grep -n "searchTerm\|filter\|limit\|recordGqlFields\|skip" packages/twenty-front/src/modules/object-...
+Now the hook using `useFindManyRecords` with ilike search. Let me check `useFindManyRecords` options for `searchTerm` or filter.
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/hooks/useFindManyRecords.ts
+Good: `filter` and `limit` work. Now the search hook. It must only query when searchInput non-empty and channels exist. For messages, search `body: { ilike: %query% }`.
+
+Let me check whether `ilike` is a valid filter operator in this codebase.
+
+[94m[bash][0m $ grep -rn "ilike" packages/twenty-front/src/modules --include="*.ts" --include="*.tsx" | grep -v __te...
+[94m[write][0m "import { useMemo } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { type ChatChannel } from '@/chat/types/ChatChannel';
+import { type ChatMessage } from '@/chat/types/ChatMes... (3076 chars)"
+Good, `ilike` works. Now write the hook.
+
+[94m[edit][0m
+Now wire the search items into `SidePanelSearchRecordsPage`. It currently merges `searchResultItems` + `appSearchResultItems`. Add `chatSearchResultItems`. Also frecency ranks are keyed by group key; chat groups will rank 0 by default, fine.
+
+Let me edit the page.
+
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/components/ChatThreadView.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/components/ChatSidebar.tsx
+Now the ChatPage needs:
+1. Read `channelId` query param on mount to select channel ("go to channel").
+2. Use `useChatChannelLive` merged messages.
+3. Use `useSendChatMessageWithQueue`.
+4. Typing publish + indicator.
+
+Let me update ChatPage. First check `ChatThreadView` props and presence avatar stack usage.
+
+
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/settings/roles/types/RoleWithPartialMembers.ts
+Now update ChatPage to wire all live pieces. I need:
+- `useSearchParams` to read `channelId`, select it once channels load.
+- `useChatChannelLive` for merged messages.
+- `useSendChatMessageWithQueue`.
+- Typing publish on composer change + indicator using `RealtimeTypingIndicator` (needs `PartialWorkspaceMember[]`). Resolve from `useChatAuthorLabels`? That returns labels only. Let me get workspace members. Simpler: create typing indicator using member labels. But `RealtimeTypingIndicator` expects `PartialWorkspaceMember[]`. I can adapt: resolve members via `useFindManyRecords` workspaceMember. Let me add a small hook `useChatTypingWorkspaceMembers` returning `PartialWorkspaceMember[]`.
+
+Actually `useChatAuthorLabels` already reads workspaceMembers; I can extend it or add another. Let me add `useChatWorkspaceMembers` and derive labels from it, but that duplicates. Minimal: add a dedicated hook.
+
+Let me check `PartialWorkspaceMember` shape.
+
+[94m[write][0m "import { CoreObjectNameSingular } from 'twenty-shared/types';
+
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { type PartialWorkspaceMember } from '@/settings/ro... (777 chars)"
+The typing indicator's `getDisplayName` only needs `name.firstName/lastName` and `userEmail`. I'll add a small hook returning `PartialWorkspaceMember[]` from workspaceMembers records.
+
+Actually, `useChatAuthorLabels` already fetches workspaceMembers. Rather than a second query, I'll create `useChatWorkspaceMembers` and refactor `useChatAuthorLabels` to consume it. That avoids duplicate queries and is additive. Let me do that.
+
+[94m[write][0m "import { useCallback } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
+
+import { useChatWorkspaceMembers } from '@/chat/hooks/useChatW... (978 chars)"
+[94m[write][0m "import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { isDef... (11365 chars)"
+Now add a hook to resolve typing member ids → PartialWorkspaceMember[]. I'll put it in the live hook itself to keep changes local. Actually let me add a tiny pure util + use it in ChatPage. Simpler: ChatPage maps `typingWorkspaceMemberIds` to members from `useChatWorkspaceMembers`. Let me keep it in ChatPage via useMemo.
+
+Now rewrite ChatPage.
+
+
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/chat/ChatPage.tsx
+I called `useChatChannelLive` twice — that creates two socket subscriptions for the same topic. Bad. Let me call once and destructure both.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/chat/ChatPage.tsx
+I removed needed declarations. Let me re-add them after the live hook.
+
+[94m[bash][0m $ grep -n "currentWorkspaceMembersState" packages/twenty-front/src/modules/auth/states/currentWorkspac...
+Now, `RealtimePresenceAvatarStack` should show presence members, not typing members. The live hook only tracks typing. Presence (online) is workspace-wide via `useWorkspacePresence`. Let me use `useWorkspacePresence().onlineWorkspaceMembers` for the avatar stack rather than typing members (typing indicator already handles typing). Actually the typing indicator already lists typing members; presence avatar stack wants online. Let me import `useWorkspacePresence`.
+
+But `onlineWorkspaceMembers` returns full workspace members possibly not `PartialWorkspaceMember`. Let me check type: `currentWorkspaceMembers` type. `useWorkspacePresence` returns members from `currentWorkspaceMembersState`. The avatar stack expects `PartialWorkspaceMember[]`. Potential type mismatch. Let me check.
+
+[94m[bash][0m $ sed -n '1,15p' packages/twenty-front/src/modules/auth/states/currentWorkspaceMembersState.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/chat/ChatPage.tsx
+Good. Let me use `useWorkspacePresence` for online members and typing indicator separately. Update ChatPage imports/usage.
+
+
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/chat/ChatPage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/chat/ChatPage.tsx
+Now let me typecheck the front package to catch errors early. First build twenty-shared? I didn't touch it. But baseline may need build. Let me run tsgo on twenty-front and filter for chat.
+
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | grep -E "src/(modules/chat|pages/chat|modules/side-panel/p...
+[94m[bash][0m $ grep -rn "from '~/modules/realtime" packages/twenty-front/src/modules/realtime/hooks/useRealtimeConn...
+The realtime module uses `~/modules/realtime/...` not `@/`. Fix import aliases. Also fix test import and implicit any.
+
+[94m[bash][0m $ cd packages/twenty-front && sed -i '' "s|from '@/modules/realtime/|from '~/modules/realtime/|g" src/...
+[94m[edit][0m
+Now fix the test's missing `ChatMessage` name and the implicit any `event`.
+
+Now fix the implicit any in `useChatChannelLive` — `useRealtimeTopic<ChatRealtimeEvent>` should type `event`. The error is on line 80 `onEvent: (event)`. The generic isn't applying because the import failed. After alias fix it may resolve. Let me re-run typecheck on touched files.
+
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | grep -E "src/(modules/chat|pages/chat|modules/side-panel/p...
+No chat-related errors. Let me confirm the total error count matches the pre-existing baseline (6 front-components errors) and none of my files appear.
+
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | grep -E "error TS" | head -20
+Exactly the 6 pre-existing baseline errors. Now let me run the chat unit tests and lint on touched files.
+
+[94m[bash][0m $ npx jest src/modules/chat --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -40
+[94m[write][0m "import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
+
+import { type ChatChannel } from '@/chat/types/ChatChannel';
+import { type ChatMessage } from '@/chat/... (2859 chars)"
+All 55 pass (was 42 before; +13 new). Now I need tests for the search provider grouping (acceptance: "provider grouping") and the offline flush ordering (done) and topic subscription wiring (need a hook-level test). Let me add:
+1. `mapChatSearchRecordsToResultItems` test → provider grouping.
+2. A hook test for `useChatChannelLive` topic subscription wiring using the mock harness.
+3. A test for the offline queue flush ordering already done; but also a hook test for `useSendChatMessageWithQueue` flush behavior would satisfy "offline queue flush ordering".
+
+Let me first write the mapper test (pure).
+
+
+
+Now the hook-level tests for topic subscription wiring and offline queue flush ordering. Let me write `useChatChannelLive.test.tsx` using the realtime mock harness, mocking `currentWorkspaceState` via jotai store. Let me check how `useWorkspacePresence` test or other tests set workspace atom.
+
+
+
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-front/src/modules/realtime/components/__tests__/RealtimePresencePrimi...
+[94m[bash][0m $ sed -n '1,50p' "packages/twenty-front/src/modules/ai/hooks/__tests__/useAiModelOptions.test.tsx"
+[94m[write][0m "import { act, renderHook, waitFor } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
+
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+impo... (4703 chars)"
+Now write the live hook test. It needs JotaiProvider + mock harness, set currentWorkspaceState (id), and `loadedMessages`.
+
+Key test: subscribing to `workspace:<id>:chat:<channelId>` and folding a broadcasted message event. Also typing event. Let me write it.
+
+[94m[bash][0m $ npx jest src/modules/chat/hooks/__tests__/useChatChannelLive.test.tsx src/modules/chat/utils/__tests...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/hooks/__tests__/useChatChannelLive.test.tsx
+Tests pass but there's an act warning in afterEach. Let me wrap the reset in act to keep output clean.
+
+
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/realtime/states/realtimeConnectionStatusState.ts
+Now a hook test for the offline queue flush ordering (`useSendChatMessageWithQueue`). This is acceptance-critical. Use JotaiProvider + set realtime status atom to 'disconnected', enqueue, then set 'connected' and assert send order.
+
+Let me check `realtimeConnectionStatusState` type.
+
+[94m[write][0m "import { act, renderHook, waitFor } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
+
+import { useSendChatMessageWithQueue } from '@/chat/hooks/useSendChatMessageWithQ... (2579 chars)"
+`useRealtimeConnectionStatus` sets the atom from the manager on mount via `onStatusChange`, which will override my manually-set atom. So I must drive the manager status through the harness instead. The harness opens asynchronously → status 'connected'. To simulate offline, I can destroy/set factory that never opens? Simpler: test the hook with the manager connected, then terminate the client (status → reconnecting) and enqueue. But `submitChatMessage` checks `status !== 'connected'`.
+
+Alternative: don't mount `useRealtimeConnectionStatus` — but the hook uses it. I could set the manager factory to a never-opening socket so status is 'connecting'. Then it's not 'connected' → enqueue. Then to flush, I'd need it to connect. 
+
+Cleaner: mock `~/modules/realtime/hooks/useRealtimeConnectionStatus` with jest.mock and control status. But then I'm not testing integration with the real manager. The unit test's purpose is flush ordering. Let me mock the status hook and the offline queue? No — use the real queue atom.
+
+Let me mock `useRealtimeConnectionStatus` to return a controllable ref.
+
+Actually simpler: use real harness with a deferred socket. Let me look at how I can set status to 'reconnecting' after connected: call `harness.terminateClient()` → onclose → scheduleReconnect → status 'reconnecting'. Then `submitChatMessage` enqueues. Then to flush, I need status 'connected' again — harness's factory creates a new socket on reconnect after 500ms backoff and opens. So wait ~600ms. That's doable but slow/flaky.
+
+Cleaner is jest.mock the status hook. Let me do that: the flush ordering logic doesn't depend on the manager.
+
+Let me write the test mocking `useRealtimeConnectionStatus` and using the real offline queue atom.
+
+[94m[bash][0m $ npx jest src/modules/chat/hooks/__tests__/useSendChatMessageWithQueue.test.tsx --config=packages/twe...
+Now let's also add a test for the typing indicator hook? The typing wiring is covered via `useChatChannelLive` typing test. Good.
+
+Now run the whole chat suite + lint/format on touched files.
+
+[94m[bash][0m $ npx jest src/modules/chat --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -25
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/utils/chatOfflineQueue.ts
+The flush test is flaky when run with the whole suite (module mock/`rerender` timing). The isolated run passed. The issue: `rerender()` doesn't re-run the effect because no prop/state changed that's in deps — mockStatusRef is read during render, but rerender with same props won't re-read the mock? Actually it does re-render, and `useRealtimeConnectionStatus` returns the new ref value. But `status` is used in `submitChatMessage`'s dep and the effect. On rerender the effect deps `[clear, entries, isDraining, sendChatMessage, status]` — status changed, so effect runs. Should work. In full-suite run, maybe `sendChatMessage` identity changes each render (inline jest.fn stable though). Hmm, `sendChatMessage` is stable.
+
+Let me make the test deterministic by wrapping the status change in `act` and using `rerender` inside act. Also, `orderChatOfflineQueueEntries` sorts by `createdAtIso`; both enqueued within same ms → tie-break by uuid, not typed order! That's the real bug: both entries get the same `createdAtIso` because `new Date().toISOString()` has ms resolution and the two enqueues happen in the same millisecond. The tie-break by random uuid is not typed order.
+
+The isolated pass was luck. I need FIFO by insertion when timestamps tie. UUID tie-break is wrong. Better: preserve array insertion order for equal timestamps. `Array.prototype.sort` is stable in modern JS, so I should tie-break by original index, not id. Let me fix `orderChatOfflineQueueEntries` to use index.
+
+This is an important correctness fix.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/utils/__tests__/chatOfflineQueue.test.ts
+Update the tie-break test to assert insertion order instead of id order.
+
+
+
+Wait — the second chatOfflineQueue test "drop entries" expects `ordered[0].entryId` to be 'a'; still fine. Let me rerun.
+
+[94m[bash][0m $ npx jest src/modules/chat --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -25
+All 64 pass. Now the side-panel search page related tests + lint. Let me also add tests for the side-panel search page? It has no existing test probably. Let me check and run related tests for touched files.
+
+[94m[bash][0m $ npx jest --findRelatedTests src/modules/side-panel/pages/search/components/SidePanelSearchRecordsPag...
+No related tests. Now lint + format on touched files. Let me gather the list.
+
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git status --porcelain | grep -E "twenty-front" | awk '{p...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx oxfmt --check src/modules/chat/...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx oxfmt src/modules/chat/hooks/us...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx oxlint --type-aware -c .oxlintr...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/hooks/useSendChatMessageWithQueue.ts
+Fix: merge duplicate imports in `useSendChatMessageWithQueue`, and remove unused imports in `mapChatSearchRecordsToResultItems.ts` (those belong to the hook).
+
+
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/utils/mapChatSearchRecordsToResultItems.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx oxlint --type-aware -c .oxlintr...
+[94m[edit][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx oxlint --type-aware -c .oxlintr...
+Clean. Now re-run format check and the full chat suite + typecheck after the fixes.
+
+
+
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx oxfmt --check src/modules/chat/...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | grep -E "error TS" | wc -l
+[94m[write][0m "import { useCallback, useEffect, useMemo, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import... (4421 chars)"
+Still 6 baseline. Now let me reconsider a functional gap: the side-panel search page renders app/chat items with `path`, and clicking calls `openRoutedPageInSidePanel({ path })`. For `/discussions?channelId=...`, this opens inside the side panel. That's consistent with app results. Good.
+
+However, the acceptance explicitly says "provider grouping" unit test — done. "topic subscription wiring" — done via `useChatChannelLive`. "offline queue flush ordering" — done both pure + hook.
+
+One remaining concern: `useChatChannelLive`'s effect merging loadedMessages re-applies each loaded message via an event object typed `chat.message.updated`. Since `applyChatRealtimeEventToMessages` dedupes by id, fine. But there's a subtle bug: switching channels resets `mergedMessages` in a separate effect, but the loaded-messages merge effect may run before/after. Both effects depend on channelId indirectly (loadedMessages changes). Order in file: merge effect first, then reset effect. On channel switch both run; reset runs after, clearing, then loaded merge might not re-run because loadedMessages for new channel changes → runs. React runs effects in order, so merge(new loaded) then reset → clears everything! That's a bug.
+
+Let me reorder: reset effect should be declared before the merge effect, or better combine. Actually on channel switch, `loadedMessages` for the new channel starts as `[]` then updates. The reset effect clears. If a stale merge runs after reset it could add old messages. Let me restructure to avoid the dual-effect race: derive merged messages entirely with `useState` + effects keyed cleanly.
+
+Simplest robust approach: make the fold state keyed by channel. Store `{ channelId, messages }` in state and reset synchronously via a derived check during render. Or: use the loaded merge only when `realtimeOverrides` belong to the current channel.
+
+Let me restructure: keep raw realtime events state; compute messages via useMemo that folds loadedMessages then realtime events, filtering events to current channel. No cross-channel leak, no effect race.
+
+
+
+Now the typing reset effect must also clear timeouts for the previous channel to avoid timer leaks firing on the new channel. The timeout callback filters by id regardless, so a stale timer just removes an id not present — harmless. Good.
+
+Rerun test + lint + typecheck on this hook.
+
+[94m[bash][0m $ npx jest src/modules/chat/hooks/__tests__/useChatChannelLive.test.tsx --config=packages/twenty-front...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx oxlint --type-aware -c .oxlintr...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | grep -E "error TS" | wc -l
+7 now — one new. Let me see which.
+
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | grep -E "error TS" | grep -v "front-components"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/hooks/useChatChannelLive.ts
+The narrowing doesn't hold inside the setState callback. Let me narrow explicitly with a type guard helper. Read event types after typing check: the remaining union is message | read | reaction. I only want message events. Let me add a guard.
+
+
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/hooks/useChatChannelLive.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/hooks/useChatChannelLive.ts
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | grep -cE "error TS"
+Back to 6 baseline. Now full chat suite once more, plus format/lint.
+
+[94m[bash][0m $ npx jest src/modules/chat --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -8
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx oxlint --type-aware -c .oxlintr...
+[94m[write][0m "import { useMutation } from '@apollo/client/react';
+import { useCallback, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+
+import {
+  SEND_CHAT_TYPING_INDICATOR_MUTATION,
+  t... (1868 chars)"
+Now let me review the remaining functional concerns:
+
+1. `useSendChatTypingIndicator` calls the mutation on every keystroke → network spam. The composer already debounces mention search; typing should be throttled. Let me check if there's an existing debounce util or `useThrottle`. Given scope, I should at least avoid a mutation per character. I'll add a simple trailing debounce in the hook. But mutations already fire on change. Let me add throttling via a timeout ref... `useRef` for non-render value is fine (not state). But `twenty/no-state-useref` might flag refs used to hold mutable derived state. Let me use `useState` for the timeout handle as elsewhere.
+
+Actually, `useWorkspacePresence.publishTyping` uses `realtimeConnectionManager.sendPresence` directly and the P2.3 primitive sends on each call; there's a fallback timeout server/client side. For chat, the server mutation per keystroke is heavy. Let me add a lightweight throttle: only publish `isTyping: true` at most once per 2s per channel, and always publish `false`.
+
+Let me implement inside `useSendChatTypingIndicator` with state-held last-published timestamp. Simpler: in ChatPage `handleDraftChange`, only publish typing true when transitioning from empty→non-empty. That reduces to one call per compose session. Combined with the 6s server-side fallback on the receiver, typing shows for up to 6s then clears, and we send `false` on submit. That's acceptable and minimal. But if a user types for >6s, indicator disappears on other side. Better to re-publish periodically.
+
+Given scope and Tier 0/1-only, I'll implement a simple throttle in the hook: publish true at most every 3s while typing continues. Let me do it in the hook with `useState` timestamp.
+
+Actually the cleanest: keep `useSendChatTypingIndicator` dumb, and in ChatPage track typing state transitions + an interval? That's complexity. Let me put a throttle in the hook.
+
+Now let me consider whether `RealtimeReconnectBanner` needs workspace; it likely uses `useRealtimeConnectionStatus`. It renders only when down. Its presence in ChatPage is fine. Let me check it doesn't require extra context.
+
+Also the composer `isSending` uses `useSendChatMessage` loading, not the queue. Fine.
+
+Now, an important integration detail: `useSendChatMessageWithQueue`'s `sendChatMessage` from `useSendChatMessage` requires `body`, `channelId`, `threadParentId`. Matches payload. Good.
+
+Let me run lint/format/typecheck on the typing hook.
+
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx oxlint --type-aware -c .oxlintr...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx oxfmt src/modules/chat/hooks/us...
+Now run the whole chat suite + tsgo once more, then check `nx lint:diff-with-main` (will say no changed files since uncommitted) and verify `git status` only shows my intended files.
+
+Let me also verify I didn't accidentally touch files outside scope. The `useChatAuthorLabels.ts` refactor is within the chat module — intended.
+
+Let me run final checks.
+
+
+
+[94m[bash][0m $ npx jest src/modules/chat --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -8
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | grep -cE "error TS"
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx nx lint:diff-with-main twenty-front 2>&1 | tail -15
+"No changed files" as expected (diffs main...HEAD; uncommitted edits use direct oxlint/oxfmt, phase-report precedent). Now verify git status only shows my files plus Ralph metadata.
+
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git status --porcelain
+[94m[bash][0m $ grep -n "throw\|return\|isDefined\|objectMetadataItem" packages/twenty-front/src/modules/object-meta...
+All files are mine (plus Ralph metadata and the phase report). No stray files, no reverts. `tasks/prd.json` was already dirty at session start (Ralph), not mine.
+
+Now let me double-check the search param deep-link works with the actual route path `/discussions`. `AppPath.Discussions = '/discussions'`. `getAppPath(AppPath.Discussions, undefined, { channelId })` → `/discussions?channelId=...`. Good.
+
+One concern: `openRoutedPageInSidePanel({ path })` with a query string — does it handle it? It's the same mechanism app results use with `record.path`, so it should. If it fails, fallback `navigate(path)` runs. Fine.
+
+Let me also verify the search provider doesn't break when `chatChannel` object isn't installed — `useFindManyRecords` calls `useObjectMetadataItem` which may warn/fail for unknown object. `useAppSearchResultItems` has no such guard. Let me check `useObjectMetadataItem` behavior for unknown object — it likely throws if not found. In a workspace without a2e-chat installed, Cmd+K opening search would call `useChatSearchResultItems` and query `chatChannel`/`chatMessage` metadata. That could be a regression for all users.
+
+Let me check how `useObjectMetadataItem` handles missing object.
+
+`useObjectMetadataItem` throws for unknown objects. So `useChatSearchResultItems` would throw on workspaces without a2e-chat. I must guard with `useDoObjectMetadataItemsExist` like `useObjectRecordSearchRecords` does, and skip the `useFindManyRecords` calls. But hooks can't be conditionally called; `useFindManyRecords` has a `skip`, yet `useObjectMetadataItem` inside it throws regardless of skip. Let me verify: `useFindManyRecords` calls `useObjectMetadataItem` unconditionally → throws.
+
+Check `useDoObjectMetadataItemsExist`.
+
+
+
+[94m[read][0m
+[94m[write][0m "import { isNonEmptyString } from '@sniptt/guards';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
+
+import { type GroupableSearchResultItem } from '@/s... (2448 chars)"
+I need to prevent `useFindManyRecords` from throwing when objects don't exist. I'll extract the queries into a child component/hook that is only rendered when metadata exists. The clean pattern: keep `useChatSearchResultItems` as the gate, and put the actual record queries in an inner hook called only when `exists` is true — but hooks must not be conditional.
+
+Cleaner: create a wrapper that conditionally renders an inner component. But `useChatSearchResultItems` returns items. Let me restructure: the hook checks existence, and only calls `useFindManyRecords` when exists using a pattern where the query hooks live in a separate hook invoked via a component. That's awkward for a hook API.
+
+Alternative: since `useFindManyRecords` uses `useObjectMetadataItem({ objectNameSingular })` which throws synchronously during render, I can make `useChatSearchResultItems` itself throw only if I call it. Let me instead query with `skip` by directly using `useObjectRecordSearchRecords`, which already guards existence internally and uses `skip`. That's the better primitive: it calls `useObjectMetadataItem`? No, it calls `useDoObjectMetadataItemsExist` and `useQuery`, not `useObjectMetadataItem`. So it's safe for unknown objects.
+
+But I need channel names for message subtitles. I can drop that and use the channel search results' names, or simply derive from the message's channel if present in channel results. To keep it robust and simple, use `useObjectRecordSearchRecords` for both `chatChannel` and `chatMessage`. The search returns labels; message label is the body (labelIdentifier is `body`). Channel label is `name`. 
+
+Let me switch the hook to `useObjectRecordSearchRecords`, which is the canonical search primitive. It gives `recordId`, `label`, `objectNameSingular`, `imageUrl`. Perfect.
+
+For message subtitle "Dans <channel>", I'd need channel name. I can omit the channel name and use a generic description, or resolve from channel results. Simpler: use `objectLabel` = 'Messages' as description. But nicer UX has channel. I'll build a channel-name lookup only when channels search returned results; otherwise generic. Actually to keep pure mapper testable, pass `resolveChannelName` returning a fallback. Let me simplify the description to a static "Message" and drop the channel name resolution — less machinery.
+
+Let me rewrite the hook and mapper accordingly.
+
+
+
+[94m[write][0m "import { useMemo } from 'react';
+
+import {
+  CHAT_CHANNEL_OBJECT_NAME_SINGULAR,
+  CHAT_MESSAGE_OBJECT_NAME_SINGULAR,
+  mapChatSearchRecordsToResultItems,
+} from '@/chat/utils/mapChatSearchRecordsToRes... (1786 chars)"
+Wait — message results have no `path`, so clicking falls through to the generic `getAppPath(AppPath.RecordShowPage, ...)` branch in the search page? Let me re-read: `if (isDefined(item.path))` → app path branch; `else if (isTaskOrNote)` → side panel; `else` → navigate to RecordShowPage with objectNameSingular/recordId. `chatMessage` object record show page exists (page layout defined). So clicking a message opens the message record page. That's acceptable ("search messages").
+
+But better UX: message result should deep-link to its channel. I need the message's channelId, which `useObjectRecordSearchRecords` doesn't return (only label/recordId). Not available. So RecordShowPage is the fallback. Fine.
+
+However there's a subtlety: `chatChannel` records also have no path if I don't set it for messages; channels do have path → deep link. Good.
+
+Now rewrite the hook using `useObjectRecordSearchRecords` (safe for uninstalled objects).
+
+
+
+[94m[write][0m "import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
+
+import { groupSearchResultItems } from '@/side-panel/pages/search/utils/groupSearchResultItems';
+impor... (2795 chars)"
+Now the `GroupableSearchResultItem` type requires `objectLabel` and `avatarType`, and `SearchResultItem` requires all its fields. My mapper returns items with `objectNameSingular` etc. Good. But message items lack `path`, which is optional. Fine.
+
+Update the mapper test to the new signature.
+
+
+
+Now `useObjectRecordSearchRecords`'s `searchRecords` type — check it has `objectNameSingular`. Yes (used in `useSidePanelSearchRecords`). Let me typecheck and test.
+
+[94m[bash][0m $ npx jest src/modules/chat/utils/__tests__/mapChatSearchRecordsToResultItems.test.ts --config=package...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx oxlint --type-aware -c .oxlintr...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx oxfmt src/modules/chat/hooks/us...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | grep -cE "error TS"
+Good. Now `useChatSearchResultItems` is called unconditionally in `SidePanelSearchRecordsPage`, and it no longer throws for non-installed objects. 
+
+Let me run the full chat suite once more and then the side-panel search-related tests if any exist.
+
+[94m[bash][0m $ npx jest --findRelatedTests src/modules/side-panel/pages/search/components/SidePanelSearchRecordsPag...
+Now let me run the broader realtime suite to make sure I didn't break it, since I reuse primitives.
+
+[94m[bash][0m $ npx jest src/modules/realtime --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -12
+All green. Now let me review the acceptance bullets once more and check the "AI stub: channel summarizer (P9)" part. The bullet says "Cmd+K: go to channel, search messages (provider); AI stub: channel summarizer (P9)". P9 is the AI phase; the "AI stub" is likely deferred to P9 per the parenthetical. The task's own acceptance criteria (prd.json) for P5.2-chat-live says: "Cmd+K: go to channel, search messages (provider); AI stub: channel summarizer (P9) [verbatim P5.2 bullet]". The `(P9)` marks the summarizer as owned by P9. So I'll leave it and note it under Missing for tick / Remaining.
+
+Let me verify there's no existing AI stub registry I should seed. The P1.5 audit says tools register via app logic functions. A channel summarizer AI stub would be P9. I'll note it.
+
+Now, final self-verify: check my Changed list and run the full set of checks one final time. Let me also run the `twenty-shared` build? I didn't touch twenty-shared, so skip.
+
+Let me compile the final changed file list and verify no i18n catalogs touched.
+
+
+
+[94m[bash][0m $ git status --porcelain -- packages/twenty-front | grep "??"
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && ls packages/twenty-front/src/modules/chat/hooks/__tests__...
+[94m[bash][0m $ npx jest src/modules/chat src/modules/realtime --config=packages/twenty-front/jest.config.mjs 2>&1 |...
+Now the final full verification run: all touched tests + typecheck + lint + format. Then write the reports.
+
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx oxfmt --check src/modules/chat/...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx oxlint --type-aware -c .oxlintr...
+[94m[bash][0m $ git rev-parse HEAD
+All checks green. Let me verify the phase report claim is still the most recent and confirm my base commit.
+
+[94m[bash][0m $ or fix the realtime publisher column names above. EOF echo done
+My claim is the most recent. Now let me write the phase report and progress entries.
+
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && head -40 .ralph-tui/progress.md
+Now append to `.ralph-tui/progress.md` (section 9b), and add a reusable pattern to the top `## Codebase Patterns` section.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ offline-queue tie-breaking must use array index, not uuid, to preserve typed order when timestamps c...
+Now let me do the final self-verify: all five section-5 conditions.
+
+1. Checks listed with literal command/result — yes.
+2. Acceptance bullets met — let me re-verify each.
+3. No file outside Changed list touched — verified via git status.
+4. git status shows only my files — yes.
+5. Claim still most recent — yes.
+
+Let me do a final git status and confirm nothing stray changed since.
+
+
+
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git status --porcelain && echo "--- claim lines ---" && g...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && node docs/scripts/check-docs.mjs 2>&1 | tail -8
+All conditions hold. Let me run the final combined verification one last time to be certain nothing regressed after the last edits (the reports only changed docs).
+
+[94m[bash][0m $ npx jest src/modules/chat src/modules/realtime --config=packages/twenty-front/jest.config.mjs 2>&1 |...
+All green. Summary of the completed slice:
+
+**P5.2-chat-live** (bullets 4 + 6) — done-for-review.
+
+- **Live layer** (`useChatChannelLive`): subscribes to `workspace:<id>:chat:<channelId>` via the existing `useRealtimeTopic`, folds `chat.message.*` events with an idempotent insert-by-id reducer, and expires typing indicators locally. Presence reuses `useWorkspacePresence` + `RealtimeTypingIndicator`/`RealtimePresenceAvatarStack`; reconnect banner in the pane.
+- **Offline queue** (`useSendChatMessageWithQueue`): parks composer payloads in the P2.2 namespaced queue while offline and replays in typed order on reconnect (FIFO by timestamp, insertion-order tie-break).
+- **Typing** (`useSendChatTypingIndicator`): throttled server mutation on the channel topic.
+- **Cmd+K** (`useChatSearchResultItems`): channel + message provider feeding the P1.4 grouping pipeline ("Discussions"/"Messages" headings), channel hits deep-link `/discussions?channelId=…`, honoured by `ChatPage`.
+
+Checks: chat+realtime jest 18 suites/76 tests green; tsgo only the 6 pre-existing baseline errors; oxlint/oxfmt clean on all 19 touched files; no twenty-shared/migration/i18n changes.
+
+One out-of-slice defect carried forward: the server `ChatRealtimePublisherService` still reads SDK join names instead of `${fieldName}Id`, so reaction/read fan-out is broken (reported for the realtime owner). The P9 channel summarizer is intentionally not built.
+
+<promise>COMPLETE</promise>

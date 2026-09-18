@@ -593,13 +593,14 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 42,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md task ID: P5.2 bullet 5; cross-app relation hazard precedent (accounting \"relation target not found\") is why the relation decision gates this story.",
       "dependsOn": [
         "P4.3-project-doc-relation-spike",
         "P5.1-chat-model",
         "P5.2-chat-page"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P8.1-notification-realtime",
@@ -829,6 +830,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-18T20:48:40.411Z"
+    "updatedAt": "2026-09-18T21:11:25.269Z"
   }
 }

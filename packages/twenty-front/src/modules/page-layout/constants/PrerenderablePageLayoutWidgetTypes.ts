@@ -14,6 +14,7 @@ export const PRERENDERABLE_PAGE_LAYOUT_WIDGET_TYPES: WidgetType[] = [
   WidgetType.FILES,
   WidgetType.EMAILS,
   WidgetType.CALENDAR,
+  WidgetType.DISCUSSIONS,
   WidgetType.FRONT_COMPONENT,
   WidgetType.IFRAME,
 ];

@@ -17,6 +17,14 @@
 // `message`/`messageThread`/`messageParticipant` in the workspace; a second
 // object named `message` would collide with that ledger, not extend it.
 
+// Cross-app relation targets. A2E Projects owns `project`; the FK/inverse pair
+// is owned by A2E Chat (consumer), so A2E Projects must be installed first
+// (D-P4.3-DOC: provider installed before consumer). Company is a standard
+// object and always present.
+export const EXTERNAL_OBJECT_IDS = {
+  project: 'c31b0200-0000-4000-8000-000000000000',
+} as const;
+
 export const OBJECT_IDS = {
   channel: 'c31c0100-0000-4000-8000-000000000000',
   channelMember: 'c31c0200-0000-4000-8000-000000000000',
@@ -32,6 +40,13 @@ export const RELATION_IDS = {
   channelMessages: 'c31c0100-0002-4000-8000-000000000001',
   channelMembers: 'c31c0100-0002-4000-8000-000000000002',
   channelReadCursors: 'c31c0100-0002-4000-8000-000000000003',
+  // Record-linked channel (P5.2): the FK lives on chatChannel and the inverse
+  // is a foreign-object field on the record (A2E Projects' project, standard
+  // company), both owned by A2E Chat — the D-P4.3-DOC consumer-owns rule.
+  channelProject: 'c31c0100-0002-4000-8000-000000000004',
+  projectDiscussions: 'c31c0100-0002-4000-8000-000000000005',
+  channelCompany: 'c31c0100-0002-4000-8000-000000000006',
+  companyDiscussions: 'c31c0100-0002-4000-8000-000000000007',
   channelMemberChannel: 'c31c0200-0002-4000-8000-000000000001',
   channelMemberWorkspaceMember: 'c31c0200-0002-4000-8000-000000000002',
   workspaceMemberChannelMemberships: 'c31c0200-0002-4000-8000-000000000003',
@@ -59,6 +74,13 @@ export const LABEL_IDENTIFIER_IDS = {
 
 export const LOGIC_FUNCTION_IDS = {
   postInstall: 'c31c0000-0012-4000-8000-000000000001',
+} as const;
+
+// Standalone tab attached to the standard company record page, so the company
+// discussions surface stays additive (no app page-layout override).
+export const PAGE_LAYOUT_TAB_IDS = {
+  companyDiscussions: 'c31c0000-0009-4000-8000-000000000001',
+  companyDiscussionsWidget: 'c31c0000-000a-4000-8000-000000000001',
 } as const;
 
 export const COMMAND_MENU_ITEM_IDS = {

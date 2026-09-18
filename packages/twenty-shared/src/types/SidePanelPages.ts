@@ -41,4 +41,6 @@ export enum SidePanelPages {
   SettingsMetadataTranslations = 'settings-metadata-translations',
   RoutedPage = 'routed-page',
   WorkflowCoreFilters = 'workflow-core-filters',
+  // Native chat mini-panel opened from a record's discussions tab.
+  ChatChannel = 'chat-channel',
 }

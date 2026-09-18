@@ -114,6 +114,28 @@ describe('getTabsRenderableForTargetObject', () => {
     expect(result.map((tab) => tab.id)).toEqual(['tab-4']);
   });
 
+  it('keeps the discussions tab only when the object has the discussions relation', () => {
+    const tabs = [
+      createMockTab('discussions-tab', [
+        createMockWidget('discussions-widget', WidgetType.DISCUSSIONS),
+      ]),
+    ];
+
+    expect(
+      getTabsRenderableForTargetObject({
+        tabs,
+        targetObjectFields: [],
+      }),
+    ).toHaveLength(0);
+
+    expect(
+      getTabsRenderableForTargetObject({
+        tabs,
+        targetObjectFields: [createRelationField('discussions')],
+      }).map((tab) => tab.id),
+    ).toEqual(['discussions-tab']);
+  });
+
   it('keeps both call recording widgets without a call recordings relation', () => {
     const tabs = [
       createMockTab('summary-tab', [

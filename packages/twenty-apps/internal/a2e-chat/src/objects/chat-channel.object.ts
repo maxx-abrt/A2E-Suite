@@ -1,12 +1,18 @@
-import { defineObject, FieldType } from 'twenty-sdk/define';
+import {
+  defineObject,
+  FieldType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
 
 import {
   channelKindOptions,
   channelPostingRoleOptions,
   channelVisibilityOptions,
+  manyToOne,
   oneToMany,
 } from '../constants/field-vocabulary.ts';
 import {
+  EXTERNAL_OBJECT_IDS,
   LABEL_IDENTIFIER_IDS,
   OBJECT_IDS,
   RELATION_IDS,
@@ -106,6 +112,33 @@ export default defineObject({
       relationTargetFieldMetadataUniversalIdentifier:
         RELATION_IDS.readCursorChannel,
       universalSettings: oneToMany,
+    },
+    {
+      // Record-linked channel: the project this conversation is attached to.
+      // Targets an object owned by A2E Projects (installed first).
+      universalIdentifier: RELATION_IDS.channelProject,
+      type: FieldType.RELATION,
+      name: 'project',
+      label: 'Projet',
+      icon: 'IconKanban',
+      relationTargetObjectMetadataUniversalIdentifier:
+        EXTERNAL_OBJECT_IDS.project,
+      relationTargetFieldMetadataUniversalIdentifier:
+        RELATION_IDS.projectDiscussions,
+      universalSettings: manyToOne('projectId'),
+    },
+    {
+      // Record-linked channel: the company this conversation is attached to.
+      universalIdentifier: RELATION_IDS.channelCompany,
+      type: FieldType.RELATION,
+      name: 'company',
+      label: 'Entreprise',
+      icon: 'IconBuildingSkyscraper',
+      relationTargetObjectMetadataUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      relationTargetFieldMetadataUniversalIdentifier:
+        RELATION_IDS.companyDiscussions,
+      universalSettings: manyToOne('companyId'),
     },
   ],
 });

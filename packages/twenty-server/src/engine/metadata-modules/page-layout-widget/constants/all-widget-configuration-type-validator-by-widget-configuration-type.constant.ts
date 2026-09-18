@@ -6,6 +6,7 @@ import { MessageCampaignBodyConfigurationDTO } from 'src/engine/metadata-modules
 import { MessageCampaignDetailsConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/message-campaign-details-configuration.dto';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
 import { CalendarConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/calendar-configuration.dto';
+import { DiscussionsConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/discussions-configuration.dto';
 import { EmailsConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/emails-configuration.dto';
 import { FieldConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/field-configuration.dto';
 import { FieldRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/field-rich-text-configuration.dto';
@@ -42,6 +43,7 @@ export const ALL_WIDGET_CONFIGURATION_TYPE_VALIDATOR_BY_WIDGET_CONFIGURATION_TYP
     EMAIL_THREAD: EmailThreadConfigurationDTO,
     CALL_RECORDING_SUMMARY: CallRecordingSummaryConfigurationDTO,
     CALL_RECORDING_TRANSCRIPT: CallRecordingTranscriptConfigurationDTO,
+    DISCUSSIONS: DiscussionsConfigurationDTO,
     MESSAGE_CAMPAIGN_BODY: MessageCampaignBodyConfigurationDTO,
     MESSAGE_CAMPAIGN_DETAILS: MessageCampaignDetailsConfigurationDTO,
     FIELD: FieldConfigurationDTO,

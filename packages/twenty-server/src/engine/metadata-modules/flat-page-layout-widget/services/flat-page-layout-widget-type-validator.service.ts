@@ -110,6 +110,9 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       FORM_FIELD: validateSimpleRecordPageWidgetForCreation(
         WidgetConfigurationType.FORM_FIELD,
       ),
+      DISCUSSIONS: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.DISCUSSIONS,
+      ),
     };
 
   private readonly PAGE_LAYOUT_WIDGET_TYPE_VALIDATOR_FOR_UPDATE_HASHMAP: FlatPageLayoutWidgetTypeValidatorForUpdate =
@@ -178,6 +181,9 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       ),
       FORM_FIELD: validateSimpleRecordPageWidgetForUpdate(
         WidgetConfigurationType.FORM_FIELD,
+      ),
+      DISCUSSIONS: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.DISCUSSIONS,
       ),
     };
 

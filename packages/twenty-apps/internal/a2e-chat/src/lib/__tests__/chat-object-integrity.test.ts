@@ -1,9 +1,13 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+import {
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  STANDARD_PAGE_LAYOUT,
+} from 'twenty-sdk/define';
 
 import {
+  EXTERNAL_OBJECT_IDS,
   FRONT_COMPONENT_IDS,
   OBJECT_IDS,
   RELATION_IDS,
@@ -72,6 +76,17 @@ type PageLayoutDefinition = {
   }[];
 };
 
+type PageLayoutTabDefinition = {
+  universalIdentifier: string;
+  pageLayoutUniversalIdentifier: string;
+  title: string;
+  widgets?: {
+    universalIdentifier: string;
+    type: string;
+    configuration?: { configurationType: string };
+  }[];
+};
+
 type NavigationMenuItemDefinition = {
   universalIdentifier: string;
   name?: string;
@@ -117,6 +132,8 @@ const FIELD_MODULE_PATHS = [
   '../../fields/workspace-member-messages.field.ts',
   '../../fields/workspace-member-reactions.field.ts',
   '../../fields/workspace-member-read-cursors.field.ts',
+  '../../fields/project-discussions.field.ts',
+  '../../fields/company-discussions.field.ts',
 ];
 
 const VIEW_MODULE_PATHS = [
@@ -128,6 +145,10 @@ const VIEW_MODULE_PATHS = [
 const PAGE_LAYOUT_MODULE_PATHS = [
   '../../page-layouts/chat-channel.page-layout.ts',
   '../../page-layouts/chat-message.page-layout.ts',
+];
+
+const PAGE_LAYOUT_TAB_MODULE_PATHS = [
+  '../../page-layout-tabs/company-discussions.page-layout-tab.ts',
 ];
 
 const NAVIGATION_MENU_MODULE_PATHS = [
@@ -223,6 +244,7 @@ const loadGraph = async () => {
 
   const views: ViewDefinition[] = [];
   const pageLayouts: PageLayoutDefinition[] = [];
+  const pageLayoutTabs: PageLayoutTabDefinition[] = [];
   const navigationMenuItems: NavigationMenuItemDefinition[] = [];
   const commandMenuItems: CommandMenuItemDefinition[] = [];
   const roles: RoleDefinition[] = [];
@@ -233,6 +255,10 @@ const loadGraph = async () => {
 
   for (const path of PAGE_LAYOUT_MODULE_PATHS) {
     pageLayouts.push(await unwrap<PageLayoutDefinition>(path));
+  }
+
+  for (const path of PAGE_LAYOUT_TAB_MODULE_PATHS) {
+    pageLayoutTabs.push(await unwrap<PageLayoutTabDefinition>(path));
   }
 
   for (const path of NAVIGATION_MENU_MODULE_PATHS) {
@@ -254,10 +280,17 @@ const loadGraph = async () => {
     fieldById,
     views,
     pageLayouts,
+    pageLayoutTabs,
     navigationMenuItems,
     commandMenuItems,
     roles,
-    resolvableObjectIds: new Set([...objectIds, ...standardObjectIds]),
+    // `project` belongs to A2E Projects, a separate app installed before chat;
+    // its universal identifier is a known cross-app target at install time.
+    resolvableObjectIds: new Set([
+      ...objectIds,
+      ...standardObjectIds,
+      ...Object.values(EXTERNAL_OBJECT_IDS),
+    ]),
     resolvableFieldIds: new Set([...fieldById.keys(), ...standardFieldIds]),
     frontComponentIds: new Set<string>(Object.values(FRONT_COMPONENT_IDS)),
   };
@@ -345,6 +378,17 @@ test('no universal identifier is declared twice across the whole app manifest', 
           `pageLayout:${layout.name}:tab[${tabIndex}].widget[${widgetIndex}]`,
         );
       }
+    }
+  }
+
+  for (const tab of graph.pageLayoutTabs) {
+    register(tab.universalIdentifier, `pageLayoutTab:${tab.title}`);
+
+    for (const [widgetIndex, widget] of (tab.widgets ?? []).entries()) {
+      register(
+        widget.universalIdentifier,
+        `pageLayoutTab:${tab.title}:widget[${widgetIndex}]`,
+      );
     }
   }
 
@@ -521,6 +565,26 @@ test('every page-layout widget references existing metadata', async () => {
   }
 
   assert.deepEqual(unresolved, []);
+});
+
+test('the company discussions tab attaches additively to the standard company layout', async () => {
+  const graph = await loadGraph();
+
+  assert.equal(graph.pageLayoutTabs.length, 1);
+
+  const tab = graph.pageLayoutTabs[0];
+
+  assert.equal(tab.title, 'Discussions');
+  assert.equal(
+    tab.pageLayoutUniversalIdentifier,
+    STANDARD_PAGE_LAYOUT.companyRecordPage.universalIdentifier,
+  );
+  assert.equal(tab.widgets?.length, 1);
+  assert.equal(tab.widgets?.[0]?.type, 'DISCUSSIONS');
+  assert.equal(
+    tab.widgets?.[0]?.configuration?.configurationType,
+    'DISCUSSIONS',
+  );
 });
 
 test('the navigation item resolves to a declared view and commands resolve to front components', async () => {

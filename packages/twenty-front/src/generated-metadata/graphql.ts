@@ -936,6 +936,11 @@ export type CallRecordingTranscriptConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
+export type DiscussionsConfiguration = {
+  __typename?: 'DiscussionsConfiguration';
+  configurationType: WidgetConfigurationType;
+};
+
 export type CampaignAudiencePreviewDto = {
   __typename?: 'CampaignAudiencePreviewDTO';
   duplicateEmails: Scalars['Int']['output'];
@@ -6928,7 +6933,7 @@ export type Webhook = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | EmailThreadConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | FormFieldConfiguration | FrontComponentConfiguration | IframeConfiguration | LineChartConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | NotesConfiguration | PieChartConfiguration | RecordTableConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration;
+export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | DiscussionsConfiguration | EmailThreadConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | FormFieldConfiguration | FrontComponentConfiguration | IframeConfiguration | LineChartConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | NotesConfiguration | PieChartConfiguration | RecordTableConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration;
 
 export enum WidgetConfigurationType {
   AGGREGATE_CHART = 'AGGREGATE_CHART',
@@ -6936,6 +6941,7 @@ export enum WidgetConfigurationType {
   CALENDAR = 'CALENDAR',
   CALL_RECORDING_SUMMARY = 'CALL_RECORDING_SUMMARY',
   CALL_RECORDING_TRANSCRIPT = 'CALL_RECORDING_TRANSCRIPT',
+  DISCUSSIONS = 'DISCUSSIONS',
   EMAILS = 'EMAILS',
   EMAIL_THREAD = 'EMAIL_THREAD',
   FIELD = 'FIELD',
@@ -6964,6 +6970,7 @@ export enum WidgetType {
   CALENDAR = 'CALENDAR',
   CALL_RECORDING_SUMMARY = 'CALL_RECORDING_SUMMARY',
   CALL_RECORDING_TRANSCRIPT = 'CALL_RECORDING_TRANSCRIPT',
+  DISCUSSIONS = 'DISCUSSIONS',
   EMAILS = 'EMAILS',
   EMAIL_THREAD = 'EMAIL_THREAD',
   FIELD = 'FIELD',

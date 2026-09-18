@@ -1,3 +1,4 @@
+import { SidePanelChatChannelPage } from '@/chat/side-panel/components/SidePanelChatChannelPage';
 import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage';
 import { SidePanelNavigationMenuItemEditPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage';
@@ -84,6 +85,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
     <SidePanelRecordPageFieldSettings />,
   ],
   [SidePanelPages.ViewFrontComponent, <SidePanelFrontComponentPage />],
+  [SidePanelPages.ChatChannel, <SidePanelChatChannelPage />],
   [
     SidePanelPages.PageLayoutRecordPageWidgetTypeSelect,
     <SidePanelPageLayoutRecordPageWidgetTypeSelect />,
