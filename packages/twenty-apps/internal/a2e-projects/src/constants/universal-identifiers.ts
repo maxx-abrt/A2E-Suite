@@ -63,6 +63,9 @@ export const LOGIC_FUNCTION_IDS = {
   taskHumanId: 'c31b0000-0012-4000-8000-000000000007',
   recurringTaskGenerator: 'c31b0000-0012-4000-8000-000000000009',
   retroplanning: 'c31b0000-0012-4000-8000-00000000000b',
+  // AI tool seed (P4.3): inert « extract tasks from document » stub consumed
+  // by the P9.2 document actions. Registered, never dispatched for writes.
+  extractTasksFromDocument: 'c31b0000-0012-4000-8000-00000000000d',
 } as const;
 
 // Task-extension fields live on the standard task object (app fields,
