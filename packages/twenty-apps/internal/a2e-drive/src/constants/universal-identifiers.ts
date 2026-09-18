@@ -33,6 +33,7 @@ export const FOLDER_FIELD_IDS = {
   name: 'c31d0100-0001-4000-8000-000000000001',
   icon: 'c31d0100-0001-4000-8000-000000000002',
   color: 'c31d0100-0001-4000-8000-000000000003',
+  archivedAt: 'c31d0100-0001-4000-8000-000000000004',
 } as const;
 
 // Fields pinned on the standard `attachment` object. The relation field is
@@ -45,6 +46,7 @@ export const ATTACHMENT_FIELD_IDS = {
   starred: 'c31d0200-0001-4000-8000-000000000003',
   sourceApp: 'c31d0200-0001-4000-8000-000000000004',
   description: 'c31d0200-0001-4000-8000-000000000005',
+  archivedAt: 'c31d0200-0001-4000-8000-000000000006',
 } as const;
 
 export const VIEW_IDS = {
@@ -54,6 +56,7 @@ export const VIEW_IDS = {
 
 export const LOGIC_FUNCTION_IDS = {
   guardDriveFolderParentCycle: 'c31d0000-0012-4000-8000-000000000001',
+  purgeDriveTrash: 'c31d0000-0012-4000-8000-000000000002',
 } as const;
 
 export const NAVIGATION_MENU_ITEM_IDS = {

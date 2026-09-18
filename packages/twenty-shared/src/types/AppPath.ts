@@ -24,6 +24,8 @@ export enum AppPath {
   Discussions = '/discussions',
   // Native inbox for P8 notifications (core-schema rows, not an app object).
   Inbox = '/inbox',
+  // Native workspace file browser (a2e-drive folders + standard attachments).
+  Drive = '/drive',
   Index = '/',
   // Mobile only: the navigation menu is a page there rather than a drawer.
   Home = '/home',

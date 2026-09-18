@@ -58,6 +58,15 @@ export default defineObject({
       isNullable: true,
     },
     {
+      universalIdentifier: FOLDER_FIELD_IDS.archivedAt,
+      type: FieldType.DATE_TIME,
+      name: 'archivedAt',
+      label: 'Archivé le',
+      description: 'Présent = dans la corbeille (restauration 7 jours)',
+      icon: 'IconArchive',
+      isNullable: true,
+    },
+    {
       universalIdentifier: RELATION_IDS.folderParent,
       type: FieldType.RELATION,
       name: 'parent',

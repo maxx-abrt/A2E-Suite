@@ -53,6 +53,7 @@ const FIELD_MODULE_PATHS = [
   '../../fields/attachment-starred.field.ts',
   '../../fields/attachment-source-app.field.ts',
   '../../fields/attachment-description.field.ts',
+  '../../fields/attachment-archived-at.field.ts',
 ];
 
 type OwnedField = {
@@ -346,4 +347,22 @@ test('starred, sourceApp and description are additive presentation fields', asyn
   assert.equal(description.type, 'TEXT');
   assert.equal(description.name, 'description');
   assert.equal(description.isNullable, true);
+});
+
+test('archivedAt is the shared 7-day corbeille marker on folders and files', async () => {
+  const graph = await loadGraph();
+  const folderArchivedAt = findFieldById(graph, FOLDER_FIELD_IDS.archivedAt);
+  const fileArchivedAt = findFieldById(graph, ATTACHMENT_FIELD_IDS.archivedAt);
+
+  for (const field of [folderArchivedAt, fileArchivedAt]) {
+    assert.equal(field.type, 'DATE_TIME');
+    assert.equal(field.name, 'archivedAt');
+    assert.equal(field.isNullable, true);
+  }
+
+  assert.equal(
+    graph.fieldById.get(FOLDER_FIELD_IDS.archivedAt)
+      ?.owningObjectUniversalIdentifier,
+    OBJECT_IDS.driveFolder,
+  );
 });

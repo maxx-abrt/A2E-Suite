@@ -53,6 +53,12 @@ const InboxPage = lazy(() =>
   })),
 );
 
+const DrivePage = lazy(() =>
+  import('~/pages/drive/DrivePage').then((module) => ({
+    default: module.DrivePage,
+  })),
+);
+
 const MobileHomePage = lazy(() =>
   import('~/pages/mobile-home/MobileHomePage').then((module) => ({
     default: module.MobileHomePage,
@@ -152,6 +158,14 @@ export const createWorkspaceRouteObjects = ({
       element: (
         <LazyRoute>
           <InboxPage />
+        </LazyRoute>
+      ),
+    },
+    {
+      path: AppPath.Drive,
+      element: (
+        <LazyRoute>
+          <DrivePage />
         </LazyRoute>
       ),
     },

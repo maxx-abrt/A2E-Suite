@@ -1,0 +1,325 @@
+# Iteration 18 Log
+
+## Metadata
+
+- **Task ID**: P6.1-drive-model
+- **Task Title**: P6.1: drive model — driveFolder object + attachment extensions (folderId, starred, sourceApp, description)
+- **Description**: As a workspace member, I want folders and richer attachment metadata, so that files can be organized without a parallel file system.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-18T22:20:09.353Z
+- **Ended At**: 2026-09-18T22:28:48.153Z
+- **Duration**: 8m 38s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ ls docs/plan/phases/ 2>/dev/null | head -50
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "P6.1" PLAN.md
+[94m[bash][0m $ grep -n "P6.1\|P1.7a\|P0.2\|P0.4" docs/plan/phases/phase-06-report.md | tail -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "1.7a\|P1.7a" PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-06-report.md
+[94m[bash][0m $ git log --oneline -20
+[94m[bash][0m $ grep -rn "unblock\|P6.1\|a2e-drive" docs/plan/phases/phase-01-report.md PLAN.md | grep -i "unblock\|...
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) items = d if isinstance(d,list) else d....
+[94m[bash][0m $ ls packages/twenty-apps/internal/ && echo "---" && ls packages/twenty-apps/internal/a2e-projects/
+[94m[bash][0m $ grep -n "P1.1" PLAN.md | head
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-projects -type f -not -path '*/node_modules/*' | sort
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents -type f -not -path '*/node_modules/*' | sort
+[94m[bash][0m $ done
+[94m[bash][0m $ cat "packages/twenty-apps/internal/a2e-documents/src/objects/document.object.ts"
+[94m[bash][0m $ done
+[94m[bash][0m $ cat "packages/twenty-apps/internal/a2e-documents/src/lib/__tests__/document-cycle.test.ts"
+[94m[bash][0m $ cat "packages/twenty-apps/internal/a2e-documents/src/views/all-documents.view.ts"
+[94m[bash][0m $ cat "packages/twenty-apps/internal/a2e-documents/src/page-layouts/document.page-layout.ts"
+[94m[bash][0m $ grep -rn "README-A2E\|UUID discipline\|UUIDv4" docs/plan/01-codebase-map.md docs/README.md AGENTS.md...
+[94m[bash][0m $ ls docs/ | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/README-A2E.md
+[94m[bash][0m $ sed -n '1,80p' "packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts"
+[94m[bash][0m $ grep -n "attachment" packages/twenty-shared/src/metadata/constants/standard-object.constant.ts | hea...
+[94m[bash][0m $ done
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-chat/src -maxdepth 2 -type f 2>/dev/null | sort
+[94m[bash][0m $ sed -n '1,20p' packages/twenty-apps/internal/a2e-chat/src/application.config.ts
+[94m[bash][0m $ grep -n "APPLICATION_UNIVERSAL_IDENTIFIER =" -A2 packages/twenty-apps/internal/a2e-accounting/src/ap...
+[94m[bash][0m $ grep -rhn "c31[a-z]" packages/twenty-apps/internal/*/src 2>/dev/null | grep -o "c31[a-z]" | sort -u
+[94m[bash][0m $ grep -rn "c31d" . -l --include=*.ts --include=*.md --include=*.json 2>/dev/null | grep -v node_modul...
+[94m[bash][0m $ grep -rn "c31d" packages/twenty-apps/internal/*/src 2>/dev/null | head -30
+[94m[bash][0m $ grep -rn "STANDARD_OBJECT_FIELDS" packages/twenty-shared/src/metadata/constants/standard-object.cons...
+[94m[bash][0m $ grep -rn "attachment" packages/twenty-shared/src/metadata/constants/standard-object-fields.constant....
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/metadata/constants/standard-object-fields.constant.ts
+[94m[bash][0m $ cat packages/twenty-server/src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+[94m[bash][0m $ grep -rln "standardObject\|person\.universalIdentifier\|company\.universalIdentifier" packages/twent...
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents/node_modules/twenty-sdk -name "*.d.ts" | head -20
+[94m[bash][0m $ grep -rn "STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS" packages/twenty-apps/internal/a2e-documents/node_mo...
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents/node_modules/twenty-sdk/dist -name "*standard*" | h...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "oxfmt\|dev:build\|node --test" docs/plan/phases/*.md | head -40
+[94m[bash][0m $ grep -n "oxfmt" package.json | head
+[94m[bash][0m $ node --version
+[94m[bash][0m $ curl -s -o /dev/null -w "%{http_code}" --max-time 6 https://registry.npmjs.org/twenty-sdk 2>/dev/nul...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-chat/src/logic-functions/post-install.ts
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-chat/src/command-menu-items/go-to-chat.command-menu-item.ts
+[94m[bash][0m $ grep -rn "tasksOnProject" packages/twenty-apps/internal/a2e-projects/src | head
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-chat/src/fields/company-discussions.field.ts
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/package.json
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-chat/.yarnrc.yml
+[94m[bash][0m $ cat packages/twenty-apps/internal/real-estate/src/views/buyers.view.ts 2>/dev/null || cat packages/t...
+[94m[bash][0m $ cat packages/twenty-apps/internal/real-estate/src/fields/person-desired-area.field.ts 2>/dev/null
+[94m[bash][0m $ grep -rln "IconFolder" packages/twenty-ui/src 2>/dev/null | head -3
+[94m[bash][0m $ ls packages/twenty-ui/src/icon/icon-dictionary.md 2>/dev/null && echo yes
+[94m[bash][0m $ grep -in "folder\|star\|palette\|align\|color\|file" packages/twenty-ui/src/icon/icon-dictionary.md ...
+[94m[bash][0m $ grep -oE "Icon[A-Za-z0-9]+" packages/twenty-ui/src/icon/constants/TwentyIconDictionary.ts 2>/dev/nul...
+[94m[bash][0m $ grep -oE "'Icon[A-Za-z0-9]+'|\"Icon[A-Za-z0-9]+\"" packages/twenty-ui/src/icon/constants/TwentyIconD...
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ cat >> docs/plan/phases/phase-06-report.md <<'EOF'  CLAIMED — P6.1-drive-model/drive-model — deepsee...
+[94m[todowrite][0m
+[94m[bash][0m $ ls "packages/twenty-apps/internal/a2e-drive/src"
+[94m[write][0m "# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn
+
+# codegen
+generated
+
+# testing
+/coverage
+/e2e/.auth
+/e2e/.result... (468 chars)"
+[94m[write][0m "24.5.0
+"
+[94m[write][0m "nodeLinker: node-modules
+"
+[94m[write][0m "{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript"],
+  "categories": {
+    "correctness": "off"
+  },
+  "ignorePatterns": ["node_modules", "dist"],
+  "rules": ... (947 chars)"
+[94m[write][0m "{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "allowSyntheticDefaultImpo... (758 chars)"
+[94m[write][0m "{
+  "name": "a2e-drive",
+  "version": "0.1.0",
+  "license": "MIT",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2",
+    "twenty": ">=2.19.0"
+  },
+  "keywords"... (823 chars)"
+[94m[write][0m "import { defineApplication } from 'twenty-sdk/define';
+
+export const APPLICATION_UNIVERSAL_IDENTIFIER =
+  'b11cd01f-75de-4acd-8e67-0e9c484fde02';
+
+export default defineApplication({
+  universalIdentif... (404 chars)"
+[94m[write][0m "import { defineApplicationRole } from 'twenty-sdk/define';
+
+export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+  'b113a2ff-45e5-4e47-a36c-36293981f4cc';
+
+export default defineApplicationRole({
+... (518 chars)"
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[write][0m "// Universal identifiers for A2E Drive.
+//
+// One UUIDv4-class identifier per declarable thing, committed forever
+// (additive-only law). A2E Documents owns c31a*, A2E Projects owns c31b*,
+// A2E Chat... (3014 chars)"
+[94m[write][0m "import { RelationType } from 'twenty-sdk/define';
+
+// Shared relation vocabulary, matching the A2E Documents/Projects apps so a
+// relation declaration reads the same in every first-party app.
+export ... (401 chars)"
+[94m[write][0m "import {
+  defineObject,
+  FieldType,
+  OnDeleteAction,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { manyToOne, oneToMany } from '../constants/field-vocabulary.ts';
+i... (3322 chars)"
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  OnDeleteAction,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import {
+  ATTACHMENT_FIELD_IDS,
+  OBJECT_IDS,
+} from '../c... (1427 chars)"
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { ATTACHMENT_FIELD_IDS } from '../constants/universal-identifiers.ts';
+
+// A personal ... (674 chars)"
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { ATTACHMENT_FIELD_IDS } from '../constants/universal-identifiers.ts';
+
+// Bureau `sou... (852 chars)"
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { ATTACHMENT_FIELD_IDS } from '../constants/universal-identifiers.ts';
+
+// Optional hu... (606 chars)"
+[94m[write][0m "import {
+  defineView,
+  ViewOpenRecordIn,
+  ViewSortDirection,
+  ViewType,
+} from 'twenty-sdk/define';
+
+import {
+  FOLDER_FIELD_IDS,
+  OBJECT_IDS,
+  RELATION_IDS,
+  VIEW_IDS,
+  viewFieldId,
+} from '.... (1733 chars)"
+[94m[write][0m "import {
+  defineView,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  ViewOpenRecordIn,
+  ViewType,
+} from 'twenty-sdk/define';
+
+import {
+  ATTACHMENT_FIELD_IDS,
+  VIEW_IDS,
+  viewFieldId,
+} from '../cons... (2015 chars)"
+[94m[write][0m "import {
+  defineNavigationMenuItem,
+  NavigationMenuItemType,
+} from 'twenty-sdk/define';
+
+import {
+  NAVIGATION_MENU_ITEM_IDS,
+  VIEW_IDS,
+} from '../constants/universal-identifiers.ts';
+
+// Positio... (605 chars)"
+[94m[write][0m "import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+
+import { OBJECT_IDS } from '../constants/universal-identifiers.ts';
+
+// Folder record page: native fields plus the timel... (1791 chars)"
+[94m[bash][0m $ grep -n "FIELD_RELATION\|FIELD_RICH_TEXT\|configurationType: 'FIELDS'\|FieldRelationConfiguration\|F...
+[94m[read][0m
+[94m[write][0m "import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+
+import { OBJECT_IDS } from '../constants/universal-identifiers.ts';
+
+// Folder record page: the native fields widget alr... (1503 chars)"
+[94m[write][0m "// Folder-tree cycle guard, mirroring the P3.3 document pattern. The folder
+// tree is writable by any API client, so a committed move must be re-checked
+// where it lands. A database event fires afte... (4899 chars)"
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+import {
+  type DatabaseEventPayload,
+  defineLogicFunction,
+} from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTION_IDS } from '../constants/unive... (2570 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  isFolderParentCycle,
+  readFolderParentChange,
+  readFolderParentId,
+  repairFolderParentCycle,
+  resolveFolderCy... (6361 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+import {
+  ATTACHMENT_FIELD_IDS,
+  FOLDER_FIELD_... (11479 chars)"
+[94m[bash][0m $ cp packages/twenty-apps/internal/a2e-chat/yarn.lock packages/twenty-apps/internal/a2e-drive/yarn.loc...
+[94m[bash][0m $ ls -la packages/twenty-apps/internal/a2e-chat/ | grep -i yarn
+[94m[bash][0m $ cp "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/yarn.lock" "/Users/max...
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -30
+[94m[bash][0m $ echo "typecheck exit=$?"
+[94m[bash][0m $ echo "lint exit=$?"
+[94m[bash][0m $ echo "test exit=${PIPESTATUS[0]}"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/lib/__tests__/drive-folder-graph.test.ts
+[94m[bash][0m $ echo "test exit=${PIPESTATUS[0]}"
+[94m[bash][0m $ echo "dev:build exit=${PIPESTATUS[0]}"
+[94m[bash][0m $ "
+[94m[bash][0m $ "
+[94m[bash][0m $ "
+[94m[bash][0m $ "
+[94m[bash][0m $ echo "exit=${PIPESTATUS[0]}"
+[94m[bash][0m $ git diff -- "packages/twenty-apps/internal/a2e-drive/src/views/all-drive-files.view.ts" | head -60
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/views/all-drive-files.view.ts
+[94m[bash][0m $ echo "exit=${PIPESTATUS[0]}"
+[94m[bash][0m $ grep -rln "a2e-chat\|a2e-documents" --exclude-dir=node_modules --exclude-dir=.twenty --exclude-dir=....
+[94m[bash][0m $ grep -rhoE "c31d[0-9a-f-]+" src | sort | uniq -d
+[94m[bash][0m $ grep -n "a2e-drive@workspace\|a2e-chat@workspace" packages/twenty-apps/internal/a2e-drive/yarn.lock ...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx oxfmt --check "packages/twenty-apps/internal/a2e-driv...
+[94m[bash][0m $ echo "dev:build exit=${PIPESTATUS[0]}"
+[94m[bash][0m $ git status --porcelain | grep -v "^ M .ralph-tui\|^?? .ralph-tui\|^ M tasks/prd.json"
+[94m[bash][0m $ git status --porcelain --untracked-files=all packages/twenty-apps/internal/a2e-drive | sed 's/^/  /'
+[94m[bash][0m $ echo "exit=${PIPESTATUS[0]}"
+[94m[bash][0m $ application/role UUIDs committed in `application.config.ts` / `default-function.role.ts`. **Remainin...
+[94m[bash][0m $ tail -40 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -5 .ralph-tui/progress.md
+[94m[todowrite][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-06-report.md
+[94m[bash][0m $ tail -14 docs/plan/phases/phase-06-report.md
+Done. Implemented **P6.1-drive-model** (bullets 2–3) as a new metadata-only app `packages/twenty-apps/internal/a2e-drive/`.
+
+**What shipped**
+- `driveFolder` object: `name` (label id), `icon`, `color`, `parent`/`children` CASCADE self-relation, `files` inverse; `position` is the auto system field.
+- Attachment extensions per the P6.1 spike (additive, not a morph target): `attachment.folder` MANY_TO_ONE → join column `folderId` (SET_NULL), `starred` BOOLEAN, `sourceApp` TEXT attribution, `description` TEXT.
+- Scaffold per README-A2E: own lockfile/node_modules, fresh application+role UUIDs, `c31d*` namespace, views (`all-drive-folders`, `all-drive-files` on the standard `attachment`), nav item, folder record page layout.
+- Folder graph coverage: `drive-folder-cycle.ts` + `guard-drive-folder-parent-cycle` logic function (P3.3 mirror) and `drive-folder-{cycle,graph}.test.ts` (21 tests).
+
+**Checks (all green, Tier 0/1)**
+- `yarn typecheck` exit 0; `yarn lint` 0/0; `yarn test:unit` 21/21; `npx twenty dev:build .` → `Build succeeded`; `npx oxfmt --check <app>` clean; `check-docs.mjs` PASS.
+
+**Missing for tick (Tier 2, orchestrator):** `app:publish --private` + `app:install` to confirm the standard `attachment` accepts app fields and `folderId` materializes live. Phase report + `progress.md` appended; no commit made.
+
+<promise>COMPLETE</promise>
