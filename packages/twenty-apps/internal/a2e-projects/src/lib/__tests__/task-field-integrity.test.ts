@@ -72,6 +72,7 @@ const FIELD_MODULE_PATHS = [
   '../../fields/task-priority.field.ts',
   '../../fields/task-project.field.ts',
   '../../fields/task-project-status.field.ts',
+  '../../fields/task-retroplanning-provenance.field.ts',
   '../../fields/task-subtask.field.ts',
   '../../fields/task-subtasks.field.ts',
   '../../fields/task-time-entries.field.ts',
@@ -450,6 +451,19 @@ test('the human id is a plain nullable TEXT field minted by the allocator', asyn
   assert.equal(humanId.type, 'TEXT');
   assert.equal(humanId.name, 'humanId');
   assert.equal(humanId.isNullable, true);
+});
+
+test('the retroplanning provenance is a plain nullable TEXT field', async () => {
+  const graph = await loadGraph();
+  const provenance = findFieldById(graph, TASK_FIELD_IDS.retroplanningProvenance);
+
+  assert.equal(provenance.type, 'TEXT');
+  assert.equal(provenance.name, 'retroplanningProvenance');
+  assert.equal(provenance.isNullable, true);
+  assert.equal(
+    provenance.objectUniversalIdentifier,
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.universalIdentifier,
+  );
 });
 
 test('time tracking keeps one timeEntry object related to task, project and member', async () => {

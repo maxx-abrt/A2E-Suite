@@ -149,6 +149,7 @@ const FIELD_MODULE_PATHS = [
   '../../fields/task-priority.field.ts',
   '../../fields/task-project.field.ts',
   '../../fields/task-project-status.field.ts',
+  '../../fields/task-retroplanning-provenance.field.ts',
   '../../fields/task-subtask.field.ts',
   '../../fields/task-subtasks.field.ts',
   '../../fields/task-time-entries.field.ts',

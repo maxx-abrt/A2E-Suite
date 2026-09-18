@@ -62,6 +62,7 @@ export const LOGIC_FUNCTION_IDS = {
   purgeTrash: 'c31b0000-0012-4000-8000-000000000005',
   taskHumanId: 'c31b0000-0012-4000-8000-000000000007',
   recurringTaskGenerator: 'c31b0000-0012-4000-8000-000000000009',
+  retroplanning: 'c31b0000-0012-4000-8000-00000000000b',
 } as const;
 
 // Task-extension fields live on the standard task object (app fields,
@@ -81,6 +82,9 @@ export const TASK_FIELD_IDS = {
   parentTask: 'c31b0201-0001-4000-8000-000000000008',
   taskLabels: 'c31b0201-0002-4000-8000-000000000003',
   humanId: 'c31b0201-0001-4000-8000-000000000009',
+  // Retroplanning provenance (P4.2): `<recipeKey>@v<version>:<taskKey>#<genDueAt>`.
+  // Its own TEXT slot so replanning can tell an owned task from a manual one.
+  retroplanningProvenance: 'c31b0201-0001-4000-8000-00000000000a',
 } as const;
 
 export const COMMAND_MENU_ITEM_IDS = {

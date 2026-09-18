@@ -3,10 +3,10 @@
   "sessionId": "f4efa378-7afd-4697-a69b-09f44239da8d",
   "status": "running",
   "startedAt": "2026-09-18T04:25:41.281Z",
-  "updatedAt": "2026-09-18T06:22:28.244Z",
-  "currentIteration": 19,
+  "updatedAt": "2026-09-18T17:34:06.942Z",
+  "currentIteration": 20,
   "maxIterations": 20,
-  "tasksCompleted": 15,
+  "tasksCompleted": 16,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -206,6 +206,16 @@
       "durationMs": 559985,
       "startedAt": "2026-09-18T06:02:20.435Z",
       "endedAt": "2026-09-18T06:11:40.420Z"
+    },
+    {
+      "iteration": 20,
+      "status": "completed",
+      "taskId": "P2.1-acl-enforcement",
+      "taskTitle": "P2.1: enforce workspace, member, record and channel ACLs at subscribe and on revocation",
+      "taskCompleted": true,
+      "durationMs": 642304,
+      "startedAt": "2026-09-18T06:11:45.936Z",
+      "endedAt": "2026-09-18T06:22:28.240Z"
     }
   ],
   "skippedTaskIds": [],

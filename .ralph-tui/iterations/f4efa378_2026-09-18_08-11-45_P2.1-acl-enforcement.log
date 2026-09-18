@@ -1,0 +1,207 @@
+# Iteration 20 Log
+
+## Metadata
+
+- **Task ID**: P2.1-acl-enforcement
+- **Task Title**: P2.1: enforce workspace, member, record and channel ACLs at subscribe and on revocation
+- **Description**: As a workspace admin, I want topic subscriptions to enforce workspace, member, record and channel ACLs — and to drop access on revocation — so that private document/chat topics never leak to unauthori...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-18T06:11:45.936Z
+- **Ended At**: 2026-09-18T06:22:28.240Z
+- **Duration**: 10m 42s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the mandatory clean-start check and task confirmation.
+[94m[bash][0m $ git rev-parse HEAD
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ ls docs/plan/phases/
+[94m[grep][0m pattern: [96mP2\.1-acl-enforcement[0m
+Ralph engine artifacts only (session/prd state + iteration log), not another executor's work. Continuing.
+[94m[bash][0m $ grep -n "P2.1\|acl-enforcement\|ACL" PLAN.md | head -50
+[94m[bash][0m $ grep -rn "P2.1\|acl-enforcement" docs/plan/ | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md
+[94m[bash][0m $ grep -n "P5.1" docs/plan/phases/phase-05-report.md | head -40
+[94m[bash][0m $ git log --oneline -20
+[94m[bash][0m $ grep -rn "acl-enforcement\|acl_enforcement\|ACL-enforcement" docs/ .ralph-tui/ 2>/dev/null | head
+[94m[bash][0m $ grep -rn "assertTopicAuthorized\|buildChatChannelTopic\|object:" packages/twenty-server/src/engine/c...
+[94m[read][0m
+[94m[bash][0m $ ls -R packages/twenty-server/src/engine/core-modules/realtime-gateway/
+No existing claim for this slice. Let me study the current authorization seam before claiming.
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "P0.2\|P0.3\|authorization model\|document-share\|documentShare\|private document\|ACL" docs...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-00-report.md
+[94m[bash][0m $ find packages/twenty-server/src/modules/chat -type f | head -60
+[94m[bash][0m $ grep -rln "chatChannelMember\|ChatChannelMember" packages/twenty-server/src/ | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/services/chat-message.service.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/chat.module.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/services/chat-typing.service.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/resolvers/chat.resolver.ts
+[94m[bash][0m $ grep -rln "executeInWorkspaceContext" packages/twenty-server/src/engine/core-modules/ | head -30
+[94m[bash][0m $ grep -rln "canAccessObjectRecord\|checkRecordPermission\|canAccessRecord\|hasRecordPermission" packa...
+[94m[bash][0m $ ls packages/twenty-apps/ 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/src/objects/chat-channel-member.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/src/objects/chat-channel.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/utils/chat-topic.util.ts
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-server/src/engine/twenty-orm/utils/build-system-auth-context.util.ts
+[94m[bash][0m $ grep -rln "workspaceMemberId.*roleId\|build.*AuthContext\|getAuthContext" packages/twenty-server/src...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/utils/resolve-role-ids-for-user.util.ts
+[94m[bash][0m $ grep -rn "resolveRoleIdsForUser\|buildUserAuthContext" packages/twenty-server/src --include=*.ts | g...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "resolveRoleIdsForUser\|buildUserAuthContext\|buildWorkspaceAuthContext" packages/twenty-se...
+[94m[bash][0m $ grep -rn "type WorkspaceCacheData\|keyof\|WorkspaceCacheKey" packages/twenty-server/src/engine/works...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/permissions/permissions.service.ts
+[94m[bash][0m $ grep -rn "flatWorkspaceMemberMaps\|userWorkspaceRoleMap\|flatRoleTargetMaps\|flatRoleMaps\|flatRowLe...
+[94m[bash][0m $ find packages/twenty-server/src -name "*user-role*" -o -name "*role-target*" | head
+[94m[bash][0m $ grep -rn "executeInWorkspaceContext" packages/twenty-server/src/engine/twenty-orm/workspace-orm.mana...
+[94m[bash][0m $ grep -rn "executeInWorkspaceContext\|userWorkspaceRoleMap\|WorkspaceContext" packages/twenty-server/...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/workspace-orm.manager.ts
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-server/src -path "*flat-workspace-member*" -name "*.ts" | head
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "async \|public \|checkRecord\|RecordPermissions\|record" packages/twenty-server/src/engine/...
+[94m[bash][0m $ grep -rn "checkRecordPermission\|recordPermission\|canReadRecord\|checkObjectRecord" packages/twenty...
+[94m[bash][0m $ grep -rn "visibility\|isPrivate\|access\|kind" packages/twenty-apps/internal/a2e-documents/src/objec...
+[94m[bash][0m $ grep -rln "object:" packages/twenty-front/src/modules/realtime packages/twenty-front/src/modules 2>/...
+[94m[bash][0m $ grep -rn "parseRealtimeTopic" packages/twenty-server/src --include='*.ts' | grep -v __tests__
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "WorkspaceOrmManager" packages/twenty-server/src/engine/twenty-orm/twenty-orm.module.ts pac...
+[94m[bash][0m $ find packages/twenty-server/src/engine/twenty-orm -name "*.module.ts"
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/workspace-cache/types/workspace-cache-key.type.ts
+[94m[bash][0m $ grep -rn "getRoleIdForUserWorkspace\|getRolesByUserWorkspaces" packages/twenty-server/src/engine/met...
+[94m[bash][0m $ grep -rln "flatUserWorkspaceMaps" packages/twenty-server/src | head
+[94m[bash][0m $ grep -rln "getWorkspaceMember\b" packages/twenty-server/src/engine/core-modules/user-workspace/ | he...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/user-role/user-role.service.ts
+[94m[bash][0m $ cat packages/twenty-server/src/engine/core-modules/user-workspace/user-workspace.module.ts 2>/dev/nu...
+[94m[bash][0m $ find packages/twenty-server/src -name "user-workspace.module.ts"
+[94m[bash][0m $ grep -rn "authContext\|workspaceMember\|rowLevel\|restricted" packages/twenty-server/src/engine/twen...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/repository/workspace-repository.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/repository/workspace-repository.ts
+[94m[bash][0m $ grep -rn "authContext\." packages/twenty-server/src/engine/twenty-orm/utils/resolve-row-level-permis...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ sed -n '440,520p' packages/twenty-server/src/engine/core-modules/user-workspace/user-workspace.servi...
+[94m[bash][0m $ grep -rn "userWorkspaceId" packages/twenty-server/src/engine/core-modules/user-session/services/user...
+[94m[bash][0m $ grep -rn "resolveSession" packages/twenty-server/src/engine/core-modules/user-session/services/user-...
+[94m[bash][0m $ sed -n '330,380p' packages/twenty-server/src/engine/core-modules/user-session/services/user-session....
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) def walk(x):     if isinstance(x,dict):...
+[94m[bash][0m $ grep -rn "export const fromWorkspaceMember\|fromWorkspaceMember" packages/twenty-server/src/engine/c...
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-server/src/engine/metadata-modules/permissions/permissions.module.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/user-session/user-session.module.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/permissions/permissions.module.ts
+[94m[bash][0m $ grep -n "workspaceMember" packages/twenty-server/src/engine/twenty-orm/utils/build-row-level-permiss...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/twenty-orm.module.ts
+[94m[bash][0m $ grep -rn "projectMember\|membershipProjectId\|membershipWorkspaceMemberId" packages/twenty-server/sr...
+[94m[bash][0m $ grep -rn "joinColumnName\|export const manyToOne" packages/twenty-apps/internal/a2e-projects/src/con...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/src/objects/chat-message.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/src/constants/field-vocabulary.ts
+[94m[bash][0m $ sed -n '/private toResolvedSession/,/^  }/p' packages/twenty-server/src/engine/core-modules/user-ses...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-server/src/engine/core-modules/workspace/types/flat-workspace.type.ts 2>/dev/nul...
+[94m[bash][0m $ grep -rn "as unknown as WorkspaceMemberWorkspaceEntity\|as WorkspaceMemberWorkspaceEntity" packages/...
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+Dependencies verified (P2.1-gateway-auth-repair @7e96506c, P5.1-chat-model @11e923d7 both committed). No active claim for this slice. Claiming now.
+[94m[bash][0m $ cat >> docs/plan/phases/phase-02-report.md <<'EOF'  CLAIMED — P2.1-acl-enforcement/subscribe-record-...
+[94m[todowrite][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[write][0m "import { Injectable } from '@nestjs/common';
+
+import { isDefined } from 'twenty-shared/utils';
+
+import { type FlatAuthContextUser } from 'src/engine/core-modules/auth/types/flat-auth-context-user.type... (7951 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ grep -n "as never," packages/twenty-server/src/engine/core-modules/realtime-gateway/services/__tests...
+[94m[read][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[write][0m "import {
+  REALTIME_CHANNEL_ACCESS_DENIED_MESSAGE,
+  REALTIME_RECORD_ACCESS_DENIED_MESSAGE,
+  RealtimeTopicAccessService,
+} from 'src/engine/core-modules/realtime-gateway/services/realtime-topic-acces... (9157 chars)"
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | head -60
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | head -60
+[94m[bash][0m $ npx jest src/engine/core-modules/realtime-gateway src/modules/chat --config=jest.config.mjs 2>&1 | t...
+[94m[bash][0m $ npx jest src/engine/core-modules/realtime-gateway src/modules/chat --config=jest.config.mjs 2>&1 | g...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/utils/__tests__/chat-topic.util.spec.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/utils/__tests__/chat-topic.util.spec.ts
+[94m[bash][0m $ npx jest src/engine/core-modules/realtime-gateway src/modules/chat --config=jest.config.mjs 2>&1 | g...
+[94m[bash][0m $ npx oxfmt --write src/engine/core-modules/realtime-gateway/types/realtime-topic-context.type.ts src/...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/engine/core-modules/realtime-gateway/types/realtime-to...
+[94m[bash][0m $ npx oxfmt --check src/engine/core-modules/realtime-gateway/types/realtime-topic-context.type.ts src/...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | head -20 && npx jest src/engine/core-modules/realtime-gate...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ echo done
+[94m[bash][0m $ git diff --stat packages/twenty-server/src/engine/core-modules/realtime-gateway/services/realtime-ga...
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ grep -rn "assertTopicAuthorized" packages/twenty-server/src --include='*.ts' | grep -v __tests__
+[94m[bash][0m $ orchestrator — Tier-2 private-topic subscribe/revocation journey + confirm the junction where-key na...
+[94m[bash][0m $ ls -la .ralph-tui/progress.md 2>/dev/null && tail -20 .ralph-tui/progress.md
+[94m[bash][0m $ head -20 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ heartbeat tests mock `assertTopicAuthorized` returning a promise. --- EOF tail -14 .ralph-tui/progre...
+[94m[bash][0m $ git status --porcelain
+[94m[todowrite][0m
+Done. P2.1 bullet 3 implemented and self-verified.
+
+**Slice:** record (`object:`) + channel (`chat:`) topic ACLs at subscribe and per-topic revocation.
+
+**What changed**
+- `realtime-topic-access.service.ts` (new): caller-permissioned reads via `WorkspaceOrmManager.executeInWorkspaceContext` with `{ intersectionOf: [roleId] }` resolved from the workspace cache — object topics check record readability; chat topics require channel readable AND (PUBLIC or a `chatChannelMember` row). Fail-closed on unknown object/uninstalled app/missing role.
+- `realtime-topic-authorization.service.ts`: `assertTopicAuthorized` is now async and delegates object/chat; socket context carries `userWorkspaceId`.
+- `realtime-gateway.service.ts`: awaits ACL at subscribe/presence; heartbeat revalidates membership then `dropRevokedTopics` drops only lost topics with a topic-attributed error, keeping the session.
+- Parser: `chat` is a distinct `kind` (was `'workspace'` + channelId).
+- Module wiring + specs (new 10-case access spec, extended topic-auth/gateway, updated parser expectations).
+
+**Checks** (all green)
+- `npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx jest src/engine/core-modules/realtime-gateway src/modules/chat --config=jest.config.mjs` → 10 suites / 77 tests
+- `npx oxlint --type-aware -c .oxlintrc.json` + `npx oxfmt --check` on the 11 touched files → 0/0, clean
+
+**Ready-to-tick: yes.** Tier-2 real-session proof and runtime confirmation of the `chatChannelMember` join-column where-keys are listed under `Missing for tick` (orchestrator). Report appended to `docs/plan/phases/phase-02-report.md` and `.ralph-tui/progress.md`; no commits made.
+
+<promise>COMPLETE</promise>

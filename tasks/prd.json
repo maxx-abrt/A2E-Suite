@@ -373,11 +373,12 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 32,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md literal deps: after P4.1/C1 — P4.1 project-object validation is in-tracker (P4.1-project-object-validation); C1 is P1.6a [x] verified 2026-09-17. The board view story (P4.2-board-view) is unrelated; E06 browser journey stays Tier 2.",
       "dependsOn": [
         "P4.1-project-object-validation"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P4.3-project-doc-relation-spike",
@@ -819,6 +820,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-18T06:22:28.243Z"
+    "updatedAt": "2026-09-18T17:34:06.942Z"
   }
 }
