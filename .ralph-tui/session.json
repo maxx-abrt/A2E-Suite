@@ -3,10 +3,10 @@
   "sessionId": "f4efa378-7afd-4697-a69b-09f44239da8d",
   "status": "running",
   "startedAt": "2026-09-18T04:25:41.281Z",
-  "updatedAt": "2026-09-18T05:07:43.920Z",
-  "currentIteration": 9,
+  "updatedAt": "2026-09-18T05:09:39.365Z",
+  "currentIteration": 10,
   "maxIterations": 20,
-  "tasksCompleted": 7,
+  "tasksCompleted": 8,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -106,6 +106,16 @@
       "durationMs": 260289,
       "startedAt": "2026-09-18T05:00:03.225Z",
       "endedAt": "2026-09-18T05:04:23.514Z"
+    },
+    {
+      "iteration": 10,
+      "status": "completed",
+      "taskId": "P3.2-revision-history",
+      "taskTitle": "P3.2: durable revision history — retention, block diff, restore-as-new-revision",
+      "taskCompleted": true,
+      "durationMs": 194869,
+      "startedAt": "2026-09-18T05:04:29.051Z",
+      "endedAt": "2026-09-18T05:07:43.920Z"
     }
   ],
   "skippedTaskIds": [],

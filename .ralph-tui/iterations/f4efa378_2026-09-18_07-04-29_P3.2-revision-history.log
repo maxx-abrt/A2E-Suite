@@ -1,0 +1,90 @@
+# Iteration 10 Log
+
+## Metadata
+
+- **Task ID**: P3.2-revision-history
+- **Task Title**: P3.2: durable revision history — retention, block diff, restore-as-new-revision
+- **Description**: As a workspace member, I want document revision history to survive reload, so that I can restore earlier versions of my work.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-18T05:04:29.051Z
+- **Ended At**: 2026-09-18T05:07:43.920Z
+- **Duration**: 3m 14s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ ls .ralph-tui/ 2>/dev/null
+I'll start with the clean-start check and gather context.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD && echo "---BRANCH---" && git bran...
+[94m[bash][0m $ grep -n "P3.2" PLAN.md | head -50
+[94m[bash][0m $ tail -120 docs/plan/phases/phase-03-report.md
+Dirty files are Ralph's own engine state (expected). Let me read the task details.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ find packages/twenty-front/src/modules/blocknote-editor -type d
+Now let me read the PLAN.md P3.2 section and the blocknote-editor store.
+[94m[bash][0m $ grep -n "revision-history\|EditorVersionHistoryStore\|version-history" docs/plan/phases/phase-03-rep...
+[94m[bash][0m $ find packages/twenty-front/src/modules/blocknote-editor/version-history -type f | sort
+Dependencies met (P0.2 done; no literal dep). Let me check for prior claims on this slice and explore the version-history code.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+There's a prior claim/report for this slice. Let me read it in full.
+[94m[read][0m
+[94m[read][0m
+This slice already has a `done-for-review` (persistence). Let me verify current state of restore/diff/retention to find the first genuinely unmet gap.
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "versionHistoryPersistence\|EditorVersionHistory\|useDocumentRevisionPersistence\|versionHi...
+[94m[bash][0m $ grep -rn "restore\|Restore" packages/twenty-front/src/modules/blocknote-editor/version-history --inc...
+Let me check the editor wiring and existing tests to assess whether restore-as-new-revision is genuinely wired.
+[94m[bash][0m $ grep -rn "versionHistoryPersistence\|EditorVersionHistory\|useDocumentRevisionPersistence\|versionHi...
+[94m[bash][0m $ grep -rn "estore" packages/twenty-front/src/modules/blocknote-editor/version-history | head -30
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "restoreDocumentVersion\|restoreRevision\|as-new...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/BlockEditor.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[read][0m
+There's a real gap: restore only mutates the editor and waits for the 120s interval — it isn't recorded as a new revision. Let me read the existing store tests to match style.
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && date -u +%Y-%m-%dT%H:%M:%SZ && grep -rn "revision" packag...
+Real gap confirmed: restore isn't recorded as a new revision. Let me check for other revision work, current time, and run baseline tests.
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest src/modules/blocknote-editor/version-history --c...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+Baseline green. Now I'll claim the slice per contract.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[edit][0m
+Confirmed free. Now implementing the durable restore-as-new-revision gap.
+[94m[edit][0m
+[94m[edit][0m
+Now the tests:
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest src/modules/blocknote-editor/version-history --c...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx oxlint --type-aware -c .oxlintrc.json packages/twenty...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx oxfmt --check packages/twenty-front/src/modules/block...
+[94m[glob][0m pattern: [96m**/.oxlintrc*[0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx oxfmt packages/twenty-front/src/modules/blocknote-edi...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx oxlint --type-aware -c .oxlintr...
+[94m[bash][0m $ echo "EXIT:${pipestatus[1]}"
+Lint and typecheck clean. Running related tests and the diff lint gate.
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest --findRelatedTests packages/twenty-front/src/mod...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx nx lint:diff-with-main twenty-front 2>&1 | tail -25
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git status --porcelain
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git diff --stat -- packages/twenty-front/src
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+Only my files (plus the report and Ralph's engine state). Now writing the phase report and progress entry.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+Final verification: docs check, git status, and confirm the claim is the latest for this slice.
+[94m[bash][0m $ grep -c "P3.2-revision-history/restore-as-new-revision" docs/plan/phases/phase-03-report.md
+Implemented the durable **restore-as-new-revision** gap for P3.2 revision history.
+
+- `EditorVersionHistoryStore.ts`: added `addRestoreSnapshots({ currentBody, restoredBody })` — appends the state being left and the restored body through the existing `addSnapshot` persistence/prune seam, so a restore is durable immediately instead of waiting up to 120s for the interval snapshot.
+- `BlockEditorVersionHistoryPanel.tsx`: `handleRestore` now records both revisions before `replaceBlocks` (restore is undoable and survives reload).
+- Tests: `EditorVersionHistoryStore.test.ts` 21 → 25 cases (append-both + persisted, skip-left-equals-latest, no-op on latest, prune-on-restore).
+
+Verification: jest 25/25, related 18 suites/155 tests, `tsgo --noEmit` exit 0, oxlint 0/0, oxfmt clean, check-docs PASS. Report appended to `docs/plan/phases/phase-03-report.md`; `Ready-to-tick: no` (Tier-2 E05 browser reload/second-session/restricted-role proof is orchestrator-only).
+
+<promise>COMPLETE</promise>

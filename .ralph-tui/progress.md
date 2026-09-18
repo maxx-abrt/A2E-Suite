@@ -93,3 +93,12 @@ after each iteration and it's included in prompts for context.
   - `npx nx lint:diff-with-main twenty-front` compares `main...HEAD`, so uncommitted edits report "No changed files." — run `npx oxlint --type-aware -c .oxlintrc.json <files>` + `npx oxfmt --check <files>` directly (phase-report precedent).
   - `oxfmt` lives at repo root and `packages/twenty-front/.oxlintrc.json` is the front package config (root has no `.oxlintrc.json`).
 ---
+
+## 2026-09-18 - P3.2-atomic-save
+- No implementation needed: the atomic expected-revision save slice was authored and committed under `5868a0e9 save` and reported done-for-review 2026-09-17 11:41 UTC (phase-03-report line 716). Re-verified it end-to-end with zero source changes: 24/24 co-editing tests, 151/151 related tests, tsgo clean, oxlint+oxfmt clean on the 4 seam files. Only the Tier-2 two-session browser proof remains (orchestrator-owned).
+- Files changed: `docs/plan/phases/phase-03-report.md`, `.ralph-tui/progress.md` (report-only iteration).
+- **Learnings:**
+  - The client-side guard already covers the acceptance's "exactly one winner / one conflict, loser draft survives" at unit level: `useDocumentSaveConflictGuard` withholds persist on an unresolved conflict while `persistBlocknoteBody` is the single normal+keep-local write seam in `RichTextFieldEditor.tsx`.
+  - Explicit design choice: the expected revision is the block-diff against a base body, not a server revision token — PLAN P3.2 forbids a server save/merge protocol and OT/CRDT in v1. Do not "fix" this by adding a compare-and-set server endpoint.
+  - Repeat assignment happens when the orchestrator has not ticked PLAN.md (still `[ ]` because only Tier 2 is missing); a re-verify + done-for-review report is the correct response, never a re-implementation.
+---
