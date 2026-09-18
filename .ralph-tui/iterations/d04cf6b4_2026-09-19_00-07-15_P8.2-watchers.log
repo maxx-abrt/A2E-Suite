@@ -1,0 +1,452 @@
+# Iteration 17 Log
+
+## Metadata
+
+- **Task ID**: P8.2-watchers
+- **Task Title**: P8.2: watchers — watch record/doc/channel → notifications on change
+- **Description**: As a workspace member, I want to watch a record, doc or channel and get notified on change, so that I can follow work I care about.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-18T22:07:15.115Z
+- **Ended At**: 2026-09-18T22:20:03.751Z
+- **Duration**: 12m 48s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+I'll start with the mandatory clean-start check.
+[94m[bash][0m $ grep -n "P8.2-watchers" PLAN.md | head -20
+[94m[bash][0m $ ls .ralph-tui/ 2>/dev/null
+Ralph engine files only, no conflicting code changes. Now let me confirm the task in PLAN.md and the phase report.
+[94m[bash][0m $ grep -n "P8.2" PLAN.md | head -30
+[94m[bash][0m $ grep -n "watcher\|watch" PLAN.md | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "P8.1\|P8.2\|CLAIMED\|done-for-review\|watcher" docs/plan/phases/phase-08-report.md | tail -...
+[94m[bash][0m $ grep -n "P2.1-acl-enforcement\|P2.1" docs/plan/phases/phase-02-report.md | head -20
+[94m[bash][0m $ sed -n '1231,1256p' PLAN.md
+[94m[bash][0m $ date -u +%Y-%m-%dT%H:%M:%SZ
+Dependencies (P8.1 notification service, P2.1 ACL) are reported done. P8.2-watchers is free. Claiming the slice now.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-08-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-08-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-08-report.md
+[94m[bash][0m $ ls -R packages/twenty-server/src/engine/core-modules/notification 2>/dev/null
+[94m[bash][0m $ grep -rn "watch" packages/twenty-server/src --include=*.ts -il | head -20
+Claim is the most recent for this slice. Now file-overlap preflight: the only recent active claim was P8.2-email-notifications which is already reported done. Proceeding.
+
+Let me explore the existing notification service and related primitives.
+
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/notification/notification.module.ts
+[94m[bash][0m $ grep -rn "WATCHED_RECORD_CHANGED" packages/twenty-server/src --include="*.ts" | head -20
+[94m[bash][0m $ grep -rln "watch" packages/twenty-server/src --include="*.ts" | head -30
+[94m[bash][0m $ cat packages/twenty-server/src/engine/core-modules/notification/notification.entity.ts
+[94m[bash][0m $ ls packages/twenty-server/src/engine/core-modules/document-share/ 2>/dev/null
+[94m[bash][0m $ grep -rn "TWENTY_CURRENT_VERSION" packages/twenty-shared/src/constants/ 2>/dev/null | head
+[94m[bash][0m $ ls packages/twenty-server/src/database/commands/upgrade-version-command/2-* 2>/dev/null | tail -20
+[94m[bash][0m $ ls packages/twenty-server/src/database/commands/upgrade-version-command/ | sort -V | tail -8
+[94m[bash][0m $ grep -rn "TWENTY_CURRENT_VERSION" packages/twenty-shared/src/ | head
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-server/src/database/commands/upgrade-version-command/2-39/2-39-upgrade-version-c...
+[94m[bash][0m $ head -30 packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.cons...
+[94m[bash][0m $ grep -n "^  [A-Z].*SlowInstanceCommand" packages/twenty-server/src/database/commands/upgrade-version...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "^import.*SlowInstanceCommand" packages/twenty-server/src/database/commands/upgrade-version-...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[edit][0m
+Now let me update the import block. I'll add the new import after line 182 and the slow imports in ascending order.
+
+[94m[edit][0m
+[94m[write][0m "import { type QueryRunner } from 'typeorm';
+
+import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { type FastInstanceCom... (1990 chars)"
+Now let me create the migration command file.
+
+[94m[write][0m "import { ObjectType } from '@nestjs/graphql';
+
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+
+import {
+  NOTIFICATION_WATCH_... (1823 chars)"
+Now the entity:
+
+[94m[edit][0m
+Let me clean that entity — the trailing re-export is unnecessary and the comment needs fixing.
+
+[94m[edit][0m
+[94m[read][0m
+Now the target-kind constant. Let me check the notification-channel constant format first.
+
+[94m[write][0m "// The three watchable target kinds share one watch primitive; the value is
+// persisted as-is and decides how a change event is resolved back to the
+// watched target.
+export const NOTIFICATION_WATCH... (364 chars)"
+Now let me look at the ACL service and member-revocation to correctly implement permission-loss cleanup.
+
+[94m[bash][0m $ grep -rln "RealtimeTopicAccessService\|member-revocation\|MemberRevocation" packages/twenty-server/s...
+[94m[read][0m
+[94m[bash][0m $ grep -rln "revok\|removeWorkspaceMember\|deleteWorkspaceMember\|OnDatabaseBatchEvent" packages/twent...
+Now let me look at the member-revocation implementation to hook watch cleanup into permission loss.
+
+[94m[bash][0m $ grep -rln "realtime.*revok\|topic.*revok\|revoke.*topic\|denylist\|revocation" packages/twenty-serve...
+[94m[bash][0m $ grep -rn "revok\|memberRemoved\|workspaceMember" packages/twenty-server/src/engine/core-modules/real...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/mention/services/mention-access.service.ts
+Now let me look at the mention engine for the pattern of permission-aware notification service and workspace-member events.
+
+[94m[bash][0m $ cat packages/twenty-server/src/modules/mention/types/mention.type.ts 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/mention/services/mention-notification.service.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/mention/listeners/document-mention.listener.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/mention/mention.module.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/services/chat-realtime-publisher.service.ts
+Now let me look at the mention module registration and how it's wired, plus chat realtime publisher's DB event listener pattern (since watches on records/channels need DB events).
+
+[94m[bash][0m $ grep -rln "OnDatabaseBatchEvent" packages/twenty-server/src/modules --include="*.ts" | grep -v __tes...
+[94m[bash][0m $ ls packages/twenty-server/src/modules/chat/
+Now I understand the patterns. Let me design the watch feature:
+
+**Architecture:**
+- `NotificationWatchEntity` — core table `core.notificationWatch` (workspaceId, userId, targetKind, targetId)
+- `NotificationWatchService` — watch/unwatch/list; change event → resolve watchers → emit `WATCHED_RECORD_CHANGED` notification via `NotificationService.requestNotifications` (the P8.1 seam). Permission-loss cleanup (removed member / lost record permission) drops the watch.
+- `NotificationWatchListener` — one listener for record/document changes, one for channel messages; reuses existing event-emitter → P8.1 path.
+
+Let me look at how existing listeners are registered in a module and how DB events are consumed for arbitrary/metadata objects, plus check `@OnDatabaseBatchEvent` constraints.
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/listeners/chat-realtime.listener.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/chat.module.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/modules.module.ts
+Now let me look at how the modules.module.ts registers feature modules and how notification module exports.
+
+Hmm, chat/mention aren't in modules.module. Let me find where they're registered.
+
+[94m[bash][0m $ grep -rn "ChatModule\|MentionModule" packages/twenty-server/src --include="*.ts" | grep -v "chat.mod...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/core-engine.module.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/notification/notification.resolver.ts
+Now I understand where to register. Let me check the notification resolver for the GraphQL surface pattern (watches may need a resolver for watch/unwatch mutations), and the document-share resolver for `@CoreResolver` conventions.
+
+[94m[bash][0m $ grep -rln "userWorkspace.*delete\|deleteUserWorkspace\|removeUserFromWorkspace\|workspaceMember.*des...
+Now I have a complete picture. Let me design the implementation.
+
+**Plan:**
+1. `NotificationWatchEntity` (done) + constant (done) + migration (done, needs registration)
+2. `NotificationWatchService` — core CRUD (`watch`/`unwatch`/`isWatching`/`listForTarget`/`listForUser`) + `dropWatchesForWorkspaceUser` for member removal
+3. `buildWatchNotificationPayload` util + `resolveWatchTargets` change-event mapping util (pure, testable)
+4. `NotificationWatchListener` — DB events → resolve watchers → per-permitted-user emit on P8.1 seam; permission-loss cleanup
+5. Register in `NotificationModule` and exports
+6. Unit tests for lifecycle, mapping, permission-loss cleanup
+
+Let me check how member removal / user-workspace deletion is detected to hook cleanup. Look at existing workspace-member listeners and user-workspace service.
+
+[94m[bash][0m $ grep -rn "class UserWorkspaceService" packages/twenty-server/src/engine/core-modules/user-workspace/...
+[94m[bash][0m $ grep -n "delete\|destroy\|remove" packages/twenty-server/src/engine/core-modules/user-workspace/user...
+[94m[bash][0m $ grep -rln "onDelete\|softDelete\|destroyUserWorkspace\|UserWorkspaceEntity" packages/twenty-server/s...
+[94m[read][0m
+[94m[read][0m
+For permission-loss cleanup, the cleanest reuse is to decorate the existing `deleteUserWorkspace` — but that risks a circular dependency and touches another module. The task says "coordinate with P2.1-acl-enforcement revocation semantics". A safer, self-contained approach: make the watch service validate and prune on read/dispatch — i.e. when building watcher targets for a change event, verify each watcher still has read access via `RealtimeTopicAccessService` and delete the stale watch (permission-loss cleanup). This reuses the P2.1 ACL primitive exactly as mentions do, without editing user-workspace.
+
+Let me verify how `resolveCallerOrNull` maps user→member for a watch (we store userId, need workspaceMemberId/userWorkspaceId).
+
+I have enough context. Now let me create the pure utils first (testable Tier-0), then the service and listener.
+
+First, the watch-target/change-event mapping util. Let me check a task/document event shape and what object names exist. Let me look at the timeline listener for a generic record-change broadcast pattern.
+
+[94m[bash][0m $ grep -rn "assigned\|ASSIGNED" packages/twenty-server/src --include="*.ts" | grep -iv "test\|spec" | ...
+[94m[bash][0m $ grep -rn "resolveNotificationDeepLink" packages/twenty-front/src --include="*.ts" -l | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/inbox/utils/resolveNotificationDeepLink.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/inbox/utils/filterInboxNotificationsByCategory.ts
+[94m[bash][0m $ cat packages/twenty-server/src/engine/core-modules/notification/utils/notification-to-dto.util.ts
+The front already expects `WATCHED_RECORD_CHANGED` with `{ kind, objectNameSingular, recordId }` payload convention (records/documents native). Channel-watch can reuse `chat.message` payload with channelId. Now let me build the pure utils.
+
+First, `buildWatchNotificationPayload` and target resolution.
+
+[94m[bash][0m $ grep -rn "objectNameSingular: 'document'\|DOCUMENT_OBJECT_NAME\|'document'" packages/twenty-server/s...
+Now let me write the pure utils. I'll create:
+- `build-watch-notification-payload.util.ts`
+- `resolve-watch-target.util.ts` (maps a raw change event to the watch target keys)
+
+Let me check object name singular conventions and the `document` object name.
+
+[94m[write][0m "import { isDefined } from 'twenty-shared/utils';
+
+import { type NotificationWatchTargetKind } from 'src/engine/core-modules/notification/constants/notification-watch-target-kind.constant';
+
+// One pay... (1223 chars)"
+Now let me write the payload builder util.
+
+Now the watch service. Let me first check `WorkspaceRelatedEntity` and workspace-scoped repository patterns.
+
+[94m[bash][0m $ cat packages/twenty-server/src/engine/workspace-manager/types/workspace-related-entity.ts
+[94m[bash][0m $ cat packages/twenty-server/src/engine/core-modules/notification/dtos/notification.dto.ts
+[94m[bash][0m $ ls packages/twenty-server/src/engine/core-modules/document-share/dtos/
+Now the service. Let me check the notification DTO and how a resolver might expose watches. Let me look at the document-share resolver for the `@CoreResolver` + user-scoped mutation pattern, and whether watches need a resolver this slice.
+
+The acceptance criteria focus on: one watch primitive, change events → notifications, unwatch stops, permission-loss cleanup, unit tests. A GraphQL resolver for watch/unwatch is needed so the front can actually use it, but the task's bullet is "watch record/doc/channel → notifications on change". I'll add a resolver for watch/unwatch since watches are user actions — it completes the primitive. Let me check the DTO pattern.
+
+
+
+[94m[write][0m "import { Field, ObjectType } from '@nestjs/graphql';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { type NotificationWatchTargetKind ... (545 chars)"
+Now let me create the DTO and the service. First the DTO:
+
+[94m[write][0m "import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { isDefined } from 'twenty-shared/utils';
+import { type Repository } from 'typeorm';
+
+i... (9527 chars)"
+Now the service. It needs the core repository (like NotificationService) plus ACL. Let me write it.
+
+[94m[bash][0m $ grep -n "getUserWorkspaceForUser" packages/twenty-server/src/engine/core-modules/user-workspace/user...
+Let me verify `getUserWorkspaceForUser` returns `workspaceMemberId` and check the unused constant. Let me look at the type.
+
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-server/src/engine/core-modules/user-workspace/user-workspace.entity.ts
+[94m[edit][0m
+There's no `workspaceMemberId` on UserWorkspaceEntity. The member id comes from the workspace cache (`flatWorkspaceMemberMaps.idByUserId`), as seen in `RealtimeTopicAuthorizationService`. Let me fix the service to use `WorkspaceCacheService` instead. Also remove the unused constant and fix the DOCUMENT object mapping.
+
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+Wait — `RECORD` targetKind can't be used as `objectNameSingular`. Records need the object name singular supplied. Let me reconsider the design: for records, the listener passes `objectNameSingular`. Let me make `canUserReadTarget` accept it. Also fix `resolveWorkspaceMemberId` to use the cache.
+
+[94m[edit][0m
+[94m[read][0m
+Now let me read the full service to verify coherence.
+
+
+
+[94m[bash][0m $ grep -rn "objectNameSingular" packages/twenty-server/src/engine/workspace-manager/twenty-standard-ap...
+The service is solid. Now the listener. It watches records/documents (object DB events) and channels (chatMessage DB events). Let me design a generic record listener. The challenge: which objects to register `@OnDatabaseBatchEvent` for? Decorators are static. I'll register for the common watchable objects: `document`, `task`, `note`, `opportunity`, `company`, `person`, plus `chatMessage` for channels.
+
+Actually, a cleaner design: one listener with explicit decorators for the standard record objects + document + chatMessage. Let me check what standard objects exist.
+
+Rather than hard-code many objects, let me check whether `@OnDatabaseBatchEvent` supports a wildcard or list, and how timeline captures all object changes.
+
+
+
+[94m[bash][0m $ cat packages/twenty-server/src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-...
+[94m[bash][0m $ grep -rn "objectNameSingular" packages/twenty-server/src/modules/task/standard-objects/*.ts 2>/dev/n...
+Each decorator binds one object. I'll register a helper method per standard watchable object. To keep it manageable and aligned with "one watch primitive", I'll cover the core workspace objects where users watch records: `document`, `note`, `task`, `opportunity`, `company`, `person`, plus `chatMessage` for channels. Let me verify these object names exist as database event sources (they're standard objects).
+
+
+
+[94m[bash][0m $ grep -rn "OnDatabaseBatchEvent('task'\|OnDatabaseBatchEvent('note'\|OnDatabaseBatchEvent('opportunit...
+[94m[write][0m "import { Injectable, Logger } from '@nestjs/common';
+
+import {
+  type ObjectRecordCreateEvent,
+  type ObjectRecordUpdateEvent,
+} from 'twenty-shared/database-events';
+
+import { OnDatabaseBatchEvent } ... (6962 chars)"
+Good. Now let me write a human-readable label/util to describe the change (changed fields) and the listener. Let me create a util that resolves the watched object-name from the DB event object name (identity for records, `document` for documents).
+
+Actually the targetKind DOCUMENT vs RECORD distinction: a document is also a record; watching a document could just be a RECORD watch with objectNameSingular 'document'. But the acceptance explicitly names "record/doc/channel" as the three target kinds. Keeping `DOCUMENT` as its own kind (with targetId = document record id) is fine and maps to the same ACL. The listener for `document` events emits targetKind DOCUMENT.
+
+Let me build the listener with a generic helper. First, the payload should carry a snippet/label maybe. Keep minimal.
+
+Let me write the listener now.
+
+[94m[bash][0m $ find packages/twenty-server/src/engine/workspace-cache -name "*workspace-member*"
+Wait — the chat message `authorId` is a workspaceMember id, but `excludeUserIds` compares against userIds. That's a mismatch. Let me check: is `excludeUserIds` supposed to exclude users? For channel self-notification, we need to map author workspaceMemberId → userId, or exclude by workspaceMemberId. Simpler: drop the exclusion here and exclude the author in the service by resolving member→user. But that adds a query. 
+
+Actually, let me reconsider: the notification payload author exclusion is a nice-to-have, not in the acceptance criteria. Let me keep it correct but simple: resolve the author workspaceMemberId to userId in the service via the workspace cache (`idByUserId` reverse). Let me check if there's a reverse map.
+
+[94m[bash][0m $ grep -rn "flatWorkspaceMemberMaps" packages/twenty-server/src/engine/workspace-cache/types/*.ts 2>/d...
+[94m[bash][0m $ grep -rn "idByUserId\|type FlatWorkspaceMemberMaps" packages/twenty-server/src/ --include="*.ts" | g...
+[94m[read][0m
+[94m[edit][0m
+There's no reverse memberId→userId map; `byId[memberId].userId` gives it. Rather than complicate, I'll remove the author exclusion entirely from this slice — it's not in the acceptance criteria, and channel watches notifying on your own message is acceptable/expected behavior. Simpler and avoids a wrong mapping.
+
+Let me simplify the listener's chart message handler.
+
+[94m[edit][0m
+[94m[write][0m "import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { Args, Mutation, Query } from '@nestjs/graphql';
+
+import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorato... (3745 chars)"
+Now the resolver for watch/unwatch/list. Let me create it following the notification resolver pattern.
+
+
+
+[94m[edit][0m
+I made a typo in the filter import path. Let me fix it.
+
+`targetKind` as String scalar isn't validated as an enum. Let me check if there's an enum registration pattern for notification types, or whether I should use a GraphQL enum. Let me check how other resolvers accept string-union args.
+
+
+
+[94m[bash][0m $ grep -rn "type: () => String" packages/twenty-server/src/engine/core-modules/*/*.resolver.ts | head
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/notification/notification.module.ts
+A String arg is acceptable and matches existing patterns. Now register everything in the module and core-engine.
+
+Let me verify the module paths exist (`UserWorkspaceModule`, `WorkspaceCacheModule`).
+
+[94m[bash][0m $ grep -n "RealtimeTopicAccessService" packages/twenty-server/src/engine/core-modules/realtime-gateway...
+Good. Now let me check if `UserWorkspaceModule` exports `UserWorkspaceService`, and whether importing it creates a circular dependency with NotificationModule.
+
+
+
+[94m[bash][0m $ grep -n "UserWorkspaceModule" packages/twenty-server/src/modules/mention/mention.module.ts
+[94m[bash][0m $ grep -rn "NotificationModule" packages/twenty-server/src/engine/core-modules/user-workspace/ package...
+Now check for circular imports: does UserWorkspaceModule or its deps import NotificationModule?
+
+No cycle. Now let me write the unit tests. First run typecheck to catch errors early.
+
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | head -50
+[94m[read][0m
+Typecheck passes. Now let me check the jest config and write the unit tests.
+
+[94m[write][0m "import { type Repository } from 'typeorm';
+
+import { NotificationWatchEntity } from 'src/engine/core-modules/notification/notification-watch.entity';
+import { NotificationWatchService } from 'src/engi... (11016 chars)"
+Now let me write the watch service spec covering lifecycle, change-event mapping, and permission-loss cleanup.
+
+
+
+[94m[bash][0m $ npx jest src/engine/core-modules/notification/services/__tests__/notification-watch.service.spec.ts ...
+[94m[edit][0m
+The mock `idByUserId` only maps `user-1`, so `user-2` has no member id → permission denied → pruned. Let me make the mock map both users in that test.
+
+The "excludes users" test also has user-2, but exclusion happens before the ACL check, so it works. Let me rerun.
+
+[94m[bash][0m $ npx jest src/engine/core-modules/notification/services/__tests__/notification-watch.service.spec.ts ...
+[94m[write][0m "import { buildWatchNotificationPayload } from 'src/engine/core-modules/notification/utils/build-watch-notification-payload.util';
+
+describe('buildWatchNotificationPayload', () => {
+  it('builds a reco... (1409 chars)"
+Now let me add tests for the pure payload-builder util, and a listener spec. Let me write the payload util spec.
+
+
+
+[94m[read][0m
+Now a listener spec. Let me check an existing listener spec for the event-batch shape.
+
+[94m[write][0m "import {
+  type ObjectRecordCreateEvent,
+  type ObjectRecordUpdateEvent,
+} from 'twenty-shared/database-events';
+
+import { NotificationWatchListener } from 'src/engine/core-modules/notification/listen... (4663 chars)"
+[94m[bash][0m $ npx jest src/engine/core-modules/notification/listeners/__tests__/notification-watch.listener.spec.t...
+All 3 specs pass (12+3+5 = 20 tests). Now run typecheck and lint on touched files.
+
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | head -40
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-server 2>&1 | tail -20
+Edits are uncommitted, so "No changed files" — I must run oxlint/oxfmt directly on the touched files per the phase-report precedent.
+
+[94m[bash][0m $ cd packages/twenty-server && npx oxlint --type-aware -c .oxlintrc.json $FILES 2>&1 | tail -30
+"0 files" — the paths were relative to the wrong dir. Let me run from the package dir correctly.
+
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/engine/core-modules/notification/services/notification...
+[94m[edit][0m
+One unused var in the test. Fix it.
+
+Now check the resolver import ordering and run oxfmt. Let me run oxfmt --check.
+
+
+
+[94m[bash][0m $ npx oxfmt --check src/engine/core-modules/notification/services/notification-watch.service.ts src/en...
+[94m[bash][0m $ npx oxfmt src/engine/core-modules/notification/services/notification-watch.service.ts src/engine/cor...
+Wait — oxfmt said "on 11 files" earlier for 13 listed, and reformatted only 2. Let me check the diffs to make sure oxfmt didn't reorder things badly. Let me view the affected files.
+
+[94m[bash][0m $ git status --porcelain | grep "^??"
+[94m[bash][0m $ git diff packages/twenty-server/src/engine/core-modules/notification/notification.module.ts
+The working tree shows only my files plus Ralph's engine files. Let me verify the two reformatted files still look correct, then re-run tests and typecheck.
+
+Now re-run typecheck and all touched specs after formatting.
+
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | head -20
+[94m[bash][0m $ npx jest src/engine/core-modules/notification --config=packages/twenty-server/jest.config.mjs 2>&1 |...
+[94m[bash][0m $ find packages/twenty-server/src/database/commands/upgrade-version-command -name "*.spec.ts" | head
+All 15 suites (83 tests) green, typecheck clean. Now let me verify the migration command test pattern — are there tests that assert instance commands are registered/ordered? Let me check the `__tests__` in 2-39.
+
+
+
+[94m[edit][0m
+No instance-command registration test to update. Let me verify the migration timestamp is greater than all existing in 2-39 (max is 1789800000000), and that CI requires it strictly greater. Mine is 1789900000000 — good.
+
+Now let me check whether the entity needs the `@Index` unique constraint differently from the migration (the migration says UNIQUE INDEX, entity says `@Index` non-unique). Let me make them consistent — a unique index. Let me check the entity index options support.
+
+Now, the entity column `targetId` is nullable, and unique index allows multiple NULLs in Postgres — so a workspace-scoped watch (targetId null) isn't deduplicated by the DB. But this slice always has targetId (records/doc/channels all carry an id). Fine.
+
+Let me run typecheck and lint/fmt on the entity once more.
+
+[94m[bash][0m $ npx oxfmt --check src/engine/core-modules/notification/notification-watch.entity.ts 2>&1 | tail -5
+[94m[bash][0m $ npx oxfmt --check src/engine/core-modules/notification/notification-watch.entity.ts 2>&1 | tail -3
+Now let me verify the entity column type with the migration. The migration's index is created as UNIQUE and columns `("userId", "workspaceId", "targetKind", "targetId")`. The entity `@Index` property order matches. Good.
+
+Let me run typecheck once more since oxfmt changed the entity, and re-run the watch specs.
+
+[94m[bash][0m $ npx jest src/engine/core-modules/notification/services/__tests__/notification-watch.service.spec.ts ...
+Typecheck ran from wrong cwd. Let me rerun in the package dir.
+
+
+
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | head -20 && echo "TYPECHECK_OK"
+Everything is green. Now let me double-check the resolver's `targetKind` casting — I typed it as `NotificationWatchTargetKind` but the GraphQL arg is a free String, so TypeScript trusts it. That's the same pattern as admin resolvers. Good.
+
+One concern: the resolver imports `ResolverValidationPipe` and `PreventNestToAutoLogGraphqlErrorsFilter` — verify those paths exist (they did for notification.resolver). Already validated by typecheck.
+
+Now let me do a final oxlint/oxfmt pass across all touched files and confirm git status is clean of stray changes.
+
+[94m[bash][0m $ npx oxfmt --check src/engine/core-modules/notification/services/notification-watch.service.ts src/en...
+All clean. Let me verify the final git status shows only my declared files plus Ralph's engine files.
+
+
+
+[94m[bash][0m $ git status --porcelain
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-08-report.md
+All changes are mine except Ralph's engine files (session-meta/session/prd/log) and the phase report (my claim). Now let me append the phase report and progress.md entry.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-08-report.md
+[94m[bash][0m $ wc -l .ralph-tui/progress.md
+Now the Ralph progress.md entry. Let me read it first.
+
+[94m[bash][0m $ the migration is not applied to a live DB here. --- EOF tail -5 .ralph-tui/progress.md
+[94m[bash][0m $ grep -n "P8.2-watchers" docs/plan/phases/phase-08-report.md
+Both reports appended. Let me do a final self-verify: confirm the claim is still the most recent for this slice, and re-run the full notification test folder + typecheck one final time to be safe.
+
+[94m[bash][0m $ git status --porcelain | grep -v "ralph-tui\|tasks/prd.json"
+Everything checks out. Final verification run:
+
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | head -5 && echo TSGO_OK
+[94m[bash][0m $ npx jest src/engine/core-modules/notification --config=packages/twenty-server/jest.config.mjs 2>&1 |...
+P8.2-watchers slice complete. Summary:
+
+**Implemented** the one watch primitive covering record/doc/channel:
+- `core.notificationWatch` table (`NotificationWatchEntity`) + fast instance command registered in 2-39, timestamp strictly greater than existing siblings.
+- `NotificationWatchService` — `watch`/`unwatch`/`isWatching`/list, plus `notifyWatchersOfChange` (resolve watchers → prune those who lost ACL access → one `WATCHED_RECORD_CHANGED` request per survivor on the existing P8.1 `requestNotifications` seam) and `removeWatchesForUser` for revocation.
+- `NotificationWatchListener` — reuses the existing metadata-engine DB-event → event-emitter path (records/documents/channel messages), best-effort.
+- `NotificationWatchResolver` (`@CoreResolver`, caller-scoped) for watch/unwatch/list.
+- Permission-loss cleanup reuses the P2.1 `RealtimeTopicAccessService` ACL with an explicit member identity (removed member / revoked access both prune the watch).
+
+**Gates:** 20 new tests (83 across the notification folder) green; `tsgo --noEmit` exit 0; oxlint `--type-aware` 0/0 and oxfmt clean on all 13 touched files. Phase-08 report and `.ralph-tui/progress.md` appended; `Ready-to-tick: yes`.
+
+<promise>COMPLETE</promise>

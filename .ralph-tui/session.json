@@ -3,10 +3,10 @@
   "sessionId": "d04cf6b4-18b1-4a08-a6a1-78012d99bf9d",
   "status": "running",
   "startedAt": "2026-09-18T19:06:36.433Z",
-  "updatedAt": "2026-09-18T22:20:03.758Z",
-  "currentIteration": 16,
+  "updatedAt": "2026-09-18T22:28:48.157Z",
+  "currentIteration": 17,
   "maxIterations": 20,
-  "tasksCompleted": 13,
+  "tasksCompleted": 14,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -176,6 +176,16 @@
       "durationMs": 229914,
       "startedAt": "2026-09-18T22:03:19.637Z",
       "endedAt": "2026-09-18T22:07:09.551Z"
+    },
+    {
+      "iteration": 17,
+      "status": "completed",
+      "taskId": "P8.2-watchers",
+      "taskTitle": "P8.2: watchers — watch record/doc/channel → notifications on change",
+      "taskCompleted": true,
+      "durationMs": 768636,
+      "startedAt": "2026-09-18T22:07:15.115Z",
+      "endedAt": "2026-09-18T22:20:03.751Z"
     }
   ],
   "skippedTaskIds": [],

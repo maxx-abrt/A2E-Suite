@@ -759,12 +759,13 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 49,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md task ID: P6.1 bullets 2–3; literal phase gate P6 on P0.2/P0.4 ([x]) and P1.7a — encoded as dependsOn [P6.1-folder-modeling-spike, P1.7a-app-management].",
       "dependsOn": [
         "P6.1-folder-modeling-spike",
         "P1.7a-app-management"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P6.2-drive-page",
@@ -836,6 +837,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-18T22:20:03.757Z"
+    "updatedAt": "2026-09-18T22:28:48.156Z"
   }
 }
