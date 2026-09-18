@@ -9,6 +9,7 @@ import { ChatMentionService } from 'src/modules/chat/services/chat-mention.servi
 import { ChatMessageService } from 'src/modules/chat/services/chat-message.service';
 import { ChatRealtimePublisherService } from 'src/modules/chat/services/chat-realtime-publisher.service';
 import { ChatTypingService } from 'src/modules/chat/services/chat-typing.service';
+import { ChatUnreadCountService } from 'src/modules/chat/services/chat-unread-count.service';
 
 // P5.1 server domain module. It carries no tables: the chat entities are
 // app-owned metadata objects (a2e-chat), so this module only adds behavior
@@ -20,6 +21,7 @@ import { ChatTypingService } from 'src/modules/chat/services/chat-typing.service
     ChatResolver,
     ChatMessageService,
     ChatTypingService,
+    ChatUnreadCountService,
     ChatRealtimePublisherService,
     ChatRealtimeListener,
     ChatMentionService,

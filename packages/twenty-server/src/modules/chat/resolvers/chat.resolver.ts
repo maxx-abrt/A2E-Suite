@@ -19,9 +19,11 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ChatMessageConnectionDTO } from 'src/modules/chat/dtos/chat-message-connection.dto';
 import { ChatMessagesArgs } from 'src/modules/chat/dtos/chat-messages.args';
 import { ChatTypingIndicatorDTO } from 'src/modules/chat/dtos/chat-typing-indicator.dto';
+import { ChatUnreadCountDTO } from 'src/modules/chat/dtos/chat-unread-count.dto';
 import { SendChatTypingInput } from 'src/modules/chat/dtos/send-chat-typing.input';
 import { ChatMessageService } from 'src/modules/chat/services/chat-message.service';
 import { ChatTypingService } from 'src/modules/chat/services/chat-typing.service';
+import { ChatUnreadCountService } from 'src/modules/chat/services/chat-unread-count.service';
 
 // Chat GraphQL beyond metadata CRUD. Channels/members/messages/reactions and
 // read cursors are app-owned metadata objects, so their CRUD + cursor
@@ -36,6 +38,7 @@ export class ChatResolver {
   constructor(
     private readonly chatMessageService: ChatMessageService,
     private readonly chatTypingService: ChatTypingService,
+    private readonly chatUnreadCountService: ChatUnreadCountService,
   ) {}
 
   @Query(() => ChatMessageConnectionDTO)
@@ -48,6 +51,23 @@ export class ChatResolver {
       channelId,
       limit,
       after,
+    });
+  }
+
+  @Query(() => [ChatUnreadCountDTO])
+  async chatUnreadCounts(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
+  ): Promise<ChatUnreadCountDTO[]> {
+    if (!isDefined(workspaceMemberId)) {
+      throw new ForbiddenException(
+        'Unread counts require an authenticated workspace member',
+      );
+    }
+
+    return this.chatUnreadCountService.listUnreadCounts({
+      workspaceId: workspace.id,
+      workspaceMemberId,
     });
   }
 

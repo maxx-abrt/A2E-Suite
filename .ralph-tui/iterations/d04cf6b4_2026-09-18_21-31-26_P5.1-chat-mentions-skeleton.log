@@ -1,0 +1,136 @@
+# Iteration 4 Log
+
+## Metadata
+
+- **Task ID**: P5.1-chat-mentions-skeleton
+- **Task Title**: P5.1: chat mentions emit notification-service events (P8 skeleton)
+- **Description**: As a workspace member, I want @mentions in chat to reach the notification service, so that mentions land in one inbox when P8 UI arrives.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-18T19:31:26.680Z
+- **Ended At**: 2026-09-18T19:35:07.892Z
+- **Duration**: 3m 41s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ ls .ralph-tui/ 2>/dev/null
+[94m[grep][0m pattern: [96mP5.1-chat-mentions-skeleton[0m
+[94m[bash][0m $ grep -n "P5.1" PLAN.md | head -50
+[94m[bash][0m $ grep -n "P5.1-chat-mentions-skeleton\|P5.1-chat-realtime-publish\|P5.1-chat-model\|P8.1-notification...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-05-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[grep][0m pattern: [96mP8.1|notification[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-08-report.md
+[94m[bash][0m $ find packages/twenty-server/src/engine/core-modules/notification -type f | sort
+[94m[bash][0m $ find packages/twenty-server/src/modules/chat -type f | sort
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/listeners/chat-realtime.listener.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/services/chat-realtime-publisher.service.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/chat.module.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/utils/chat-realtime-event.util.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -rn "mention" PLAN.md | head -40
+[94m[bash][0m $ find "packages/twenty-apps/internal/a2e-chat" -type f | sort | head -80
+[94m[bash][0m $ find "packages/twenty-apps/internal/a2e-chat/src" -type f | sort
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/src/objects/chat-message.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/src/lib/message-body.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/notification/notification.module.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/notification/notification.entity.ts
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-server/src/engine/core-modules/realtime-gateway -type f | sort
+[94m[bash][0m $ grep -rln "workspaceMemberId.*userId\|userId.*workspaceMemberId" packages/twenty-server/src/engine -...
+[94m[read][0m
+[94m[bash][0m $ grep -rln "userWorkspace" packages/twenty-server/src/engine/core-modules/realtime-gateway packages/t...
+[94m[bash][0m $ grep -rln "workspaceMemberId" packages/twenty-server/src/engine/core-modules --include='*.ts' 2>/dev...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/services/chat-message.service.ts
+[94m[read][0m
+[94m[bash][0m $ grep -n "NotificationModule\|ChatModule" packages/twenty-server/src/engine/core-modules/core-engine....
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/services/chat-typing.service.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/src/objects/chat-channel-member.object.ts
+[94m[bash][0m $ grep -n "userId" packages/twenty-server/src/modules/workspace-member/standard-objects/workspace-memb...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/src/lib/__tests__/message-body.test.ts
+[94m[read][0m
+[94m[bash][0m $ grep -n "P5.1\|mention\|notification" .ralph-tui/progress.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/resolvers/chat.resolver.ts
+[94m[bash][0m $ date -u +%Y-%m-%dT%H:%M:%SZ
+[94m[bash][0m $ git log --oneline -8
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-05-report.md
+[94m[todowrite][0m
+[94m[write][0m "import { type NotificationRequest } from 'src/engine/core-modules/notification/types/notification-request.type';
+
+// Markdown-lite mention wire format shared with the a2e-chat composer:
+// `@[label](w... (1890 chars)"
+[94m[write][0m "import { Injectable } from '@nestjs/common';
+
+import { In } from 'typeorm';
+
+import { NotificationService } from 'src/engine/core-modules/notification/services/notification.service';
+import { Workspac... (3653 chars)"
+[94m[write][0m "import { Injectable, Logger } from '@nestjs/common';
+
+import { type ObjectRecordCreateEvent } from 'twenty-shared/database-events';
+
+import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphq... (1800 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/chat.module.ts
+Now wire the module:
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/chat.module.ts
+[94m[bash][0m $ find packages/twenty-server/src -name '*.listener.spec.ts' | head
+[94m[read][0m
+[94m[read][0m
+[94m[write][0m "import {
+  buildChatMentionNotificationRequests,
+  extractMentionedWorkspaceMemberIds,
+} from 'src/modules/chat/utils/chat-mention.util';
+
+const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+... (3312 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/utils/__tests__/chat-mention.util.spec.ts
+[94m[write][0m "import { NotificationService } from 'src/engine/core-modules/notification/services/notification.service';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import {
+  ... (3614 chars)"
+Now the service spec:
+[94m[edit][0m
+[94m[write][0m "import { Logger } from '@nestjs/common';
+
+import { type ObjectRecordCreateEvent } from 'twenty-shared/database-events';
+
+import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/ty... (2130 chars)"
+[94m[bash][0m $ grep -rn "ObjectRecordCreateEvent" packages/twenty-shared/src/database-events/*.ts | head
+[94m[bash][0m $ npx jest src/modules/chat/utils/__tests__/chat-mention.util.spec.ts src/modules/chat/services/__test...
+[94m[bash][0m $ npx jest src/modules/chat src/engine/core-modules/notification --config=packages/twenty-server/jest....
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -30
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-server 2>&1 | tail -20
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/chat/utils/chat-mention.util.ts src/modules/ch...
+[94m[bash][0m $ npx oxfmt --check src/modules/chat/utils/chat-mention.util.ts src/modules/chat/services/chat-mention...
+[94m[bash][0m $ npx oxfmt src/modules/chat/listeners/__tests__/chat-mention.listener.spec.ts src/modules/chat/servic...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ npx jest src/modules/chat/utils/__tests__/chat-mention.util.spec.ts src/modules/chat/services/__test...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-05-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/chat/utils/chat-mention.util.ts src/modules/ch...
+[94m[todowrite][0m
+Implemented P5.1 bullet 4 (chat mentions → notification service) and appended the phase report + progress entry.
+
+- `chat-mention.listener.ts` — new `chatMessage.created` listener (best-effort).
+- `chat-mention.service.ts` — extracts mention ids, resolves workspaceMember→user, calls `NotificationService.requestNotifications` with `MENTION` requests.
+- `chat-mention.util.ts` — pure extraction + request builder.
+- `chat.module.ts` — imports `NotificationModule`, registers both providers.
+- 3 specs (utils/service/listener).
+
+Checks green: jest `src/modules/chat src/engine/core-modules/notification` 15 suites/70 tests; `tsgo --noEmit` exit 0; oxlint --type-aware 0/0 and oxfmt clean on the 7 touched files. No chat-local storage; parsing stays minimal until P8.2. Tier 2 (live install + E08) left for the orchestrator.
+
+<promise>COMPLETE</promise>

@@ -522,11 +522,12 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 39,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md task ID: P5.1 bullets 5–6; dependsOn P5.1-chat-model. Single-spec integration runs are Tier 1 (the excluded Tier 2 is the full 621-spec sweep).",
       "dependsOn": [
         "P5.1-chat-model"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P5.2-chat-page",
@@ -826,6 +827,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-18T19:35:07.893Z"
+    "updatedAt": "2026-09-18T20:13:31.216Z"
   }
 }

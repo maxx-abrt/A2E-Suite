@@ -3,10 +3,10 @@
   "sessionId": "d04cf6b4-18b1-4a08-a6a1-78012d99bf9d",
   "status": "running",
   "startedAt": "2026-09-18T19:06:36.433Z",
-  "updatedAt": "2026-09-18T19:35:07.893Z",
-  "currentIteration": 3,
+  "updatedAt": "2026-09-18T20:13:31.217Z",
+  "currentIteration": 5,
   "maxIterations": 20,
-  "tasksCompleted": 3,
+  "tasksCompleted": 4,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -46,6 +46,26 @@
       "durationMs": 449604,
       "startedAt": "2026-09-18T19:23:51.483Z",
       "endedAt": "2026-09-18T19:31:21.087Z"
+    },
+    {
+      "iteration": 4,
+      "status": "completed",
+      "taskId": "P5.1-chat-mentions-skeleton",
+      "taskTitle": "P5.1: chat mentions emit notification-service events (P8 skeleton)",
+      "taskCompleted": true,
+      "durationMs": 221212,
+      "startedAt": "2026-09-18T19:31:26.680Z",
+      "endedAt": "2026-09-18T19:35:07.892Z"
+    },
+    {
+      "iteration": 5,
+      "status": "completed",
+      "taskId": "P5.1-chat-attachments-tests",
+      "taskTitle": "P5.1: chat attachments + integration tests (pagination, isolation, unread counts)",
+      "taskCompleted": false,
+      "durationMs": 958135,
+      "startedAt": "2026-09-18T19:35:13.412Z",
+      "endedAt": "2026-09-18T19:51:11.547Z"
     }
   ],
   "skippedTaskIds": [],
