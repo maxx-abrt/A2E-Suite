@@ -688,12 +688,13 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 46,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md task ID: P8.2 activity bullet; dependsOn P8.1-notification-service; the my-tasks widget composes P4.2-my-tasks-page (in-tracker, priority 19).",
       "dependsOn": [
         "P8.1-notification-service",
         "P4.2-my-tasks-page"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P8.2-email-notifications",
@@ -833,6 +834,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-18T21:47:12.788Z"
+    "updatedAt": "2026-09-18T21:56:04.277Z"
   }
 }

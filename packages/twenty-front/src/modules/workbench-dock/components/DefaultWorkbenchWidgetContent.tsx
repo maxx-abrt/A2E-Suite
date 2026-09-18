@@ -63,8 +63,12 @@ export const getWorkbenchWidgetTitle = (
       return translate`Comments`;
     case 'tasks':
       return translate`Tasks`;
+    case 'events':
+      return translate`Upcoming events`;
     case 'activity':
       return translate`Activity`;
+    case 'contributions':
+      return translate`Contributions`;
     case 'presence':
       return translate`People online`;
     default:

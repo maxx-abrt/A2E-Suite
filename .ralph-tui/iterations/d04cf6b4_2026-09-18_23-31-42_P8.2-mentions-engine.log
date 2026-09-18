@@ -1,0 +1,297 @@
+# Iteration 13 Log
+
+## Metadata
+
+- **Task ID**: P8.2-mentions-engine
+- **Task Title**: P8.2: shared mentions parser for docs, chat and comments
+- **Description**: As a workspace member, I want one mentions parser shared across docs, chat and comments, so that mentions produce consistent notifications with context snippets everywhere.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-18T21:31:42.837Z
+- **Ended At**: 2026-09-18T21:47:12.781Z
+- **Duration**: 15m 29s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "P8.2" PLAN.md | head -50
+[94m[bash][0m $ ls docs/plan/phases/ | head -50
+[94m[bash][0m $ grep -n "P8.2\|mentions-engine\|mentions parser\|P8.1\|notification-service" PLAN.md | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -rn "P8.2-mentions-engine\|mentions-engine\|P8.1-notification-service\|P5.1-chat-model" PLAN.md...
+[94m[bash][0m $ grep -n "P8\b\|phase-08\|P8.1\|P8.2\|Execution order\|handoff" PLAN.md | head -60
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-08-report.md
+[94m[bash][0m $ grep -rniE "slash|mention" packages/twenty-front/src/modules/blocknote-editor --include=*.ts -l | he...
+[94m[bash][0m $ ls packages/twenty-server/src/engine/core-modules/notification/services
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/notification/notification.entity.ts
+[94m[bash][0m $ ls packages/twenty-server/src/engine/core-modules/notification/constants/ && echo "===type constant=...
+[94m[bash][0m $ grep -rn "chat.mention\|mention" packages/twenty-server/src/engine/core-modules/notification package...
+[94m[bash][0m $ grep -rn "requestNotifications\|chat.mention\|CHAT_MENTION\|'MENTION'" packages/twenty-server/src --...
+[94m[bash][0m $ cat packages/twenty-front/src/modules/inbox/utils/resolveNotificationDeepLink.ts
+[94m[bash][0m $ find packages/twenty-front/src/modules -maxdepth 1 -type d | grep -iE "chat|comment|mention|document...
+[94m[bash][0m $ grep -rln "documentCommentThread\|DocumentCommentThread\|commentThread" packages/twenty-server/src p...
+[94m[bash][0m $ find packages/twenty-front/src/modules/chat -type f | head -60
+[94m[bash][0m $ find packages/twenty-front/src/modules/blocknote-editor/comments -type f
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/utils/chat-mention.util.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/services/chat-mention.service.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/listeners/chat-mention.listener.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/utils/__tests__/chat-mention.util.spec.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/Schema.ts
+[94m[bash][0m $ find packages/twenty-front/src/modules/blocknote-editor -type d | head -40
+[94m[bash][0m $ ls packages/twenty-front/src/modules/blocknote-editor/version-history/utils
+[94m[bash][0m $ ls packages/twenty-apps/internal 2>/dev/null
+[94m[bash][0m $ grep -rln "documentCommentThread" packages/twenty-apps packages/twenty-server/src 2>/dev/null | head...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/objects/document.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/parseInitialBlocknote.ts
+[94m[bash][0m $ grep -rln "MentionInlineContent\|objectNameSingular.*workspaceMember" packages/twenty-front/src/modu...
+[94m[bash][0m $ git log --oneline -15
+[94m[bash][0m $ grep -rln "mention" packages/twenty-apps/internal/a2e-chat/src 2>/dev/null | head
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-chat/src/lib/message-body.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/utils/splitChatMessageBody.ts
+[94m[bash][0m $ cat packages/twenty-server/src/modules/chat/chat.module.ts
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-chat/src/objects/chat-message.object.ts 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/src/lib/channel-membership.ts
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-chat/src/constants/field-vocabulary.ts | head -80
+[94m[bash][0m $ cat packages/twenty-server/src/modules/chat/services/chat-message.service.ts
+[94m[bash][0m $ find packages/twenty-server/src -iname "*realtime-topic-access*" -o -iname "*topic-access*" -o -inam...
+[94m[read][0m
+[94m[bash][0m $ grep -n "Module" packages/twenty-server/src/engine/core-modules/core-engine.module.ts | head -60
+[94m[bash][0m $ cat packages/twenty-server/src/engine/core-modules/notification/notification.module.ts
+[94m[bash][0m $ cat packages/twenty-server/src/engine/core-modules/realtime-gateway/realtime-gateway.module.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/types/chat-message.type.ts
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-server/src/modules/chat/services/chat-realtime-publisher.service.ts
+[94m[read][0m
+[94m[bash][0m $ grep -rln "flatWorkspaceMemberMaps\|FlatWorkspaceMemberMaps" packages/twenty-server/src/engine/works...
+[94m[bash][0m $ grep -rln "FlatWorkspaceMemberMaps" packages/twenty-server/src | head
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/workspace-cache/types/workspace-cache-key.type.ts
+[94m[bash][0m $ find packages/twenty-server/src -name "user-workspace.service.ts" -o -name "user-workspace.entity.ts...
+[94m[bash][0m $ grep -n "findOne\|findBy\|async \|roleId\|workspaceMemberId" packages/twenty-server/src/engine/core-...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-server/src/engine/core-modules/user-workspace/utils/resolve-workspace-member-id....
+[94m[bash][0m $ cat packages/twenty-server/src/engine/core-modules/user-workspace/user-workspace.module.ts
+[94m[bash][0m $ cat >> docs/plan/phases/phase-08-report.md <<'EOF'  CLAIMED — P8.2-mentions-engine/mentions-engine-c...
+[94m[bash][0m $ grep -rn "export type CommentData\|interface CommentData\|type CommentData" node_modules/@blocknote/...
+[94m[bash][0m $ grep -rn "UserId\|userIds\|createdAt" packages/twenty-front/src/modules/blocknote-editor/comments/Ed...
+[94m[bash][0m $ grep -rln "OnDatabaseBatchEvent" packages/twenty-server/src | head -20
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/inbox/components/InboxNotificationItem.tsx
+[94m[todowrite][0m
+[94m[write][0m "// The three surfaces a workspace member can be mentioned on. Each carries its
+// own wire format (chat Markdown-lite, BlockNote document body, BlockNote
+// comment body) but shares one parsing/notifi... (1200 chars)"
+[94m[write][0m "import { isDefined } from 'twenty-shared/utils';
+
+// Short enough to render on one inbox line, long enough to carry the sentence
+// the mention sits in ("context snippet").
+export const MENTION_SNIPPE... (1333 chars)"
+[94m[write][0m "import { type MentionExtraction } from 'src/modules/mention/types/mention.type';
+import {
+  normalizeMentionSnippetText,
+  truncateMentionSnippet,
+} from 'src/modules/mention/utils/build-mention-snipp... (1465 chars)"
+[94m[write][0m "import { isArray, isNonEmptyString } from '@sniptt/guards';
+
+import {
+  type CommentMentionExtraction,
+  type MentionExtraction,
+} from 'src/modules/mention/types/mention.type';
+import {
+  type Mentio... (5681 chars)"
+[94m[write][0m "import {
+  type MentionExtraction,
+  type MentionSurface,
+} from 'src/modules/mention/types/mention.type';
+import { parseChatMentions } from 'src/modules/mention/utils/parse-chat-mentions.util';
+impor... (1761 chars)"
+[94m[write][0m "// Re-notification policy for edited bodies: a mention already present in the
+// previous revision is not a new mention, so an edit that merely moves text
+// around never re-pings the same member.
+exp... (588 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[write][0m "import { Injectable } from '@nestjs/common';
+
+import { isDefined } from 'twenty-shared/utils';
+
+import {
+  RealtimeTopicAccessService,
+  type RealtimeWorkspaceMemberIdentity,
+} from 'src/engine/core-m... (2272 chars)"
+[94m[write][0m "import { type MentionTarget } from 'src/modules/mention/types/mention.type';
+
+// Keeps only targets whose access check resolved true. The check is injected so
+// the suppression rule stays pure and un... (740 chars)"
+[94m[write][0m "import { type MentionSource } from 'src/modules/mention/types/mention.type';
+
+// One payload shape per surface, all carrying the mention kind, the snippet the
+// inbox previews and the ids the front d... (1398 chars)"
+[94m[write][0m "import { Injectable } from '@nestjs/common';
+
+import { isDefined } from 'twenty-shared/utils';
+import { In } from 'typeorm';
+
+import { NotificationService } from 'src/engine/core-modules/notification/... (5138 chars)"
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-server/src/engine/twenty-orm/twenty-orm.module.ts
+[94m[bash][0m $ find packages/twenty-shared/src -name "*.ts" | xargs grep -ln "ObjectRecordUpdateEvent" 2>/dev/null ...
+[94m[bash][0m $ cat packages/twenty-shared/src/database-events/object-record-update.event.ts packages/twenty-shared/...
+[94m[write][0m "import { Injectable, Logger } from '@nestjs/common';
+
+import {
+  type ObjectRecordCreateEvent,
+  type ObjectRecordUpdateEvent,
+} from 'twenty-shared/database-events';
+import { isDefined } from 'twenty... (3552 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/mention/utils/parse-blocknote-mentions.util.ts
+[94m[write][0m "import { Injectable, Logger } from '@nestjs/common';
+
+import {
+  type ObjectRecordCreateEvent,
+  type ObjectRecordUpdateEvent,
+} from 'twenty-shared/database-events';
+import { isDefined } from 'twenty... (4359 chars)"
+[94m[write][0m "import { Module } from '@nestjs/common';
+
+import { NotificationModule } from 'src/engine/core-modules/notification/notification.module';
+import { RealtimeGatewayModule } from 'src/engine/core-modules/... (1293 chars)"
+[94m[bash][0m $ grep -n "ChatModule\|import { ChatModule" packages/twenty-server/src/engine/core-modules/core-engine...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/core-engine.module.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/core-engine.module.ts
+[94m[write][0m "import { Injectable } from '@nestjs/common';
+
+import { type ChatMessageRecord } from 'src/modules/chat/services/chat-realtime-publisher.service';
+import { MentionNotificationService } from 'src/module... (1145 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/chat.module.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/chat.module.ts
+[94m[write][0m "import { isDefined } from 'twenty-shared/utils';
+
+import { type NotificationRequest } from 'src/engine/core-modules/notification/types/notification-request.type';
+import { type MentionTarget } from 's... (1882 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/chat/utils/__tests__/chat-mention.util.spec.ts
+[94m[write][0m "import { ChatMentionService } from 'src/modules/chat/services/chat-mention.service';
+import { type ChatMessageRecord } from 'src/modules/chat/services/chat-realtime-publisher.service';
+import { Mentio... (2168 chars)"
+[94m[write][0m "import { parseMentions } from 'src/modules/mention/utils/parse-mentions.util';
+
+const ALICE_MEMBER_ID = '20202020-88e5-4cb6-b60a-f4a835a85d62';
+const BOB_MEMBER_ID = '20202020-99f5-4cb6-b60a-f4a835a85... (4060 chars)"
+[94m[write][0m "import { NotificationService } from 'src/engine/core-modules/notification/services/notification.service';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { Me... (7476 chars)"
+[94m[write][0m "import { RealtimeTopicAccessService } from 'src/engine/core-modules/realtime-gateway/services/realtime-topic-access.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspa... (4267 chars)"
+[94m[write][0m "import { type ObjectRecordCreateEvent } from 'twenty-shared/database-events';
+
+import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { ... (4356 chars)"
+[94m[write][0m "import { type ObjectRecordCreateEvent } from 'twenty-shared/database-events';
+
+import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { ... (4603 chars)"
+[94m[write][0m "import { type MentionTarget } from 'src/modules/mention/types/mention.type';
+import { filterPermittedMentionTargets } from 'src/modules/mention/utils/filter-permitted-mention-targets.util';
+
+const ALI... (1134 chars)"
+[94m[write][0m "import { buildMentionNotificationPayload } from 'src/modules/mention/utils/build-mention-notification-payload.util';
+
+describe('buildMentionNotificationPayload', () => {
+  it('builds the chat payload ... (1614 chars)"
+[94m[write][0m "import { subtractMentionedWorkspaceMemberIds } from 'src/modules/mention/utils/subtract-mentioned-workspace-member-ids.util';
+
+describe('subtractMentionedWorkspaceMemberIds', () => {
+  it('keeps only ... (740 chars)"
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | head -60
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/mention/services/mention-notification.service.ts
+[94m[edit][0m
+[94m[bash][0m $ grep -n "as unknown as WorkspaceEventBatch" packages/twenty-server/src/modules/mention/listeners/__t...
+[94m[read][0m
+[94m[bash][0m $ cd packages/twenty-server && perl -0pi -e 's/(handleDocumentUpdated\(\{.*?\} as unknown as Workspace...
+[94m[edit][0m
+[94m[bash][0m $ cd packages/twenty-server && perl -0pi -e 's/(handleThreadUpdated\(\{.*?\} as unknown as WorkspaceEv...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | head -60
+[94m[bash][0m $ npx jest src/modules/mention src/modules/chat --config=jest.config.mjs 2>&1 | tail -60
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/modules/mention src/modules/chat --config=jest.config.mjs 2>&1 | tail -50
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/mention/services/mention-access.service.ts
+[94m[bash][0m $ npx jest src/modules/mention src/modules/chat --config=jest.config.mjs 2>&1 | tail -12
+[94m[bash][0m $ npx jest src/engine/core-modules/realtime-gateway src/engine/core-modules/notification --config=jest...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/mention src/modules/chat/services/chat-mention...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/mention src/modules/chat/services/chat-mention...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/mention src/modules/chat src/engine/core-modul...
+[94m[bash][0m $ grep -rln "inject-workspace-repository" packages 2>/dev/null | grep -v node_modules | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-oxlint-rules/rules/inject-workspace-repository.ts
+[94m[bash][0m $ grep -rln "UserWorkspaceService" packages/twenty-server/src --include=*.service.ts 2>/dev/null | hea...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/engine/metadata-modules/ai/ai-agent-execution/services...
+[94m[bash][0m $ grep -n "constructor\|UserWorkspaceService\|private readonly" packages/twenty-server/src/modules/wor...
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-server/.oxlintrc.json
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/engine/metadata-modules/ai/ai-agent-execution/services...
+[94m[bash][0m $ grep -n "WorkspaceService\|inject-workspace" packages/twenty-oxlint-rules/dist/oxlint-plugin.mjs | h...
+[94m[bash][0m $ sed -n '120,220p' packages/twenty-server/.oxlintrc.json
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/mention/services/mention-access.service.ts 2>&...
+[94m[read][0m
+[94m[bash][0m $ grep -n "oxlint-disable.*inject-workspace" packages/twenty-server/src/engine/metadata-modules/ai/ai-...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/mention/services/mention-access.service.ts
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/mention src/modules/chat src/engine/core-modul...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/mention src/modules/chat src/engine/core-modul...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/mention/services/mention-access.service.ts
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/mention src/modules/chat src/engine/core-modul...
+[94m[bash][0m $ npx oxfmt --check src/modules/mention src/modules/chat/services/chat-mention.service.ts src/modules/...
+[94m[bash][0m $ npx oxfmt src/modules/mention src/modules/chat/services/chat-mention.service.ts src/modules/chat/ser...
+[94m[bash][0m $ echo "=== tsgo exit: $? ==="
+[94m[bash][0m $ npx jest src/modules/mention src/modules/chat src/engine/core-modules/realtime-gateway --config=jest...
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-server 2>&1 | tail -15
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ grep -rn "currentUserId" packages/twenty-front/src/modules/blocknote-editor --include=*.tsx 2>/dev/n...
+[94m[read][0m
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ then P8.2 email notifications (twenty-emails templates honoring preferences/quiet hours) or watchers...
+[94m[bash][0m $ sed -n '1,40p' .ralph-tui/progress.md
+[94m[bash][0m $ covered at Tier 0 with synthetic event payloads. --- EOF echo done
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ grep -n "forwardRef because the publisher" .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ npx oxfmt --check src/modules/mention/services/mention-access.service.ts 2>&1 | tail -3
+[94m[bash][0m $ npx jest src/modules/mention --config=jest.config.mjs 2>&1 | tail -6
+[94m[bash][0m $ sed -n '20,22p' .ralph-tui/progress.md | cut -c1-120
+Implemented the P8.2 shared mentions engine (server) and closed the slice.
+
+**What landed**
+- New `packages/twenty-server/src/modules/mention/` module: one `parseMentions({surface, body})` parser over three surfaces (chat Markdown-lite, BlockNote document `content`, BlockNote comment `comments`), snippet builder, payload builder, re-notify subtraction, and permission filter.
+- `MentionNotificationService` — single producer: parse → resolve `workspaceMember`→user → permission-filter → emit one `MENTION` request per permitted user on the P8.1 `NotificationService.requestNotifications` seam, payload carrying `kind` + `snippet` + deep-link ids.
+- `MentionAccessService` reuses the P2.1 `RealtimeTopicAccessService` ACL (additive `canWorkspaceMemberReadObjectRecord`/`canWorkspaceMemberReadChatChannel` taking an explicit member identity); a mentioned user without read access is suppressed entirely.
+- Surface wiring: `ChatMentionService` now delegates to the shared engine; new `DocumentMentionListener` and `DocumentCommentMentionListener` diff `before` so edits don't re-notify.
+
+**Evidence**
+- `npx jest src/modules/mention src/modules/chat src/engine/core-modules/realtime-gateway --config=jest.config.mjs` → 25 suites / 136 tests pass
+- `npx tsgo -p tsconfig.json --noEmit` (twenty-server) → exit 0
+- `npx oxlint --type-aware -c .oxlintrc.json <touched>` → 0 warnings / 0 errors; `oxfmt --check` clean
+- `npx nx lint:diff-with-main twenty-server` → success ("No changed files.")
+- No twenty-shared / migration / locale / twenty-front changes.
+
+Reported `done-for-review` in `docs/plan/phases/phase-08-report.md` and appended the `.ralph-tui/progress.md` entry + Codebase Pattern. No commit made (per contract).
+
+<promise>COMPLETE</promise>

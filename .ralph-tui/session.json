@@ -3,10 +3,10 @@
   "sessionId": "d04cf6b4-18b1-4a08-a6a1-78012d99bf9d",
   "status": "running",
   "startedAt": "2026-09-18T19:06:36.433Z",
-  "updatedAt": "2026-09-18T21:47:12.790Z",
-  "currentIteration": 12,
+  "updatedAt": "2026-09-18T21:56:04.277Z",
+  "currentIteration": 13,
   "maxIterations": 20,
-  "tasksCompleted": 10,
+  "tasksCompleted": 11,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -136,6 +136,16 @@
       "durationMs": 216892,
       "startedAt": "2026-09-18T21:28:00.249Z",
       "endedAt": "2026-09-18T21:31:37.141Z"
+    },
+    {
+      "iteration": 13,
+      "status": "completed",
+      "taskId": "P8.2-mentions-engine",
+      "taskTitle": "P8.2: shared mentions parser for docs, chat and comments",
+      "taskCompleted": true,
+      "durationMs": 929944,
+      "startedAt": "2026-09-18T21:31:42.837Z",
+      "endedAt": "2026-09-18T21:47:12.781Z"
     }
   ],
   "skippedTaskIds": [],

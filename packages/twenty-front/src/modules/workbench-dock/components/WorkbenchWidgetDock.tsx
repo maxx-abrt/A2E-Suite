@@ -1,3 +1,4 @@
+import '@/home-dashboard/registerHomeDashboardWidgets';
 import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
