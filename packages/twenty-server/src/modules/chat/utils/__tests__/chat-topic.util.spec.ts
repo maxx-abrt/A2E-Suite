@@ -23,7 +23,7 @@ describe('buildChatChannelTopic', () => {
         }),
       ),
     ).toEqual({
-      kind: 'workspace',
+      kind: 'chat',
       workspaceId: WORKSPACE_ID,
       channelId: CHANNEL_ID,
     });

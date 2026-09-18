@@ -348,12 +348,13 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 31,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md task ID: P2.1 bullet 3; P0.3 scope note from batch-2 deferred this until object:/chat: publishers exist — the chat publisher lands via P5.1-chat-model, hence dependsOn. Ordered after the gateway repair.",
       "dependsOn": [
         "P2.1-gateway-auth-repair",
         "P5.1-chat-model"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P4.2-retroplanning",
@@ -818,6 +819,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-18T06:11:40.424Z"
+    "updatedAt": "2026-09-18T06:22:28.243Z"
   }
 }

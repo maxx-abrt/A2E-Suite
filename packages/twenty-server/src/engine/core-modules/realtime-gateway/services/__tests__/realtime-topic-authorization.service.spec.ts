@@ -28,10 +28,16 @@ const buildSocketContext = (
   ...overrides,
 });
 
+const createAccessService = () => ({
+  assertCanAccessObjectRecord: jest.fn().mockResolvedValue(undefined),
+  assertCanAccessChatChannel: jest.fn().mockResolvedValue(undefined),
+});
+
 const createService = (
   overrides: {
     userSessionService?: Record<string, unknown>;
     workspaceCacheService?: Record<string, unknown>;
+    accessService?: Record<string, unknown>;
   } = {},
 ) => {
   const workspaceCacheService = {
@@ -43,14 +49,20 @@ const createService = (
     }),
     ...overrides.workspaceCacheService,
   };
+  const accessService = {
+    ...createAccessService(),
+    ...overrides.accessService,
+  };
 
   return {
     service: new RealtimeTopicAuthorizationService(
       {} as never,
       (overrides.userSessionService ?? {}) as never,
       workspaceCacheService as never,
+      accessService as never,
     ),
     workspaceCacheService,
+    accessService,
   };
 };
 
@@ -81,6 +93,7 @@ describe('RealtimeTopicAuthorizationService', () => {
             },
           }),
         } as never,
+        createAccessService() as never,
       );
 
       const context = await service.authenticate('token');
@@ -89,6 +102,7 @@ describe('RealtimeTopicAuthorizationService', () => {
         userId: USER_ID,
         workspaceId: WORKSPACE_ID,
         workspaceMemberId: WORKSPACE_MEMBER_ID,
+        userWorkspaceId: '20202020-1e7c-43d9-a5db-685b506d816',
         isWorkspaceAgnostic: false,
       });
     });
@@ -110,6 +124,7 @@ describe('RealtimeTopicAuthorizationService', () => {
             },
           }),
         } as never,
+        createAccessService() as never,
       );
 
       const context = await service.authenticate('sess_session-token');
@@ -136,6 +151,7 @@ describe('RealtimeTopicAuthorizationService', () => {
             },
           }),
         } as never,
+        createAccessService() as never,
       );
 
       await expect(service.authenticate('token')).rejects.toThrow(
@@ -153,6 +169,7 @@ describe('RealtimeTopicAuthorizationService', () => {
         } as never,
         {} as never,
         {} as never,
+        createAccessService() as never,
       );
 
       await expect(service.authenticate('token')).rejects.toThrow(
@@ -172,6 +189,7 @@ describe('RealtimeTopicAuthorizationService', () => {
         } as never,
         {} as never,
         {} as never,
+        createAccessService() as never,
       );
 
       await expect(service.authenticate('token')).rejects.toThrow(
@@ -188,6 +206,7 @@ describe('RealtimeTopicAuthorizationService', () => {
         } as never,
         {} as never,
         {} as never,
+        createAccessService() as never,
       );
 
       await expect(service.authenticate('bad')).rejects.toThrow(
@@ -197,75 +216,155 @@ describe('RealtimeTopicAuthorizationService', () => {
   });
 
   describe('assertTopicAuthorized', () => {
-    it('accepts a workspace topic of the authenticated workspace', () => {
+    it('accepts a workspace topic of the authenticated workspace', async () => {
       const { service } = createService();
 
-      expect(() =>
+      await expect(
         service.assertTopicAuthorized(
           buildSocketContext(),
           `workspace:${WORKSPACE_ID}`,
         ),
-      ).not.toThrow();
+      ).resolves.toBeUndefined();
     });
 
-    it('rejects a topic of another workspace', () => {
+    it('accepts a presence topic of the authenticated workspace', async () => {
+      const { service, accessService } = createService();
+
+      await expect(
+        service.assertTopicAuthorized(
+          buildSocketContext(),
+          `workspace:${WORKSPACE_ID}:presence`,
+        ),
+      ).resolves.toBeUndefined();
+      expect(accessService.assertCanAccessObjectRecord).not.toHaveBeenCalled();
+      expect(accessService.assertCanAccessChatChannel).not.toHaveBeenCalled();
+    });
+
+    it('rejects a topic of another workspace', async () => {
       const { service } = createService();
 
-      expect(() =>
+      await expect(
         service.assertTopicAuthorized(
           buildSocketContext(),
           `workspace:${OTHER_WORKSPACE_ID}`,
         ),
-      ).toThrow('Topic workspace does not match the authenticated one');
+      ).rejects.toThrow('Topic workspace does not match the authenticated one');
     });
 
-    it('rejects invalid topic shapes', () => {
+    it('rejects invalid topic shapes', async () => {
       const { service } = createService();
 
-      expect(() =>
+      await expect(
         service.assertTopicAuthorized(
           buildSocketContext(),
           'workspace:not-a-uuid',
         ),
-      ).toThrow();
-      expect(() =>
+      ).rejects.toThrow();
+      await expect(
         service.assertTopicAuthorized(buildSocketContext(), 'other:thing'),
-      ).toThrow();
-      expect(() =>
+      ).rejects.toThrow();
+      await expect(
         service.assertTopicAuthorized(
           buildSocketContext(),
           `workspace:${WORKSPACE_ID}:object`,
         ),
-      ).toThrow();
+      ).rejects.toThrow();
     });
 
-    it('rejects another user inbox topic but allows the own one', () => {
+    it('rejects another user inbox topic but allows the own one', async () => {
       const { service } = createService();
 
-      expect(() =>
+      await expect(
         service.assertTopicAuthorized(
           buildSocketContext(),
           `workspace:${WORKSPACE_ID}:inbox:${USER_ID}`,
         ),
-      ).not.toThrow();
+      ).resolves.toBeUndefined();
 
-      expect(() =>
+      await expect(
         service.assertTopicAuthorized(
           buildSocketContext(),
           `workspace:${WORKSPACE_ID}:inbox:someone-else`,
         ),
-      ).toThrow('Inbox topics are scoped to the owning user');
+      ).rejects.toThrow('Inbox topics are scoped to the owning user');
     });
 
-    it('rejects everything for workspace-agnostic sockets', () => {
+    it('rejects everything for workspace-agnostic sockets', async () => {
       const { service } = createService();
 
-      expect(() =>
+      await expect(
         service.assertTopicAuthorized(
           buildSocketContext({ isWorkspaceAgnostic: true }),
           `workspace:${WORKSPACE_ID}`,
         ),
-      ).toThrow('Workspace-agnostic tokens cannot subscribe to topics');
+      ).rejects.toThrow('Workspace-agnostic tokens cannot subscribe to topics');
+    });
+
+    it('delegates an object topic to the record ACL check for the named record', async () => {
+      const { service, accessService } = createService();
+
+      await service.assertTopicAuthorized(
+        buildSocketContext(),
+        `workspace:${WORKSPACE_ID}:object:document:record-1`,
+      );
+
+      expect(accessService.assertCanAccessObjectRecord).toHaveBeenCalledWith({
+        socketContext: expect.objectContaining({ workspaceId: WORKSPACE_ID }),
+        objectNameSingular: 'document',
+        recordId: 'record-1',
+      });
+    });
+
+    it('propagates a record ACL denial', async () => {
+      const { service } = createService({
+        accessService: {
+          assertCanAccessObjectRecord: jest
+            .fn()
+            .mockRejectedValue(
+              new Error('You do not have access to this record'),
+            ),
+        },
+      });
+
+      await expect(
+        service.assertTopicAuthorized(
+          buildSocketContext(),
+          `workspace:${WORKSPACE_ID}:object:document:record-1`,
+        ),
+      ).rejects.toThrow('You do not have access to this record');
+    });
+
+    it('delegates a chat topic to the channel ACL check', async () => {
+      const { service, accessService } = createService();
+
+      await service.assertTopicAuthorized(
+        buildSocketContext(),
+        `workspace:${WORKSPACE_ID}:chat:channel-1`,
+      );
+
+      expect(accessService.assertCanAccessChatChannel).toHaveBeenCalledWith({
+        socketContext: expect.objectContaining({ workspaceId: WORKSPACE_ID }),
+        channelId: 'channel-1',
+      });
+    });
+
+    it('propagates a channel ACL denial', async () => {
+      const { service } = createService({
+        accessService: {
+          assertCanAccessChatChannel: jest
+            .fn()
+            .mockRejectedValue(
+              new Error('You do not have access to this channel'),
+            ),
+        },
+      });
+
+      await expect(
+        service.assertTopicAuthorized(
+          buildSocketContext(),
+          `workspace:${WORKSPACE_ID}:chat:channel-1`,
+        ),
+      ).rejects.toThrow('You do not have access to this channel');
     });
   });
 

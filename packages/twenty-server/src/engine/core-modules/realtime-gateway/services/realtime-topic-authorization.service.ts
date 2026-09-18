@@ -10,6 +10,7 @@ import { UserSessionService } from 'src/engine/core-modules/user-session/service
 import { isUserSessionToken } from 'src/engine/core-modules/user-session/utils/is-user-session-token.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type RealtimeAuthenticatedSocketContext } from '../types/realtime-topic-context.type';
+import { RealtimeTopicAccessService } from './realtime-topic-access.service';
 import { parseRealtimeTopic } from '../utils/parse-realtime-topic.util';
 
 // Authorization is evaluated per topic at subscribe time, never on publish:
@@ -30,6 +31,7 @@ export class RealtimeTopicAuthorizationService {
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly userSessionService: UserSessionService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly realtimeTopicAccessService: RealtimeTopicAccessService,
   ) {}
 
   async authenticate(
@@ -65,6 +67,7 @@ export class RealtimeTopicAuthorizationService {
       userId: payload.userId,
       workspaceId: payload.workspaceId,
       workspaceMemberId,
+      userWorkspaceId: payload.userWorkspaceId,
       isWorkspaceAgnostic: false,
     };
   }
@@ -107,10 +110,12 @@ export class RealtimeTopicAuthorizationService {
     return workspaceMemberId;
   }
 
-  assertTopicAuthorized(
+  // Async because record and channel topics consult the caller-permissioned
+  // repository; workspace, presence and inbox topics resolve synchronously.
+  async assertTopicAuthorized(
     socketContext: RealtimeAuthenticatedSocketContext,
     topic: string,
-  ): void {
+  ): Promise<void> {
     const topicContext = parseRealtimeTopic(topic);
 
     if (socketContext.isWorkspaceAgnostic) {
@@ -125,6 +130,25 @@ export class RealtimeTopicAuthorizationService {
       if (topicContext.userId !== socketContext.userId) {
         throw new Error('Inbox topics are scoped to the owning user');
       }
+    }
+
+    if (
+      topicContext.kind === 'object' &&
+      isDefined(topicContext.objectNameSingular) &&
+      isDefined(topicContext.recordId)
+    ) {
+      await this.realtimeTopicAccessService.assertCanAccessObjectRecord({
+        socketContext,
+        objectNameSingular: topicContext.objectNameSingular,
+        recordId: topicContext.recordId,
+      });
+    }
+
+    if (topicContext.kind === 'chat' && isDefined(topicContext.channelId)) {
+      await this.realtimeTopicAccessService.assertCanAccessChatChannel({
+        socketContext,
+        channelId: topicContext.channelId,
+      });
     }
   }
 }

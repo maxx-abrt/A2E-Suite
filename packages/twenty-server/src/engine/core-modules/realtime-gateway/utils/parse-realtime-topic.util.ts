@@ -22,7 +22,7 @@ export const parseRealtimeTopic = (topic: string): RealtimeTopicContext => {
     case 'presence':
       return { kind: 'presence', workspaceId };
     case 'chat':
-      return { kind: 'workspace', workspaceId, channelId: rest[0] };
+      return { kind: 'chat', workspaceId, channelId: rest[0] };
     case 'inbox':
       return { kind: 'inbox', workspaceId, userId: rest[0] };
     case 'object': {

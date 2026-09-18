@@ -7,9 +7,11 @@ import { PresenceService } from 'src/engine/core-modules/realtime-gateway/servic
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { RealtimeGatewayService } from 'src/engine/core-modules/realtime-gateway/services/realtime-gateway.service';
 import { RealtimePublisherService } from 'src/engine/core-modules/realtime-gateway/services/realtime-publisher.service';
+import { RealtimeTopicAccessService } from 'src/engine/core-modules/realtime-gateway/services/realtime-topic-access.service';
 import { RealtimeTopicAuthorizationService } from 'src/engine/core-modules/realtime-gateway/services/realtime-topic-authorization.service';
 import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
+import { TwentyOrmModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 // Track A core primitive (blueprint §4). Mounted once from CoreEngineModule;
@@ -24,12 +26,14 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UserSessionModule,
     WorkspaceCacheModule,
     CoreEntityCacheModule,
+    TwentyOrmModule,
   ],
   providers: [
     PresenceResolver,
     PresenceService,
     RealtimeGatewayService,
     RealtimePublisherService,
+    RealtimeTopicAccessService,
     RealtimeTopicAuthorizationService,
   ],
   exports: [

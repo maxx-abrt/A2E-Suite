@@ -54,12 +54,16 @@ const buildSocketState = (
 
 const createHeartbeatService = (
   assertStillAMember = jest.fn().mockResolvedValue(undefined),
+  assertTopicAuthorized = jest.fn().mockResolvedValue(undefined),
 ) => {
   const presenceService = { leave: jest.fn().mockResolvedValue(undefined) };
   const metricsService = { incrementCounterBy: jest.fn() };
   const service = new RealtimeGatewayService(
     { httpAdapter: null } as unknown as HttpAdapterHost,
-    { assertStillAMember } as unknown as RealtimeTopicAuthorizationService,
+    {
+      assertStillAMember,
+      assertTopicAuthorized,
+    } as unknown as RealtimeTopicAuthorizationService,
     {} as RealtimePublisherService,
     presenceService as unknown as PresenceService,
     {} as UserSessionCookieService,
@@ -67,7 +71,13 @@ const createHeartbeatService = (
     metricsService as never,
   );
 
-  return { service, assertStillAMember, presenceService, metricsService };
+  return {
+    service,
+    assertStillAMember,
+    assertTopicAuthorized,
+    presenceService,
+    metricsService,
+  };
 };
 
 describe('RealtimeGatewayService', () => {
@@ -154,6 +164,55 @@ describe('RealtimeGatewayService', () => {
         4403,
         'User is not a member of the workspace',
       );
+    });
+
+    it('drops only the revoked topic when a record/channel ACL is lost, keeping the session', async () => {
+      const revokedTopic = `workspace:${WORKSPACE_ID}:object:document:rec-1`;
+      const keptTopic = `workspace:${WORKSPACE_ID}:chat:channel-1`;
+      const { service, assertTopicAuthorized } = createHeartbeatService(
+        jest.fn().mockResolvedValue(undefined),
+        jest
+          .fn()
+          .mockImplementation((_context, topic: string) =>
+            topic === revokedTopic
+              ? Promise.reject(
+                  new Error('You do not have access to this record'),
+                )
+              : Promise.resolve(undefined),
+          ),
+      );
+      const webSocket = buildHeartbeatSocket();
+      const revokedUnsubscribe = jest.fn();
+      const keptUnsubscribe = jest.fn();
+      const socketState = buildSocketState({
+        subscriptionsByTopic: new Map([
+          [revokedTopic, revokedUnsubscribe],
+          [keptTopic, keptUnsubscribe],
+        ]),
+        seqByTopic: new Map([[revokedTopic, 3]]),
+      });
+
+      await service.runHeartbeatCycle([
+        { webSocket, socketState } as unknown as RealtimeHeartbeatClient,
+      ]);
+
+      expect(assertTopicAuthorized).toHaveBeenCalledTimes(2);
+      expect(revokedUnsubscribe).toHaveBeenCalledTimes(1);
+      expect(keptUnsubscribe).not.toHaveBeenCalled();
+      expect(socketState.subscriptionsByTopic.has(revokedTopic)).toBe(false);
+      expect(socketState.subscriptionsByTopic.has(keptTopic)).toBe(true);
+      expect(socketState.seqByTopic.has(revokedTopic)).toBe(false);
+      expect(socketState.authContext).not.toBeNull();
+      expect(webSocket.close).not.toHaveBeenCalled();
+
+      const errorEnvelope = JSON.parse(webSocket.send.mock.calls[0][0]);
+
+      expect(errorEnvelope).toEqual({
+        topic: revokedTopic,
+        seq: 0,
+        type: 'error',
+        payload: { message: 'You do not have access to this record' },
+      });
     });
 
     it('pings unauthenticated sockets without revalidating membership', async () => {

@@ -70,7 +70,7 @@ describe('parseRealtimeTopic', () => {
       workspaceId,
     });
     expect(parseRealtimeTopic(`workspace:${workspaceId}:chat:abc`)).toEqual({
-      kind: 'workspace',
+      kind: 'chat',
       workspaceId,
       channelId: 'abc',
     });

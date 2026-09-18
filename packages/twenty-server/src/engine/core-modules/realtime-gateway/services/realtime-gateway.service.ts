@@ -216,12 +216,12 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
         socketState.isAlive = false;
         webSocket.ping();
 
-        await this.revalidateSocketMembership(webSocket, socketState);
+        await this.revalidateSocketAuthorizations(webSocket, socketState);
       }),
     );
   }
 
-  private async revalidateSocketMembership(
+  private async revalidateSocketAuthorizations(
     webSocket: RealtimeHeartbeatSocket,
     socketState: RealtimeSocketState,
   ): Promise<void> {
@@ -239,6 +239,63 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
         socketState,
         error instanceof Error ? error.message : 'Workspace membership revoked',
       );
+
+      return;
+    }
+
+    await this.dropRevokedTopics(webSocket, socketState);
+  }
+
+  // A member who is still in the workspace can nevertheless lose a record or
+  // channel (role change, removed from a private channel, RLS change). Those
+  // are per-topic losses: drop only the revoked topics and attribute the error
+  // to each one, keeping the authenticated session — and its still-valid
+  // topics — alive.
+  private async dropRevokedTopics(
+    webSocket: RealtimeHeartbeatSocket,
+    socketState: RealtimeSocketState,
+  ): Promise<void> {
+    const authContext = socketState.authContext;
+
+    if (!isDefined(authContext)) {
+      return;
+    }
+
+    for (const topic of [...socketState.subscriptionsByTopic.keys()]) {
+      try {
+        await this.topicAuthorizationService.assertTopicAuthorized(
+          authContext,
+          topic,
+        );
+      } catch (error) {
+        const unsubscribe = socketState.subscriptionsByTopic.get(topic);
+
+        unsubscribe?.();
+        socketState.subscriptionsByTopic.delete(topic);
+        socketState.seqByTopic.delete(topic);
+
+        if (this.isPresenceTopic(topic)) {
+          try {
+            await this.presenceService.leave(
+              this.toPresenceIdentity(socketState),
+            );
+          } catch (presenceError) {
+            this.logger.warn(
+              `Failed to clear presence for a revoked topic: ${
+                presenceError instanceof Error
+                  ? presenceError.message
+                  : 'unknown error'
+              }`,
+            );
+          }
+        }
+
+        this.sendError(
+          webSocket,
+          error instanceof Error ? error.message : 'Topic access revoked',
+          topic,
+        );
+      }
     }
   }
 
@@ -411,7 +468,7 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
           } as never),
       );
 
-      this.topicAuthorizationService.assertTopicAuthorized(
+      await this.topicAuthorizationService.assertTopicAuthorized(
         authContext,
         parsed.topic,
       );
@@ -509,7 +566,7 @@ export class RealtimeGatewayService implements OnModuleInit, OnModuleDestroy {
       throw new Error('Presence topic is not subscribed');
     }
 
-    this.topicAuthorizationService.assertTopicAuthorized(
+    await this.topicAuthorizationService.assertTopicAuthorized(
       socketState.authContext,
       message.topic,
     );

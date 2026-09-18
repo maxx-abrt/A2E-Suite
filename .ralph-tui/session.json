@@ -3,10 +3,10 @@
   "sessionId": "f4efa378-7afd-4697-a69b-09f44239da8d",
   "status": "running",
   "startedAt": "2026-09-18T04:25:41.281Z",
-  "updatedAt": "2026-09-18T06:11:40.425Z",
-  "currentIteration": 18,
+  "updatedAt": "2026-09-18T06:22:28.244Z",
+  "currentIteration": 19,
   "maxIterations": 20,
-  "tasksCompleted": 14,
+  "tasksCompleted": 15,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -196,6 +196,16 @@
       "durationMs": 204119,
       "startedAt": "2026-09-18T05:58:50.770Z",
       "endedAt": "2026-09-18T06:02:14.889Z"
+    },
+    {
+      "iteration": 19,
+      "status": "completed",
+      "taskId": "P8.1-notification-service",
+      "taskTitle": "P8.1: notification core service — event consumers, digest batching, quiet hours, preference model",
+      "taskCompleted": true,
+      "durationMs": 559985,
+      "startedAt": "2026-09-18T06:02:20.435Z",
+      "endedAt": "2026-09-18T06:11:40.420Z"
     }
   ],
   "skippedTaskIds": [],
