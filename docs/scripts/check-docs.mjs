@@ -18,6 +18,7 @@ export const MAINTAINED_DOCUMENTS = [
   'docs/plan/03-integration-blueprint.md',
   'docs/plan/04-twenty-native-law.md',
   'docs/plan/05-template-contracts.md',
+  'docs/plan/p3.4-advanced-authoring-feasibility.md',
   'docs/templates/task.md',
   'docs/templates/handoff.md',
   'packages/twenty-apps/README-A2E.md',

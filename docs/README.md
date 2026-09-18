@@ -15,6 +15,7 @@ explains the fork; upstream product documentation lives in
 | Find Bilan, Bureau or the app installer | [Applications runbook](applications.md) | The linked catalog, installer and preset source |
 | Locate the code for a change | [Codebase map](plan/01-codebase-map.md) | One adjacent implementation and its tests |
 | Build a native feature | [Integration blueprint](plan/03-integration-blueprint.md) | [Native patterns](plan/04-twenty-native-law.md), [app authoring](../packages/twenty-apps/README-A2E.md) |
+| Gate advanced authoring blocks | [P3.4 feasibility check](plan/p3.4-advanced-authoring-feasibility.md) | The cited editor/export source paths |
 | Translate a reference-app feature | [Reference analysis](plan/02-reference-analysis.md) | Only the relevant reference schema/component |
 | Run checks or set up development | [Verification](verification.md) | Package manifest and Nx targets |
 | Understand a known risk | [Architecture audit](repository-architecture-audit.md) | Source evidence and the matching plan work package |

@@ -431,9 +431,10 @@
         "Quality gate: no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 35,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md task ID: P3.4 bullet 2 (gate half). Guest editing is explicitly deferred by PLAN.md — not part of this spike. D07 records the broader fidelity/licensing decision.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P3.4-import-portability",
@@ -822,6 +823,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-18T19:04:02.964Z"
+    "updatedAt": "2026-09-18T19:13:15.933Z"
   }
 }

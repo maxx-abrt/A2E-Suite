@@ -877,3 +877,25 @@ CLAIMED — P3.2-revision-history/restore-as-new-revision — deepseek-v4.1-flas
 **Do not redo:** `classifyDocumentSaveConflict` remains the only caller of `resolveOptimisticDocumentUpdate`, `getBlockLevelDiff` the block-diff source, `persistBlocknoteBody` the single normal+keep-local write seam, and `useDocumentSaveConflictGuard` the client-only expected-revision guard — do not add a server save/merge protocol or OT/CRDT, and keep a body equal to the draft classified as an echo, never a remote revision.
 **Remaining:** ~12 other [ ]/[~] tasks ahead (P1.3 e2e, P1.6d D02-gated leg, P1.7a export, P1.7b/c Tier-2, P2.1 bullet 5, P2.4/P2.5 e2e, P3.2 share UX bullet, remaining P3.3 tree legs, P3.4+)
 **Next:** executor — P3.2 public snapshot sharing bullet 5 (owner-side share UX) or remaining P3.3 tree legs; orchestrator — Tier-2 two-session conflict-banner pass (plus the pending schema-regen/revision-history scroll)
+
+CLAIMED — P3.4-feasibility-spike/feasibility-check — deepseek-v4.1-flash — 2026-09-18T19:12:00Z — base 7d0651f0c91df2c92f99a3236eaf9be463af3fde
+
+## 2026-09-18 19:12 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** P3.4-feasibility-spike P3.4: native-primitive/license feasibility check for advanced authoring blocks (report-only) · **Slice:** the gate half of PLAN.md line 772 (native-primitive/license check); advanced-blocks implementation stays closed
+**Claim:** done-for-review
+**Ready-to-tick:** yes — report-only deliverable complete, Tier-0 docs gate green, no package touched
+**Base:** 7d0651f0c91df2c92f99a3236eaf9be463af3fde
+**Changed:**
+- `docs/plan/p3.4-advanced-authoring-feasibility.md` (new — findings, license table, per-block matrix, fidelity/ODT statement, sequencing)
+- `docs/scripts/check-docs.mjs` (added the new doc to `MAINTAINED_DOCUMENTS` so the gate actually covers it)
+- `docs/README.md` (one doc-index row linking the spike)
+- `docs/plan/phases/phase-03-report.md` (claim + this report)
+**Checks:** `node docs/scripts/check-docs.mjs` → `PASS: 20 maintained documents, 131 local inline links, balanced code fences` (exit 0); `node --test docs/scripts/check-docs.test.mjs` → 5/5 pass, fail 0. lint/tsgo gates **N/A** — no package source touched (accepted-reason, reported as such per acceptance).
+**Findings (Observed, baseline 7d0651f0; no runtime/browser):**
+- **License (material):** editor core `@blocknote/{core,react,mantine}` = MPL-2.0; but `@blocknote/xl-docx-exporter`, `xl-pdf-exporter` and transitive `xl-multi-column` = **GPL-3.0 OR PROPRIETARY**, already imported by `twenty-front` (root is AGPL-3.0, compatible; any closed/commercial distribution needs a paid BlockNote license). `xl-math` not installed. No license-policy file exists → escalate to **D07**.
+- **Per-block go/no-go:** embedded native record views → **Conditional GO** (reuse `RecordTableWidgetRendererContent`/`PageLayoutRecordPageRenderer`; no editor block yet; export must degrade, not silently accept); charts → **Conditional GO** (native `GRAPH` widgets + Nivo/d3, MIT/ISC; DOCX/MD cannot serialize live views/charts); multi-column → **GO** (lowest risk: `@blocknote/xl-multi-column` already installed transitively, only `withMultiColumn` wiring needed; D07 ratification required); math/diagrams → **NO-GO now** (no `xl-math`/mermaid; GPL/proprietary + no exporter mapping); text review accept/reject → **NO-GO now** (no native primitive; version-history/comments are not per-edit review); font/page-layout controls → **NO-GO now** (absent in the BlockNote doc editor; `a2e-print-editor` class has no CSS rule); existing PDF/DOCX/Markdown export → **GO with caveat**.
+- **Fidelity:** PDF prints the live DOM; **DOCX/Markdown currently degrade callout/file/mention** with warnings. `PLAN.md`'s "PDF/DOCX fidelity is required" is therefore only partially met today; every future block must round-trip or carry an explicit unsupported warning. **ODT export stays deferred** (no `xl-odt-exporter` installed).
+**Missing for tick:** none for the spike; D07 must ratify the AGPL-3.0-vs-commercial xl-* position before any further XL dependency (multi-column/math) is wired. This is an owner decision, not a Tier-2 check.
+**Do not redo:** the check is evidence, not a go-ahead — the advanced-blocks implementation bullet stays closed behind durable save/share acceptance (P3.2/P3.3) and D07; do not import reference packages or invent a JSON DB engine; reuse the cited first-party primitives.
+**Remaining:** ~12 other [ ]/[~] tasks ahead (P1.3 e2e, P1.6d D02-gated leg, P1.7a export, P1.7b/c Tier-2, P2.1 bullet 5, P2.4/P2.5 e2e, P3.2 share UX bullet, remaining P3.3 tree legs, P3.4+)
+**Next:** executor — P3.2 public snapshot sharing bullet 5 or the remaining P3.3 tree legs; orchestrator — verify this report, hand D07 the license position, and run the pending Tier-2 P3.2/P3.3 browser passes
