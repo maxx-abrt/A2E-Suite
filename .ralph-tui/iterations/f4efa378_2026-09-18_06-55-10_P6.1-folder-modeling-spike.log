@@ -1,0 +1,122 @@
+# Iteration 8 Log
+
+## Metadata
+
+- **Task ID**: P6.1-folder-modeling-spike
+- **Task Title**: P6.1: Drive folder-modeling spike (report-only) — driveFolder + folderId field versus morph attachments
+- **Description**: As the platform team, I need a recorded folder-modeling decision for Drive before any metadata is created, so that no parallel file system is built.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-18T04:55:10.188Z
+- **Ended At**: 2026-09-18T04:59:57.674Z
+- **Duration**: 4m 47s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ ls docs/plan/phases/
+[94m[grep][0m [95mPLAN.md[0m pattern: [96mP6.1-folder-modeling-spike[0m
+[94m[bash][0m $ grep -n "P6.1" PLAN.md | head -50
+[94m[bash][0m $ grep -n "P6" PLAN.md | head -80
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ ls -la docs/plan/ && echo "---" && ls docs/plan/phases/ && echo "---PROMPT phase map---" && grep -rn...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PROMPT.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -n "CLAIMED" docs/plan/phases/*.md | tail -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ grep -rn "attachment" PLAN.md | head -40
+[94m[bash][0m $ find packages/twenty-server/src -iname "*attachment*" -type f | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n -i "attachment\|file-storage\|fileStorage" docs/plan/phases/phase-03-report.md | head -40
+[94m[bash][0m $ grep -n "# P3\|### P3" PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ grep -n -i "spike\|P3.1" docs/plan/phases/phase-03-report.md | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-server/src -type d -iname "*file-storage*" -o -type d -iname "*fileStorage*" | ...
+[94m[bash][0m $ grep -rn "attachment" packages/twenty-shared/src/metadata/*.ts | head -20
+[94m[bash][0m $ ls packages/twenty-server/src/engine/core-modules/file/file-upload
+[94m[bash][0m $ grep -rn "attachment" packages/twenty-shared/src/metadata/constants/*.ts 2>/dev/null | head
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-server/src/engine/core-modules/file/files-field/services/files-field...
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-server/src/engine/api/common/common-args-processors/data-arg-processo...
+[94m[bash][0m $ grep -rn "FILES" packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/uti...
+[94m[bash][0m $ grep -rln "FieldMetadataType.FILES" packages/twenty-server/src --include="*.ts" | head -30
+[94m[bash][0m $ find . -maxdepth 4 -type d -iname "a2e-*" 2>/dev/null | grep -v node_modules | head
+[94m[bash][0m $ grep -rn "driveFolder\|DriveFolder\|a2e-drive" --include="*.ts" --include="*.tsx" --include="*.md" ....
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/03-integration-blueprint.md
+[94m[bash][0m $ find packages/twenty-apps/internal/real-estate -type d | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/real-estate/src/fields/person-desired-area.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/real-estate/src/fields/person-budget-max.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/real-estate/src/fields/property-on-opportunity.field.ts
+[94m[bash][0m $ find packages/twenty-shared/src/metadata -name "*universal*"
+[94m[bash][0m $ find packages/twenty-sdk/src -type d | head -40
+[94m[bash][0m $ grep -rn "MORPH\|morphId\|MORPH_RELATION" packages/twenty-sdk/src packages/twenty-shared/src/types 2...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/fields/validate-fields.ts
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-sdk/src/cli/utilities/build/manifest/utils/manifest-validation-helper...
+[94m[bash][0m $ cat packages/twenty-sdk/src/sdk/define/index.ts 2>/dev/null | head -60
+[94m[bash][0m $ grep -rn "export const STANDARD_OBJECTS\|STANDARD_OBJECTS =" packages/twenty-shared/src/metadata | h...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+[94m[bash][0m $ grep -rn "reserved\|RESERVED" packages/twenty-sdk/src/sdk/define/fields/*.ts packages/twenty-sdk/src...
+[94m[bash][0m $ grep -rn "isCustom: false\|isSystem: true" packages/twenty-server/src/engine/workspace-manager/twent...
+[94m[bash][0m $ find packages/twenty-server/src -iname "*application*" -type d | head
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-accounting -path "*fields*" -name "*.ts" | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/task-project.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/fields/company-documents.field.ts
+[94m[bash][0m $ cat packages/twenty-sdk/src/sdk/define/fields/field-type.ts 2>/dev/null | head -40
+[94m[bash][0m $ grep -rn "sourceApp\|source-app\|attribution" docs/plan/*.md PLAN.md | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/real-estate/src/objects/property.object.ts
+[94m[bash][0m $ find packages/twenty-shared/src -iname "*FileFolder*"
+[94m[read][0m
+[94m[bash][0m $ grep -rn "ATTACHMENTS\|FilesWidget\|FILES widget\|'FILES'" packages/twenty-front/src/modules/activit...
+[94m[bash][0m $ grep -rln "uploadFilesFieldFile\|uploadFile" packages/twenty-front/src --include="*.ts" --include="*...
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-front/src/modules/activities/files/hooks/useUploadAttachmentFile.tsx
+[94m[bash][0m $ grep -rn "useUploadAttachmentFile\|createOneRecord.*attachment\|attachment" packages/twenty-front/sr...
+[94m[bash][0m $ grep -n "P0.2\|P0.4\|P1.7a\|P1.6c" PLAN.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ sed -n '1,60p' docs/scripts/check-docs.mjs 2>/dev/null
+[94m[bash][0m $ sed -n '1,60p' docs/README.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/scripts/check-docs.mjs
+[94m[bash][0m $ sed -n '1,60p' .ralph-tui/progress.md 2>/dev/null
+[94m[bash][0m $ git log --oneline --all -- docs/plan/phases/ | head -20
+[94m[bash][0m $ grep -n "phase-06\|phase-6\|phase-05\|phase-5" tasks/prd.json | head
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ sed -n '90,140p' .ralph-tui/prompt.hbs
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[write][0m "# Phase 06 — Drive
+
+CLAIMED — P6.1-folder-modeling-spike/folder-modeling-spike — deepseek-v4.1-flash — 2026-09-18T04:58:29Z — base c1bf077cbfd302d5f6d2155e84433e3894ec4369
+"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/FileFolder.ts
+[94m[bash][0m $ grep -rn "attachments" packages/twenty-shared/src/metadata/constants/standard-object-fields.constant...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/metadata/constants/standard-object-fields.constant.ts
+[94m[bash][0m $ grep -rln "objectUniversalIdentifier" packages/twenty-apps/internal --include="*.field.ts" 2>/dev/nu...
+[94m[bash][0m $ grep -rn "isExtensible\|EXTENSIBLE\|extensible\|NON_EXTENSIBLE\|canExtend\|nonExtensible" packages/t...
+[94m[bash][0m $ grep -rn "morphId\|MORPH" packages/twenty-sdk/src/sdk/define/fields/*.ts | head
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-shared/src/application/objectFieldManifest.type.ts
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-sdk/src/sdk/define/fields/define-field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-06-report.md
+[94m[write][0m "# Phase 06 — Drive
+
+CLAIMED — P6.1-folder-modeling-spike/folder-modeling-spike — deepseek-v4.1-flash — 2026-09-18T04:58:29Z — base c1bf077cbfd302d5f6d2155e84433e3894ec4369
+
+## 2026-09-18 — P6.1 folder... (10495 chars)"
+[94m[bash][0m $ tail -30 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ `check-docs.mjs` only checks `MAINTAINED_DOCUMENTS`, so phase reports don't affect it. --- EOF echo ...
+[94m[bash][0m $ git status --porcelain
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-06-report.md
+Spike complete — report-only. Decision recorded in `docs/plan/phases/phase-06-report.md` (new phase file) and `.ralph-tui/progress.md`.
+
+**Decision:** model folders as a `driveFolder` app object (`name`, `parent` self-relation tree, color/icon, `position`) plus an **additive `folderId` MANY_TO_ONE relation on the standard `attachment` object** (inverse `files`, `SET_NULL`) — not a new target on the attachment `targetMorphId` morph set. Rationale: the morph set means "record this file is attached to"; folder is an orthogonal, view-filterable organizational axis that coexists with any morph target, is additive-only, and carries no server/morph blast radius. `folderId`/`sourceApp` are attribution, not permission (C5).
+
+**Recorded:** existing primitives (7 morph targets sharing one morphId, FILES field/`FileEntity`/`FileFolder.FilesField`, native Files upload path), the P3 documents attachment pattern, limitations (`folderId` only organizes `attachment` records, not arbitrary FILES-field/rich-text files — project over both, no second file system), and the honest P6 gate (P0.2/P0.4 `[x]`; P1.7a still `[~]`, waiting on P1.6c).
+
+**Checks:** `node docs/scripts/check-docs.mjs` → PASS; lint/tsgo N/A (no package touched). git status shows only `docs/plan/phases/phase-06-report.md` + `.ralph-tui/progress.md` from this session.
+
+<promise>COMPLETE</promise>

@@ -149,9 +149,10 @@
         "Quality gate: if twenty-shared is touched, npx nx build twenty-shared --skip-nx-cache passes; no i18n catalog files committed; no AI attribution in commits"
       ],
       "priority": 22,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md task ID: P2.1 bullet 1; literal deps: P0.3 [x] DONE 2026-09-13. Open P2.1 legs NOT in this story: Redis fan-out multi-instance verification and real-session integration tests (Tier 2 — orchestrator); ACL enforcement is P2.1-acl-enforcement.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "P3.2-revision-history",
@@ -809,6 +810,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-18T04:59:57.675Z"
+    "updatedAt": "2026-09-18T05:04:23.515Z"
   }
 }

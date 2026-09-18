@@ -230,4 +230,114 @@ describe('RealtimeGatewayService', () => {
       });
     });
   });
+
+  // Connection success is a transport fact (the socket exists and carries no
+  // envelope); subscription success is an `ack` envelope, and a rejected
+  // subscription is a topic-attributed `error` envelope that leaves the
+  // connection open. A client can therefore tell "socket is up" apart from
+  // "this topic is live" without inferring from a close code.
+  describe('connection versus subscription protocol', () => {
+    type RealtimeMessageSocket = EventEmitter & {
+      readyState: number;
+      send: jest.Mock;
+      close: jest.Mock;
+    };
+
+    // The jest config enables fake timers globally, so only microtasks are
+    // flushed here — the subscribe continuation is a promise chain, no timer.
+    const flushAsync = async () => {
+      for (let tick = 0; tick < 8; tick += 1) {
+        await Promise.resolve();
+      }
+    };
+
+    const buildMessageSocket = (): RealtimeMessageSocket => {
+      const webSocket = new EventEmitter() as RealtimeMessageSocket;
+
+      webSocket.readyState = 1;
+      webSocket.send = jest.fn();
+      webSocket.close = jest.fn();
+
+      return webSocket;
+    };
+
+    const createMessageService = (assertTopicAuthorized = jest.fn()) => {
+      const authenticate = jest.fn().mockResolvedValue({
+        userId: USER_ID,
+        workspaceId: WORKSPACE_ID,
+        workspaceMemberId: WORKSPACE_MEMBER_ID,
+        isWorkspaceAgnostic: false,
+      });
+      const subscribeTopic = jest.fn().mockResolvedValue(jest.fn());
+      const service = new RealtimeGatewayService(
+        { httpAdapter: null } as unknown as HttpAdapterHost,
+        {
+          authenticate,
+          assertTopicAuthorized,
+        } as unknown as RealtimeTopicAuthorizationService,
+        { subscribeTopic } as unknown as RealtimePublisherService,
+        { leave: jest.fn() } as unknown as PresenceService,
+        {} as UserSessionCookieService,
+        {} as TwentyConfigService,
+        { incrementCounterBy: jest.fn() } as never,
+      );
+
+      return { service, authenticate, subscribeTopic };
+    };
+
+    const parseSentEnvelopes = (webSocket: RealtimeMessageSocket) =>
+      webSocket.send.mock.calls.map(
+        ([raw]) => JSON.parse(raw as string) as Record<string, unknown>,
+      );
+
+    it('sends no envelope on connection but an ack on subscription success', async () => {
+      const { service, subscribeTopic } = createMessageService();
+      const webSocket = buildMessageSocket();
+      const topic = `workspace:${WORKSPACE_ID}`;
+
+      service.handleConnection(webSocket as never, {} as never);
+
+      expect(webSocket.send).not.toHaveBeenCalled();
+
+      webSocket.emit(
+        'message',
+        JSON.stringify({ action: 'subscribe', topic, token: 'token' }),
+      );
+
+      await flushAsync();
+
+      expect(subscribeTopic).toHaveBeenCalledWith(topic, expect.any(Function));
+      expect(parseSentEnvelopes(webSocket)).toEqual([
+        { topic, seq: 0, type: 'ack', payload: { action: 'subscribed' } },
+      ]);
+      expect(webSocket.close).not.toHaveBeenCalled();
+    });
+
+    it('reports a rejected subscription as a topic-attributed error without closing the connection', async () => {
+      const { service, authenticate } = createMessageService();
+      const webSocket = buildMessageSocket();
+      const topic = `workspace:${WORKSPACE_ID}`;
+
+      authenticate.mockRejectedValue(new Error('Token invalid.'));
+
+      service.handleConnection(webSocket as never, {} as never);
+
+      webSocket.emit(
+        'message',
+        JSON.stringify({ action: 'subscribe', topic, token: 'bad' }),
+      );
+
+      await flushAsync();
+
+      expect(parseSentEnvelopes(webSocket)).toEqual([
+        {
+          topic,
+          seq: 0,
+          type: 'error',
+          payload: { message: 'Token invalid.' },
+        },
+      ]);
+      expect(webSocket.close).not.toHaveBeenCalled();
+    });
+  });
 });
