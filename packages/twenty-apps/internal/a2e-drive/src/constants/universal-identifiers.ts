@@ -57,6 +57,10 @@ export const VIEW_IDS = {
 export const LOGIC_FUNCTION_IDS = {
   guardDriveFolderParentCycle: 'c31d0000-0012-4000-8000-000000000001',
   purgeDriveTrash: 'c31d0000-0012-4000-8000-000000000002',
+  // P9.2 read-only AI tools, registered on the native registry through
+  // `toolTriggerSettings` (P1.5) — no `registerAiTools`, no new table.
+  findFile: 'c31d0000-0012-4000-8000-000000000003',
+  dedupeHints: 'c31d0000-0012-4000-8000-000000000004',
 } as const;
 
 export const NAVIGATION_MENU_ITEM_IDS = {

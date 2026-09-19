@@ -56,6 +56,23 @@ the `useDriveFolders` / `useDriveFiles` hooks (record queries), `useDriveActions
 the shared file-preview state. Retention and purge follow the 7-day trash
 window. Drive does not use a realtime topic; the page refetches its records.
 
+### Assistant tools
+
+Drive exposes two read-only assistant tools through the native logic-function
+`toolTriggerSettings` registry (P1.5), so the assistant can search files and
+flag duplicates without a bespoke registration hook:
+
+- `find-file` — keyword + metadata search over name, description, source-app
+  attribution and folder, with optional source-app / folder / type filters.
+  Results are ranked exact-prefix first, then contains, then most-recent, and
+  carry a Drive deep link. No embedding model or LLM call is involved.
+- `dedupe-hints` — groups files that share a normalized name + extension (and
+  folder, when present) to flag likely duplicates. Attachment records carry no
+  byte size or content hash, so no size/hash comparison is attempted.
+
+Both tools read under the caller's auth context and never move, rename or
+delete a file (C6).
+
 ## Development
 
 From this directory, after installing a compatible Node/SDK:
