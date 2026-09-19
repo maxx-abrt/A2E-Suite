@@ -1054,3 +1054,17 @@ CLAIMED — US-043/private-result-cache-contract — deepseek-v4.1-flash — 202
 **Do not redo:** the concurrent claimant owns `US-043/private-result-cache-contract`; do not create or edit any `twenty-shared/src/ai` cache-contract files (or a server-side equivalent) until that claim lands (or is abandoned) and its report/commit is visible.
 **Remaining:** US-043 (concurrent claimant); then US-044 saved runs (`dependsOn US-043`), US-045 audit page (`dependsOn US-041`), US-046 CRM core actions.
 **Next:** orchestrator — let the active `US-043/private-result-cache-contract` claim finish, then verify/tick; serialize the two `ralph-tui run` sessions on this single checkout to stop the collision.
+
+## 2026-09-19 22:33 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-044 [P9.2b] Saved runs — authorized persisted results, zero-provider-call re-open, explicit rerun with cost estimate · **Slice:** not started — pre-existing uncommitted sibling work on this one checkout
+**Claim:** conflict
+**Ready-to-tick:** no — zero work done; the tree carries a live, unclaimed refactor of the US-043 cache contract US-044 depends on
+**Base:** 5281cc3753a107979b92d3eff7995052db001481
+**Changed:** `docs/plan/phases/phase-01-report.md` (this entry) + `.ralph-tui/progress.md` (Ralph bridge) only — no source files touched
+**Checks:** none run — contract v4 §0 (clean-start) + §3 (file-overlap) stop before any work
+**Conflict files (uncommitted, not mine, no `CLAIMED` entry for them):** `D packages/twenty-apps/internal/a2e-accounting/src/lib/ai-result-cache.ts`, `D packages/twenty-apps/internal/a2e-accounting/src/lib/__tests__/ai-result-cache.test.ts`; `?? packages/twenty-shared/src/ai/utils/ai-result-cache.util.ts`, `?? packages/twenty-shared/src/ai/types/ai-result-cache.type.ts`, `?? packages/twenty-shared/src/ai/utils/__tests__/ai-result-cache.util.spec.ts`, `M packages/twenty-shared/src/ai/index.ts`. mtimes `2026-09-20T00:31–00:32` local (`22:31–22:32 UTC`), i.e. seconds before this session's clock read `2026-09-19T22:32:45Z`; content is the US-043 contract relocated unchanged (no saved-run/rerun logic yet).
+**Evidence:** two live `ralph-tui run` PIDs (35049 + 49648) on this single checkout; the uncommitted files relocate the US-043 contract (`ai-result-cache`, committed at HEAD 5281cc37) from `a2e-accounting/src/lib` into `twenty-shared/src/ai`, and the report tail still ends at the earlier US-043 `blocked` entry with no `CLAIMED` line for the new files. US-044 `dependsOn US-043`, so the contract's location/identity is a hard prerequisite currently in flux.
+**Missing for tick:** n/a — conflict; nothing to verify.
+**Do not redo:** hold the whole US-044 slice until the in-flight `twenty-shared/src/ai` contract relocation settles (committed or abandoned); do not add saved-run files importing either the `a2e-accounting` or the `twenty-shared` cache contract until the reconciler picks one location.
+**Remaining:** US-044 saved runs (this task, blocked by the conflict), US-045 audit page, US-046 CRM core actions.
+**Next:** orchestrator — serialize the two `ralph-tui run` sessions (the recurrent same-checkout hazard), let the in-flight US-043 contract relocation land and be verified/ticked, then re-queue US-044 against the final contract location.

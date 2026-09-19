@@ -30,6 +30,17 @@ export type {
   AgentResponseSchema,
 } from './types/agent-response-schema.type';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
+export type {
+  AiResultVisibility,
+  AiResultScope,
+  AiResultVersions,
+  AiResultCacheDescriptor,
+  AiResultCacheEntry,
+  AiResultReuseReason,
+  AiResultReuseDecision,
+  AiAccessScopeInput,
+  ResolvedAiResultCacheKey,
+} from './types/ai-result-cache.type';
 export type { AskQuestionAnswer } from './types/AskQuestionAnswer';
 export type { AskQuestionItem } from './types/AskQuestionItem';
 export type { AskQuestionOption } from './types/AskQuestionOption';
@@ -52,6 +63,18 @@ export type {
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
 export type { ModelConfiguration } from './types/model-configuration.type';
 export type { NavigateAppToolOutput } from './types/NavigateAppToolOutput';
+export {
+  buildAccessScopeId,
+  isGloballyShareable,
+  resolveAiResultCacheKey,
+  PRIVATE_AI_RESULT_TTL_MS,
+  PUBLIC_CATALOGUE_AI_RESULT_TTL_MS,
+  computeAiResultExpiresAt,
+  isAiResultExpired,
+  hasAiResultVersionDrift,
+  hasAiResultScopeDrift,
+  evaluateAiResultReuse,
+} from './utils/ai-result-cache.util';
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
 export { isAiSdkPackage } from './utils/is-ai-sdk-package.util';

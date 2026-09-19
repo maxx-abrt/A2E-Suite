@@ -320,11 +320,12 @@
         "C6: saved-run re-open must incur no new provider call — asserted by test"
       ],
       "priority": 19,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md:1418 (P9.2b `[ ]`, not-started). dependsOn US-043 (cache layer is the storage contract).",
       "dependsOn": [
         "US-043"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-045",
@@ -360,6 +361,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T22:30:08.933Z"
+    "updatedAt": "2026-09-19T22:33:34.398Z"
   }
 }

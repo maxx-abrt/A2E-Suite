@@ -1,73 +1,26 @@
-// AI RESULT CACHE CONTRACT (P9.2b).
+import {
+  type AiAccessScopeInput,
+  type AiResultCacheDescriptor,
+  type AiResultCacheEntry,
+  type AiResultReuseDecision,
+  type AiResultScope,
+  type AiResultVersions,
+  type AiResultVisibility,
+  type ResolvedAiResultCacheKey,
+} from '@/ai/types/ai-result-cache.type';
+
+// AI RESULT CACHE CONTRACT.
 //
-// The Bilan `aiCacheEntry` object keeps one row per expensive model call, keyed
-// by kind + model + payload digest + catalogue version, so a catalogue refresh
-// invalidates exactly the runs whose input changed. This module is the pure,
-// database-free half of that pattern, generalised for every app: a private
-// result belongs to one workspace AND one access scope, a public catalogue-only
-// result may be shared instance-wide only after a reviewer approved it, and an
-// entry is reusable only while its model/data/catalogue versions match and it
-// has not expired. C6: no cross-workspace cache leak.
-
-export type AiResultVisibility = 'PRIVATE' | 'PUBLIC_CATALOGUE';
-
-export type AiResultScope = {
-  workspaceId: string;
-  // Opaque fingerprint of the caller's effective permissions (role + grants).
-  // A role or grant change produces a new id, so the old key is unreachable.
-  accessScopeId: string;
-};
-
-export type AiResultVersions = {
-  modelVersion: string;
-  dataVersion: string;
-  catalogVersion: number;
-};
-
-export type AiResultCacheDescriptor = {
-  kind: string;
-  visibility: AiResultVisibility;
-  payloadHash: string;
-  scope: AiResultScope;
-  versions: AiResultVersions;
-  // Set only after a human review confirms the payload admits no private data.
-  reviewedForGlobalSharing?: boolean;
-};
-
-export type AiResultCacheEntry = {
-  cacheKey: string;
-  visibility: AiResultVisibility;
-  scope: AiResultScope;
-  versions: AiResultVersions;
-  expiresAt?: string | null;
-};
-
-export type AiResultReuseReason =
-  | 'FRESH'
-  | 'KEY_MISMATCH'
-  | 'NOT_REVIEWED'
-  | 'EXPIRED'
-  | 'VERSION_MISMATCH'
-  | 'ACCESS_CHANGED';
-
-export type AiResultReuseDecision = {
-  reusable: boolean;
-  reason: AiResultReuseReason;
-};
-
-export type AiAccessScopeInput = {
-  roleUniversalIdentifier?: string | null;
-  permissionFingerprint?: string | null;
-};
-
-export type ResolvedAiResultCacheKey = {
-  cacheKey: string;
-  isGlobal: boolean;
-};
+// Every expensive model call can be stored once and reused, but a private
+// result must never be shared across workspaces. A private result therefore
+// belongs to one workspace AND one access scope (the caller's role + grants),
+// while a public catalogue-only result may be shared instance-wide only after
+// a reviewer approved it. Reuse additionally requires the model, data and
+// catalogue versions to match and the entry not to have expired. C6: no
+// cross-workspace cache leak.
 
 const CACHE_KEY_GLOBAL_PREFIX = 'global';
 const CACHE_KEY_SCOPED_PREFIX = 'scoped';
-
 const EMPTY_SCOPE_PART = 'none';
 
 const normaliseScopePart = (value: string | null | undefined): string =>
@@ -143,9 +96,9 @@ export const computeAiResultExpiresAt = (input: {
   return new Date(generatedAtMs + ttlMs).toISOString();
 };
 
-// A missing expiry is an explicitly non-expiring entry (the `aiCacheEntry`
-// `expiresAt` field is nullable); only a concrete past timestamp is stale. An
-// unparseable timestamp fails closed rather than serving potentially stale data.
+// A missing expiry is an explicitly non-expiring entry; only a concrete past
+// timestamp is stale. An unparseable timestamp fails closed rather than
+// serving potentially stale data.
 export const isAiResultExpired = (input: {
   expiresAt?: string | null;
   now: string;
