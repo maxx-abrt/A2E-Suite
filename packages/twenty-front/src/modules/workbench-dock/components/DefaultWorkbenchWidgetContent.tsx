@@ -75,6 +75,8 @@ export const getWorkbenchWidgetTitle = (
       return translate`Drive usage`;
     case 'presence':
       return translate`People online`;
+    case 'help':
+      return translate`First-open help`;
     default:
       return id;
   }

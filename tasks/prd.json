@@ -76,9 +76,10 @@
         "A dated entry is appended to the phase report for the touched phase; PLAN.md is not edited; nothing is committed"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md task P10 ('Guided first-open help…'), phase P10, handoff position 5. Starting state: NOT STARTED (no prior commit; the only 'first-open' commit is P1.6e-workspace-reuse 0d34f9bc, which owns gallery/first-open template instantiation — consume its entrypoints, do not duplicate). Front-only, unit-testable; dismissible state must persist per user. Reference boundary: R15 supplies explanatory patterns only — no marketing/pricing claims, no mock data.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-005",
@@ -326,6 +327,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T10:27:54.302Z"
+    "updatedAt": "2026-09-19T10:38:30.175Z"
   }
 }

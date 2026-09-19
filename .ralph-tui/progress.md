@@ -11,6 +11,7 @@ after each iteration and it's included in prompts for context.
 - **Record-page relation list:** use the native `FIELD` widget (`type: 'FIELD'`, `configuration.fieldMetadataId` = the relation field universal identifier, `fieldDisplayMode: 'TABLE' | 'CARD'`) — the same primitive as company↔people. The manifest universal config keeps `fieldMetadataId` = the uid (server resolves it); `fieldDisplayMode: 'TABLE'` without an embedded view degrades to the inline relation list.
 - **a2e-* app package gates:** `yarn typecheck && yarn lint && yarn test:unit && npx twenty dev:build .` — these apps are not Nx projects, so `npx nx lint:diff-with-main` does not apply.
 - **Solo/conditional front UI:** `useIsSoloWorkspace` (`@/workspace-member/hooks/useIsSoloWorkspace`) = `currentWorkspaceMembersState.length === 1` (0 members ≠ solo). Team-only dock widgets opt in via `WorkbenchWidgetDefinition.requiresCollaborators`; gate containers/rail entries, not the presence primitives (they already no-op on empty).
+- **Per-user dismissible front state:** persist a `Record<userId, string[]>` in a `createAtomState({ useLocalStorage: true })` and keep the add/remove/select logic as pure helpers; the hook selects with `currentUserState.id` and treats a null user as a no-op. Avoids a server schema change and survives reload, while a shared browser never leaks one member's hidden UI to another.
 
 ---
 
@@ -43,4 +44,14 @@ after each iteration and it's included in prompts for context.
   - The Home dashboard is a set of `WorkbenchWidgetDefinition`s registered by `registerHomeDashboardWidgets()` (imported for side effect by `WorkbenchWidgetDock`); new Home widgets only need a registry entry + a `getWorkbenchWidgetTitle` case — no dock change. Use `IconClockPlay` for focus (no timer/clock concept in the icon dictionary; rule 5 = pick an existing icon).
   - The container/hook timer is the only place a `useEffect` + `setInterval` is warranted here; keep the presentational `*WidgetContent` callback-driven (`onStart/onPause/onReset`) so it is testable with `fireEvent`, and test the ticking container with `jest.useFakeTimers()` + `act`.
   - `npx nx lint:diff-with-main twenty-front` can only see committed diffs (`main...HEAD`) and reports "No changed files" for uncommitted work — run `npx oxlint --type-aware -c .oxlintrc.json <files>` + `npx oxfmt --check <files>` from `packages/twenty-front` instead; the repo forbids JSX prop spreading in tests.
+---
+
+## 2026-09-19 - US-004
+- Implemented the P10 guided first-open help as a non-modal workbench dock widget (id `help`, order 5): contextual "Get started" actions resolved from the current route (Documents / Tasks / Workspace), dismissible explanation cards, and a search box that filters topics across title/body/keywords (diacritic-insensitive).
+- Help content uses R15's explanatory patterns only — `FEATURE_EXPLANATION` / `COMPARISON` / `FAQ` — with no pricing, plan, availability or mock-data claims. Dismissals persist per user in a localStorage atom map keyed by `currentUser.id`.
+- Files changed: new `packages/twenty-front/src/modules/first-open-help/` (types, constants, utils, states, hooks, components, register + 6 specs); `workbench-dock/components/WorkbenchWidgetDock.tsx` (side-effect import); `workbench-dock/components/DefaultWorkbenchWidgetContent.tsx` (`help` title); `docs/plan/phases/phase-10-report.md`; `.ralph-tui/progress.md`.
+- **Learnings:**
+  - The repo's oxlint custom rules bite in two places: `twenty(max-consts-per-file)` allows only ONE non-function `const` per file under `constants/` (so kind-label map and topic list must be separate files), and `twenty(matching-state-variable)` forces the `useAtomState` destructure names to mirror the atom name (`dismissedFirstOpenHelpTopicsState` → `[dismissedFirstOpenHelpTopics, setDismissedFirstOpenHelpTopics]`).
+  - `twenty-ui/input`'s `SearchInput` renders fine under jsdom/base-ui and is queryable by placeholder; no manual normalizer needed — reuse `~/utils/normalizeSearchText`.
+  - Contextual actions should only NAVIGATE (`useNavigate` to `AppPath.Drive`/`TasksPage`/`/objects/projects`), not re-implement P1.6e's template instantiation; the document-template gallery/entrypoint stays the single source.
 ---
