@@ -140,3 +140,16 @@ CLAIMED — US-015/suggestions-engine — deepseek-v4.1-flash — 2026-09-19T11:
 **Do not redo:** the P8.2 `home-dashboard` widget registry, `HomeWidgetList` and the P8 `inbox` utils are green and unchanged (only the mechanical preview-helper extraction). `buildHomeSuggestions` is pure rules-first — no ranking model: overdue uses the existing `isTaskOverdue` (`dueAt < now`), stale is `age >= STALE_TASK_THRESHOLD_DAYS` and excludes overdue tasks so one task never yields two cards, mentions reuse `filterInboxNotificationsByCategory` + `resolveNotificationDeepLink` + `getInboxNotificationPreview` (never fork the P8 mention system). Dismissal is local component state only (no server surface) so it is recoverable on reload.
 **Remaining:** US-015 was the last item in the Ralph batch II queue (US-008..015); no further P9.3 executor slice is pending (P9.3-audit / P9.1 / P9.2b remain out of this queue per batch-II exclusions).
 **Next:** orchestrator — run the Tier-2 dock journey and tick US-014 + US-015; when P7 unblocks, add the overdue-invoices rule to `buildHomeSuggestions` (documented follow-up).
+
+## 2026-09-19 12:20 UTC — orchestrator — batch-II verification + tick (US-015)
+
+Checks re-run by orchestrator on HEAD: front suites incl. home-dashboard, inbox
+and workbench-dock → 46 suites / 196 tests PASS across the touched modules.
+
+Spot-checks: `suggestions` registered in `registerHomeDashboardWidgets`; grep
+confirms NO invoice rule exists in `buildHomeSuggestions` — the P7 exclusion
+held exactly as reported.
+
+PLAN.md tick: P9.3 suggestions engine `[~]` — rules-first cards (stale tasks,
+unread mentions) verified; overdue-invoices rule is the documented follow-up
+once P7 unblocks; AI-ranked layer later. Tier-2 browser proof open.

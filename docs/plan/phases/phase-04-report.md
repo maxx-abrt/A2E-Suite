@@ -776,3 +776,24 @@ CLAIMED — US-014/deal-won-workflow-recipe — deepseek-v4.1-flash — 2026-09-
 **Do not redo:** the P4.1 recurring-generator pattern (native trigger + `workflowActionTriggerSettings` action, no app-level workflow entity). Do NOT add `databaseEventTriggerSettings` to these actions — that would create a second trigger path beside the workflow recipe. Do NOT pin a field on `chatChannel` from A2E Projects (would make A2E Chat a hard install prerequisite and break the degrade rule). Do NOT add the invoice/facture leg until P7 unblocks. The `c31b0000-0014-…0010/0011` step ids and `c31b0000-0012-…0010/0011` action ids are now consumed.
 **Remaining:** US-015 (P9.3 Home suggestion cards), plus the standing P4.1/P4.2 Tier-2 legs, P4.2 dependency picker, P4C.2–P4C.5, P6.1, and US-002..007 of the Ralph batch.
 **Next:** orchestrator — tick US-014 after the Tier-2 materialization + deal-won firing proof; or executor — US-015 (rules-first Home suggestion cards over the verified P4/P8 domains, invoice rule excluded).
+
+## 2026-09-19 12:20 UTC — orchestrator — batch-II verification + tick (US-008/009/012/013/014)
+
+Checks re-run by orchestrator on HEAD: twenty-server search suites → 5 suites /
+29 tests PASS (includes the SQL-level ILIKE regression through the real query
+builder); `tsgo` twenty-server → exit 0; a2e-projects `yarn test:unit` → 245/245;
+a2e-documents `yarn test:unit` → 121/121.
+
+Diff review of ed7f499b (US-008): fix confirmed in-source — both live providers
+now pass `ILike(pattern)` FindOperators where they previously bound a plain
+`{ ilike }` object as an equality value (silently matching nothing). Additive,
+error-isolation contract untouched.
+
+PLAN.md ticks: P4.3 AI seed extract-tasks `[x]` (US-009); P4.2 Cmd+K `[~]`
+annotation — the BLOCKED federation half is root-caused and fixed (US-008), live
+re-proof open; P9.2 Documents `[~]` (extract + document-content verified;
+summarize/translate/improve-writing remain, US-013 was the enabler); P9.2 Projects
+`[~]` (US-012 both context tools verified; suggestion layer is P9.1-gated);
+P9.3 workflow recipes `[~]` (US-014 app-side recipe verified — native trigger,
+idempotent actions, chat-absent degradation, invoice leg excluded while P7
+blocked; live materialization/firing/replay proof open).

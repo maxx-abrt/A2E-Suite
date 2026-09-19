@@ -259,3 +259,12 @@ CLAIMED — US-011/find-file-dedupe-hints — deepseek-v4.1-flash — 2026-09-19
 **Do not redo:** the two native tools registered only via `toolTriggerSettings` (P1.5) — no `registerAiTools`, no table. Pure ranking `searchDriveFiles` (PREFIX > CONTAINS > most-recent, then id) and pure grouping `groupDriveDuplicates` (normalized name+extension+folder key, singletons dropped, no size/hash — attachment has none); `drive-tool-support.ts` single caller-scoped `attachments` read (`archivedAt is NULL`, first 200, newest first); `readOptionalToolFilter` blank-filter refusal; `/drive` deep link mirroring `AppPath.Drive` (twenty-shared is not importable inside an app package — local constant). Both handlers are query-only (C6).
 **Remaining:** the other P9.2 per-app action bullets (Documents, Projects, Chat already done, Accounting, CRM core) and P9.1/P9.2b/P9.3 in the execution order.
 **Next:** orchestrator — tick once Tier 2 confirms dispatch; then the next dependency-ready P9.2 action (Documents summarize/extract/translate or Projects task-breakdown).
+
+## 2026-09-19 12:20 UTC — orchestrator — batch-II verification + tick (US-011)
+
+Checks re-run by orchestrator on HEAD: a2e-drive `yarn test:unit` → 73/73.
+
+PLAN.md tick: P9.2 Drive `[x]` with caveats inline — Tier-2 live dispatch open,
+and the caller-scoped `attachments` read additionally depends on the P6 install
+leg landing the app columns (`archivedAt`/`folderId`/`sourceApp`) on a live
+workspace before it can return live rows.

@@ -864,13 +864,26 @@ Optional advanced authoring is not a prerequisite to this repair slice.
       restart, for the new provider AND the pre-existing documents provider
       — app-search federation is not live-functional; needs a follow-up
       brief (phase-04-report has the details).
+      — 2026-09-19 orchestrator: root cause FOUND and FIXED (US-008,
+      phase-04-report) — both providers passed `{ ilike }` plain objects
+      that the workspace ORM silently renders as equality; now `ILike()`
+      FindOperators with a SQL-level regression test through the real
+      query builder (search suites 5/29 green on HEAD re-run). Live
+      app-installed `searchAppRecords` re-proof still open (Tier 2).
 
 ### P4.3 Integrations
 - [ ] Calendar links: P4C.5 owns opt-in task/event synchronization and source
       of truth. Keep deadline overlays separate from provider events; do not
       implement a competing two-way link in this task.
 - [ ] Documents: doc relation on project; project overview shows linked docs
-- [ ] AI seed: "extract tasks from document" (P9 tool stub)
+- [x] AI seed: "extract tasks from document" (P9 tool stub)
+      — 2026-09-19 orchestrator: verified (US-009, phase-04-report) — the
+      P4.3 `STUB_NOT_IMPLEMENTED` stub replaced by a real read-only
+      extraction (unchecked checklist blocks + conservative
+      imperative/heading heuristic; missing/unauthorized fail closed to
+      `DOCUMENT_NOT_FOUND`; creates nothing, C6); a2e-projects 245/245
+      green on HEAD re-run. Tier-2 live assistant-catalogue invocation
+      open.
 - [x] Trash: 7-day restore + purge cron (mirror P3 pattern)
       — 2026-09-17 orchestrator (phase-04-report): archive → trash query,
       restore inside the window clears `archivedAt`, deployed purge handler
@@ -1329,10 +1342,30 @@ mention→inbox→open.
       context (see below)
 
 ### P9.2 Per-app actions (each its own task)
-- [ ] Documents: summarize, extract tasks→P4, translate, improve writing
-- [ ] Projects: task breakdown suggestions, standup digest from activity
-- [ ] Chat: channel/thread summarization, catch-me-up
-- [ ] Drive: semantic-ish search (keyword + metadata first), dedupe hints
+- [~] Documents: summarize, extract tasks→P4, translate, improve writing
+      — 2026-09-19 orchestrator: extract-tasks verified (US-009) and the
+      authorized `document-content` access tool shipped (US-013,
+      a2e-documents 121/121 green on HEAD re-run) — the enabler for the
+      remaining summarize/translate/improve-writing actions, still to
+      build.
+- [~] Projects: task breakdown suggestions, standup digest from activity
+      — 2026-09-19 orchestrator: both read-only context tools verified
+      (US-012, phase-04-report) — standup digest + task-breakdown
+      tree/status counts; the AI suggestion layer over that context is
+      P9.1-gated. a2e-projects 245/245 green on HEAD re-run. Tier-2 live
+      dispatch open.
+- [x] Chat: channel/thread summarization, catch-me-up
+      — 2026-09-19 orchestrator: verified (US-010, phase-05-report) — both
+      read-only caller-permission-scoped tools with manifest
+      `toolTriggerSettings` registration proof; a2e-chat 54/54 green on
+      HEAD re-run. Tier-2 live dispatch + PRIVATE-channel denial proof
+      open.
+- [x] Drive: semantic-ish search (keyword + metadata first), dedupe hints
+      — 2026-09-19 orchestrator: verified (US-011, phase-06-report) —
+      `find-file` (prefix > contains > recency ranking) + `dedupe-hints`
+      (name/extension/folder grouping), read-only caller-scoped;
+      a2e-drive 73/73 green on HEAD re-run. Tier-2 live dispatch open
+      (also depends on the P6 install leg for the attachment app columns).
 - [ ] Accounting: expense categorization, invoice draft from
       opportunity/email, anomaly flags (review-required before commit);
       subvention matching with aiScore/aiReason + saved runs (P7.1f)
@@ -1348,10 +1381,22 @@ mention→inbox→open.
       an explicit rerun is a separate user action with a visible cost estimate.
 
 ### P9.3 Smart integrations (cross-app glue)
-- [ ] "Workflow recipes": prebuilt workflow templates combining apps (e.g.
+- [~] "Workflow recipes": prebuilt workflow templates combining apps (e.g.
       deal-won → create project + invoice draft + channel)
-- [ ] Suggestions engine: proactive cards in Home (stale tasks, overdue
+      — 2026-09-19 orchestrator: app-side recipe verified (US-014,
+      phase-04-report) — native DATABASE_EVENT trigger + two idempotent
+      actions (persisted correlation key, chat-absent degradation); the
+      validator asserts no invoice/accounting step while P7 is blocked;
+      a2e-projects 245/245 green on HEAD re-run. Tier-2 live
+      materialization + firing + replay-idempotency proof open; invoice
+      draft deferred with P7.
+- [~] Suggestions engine: proactive cards in Home (stale tasks, overdue
       invoices, unread mentions) — rules first, AI-ranked later
+      — 2026-09-19 orchestrator: rules-first cards verified (US-015,
+      phase-08-report) — stale-task + unread-mention rules over the verified
+      P4/P8 domains; grep confirmed no invoice rule exists while P7 is
+      blocked (documented follow-up); front suites green on HEAD re-run.
+      Tier-2 browser proof open.
 - [ ] Audit page: Settings → AI (usage, logs, provider keys)
 
 **Acceptance.** Assistant answers with record context; every AI mutation
@@ -1364,23 +1409,52 @@ app ship with tests.
 
 **Goal.** individuals/students love it solo; teams trust it at scale.
 
-- [ ] Solo onboarding polish: 1-user workspace presets hide team UI
+- [x] Solo onboarding polish: 1-user workspace presets hide team UI
       (members/widgets presence gracefully degrade)
-- [ ] Personal dashboard: contribution grid, habits/Pomodoro widget,
+      — 2026-09-19 orchestrator: verified (US-002, phase-10-report) —
+      `isSoloWorkspace` predicate (1 member exactly, 0 ≠ solo) +
+      `requiresCollaborators` widget-registry flag; dock/top-bar/chat
+      avatars degrade; suites green on HEAD re-run. Tier-2 E12 solo journey
+      open.
+- [~] Personal dashboard: contribution grid, habits/Pomodoro widget,
       journal doc template, quick capture (Cmd+K → note/task/income)
-- [ ] Guided first-open help: contextual template/blank actions, dismissible
+      — 2026-09-19 orchestrator: contribution grid shipped with P8.2;
+      Pomodoro `focus` widget verified (US-003 slice, phase-10-report,
+      suites green on HEAD re-run). Journal doc template + Cmd+K quick
+      capture remain (queued executor slices).
+- [x] Guided first-open help: contextual template/blank actions, dismissible
       explanations and searchable help; no forced overlay tour. Use R15's
       explanatory patterns, not its marketing/pricing claims or mock data.
-- [ ] Optional focus/accessibility work: Pomodoro, density/easy-read and
+      — 2026-09-19 orchestrator: verified (US-004, phase-10-report) —
+      non-modal `help` dock widget, per-user localStorage dismissal keyed by
+      `currentUser.id`, search re-surfaces dismissed topics; suites green on
+      HEAD re-run. Tier-2 browser walkthrough open.
+- [x] Optional focus/accessibility work: Pomodoro, density/easy-read and
       shortcut preferences with explicit user control (R09/R14). Music embeds
       and a native mobile client remain deferred (D07); no new player stack
       or copied prototype assistant behavior in the initial release.
+      — 2026-09-19 orchestrator: verified (US-005, phase-10-report) —
+      Settings → Experience surface wraps the single `focus` widget
+      (localStorage atom, no server migration); density/easy-read published
+      as root `data-a2e-*` attributes; shortcut gate only when the focus
+      stack is empty. Tier-2 browser proof open.
 - [ ] Performance: workspace switch latency, 10k-record views, cold start —
       profile and fix top 3 issues (document in report)
-- [ ] Accessibility pass: keyboard nav for all new surfaces, focus traps in
+- [x] Accessibility pass: keyboard nav for all new surfaces, focus traps in
       docks/modals, reduced-motion
-- [ ] Docs: user-facing feature docs (README sections per app), self-host
+      — 2026-09-19 orchestrator: verified (US-006, phase-10-report) —
+      focus-visible rings, `role="status"` live regions, labelled dock
+      `region`, the deliberate no-focus-trap locked by test; module suites
+      green on HEAD re-run. Pre-existing `StyledDockRoot` invalid-CSS bug
+      (width transition / media queries never fire) flagged in
+      phase-10-report for a separate layout fix. Tier-2 rendering proof
+      open.
+- [x] Docs: user-facing feature docs (README sections per app), self-host
       docs for gateway requirements (ws, Redis)
+      — 2026-09-19 orchestrator: verified (US-007, phase-10-report) — 4 app
+      READMEs + `docs/features.md` + DEPLOY gateway section; check-docs gate
+      PASS (25 docs / 198 links) + its own 6/6 tests re-run on HEAD.
+      Docs-only change, no Tier-2 leg.
 - [ ] Final regression: full e2e suite green; upgrade from clean 2.39 DB
       through all upgrade commands; uninstall-everything still leaves a
       working CRM

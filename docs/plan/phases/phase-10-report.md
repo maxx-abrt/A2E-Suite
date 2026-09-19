@@ -84,3 +84,27 @@ CLAIMED — US-007/docs-per-app-and-gateway — deepseek-v4.1-flash — 2026-09-
 **Do not redo:** a2e-accounting already has a user-facing README (left untouched); `docs/features.md` is the cross-surface index and links each app README; the self-host facts live in `DEPLOY.md` next to the existing Postgres/Redis matrix (compose pins `redis:7`, no host port, `/realtime` on the API port). Do not restate the P10 front-module work (US-002..006) as shipped product features.
 **Remaining:** P10 open: US-003 journal/quick-capture remainder, US-006 (done-for-review, awaiting tick), this US-007; plus the P9/app-search US-008..015 batch II
 **Next:** orchestrator tick pass for US-006/US-007 then Tier-2 E12 solo/no-AI journeys; executor next free P10 slice is US-003's journal doc template (`a2e-documents/src/lib/starter-templates.ts` + its test) per the earlier entries, or the P9/app-search batch.
+
+## 2026-09-19 12:20 UTC — orchestrator — P10 batch-II verification + tick
+
+Verified US-002..US-007 on HEAD (commit range 8debd2e2..1500656f, clean tree).
+
+Checks re-run by orchestrator: front module suites (home-dashboard, workbench-dock,
+first-open-help, focus-preferences, inbox, workspace-member, side-panel/components,
+chat/components, ui/utilities/focus) → 46 suites / 196 tests PASS; `tsgo` twenty-front
+→ only the 6 documented `front-components` AppPath baseline errors; `node docs/scripts/check-docs.mjs`
+→ PASS (25 docs / 198 links) and its own test 6/6.
+
+Diff review: additive only (no deletions outside `.ralph-tui` session files), no
+i18n catalogs, no secrets, no migrations, `twenty-shared` untouched.
+
+PLAN.md ticks: US-002 `[x]`, US-004 `[x]`, US-005 `[x]`, US-006 `[x]`, US-007 `[x]`;
+US-003 stays `[~]` (journal doc template + Cmd+K quick capture remain).
+
+Spot-checks: `requiresCollaborators` registry flag + `isSoloWorkspace` predicate
+(0 members ≠ solo) as reported; help dismissal atom keyed by `currentUser.id`.
+
+Still open (Tier-2, orchestrator-only, no running stack at verification time):
+E12 solo journey, first-open-help walkthrough, focus-prefs browser proof, a11y
+rendering proof. Recorded inline on each tick. The pre-existing `StyledDockRoot`
+invalid-CSS bug (US-006 entry) is noted for a separate layout slice.

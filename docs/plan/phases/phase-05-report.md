@@ -143,3 +143,12 @@ CLAIMED — US-010/P9.2-chat-summarize-catchup — deepseek-v4.1-flash — 2026-
 **Do not redo:** the a2e-chat objects/views/roles/front/GraphQL are consumed unchanged — leave alone. Reuse `canReadChannel` for any future chat ACL; reuse `chat-tool-support.ts` for the remaining P9.2 chat actions. `readCursor` semantics stay `lastReadMessage.createdAt` first, `lastReadAt` fallback.
 **Remaining:** P9.1 (registry/assistant surface), P9.2 remaining per-app bullets (documents, projects, drive, accounting, CRM), P9.2b, P9.3; P6–P8, P10 remain.
 **Next:** another P9.2 per-app action, or P9.1's assistant surface that renders these tools as context buttons.
+
+## 2026-09-19 12:20 UTC — orchestrator — batch-II verification + tick (US-010)
+
+Checks re-run by orchestrator on HEAD: a2e-chat `yarn test:unit` → 54/54
+(transcript + summarize + catch-me-up + registration suites).
+
+PLAN.md tick: P9.2 Chat summarization/catch-me-up `[x]` with the Tier-2 caveat
+inline (live assistant dispatch + PRIVATE-channel `CHANNEL_FORBIDDEN` denial
+proof open — orchestrator-only).
