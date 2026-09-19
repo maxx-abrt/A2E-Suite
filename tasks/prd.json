@@ -198,9 +198,10 @@
         "Tier 2 stays with the orchestrator: browser proof of the capture flow is orchestrator-owned; a dated executor entry is appended to docs/plan/phases/phase-10-report.md; PLAN.md is not edited; nothing is committed"
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "notes": "Starting state: not-started slice (queued in phase-10 US-003 remainder). US-006's a11y entry notes these surfaces will need their own keyboard/label check when they land — included in this story's criteria.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-025",
@@ -226,6 +227,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T18:23:37.944Z"
+    "updatedAt": "2026-09-19T18:38:53.257Z"
   }
 }

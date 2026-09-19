@@ -72,6 +72,21 @@ after each iteration and it's included in prompts for context.
   leaves archived rows past the first page unpurged forever. Read every cursor
   page into memory first, then delete — deleting mid-page shifts the cursor.
   See `purge-archived-documents-handler.ts`.
+- **Adding a native side-panel page + command-menu action:** `SidePanelPages`
+  lives in `twenty-shared/src/types/SidePanelPages.ts`; a new member must be
+  registered in `SIDE_PANEL_PAGES_CONFIG` (`Map<ActiveSidePanelPage, ReactNode>`)
+  and the bundled `twenty-sdk/dist/front-component/index.d.ts` ALSO re-declares
+  the enum — so after adding a member run
+  `npx nx build twenty-shared --skip-nx-cache && npx nx build twenty-sdk --skip-nx-cache`
+  or twenty-front tsgo fails with `Property '<member>' is missing` (the AppPath
+  gotcha's class). A native command-menu entry is a `CoreObjectsCommands`-style
+  `SelectableListItem`+`CommandMenuItem` whose id is added to `selectableItemIds`
+  and gated by a search-matching hook (see `quick-capture/**`,
+  `SidePanelCommandMenuItemDisplayPage.tsx`). `navigateSidePanel` does NOT clear
+  `sidePanelSearchState`, so preset it before navigating to route to an existing
+  command. App front components cannot open a sibling front component:
+  `frontComponent(id)` resolves a DB id, not the universal identifier, so
+  cross-app `openSidePanelPage({ page: ViewFrontComponent })` routing fails.
 ---
 
 
@@ -293,4 +308,34 @@ after each iteration and it's included in prompts for context.
   - `buildTemplateCopyPayload` strips the shared `TEMPLATE_TITLE_PREFIX`
     (`Modèle — `), so re-instantiating a copy is prefix-idempotent.
   - Tier 2 remains: browser gallery/template-page instantiation of the journal.
+---
+
+## 2026-09-19 - US-024
+- Implemented the P10 Cmd+K quick capture natively in twenty-front: a
+  GLOBAL "Quick capture" command-menu action opens a new side-panel page with a
+  text input + Note/Task/Income targets. Note and Task create core CRM records
+  through `useCreateOneRecord` and navigate to the new record page; Income
+  creates nothing — it presets `sidePanelSearchState` to 'saisie rapide' and
+  returns to the command menu so P7.2's pinned "Bilan : saisie rapide" command
+  stays the only income path (no second creation system).
+- Files changed: `packages/twenty-shared/src/types/SidePanelPages.ts` (+
+  `QuickCapture`); `packages/twenty-front/src/modules/quick-capture/**` (pure
+  `utils/quickCapture.ts` + 13-test spec, `hooks/useQuickCapture.ts`,
+  `hooks/useQuickCaptureCommand.ts`, `hooks/useOpenQuickCaptureSidePanel.ts`,
+  `components/QuickCaptureCommand.tsx`, `components/QuickCaptureSidePanelPage.tsx`);
+  `.../side-panel/constants/SidePanelPagesConfig.tsx`;
+  `.../command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx`;
+  `docs/plan/phases/phase-10-report.md`.
+- **Learnings:**
+  - Core `note`/`task` are standard objects: `CoreObjectNameSingular.Note/Task`
+    from `twenty-shared/types`, so quick capture needs no app.
+  - The income leg can only be routed to a pinned app command from native code
+    (app front components cannot open sibling front components and the host API
+    cannot preset the command-menu search).
+  - Adding an enum member to `SidePanelPages` requires rebuilding both
+    twenty-shared and twenty-sdk (the sdk d.ts re-declares the enum); after that
+    twenty-front tsgo is clean (0 errors).
+  - A new side-panel page is just an enum member + `SIDE_PANEL_PAGES_CONFIG`
+    entry; keyboard submit uses `useHotkeysOnFocusedElement` with
+    `SIDE_PANEL_FOCUS_ID` plus the input's own Enter handler.
 ---
