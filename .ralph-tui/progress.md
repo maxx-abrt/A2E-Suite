@@ -24,6 +24,12 @@ after each iteration and it's included in prompts for context.
   `[stored]`), then `Promise.all` two same-key calls: the second waits on the
   chain, reads the persisted operation and skips the install. See
   `workspace-template.service.idempotency.spec.ts`.
+- **Proving unreachable content paths without shipping content:** when a
+  service path depends on code-data (`WORKSPACE_TEMPLATE_DEFINITIONS`) that no
+  shipped entry exercises yet, `jest.mock` the tiny lookup util
+  (`get-workspace-template-definition.util`) in the spec and return a crafted
+  definition — never edit the shipped constant (that is a product/content call).
+  See `workspace-template.service.partial-failure.spec.ts`.
 
 ---
 
@@ -71,4 +77,34 @@ after each iteration and it's included in prompts for context.
     "UUID" note is cosmetic and changing it is a wire change with no AC.
   - `nx lint:diff-with-main` diffs `main...HEAD`, so an untracked new spec is
     not covered — run `oxlint --type-aware` + `oxfmt --check` directly.
+---
+
+## 2026-09-19 - US-018
+
+- Closed the P1.6b AC5 gap: non-deselected *optional* apps are now attempted.
+  `WorkspaceTemplateService` gained `selectedApplicationUniversalIdentifiers`
+  (all definition apps minus deselected) used to build install steps, while the
+  `set-workspace-template` blocking decision still keys off
+  `requiredApplicationUniversalIdentifiers` — so an unavailable optional app is
+  excluded from the bundle instead of blocking it. No behavior change for
+  shipped definitions (all `optionalApplicationUniversalIdentifiers` are empty).
+- Added `workspace-template.service.partial-failure.spec.ts` (5 cases):
+  partial required failure keeps the succeeded optional install, names
+  `INSTALL_FAILED` with a localized message and withholds
+  `appliedTemplateKeyVersion`; unavailable optional app reports
+  `APP_NOT_REGISTERED` yet the template still applies; same-key resume
+  re-validates compatibility only for the failed app and re-installs once;
+  a deselected optional app is absent but the result stands; all-required-failed
+  never sets the template.
+- Files changed: `workspace-template.service.ts`, new
+  `workspace-template.service.partial-failure.spec.ts`,
+  `docs/plan/phases/phase-01-report.md`.
+- **Learnings:**
+  - Optional-app exclusion was unreachable: the definitions ship no optional
+    apps (product call D02/P1.6d), and `buildInitialSteps` dropped every optional
+    app. Prove the behavior by `jest.mock`ing `get-workspace-template-definition.util`
+    rather than editing shipped content.
+  - Resume re-installing a failed app re-runs `validateWorkspaceCompatibility`
+    inside `installTemplateApplication`, which is the "revalidate versions on
+    resume" AC; permissions are re-checked per request by the resolver guard.
 ---

@@ -65,11 +65,12 @@
         "Tier 2 stays with the orchestrator: the E02-style live partial-failure journey is not run by the executor; a dated executor entry is appended to docs/plan/phases/phase-01-report.md; PLAN.md is not edited; nothing is committed"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "Starting state: not-started (P1.6b [ ]). Completing US-016..018 makes P1.6b tickable after orchestrator verification and unblocks P1.6c (front) and P1.6d (bundles).",
       "dependsOn": [
         "US-017"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-019",
@@ -220,6 +221,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T17:12:52.087Z"
+    "updatedAt": "2026-09-19T17:19:27.600Z"
   }
 }

@@ -117,7 +117,16 @@ export class WorkspaceTemplateService {
         (applicationUniversalIdentifier) =>
           !definition.optionalApplicationUniversalIdentifiers.includes(
             applicationUniversalIdentifier,
-          ) &&
+          ),
+      );
+
+    // Every non-deselected app is attempted, optional ones included: an
+    // unchecked optional app is deselected explicitly, while a checked or
+    // absent-optional app is part of the chosen bundle. Optional installs that
+    // fail are excluded from the bundle instead of blocking it (C2).
+    const selectedApplicationUniversalIdentifiers =
+      definition.applicationUniversalIdentifiers.filter(
+        (applicationUniversalIdentifier) =>
           !deselectedOptionalAppUniversalIdentifiers.includes(
             applicationUniversalIdentifier,
           ),
@@ -158,6 +167,7 @@ export class WorkspaceTemplateService {
         version: definition.version,
       },
       requiredApplicationUniversalIdentifiers,
+      selectedApplicationUniversalIdentifiers,
       sampleContentEnabled,
     });
 
@@ -186,6 +196,7 @@ export class WorkspaceTemplateService {
     template,
     requestedTemplateKeyVersion,
     requiredApplicationUniversalIdentifiers,
+    selectedApplicationUniversalIdentifiers,
     sampleContentEnabled,
   }: {
     workspaceId: string;
@@ -194,6 +205,7 @@ export class WorkspaceTemplateService {
     template: WorkspaceTemplate;
     requestedTemplateKeyVersion: TemplateKeyVersion;
     requiredApplicationUniversalIdentifiers: string[];
+    selectedApplicationUniversalIdentifiers: string[];
     sampleContentEnabled: boolean;
   }): Promise<ApplyTemplateStep[]> {
     const lockKey = `template-operation:${workspaceId}:${idempotencyKey}`;
@@ -262,7 +274,7 @@ export class WorkspaceTemplateService {
         }
 
         const initialSteps = this.buildInitialSteps({
-          requiredApplicationUniversalIdentifiers,
+          selectedApplicationUniversalIdentifiers,
           definition,
           sampleContentEnabled,
         });
@@ -300,16 +312,16 @@ export class WorkspaceTemplateService {
   }
 
   private buildInitialSteps({
-    requiredApplicationUniversalIdentifiers,
+    selectedApplicationUniversalIdentifiers,
     definition,
     sampleContentEnabled,
   }: {
-    requiredApplicationUniversalIdentifiers: string[];
+    selectedApplicationUniversalIdentifiers: string[];
     definition: WorkspaceTemplateDefinition;
     sampleContentEnabled: boolean;
   }): ApplyTemplateStep[] {
     const steps: ApplyTemplateStep[] =
-      requiredApplicationUniversalIdentifiers.map(
+      selectedApplicationUniversalIdentifiers.map(
         (applicationUniversalIdentifier) => ({
           kind: 'install-app',
           targetUniversalIdentifier: applicationUniversalIdentifier,
