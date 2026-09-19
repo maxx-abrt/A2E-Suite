@@ -1011,3 +1011,18 @@ CLAIMED — US-040/input-schema-aware-context-mapping — deepseek-v4.1-flash �
 **Do not redo:** the mapping util + hook wiring + 20 tests are complete and green; `AiChatEmptyState`/`AiChatEditorSection` is the single mount shared by both assistant surfaces (do not add a second full-page shell or a parallel tool list).
 **Remaining:** US-040 legs full-page upgrade (already shared-mount) + channel-side context; then US-041 streaming/model config/usage logging; P9.2/P9.2b/P9.3.
 **Next:** executor — channel-side context: have `useAiChatSuggestedPromptsContext` report the open `chatChannel` (full `ChatPage` `selectedChatChannelIdState` / side-panel `viewableChatChannelIdComponentState`) so the a2e-chat context tools surface; orchestrator — Tier-2 live dispatch + tick once the channel leg lands.
+
+CLAIMED — US-041/ai-usage-log-write-tests — deepseek-v4.1-flash — 2026-09-19T22:19:30Z — base cbeef79cefc3c0627963e13c2e0fbf34bdd59a7e
+
+## 2026-09-19 22:20 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-041 [P9.1] Streaming responses (SSE reuse) + usage logging to event-logs + provider config from existing AI settings · **Slice:** server usage-log-write tests (acceptance bullet 4 — the native SSE streaming / provider-config / usage-record plumbing already exists and is test-covered)
+**Claim:** conflict
+**Ready-to-tick:** no — zero work done; the target slice and its exact file are under an active concurrent claim
+**Base:** cbeef79cefc3c0627963e13c2e0fbf34bdd59a7e
+**Changed:** `docs/plan/phases/phase-01-report.md` (this entry) + `.ralph-tui/progress.md` (Ralph bridge) only — no source files touched
+**Checks:** none run — contract §1.3 (already claimed) + §3 (target-file overlap) stop before any work
+**Evidence:** `CLAIMED — US-041/ai-usage-log-write-tests — deepseek-v4.1-flash — 2026-09-19T22:19:30Z — base cbeef79c…` (phase-01-report.md:1015) plus a live untracked `packages/twenty-server/src/engine/metadata-modules/ai/ai-billing/services/__tests__/ai-billing.service.spec.ts` (7998 B, mtime 2026-09-20T00:19:59Z, 2 s before this session's clock) — a second ralph session on this checkout is actively writing exactly my intended slice (the recurrent US-030/US-032/US-039/US-040 hazard).
+**Missing for tick:** n/a — conflict; nothing to verify or tick.
+**Do not redo:** the concurrent claimant owns `ai-billing.service.spec.ts` (AI usage-log-write tests); do not edit that file until its claim lands (or is abandoned) and its report/commit is visible. The native streaming/model-config/usage-record plumbing is unchanged by this conflict.
+**Remaining:** US-041 itself (concurrent claimant), then P9.2/P9.2b/P9.3 legs; P9.1 streaming + provider config + usage logging are native and need only verification.
+**Next:** orchestrator — let the active `US-041/ai-usage-log-write-tests` claim finish, then verify/tick; serialize the two `ralph-tui run` sessions on this one checkout to stop the collision.

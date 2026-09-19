@@ -272,9 +272,10 @@
         "Server unit tests cover streaming plumbing and usage-log writes; live streaming proof deferred (Tier 2)"
       ],
       "priority": 16,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md:1378 (P9.1 `[ ]`, not-started). Gates US-043 (audit page needs usage data).",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-042",
@@ -357,6 +358,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T22:16:55.471Z"
+    "updatedAt": "2026-09-19T22:20:34.205Z"
   }
 }
