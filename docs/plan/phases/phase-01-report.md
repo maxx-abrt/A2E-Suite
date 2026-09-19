@@ -1095,3 +1095,15 @@ CLAIMED — US-045/settings-ai-audit-page — deepseek-v4.1-flash — 2026-09-19
 **Do not redo:** the concurrent claimant owns `US-045/settings-ai-audit-page`; do not create or edit `SettingsAiAuditTab.tsx`, `getAiProviderCredentialStatuses.ts`, `SettingsAI.tsx`, `SettingsAiTabs.ts`, or an audit-tab spec until that claim lands (or is abandoned) and its report/commit is visible.
 **Remaining:** US-045 (concurrent claimant), US-046 CRM core actions.
 **Next:** orchestrator — serialize the two `ralph-tui run` sessions on this single checkout, let the active US-045 claim finish, then verify/tick it.
+
+## 2026-09-19 22:51 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-045 [P9.3] Settings → AI audit page (usage, logs, provider keys) · **Slice:** the task's single deliverable — a read-only Audit tab inside the existing Settings → AI page
+**Claim:** done-for-review
+**Ready-to-tick:** yes — Tier 0 green on `twenty-front`; no browser run
+**Base:** fff02e2aaff4b775ca83fded57f141ef603c193e
+**Changed:** `packages/twenty-front/src/pages/settings/ai/SettingsAI.tsx` (Audit tab, `IconHistory`), `.../constants/SettingsAiTabs.ts` (`AUDIT: 'audit'`), NEW `.../components/SettingsAiAuditTab.tsx` (read-only: provider credentials masked from client-config `aiModelsState`; AI usage logs from the `USAGE_EVENT` event-log table via the existing `useEventLogs` + `EventLogResultsTable`; entitlement/ClickHouse gating mirrors `SettingsLogs`), NEW `.../utils/getAiProviderCredentialStatuses.ts` (`AI_PROVIDER_CREDENTIAL_MASK`), NEW `.../components/__tests__/SettingsAiAuditTab.test.tsx` (3 cases), NEW `.../utils/__tests__/getAiProviderCredentialStatuses.test.ts` (4 cases). No server/GraphQL change: the page adds no query and renders only a fixed mask, so a plaintext key cannot appear in any response or in the DOM.
+**Checks:** `npx jest packages/twenty-front/src/pages/settings/ai --config=packages/twenty-front/jest.config.mjs` → 2 suites / 7 PASS; `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0; `npx oxlint --type-aware -c .oxlintrc.json <6 files>` → 0 warnings 0 errors; `npx oxfmt --check <6 files>` → clean.
+**Missing for tick:** none. Tier-2/browser proof is orchestrator-only and explicitly excluded by the story ("no browser run").
+**Do not redo:** the source is already committed as `e5075167` (the engine swept this working tree under a twin's US-045 iteration at 22:48:40Z); the only worktree delta vs that commit is `oxfmt` whitespace in the 3 new files. Do not add a second provider query — `getAiProviders` is admin-client-only, and the masked status is deliberately derived from client config.
+**Remaining:** US-046 CRM core AI actions.
+**Next:** orchestrator — tick US-045 on `e5075167` (plus the engine's next commit of the formatting delta); serialize the two `ralph-tui run` sessions on this single checkout (hazard now US-030…045).

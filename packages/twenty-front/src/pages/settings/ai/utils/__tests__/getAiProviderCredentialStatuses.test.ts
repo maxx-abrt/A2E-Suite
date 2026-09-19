@@ -5,7 +5,8 @@ import {
 import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
 
 const buildModel = (
-  overrides: Partial<ClientAiModelConfig> & Pick<ClientAiModelConfig, 'modelId'>,
+  overrides: Partial<ClientAiModelConfig> &
+    Pick<ClientAiModelConfig, 'modelId'>,
 ): ClientAiModelConfig => ({
   label: overrides.modelId,
   ...overrides,

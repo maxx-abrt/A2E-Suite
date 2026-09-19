@@ -11,7 +11,10 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
-import { BillingEntitlementKey, EventLogTable } from '~/generated-metadata/graphql';
+import {
+  BillingEntitlementKey,
+  EventLogTable,
+} from '~/generated-metadata/graphql';
 import { getAiProviderCredentialStatuses } from '~/pages/settings/ai/utils/getAiProviderCredentialStatuses';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 

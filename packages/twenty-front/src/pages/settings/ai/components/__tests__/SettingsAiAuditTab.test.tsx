@@ -46,18 +46,15 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 const setEntitlement = (hasAuditLogsEntitlement: boolean) => {
-  jotaiStore.set(
-    currentWorkspaceState.atom,
-    {
-      id: 'workspace-1',
-      billingEntitlements: [
-        {
-          key: BillingEntitlementKey.AUDIT_LOGS,
-          value: hasAuditLogsEntitlement,
-        },
-      ],
-    } as never,
-  );
+  jotaiStore.set(currentWorkspaceState.atom, {
+    id: 'workspace-1',
+    billingEntitlements: [
+      {
+        key: BillingEntitlementKey.AUDIT_LOGS,
+        value: hasAuditLogsEntitlement,
+      },
+    ],
+  } as never);
 };
 
 describe('SettingsAiAuditTab', () => {
