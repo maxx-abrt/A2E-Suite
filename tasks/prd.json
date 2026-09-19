@@ -240,9 +240,10 @@
         "Unit tests cover validation, escaping and error feedback paths"
       ],
       "priority": 14,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md:923-924 (P4 acceptance paragraph — a plan need without its own checkbox). Explicitly reuses native import per the bullet.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-040",
@@ -355,6 +356,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T22:01:36.243Z"
+    "updatedAt": "2026-09-19T22:08:19.263Z"
   }
 }

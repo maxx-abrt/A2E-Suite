@@ -1,0 +1,87 @@
+# Iteration 9 Log
+
+## Metadata
+
+- **Task ID**: US-038
+- **Task Title**: [P4.2] Project page — overview widgets (health, milestones, members, activity) + tabs (tasks/board/gantt/files/docs)
+- **Description**: As a project member, I want a complete project page with overview widgets and tabs, so that all project surfaces are reachable from one native page.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T21:58:53.086Z
+- **Ended At**: 2026-09-19T22:01:36.242Z
+- **Duration**: 2m 43s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "US-038" PLAN.md
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-038\|P4.2" PLAN.md | head -40
+[94m[bash][0m $ ls docs/plan/phases/ | tail -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "US-037\|US-038\|US-036" docs/plan/phases/phase-04-report.md | tail -40
+[94m[bash][0m $ grep -n "US-038\|US-037\|US-036" tasks/prd.json | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ tail -60 docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/ && echo "---SRC---" && ls packages/twenty-apps/intern...
+[94m[bash][0m $ ls -R packages/twenty-apps/internal/a2e-projects/src/front-components packages/twenty-apps/internal/...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/src/page-layouts/project.page-layout.ts
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/src/front-components/project-overview.front-component...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/src/lib/project-overview.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git log --oneline -15 -- packages/twenty-apps/internal/a2...
+[94m[bash][0m $ grep -rn "US-038\|project-page\|project page" docs/plan/phases/*.md | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ grep -n "tab\|Gantt\|Documents\|page-layout\|pageLayout" packages/twenty-apps/internal/a2e-projects/...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/project-overview.test.ts
+[94m[read][0m
+[94m[bash][0m $ grep -rn "gantt tab\|overview widgets\|project page" docs/plan/*.md docs/product-experience.md 2>/de...
+[94m[bash][0m $ grep -n "FRONT_COMPONENT_IDS\|VIEW_IDS\|TAB\|page-layout" packages/twenty-apps/internal/a2e-projects...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[bash][0m $ grep -n -i "gantt\|project page\|overview\|documents tab\|timeline" docs/product-experience.md | hea...
+[94m[bash][0m $ grep -rn -i "gantt" docs/plan/*.md packages/twenty-apps/internal/a2e-projects/README.md 2>/dev/null ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/README.md
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects" && cat package.js...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ grep -n "US-038" docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -15
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -15
+[94m[bash][0m $ ps -eo pid,etime,command | grep -i "ralph-tui run" | grep -v grep
+[94m[bash][0m $ tail -20 docs/plan/phases/phase-04-report.md && echo "=== git status ===" && git status --porcelain
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git rev-parse HEAD && git log --oneline -5 && echo "--- i...
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/project-object-integrity.test.ts" "src/lib...
+[94m[bash][0m $ echo "lint exit=$?"
+[94m[bash][0m $ echo "typecheck exit=$?"
+[94m[bash][0m $ echo "tsgo exit=$?"
+[94m[bash][0m $ echo "build exit=$?"
+[94m[bash][0m $ "
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ tail -40 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -5 .ralph-tui/progress.md
+[94m[bash][0m $ grep -n "US-038" .ralph-tui/progress.md
+[94m[bash][0m $ grep -n "US-038" docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain && echo "--- diff stat (tracked) ---" && git diff --stat
+[94m[bash][0m $ git log --oneline -6 && echo "--- prd diff ---" && git diff tasks/prd.json | head -30
+[94m[bash][0m $ git show --stat --oneline 304e3010 | head -20
+US-038 is already implemented; verified and reported `done-for-review` with no source changes.
+
+**State:** one `RECORD_PAGE` on `project` in `project.page-layout.ts` carries all required tabs — Accueil@10 (overview `Aperçu` front component: health/milestones/members/activity), Timeline@20 (hosts the existing `Gantt` front component), Tâches@30 (`project-tasks` view), Tableau@40 (`task-board` KANBAN view), Fichiers@50 (native FILES), Documents@55 (FIELD → `project.documents` from US-037).
+
+**Checks (all green):**
+- `node --test … project-object-integrity + project-overview` → 16/16
+- `yarn test:unit` → 249/249; `yarn typecheck` / `npx tsgo --noEmit` → exit 0
+- `yarn lint` → 0 errors (1 pre-existing); `yarn twenty dev:build .` → Build succeeded (38 files)
+- Manifest re-read confirms the exact tab/widget set and Documents FIELD → `c31b0200-0002-…0005`
+
+Reports appended to `docs/plan/phases/phase-04-report.md` (committed by the twin engine as `304e3010`) and `.ralph-tui/progress.md`. A twin `ralph-tui` session independently produced the same `done-for-review` (double-report precedent). Tier-2 live render is the only remaining proof.
+
+<promise>COMPLETE</promise>

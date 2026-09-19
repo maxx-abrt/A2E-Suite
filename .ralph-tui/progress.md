@@ -164,3 +164,12 @@ after each iteration and it's included in prompts for context.
   - No source file overlap existed (both slices are verify-only), so §3 conflict did not apply; duplicate done-for-review is the correct outcome.
   - Base drifted mid-session: `<repo>/.git/HEAD` moved from `6943ffab` to `7e21c6c1` (twin's US-037 commit) while this iteration was running; report the base you started from and note the drift.
 ---
+
+## [2026-09-19] - US-039
+- Conflict — did no work. A concurrent same-checkout executor appended `CLAIMED — US-039/partial-row-error-feedback — deepseek-v4.1-flash — 2026-09-19T22:05:55Z` and was mid-edit on the exact slice files; contract v4 §1.3 (already claimed) + §3 (target-file overlap) → stop, report `conflict / blocked — already claimed`, zero source touched (reports only).
+- Files changed: `docs/plan/phases/phase-04-report.md`, `.ralph-tui/progress.md` (reports only). No CLAIMED line appended, to avoid racing the live owner.
+- **Learnings:**
+  - Native record import/export in this checkout is **entirely client-side**: `packages/twenty-front/src/modules/spreadsheet-import/` (wizard + `ValidationStep` per-row errors) and `packages/twenty-front/src/modules/object-record/spreadsheet-import/` (`useOpenObjectRecordsSpreadsheetImportDialog` → `buildRecordFromImportedStructuredRow` → `batchCreateManyRecords({ upsert: true })`). Export is browser-side `generateCsv` (`useRecordIndexExportRecords.ts`, `json-2-csv` + `sanitizeValueForCSVExport`). There is **no** server `import-job`/`export-job` module or `importRecords`/`exportRecords` mutation.
+  - The app SDK (`twenty-sdk/front-component`) exposes **no** import/export host API and an app `commandMenuItem` cannot target native `EngineComponentKey.IMPORT_RECORDS` (front-component target only) — so "reusing native import" for tasks means the native generic pipeline, not an app-level importer. Do not build a parallel CSV engine in `a2e-projects`.
+  - With two `ralph-tui run` processes on one checkout, `git status` at session start can be clean while a twin claims between scoping and editing; check the report tail AND per-file mtimes immediately before touching anything.
+---

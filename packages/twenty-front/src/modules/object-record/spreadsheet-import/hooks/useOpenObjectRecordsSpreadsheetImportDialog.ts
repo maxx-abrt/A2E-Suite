@@ -1,3 +1,4 @@
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
@@ -10,8 +11,11 @@ import { SPREADSHEET_IMPORT_CREATE_RECORDS_BATCH_SIZE } from '@/spreadsheet-impo
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { type SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
+import { partitionRowsByImportResult } from '@/spreadsheet-import/utils/spreadsheetImportFeedback';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { t } from '@lingui/core/macro';
+import { useCallback, useRef } from 'react';
 
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,
@@ -20,7 +24,8 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
   const { openSpreadsheetImportDialog } = useOpenSpreadsheetImportDialog();
   const { buildSpreadsheetImportFields } = useBuildSpreadsheetImportFields();
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueWarningSnackBar } = useSnackBar();
+  const { formatNumber } = useNumberFormat();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -28,6 +33,18 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
 
   const setSpreadsheetImportCreatedRecordsProgress = useSetAtomState(
     spreadsheetImportCreatedRecordsProgressState,
+  );
+
+  // The batch hook reports its progress through this callback, so the ref lets a
+  // failed submit know how many rows were already committed.
+  const createdRecordCountRef = useRef(0);
+
+  const handleBatchedRecordsCount = useCallback(
+    (count: number) => {
+      createdRecordCountRef.current = count;
+      setSpreadsheetImportCreatedRecordsProgress(count);
+    },
+    [setSpreadsheetImportCreatedRecordsProgress],
   );
 
   const abortController = new AbortController();
@@ -41,7 +58,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     objectNameSingular,
     recordGqlFields,
     mutationBatchSize: SPREADSHEET_IMPORT_CREATE_RECORDS_BATCH_SIZE,
-    setBatchedRecordsCount: setSpreadsheetImportCreatedRecordsProgress,
+    setBatchedRecordsCount: handleBatchedRecordsCount,
     abortController,
     skipPostOptimisticEffect: true,
   });
@@ -86,6 +103,21 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
             },
           });
         } catch (error: any) {
+          const { createdCount, failedCount, isPartial } =
+            partitionRowsByImportResult({
+              recordsToImport: createInputs,
+              createdRecordCount: createdRecordCountRef.current,
+            });
+
+          if (isPartial) {
+            enqueueWarningSnackBar({
+              message: t`Import stopped after ${formatNumber(createdCount)} of ${formatNumber(createInputs.length)} records. ${formatNumber(failedCount)} records were not imported.`,
+              options: {
+                duration: 8000,
+              },
+            });
+          }
+
           enqueueErrorSnackBar({
             apolloError: error,
           });

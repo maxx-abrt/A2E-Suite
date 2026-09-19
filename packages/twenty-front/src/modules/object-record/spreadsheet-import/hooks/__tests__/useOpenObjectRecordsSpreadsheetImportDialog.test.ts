@@ -5,6 +5,7 @@ import gql from 'graphql-tag';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
+import { snackBarInternalComponentState } from '@/ui/feedback/snack-bar-manager/states/snackBarInternalComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
@@ -17,10 +18,17 @@ jest.mock('uuid', () => ({
 
 const mockBatchCreateManyRecords = jest.fn().mockResolvedValue([]);
 
+let mockSetBatchedRecordsCount: ((count: number) => void) | undefined;
+
 jest.mock('@/object-record/hooks/useBatchCreateManyRecords', () => ({
-  useBatchCreateManyRecords: () => ({
-    batchCreateManyRecords: mockBatchCreateManyRecords,
-  }),
+  useBatchCreateManyRecords: (options: {
+    setBatchedRecordsCount?: (count: number) => void;
+  }) => {
+    mockSetBatchedRecordsCount = options.setBatchedRecordsCount;
+    return {
+      batchCreateManyRecords: mockBatchCreateManyRecords,
+    };
+  },
 }));
 
 const mockResult = jest.fn(() => ({
@@ -170,5 +178,60 @@ describe('useOpenObjectRecordsSpreadsheetImportDialog', () => {
     expect(recordToCreate).toHaveProperty('name', 'Example Company');
     expect(recordToCreate).toHaveProperty('idealCustomerProfile', true);
     expect(recordToCreate).toHaveProperty('employees', 0);
+  });
+
+  it('should report partial failures per row without dropping created records', async () => {
+    mockBatchCreateManyRecords.mockRejectedValueOnce(
+      new Error('Import batch failed'),
+    );
+
+    const { result } = renderHook(
+      () => {
+        const { openObjectRecordsSpreadsheetImportDialog } =
+          useOpenObjectRecordsSpreadsheetImportDialog(
+            CoreObjectNameSingular.Company,
+          );
+        return {
+          openObjectRecordsSpreadsheetImportDialog,
+        };
+      },
+      { wrapper: Wrapper },
+    );
+
+    await act(async () => {
+      result.current.openObjectRecordsSpreadsheetImportDialog();
+    });
+
+    const spreadsheetImportDialog = jotaiStore.get(
+      spreadsheetImportDialogState.atom,
+    );
+
+    const submitData = {
+      validStructuredRows: [
+        { name: 'First Company', idealCustomerProfile: true, employees: '0' },
+        { name: 'Second Company', idealCustomerProfile: false, employees: '1' },
+      ],
+      invalidStructuredRows: [],
+      allStructuredRows: [],
+    };
+
+    await act(async () => {
+      // Simulate the first batch having been committed before the failing one.
+      mockSetBatchedRecordsCount?.(1);
+      await spreadsheetImportDialog.options?.onSubmit(submitData, fakeCsv());
+    });
+
+    const snackBarState = jotaiStore.get(
+      snackBarInternalComponentState.atomFamily({
+        instanceId: 'snack-bar-manager',
+      }),
+    );
+
+    const partialFailureSnackBar = snackBarState.queue.find((snackBar) =>
+      snackBar.message.includes('not imported'),
+    );
+
+    expect(partialFailureSnackBar).toBeDefined();
+    expect(partialFailureSnackBar?.message).toContain('1');
   });
 });

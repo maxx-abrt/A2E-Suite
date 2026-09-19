@@ -4,13 +4,11 @@ import { useHideStepBar } from '@/spreadsheet-import/hooks/useHideStepBar';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
-import {
-  type ImportedStructuredRow,
-  type SpreadsheetImportImportValidationResult,
-} from '@/spreadsheet-import/types';
+import { type ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
+import { partitionRowsByValidationErrors } from '@/spreadsheet-import/utils/spreadsheetImportFeedback';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -224,30 +222,7 @@ export const ValidationStep = ({
   );
 
   const submitData = async () => {
-    const calculatedData = data.reduce(
-      (acc, value) => {
-        const { __index, __errors, ...values } = value;
-        if (isDefined(__errors)) {
-          for (const key in __errors) {
-            if (__errors[key].level === 'error') {
-              acc.invalidStructuredRows.push(
-                values as unknown as ImportedStructuredRow,
-              );
-              return acc;
-            }
-          }
-        }
-        acc.validStructuredRows.push(
-          values as unknown as ImportedStructuredRow,
-        );
-        return acc;
-      },
-      {
-        validStructuredRows: [] as ImportedStructuredRow[],
-        invalidStructuredRows: [] as ImportedStructuredRow[],
-        allStructuredRows: data,
-      } satisfies SpreadsheetImportImportValidationResult,
-    );
+    const calculatedData = partitionRowsByValidationErrors(data);
 
     setCurrentStepState({
       type: SpreadsheetImportStepType.importData,

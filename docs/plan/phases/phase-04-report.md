@@ -948,3 +948,18 @@ CLAIMED — US-038/verify-overview-and-tabs — deepseek-v4.1-flash — 2026-09-
 **Do not redo:** the committed `c1bf077c` layout + overview projection/tests and the `8debd2e2` Documents tab; the `c31b*` namespace; the pre-existing Accueil/Timeline tabs and their widgets; the `project-tasks`/`task-board` view definitions (owned by P4.1/P4.2-board-view). Gantt is deliberately a Timeline-tab widget, not a duplicate Gantt tab — do not add one.
 **Remaining:** P4.2 dependency-picker/retroplanning legacy open legs, standing P4.1/P4.2 Tier-2 legs, P4C.2–P4C.5, P6.1.
 **Next:** orchestrator — Tier-2 install-order + browser proof, then tick US-038.
+
+CLAIMED — US-039/partial-row-error-feedback — deepseek-v4.1-flash — 2026-09-19T22:05:55Z — base 304e30105333e0ff3dd357f5579db6c86cdba522
+
+## 2026-09-19 22:08 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-039 [P4] CSV/bulk task import/export — validation and partial-row error feedback on native import · **Slice:** partial-row error feedback on the native import pipeline (the task's first unmet acceptance gap)
+**Claim:** conflict / blocked — already claimed
+**Ready-to-tick:** no — a concurrent same-checkout executor holds an active claim on the exact slice and is mid-edit on the exact target files; zero source work done.
+**Base:** f54989af44b28a8fb8a278b2874e386449f2e294
+**Changed:** `docs/plan/phases/phase-04-report.md`, `.ralph-tui/progress.md` (reports only — no source touched, no CLAIMED line appended so I do not race the live owner).
+**Evidence:** `git status --porcelain` at session start was clean of source; by the time I scoped the slice a concurrent process had appended `CLAIMED — US-039/partial-row-error-feedback — deepseek-v4.1-flash — 2026-09-19T22:05:55Z` (2 min before this report) and created/modified the exact files my slice needs: `packages/twenty-front/src/modules/spreadsheet-import/utils/spreadsheetImportFeedback.ts` (+ test, both `??` untracked) and `.../spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx` + `.../object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog.ts` (both ` M`, mtimes 22:06:34–22:07:16Z, i.e. live). 4 `ralph` processes run on this one checkout. Contract §1.3 (existing claim) and §3 (target-file overlap with an active claim) both fire → stop.
+**Checks:** none run — running the front suite would race the live editor's half-written tree (same rationale as the US-036 conflict entry); my reads already showed `useOpenObjectRecordsSpreadsheetImportDialog.ts:107` mid-implementation calling `partitionRowsByImportResult`.
+**Missing for tick:** the live owner must finish and report its `US-039/partial-row-error-feedback` slice; nothing actionable for this iteration.
+**Do not redo:** the native `spreadsheet-import` module (`spreadsheetImportFeedback.ts` + `ValidationStep.tsx` + `useOpenObjectRecordsSpreadsheetImportDialog.ts` and the feedback test) — the parallel session owns those dirty files right now. The committed P3.4 native-import/export reuse (`1a4959f7`, HTML/document import) is green and must not be rebuilt.
+**Remaining:** US-039 (owned by the concurrent session), P4.2 dependency-picker/retroplanning legs, standing P4.1/P4.2 Tier-2 legs, P4C.2–P4C.5, P6.1.
+**Next:** let the `partial-row-error-feedback` session report; orchestrator ticks US-039 from its phase-report entry once its feedback-path tests are green.
