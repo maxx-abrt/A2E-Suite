@@ -144,3 +144,13 @@ after each iteration and it's included in prompts for context.
   - Gates on `dcb69f9f`: `yarn test:unit` 249/249; focused `project-object-integrity` + `project-overview` 16/16; `yarn typecheck` exit 0; `yarn lint` 0 errors (1 pre-existing `task-labels.field.ts` warning); `npx twenty dev:build .` Build succeeded (38 files); manifest carries `document.project` @ `c31b0200-0002-…0006` (`objectUniversalIdentifier` `c31a0100-…`, join `projectId`, `SET_NULL`) + inverse `project.documents` @ `…0005` + Documents tab FIELD widget `c31b0200-000a-…000f`.
   - C5 is native: A2E Documents' views set `openRecordIn: SIDE_PANEL`, so a linked doc opens in the native side panel; the relation is workspace-scoped (never cross-tenant) and no app code is needed.
 ---
+
+## [2026-09-19] - US-038
+- Verified the committed P4.2 project-page deliverable (`c1bf077c` layout+overview, plus the US-037 `8debd2e2` Documents tab): one RECORD_PAGE on the project object with Accueil [Champs clés, Description, Aperçu, Temps], Timeline [Timeline, Tâches, Jalons, Étiquettes, Notes, Gantt], and the Tâches / Tableau / Fichiers / Documents tabs. The Aperçu overview front component already renders health + task/milestone/member/activity counts and member names via pure `lib/project-overview.ts`. No source change needed — reported `done-for-review`.
+- Files changed: `docs/plan/phases/phase-04-report.md`, `.ralph-tui/progress.md` (reports only).
+- **Learnings:**
+  - US-038 is a re-issue of the same P4.2 `project-page-tabs` work already reported done-for-review on 2026-09-18 04:54 UTC; its only recorded deferral was the docs tab, which US-037's committed `8debd2e2` now supplies. Do not rebuild the layout or the overview component.
+  - Gantt is deliberately a widget inside the Timeline tab (FRONT_COMPONENT `project-gantt`), NOT its own tab — the acceptance phrase "gantt tab embeds the existing timeline widget" is satisfied by this pre-existing composition; a duplicate Gantt tab would double the widget. The manifest confirms: Accueil/Timeline/Tâches/Tableau/Fichiers/Documents/Discussions.
+  - App-package gates for a2e-projects do not need services: `yarn typecheck` exit 0, `yarn test:unit` 249/249, `yarn lint` 0 errors / 1 pre-existing warning, `npx twenty dev:build .` → Build succeeded (38 files). `npx nx lint:diff-with-main a2e-projects` is N/A (app is not an Nx project).
+  - The manifest build is the cheapest manifest-level proof: re-read `.twenty/output/manifest.json` and assert the exact tab/widget shape rather than trusting the source alone.
+---

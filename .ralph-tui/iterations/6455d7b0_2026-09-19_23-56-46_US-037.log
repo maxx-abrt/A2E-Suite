@@ -1,0 +1,69 @@
+# Iteration 12 Log
+
+## Metadata
+
+- **Task ID**: US-037
+- **Task Title**: [P4.3] Project ↔ document relation — linked docs on project overview
+- **Description**: As a project member, I want to link documents to a project and see them on the project overview, so that project knowledge lives one click away.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T21:56:46.766Z
+- **Ended At**: 2026-09-19T21:59:06.920Z
+- **Duration**: 2m 20s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ ls docs/plan/ 2>/dev/null
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96mUS-037[0m
+[94m[bash][0m $ grep -n "P4.3\|P4.2\|US-037\|US-038" "PLAN.md" | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "US-037\|US-036\|CLAIMED" "docs/plan/phases/phase-04-report.md" | tail -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ grep -rn "document" packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.t...
+[94m[bash][0m $ git log --oneline -15
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/document-project.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/project-overview.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/page-layouts/project.page-layout.ts
+[94m[bash][0m $ grep -rn "C4\b\|C4:" docs/ --include=*.md | head -30
+[94m[bash][0m $ grep -rln "degrade safely\|not installed\|missing app\|optional cross-app" docs/ --include=*.md | he...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/docs[0m pattern: [96mdegrade safely|optional cross-app|when .*is not installed|not installed[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite[0m pattern: [96m\bC4\b[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96mC5 —|C5\.|### C5[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project.object.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/ && echo "---" && ls packages/twenty...
+[94m[read][0m
+[94m[bash][0m $ sed -n '1,60p' tasks/prd.json
+[94m[bash][0m $ git log --oneline -3 -- packages/twenty-apps/internal/a2e-projects/src/fields/document-project.field...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ tail -5 "docs/plan/phases/phase-04-report.md"
+[94m[bash][0m $ cat .ralph-tui/session-meta.json 2>/dev/null | head -40
+[94m[bash][0m $ ps aux | grep -i "ralph-tui\|opencode" | grep -v grep | head -20
+[94m[bash][0m $ tail -30 .ralph-tui/session.json
+[94m[bash][0m $ echo "(empty = clean)"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -25 .ralph-tui/progress.md
+I found an active concurrent claim for this exact task that appeared mid-session. Let me confirm before yielding.
+[94m[bash][0m $ ls -la --time-style=full-iso packages/twenty-apps/internal/a2e-projects/src/fields/document-project....
+[94m[bash][0m $ grep -n "US-037" docs/plan/phases/phase-04-report.md
+The report tail changed — the concurrent session just completed its report. Let me read it.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+The concurrent session already completed US-037's verification and appended a full `done-for-review` report. Per contract §1.3 (and the US-034 precedent), I report `done-for-review` with zero new changes rather than duplicate work.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ tail -3 .ralph-tui/progress.md | cat -A | tail -3
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -4 .ralph-tui/progress.md
+US-037 was already handled: a concurrent `ralph-tui` session claimed it at 21:57:12Z and appended a full `done-for-review` verification report before this iteration could claim. The verified work is the committed `8debd2e2` (US-001) — `document.project` + `project.documents`, the Documents FIELD tab, and the overview document count.
+
+I changed no source. Per contract §1.3 / US-034 precedent I appended a zero-change `done-for-review` report (`docs/plan/phases/phase-04-report.md`) and a progress entry (`.ralph-tui/progress.md`), then stopped.
+
+Key residual for the orchestrator's Tier 2 run: `objects/project.object.ts:193`'s comment claims the widget hides when A2E Documents is absent, but Documents is a hard install prerequisite (D-P4.3-DOC), so the real behavior is fail-closed atomic install.
+
+<promise>COMPLETE</promise>

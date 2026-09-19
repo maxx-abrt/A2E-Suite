@@ -222,11 +222,12 @@
         "Widgets and tabs unit-verified; manifest build passes; app-local typecheck + test:unit green"
       ],
       "priority": 13,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md:873 (P4.2 `[ ]`, partial-by-ledger: overview component exists). dependsOn US-037 for the docs tab.",
       "dependsOn": [
         "US-037"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-039",
@@ -354,6 +355,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T21:59:06.921Z"
+    "updatedAt": "2026-09-19T22:00:52.313Z"
   }
 }

@@ -3,10 +3,10 @@
   "sessionId": "6455d7b0-09b6-4e5c-ba20-c39a463e7fdb",
   "status": "running",
   "startedAt": "2026-09-19T20:42:50.206Z",
-  "updatedAt": "2026-09-19T21:59:06.921Z",
-  "currentIteration": 11,
+  "updatedAt": "2026-09-19T22:00:52.313Z",
+  "currentIteration": 12,
   "maxIterations": 20,
-  "tasksCompleted": 10,
+  "tasksCompleted": 11,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -126,6 +126,16 @@
       "durationMs": 198474,
       "startedAt": "2026-09-19T21:53:22.627Z",
       "endedAt": "2026-09-19T21:56:41.101Z"
+    },
+    {
+      "iteration": 12,
+      "status": "completed",
+      "taskId": "US-037",
+      "taskTitle": "[P4.3] Project ↔ document relation — linked docs on project overview",
+      "taskCompleted": true,
+      "durationMs": 140154,
+      "startedAt": "2026-09-19T21:56:46.766Z",
+      "endedAt": "2026-09-19T21:59:06.920Z"
     }
   ],
   "skippedTaskIds": [],
