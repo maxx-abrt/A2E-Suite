@@ -36,7 +36,16 @@ const buildStep = (status: string) => ({
   localizedMessage: status === 'FAILED' ? 'install boom' : null,
 });
 
-const buildMock = (variables: Record<string, unknown>): MockedResponse => ({
+const buildMock = (
+  variables: Record<string, unknown>,
+  operation: {
+    appliedTemplateKeyVersion: { key: string; version: number } | null;
+    steps: ReturnType<typeof buildStep>[];
+  } = {
+    appliedTemplateKeyVersion: { key: 'INDIVIDUAL', version: 1 },
+    steps: [buildStep('SUCCEEDED'), buildStep('SUCCEEDED')],
+  },
+): MockedResponse => ({
   request: {
     query: APPLY_WORKSPACE_TEMPLATE_OPERATION,
     variables,
@@ -46,8 +55,8 @@ const buildMock = (variables: Record<string, unknown>): MockedResponse => ({
       applyWorkspaceTemplateOperation: {
         operationId: 'op-1',
         requestedTemplateKeyVersion: { key: 'INDIVIDUAL', version: 1 },
-        appliedTemplateKeyVersion: { key: 'INDIVIDUAL', version: 1 },
-        steps: [buildStep('SUCCEEDED'), buildStep('SUCCEEDED')],
+        appliedTemplateKeyVersion: operation.appliedTemplateKeyVersion,
+        steps: operation.steps,
         __typename: 'ApplyTemplateResult',
       },
     },
@@ -133,6 +142,39 @@ describe('useApplyWorkspaceTemplateOperation', () => {
     expect(result.current.idempotencyKey).toBe(firstKey);
     expect(mockEnqueueSuccessSnackBar).toHaveBeenCalledTimes(1);
     expect(mockEnqueueErrorSnackBar).toHaveBeenCalledTimes(1);
+  });
+
+  it('never reports success on a partial result and returns it for retry', async () => {
+    const variables = {
+      input: {
+        idempotencyKey: OPERATION_IDEMPOTENCY_KEY,
+        template: 'INDIVIDUAL',
+      },
+    };
+
+    const { result } = renderOperationHook([
+      buildMock(variables, {
+        appliedTemplateKeyVersion: null,
+        steps: [buildStep('SUCCEEDED'), buildStep('FAILED')],
+      }),
+    ]);
+
+    let returned: { steps: unknown[] } | null = null;
+
+    await act(async () => {
+      returned = await result.current.applyTemplateOperation({
+        template: 'INDIVIDUAL',
+      });
+    });
+
+    expect(mockEnqueueSuccessSnackBar).not.toHaveBeenCalled();
+    expect(mockEnqueueErrorSnackBar).toHaveBeenCalledTimes(1);
+    expect(returned).toMatchObject({ operationId: 'op-1' });
+    expect(result.current.operationResult).toMatchObject({
+      appliedTemplateKeyVersion: null,
+    });
+    // The key survives, so the next call resumes the same server operation.
+    expect(result.current.idempotencyKey).toBe(OPERATION_IDEMPOTENCY_KEY);
   });
 
   it('generates a fresh key after resetOperation', async () => {

@@ -47,4 +47,26 @@ describe('shouldAutoSkipInstallAppsStep', () => {
       }),
     ).toBe(false);
   });
+
+  it('never auto-skips an unproven empty catalogue, so a network error cannot discard the template choice', () => {
+    expect(
+      shouldAutoSkipInstallAppsStep({
+        hasLoadedAppsSuccessfully: false,
+        availableAppCount: 0,
+        hasTemplateChoices: true,
+        hasAutoSkipFailed: false,
+      }),
+    ).toBe(false);
+  });
+
+  it('never auto-skips an errored catalogue even when no apps and no templates are known', () => {
+    expect(
+      shouldAutoSkipInstallAppsStep({
+        hasLoadedAppsSuccessfully: false,
+        availableAppCount: 0,
+        hasTemplateChoices: false,
+        hasAutoSkipFailed: false,
+      }),
+    ).toBe(false);
+  });
 });

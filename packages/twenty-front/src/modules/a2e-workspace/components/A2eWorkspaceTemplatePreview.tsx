@@ -2,6 +2,7 @@ import { type A2eWorkspaceTemplate } from '@/a2e-workspace/constants/A2eWorkspac
 import { useApplyWorkspaceTemplateOperation } from '@/a2e-workspace/hooks/useApplyWorkspaceTemplateOperation';
 import { useWorkspaceTemplatePreview } from '@/a2e-workspace/hooks/useWorkspaceTemplatePreview';
 import { type ApplyTemplateStep } from '@/a2e-workspace/types/apply-template-operation.types';
+import { getApplyTemplateResultOutcome } from '@/a2e-workspace/utils/getApplyTemplateResultOutcome';
 import {
   resolveTemplatePreview,
   type TemplatePreviewAppResolution,
@@ -11,7 +12,14 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Checkbox, MainButton } from 'twenty-ui/input';
-import { IconAlertTriangle, IconCheck, IconMinus, IconX } from 'twenty-ui/icon';
+import {
+  IconAlertTriangle,
+  IconCheck,
+  IconClock,
+  IconLoader,
+  IconPlayerPause,
+  IconX,
+} from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledPreviewPanel = styled.div`
@@ -57,6 +65,15 @@ const StyledContentItem = styled.li`
 const StyledBlockedText = styled.span`
   align-items: center;
   color: ${themeCssVariables.color.red};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledOutcomeBanner = styled.span<{ isFailed: boolean }>`
+  align-items: center;
+  color: ${({ isFailed }) =>
+    isFailed ? themeCssVariables.color.red : themeCssVariables.color.orange};
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
@@ -148,7 +165,41 @@ const StepStatusIcon = ({
     return <IconX size={themeCssVariables.icon.size.sm} />;
   }
 
-  return <IconMinus size={themeCssVariables.icon.size.sm} />;
+  if (status === 'RUNNING') {
+    return <IconLoader size={themeCssVariables.icon.size.sm} />;
+  }
+
+  if (status === 'PENDING') {
+    return <IconClock size={themeCssVariables.icon.size.sm} />;
+  }
+
+  return <IconPlayerPause size={themeCssVariables.icon.size.sm} />;
+};
+
+const StepStatusLabel = ({
+  status,
+}: {
+  status: ApplyTemplateStep['status'];
+}) => {
+  const { t } = useLingui();
+
+  if (status === 'PENDING') {
+    return <>{t`pending`}</>;
+  }
+
+  if (status === 'RUNNING') {
+    return <>{t`in progress`}</>;
+  }
+
+  if (status === 'SUCCEEDED') {
+    return <>{t`succeeded`}</>;
+  }
+
+  if (status === 'FAILED') {
+    return <>{t`failed`}</>;
+  }
+
+  return <>{t`skipped`}</>;
 };
 
 export type A2eWorkspaceTemplatePreviewProps = {
@@ -190,13 +241,17 @@ export const A2eWorkspaceTemplatePreview = ({
       sampleContentEnabled,
     });
 
-    if (isDefined(result)) {
+    // A partial or failed run keeps its result: the successful steps stay,
+    // exactly what failed stays visible, and the next click resumes the same
+    // operation (same hook instance, so the same idempotency key). Only a run
+    // whose template row was actually set is reported as applied (C2).
+    if (
+      isDefined(result) &&
+      getApplyTemplateResultOutcome(result) === 'applied'
+    ) {
       resetOperation();
       onApplied?.();
     }
-    // On partial failure the result is kept: failed steps stay visible with
-    // their error codes and a later click retries only them (same hook, so
-    // the same idempotency key).
   }, [
     applyTemplateOperation,
     deselectedUniversalIdentifiers,
@@ -232,6 +287,9 @@ export const A2eWorkspaceTemplatePreview = ({
   }
 
   const hasSteps = isNonEmptyArray(operationResult?.steps ?? []);
+  const operationOutcome = isDefined(operationResult)
+    ? getApplyTemplateResultOutcome(operationResult)
+    : null;
 
   const resolvedPreview = resolveTemplatePreview(
     preview,
@@ -323,17 +381,36 @@ export const A2eWorkspaceTemplatePreview = ({
           {t`A required app is unavailable. Apply stays disabled until it is registered and compatible.`}
         </StyledBlockedText>
       )}
+      {isDefined(operationOutcome) && operationOutcome !== 'applied' && (
+        <StyledOutcomeBanner
+          data-testid="a2e-workspace-template-preview-operation-outcome"
+          isFailed={operationOutcome === 'failed'}
+        >
+          <IconAlertTriangle size={themeCssVariables.icon.size.sm} />
+          {operationOutcome === 'partial'
+            ? t`Some steps failed. Successful steps are kept; retry re-runs only the remaining ones.`
+            : t`Setup did not complete. Retry re-runs the same operation.`}
+        </StyledOutcomeBanner>
+      )}
       {hasSteps && (
-        <StyledStepsList>
+        <StyledStepsList data-testid="a2e-workspace-template-preview-steps">
           {operationResult!.steps.map((step) => (
             <StyledStepItem
-              key={`${step.kind}-${step.targetUniversalIdentifier ?? 'workspace'}`}
+              key={[
+                step.kind,
+                step.targetUniversalIdentifier ?? 'workspace',
+                step.status,
+              ].join('-')}
             >
               <StyledStepIcon status={step.status}>
                 <StepStatusIcon status={step.status} />
               </StyledStepIcon>
               <StyledRowText>
                 <StepKindLabel kind={step.kind} />
+                <StyledRowSubText>
+                  {' '}
+                  · <StepStatusLabel status={step.status} />
+                </StyledRowSubText>
                 {isDefined(step.targetUniversalIdentifier) && (
                   <StyledRowSubText>
                     {' '}
@@ -356,9 +433,8 @@ export const A2eWorkspaceTemplatePreview = ({
         <StyledApplyButton>
           <MainButton
             title={
-              hasSteps &&
-              operationResult!.steps.some((step) => step.status === 'FAILED')
-                ? t`Retry failed steps`
+              hasSteps && operationOutcome !== 'applied'
+                ? t`Retry remaining steps`
                 : t`Apply template`
             }
             onClick={handleApply}

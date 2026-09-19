@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { type A2eWorkspaceTemplate } from '@/a2e-workspace/constants/A2eWorkspaceTemplates';
 import { APPLY_WORKSPACE_TEMPLATE_OPERATION } from '@/a2e-workspace/graphql/mutations/applyWorkspaceTemplateOperation';
 import { type ApplyTemplateResult } from '@/a2e-workspace/types/apply-template-operation.types';
+import { getApplyTemplateResultOutcome } from '@/a2e-workspace/utils/getApplyTemplateResultOutcome';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -86,9 +87,21 @@ export const useApplyWorkspaceTemplateOperation = () => {
           setOperationResult(applyTemplateResult);
         }
 
-        enqueueSuccessSnackBar({
-          message: t`Workspace template operation finished`,
-        });
+        // A partial/failed run is not a finished setup: never report the whole
+        // preset applied. The result is still returned so the caller can show
+        // exactly which steps failed and retry them (C2).
+        if (
+          isDefined(applyTemplateResult) &&
+          getApplyTemplateResultOutcome(applyTemplateResult) === 'applied'
+        ) {
+          enqueueSuccessSnackBar({
+            message: t`Workspace template operation finished`,
+          });
+        } else {
+          enqueueErrorSnackBar({
+            message: t`Some setup steps failed. Successful steps are kept; retry re-runs only the remaining ones.`,
+          });
+        }
 
         return applyTemplateResult;
       } catch {

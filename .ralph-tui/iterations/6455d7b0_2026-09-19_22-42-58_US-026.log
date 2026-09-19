@@ -1,0 +1,148 @@
+# Iteration 1 Log
+
+## Metadata
+
+- **Task ID**: US-026
+- **Task Title**: [P1.6c] Unified setup UI — preview apps/prerequisites/samples/customization, blank/CRM, optional app exclusion (both entrypoints)
+- **Description**: As a workspace owner, I want onboarding and Settings to preview exactly what a template will apply before anything is installed, so that I can choose blank/CRM or exclude optional apps with full knowl...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T20:42:58.131Z
+- **Ended At**: 2026-09-19T20:48:08.418Z
+- **Duration**: 5m 10s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-026" PLAN.md
+I'll start with the mandatory clean-start check and task confirmation.
+[94m[bash][0m $ grep -n "P1.6c\|P1\.6c\|Unified setup UI" PLAN.md | head -50
+[94m[bash][0m $ ls docs/plan/ 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "P1.6c\|P1.6b\|US-026\|US-016\|US-017\|US-018" tasks/prd.json | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -n "US-026\|P1.6c\|CLAIMED" docs/plan/phases/phase-01-report.md | tail -60
+[94m[bash][0m $ tail -120 docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ ls -R packages/twenty-front/src/modules/a2e-workspace 2>/dev/null
+[94m[bash][0m $ grep -rln "workspaceTemplatePreview\|applyWorkspaceTemplateOperation\|A2eWorkspaceTemplatePreview" p...
+Now let me explore the existing P1.6c front implementation.
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && wc -l packages/twenty-front/src/modules/a2e-workspace/com...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rln "workspaceTemplatePreview\|applyWorkspaceTempla...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/hooks/useWorkspaceTemplatePreview.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/InstallApps.tsx
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "getWorkspaceTemplatePreview\|navigationChanges\|...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git log --oneline -8 && echo "---" && git log --oneline -...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+[94m[bash][0m $ cat packages/twenty-front/jest.config.mjs 2>/dev/null | head -60
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "navigationChanges\|TemplatePreviewNavigationCha...
+[94m[bash][0m $ find packages/twenty-front/src -path "*a2e*" -name "*.test.*"
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && sed -n '1,80p' packages/twenty-front/src/modules/ai/compo...
+[94m[bash][0m $ grep -rn "testMatch\|testPathIgnorePatterns" packages/twenty-front/jest.config.mjs jest.preset.js 2>...
+[94m[bash][0m $ find packages/twenty-front/src/modules/a2e-workspace -name "*.test.*"
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && tail -40 docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && find packages/twenty-front/src/pages/onboarding packages/...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/onboarding/utils/shouldAutoSkipInstallAppsStep.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && find packages/twenty-front/src -path "*onboarding*" -name...
+[94m[bash][0m $ grep -n "paths" -A40 packages/twenty-front/tsconfig.json | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/InstallAppsContent.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/onboarding/utils/shouldAutoSkipInstallAppsStep.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/onboarding/hooks/useInstallOnboardingApps.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "onboardingConfigState" packages/twenty-front/sr...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && cat >> docs/plan/phases/phase-01-report.md <<'EOF'  CLAIM...
+Now I have a full picture. Let me claim the slice and start implementing.
+[94m[write][0m "import {
+  type TemplatePreview,
+  type TemplatePreviewApp,
+  type TemplatePreviewNavigationChange,
+  type TemplatePreviewSample,
+} from '@/a2e-workspace/types/apply-template-operation.types';
+
+// Res... (2783 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/utils/resolveTemplatePreview.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/utils/resolveTemplatePreview.ts
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-ui/src -name "MainButton.tsx" | head
+[94m[bash][0m $ grep -rln "from 'twenty-ui/input'" packages/twenty-front/src --include="*.test.tsx" | head
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && sed -n '1,80p' packages/twenty-ui/src/input/MainButton/Ma...
+[94m[bash][0m $ grep -rn "aria-label" packages/twenty-ui/src/input/Checkbox/Checkbox.tsx 2>/dev/null | head
+[94m[bash][0m $ grep -rn "export const useTheme" packages/twenty-ui/src/theme-constants/*.ts* 2>/dev/null
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && sed -n '1,40p' packages/twenty-ui/src/input/Checkbox/__te...
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-front/setupTests.ts
+[94m[write][0m "import { type TemplatePreview, type TemplatePreviewApp } from '@/a2e-workspace/types/apply-template-operation.types';
+import {
+  resolveTemplatePreview,
+  resolveTemplatePreviewApp,
+} from '@/a2e-work... (4689 chars)"
+[94m[write][0m "import { type MockedResponse } from '@apollo/client/testing';
+import { MockedProvider } from '@apollo/client/testing/react';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/... (6499 chars)"
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import ... (6191 chars)"
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import ... (2799 chars)"
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "testMatch\|testRegex" jest.preset.js packages/tw...
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+import { type ReactNode } from 'react';
+
+import { SettingsA2... (2178 chars)"
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest packages/twenty-front/src/modules/a2e-workspace/...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest packages/twenty-front/src/modules/a2e-workspace/...
+[94m[bash][0m $ grep -rn "id:" packages/twenty-front/src/modules/ai/components/AiChatAssistantMessageRenderer.tsx 2>...
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest packages/twenty-front/src/modules/a2e-workspace/...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest packages/twenty-front/src/modules/a2e-workspace ...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx tsgo -p tsconfig.json --noEmit ...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx oxlint --type-aware -c .oxlintrc.json packages/twenty...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx oxfmt --check packages/twenty-front/src/modules/a2e-w...
+[94m[bash][0m $ find packages/twenty-front -maxdepth 2 -name ".oxlintrc*" -o -maxdepth 2 -name "oxlint*" | head
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx oxfmt packages/twenty-front/src/modules/a2e-workspace...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx oxlint --type-aware -c .oxlintr...
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -8
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest packages/twenty-front/src/modules/a2e-workspace ...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git status --porcelain
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ orchestrator — Tier-2 schema regen + live P1.6c browser journey. EOF tail -2 docs/plan/phases/phase-...
+[94m[bash][0m $ tail -25 .ralph-tui/progress.md
+[94m[bash][0m $ resolution is a front-only projection, no server change needed.   - The `navigationChanges` wire sha...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git status --porcelain && echo "=== claims ===" && grep -...
+Done. Slice complete and self-verified.
+
+**US-026 [P1.6c] — preview resolved states + prerequisites + customization** (first unmet acceptance gap, AC1 + AC5 front coverage).
+
+- New pure resolver `resolveTemplatePreview.ts` maps preview apps to `install`/`keep`/`unavailable`, marks optional deselection as `excluded`, and derives blocking `prerequisites` (required + unavailable) — reusing the wire shape from US-016/017/018.
+- `A2eWorkspaceTemplatePreview.tsx` now renders the resolved label per app, a prerequisites list, and the previously-unrendered `navigationChanges` customization; also fixed the blank dynamic label rendering (`t({id,message})` → tagged-template `ResolutionLabel`/`StepKindLabel`).
+- Tests cover resolution states, exclusion toggles, and entrypoint parity (onboarding `InstallApps` + Settings both route through the one picker/preview/operation chain).
+
+Checks: `a2e-workspace` jest → 7 suites / 25 tests PASS; `tsgo --noEmit` → exit 0; oxlint → 0/0; oxfmt clean; `lint:diff-with-main` → "No changed files" (uncommitted, direct lint covers); `check-docs` → PASS. Tier-2 schema regen + live browser journey remain orchestrator-only.
+
+<promise>COMPLETE</promise>

@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
 
@@ -8,6 +8,8 @@ import { A2eWorkspaceTemplatePreview } from '@/a2e-workspace/components/A2eWorks
 import { useApplyWorkspaceTemplateOperation } from '@/a2e-workspace/hooks/useApplyWorkspaceTemplateOperation';
 import { useWorkspaceTemplatePreview } from '@/a2e-workspace/hooks/useWorkspaceTemplatePreview';
 import {
+  type ApplyTemplateResult,
+  type ApplyTemplateStep,
   type TemplatePreview,
   type TemplatePreviewApp,
 } from '@/a2e-workspace/types/apply-template-operation.types';
@@ -70,7 +72,37 @@ const buildPreview = (
   ...overrides,
 });
 
-const setupHooks = (preview: TemplatePreview) => {
+const buildStep = (
+  overrides: Partial<ApplyTemplateStep> = {},
+): ApplyTemplateStep => ({
+  kind: 'INSTALL_APP',
+  targetUniversalIdentifier: 'app-documents',
+  status: 'SUCCEEDED',
+  ...overrides,
+});
+
+const buildPartialResult = (
+  overrides: Partial<ApplyTemplateResult> = {},
+): ApplyTemplateResult => ({
+  operationId: 'op-1',
+  requestedTemplateKeyVersion: { key: 'INDIVIDUAL', version: 1 },
+  appliedTemplateKeyVersion: null,
+  steps: [
+    buildStep({ status: 'SUCCEEDED' }),
+    buildStep({
+      status: 'FAILED',
+      errorCode: 'INSTALL_FAILED',
+      localizedMessage: 'install boom',
+    }),
+    buildStep({ kind: 'SET_WORKSPACE_TEMPLATE', status: 'SKIPPED' }),
+  ],
+  ...overrides,
+});
+
+const setupHooks = (
+  preview: TemplatePreview,
+  operationResult: ApplyTemplateResult | null = null,
+) => {
   mockedUseWorkspaceTemplatePreview.mockReturnValue({
     preview,
     isLoading: false,
@@ -79,7 +111,7 @@ const setupHooks = (preview: TemplatePreview) => {
   mockedUseApplyWorkspaceTemplateOperation.mockReturnValue({
     applyTemplateOperation: mockApplyTemplateOperation,
     resetOperation: mockResetOperation,
-    operationResult: null,
+    operationResult,
     idempotencyKey: null,
     isLoading: false,
   } as unknown as ReturnType<typeof useApplyWorkspaceTemplateOperation>);
@@ -214,5 +246,106 @@ describe('A2eWorkspaceTemplatePreview', () => {
         sampleContentEnabled: false,
       }),
     );
+  });
+
+  it('shows each step status truthfully from the operation result', () => {
+    setupHooks(
+      buildPreview(),
+      buildPartialResult({
+        steps: [
+          buildStep({ status: 'SUCCEEDED' }),
+          buildStep({
+            status: 'FAILED',
+            errorCode: 'INSTALL_FAILED',
+            localizedMessage: 'install boom',
+          }),
+          buildStep({ kind: 'SEED_SAMPLES', status: 'SKIPPED' }),
+          buildStep({ kind: 'SET_WORKSPACE_TEMPLATE', status: 'SKIPPED' }),
+        ],
+      }),
+    );
+
+    render(<A2eWorkspaceTemplatePreview template="INDIVIDUAL" />, {
+      wrapper: Wrapper,
+    });
+
+    const steps = screen.getByTestId('a2e-workspace-template-preview-steps');
+    expect(steps).toHaveTextContent('succeeded');
+    expect(steps).toHaveTextContent('failed');
+    expect(steps).toHaveTextContent('skipped');
+    expect(steps).not.toHaveTextContent('pending');
+    expect(steps).not.toHaveTextContent('in progress');
+  });
+
+  it('reports a partial failure without claiming the whole preset applied', () => {
+    setupHooks(buildPreview(), buildPartialResult());
+
+    render(<A2eWorkspaceTemplatePreview template="INDIVIDUAL" />, {
+      wrapper: Wrapper,
+    });
+
+    const outcome = screen.getByTestId(
+      'a2e-workspace-template-preview-operation-outcome',
+    );
+    expect(outcome).toHaveTextContent('Some steps failed');
+    expect(outcome).not.toHaveTextContent('applied');
+    expect(screen.getByText('install boom')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Retry remaining steps' }),
+    ).toBeInTheDocument();
+  });
+
+  it('retries the same operation and keeps the partial result until it succeeds', async () => {
+    const user = userEvent.setup();
+    // Still partial on the retry: the hook keeps its result and its
+    // idempotency key, so the button must stay a retry, not a fresh apply.
+    mockApplyTemplateOperation.mockResolvedValue(buildPartialResult());
+    setupHooks(buildPreview(), buildPartialResult());
+
+    render(<A2eWorkspaceTemplatePreview template="INDIVIDUAL" />, {
+      wrapper: Wrapper,
+    });
+
+    await user.click(
+      screen.getByRole('button', { name: 'Retry remaining steps' }),
+    );
+
+    expect(mockApplyTemplateOperation).toHaveBeenCalledTimes(1);
+    expect(mockResetOperation).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole('button', { name: 'Retry remaining steps' }),
+    ).toBeInTheDocument();
+  });
+
+  it('resets the operation and notifies the caller only when fully applied', async () => {
+    const user = userEvent.setup();
+    const onApplied = jest.fn();
+    mockApplyTemplateOperation.mockResolvedValue({
+      operationId: 'op-2',
+      requestedTemplateKeyVersion: { key: 'INDIVIDUAL', version: 1 },
+      appliedTemplateKeyVersion: { key: 'INDIVIDUAL', version: 1 },
+      steps: [
+        buildStep({ status: 'SUCCEEDED' }),
+        buildStep({ kind: 'SEED_SAMPLES', status: 'SKIPPED' }),
+        buildStep({ kind: 'SET_WORKSPACE_TEMPLATE', status: 'SUCCEEDED' }),
+      ],
+    } satisfies ApplyTemplateResult);
+    setupHooks(buildPreview());
+
+    render(
+      <A2eWorkspaceTemplatePreview
+        template="INDIVIDUAL"
+        onApplied={onApplied}
+      />,
+      { wrapper: Wrapper },
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Apply template' }));
+
+    await waitFor(() => expect(onApplied).toHaveBeenCalledTimes(1));
+    expect(mockResetOperation).toHaveBeenCalledTimes(1);
+    expect(
+      screen.queryByTestId('a2e-workspace-template-preview-operation-outcome'),
+    ).not.toBeInTheDocument();
   });
 });
