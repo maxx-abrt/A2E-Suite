@@ -1,0 +1,186 @@
+# Iteration 12 Log
+
+## Metadata
+
+- **Task ID**: US-012
+- **Task Title**: P9.2 Projects: standup digest from activity + task-breakdown context tools (read-only)
+- **Description**: As a user, I want the assistant to assemble a standup digest from recent activity and to see a project's task structure so that it can propose breakdowns and updates.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T11:41:41.670Z
+- **Ended At**: 2026-09-19T11:46:58.546Z
+- **Duration**: 5m 16s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "US-012" PLAN.md
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ wc -l PLAN.md
+[94m[bash][0m $ grep -rn "US-012" .ralph-tui/ tasks/ 2>/dev/null | head -30
+[94m[bash][0m $ sed -n '230,330p' tasks/prd.json
+[94m[bash][0m $ grep -n "P9.2\|P9\.\|standup\|task breakdown\|task-breakdown" PLAN.md
+[94m[bash][0m $ sed -n '1310,1365p' PLAN.md
+[94m[bash][0m $ sed -n '1365,1462p' PLAN.md
+[94m[bash][0m $ grep -n "US-012\|P9.2\|standup\|task-breakdown\|task breakdown" docs/plan/phases/phase-04-report.md ...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects 2>/dev/null
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-projects/src -type f | sort
+[94m[bash][0m $ grep -n "^## \|^# \|CLAIMED" docs/plan/phases/phase-04-report.md | tail -60
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/application.config.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/package.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/task-tree.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/project-overview.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-tree.test.ts
+[94m[bash][0m $ grep -rn "completedAt\|dueAt\|status" packages/twenty-apps/internal/a2e-projects/src/lib/*.ts packag...
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/tsconfig.json
+[94m[read][0m
+[94m[bash][0m $ grep -rn "extract-tasks-from-document\|extractTasksFromDocument" packages/twenty-apps/internal/a2e-p...
+[94m[bash][0m $ grep -rn "logic-functions\|logicFunction" packages/twenty-apps/internal/a2e-projects/README.md | hea...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects[0m pattern: [96mextractTasksFromDocument|extract-tasks-from-document[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/README.md
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/starter-projects.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/task-project-status.field.ts
+[94m[bash][0m $ grep -rln "TaskStatusEnum\|taskStatus\|'DONE'" packages/twenty-shared/src packages/twenty-server/src...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "'DONE'\|projectStatus\|\.status" packages/twenty-apps/internal/a2e-projects/src/lib/*.ts p...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/milestone.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/task-subtask.field.ts
+[94m[bash][0m $ wc -l docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ sed -n '1,40p' .ralph-tui/progress.md 2>/dev/null
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-drive/src -type f | grep -E "logic-functions|lib" | sort
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/logic-functions/find-file.ts
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-drive/.oxlintrc.json 2>/dev/null
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-apps/internal/a2e-drive/src/logic-functions/dedupe-hints.ts 2>/dev/nu...
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ grep -n "US-012\|standup-digest-task-breakdown" docs/plan/phases/phase-04-report.md
+[94m[todowrite][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[write][0m "// One reading of a task's pipeline status, shared by the P9.2 tools.
+//
+// The app's own `projectStatus` select is the authoritative pipeline
+// (TODO / IN_PROGRESS / DONE), but tasks created outside... (1268 chars)"
+[94m[write][0m "// Pure assembly of the P9.2 standup digest.
+//
+// The digest is a projection over project/task rows the assistant already has
+// access to: the caller passes the records read under its auth context, ... (4358 chars)"
+[94m[write][0m "// Pure assembly of the P9.2 task-breakdown context.
+//
+// This is the context an assistant needs to PROPOSE a breakdown: the project's
+// task forest (roots and children through the `parentTask` self... (2354 chars)"
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+
+// Shared plumbing for the two read-only P9.2 Projects tools. Both read the
+// standard `task` object (with the app's `projectStatus` / `parent... (4048 chars)"
+[94m[write][0m "import {
+  buildStandupDigest,
+  resolveDigestWindowStart,
+  type StandupDigest,
+} from '../../lib/standup-digest.ts';
+import {
+  coreClient,
+  readOptionalToolFilter,
+  readProjectTasks,
+  type CoreC... (1824 chars)"
+[94m[write][0m "import {
+  buildTaskBreakdownContext,
+  type TaskBreakdownContext,
+} from '../../lib/task-breakdown-context.ts';
+import {
+  coreClient,
+  readOptionalToolFilter,
+  readProjectMilestones,
+  readProject... (1755 chars)"
+[94m[write][0m "import { defineLogicFunction } from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+import {
+  buildStandupDigestForAssistant,
+  type StandupDigestInp... (1961 chars)"
+[94m[write][0m "import { defineLogicFunction } from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+import {
+  buildTaskBreakdownContextForAssistant,
+  type TaskBreak... (1868 chars)"
+[94m[write][0m "// Shared fake for the read-only Projects tool handlers. The generated Core
+// client is never instantiated (it throws before generation); this reproduces
+// the query frontier: each root key yields t... (1743 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  buildStandupDigest,
+  resolveDigestWindowStart,
+  type DigestTaskRecord,
+} from '../standup-digest.ts';
+
+const NO... (6593 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  buildTaskBreakdownContext,
+  countTasksByPipelineStatus,
+  type BreakdownTaskRecord,
+} from '../task-breakdown-co... (3055 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { buildStandupDigestForAssistant } from '../handlers/standup-digest-handler.ts';
+import {
+  buildFakeCoreClient,
+  bu... (3293 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { buildTaskBreakdownContextForAssistant } from '../handlers/task-breakdown-context-handler.ts';
+import {
+  buildFakeC... (2975 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { LOGIC_FUNCTION_IDS } from '../../constants/universal-identifiers.ts';
+import standupDigestTool from '../standup-dig... (2693 chars)"
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -60
+[94m[bash][0m $ echo "=== TSGO EXIT $? ==="
+[94m[bash][0m $ echo "=== LINT EXIT $? ==="
+[94m[bash][0m $ echo "=== BUILD EXIT $? ==="
+[94m[bash][0m $ grep -o "standup-digest\|task-breakdown-context\|c31b0000-0012-4000-8000-00000000000e\|c31b0000-0012...
+[94m[bash][0m $ " 2>&1 | head -20
+[94m[bash][0m $ git status --porcelain
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/README.md
+[94m[bash][0m $ "
+[94m[bash][0m $ "
+[94m[bash][0m $ echo "=== EXIT $? ==="
+[94m[bash][0m $ echo "=== EXIT $? ==="
+[94m[bash][0m $ git diff --stat
+[94m[bash][0m $ echo "=== FMT EXIT $? ==="
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -8
+[94m[bash][0m $ echo "=== EXIT $? ==="
+[94m[bash][0m $ git status --porcelain | grep -v "ralph-tui\|tasks/prd.json"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ wc -l .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git diff --stat
+[94m[todowrite][0m
+US-012 done-for-review.
+
+- Two read-only a2e-projects tools registered via `toolTriggerSettings` (native P1.5 registry, no `registerAiTools`/table): `standup-digest` (window projection — completed/created/updated/overdue; default previous local day) and `task-breakdown-context` (task forest via `parentTask`, milestones, status counts).
+- Pure logic in `lib/` (`task-status.ts`, `standup-digest.ts`, `task-breakdown-context.ts` reusing `nestTaskTree`); handler reads use the caller-context `CoreApiClient`, query-only (C6).
+- Checks: `yarn test:unit` 217/217 (+30); `yarn typecheck` and `npx tsgo -p tsconfig.json --noEmit` exit 0; `yarn lint` 0 errors (1 pre-existing warning); `npx twenty dev:build .` → 34 files, manifest carries both tools; oxfmt clean; `nx lint:diff-with-main a2e-projects` → "Cannot find project" (app-package gates substitute). Report + progress entries appended; nothing committed, PLAN.md untouched.
+
+<promise>COMPLETE</promise>
