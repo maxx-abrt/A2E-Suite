@@ -223,7 +223,11 @@ describe('getContextToolButtons', () => {
   it('matches a record reference declared by object universal identifier', () => {
     const buttons = getContextToolButtons({
       ...defaultArguments,
-      context: { applicationId: null, objectNameSingular: 'document', objectUniversalIdentifier: DOCUMENT_UNIVERSAL_IDENTIFIER },
+      context: {
+        applicationId: null,
+        objectNameSingular: 'document',
+        objectUniversalIdentifier: DOCUMENT_UNIVERSAL_IDENTIFIER,
+      },
       toolIndex: [extractTasksTool],
       logicFunctions: [
         {
