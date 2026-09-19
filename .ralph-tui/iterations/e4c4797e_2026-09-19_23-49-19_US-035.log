@@ -1,0 +1,71 @@
+# Iteration 6 Log
+
+## Metadata
+
+- **Task ID**: US-035
+- **Task Title**: [P4.2] Calendar view of task due dates — link into the existing calendar surface
+- **Description**: As a project member, I want task due dates visible on a calendar view, so that I can see deadlines without confusing them with scheduled provider events.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T21:49:19.070Z
+- **Ended At**: 2026-09-19T21:53:14.917Z
+- **Duration**: 3m 55s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the mandatory clean-start check and task confirmation.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+Tree is dirty with changes in my target area. I must check for matching CLAIMED entries before doing anything.
+[94m[bash][0m $ git diff --stat && echo "=== phase report tail ===" && tail -120 docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ" && echo "=== git log ===" && git log --oneline -12 && echo "=== iterat...
+There's a `CLAIMED` for US-035 and matching dirty calendar files. Let me understand the timeline and current state before proceeding.
+[94m[bash][0m $ git diff -- packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts packages/twen...
+The prior iteration (`e4c4797e`, same model) claimed `US-035/task-calendar-pipeline-status`, made edits, ran gates green, then stalled on a permission error before reporting. Per §0 this matches an active CLAIMED entry for the exact slice I'm resuming — continue. Let me inspect its diff.
+[94m[bash][0m $ grep -n "US-035\|P4.2\|task-calendar\|Calendar" PLAN.md | head -60
+[94m[bash][0m $ grep -rn "US-035" PLAN.md docs/ tasks/prd.json 2>/dev/null | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-calendar.test.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/task-status.ts
+[94m[bash][0m $ grep -n "taskCalendar\|projectStatus\|TASK_FIELD_IDS" packages/twenty-apps/internal/a2e-projects/src...
+[94m[bash][0m $ sed -n '854,905p' PLAN.md
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/views/ && echo "=== grep calendar ===" && grep -rl...
+[94m[bash][0m $ grep -rln -i "calendar" packages/twenty-apps/internal/a2e-projects/src | sort
+[94m[bash][0m $ grep -rn "projectStatus" packages/twenty-apps/internal/a2e-projects/src --include="*.ts" | grep -v "...
+[94m[bash][0m $ git log --oneline -8 -- packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts &...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/package.json
+This is a stalled same-model run I'm resuming; the working tree matches the active `US-035/task-calendar-pipeline-status` claim. Let me record the resume and verify the work that's already in place.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+Now verifying the already-applied slice. Running the focused test and typecheck.
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/task-calendar.test.ts" 2>&1 | tail -25
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -8 && echo "===TYPECHECK===" && yarn typecheck 2>&1 | tail -6 && echo "==...
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -12
+[94m[bash][0m $ "
+[94m[bash][0m $ "
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/.oxfmtrc* 2>/dev/null
+[94m[bash][0m $ printf '{\n  "$schema": "./node_modules/oxfmt/configuration_schema.json",\n  "singleQuote": true,\n ...
+[94m[bash][0m $ grep -rn "case ViewFilterOperand.IS_NOT\b" -A 6 packages/twenty-front/src/modules/object-record/reco...
+Let me sanity-check one risk in the prior change: whether `IS_NOT` on a nullable select excludes null-valued tasks.
+[94m[bash][0m $ grep -rn "IS_NOT" packages/twenty-shared/src/utils/filter/*.ts 2>/dev/null | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/filter/turnRecordFilterIntoGqlOperationFilter.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+All gates green. Now appending the phase report.
+Now the Ralph bridge entry. Reading `progress.md` first.
+[94m[bash][0m $ wc -l .ralph-tui/progress.md && tail -30 .ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain && echo "=== my diff stat ===" && git diff --stat -- packages/twenty-apps/int...
+Done. Resumed the stalled same-model `US-035/task-calendar-pipeline-status` claim (iteration `e4c4797e` died on a permission error after applying the diff and running gates green), re-verified the tree, and reported `done-for-review`.
+
+- **Change:** `task-calendar.view.ts` status column + DONE exclusion now read the app `projectStatus` field (same one the board groups on), matching C5; +2 unit tests.
+- **Verified:** calendar test 6/6, `yarn test:unit` 247/247, `yarn typecheck` exit 0, `yarn lint` 0 errors (1 pre-existing warning), `npx twenty dev:build .` 38 files, manifest confirms CALENDAR/MONTH on native `dueAt` with `projectStatus IS_NOT DONE` + `project IS_NOT_EMPTY`, oxfmt clean.
+- **Deferred:** Tier 2 live calendar render / no-invitation proof (orchestrator).
+- **Reports:** appended to `docs/plan/phases/phase-04-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>
