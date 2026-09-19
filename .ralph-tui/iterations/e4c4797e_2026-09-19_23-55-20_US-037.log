@@ -1,0 +1,79 @@
+# Iteration 8 Log
+
+## Metadata
+
+- **Task ID**: US-037
+- **Task Title**: [P4.3] Project ↔ document relation — linked docs on project overview
+- **Description**: As a project member, I want to link documents to a project and see them on the project overview, so that project knowledge lives one click away.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T21:55:20.143Z
+- **Ended At**: 2026-09-19T21:58:47.319Z
+- **Duration**: 3m 27s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-037" PLAN.md | head -50
+[94m[glob][0m pattern: [96mdocs/plan/phases/phase-04-report.md[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ grep -n "US-037\|P4.3.*doc\|doc-relation\|doc-relation\|Documents: doc relation" docs/plan/phases/ph...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) def walk(o):     if isinstance(o,dict):...
+[94m[bash][0m $ git log --oneline -20
+[94m[bash][0m $ git diff --stat
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/page-layouts/
+[94m[bash][0m $ git log --oneline -40 | grep -i "US-0" | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/document-project.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/page-layouts/project.page-layout.ts
+[94m[bash][0m $ grep -rn "project" packages/twenty-apps/internal/a2e-documents/src --include=*.ts -il | head -30
+[94m[bash][0m $ grep -rn "degrade\|not installed\|NOT_INSTALLED\|CHAT_NOT_INSTALLED\|EXTERNAL_APPLICATION" packages/...
+[94m[grep][0m [95mpackages/twenty-apps/internal/a2e-projects/src[0m pattern: [96mEXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIERS|CHAT_NOT_INSTALLED|not installed|Installed_?[0m
+[94m[grep][0m [95mpackages/twenty-apps/internal/a2e-accounting/src[0m pattern: [96mproject[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/project-overview.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/project-overview.test.ts
+[94m[bash][0m $ grep -rn "documents\|documentProject\|projectDocuments" packages/twenty-apps/internal/a2e-projects/s...
+[94m[bash][0m $ grep -rn "C4\b\|C5\b" PLAN.md docs/*.md docs/plan/*.md 2>/dev/null | grep -i "degrad\|link\|cross-ap...
+[94m[bash][0m $ grep -rn "cross-app\|crossApp\|optional.*relation\|relation.*optional" docs/plan/*.md | head -20
+[94m[bash][0m $ grep -rn "C4\|C5" docs/plan/*.md docs/*.md PLAN.md 2>/dev/null | grep -v "P4C\|P5\.\|C\.4\|C\.5" | h...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -rn "OBJECT_IDS.project\|project'].universalIdentifier\|project\"" packages/twenty-apps --inclu...
+[94m[bash][0m $ ls "Inspiration apps (bureaubilan)" 2>/dev/null | head
+[94m[bash][0m $ echo "US-037 commits count above"
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) items=d if isinstance(d,list) else d.ge...
+[94m[bash][0m $ grep -rn "relation target\|RELATION_TARGET\|target object.*not found\|TARGET_OBJECT" packages/twenty...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/src/fields/project-discussions.field.ts
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/package.json
+[94m[bash][0m $ cat >> docs/plan/phases/phase-04-report.md <<'EOF'  CLAIMED — US-037/verify-existing-project-doc-rel...
+[94m[bash][0m $ tail -8 docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -20
+[94m[bash][0m $ echo "EXIT:$?"
+[94m[bash][0m $ echo "EXIT:$?"
+[94m[bash][0m $ echo "EXIT:$?"
+[94m[bash][0m $ python3 - <<'PY' import json p='.twenty/output/manifest.json' m=json.load(open(p)) def find(obj,uid,...
+[94m[read][0m
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/project-object-integrity.test.ts" "src/lib...
+[94m[grep][0m [95mpackages/twenty-apps/internal/a2e-documents/src[0m pattern: [96mopenRecordIn|SIDE_PANEL[0m
+[94m[bash][0m $ grep -n "c31b0200-0000" packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifie...
+I've verified the committed work is on HEAD. Let me confirm the relation identifiers and then write the report.
+[94m[bash][0m $ or executor — US-038 project-page tabs. EOF echo appended
+[94m[bash][0m $ tail -25 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ the relation is workspace-scoped (never cross-tenant) and no app code is needed. --- EOF echo done
+[94m[bash][0m $ tail -3 docs/plan/phases/phase-04-report.md
+Verified US-037 is a re-issue of the already-committed P4.3 project↔document relation (US-001, `8debd2e2`, ancestor of HEAD). No source changes needed; reported `done-for-review`.
+
+**Gates (on `dcb69f9f`):** `yarn test:unit` 249/249 · focused integrity+overview 16/16 · `yarn typecheck` exit 0 · `yarn lint` 0 errors (1 pre-existing warning) · `npx twenty dev:build .` Build succeeded (38 files). Manifest carries `document.project` @ `c31b0200-0002-…0006`, inverse `project.documents` @ `…0005`, and the Documents tab FIELD widget.
+
+**AC:** relation+overview chip (evidence in report), additive consumer-owned pair, native `SIDE_PANEL` links (C5), and C4 = fail-closed atomic install under the committed hard-prerequisite decision. Tier-2 install/browser proof remains for the orchestrator. Changed only `docs/plan/phases/phase-04-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

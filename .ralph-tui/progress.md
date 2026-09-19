@@ -126,6 +126,15 @@ after each iteration and it's included in prompts for context.
   - A concurrent dual-session iteration logged `US-036 (conflict, no work)` for the same files; its claim line says it claims nothing and it changed zero source. Both processes share this checkout — re-read the report tail and `git status` immediately before claiming.
 ---
 
+## [2026-09-19] - US-037 (double done-for-review, no work)
+- Verified-by-reference only: the concurrent `ralph-tui` session claimed `US-037/verify-existing-project-doc-relation` at 21:57:12Z and appended a full `done-for-review` phase report at 22:03 UTC before this iteration could claim. The work it verified is the committed `8debd2e2` (US-001): `document.project` M2O + `project.documents` O2M, the Documents FIELD tab, and the overview `documentCount` chip. This iteration changed no source.
+- Files changed: `docs/plan/phases/phase-04-report.md`, `.ralph-tui/progress.md` (reports only).
+- **Learnings:**
+  - Same dual-session race as US-036: the sibling `ralph-tui run` (PIDs 35049/49648 share this checkout and session.json `activeTaskIds`) appended the US-037 claim between this session's initial `git status` and its first read of the report tail — then finished and reported within ~60s. A `CLAIMED`/`done-for-review` entry that appears mid-session means the twin owns the slice; report `done-for-review` with zero changes (contract §1.3 / US-034 precedent), never re-run the suite against a tree another agent is verifying.
+  - US-037 is a duplicate of US-001 (same P4.3 bullet); the committed relation/overview/tab already satisfy it. Do not rebuild.
+  - Residual for the orchestrator's Tier-2 run (not a blocker): `objects/project.object.ts:193` claims the Documents widget "hides when A2E Documents is not installed", but Documents is a hard install prerequisite (D-P4.3-DOC), so the actual behavior is fail-closed install; the widget-hides analog only exists for the DISCUSSIONS widget type, not FIELD.
+---
+
 ## 2026-09-19 - US-037
 - Verified the committed P4.3 project↔document relation slice — it was already implemented and reported done-for-review as US-001 (`8debd2e2`, ancestor of HEAD: `document-project.field.ts` M2O `document.project` + `project.object.ts` inverse O2M `project.documents`, the project-page Documents tab as a native `FIELD` widget, and the overview «N documents» chip). Per contract v4 §1.3 this iteration changed no source; it re-ran the gates and mapped every AC.
 - Files changed: `docs/plan/phases/phase-04-report.md`, `.ralph-tui/progress.md` only.
