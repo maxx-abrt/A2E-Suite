@@ -78,6 +78,10 @@ export default defineObject({
       isNullable: true,
     },
     {
+      // Deprecated (P3.3 favorites audit): a boolean on the shared document
+      // row is workspace-shared, not personal. Kept for additive compatibility
+      // and legacy data; the browser reads personal documentFavorite rows
+      // instead and no longer writes this field.
       universalIdentifier: 'c31a0100-0001-4000-8000-000000000007',
       type: FieldType.BOOLEAN,
       name: 'isFavorite',
@@ -135,6 +139,20 @@ export default defineObject({
       relationTargetObjectMetadataUniversalIdentifier: OBJECT_IDS.document,
       relationTargetFieldMetadataUniversalIdentifier:
         RELATION_IDS.documentParent,
+      universalSettings: oneToMany,
+    },
+    {
+      universalIdentifier: RELATION_IDS.documentFavorites,
+      type: FieldType.RELATION,
+      name: 'favorites',
+      label: 'Favoris',
+      description:
+        'Favoris personnels : une ligne par membre ayant épinglé ce document.',
+      icon: 'IconHeart',
+      relationTargetObjectMetadataUniversalIdentifier:
+        OBJECT_IDS.documentFavorite,
+      relationTargetFieldMetadataUniversalIdentifier:
+        RELATION_IDS.documentFavoriteDocument,
       universalSettings: oneToMany,
     },
     {

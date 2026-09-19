@@ -51,6 +51,27 @@ after each iteration and it's included in prompts for context.
   `packages/twenty-sdk/src/sdk/define/logic-functions/` and
   `packages/twenty-server/src/engine/.../workspace-query-hook/` before promising
   rejection.
+- **Per-user data in an app front component:** the native personal favorite
+  primitive is `navigationMenuItem.userWorkspaceId`, but an app front component
+  only gets `useUserId()` (`twenty-sdk/front-component`) and cannot reach the
+  metadata API. Model personal state as an app-owned join object with a TEXT
+  `userId` + a unique TEXT label key `${userId}:${documentId}`, filter
+  `{ userId: { eq } }` server-side, and toggle with
+  `createDocumentFavorites`/`deleteDocumentFavorite` (the `<fieldName>Id` FK key
+  comes from the relation *field* name, not `joinColumnName` — verified in
+  `relation-field-metadata-gql-type.generator.ts`). To make a shared flag
+  personal: deprecate, never remove/rename. See `document-favorites.ts`,
+  `document-favorite.object.ts`.
+- **Stale `twenty-sdk/dist` reddens twenty-front tsgo:** the bundled
+  `dist/front-component/index.d.ts` re-declares a local `AppPath` enum, so
+  `useFrontComponentExecutionContext.ts` fails with `AppPath.X is not assignable
+  to AppPath` until `npx nx build twenty-sdk --skip-nx-cache` (same class as the
+  `twenty-shared/dist` gotcha). The app package pins `twenty-sdk@2.31.0` and is
+  unaffected.
+- **Purge crons must page before deleting:** a single `first: 500` silently
+  leaves archived rows past the first page unpurged forever. Read every cursor
+  page into memory first, then delete — deleting mid-page shifts the cursor.
+  See `purge-archived-documents-handler.ts`.
 ---
 
 
@@ -212,4 +233,38 @@ after each iteration and it's included in prompts for context.
     needs an override config; running the root formatter on an app
     front-component can also reformat unrelated pre-existing lines — revert that
     incidental churn to keep the diff scoped.
+---
+
+## 2026-09-19 - US-022
+
+- **Favorites audit:** `document.isFavorite` is a boolean on the *shared*
+  document record → workspace-shared, not personal. Re-implemented additively as
+  a per-user `documentFavorite` join object (unique `favoriteKey`
+  `${userId}:${documentId}`, TEXT `userId`, `document` manyToOne CASCADE); the
+  browser fetches only the current member's rows (`userId` filter) and toggles
+  create/delete. `document.isFavorite` is deprecated (comment only), not
+  removed/renamed.
+- **Deep-tree trash legs:** `trash-retention.ts` now mirrors P4.3/P6
+  (`isInTrash` type predicate, `isRestorable`, `buildArchivePayload`,
+  `buildRestorePayload`); the purge was extracted to an injectable
+  `purge-archived-documents-handler.ts` that cursor-paginates **all** archived
+  pages before deleting (the old single `first: 500` could never purge >1 page).
+- Files changed: new `objects/document-favorite.object.ts`, new
+  `lib/document-favorites.ts` (+spec), `objects/document.object.ts`,
+  `constants/universal-identifiers.ts`, `front-components/document-browser.front-component.tsx`,
+  `lib/trash-retention.ts` (+spec), new
+  `logic-functions/handlers/purge-archived-documents-handler.ts` (+spec),
+  `logic-functions/purge-archived-documents.ts`, `README.md`,
+  `docs/plan/phases/phase-03-report.md`.
+- **Learnings:**
+  - An app front component can read the acting user via `useUserId()`, but not
+    `userWorkspaceId`; scope personal rows by the user id in an app-owned object.
+  - The relation create/filter key is the relation **field** name + `Id`
+    (`parent` → `parentId`, `document` → `documentId`), regardless of the
+    manifest `joinColumnName` (server
+    `relation-field-metadata-gql-type.generator.ts`).
+  - twenty-front `tsgo` was red on base due to a stale `twenty-sdk/dist` local
+    `AppPath` enum; `npx nx build twenty-sdk --skip-nx-cache` clears it.
+  - Tier 2 remains: two-session favorites proof, live purge-cron firing, and the
+    live `documentFavorites` query/mutation round-trip.
 ---

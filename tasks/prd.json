@@ -155,11 +155,12 @@
         "Tier 2 stays with the orchestrator: no `yarn start`, no browser; a dated executor entry is appended to docs/plan/phases/phase-03-report.md; PLAN.md is not edited; nothing is committed"
       ],
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "notes": "Starting state: not-started leg (queued in phase-03 \"Next: ... or verify favorites are personal\"). Closes the P3.3 tree bullet together with US-020/021.",
       "dependsOn": [
         "US-021"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-023",
@@ -224,6 +225,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T17:42:07.963Z"
+    "updatedAt": "2026-09-19T18:20:24.876Z"
   }
 }

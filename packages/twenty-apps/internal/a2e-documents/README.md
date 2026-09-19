@@ -39,8 +39,12 @@ The `document` object ([document.object.ts](./src/objects/document.object.ts))
 is self-referencing (`parent` / `children`, cascade), so documents form a tree.
 The browser front component
 ([document-browser.front-component.tsx](./src/front-components/document-browser.front-component.tsx))
-adds quick search, favorites, drag-and-drop reparenting and reordering
-(fractional-index positions), and a trash section with restore. Archiving sets
+adds quick search, per-member favorites, drag-and-drop reparenting and reordering
+(fractional-index positions), and a trash section with restore. A favorite is a
+personal `documentFavorite` row keyed by the acting user
+([document-favorite.object.ts](./src/objects/document-favorite.object.ts)); the
+historical `document.isFavorite` boolean is a shared record flag and is
+deprecated, not removed. Archiving sets
 `archivedAt`; a daily cron destroys documents archived for more than
 `TRASH_RETENTION_DAYS = 7`
 ([purge-archived-documents.ts](./src/logic-functions/purge-archived-documents.ts)).
@@ -51,7 +55,8 @@ parent ([guard-document-parent-cycle.ts](./src/logic-functions/guard-document-pa
 
 A document carries `title`, rich-text `content`, `icon`, `coverColor`,
 `summary`, a `kind` select (`DOCUMENT` / `TEMPLATE`), tags
-(`MEETING_NOTES`, `REFERENCE`, `DRAFT`), an `isFavorite` flag and `archivedAt`.
+(`MEETING_NOTES`, `REFERENCE`, `DRAFT`), a deprecated `isFavorite` flag and
+`archivedAt`. Personal favorites live on the `documentFavorite` join object.
 It links to a `company` and a `person` (set null on delete); inverse
 `documents` fields are added to those standard objects. The record page's
 front component renders the cover, a Markdown heading outline and inline child

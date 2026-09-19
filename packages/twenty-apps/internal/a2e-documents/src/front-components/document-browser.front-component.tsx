@@ -8,10 +8,23 @@ import {
 } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { AppPath, copyToClipboard, navigate } from 'twenty-sdk/front-component';
+import {
+  AppPath,
+  copyToClipboard,
+  navigate,
+  useUserId,
+} from 'twenty-sdk/front-component';
 
 import { DOCUMENT_KIND } from '../constants/field-vocabulary.ts';
 import { OBJECT_IDS } from '../constants/universal-identifiers.ts';
+import {
+  buildDocumentFavoriteFilter,
+  buildDocumentFavoriteToggle,
+  collectFavoriteDocumentIds,
+  mapDocumentFavoriteRecords,
+  type DocumentFavoriteQueryNode,
+  type DocumentFavoriteRecord,
+} from '../lib/document-favorites.ts';
 import {
   buildCreateDocumentShareRequest,
   buildDocumentSharePath,
@@ -52,7 +65,11 @@ import {
   buildSaveAsTemplatePayload,
   buildTemplateDuplicatePayload,
 } from '../lib/save-document-as-template.ts';
-import { isPastTrashRetention } from '../lib/trash-retention.ts';
+import {
+  buildArchivePayload,
+  buildRestorePayload,
+  isPastTrashRetention,
+} from '../lib/trash-retention.ts';
 
 // LE NAVIGATEUR DE DOCUMENTS.
 //
@@ -70,12 +87,14 @@ import { isPastTrashRetention } from '../lib/trash-retention.ts';
 export const DOCUMENT_BROWSER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
   'c31a0000-0013-4000-8000-000000000001';
 
+// `isFavorite` is deliberately absent: the shared document flag is deprecated
+// (P3.3). The star comes from the member's own documentFavorite rows, so the
+// tree query no longer reads the shared boolean at all.
 type DocumentNode = {
   id: string;
   title: string;
   kind: string;
   icon?: string | null;
-  isFavorite: boolean;
   archivedAt: string | null;
   position?: string | null;
   content?: {
@@ -141,7 +160,6 @@ const fetchDocumentsPage = async (options: {
           title: true,
           kind: true,
           icon: true,
-          isFavorite: true,
           archivedAt: true,
           position: true,
           content: { blocknote: true, markdown: true },
@@ -161,6 +179,34 @@ const fetchDocumentsPage = async (options: {
     hasNextPage: result?.documents?.pageInfo?.hasNextPage ?? false,
     endCursor: result?.documents?.pageInfo?.endCursor ?? null,
   };
+};
+
+// Personal favorites are fetched separately from the tree: a lazy tree only
+// holds the visible pages, while the member's starred documents may sit
+// anywhere. The server-side filter on `userId` is what keeps a colleague's
+// stars out of this member's payload.
+const fetchFavoritesForUser = async (
+  userId: string,
+): Promise<DocumentFavoriteRecord[]> => {
+  const client = new CoreApiClient();
+
+  const result = (await client.query({
+    documentFavorites: {
+      __args: {
+        filter: buildDocumentFavoriteFilter(userId),
+        first: 500,
+      },
+      edges: {
+        node: { id: true, userId: true, document: { id: true } },
+      },
+    },
+  } as never)) as {
+    documentFavorites?: { edges?: { node: DocumentFavoriteQueryNode }[] };
+  };
+
+  return mapDocumentFavoriteRecords(
+    result?.documentFavorites?.edges?.map((edge) => edge.node) ?? [],
+  );
 };
 
 type DocumentTreeNode = TreeNestedNode<DocumentNode>;
@@ -203,6 +249,13 @@ const DocumentBrowser = () => {
     null,
   );
   const [shareTarget, setShareTarget] = useState<DocumentNode | null>(null);
+  const userId = useUserId();
+  const [favorites, setFavorites] = useState<DocumentFavoriteRecord[]>([]);
+
+  const favoriteDocumentIds = useMemo(
+    () => collectFavoriteDocumentIds(favorites, userId),
+    [favorites, userId],
+  );
 
   // Async readers (the page loader and the post-mutation reload) must observe
   // the latest maps without being re-created on every keystroke.
@@ -260,6 +313,26 @@ const DocumentBrowser = () => {
   useEffect(() => {
     void loadChildrenPage(null);
   }, [loadChildrenPage]);
+
+  // A favorite write is personal, so only this member's rows are refetched. A
+  // failed read keeps the previously rendered stars rather than flashing them
+  // all off; the next successful reload reconciles.
+  const reloadFavorites = useCallback(async () => {
+    if (userId === null) {
+      setFavorites([]);
+      return;
+    }
+
+    try {
+      setFavorites(await fetchFavoritesForUser(userId));
+    } catch {
+      // Keep the last known personal favorites.
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    void reloadFavorites();
+  }, [reloadFavorites]);
 
   // A mutation can move a node across parents or change sibling order, so the
   // cached pages are dropped and the roots plus the currently open levels are
@@ -535,20 +608,38 @@ const DocumentBrowser = () => {
     await reloadTree();
   };
 
+  // Personal favorite toggle: create this member's own row, or remove exactly
+  // that row. The shared `document.isFavorite` flag is never written again.
   const toggleFavorite = async (documentNode: DocumentNode): Promise<void> => {
+    const toggle = buildDocumentFavoriteToggle({
+      favorites,
+      userId,
+      documentId: documentNode.id,
+    });
+
+    if (toggle.action === 'none') {
+      return;
+    }
+
     const client = new CoreApiClient();
 
-    await client.mutation({
-      updateDocument: {
-        __args: {
-          id: documentNode.id,
-          data: { isFavorite: !documentNode.isFavorite },
+    if (toggle.action === 'delete') {
+      await client.mutation({
+        deleteDocumentFavorite: {
+          __args: { id: toggle.favoriteId },
+          id: true,
         },
-        id: true,
-      },
-    } as never);
+      } as never);
+    } else {
+      await client.mutation({
+        createDocumentFavorites: {
+          __args: { data: [toggle.data] },
+          id: true,
+        },
+      } as never);
+    }
 
-    await reloadTree();
+    await reloadFavorites();
   };
 
   const archiveDocument = async (documentNode: DocumentNode): Promise<void> => {
@@ -558,7 +649,7 @@ const DocumentBrowser = () => {
       updateDocument: {
         __args: {
           id: documentNode.id,
-          data: { archivedAt: new Date().toISOString() },
+          data: buildArchivePayload(),
         },
         id: true,
       },
@@ -578,7 +669,7 @@ const DocumentBrowser = () => {
         __args: {
           id: documentNode.id,
           data: {
-            archivedAt: null,
+            ...buildRestorePayload(),
             parentId: targetParentId,
             position: buildAppendPosition(
               targetParentId === null
@@ -671,6 +762,7 @@ const DocumentBrowser = () => {
                   <DocumentRow
                     key={`search-${node.id}`}
                     documentNode={node}
+                    favoriteDocumentIds={favoriteDocumentIds}
                     onOpen={openDocument}
                     onToggleFavorite={toggleFavorite}
                   />
@@ -678,15 +770,17 @@ const DocumentBrowser = () => {
             </DocumentSection>
           )}
           <DocumentSection title="Favoris">
-            {searchableNodes.filter((node) => node.isFavorite).length === 0 ? (
+            {searchableNodes.filter((node) => favoriteDocumentIds.has(node.id))
+              .length === 0 ? (
               <DocumentEmpty label="Aucun favori" />
             ) : (
               searchableNodes
-                .filter((node) => node.isFavorite)
+                .filter((node) => favoriteDocumentIds.has(node.id))
                 .map((node) => (
                   <DocumentRow
                     key={`favorite-${node.id}`}
                     documentNode={node}
+                    favoriteDocumentIds={favoriteDocumentIds}
                     onOpen={openDocument}
                     onToggleFavorite={toggleFavorite}
                   />
@@ -701,6 +795,7 @@ const DocumentBrowser = () => {
                 <DocumentRow
                   key={`gallery-${templateNode.id}`}
                   documentNode={templateNode}
+                  favoriteDocumentIds={favoriteDocumentIds}
                   onOpen={openDocument}
                   onToggleFavorite={toggleFavorite}
                   onInstantiate={instantiateTemplate}
@@ -715,6 +810,7 @@ const DocumentBrowser = () => {
                 documentNode={node}
                 depth={0}
                 parentId={null}
+                favoriteDocumentIds={favoriteDocumentIds}
                 treeState={treeState}
                 draggedDocumentId={draggedDocumentId}
                 onDragStart={setDraggedDocumentId}
@@ -1087,6 +1183,7 @@ const DocumentEmpty = ({ label }: { label: string }) => (
 
 type DocumentRowProps = {
   documentNode: DocumentNode;
+  favoriteDocumentIds: Set<string>;
   onOpen: (documentId: string) => void;
   onToggleFavorite: (documentNode: DocumentNode) => Promise<void>;
   onInstantiate?: (templateDocument: DocumentNode) => Promise<void>;
@@ -1094,6 +1191,7 @@ type DocumentRowProps = {
 
 const DocumentRow = ({
   documentNode,
+  favoriteDocumentIds,
   onOpen,
   onToggleFavorite,
   onInstantiate,
@@ -1122,7 +1220,7 @@ const DocumentRow = ({
       style={ghostButtonStyle}
       aria-label="Favori"
     >
-      {documentNode.isFavorite ? '★' : '☆'}
+      {favoriteDocumentIds.has(documentNode.id) ? '★' : '☆'}
     </button>
   </li>
 );
@@ -1131,6 +1229,7 @@ type DocumentTreeItemProps = {
   documentNode: DocumentNode;
   depth: number;
   parentId: string | null;
+  favoriteDocumentIds: Set<string>;
   treeState: DocumentTreeState;
   draggedDocumentId: string | null;
   onDragStart: (documentId: string) => void;
@@ -1160,6 +1259,7 @@ const DocumentTreeItem = ({
   documentNode,
   depth,
   parentId,
+  favoriteDocumentIds,
   treeState,
   draggedDocumentId,
   onDragStart,
@@ -1278,7 +1378,7 @@ const DocumentTreeItem = ({
           style={ghostButtonStyle}
           aria-label="Favori"
         >
-          {documentNode.isFavorite ? '★' : '☆'}
+          {favoriteDocumentIds.has(documentNode.id) ? '★' : '☆'}
         </button>
         <button
           type="button"
@@ -1368,6 +1468,7 @@ const DocumentTreeItem = ({
                 documentNode={childNode}
                 depth={depth + 1}
                 parentId={documentNode.id}
+                favoriteDocumentIds={favoriteDocumentIds}
                 treeState={treeState}
                 draggedDocumentId={draggedDocumentId}
                 onDragStart={onDragStart}
