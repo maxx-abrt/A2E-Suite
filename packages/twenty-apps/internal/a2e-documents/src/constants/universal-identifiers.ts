@@ -46,6 +46,7 @@ export const LOGIC_FUNCTION_IDS = {
   purgeArchivedDocuments: 'c31a0000-0012-4000-8000-000000000002',
   guardDocumentParentCycle: 'c31a0000-0012-4000-8000-000000000003',
   documentContent: 'c31a0000-0012-4000-8000-000000000004',
+  guardDocumentRevisionSave: 'c31a0000-0012-4000-8000-000000000005',
 } as const;
 
 export const COMMAND_MENU_ITEM_IDS = {

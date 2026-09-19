@@ -3,10 +3,10 @@
   "sessionId": "e4c4797e-8eca-417d-bb62-7df2149568f1",
   "status": "running",
   "startedAt": "2026-09-19T21:22:21.057Z",
-  "updatedAt": "2026-09-19T21:34:38.705Z",
-  "currentIteration": 0,
+  "updatedAt": "2026-09-19T21:38:58.380Z",
+  "currentIteration": 1,
   "maxIterations": 20,
-  "tasksCompleted": 0,
+  "tasksCompleted": 1,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -16,7 +16,18 @@
     "totalTasks": 0,
     "tasks": []
   },
-  "iterations": [],
+  "iterations": [
+    {
+      "iteration": 1,
+      "status": "completed",
+      "taskId": "US-030",
+      "taskTitle": "[P3.2] Template instantiation — fetch authorized body, remap IDs/anchors, prove copy independence",
+      "taskCompleted": true,
+      "durationMs": 730893,
+      "startedAt": "2026-09-19T21:22:27.811Z",
+      "endedAt": "2026-09-19T21:34:38.704Z"
+    }
+  ],
   "skippedTaskIds": [],
   "cwd": "/Users/maxaubert/Projets/A2E Suite",
   "activeTaskIds": [],

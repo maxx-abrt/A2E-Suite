@@ -36,3 +36,13 @@ after each iteration and it's included in prompts for context.
   - `node --test --experimental-strip-types src/lib/__tests__/instantiate-template.test.ts` → 18/18 on `a605200d`; the slice's E04 browser leg and the P1.6e provenance clause remain the only open items.
   - Gotcha: two ralph processes can run against one checkout (both acquire/spawn agents); `git status` can acquire new concurrent modifications mid-session. Check `ps` for live sibling opencode agents (children of a `ralph-tui run`) before assuming a dirty tree is a stall.
 ---
+
+## 2026-09-19 - US-032
+- Did **not** implement: a concurrent ralph session claimed the identical slice (`CLAIMED — US-032/server-side-compare-and-set — 2026-09-19T21:38:00Z`) 17 seconds before this session's claim (`US-032/server-expected-revision-cas`, 21:38:17Z). Per contract §3 file-overlap preflight, stopped with zero code changes and reported `conflict`.
+- Files changed: `docs/plan/phases/phase-03-report.md`, `.ralph-tui/progress.md` only.
+- **Learnings:**
+  - Two ralph sessions can be live on one checkout at once (US-030 already showed a duplicate). Always re-read the phase report's tail immediately before claiming — a claim can appear between your read and your append.
+  - The first unmet US-032 acceptance gap is AC3 (server-side compare-and-set via the app's logic-function pattern). The app CAS primitive is a **filtered update** (`updateX(filter, data)` compiles to one `UPDATE … WHERE … RETURNING`, per phase-04-report lines 158/210/556) — but the document body path can only be a **post-commit repair** guard (SDK has no pre-write hook), so it needs a client-carried expected-revision token to detect staleness at all.
+  - `DatabaseEventPayload.properties` carries full `before`/`after` records (`ObjectRecordUpdateEvent`), so a `document.updated` guard can read `before.content`/`after.content` and restore the winner without a second query.
+  - AC4 (front `retry` + draft-preservation cases) and AC5 (single-writer guidance docs) remain open and unclaimed once the AC3 claimant reports.
+---

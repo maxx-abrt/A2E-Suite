@@ -1071,3 +1071,20 @@ CLAIMED — US-031/durable-revision-acceptance-gaps — deepseek-v4.1-flash — 
 **Do not redo:** the earlier `done-for-review` entry at 2026-09-19 21:23 UTC already covers this slice — `buildTemplateCopyPayload` / `readAuthorizedTemplateCopySource` / `remapTemplateBlockIds` are the single instantiation path and the 18-case test file is committed.
 **Remaining:** ~11 other [ ]/[~] tasks ahead in the execution order
 **Next:** orchestrator — tick US-030 on the existing 21:23 UTC done-for-review and run the deferred Tier-2 E04 browser journey; executor — P3.3 record-note body-copy or another queued leg. Process note: two ralph sessions were live (agent pid 48678/ralph 35049 executed US-030; this agent pid 49671/ralph 49648 found it already done) — reconcile the duplicate US-030 claims.
+
+CLAIMED — US-032/server-side-compare-and-set — deepseek-v4.1-flash — 2026-09-19T21:38:00Z — base 54711a5c2984c374376fbf6becbbffeb07d46a9b
+
+CLAIMED — US-032/server-expected-revision-cas — deepseek-v4.1-flash — 2026-09-19T21:38:17Z — base 0bacc2008b3d8ed816f0ac7ef35342a376b38e04
+
+## 2026-09-19 21:39 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-032 [P3.2] Atomic expected-revision save with conflict feedback and preserved draft (no OT/CRDT) · **Slice:** AC3 server-side compare-and-set via the app's existing logic-function pattern (post-commit repair) — the first unmet acceptance gap (client guard already done-for-review 2026-09-17)
+**Claim:** conflict
+**Ready-to-tick:** no — a live concurrent claim on the identical slice won the race; zero source touched
+**Base:** 0bacc2008b3d8ed816f0ac7ef35342a376b38e04
+**Changed:** none — only this report and the `.ralph-tui/progress.md` bridge entry; no source file was opened for edit
+**Checks:** `git status --porcelain` before and after → only Ralph's `.ralph-tui/*` + `tasks/prd.json` (not mine); no test/typecheck run because zero code changed
+**Conflict detail:** phase-03-report.md already carries `CLAIMED — US-032/server-side-compare-and-set — deepseek-v4.1-flash — 2026-09-19T21:38:00Z — base 54711a5c2984c374376fbf6becbbffeb07d46a9b`, appended seconds before my own `US-032/server-expected-revision-cas` claim (21:38:17Z). Same task, same design surface (a2e-documents logic function + `contentRevision` additive field + `RichTextFieldEditor`/guard expected-revision token), so our target files overlap. Two ralph sessions are live (see the US-030 21:34 process note) — this is the same duplicate-session class.
+**Missing for tick:** the other claimant owns AC3; my claim is withdrawn. AC4 (retry/draft unit cases) and AC5 (single-writer guidance docs) remain open and are still free if the other session covers only AC3.
+**Do not redo:** do not start a third concurrent AC3 attempt on this checkout — the `server-side-compare-and-set` claim is the active lock for the app logic-function + editor files.
+**Remaining:** ~11 other [ ]/[~] tasks ahead in the execution order (P1.3 e2e, P1.6d D02-gated leg, P1.7a export, P1.7b/c Tier-2, P2.1 bullet 5, P2.4/P2.5 e2e, US-032 AC4/AC5, P3.3 record-note-body copy, P3.4+)
+**Next:** orchestrator — reconcile the two live ralph sessions (US-030 already showed the same duplicate); executor — after `server-side-compare-and-set` reports, take US-032's remaining AC4/AC5 or another queued leg.

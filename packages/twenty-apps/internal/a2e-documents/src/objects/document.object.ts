@@ -117,6 +117,30 @@ export default defineObject({
       isNullable: true,
     },
     {
+      universalIdentifier: 'c31a0100-0001-4000-8000-00000000000b',
+      // Expected-revision save token (P3.2): the editor writes the token
+      // identifying the body it just stored, plus the token it expected to
+      // overwrite. `guard-document-revision-save` repairs a committed write
+      // whose expected token no longer matches — the app SDK has no pre-write
+      // hook. Nullable so non-editor writers stay last-write-wins.
+      type: FieldType.TEXT,
+      name: 'contentRevision',
+      label: 'Révision de contenu',
+      description: 'Jeton de la révision de contenu actuellement enregistrée.',
+      icon: 'IconAbc',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'c31a0100-0001-4000-8000-00000000000c',
+      type: FieldType.TEXT,
+      name: 'contentBaseRevision',
+      label: 'Révision attendue',
+      description:
+        'Jeton de révision attendu par l’auteur au moment de l’enregistrement.',
+      icon: 'IconAbc',
+      isNullable: true,
+    },
+    {
       universalIdentifier: RELATION_IDS.documentParent,
       type: FieldType.RELATION,
       name: 'parent',
