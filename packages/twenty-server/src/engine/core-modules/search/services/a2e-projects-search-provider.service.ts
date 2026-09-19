@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { escapeForIlike, isDefined } from 'twenty-shared/utils';
+import { ILike } from 'typeorm';
 
 import { RegisteredSearchProvider } from 'src/engine/core-modules/search/decorators/registered-search-provider.decorator';
 import {
@@ -91,7 +92,9 @@ export class A2eProjectsSearchProviderService implements SearchProvider {
 
     // The cast keeps the untyped workspace repositories honest: the two `find`
     // projections below return exactly TaskSearchRecord / ProjectSearchRecord
-    // rows.
+    // rows. The match goes through the TypeORM ILIKE FindOperator: the workspace
+    // ORM only renders operators it can recognize as FindOperator instances, so
+    // a plain `{ ilike }` object is bound as equality and matches nothing.
     const records = (await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const context = getWorkspaceContext();
@@ -114,14 +117,14 @@ export class A2eProjectsSearchProviderService implements SearchProvider {
           );
 
         const tasks = await taskRepository.find({
-          where: { title: { ilike: pattern } },
+          where: { title: ILike(pattern) },
           select: { id: true, title: true },
           order: { title: 'ASC' },
           take: params.limit,
         });
 
         const projects = await projectRepository.find({
-          where: { name: { ilike: pattern }, archivedAt: null },
+          where: { name: ILike(pattern), archivedAt: null },
           select: { id: true, name: true },
           order: { name: 'ASC' },
           take: params.limit,

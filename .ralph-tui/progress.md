@@ -16,6 +16,7 @@ after each iteration and it's included in prompts for context.
 - **base-ui `Switch` in jsdom:** `Toggle`/`Switch` forwards a root click to a synthetic `PointerEvent` on a hidden checkbox; jsdom lacks `PointerEvent`, so a spec that clicks a toggle must alias `window.PointerEvent = MouseEvent` (and query `getByRole('switch', { name })`).
 - **New-surface accessibility pass:** respect reduced motion with the inline Linaria pattern `@media (prefers-reduced-motion: reduce) { transition: none; }` on the animated rule (jsdom cannot assert CSS; the repo precedent is SidePanelTabStripItem); give custom interactive elements a `:focus-visible` outline; expose changing counters/phases as `role="status"` live regions but keep per-second timers out of any live region; mark purely visual re-encodings (habit dots) `aria-hidden`; give an expanded panel `role="region"` + `aria-label`; and assert keyboard operation with `userEvent.tab()`/`{Enter}`. Non-modal docks must NOT trap focus — test that tabbing past the last control lands on a sentinel outside the dock.
 - **Docs gate (`docs/scripts/check-docs.mjs`):** only paths listed in `MAINTAINED_DOCUMENTS` are checked. A new user doc is invisible to the gate until its repo-relative path is added there; the checker validates local inline link targets and fenced-code balance (no remote URLs/anchors). From an app package README, `../../../../docs/<file>.md` reaches `docs/`; from `docs/`, app docs are `../packages/twenty-apps/internal/<app>/README.md`.
+- **Workspace-ORM where operators must be TypeORM `FindOperator`s:** `workspaceSelectQueryBuilder` only renders operators it can recognise as `instanceof FindOperator` (`ILike()`, `In()`, `Not()`…); a plain `{ ilike: '%x%' }` object is not one, so `buildValueCondition` binds it as equality (`col = $1` with the object JSON-stringified) and the query silently matches nothing. Always import the operator (`import { ILike } from 'typeorm'`) in `find({ where: … })` — a mocked `find` in unit tests cannot catch this, so assert the built SQL via `applyFindOptionsToQueryBuilder` for new provider queries.
 
 ---
 
@@ -90,4 +91,14 @@ after each iteration and it's included in prompts for context.
   - The realtime transport is `/realtime` WebSocket mounted on the same HTTP port as the API (raw `ws`, no separate port); Redis pub/sub on `a2e:rt:<topic>` is fan-out only, not a replay log, and presence uses short TTL keys.
   - `docs/scripts/check-docs.mjs` only checks paths in `MAINTAINED_DOCUMENTS`; add new docs there or they are ungated. Doc-only work runs `node docs/scripts/check-docs.mjs` + `node --test docs/scripts/check-docs.test.mjs`; package lint/typecheck are N/A.
   - The app READMEs must describe declared metadata vs. actually surfaced UI: a2e-documents declares comment/revision objects with no editing surface, and the Projects `extract-tasks-from-document` AI tool is a deliberate `STUB_NOT_IMPLEMENTED`.
+---
+
+## 2026-09-19 - US-008
+- Repaired the live app-search federation: `searchAppRecords` returned `[]` for the a2e-projects and documents providers because both passed `{ ilike: pattern }` (a plain object) as the `find({ where })` match. The workspace ORM only recognises TypeORM `FindOperator`s, so it compiled `title = $1` with the object JSON-stringified and matched nothing (silent, no error/log, survives restarts).
+- Fixed `a2e-projects-search-provider.service.ts` and `document-search-provider.service.ts` to use `ILike(pattern)` from `typeorm`; no change to the registry, resolver, cache gate, permissions or `AppSearchService` error isolation.
+- Files changed: twenty-server `search/services/{a2e-projects-search-provider,document-search-provider}.service.ts` + their two specs; `docs/plan/phases/phase-04-report.md`; `.ralph-tui/progress.md`.
+- **Learnings:**
+  - The failing-test-first reproduction is the *SQL* the real query builder emits, not the mocked `find` call shape: assert `ILIKE $1` via `applyFindOptionsToQueryBuilder` + a minimal `WorkspaceTableShape`.
+  - Probed and cleared the ruled-out/suspect hypotheses: discovery (Nest harness with the real providers, `module.init()`, flat + nested modules → 2/2), and the `flatApplicationMaps` key direction (live Redis read). The current local DB has no a2e app rows, so the Tier-2 app-installed re-proof must run elsewhere.
+  - `nx lint:diff-with-main` cannot see uncommitted edits ("No changed files."); the real gate is direct `npx oxlint --type-aware -c .oxlintrc.json` + `npx oxfmt --check` in `packages/twenty-server`.
 ---

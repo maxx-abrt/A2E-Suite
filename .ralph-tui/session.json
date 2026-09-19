@@ -3,10 +3,10 @@
   "sessionId": "174757dd-d765-4ed1-b381-90cc593ca4ee",
   "status": "running",
   "startedAt": "2026-09-19T10:07:04.586Z",
-  "updatedAt": "2026-09-19T11:01:53.785Z",
-  "currentIteration": 6,
+  "updatedAt": "2026-09-19T11:21:14.831Z",
+  "currentIteration": 7,
   "maxIterations": 20,
-  "tasksCompleted": 6,
+  "tasksCompleted": 7,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -76,6 +76,16 @@
       "durationMs": 399877,
       "startedAt": "2026-09-19T10:47:14.262Z",
       "endedAt": "2026-09-19T10:53:54.139Z"
+    },
+    {
+      "iteration": 7,
+      "status": "completed",
+      "taskId": "US-007",
+      "taskTitle": "P10: Docs — user-facing feature docs per app + self-host gateway requirements",
+      "taskCompleted": true,
+      "durationMs": 474131,
+      "startedAt": "2026-09-19T10:53:59.653Z",
+      "endedAt": "2026-09-19T11:01:53.784Z"
     }
   ],
   "skippedTaskIds": [],

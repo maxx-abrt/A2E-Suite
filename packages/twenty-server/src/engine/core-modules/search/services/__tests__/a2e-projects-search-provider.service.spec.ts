@@ -1,9 +1,15 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+import { ILike } from 'typeorm';
+
 import { getRegisteredSearchProviderMetadata } from 'src/engine/core-modules/search/decorators/registered-search-provider.decorator';
 import { A2eProjectsSearchProviderService } from 'src/engine/core-modules/search/services/a2e-projects-search-provider.service';
+import { applyFindOptionsToQueryBuilder } from 'src/engine/twenty-orm/query-builder/utils/apply-find-options.util';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import {
   type ORMWorkspaceContext,
   withWorkspaceContext,
 } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 // APPLICATION_UNIVERSAL_IDENTIFIER of a2e-projects; inlined because server
@@ -70,6 +76,42 @@ const buildOrmManagerMock = ({
 
   return { ormManager, getRepository, taskFind, projectFind };
 };
+
+// Minimal task table shape so a captured `find` where clause can be rendered
+// through the REAL workspace query builder. The live symptom was a where clause
+// the ORM does not understand, so asserting the built SQL is the faithful
+// reproduction (a mocked `find` cannot show it).
+const buildColumn = (columnName: string) => ({
+  columnName,
+  fieldMetadataId: `field-${columnName}`,
+  fieldName: columnName,
+  fieldMetadataType: FieldMetadataType.TEXT,
+});
+
+const taskTableShape: WorkspaceTableShape = {
+  objectMetadataId: 'task-object-id',
+  nameSingular: 'task',
+  schemaName: 'workspace_test',
+  tableName: 'task',
+  columnShapeByColumnName: {
+    id: buildColumn('id'),
+    title: buildColumn('title'),
+    deletedAt: buildColumn('deletedAt'),
+  },
+  columnNames: ['id', 'title', 'deletedAt'],
+  relationShapeByFieldName: {},
+  hasDeletedAtColumn: true,
+};
+
+const buildTaskQueryBuilder = (): WorkspaceSelectQueryBuilder =>
+  new WorkspaceSelectQueryBuilder('task', {
+    tableShape: taskTableShape,
+    executor: { execute: async () => [] },
+    objectRecordsPermissions: {},
+    tableShapeByObjectMetadataId: () => taskTableShape,
+    onBeforeExecute: () => undefined,
+    formatResult: (records) => records as never,
+  });
 
 describe('A2eProjectsSearchProviderService', () => {
   it('is registered for the a2e-projects app universal identifier', () => {
@@ -145,17 +187,46 @@ describe('A2eProjectsSearchProviderService', () => {
 
     expect(taskFind).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { title: { ilike: '%devis%' } },
+        where: { title: ILike('%devis%') },
         take: 7,
       }),
     );
 
     expect(projectFind).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { name: { ilike: '%devis%' }, archivedAt: null },
+        where: { name: ILike('%devis%'), archivedAt: null },
         take: 7,
       }),
     );
+  });
+
+  // Regression: a plain `{ ilike: pattern }` where value is not a TypeORM
+  // FindOperator, so the workspace ORM bound it as an equality (`title = $1`
+  // with the object serialized to JSON) and matched nothing — every provider
+  // returned an empty group, so `searchAppRecords` returned [] live. The match
+  // must reach the ORM as ILIKE, which is what the real query builder renders.
+  it('renders the title match as ILIKE, not an equality on the pattern object', async () => {
+    const { ormManager, taskFind } = buildOrmManagerMock({
+      tasks: [],
+      projects: [],
+    });
+    const provider = new A2eProjectsSearchProviderService(ormManager);
+
+    await provider.search({
+      searchInput: 'devis',
+      limit: 5,
+      workspaceId: WORKSPACE_ID,
+    });
+
+    const taskFindOptions = taskFind.mock.calls[0][0] as {
+      where: { title: unknown };
+    };
+    const [sql] = applyFindOptionsToQueryBuilder(buildTaskQueryBuilder(), {
+      where: taskFindOptions.where,
+    }).getQueryAndParameters();
+
+    expect(sql).toContain('"task"."title" ILIKE $1');
+    expect(sql).not.toContain('"task"."title" = $1');
   });
 
   it('runs every query under the caller role, never a permission bypass', async () => {
@@ -250,13 +321,13 @@ describe('A2eProjectsSearchProviderService', () => {
 
     expect(taskFind).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { title: { ilike: '%100\\%\\_done%' } },
+        where: { title: ILike('%100\\%\\_done%') },
       }),
     );
     expect(projectFind).toHaveBeenCalledWith(
       expect.objectContaining({
         where: {
-          name: { ilike: '%100\\%\\_done%' },
+          name: ILike('%100\\%\\_done%'),
           archivedAt: null,
         },
       }),

@@ -164,9 +164,10 @@
         "A dated entry is appended to the phase report for the touched phase; PLAN.md is not edited; nothing is committed"
       ],
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "notes": "Orchestrator-flagged executor brief (phase-04-report 2026-09-17, 'Next: (1) executor brief — fix live app-search federation'). PLAN.md anchor: P4.2 Cmd+K bullet ('Cmd+K: create task, go to project; search provider for tasks/projects', marked [~] with the BLOCKED half) and P2.5 first bullet. Key files: packages/twenty-server/src/engine/core-modules/search/search.resolver.ts:98-117 (federation entry point), services/app-search.service.ts:22-78 (installed-app filter + grouping + error isolation), services/search-provider-registry.service.ts (DiscoveryService-based registration, OnModuleInit), services/a2e-projects-search-provider.service.ts and services/document-search-provider.service.ts (the two live-registered providers), engine/core-modules/application/workspace-flat-application-map-cache.service.ts (map build). Unblocks: the P4.2-cmdk search half, the P6.2 drive:file Cmd+K provider's live proof, and P2.5 document-provider deep links. The live searchAppRecords re-proof (real query returns results through the running server) is Tier 2 — orchestrator verifies; executor proves the fix at unit level with the failing-test-first regression case. Append the report entry to phase-04-report (where the brief lives).",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-009",
@@ -330,6 +331,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T11:01:53.785Z"
+    "updatedAt": "2026-09-19T11:21:14.831Z"
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { escapeForIlike, isDefined } from 'twenty-shared/utils';
+import { ILike } from 'typeorm';
 
 import { RegisteredSearchProvider } from 'src/engine/core-modules/search/decorators/registered-search-provider.decorator';
 import {
@@ -63,7 +64,10 @@ export class DocumentSearchProviderService implements SearchProvider {
     }
 
     // The cast keeps the untyped workspace repository honest: `find` with this
-    // select projection returns exactly DocumentSearchRecord rows.
+    // select projection returns exactly DocumentSearchRecord rows. The match
+    // goes through the TypeORM ILIKE FindOperator: the workspace ORM only
+    // renders operators it can recognize as FindOperator instances, so a plain
+    // `{ ilike }` object is bound as equality and matches nothing.
     const records = (await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const context = getWorkspaceContext();
@@ -82,7 +86,7 @@ export class DocumentSearchProviderService implements SearchProvider {
 
         return documentRepository.find({
           where: {
-            title: { ilike: `%${escapeForIlike(searchInput)}%` },
+            title: ILike(`%${escapeForIlike(searchInput)}%`),
             archivedAt: null,
           },
           select: { id: true, title: true },

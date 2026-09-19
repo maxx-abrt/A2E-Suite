@@ -1,9 +1,15 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+import { ILike } from 'typeorm';
+
 import { getRegisteredSearchProviderMetadata } from 'src/engine/core-modules/search/decorators/registered-search-provider.decorator';
 import { DocumentSearchProviderService } from 'src/engine/core-modules/search/services/document-search-provider.service';
+import { applyFindOptionsToQueryBuilder } from 'src/engine/twenty-orm/query-builder/utils/apply-find-options.util';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import {
   type ORMWorkspaceContext,
   withWorkspaceContext,
 } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 // APPLICATION_UNIVERSAL_IDENTIFIER of a2e-documents; inlined because server
@@ -62,6 +68,43 @@ const buildOrmManagerMock = ({
 
   return { ormManager, repositoryFind, getRepository };
 };
+
+// Minimal document table shape so a captured `find` where clause can be rendered
+// through the REAL workspace query builder. The live symptom was a where clause
+// the ORM does not understand, so asserting the built SQL is the faithful
+// reproduction (a mocked `find` cannot show it).
+const buildColumn = (columnName: string) => ({
+  columnName,
+  fieldMetadataId: `field-${columnName}`,
+  fieldName: columnName,
+  fieldMetadataType: FieldMetadataType.TEXT,
+});
+
+const documentTableShape: WorkspaceTableShape = {
+  objectMetadataId: 'document-object-id',
+  nameSingular: 'document',
+  schemaName: 'workspace_test',
+  tableName: 'document',
+  columnShapeByColumnName: {
+    id: buildColumn('id'),
+    title: buildColumn('title'),
+    archivedAt: buildColumn('archivedAt'),
+    deletedAt: buildColumn('deletedAt'),
+  },
+  columnNames: ['id', 'title', 'archivedAt', 'deletedAt'],
+  relationShapeByFieldName: {},
+  hasDeletedAtColumn: true,
+};
+
+const buildDocumentQueryBuilder = (): WorkspaceSelectQueryBuilder =>
+  new WorkspaceSelectQueryBuilder('document', {
+    tableShape: documentTableShape,
+    executor: { execute: async () => [] },
+    objectRecordsPermissions: {},
+    tableShapeByObjectMetadataId: () => documentTableShape,
+    onBeforeExecute: () => undefined,
+    formatResult: (records) => records as never,
+  });
 
 describe('DocumentSearchProviderService', () => {
   it('is registered for the a2e-documents app universal identifier', () => {
@@ -196,10 +239,38 @@ describe('DocumentSearchProviderService', () => {
     expect(repositoryFind).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({
-          title: { ilike: '%100\\%\\_done%' },
+          title: ILike('%100\\%\\_done%'),
         }),
       }),
     );
+  });
+
+  // Regression: a plain `{ ilike: pattern }` where value is not a TypeORM
+  // FindOperator, so the workspace ORM bound it as an equality (`title = $1`
+  // with the object serialized to JSON) and matched nothing — the provider
+  // returned an empty group, so `searchAppRecords` returned [] live. The match
+  // must reach the ORM as ILIKE, which is what the real query builder renders.
+  it('renders the title match as ILIKE, not an equality on the pattern object', async () => {
+    const { ormManager, repositoryFind } = buildOrmManagerMock({
+      records: [],
+    });
+    const provider = new DocumentSearchProviderService(ormManager);
+
+    await provider.search({
+      searchInput: 'notes',
+      limit: 5,
+      workspaceId: WORKSPACE_ID,
+    });
+
+    const findOptions = repositoryFind.mock.calls[0][0] as {
+      where: { title: unknown };
+    };
+    const [sql] = applyFindOptionsToQueryBuilder(buildDocumentQueryBuilder(), {
+      where: findOptions.where,
+    }).getQueryAndParameters();
+
+    expect(sql).toContain('"document"."title" ILIKE $1');
+    expect(sql).not.toContain('"document"."title" = $1');
   });
 
   it('filters out malformed records before mapping', async () => {
