@@ -586,9 +586,52 @@ describe('WorkspaceTemplateService', () => {
       expect(preview.samples).toEqual([
         { label: 'Notes de réunion', locale: 'fr' },
       ]);
+      // The deferred Bilan contents are recorded, not silently dropped.
+      expect(preview.blockedSamples).toEqual([
+        { label: 'Dons', locale: 'fr', blockedBy: 'P7.0_SAFETY_GATE' },
+        { label: 'Subventions', locale: 'fr', blockedBy: 'P7.0_SAFETY_GATE' },
+        {
+          label: 'Budget prévisionnel à l’équilibre',
+          locale: 'fr',
+          blockedBy: 'P7.0_SAFETY_GATE',
+        },
+        {
+          label: 'Demande de subvention',
+          locale: 'fr',
+          blockedBy: 'P7.0_SAFETY_GATE',
+        },
+      ]);
 
       // mockImplementation is not cleared by jest.clearAllMocks; drop it so the
       // next test starts from the module default.
+      findOneByUniversalIdentifierGlobal.mockReset();
+    });
+
+    it('excludes Bilan content even when Bilan is registered and compatible', async () => {
+      // Bilan is ready on this server, but its proposed contents stay behind the
+      // P7.0 gate: they must not appear as if the persona would seed them.
+      findOneByUniversalIdentifierGlobal.mockImplementation(() =>
+        Promise.resolve(buildRegistration('registration-ready')),
+      );
+      validateWorkspaceCompatibility.mockResolvedValue({ compatible: true });
+
+      const preview = await service.getWorkspaceTemplatePreview({
+        workspaceId,
+        template: WorkspaceTemplate.NON_PROFIT,
+      });
+
+      expect(preview.samples).toEqual([
+        { label: 'Notes de réunion', locale: 'fr' },
+      ]);
+      expect(
+        preview.blockedSamples.every(
+          (blockedSample) => blockedSample.blockedBy === 'P7.0_SAFETY_GATE',
+        ),
+      ).toBe(true);
+      expect(preview.blockedSamples.map((sample) => sample.label)).toContain(
+        'Dons',
+      );
+
       findOneByUniversalIdentifierGlobal.mockReset();
     });
 
@@ -599,6 +642,7 @@ describe('WorkspaceTemplateService', () => {
       });
 
       expect(preview.samples).toEqual([]);
+      expect(preview.blockedSamples).toEqual([]);
       expect(preview.blocked).toBe(false);
     });
 

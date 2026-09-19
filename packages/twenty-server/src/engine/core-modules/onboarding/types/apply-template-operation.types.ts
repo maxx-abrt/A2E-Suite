@@ -62,11 +62,18 @@ export type TemplatePreviewSample = {
   locale: string;
 };
 
+// Proposed content a persona would seed but that is deferred behind an upstream
+// gate: surfaced so the preview records the exclusion instead of dropping it.
+export type TemplatePreviewBlockedSample = TemplatePreviewSample & {
+  blockedBy: string;
+};
+
 export type TemplatePreview = {
   templateKey: string;
   version: number;
   apps: TemplatePreviewApp[];
   navigationChanges: TemplatePreviewNavigationChange[];
   samples: TemplatePreviewSample[];
+  blockedSamples: TemplatePreviewBlockedSample[];
   blocked: boolean;
 };

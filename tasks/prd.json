@@ -69,11 +69,12 @@
         "Repeat-safe by construction: bundle payloads carry no record IDs, tokens, share URLs or live finance rows (C1 construction rule)"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md:587 (P1.6d `[~]`, partial: Bilan payloads shipped, persona bundles unshipped). Bilan legs deferred — blocked upstream (P7). dependsOn US-028 so seeding inherits the truthful hook path.",
       "dependsOn": [
         "US-028"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-030",
@@ -345,6 +346,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T21:01:12.265Z"
+    "updatedAt": "2026-09-19T21:16:36.647Z"
   }
 }

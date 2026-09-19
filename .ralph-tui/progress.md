@@ -17,6 +17,7 @@ after each iteration and it's included in prompts for context.
 - `A2eWorkspaceTemplatePreview` per-app resolution and per-step outcome are both pure front projections beside each other: `resolveTemplatePreview` (previews) and `getApplyTemplateResultOutcome` (operation result). Do not merge either into the server or into the other. Retry correctness depends on NOT calling `resetOperation` on a partial result — the hook instance's reused idempotency key is what resumes the same server operation.
 - Seeders must return the rows `createRecords`/`createRecords`-style helpers actually created (`result[createMutationName] ?? []`), never the requested missing count — a mutation the API accepts but returns 0 ids for would otherwise be reported as a seed. See `a2e-accounting/src/logic-functions/handlers/seed-starter-content.ts`.
 - Mock a dynamic `await import('unzipper')` in a jest spec with `jest.mock('unzipper', () => ({ __esModule: true, default: { Open: { buffer: jest.fn() } } }))`; the service's `const { default: unzipper } = await import('unzipper')` resolves the mocked default. Construct `SdkClientArchiveService` via `Test.createTestingModule` with the `getRepositoryToken`/service providers (no constructor casts).
+- Persona starter bundle data: ready app content lives in `WORKSPACE_TEMPLATE_DEFINITIONS[…].starterBundleContents` and previews as `samples` (filtered to `registered && versionCompatible`); content deferred behind an upstream product gate lives in `blockedStarterBundleContents` with a `blockedBy` key (e.g. `P7.0_SAFETY_GATE`) and always previews as `blockedSamples`, unfiltered by server readiness. Never put gated content in `starterBundleContents` (it would preview as seedable), and never filter `blockedSamples` by registration (the gate is upstream).
 
 ---
 
@@ -45,4 +46,13 @@ after each iteration and it's included in prompts for context.
   - The 0-rows incident's root cause is the SDK layer, not the seed payloads: `downloadAndExtractToPackage` now extracts to a staging sibling, verifies `package.json` + `dist/core.mjs`, then renames atomically. A consumer must never see a partial live layer.
   - `createRecords` returns the created rows (`result[createMutationName] ?? []`). Seeders that return `missing.length` instead over-report on a silent 0-row mutation — always count what was written.
   - Mock dynamic `await import('unzipper')` by `jest.mock('unzipper', () => ({ __esModule: true, default: { Open: { buffer: jest.fn() } } }))` and cast `unzipper.Open.buffer as unknown as jest.Mock`; the service's `{ default: unzipper }` destructure then resolves the mock.
+---
+
+## 2026-09-19 - US-029
+- Closed the P1.6d persona-bundle gap: persona previews now include only ready-app content. Bilan (a2e-accounting) proposed contents were moved out of `starterBundleContents` into a new `blockedStarterBundleContents` field tagged `P7.0_SAFETY_GATE`, and the preview surfaces them as `blockedSamples` so a gated exclusion is visible, never silently dropped.
+- Files changed: `twenty-server` onboarding `workspace-template-definitions.constant.ts` (+`WorkspaceTemplateBundleBlockReason`, `WorkspaceTemplateBlockedBundleContent`, required `blockedStarterBundleContents`), `types/apply-template-operation.types.ts` (+`TemplatePreviewBlockedSample`, `blockedSamples`), `dtos/apply-template-operation-result.dto.ts` (+DTO/field), `workspace-template.service.ts` (map blocked → preview); server specs/fixtures; `twenty-front` a2e-workspace types/resolver/query/component + specs; `docs/plan/05-template-contracts.md` §6/§7; phase report.
+- **Learnings:**
+  - The preview's `samples` filter (`registered && versionCompatible`) is a *server-readiness* gate, not a *product-readiness* gate. Bilan can be registered+compatible and still must not preview as seedable while P7.0 is open — that distinction needs the separate `blockedSamples` channel.
+  - A required field added to `WorkspaceTemplateDefinition` breaks any hand-built definition literal in specs (e.g. `workspace-template.service.partial-failure.spec.ts`); update those first or `tsgo --noEmit` fails before jest runs.
+  - No preset installs a2e-projects, so "Documents/Projects" cannot both be previewed without an app-set + `version` change touching two onboarding integration specs — recorded as a D02 product call, not faked.
 ---

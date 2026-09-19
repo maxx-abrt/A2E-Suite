@@ -81,6 +81,13 @@ const ALL_FIXTURE_VALUES = [
   individualTemplatePreview,
   individualTemplateApplyResult,
   templateRejectionFixtures,
+  // The persona bundle data is repeat-safe by construction too: labels, locale,
+  // app universal identifiers and a gate key — never a record ID, token, share
+  // URL or live finance row.
+  Object.values(WORKSPACE_TEMPLATE_DEFINITIONS).flatMap((definition) => [
+    ...definition.starterBundleContents,
+    ...definition.blockedStarterBundleContents,
+  ]),
 ];
 
 describe('apply-template-operation fixtures', () => {
@@ -93,6 +100,13 @@ describe('apply-template-operation fixtures', () => {
       expect(typeof sample.label).toBe('string');
       expect(sample.label.length).toBeGreaterThan(0);
       expect(typeof sample.locale).toBe('string');
+    }
+
+    for (const blockedSample of individualTemplatePreview.blockedSamples) {
+      expect(typeof blockedSample.label).toBe('string');
+      expect(blockedSample.label.length).toBeGreaterThan(0);
+      expect(typeof blockedSample.locale).toBe('string');
+      expect(typeof blockedSample.blockedBy).toBe('string');
     }
 
     for (const app of individualTemplatePreview.apps) {
@@ -216,6 +230,15 @@ describe('apply-template-operation fixtures', () => {
         locale: bundleContent.locale,
       })),
     );
+    expect(individualTemplatePreview.blockedSamples).toEqual(
+      individualDefinition.blockedStarterBundleContents.map(
+        (blockedContent) => ({
+          label: blockedContent.label,
+          locale: blockedContent.locale,
+          blockedBy: blockedContent.blockedBy,
+        }),
+      ),
+    );
   });
 
   it('proposes persona bundle contents only from apps each preset installs', () => {
@@ -240,6 +263,10 @@ describe('apply-template-operation fixtures', () => {
       WORKSPACE_TEMPLATE_DEFINITIONS[WorkspaceTemplate.CRM]
         .starterBundleContents,
     ).toEqual([]);
+    expect(
+      WORKSPACE_TEMPLATE_DEFINITIONS[WorkspaceTemplate.CRM]
+        .blockedStarterBundleContents,
+    ).toEqual([]);
 
     // Every non-CRM persona previews at least one proposed bundle item.
     for (const persona of [
@@ -252,6 +279,52 @@ describe('apply-template-operation fixtures', () => {
       expect(
         WORKSPACE_TEMPLATE_DEFINITIONS[persona].starterBundleContents.length,
       ).toBeGreaterThan(0);
+    }
+  });
+
+  it('excludes Bilan (blocked upstream) from ready contents and records the P7.0 gate', () => {
+    const accountingUniversalIdentifier =
+      'b11a0000-0000-4000-8000-000000000001';
+
+    for (const definition of Object.values(WORKSPACE_TEMPLATE_DEFINITIONS)) {
+      const presetAppUniversalIdentifiers = new Set(
+        definition.applicationUniversalIdentifiers,
+      );
+
+      // Bilan is never a ready (previewed) content source.
+      expect(
+        definition.starterBundleContents.map(
+          (bundleContent) => bundleContent.applicationUniversalIdentifier,
+        ),
+      ).not.toContain(accountingUniversalIdentifier);
+
+      for (const blockedContent of definition.blockedStarterBundleContents) {
+        // Blocked content still belongs to an app the preset installs, and is
+        // recorded with its upstream gate — never silently dropped.
+        expect(presetAppUniversalIdentifiers).toContain(
+          blockedContent.applicationUniversalIdentifier,
+        );
+        expect(blockedContent.blockedBy).toBe('P7.0_SAFETY_GATE');
+        expect(blockedContent.label.length).toBeGreaterThan(0);
+      }
+    }
+
+    // The two Bilan-installing personas record their deferred Bilan contents.
+    for (const persona of [
+      WorkspaceTemplate.NON_PROFIT,
+      WorkspaceTemplate.SMALL_BUSINESS,
+    ]) {
+      const blockedContent =
+        WORKSPACE_TEMPLATE_DEFINITIONS[persona].blockedStarterBundleContents;
+
+      expect(blockedContent.length).toBeGreaterThan(0);
+      expect(
+        blockedContent.every(
+          (content) =>
+            content.applicationUniversalIdentifier ===
+            accountingUniversalIdentifier,
+        ),
+      ).toBe(true);
     }
   });
 

@@ -64,11 +64,16 @@ export type TemplatePreviewSample = {
   locale: string;
 };
 
+export type TemplatePreviewBlockedSample = TemplatePreviewSample & {
+  blockedBy: string;
+};
+
 export type TemplatePreview = {
   templateKey: string;
   version: number;
   apps: TemplatePreviewApp[];
   navigationChanges: TemplatePreviewNavigationChange[];
   samples: TemplatePreviewSample[];
+  blockedSamples: TemplatePreviewBlockedSample[];
   blocked: boolean;
 };

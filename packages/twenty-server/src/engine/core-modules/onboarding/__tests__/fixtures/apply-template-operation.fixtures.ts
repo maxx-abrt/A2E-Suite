@@ -99,6 +99,8 @@ export const individualTemplatePreview: TemplatePreview = {
     { label: 'Notes de réunion', locale: 'fr' },
     { label: 'Entretien individuel', locale: 'fr' },
   ],
+  // The individual persona proposes no gated content.
+  blockedSamples: [],
   blocked: false,
 };
 

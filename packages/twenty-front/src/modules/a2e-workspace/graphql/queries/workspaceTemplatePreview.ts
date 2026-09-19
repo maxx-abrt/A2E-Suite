@@ -26,6 +26,11 @@ export const WORKSPACE_TEMPLATE_PREVIEW = gql`
         label
         locale
       }
+      blockedSamples {
+        label
+        locale
+        blockedBy
+      }
     }
   }
 `;

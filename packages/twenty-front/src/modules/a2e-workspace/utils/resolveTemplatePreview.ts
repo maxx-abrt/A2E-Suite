@@ -1,6 +1,7 @@
 import {
   type TemplatePreview,
   type TemplatePreviewApp,
+  type TemplatePreviewBlockedSample,
   type TemplatePreviewNavigationChange,
   type TemplatePreviewSample,
 } from '@/a2e-workspace/types/apply-template-operation.types';
@@ -32,6 +33,9 @@ export type ResolvedTemplatePreview = {
   prerequisites: ResolvedTemplatePreviewApp[];
   navigationChanges: TemplatePreviewNavigationChange[];
   samples: TemplatePreviewSample[];
+  // Contents a persona would seed but that an upstream gate defers; shown so an
+  // exclusion is visible rather than silent.
+  blockedSamples: TemplatePreviewBlockedSample[];
   blocked: boolean;
 };
 
@@ -91,6 +95,7 @@ export const resolveTemplatePreview = (
     ),
     navigationChanges: preview.navigationChanges,
     samples: preview.samples,
+    blockedSamples: preview.blockedSamples,
     blocked: preview.blocked,
   };
 };

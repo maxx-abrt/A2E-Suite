@@ -59,6 +59,7 @@ describe('WorkspaceTemplateService partial failure and resume', () => {
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [],
     sampleContentEnabled: false,
     starterBundleContents: [],
+    blockedStarterBundleContents: [],
   };
 
   const buildRegistration = (

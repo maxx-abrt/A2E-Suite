@@ -269,6 +269,7 @@ type TemplatePreview = {
   }>;
   navigationChanges: Array<{ universalIdentifier: string; action: 'hide' | 'restore' }>; // managed rows only
   samples: Array<{ label: string; locale: string }>; // empty when off
+  blockedSamples: Array<{ label: string; locale: string; blockedBy: string }>; // gated content, never silent
   blocked: boolean; // true when a required app is unregistered/incompatible
 };
 ```
@@ -288,6 +289,16 @@ apply will use, so preview cannot lie.
 > by each app's post-install hook. Definition `version` is **not** bumped by
 > this change: it adds previewed proposal metadata without changing what an
 > apply installs, hides or seeds, so no previously previewed apply goes stale.
+
+> 2026-09-19 (US-029): persona bundles carry only **ready** app content.
+> Bilan (a2e-accounting) contents are deferred behind the **P7.0 safety gate**
+> and are recorded on the definition as `blockedStarterBundleContents` rather
+> than in `starterBundleContents`, so they are never previewed as if the
+> persona would seed them. The preview surfaces them as `blockedSamples`
+> (`blockedBy: 'P7.0_SAFETY_GATE'`) so a gated exclusion is visible, never
+> silently dropped. `blockedSamples` are gated upstream, independent of this
+> server's registration/compatibility, so they are always reported; `samples`
+> still filters `starterBundleContents` to `registered && versionCompatible`.
 
 ## 7. Fixtures (normative examples)
 
@@ -315,7 +326,7 @@ Preview, `individual` on a fresh workspace with a2e-accounting unregistered
     { "universalIdentifier": "20202020-b005-4b05-8b05-c0aba11c0005", "action": "hide" },
     { "universalIdentifier": "20202020-b004-4b04-8b04-c0aba11c0004", "action": "hide" }
   ],
-  "samples": [], "blocked": false
+  "samples": [], "blockedSamples": [], "blocked": false
 }
 ```
 

@@ -68,6 +68,7 @@ const buildPreview = (
     { universalIdentifier: 'nav-notes', action: 'restore' },
   ],
   samples: [{ label: 'Welcome note', locale: 'en' }],
+  blockedSamples: [],
   blocked: false,
   ...overrides,
 });
@@ -208,6 +209,27 @@ describe('A2eWorkspaceTemplatePreview', () => {
     expect(
       screen.getByRole('checkbox', { name: 'Include sample content' }),
     ).toBeInTheDocument();
+  });
+
+  it('renders deferred bundle contents as blocked instead of dropping them', () => {
+    setupHooks(
+      buildPreview({
+        blockedSamples: [
+          { label: 'Dons', locale: 'fr', blockedBy: 'P7.0_SAFETY_GATE' },
+        ],
+      }),
+    );
+
+    render(<A2eWorkspaceTemplatePreview template="NON_PROFIT" />, {
+      wrapper: Wrapper,
+    });
+
+    const blockedContents = screen.getByTestId(
+      'a2e-workspace-template-preview-blocked-contents',
+    );
+    expect(blockedContents).toHaveTextContent(
+      'Dons — blocked until the Bilan safety gate (P7.0) clears',
+    );
   });
 
   it('offers an include toggle only for optional apps that are not installed', () => {

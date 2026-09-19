@@ -20,6 +20,16 @@ export type WorkspaceTemplateBundleContent = TemplatePreviewSample & {
   applicationUniversalIdentifier: string;
 };
 
+// Upstream gates that defer a proposed bundle item until a later phase. Recorded
+// on the definition (and surfaced in the preview) so a blocked item is never
+// silently dropped from a persona.
+export type WorkspaceTemplateBundleBlockReason = 'P7.0_SAFETY_GATE';
+
+export type WorkspaceTemplateBlockedBundleContent = TemplatePreviewSample & {
+  applicationUniversalIdentifier: string;
+  blockedBy: WorkspaceTemplateBundleBlockReason;
+};
+
 const bundleContent = (
   applicationUniversalIdentifier: string,
   label: string,
@@ -27,6 +37,17 @@ const bundleContent = (
   applicationUniversalIdentifier,
   label,
   locale: 'fr',
+});
+
+const blockedBundleContent = (
+  applicationUniversalIdentifier: string,
+  label: string,
+  blockedBy: WorkspaceTemplateBundleBlockReason,
+): WorkspaceTemplateBlockedBundleContent => ({
+  applicationUniversalIdentifier,
+  label,
+  locale: 'fr',
+  blockedBy,
 });
 
 // Named items (not string-filtered) so a typo is a compile-time error and the
@@ -50,28 +71,36 @@ const DOCUMENT_BUNDLE_ITEM = {
   ),
 } satisfies Record<string, WorkspaceTemplateBundleContent>;
 
-const ACCOUNTING_BUNDLE_ITEM = {
-  cashflow: bundleContent(
+// Bilan (a2e-accounting) proposed contents are deferred behind the P7.0 safety
+// gate: they are recorded here as blocked upstream, never previewed as ready,
+// and never included in `starterBundleContents`.
+const BLOCKED_ACCOUNTING_BUNDLE_ITEM = {
+  cashflow: blockedBundleContent(
     A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER,
     'Trésorerie',
+    'P7.0_SAFETY_GATE',
   ),
-  donations: bundleContent(
+  donations: blockedBundleContent(
     A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER,
     'Dons',
+    'P7.0_SAFETY_GATE',
   ),
-  grants: bundleContent(
+  grants: blockedBundleContent(
     A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER,
     'Subventions',
+    'P7.0_SAFETY_GATE',
   ),
-  balancedBudget: bundleContent(
+  balancedBudget: blockedBundleContent(
     A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER,
     'Budget prévisionnel à l’équilibre',
+    'P7.0_SAFETY_GATE',
   ),
-  grantRequest: bundleContent(
+  grantRequest: blockedBundleContent(
     A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER,
     'Demande de subvention',
+    'P7.0_SAFETY_GATE',
   ),
-} satisfies Record<string, WorkspaceTemplateBundleContent>;
+} satisfies Record<string, WorkspaceTemplateBlockedBundleContent>;
 
 export type WorkspaceTemplateDefinition = {
   // Integer bumped whenever the definition changes meaningfully (app set,
@@ -89,6 +118,9 @@ export type WorkspaceTemplateDefinition = {
   // Preview-only proposal list (never the seeding source). The preview filters
   // it to apps that are registered and version-compatible on the server.
   starterBundleContents: WorkspaceTemplateBundleContent[];
+  // Proposed contents deferred behind an upstream gate. Recorded so the preview
+  // can show them as blocked instead of dropping them silently.
+  blockedStarterBundleContents: WorkspaceTemplateBlockedBundleContent[];
 };
 
 export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
@@ -102,6 +134,7 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [],
     sampleContentEnabled: false,
     starterBundleContents: [],
+    blockedStarterBundleContents: [],
   },
   [WorkspaceTemplate.INDIVIDUAL]: {
     version: 1,
@@ -119,6 +152,7 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
       DOCUMENT_BUNDLE_ITEM.meetingNotes,
       DOCUMENT_BUNDLE_ITEM.oneOnOne,
     ],
+    blockedStarterBundleContents: [],
   },
   [WorkspaceTemplate.STUDENT]: {
     version: 1,
@@ -137,6 +171,7 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
       DOCUMENT_BUNDLE_ITEM.projectBrief,
       DOCUMENT_BUNDLE_ITEM.productRequirements,
     ],
+    blockedStarterBundleContents: [],
   },
   [WorkspaceTemplate.TEAM]: {
     version: 1,
@@ -152,6 +187,7 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
       DOCUMENT_BUNDLE_ITEM.productRequirements,
       DOCUMENT_BUNDLE_ITEM.oneOnOne,
     ],
+    blockedStarterBundleContents: [],
   },
   [WorkspaceTemplate.NON_PROFIT]: {
     version: 1,
@@ -162,12 +198,12 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
     optionalApplicationUniversalIdentifiers: [],
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [],
     sampleContentEnabled: false,
-    starterBundleContents: [
-      DOCUMENT_BUNDLE_ITEM.meetingNotes,
-      ACCOUNTING_BUNDLE_ITEM.donations,
-      ACCOUNTING_BUNDLE_ITEM.grants,
-      ACCOUNTING_BUNDLE_ITEM.balancedBudget,
-      ACCOUNTING_BUNDLE_ITEM.grantRequest,
+    starterBundleContents: [DOCUMENT_BUNDLE_ITEM.meetingNotes],
+    blockedStarterBundleContents: [
+      BLOCKED_ACCOUNTING_BUNDLE_ITEM.donations,
+      BLOCKED_ACCOUNTING_BUNDLE_ITEM.grants,
+      BLOCKED_ACCOUNTING_BUNDLE_ITEM.balancedBudget,
+      BLOCKED_ACCOUNTING_BUNDLE_ITEM.grantRequest,
     ],
   },
   [WorkspaceTemplate.SMALL_BUSINESS]: {
@@ -182,8 +218,10 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
     starterBundleContents: [
       DOCUMENT_BUNDLE_ITEM.projectBrief,
       DOCUMENT_BUNDLE_ITEM.productRequirements,
-      ACCOUNTING_BUNDLE_ITEM.cashflow,
-      ACCOUNTING_BUNDLE_ITEM.balancedBudget,
+    ],
+    blockedStarterBundleContents: [
+      BLOCKED_ACCOUNTING_BUNDLE_ITEM.cashflow,
+      BLOCKED_ACCOUNTING_BUNDLE_ITEM.balancedBudget,
     ],
   },
 };

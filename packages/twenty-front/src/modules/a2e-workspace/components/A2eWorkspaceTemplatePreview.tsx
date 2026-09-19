@@ -375,6 +375,23 @@ export const A2eWorkspaceTemplatePreview = ({
           </StyledContentList>
         </>
       )}
+      {isNonEmptyArray(preview.blockedSamples) && (
+        <>
+          {/* Deferred proposals: shown so a gated exclusion is never silent. */}
+          <StyledRowSubText>{t`Deferred content`}</StyledRowSubText>
+          <StyledContentList data-testid="a2e-workspace-template-preview-blocked-contents">
+            {preview.blockedSamples.map((blockedSample) => (
+              <StyledContentItem
+                key={`${blockedSample.locale}-${blockedSample.label}`}
+              >
+                {blockedSample.blockedBy === 'P7.0_SAFETY_GATE'
+                  ? t`${blockedSample.label} — blocked until the Bilan safety gate (P7.0) clears`
+                  : t`${blockedSample.label} — blocked upstream`}
+              </StyledContentItem>
+            ))}
+          </StyledContentList>
+        </>
+      )}
       {preview.blocked && (
         <StyledBlockedText>
           <IconAlertTriangle size={themeCssVariables.icon.size.sm} />

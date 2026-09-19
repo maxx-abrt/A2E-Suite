@@ -113,6 +113,13 @@ describe('resolveTemplatePreview', () => {
       { universalIdentifier: 'nav-notes', action: 'restore' },
     ],
     samples: [{ label: 'Welcome note', locale: 'en' }],
+    blockedSamples: [
+      {
+        label: 'Trésorerie',
+        locale: 'fr',
+        blockedBy: 'P7.0_SAFETY_GATE',
+      },
+    ],
     blocked: true,
   };
 
@@ -130,6 +137,7 @@ describe('resolveTemplatePreview', () => {
     expect(resolved.prerequisites[0].universalIdentifier).toBe('app-missing');
     expect(resolved.navigationChanges).toEqual(preview.navigationChanges);
     expect(resolved.samples).toEqual(preview.samples);
+    expect(resolved.blockedSamples).toEqual(preview.blockedSamples);
     expect(resolved.blocked).toBe(true);
   });
 

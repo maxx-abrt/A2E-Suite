@@ -1,0 +1,139 @@
+# Iteration 3 Log
+
+## Metadata
+
+- **Task ID**: US-028
+- **Task Title**: [P1.3] Fix post-install delegated seeding completing with 0 rows — truthful step status
+- **Description**: As a workspace owner applying a preset, I want post-install sample/starter seeding to actually write its rows and report failure truthfully, so that 'succeeded (delegated)' never over-reports a broken...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T20:55:00.819Z
+- **Ended At**: 2026-09-19T21:01:12.261Z
+- **Duration**: 6m 11s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the mandatory clean-start check.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-028" PLAN.md | head -20
+[94m[bash][0m $ ls docs/plan/ 2>/dev/null
+Dirty files are Ralph's own tracker state, expected. Let me find the task in PLAN.md and the phase report.
+[94m[bash][0m $ grep -n "P1.3" PLAN.md | head -20
+[94m[bash][0m $ grep -rn "US-028" docs/ .ralph-tui/ 2>/dev/null | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "CLAIMED\|US-028" docs/plan/phases/phase-01-report.md | tail -40
+[94m[bash][0m $ grep -n "0 rows\|0-rows\|seeding\|post-install\|post install\|delegated" docs/plan/phases/phase-01-r...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ tail -60 .ralph-tui/progress.md
+[94m[bash][0m $ ls packages/twenty-server/src/engine/core-modules/onboarding/__tests__/
+[94m[bash][0m $ grep -n "seed\|Seed\|postInstall\|PostInstall\|shouldRunSynchronously" packages/twenty-server/src/en...
+[94m[bash][0m $ wc -l packages/twenty-server/src/engine/core-modules/onboarding/workspace-template.service.ts packag...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "postInstallLogicFunction\|shouldRunSynchronously" packages/twenty-server/src --include=*.t...
+[94m[bash][0m $ git log --oneline -15 -- packages/twenty-server/src/engine/core-modules/onboarding/workspace-templat...
+[94m[bash][0m $ grep -rn "postInstallLogicFunction\|shouldRunSynchronously" packages/twenty-server/src | grep -v spe...
+[94m[bash][0m $ grep -rln "postInstallLogicFunction" packages/twenty-server/src packages/twenty-shared/src packages/...
+[94m[read][0m
+[94m[bash][0m $ ls packages | grep a2e
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/logic-functions/post-install.ts
+[94m[bash][0m $ git log --oneline -20 | cat
+[94m[bash][0m $ git log --oneline --all -- packages/twenty-server/src/engine/core-modules/sdk-client/sdk-client-arch...
+[94m[bash][0m $ git show --stat b3db4bed | cat
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "installTemplateApplication\|private async installTemplateApplication" packages/twenty-serve...
+[94m[read][0m
+[94m[bash][0m $ grep -n "seed\|Seed\|postInstall\|shouldRunSynchronously" packages/twenty-server/src/engine/core-mod...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "runInstallStep\|InstallStepOutcome" packages/twenty-apps/internal/a2e-accounting/src/lib/i...
+[94m[bash][0m $ grep -rn "definePostInstallLogicFunction" packages/twenty-sdk/src packages/twenty-shared/src | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/install-steps.ts
+[94m[bash][0m $ grep -rn "class LogicFunctionExecutorService" packages/twenty-server/src
+[94m[read][0m
+[94m[bash][0m $ grep -rn "type LogicFunctionExecuteResult\|LogicFunctionExecuteResult =" packages/twenty-server/src ...
+[94m[read][0m
+[94m[bash][0m $ grep -n "seed\|Seed\|post-install\|postInstall\|succeed\|delegat" docs/plan/05-template-contracts.md...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[bash][0m $ ls packages/twenty-server/src/engine/core-modules/sdk-client/__tests__/ 2>/dev/null
+[94m[bash][0m $ grep -rln "staged\|sentinel\|rename\|LAYER\|extract" packages/twenty-server/src/engine/core-modules/...
+[94m[bash][0m $ git show --stat 57354bc8 | cat
+[94m[bash][0m $ git show --stat a99f5794 | cat
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "handleExecutionResult" packages/twenty-server/src/engine/core-modules/logic-function/logic-...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/__tests__/install-steps.test.ts
+[94m[bash][0m $ grep -rln "0 rows\|0-rows\|seeding" docs/tasks/ 2>/dev/null
+[94m[bash][0m $ grep -rn "0 rows\|0-rows\|zero row\|seededRecord\|seedCount\|createdRecordUniversalIdentifiers" pack...
+[94m[bash][0m $ ls packages/twenty-server/jest.config.mjs && sed -n '1,60p' packages/twenty-server/jest.config.mjs 2...
+[94m[bash][0m $ grep -rln "jest.mock('unzipper'\|mock(\"unzipper\"" packages/twenty-server/src 2>/dev/null | head
+[94m[bash][0m $ grep -rln "Open.buffer\|unzipper" packages/twenty-server/src --include=*.spec.ts 2>/dev/null | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/logic-functions/utils/records.ts
+[94m[read][0m
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-server/src/utils/stream-to-buffer.ts
+[94m[bash][0m $ grep -n "CLAIMED" docs/plan/phases/phase-01-report.md | tail -6
+[94m[bash][0m $ tail -30 docs/plan/phases/phase-01-report.md
+Now I have enough context. Let me check the current UTC time and existing claims, then claim my slice.
+[94m[bash][0m $ cat >> docs/plan/phases/phase-01-report.md << 'EOF'  CLAIMED — US-028/post-install-0-rows-regression...
+[94m[bash][0m $ grep -rn "Readable.from\|readFile: jest.fn\|readFile: async" packages/twenty-server/src --include=*....
+[94m[bash][0m $ grep -n "async readFile\|readFile(" packages/twenty-server/src/engine/core-modules/file-storage/serv...
+[94m[read][0m
+[94m[write][0m "import { Readable } from 'stream';
+
+import * as fs from 'fs/promises';
+import { tmpdir } from 'os';
+import { join } from 'path';
+
+import { Test, type TestingModule } from '@nestjs/testing';
+import { g... (5815 chars)"
+Now I'll write the regression spec for the staged SDK-layer extraction (the root cause of the 0-rows path).
+[94m[bash][0m $ npx jest src/engine/core-modules/sdk-client/__tests__/sdk-client-archive-staged-extraction.spec.ts -...
+[94m[read][0m
+The regression test passes. Let me examine the app-layer seed count logic to see whether a silent 0-row write is reported truthfully.
+[94m[edit][0m
+This reveals a real row-count truthfulness gap: the seeders report `missing.length` rather than the rows actually created, so a silent 0-row write over-reports. Let me fix that.
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[bash][0m $ grep -n "\"test:unit\"\|\"typecheck\"\|\"lint\"\|\"scripts\"" -A2 packages/twenty-apps/internal/a2e-...
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -30
+[94m[bash][0m $ yarn lint 2>&1 | tail -15
+[94m[bash][0m $ npx jest src/engine/core-modules/onboarding --config=packages/twenty-server/jest.config.mjs 2>&1 | t...
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -15
+[94m[bash][0m $ npx oxfmt --check "src/engine/core-modules/sdk-client/__tests__/sdk-client-archive-staged-extraction...
+[94m[bash][0m $ echo "EXIT:$?"
+[94m[bash][0m $ npx oxfmt --write "src/engine/core-modules/sdk-client/__tests__/sdk-client-archive-staged-extraction...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ npx jest src/engine/core-modules/sdk-client/__tests__/sdk-client-archive-staged-extraction.spec.ts -...
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -8
+[94m[bash][0m $ the extraction is a pure move. The app fix only changes reported counts, not what is written. **Rema...
+All checks green. Now I'll write the phase report and Ralph bridge entry.
+[94m[bash][0m $ the service's `{ default: unzipper }` destructure then resolves the mock. --- EOF echo done
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git diff -- packages/twenty-apps/internal/a2e-accounting/src/logic-functions/handlers/seed-starter-c...
+[94m[bash][0m $ ls -la packages/twenty-server/src/engine/core-modules/sdk-client/__tests__/
+Done. US-028 slice complete.
+
+**What I found:** The root-cause fix (staged SDK-layer extraction, `57354bc8`) and the server step truth (`resolveSampleSeedingStep` async hook → `failed`/`SEED_FAILED`, `a99f5794`) were already in the tree, but neither had regression coverage, and the app seeders still over-reported counts.
+
+**Changes:**
+- `seed-starter-content.ts` (Bilan post-install hook write path): all four seeders now return the rows `createRecords` **actually created**, not the requested `missing.length` — a 0-created mutation can no longer be reported as a seed.
+- New `sdk-client-archive-staged-extraction.spec.ts` (4 cases): reproduces the 0-rows path — a dead extraction must leave the live SDK layer **absent, never partial** (the empty-layer state that made `coreClient()` seed 0 rows), and a verified staged swap wins over a concurrent holder.
+- `starter-content-seeding.test.ts` +2 cases: 0-created write → 0/false; partial write → actual count.
+
+**Checks (all green):** app `test:unit` 106/106, `typecheck` exit 0, `lint` 0/0, `dev:build` 28 files; server sdk spec 4/4, onboarding batch 8 suites/71/71, `tsgo` exit 0, oxlint/oxfmt clean; docs check PASS.
+
+**Missing for tick (Tier 2, orchestrator):** live Bilan install/reinstall asserting rows > 0.
+
+Phase report and `.ralph-tui/progress.md` entries appended.
+
+<promise>COMPLETE</promise>

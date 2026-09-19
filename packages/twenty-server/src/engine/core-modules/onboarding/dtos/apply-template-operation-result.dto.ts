@@ -9,6 +9,7 @@ import {
   type TemplateKeyVersion,
   type TemplatePreview,
   type TemplatePreviewApp,
+  type TemplatePreviewBlockedSample,
   type TemplatePreviewNavigationChange,
 } from 'src/engine/core-modules/onboarding/types/apply-template-operation.types';
 
@@ -132,6 +133,19 @@ export class TemplatePreviewSampleDTO {
 }
 
 @ObjectType()
+export class TemplatePreviewBlockedSampleDTO {
+  @Field(() => String)
+  label: string;
+
+  @Field(() => String)
+  locale: string;
+
+  // Upstream gate key (e.g. P7.0_SAFETY_GATE) the client localizes.
+  @Field(() => String)
+  blockedBy: string;
+}
+
+@ObjectType()
 export class TemplatePreviewDTO implements TemplatePreview {
   @Field(() => String)
   templateKey: string;
@@ -148,6 +162,11 @@ export class TemplatePreviewDTO implements TemplatePreview {
   @Field(() => [TemplatePreviewSampleDTO])
   samples: TemplatePreview['samples'];
 
+  // Proposed content deferred behind an upstream gate; surfaced so an exclusion
+  // is never silent.
+  @Field(() => [TemplatePreviewBlockedSampleDTO])
+  blockedSamples: TemplatePreviewBlockedSample[];
+
   // True when a required app is unregistered or incompatible: preview stays
   // visible but apply is refused.
   @Field(() => Boolean)
@@ -162,5 +181,6 @@ export type {
   OperationStepStatus,
   TemplatePreview,
   TemplatePreviewApp,
+  TemplatePreviewBlockedSample,
   TemplatePreviewNavigationChange,
 } from 'src/engine/core-modules/onboarding/types/apply-template-operation.types';

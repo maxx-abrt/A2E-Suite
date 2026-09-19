@@ -714,6 +714,15 @@ export class WorkspaceTemplateService {
           label: bundleContent.label,
           locale: bundleContent.locale,
         })),
+      // Blocked contents are gated upstream, not by this server's readiness, so
+      // they are always surfaced — a persona's deferred content never vanishes.
+      blockedSamples: definition.blockedStarterBundleContents.map(
+        (blockedContent) => ({
+          label: blockedContent.label,
+          locale: blockedContent.locale,
+          blockedBy: blockedContent.blockedBy,
+        }),
+      ),
       blocked,
     };
   }

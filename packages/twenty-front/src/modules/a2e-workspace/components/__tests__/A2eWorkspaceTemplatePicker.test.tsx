@@ -37,6 +37,7 @@ const preview: TemplatePreview = {
   ],
   navigationChanges: [],
   samples: [],
+  blockedSamples: [],
   blocked: false,
 };
 
