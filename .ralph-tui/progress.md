@@ -34,3 +34,13 @@ after each iteration and it's included in prompts for context.
   - Existing `RealtimePresenceAvatarStack`/`RealtimeTypingIndicator` already no-op on empty input; the clutter is the widget/rail entry and header slots, so the conditional must gate the container, not the primitive.
   - `WorkbenchWidgetDefinition` is the shared extension point between the dock and the Home dashboard (`registerHomeDashboardWidgets` re-registers `tasks`/`activity`), so adding an optional capability flag there (not an id check in the dock) is the non-duplicating way to degrade team widgets.
 ---
+
+## 2026-09-19 - US-003
+- Implemented the habits/Pomodoro piece of the P10 personal dashboard: a new `focus` Home widget on the existing workbench registry — 25-minute Pomodoro countdown, start/pause/reset, and a derived "N of 4 focus sessions today" habit row (a completed session is the habit notch, so no separate habit store/object was introduced).
+- Added `home-dashboard/{utils/pomodoroTimer.ts, components/PomodoroWidget.tsx, components/PomodoroWidgetContent.tsx}` (+ 6-test suite, story) and registered `focus` (IconClockPlay, order 52) in `registerHomeDashboardWidgets.ts`; added the `focus` title in `DefaultWorkbenchWidgetContent.tsx`.
+- Files changed: twenty-front `home-dashboard/{utils,components,__tests__,components/__stories__}`, `registerHomeDashboardWidgets.ts`, `workbench-dock/components/DefaultWorkbenchWidgetContent.tsx`, `docs/plan/phases/phase-10-report.md`, `.ralph-tui/progress.md`.
+- **Learnings:**
+  - The Home dashboard is a set of `WorkbenchWidgetDefinition`s registered by `registerHomeDashboardWidgets()` (imported for side effect by `WorkbenchWidgetDock`); new Home widgets only need a registry entry + a `getWorkbenchWidgetTitle` case — no dock change. Use `IconClockPlay` for focus (no timer/clock concept in the icon dictionary; rule 5 = pick an existing icon).
+  - The container/hook timer is the only place a `useEffect` + `setInterval` is warranted here; keep the presentational `*WidgetContent` callback-driven (`onStart/onPause/onReset`) so it is testable with `fireEvent`, and test the ticking container with `jest.useFakeTimers()` + `act`.
+  - `npx nx lint:diff-with-main twenty-front` can only see committed diffs (`main...HEAD`) and reports "No changed files" for uncommitted work — run `npx oxlint --type-aware -c .oxlintrc.json <files>` + `npx oxfmt --check <files>` from `packages/twenty-front` instead; the repo forbids JSX prop spreading in tests.
+---

@@ -67,6 +67,8 @@ export const getWorkbenchWidgetTitle = (
       return translate`Upcoming events`;
     case 'activity':
       return translate`Activity`;
+    case 'focus':
+      return translate`Focus & habits`;
     case 'contributions':
       return translate`Contributions`;
     case 'drive-usage':

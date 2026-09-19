@@ -56,9 +56,10 @@
         "A dated entry is appended to the phase report for the touched phase; PLAN.md is not edited; nothing is committed"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md task P10 ('Personal dashboard…'), phase P10, handoff position 5. Starting state: PARTIAL — P8.2-activity-feed (commit 6d220880, orchestrator-ticked 2026-09-19) already shipped the unified Home dashboard widgets including the contribution grid; do not rebuild it. Open: habits/Pomodoro widget, journal doc template (a content template, C1 — instantiate via the existing template machinery, not a parallel system), quick capture Cmd+K → note/task/income (create-task command exists from P4.2-cmdk 7e74c40e, document create command exists, Bilan 'saisie rapide' quick entry exists — compose/reuse these, no duplicate commands).",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-004",
@@ -325,6 +326,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T10:23:09.517Z"
+    "updatedAt": "2026-09-19T10:27:54.302Z"
   }
 }

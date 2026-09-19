@@ -1,0 +1,176 @@
+# Iteration 2 Log
+
+## Metadata
+
+- **Task ID**: US-002
+- **Task Title**: P10: Solo onboarding polish — 1-user presets hide team UI
+- **Description**: As a solo user, I want 1-user workspace presets to hide team UI so that members widgets and presence degrade gracefully instead of cluttering the shell.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T10:16:44.906Z
+- **Ended At**: 2026-09-19T10:23:09.516Z
+- **Duration**: 6m 24s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the clean-start check and task confirmation.
+[94m[bash][0m $ grep -n "US-002" PLAN.md
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "Solo onboarding\|P10\|1-user" PLAN.md | head -50
+[94m[bash][0m $ grep -rn "US-002" tasks/ .ralph-tui/ 2>/dev/null | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "US-002\|CLAIMED\|Solo onboarding\|solo" docs/plan/phases/phase-10-report.md 2>/dev/null | t...
+[94m[bash][0m $ ls docs/plan/phases/ | tail -30
+[94m[bash][0m $ tail -40 docs/plan/phases/phase-08-report.md
+[94m[bash][0m $ grep -rn "one-user\|1-user\|singleUser\|isSolo\|solo" packages/twenty-front/src --include=*.ts --inc...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mAvatarStack[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mmemberCount|membersCount|currentWorkspaceMemberCount|totalMembers[0m
+[94m[bash][0m $ ls packages/twenty-front/src/modules/realtime/components/
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock[0m pattern: [96museRecoilValue|members|workspaceMembers[0m
+[94m[bash][0m $ ls -R packages/twenty-front/src/modules/workbench-dock/registry packages/twenty-front/src/modules/wo...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/registry/workbenchWidgetRegistry.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/hooks/useWorkbenchWidgetRegistry.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workspace-member[0m pattern: [96mcurrentWorkspaceMembers|useWorkspaceMembers|workspaceMembersState|workspaceMemberCount[0m
+[94m[bash][0m $ ls packages/twenty-front/src/modules/workspace-member/ packages/twenty-front/src/modules/workspace-m...
+[94m[bash][0m $ ls packages/twenty-front/src/modules/workspace-member/states packages/twenty-front/src/modules/works...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mWORKSPACE_MEMBER_DATA_SEED_IDS|useWorkspaceMembersState|workspaceMemberIdsState|findManyRecords.*[Ww]orkspaceMember[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/realtime/components/RealtimePresenceAvatarStack.tsx
+[94m[bash][0m $ grep -rln "preset" packages/twenty-front/src/modules --include="*.ts" | grep -iv test | grep -i pres...
+[94m[bash][0m $ grep -rln "PRESET\|Preset" packages/twenty-shared/src 2>/dev/null | head -40
+[94m[bash][0m $ grep -rln "preset" packages/twenty-shared/src packages/twenty-server/src 2>/dev/null | grep -iv "\.s...
+[94m[bash][0m $ grep -rln "preset" docs/plan --include="*.md" | head -20
+[94m[bash][0m $ grep -rln "workspacePreset\|WorkspacePreset\|presetId\|PERSONA\|persona" packages --include="*.ts" -...
+[94m[bash][0m $ grep -n "P1.3\|preset" docs/plan/phases/phase-01-report.md | head -40
+[94m[bash][0m $ grep -rn "P1.3\|preset" docs/plan/01-codebase-map.md docs/plan/03-integration-blueprint.md | head -4...
+[94m[bash][0m $ ls -R packages/twenty-server/src/engine/core-modules/onboarding/ 2>/dev/null | head -60
+[94m[bash][0m $ grep -rln "WorkspaceTemplate\|workspaceTemplate" packages/twenty-server/src/engine/core-modules 2>/d...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ ls -R packages/twenty-front/src/modules/home-dashboard/ 2>/dev/null | head -80
+[94m[bash][0m $ grep -rln "WorkspaceMember" packages/twenty-front/src/modules --include="*.ts" | grep -iv test | gre...
+[94m[bash][0m $ find packages/twenty-front/src/modules/settings/members -name "*.ts" | head -30
+[94m[bash][0m $ grep -rln "WorkspaceMembers\b\|useWorkspaceMembers\|workspaceMembers" packages/twenty-front/src/modu...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mobjectNameSingular: 'workspaceMember'|WorkspaceMember\b.*findMany|findMany.*[Ww]orkspaceMember[0m
+[94m[bash][0m $ grep -rln "workspaceMember" packages/twenty-front/src/modules --include="*.ts" --include="*.tsx" | g...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/hooks/useChatWorkspaceMembers.ts
+[94m[bash][0m $ cat packages/twenty-front/src/modules/realtime/hooks/useWorkspacePresence.ts 2>/dev/null || find pac...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/registerHomeDashboardWidgets.ts
+[94m[bash][0m $ grep -rn "solo\|Solo\|oneUser\|singleUser" packages/twenty-front/src --include="*.ts" --include="*.t...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-front/src/modules/auth/states/currentWorkspaceMembersState.ts 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/side-panel/components/SidePanelTopBar.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/side-panel/components/SidePanelTopBar.tsx
+[94m[read][0m
+[94m[bash][0m $ grep -n "P10\|solo\|Solo" .ralph-tui/progress.md | head -20
+[94m[bash][0m $ grep -rn "totalMembers\|memberCount" packages/twenty-front/src --include="*.ts" --include="*.tsx" | ...
+[94m[bash][0m $ head -80 .ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/components/ChatChannelConversation.tsx
+[94m[bash][0m $ grep -rn "currentWorkspaceMembersState" packages/twenty-front/src --include="*.ts" --include="*.tsx"...
+[94m[bash][0m $ grep -rn "isSolo\|soloWorkspace\|singleMember\|isSingleUser" packages/twenty-shared/src packages/twe...
+[94m[bash][0m $ cat packages/twenty-front/src/modules/realtime/components/__tests__/RealtimePresencePrimitives.test....
+[94m[bash][0m $ ls packages/twenty-front/src/modules/realtime/components/__tests__/ packages/twenty-front/src/module...
+[94m[read][0m
+[94m[bash][0m $ sed -n '100,130p' packages/twenty-front/src/modules/chat/components/ChatChannelConversation.tsx
+[94m[bash][0m $ grep -rln "ChatChannelConversation" packages/twenty-front/src/modules/chat | head
+[94m[bash][0m $ find packages/twenty-front/src/modules/workspace-member -type d
+[94m[bash][0m $ head -20 packages/twenty-front/src/modules/auth/hooks/useAuth.ts 2>/dev/null
+[94m[bash][0m $ ls packages/twenty-front/src/modules/workspace-member/types packages/twenty-front/src/modules/worksp...
+[94m[bash][0m $ cat packages/twenty-front/src/modules/workspace-member/types/*.ts 2>/dev/null | head -60
+[94m[bash][0m $ grep -rln "presence-avatar-stack\|RealtimePresenceAvatarStack" packages/twenty-front/src --include="...
+[94m[bash][0m $ grep -n "SidePanelTopBar\|useWorkspacePresence\|currentWorkspaceMembersState" packages/twenty-front/...
+[94m[bash][0m $ grep -n "WorkbenchWidgetDock\|useIsSoloWorkspace\|currentWorkspaceMembersState\|jest.mock" packages/...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/settings/roles/types/RoleWithPartialMembers.ts
+[94m[bash][0m $ grep -rn "isSoloWorkspace\|requiresCollaborators\|requiresMultipleMembers" packages/twenty-front/src...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/auth/components/AuthProvider.tsx
+[94m[bash][0m $ git diff .ralph-tui/session.json .ralph-tui/session-meta.json | head -60
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ ls docs/plan/phases/phase-10-report.md 2>/dev/null || echo "MISSING"
+Clean-start: dirty files are only Ralph harness state from the US-001 iteration (session/prd metadata), not another executor's source. Proceeding.
+[94m[bash][0m $ head -20 docs/plan/phases/phase-08-report.md
+[94m[write][0m "# Phase 10 — Individual Mode & Polish
+
+CLAIMED — US-002/solo-presence-degrade — deepseek-v4.1-flash — 2026-09-19T10:19:32Z — base 8debd2e2b8caabeff6c7556a34e72108759b84c7
+"
+Now I'll create the phase report and claim the slice.
+[94m[bash][0m $ grep -n "CLAIMED" docs/plan/phases/phase-10-report.md
+[94m[bash][0m $ grep -n "@/\*\|~/\*" packages/twenty-front/tsconfig.json
+[94m[write][0m "import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
+
+// A workspace with exactly one member has no collaborators, so presence,
+// typing and team discussion ha... (524 chars)"
+[94m[write][0m "import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isSoloWorksp... (454 chars)"
+Now implementing. First the pure util and hook:
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/registry/workbenchWidgetRegistry.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/registry/workbenchWidgetRegistry.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/registry/workbenchWidgetRegistry.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+Now filter the dock rail when solo:
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/side-panel/components/SidePanelTopBar.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/side-panel/components/SidePanelTopBar.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/side-panel/components/SidePanelTopBar.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/side-panel/components/SidePanelTopBar.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/components/ChatChannelConversation.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/components/ChatChannelConversation.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/components/ChatChannelConversation.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/components/ChatChannelConversation.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/chat/components/ChatChannelConversation.tsx
+[94m[write][0m "import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
+import { isSoloWorkspace } from '@/workspace-member/utils/isSoloWorkspace';
+
+const createMember = (id: stri... (731 chars)"
+Now the tests. Util spec:
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/workspace-member/utils/__tests__/isSoloWorkspace.test.ts ...
+[94m[bash][0m $ grep -n "tsgo\|typecheck\|lint:diff" docs/plan/phases/phase-08-report.md | head -40
+[94m[bash][0m $ echo "EXIT=${pipestatus[1]:-$?}"
+[94m[bash][0m $ npx oxfmt --check src/modules/workspace-member/utils/isSoloWorkspace.ts src/modules/workspace-member...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/workspace-member/utils/isSoloWorkspace.ts src/...
+[94m[bash][0m $ npx oxfmt --check src/modules/workspace-member/utils/isSoloWorkspace.ts src/modules/workspace-member...
+[94m[read][0m
+[94m[bash][0m $ npx jest src/modules/workbench-dock src/modules/home-dashboard src/modules/realtime src/modules/work...
+[94m[bash][0m $ npx jest src/modules/side-panel/components src/modules/chat/components --config=packages/twenty-fron...
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-front 2>&1 | tail -25
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-10-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-10-report.md
+[94m[bash][0m $ tail -20 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git diff --stat -- packages/twenty-front
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -5
+Done. Implemented the P10 first bullet: a one-member workspace now degrades team presence UI instead of rendering an empty team shell.
+
+**What changed**
+- New `isSoloWorkspace` util + `useIsSoloWorkspace` hook (`workspace-member` module), keyed on `currentWorkspaceMembersState.length === 1` (0 members ≠ solo, so no hidden-UI flash on load).
+- Workbench dock: new `requiresCollaborators` flag on `WorkbenchWidgetDefinition`; `presence` marked team-only and omitted for solo workspaces.
+- Side-panel top bar and chat header: presence avatars + typing indicator hidden for solo.
+
+**Checks (all green)**
+- 3 touched specs → 21 tests PASS; broader front runs → 19 suites/54 + 9 suites/60 PASS
+- `tsgo` → only the 6 documented `front-components` AppPath baseline errors
+- `oxlint --type-aware` → 0/0; `oxfmt --check` clean; `lint:diff-with-main twenty-front` → "No changed files." (uncommitted); `check-docs.mjs` → PASS
+
+**Reported:** `done-for-review`, Ready-to-tick: yes. Tier-2 E12 solo journey left for the orchestrator. Phase report and `progress.md` entries appended; PLAN.md untouched; nothing committed.
+
+<promise>COMPLETE</promise>

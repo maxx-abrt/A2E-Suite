@@ -2,11 +2,13 @@ import {
   IconCalendarEvent,
   IconChartBar,
   IconCheckbox,
+  IconClockPlay,
   IconTimelineEvent,
 } from 'twenty-ui/icon';
 
 import { ContributionGridWidget } from '@/home-dashboard/components/ContributionGridWidget';
 import { MyTasksWidget } from '@/home-dashboard/components/MyTasksWidget';
+import { PomodoroWidget } from '@/home-dashboard/components/PomodoroWidget';
 import { RecentActivityWidget } from '@/home-dashboard/components/RecentActivityWidget';
 import { UpcomingEventsWidget } from '@/home-dashboard/components/UpcomingEventsWidget';
 import {
@@ -29,6 +31,12 @@ const HOME_DASHBOARD_WIDGET_DEFINITIONS: WorkbenchWidgetDefinition[] = [
     Icon: IconTimelineEvent,
     Component: RecentActivityWidget,
     order: 50,
+  },
+  {
+    id: 'focus',
+    Icon: IconClockPlay,
+    Component: PomodoroWidget,
+    order: 52,
   },
   {
     id: 'contributions',

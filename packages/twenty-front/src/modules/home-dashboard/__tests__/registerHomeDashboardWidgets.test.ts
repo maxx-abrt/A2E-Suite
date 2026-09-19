@@ -1,10 +1,16 @@
 import { registerHomeDashboardWidgets } from '@/home-dashboard/registerHomeDashboardWidgets';
 import { getWorkbenchWidgetRegistrySnapshot } from '~/modules/workbench-dock/registry/workbenchWidgetRegistry';
 
-const HOME_WIDGET_IDS = ['tasks', 'events', 'activity', 'contributions'];
+const HOME_WIDGET_IDS = [
+  'tasks',
+  'events',
+  'activity',
+  'focus',
+  'contributions',
+];
 
 describe('registerHomeDashboardWidgets', () => {
-  it('registers the four Home widgets with their components on import', () => {
+  it('registers the five Home widgets with their components on import', () => {
     const definitions = getWorkbenchWidgetRegistrySnapshot();
 
     for (const widgetId of HOME_WIDGET_IDS) {
