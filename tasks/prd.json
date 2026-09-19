@@ -42,11 +42,12 @@
         "Tier 2 stays with the orchestrator: no `yarn start`, no live scratch workspace run; a dated executor entry is appended to docs/plan/phases/phase-01-report.md; PLAN.md is not edited; nothing is committed"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "Starting state: not-started (P1.6b is [ ]; the C1/C2 contract and typed operation shapes exist from P1.6a). Sequential with US-016 because both edit workspace-template.service.ts.",
       "dependsOn": [
         "US-016"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-018",
@@ -219,6 +220,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T17:08:50.835Z"
+    "updatedAt": "2026-09-19T17:12:52.087Z"
   }
 }

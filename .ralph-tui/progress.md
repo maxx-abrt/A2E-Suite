@@ -17,6 +17,13 @@ after each iteration and it's included in prompts for context.
   `postInstallLogicFunction`. `WorkspaceTemplateService.resolveSampleSeedingStep`
   reports `succeeded` only for a synchronous hook; an async hook (all a2e apps)
   reports `failed`/`SEED_FAILED` with retry guidance. No server-side seeder.
+- **Unit-proving lock-serialized idempotency:** a spec that mocks
+  `CacheLockService.withLock` as a passthrough cannot show concurrent dedupe.
+  Provide a real per-key serializing fake (a `Map<key, Promise>` chain) plus a
+  stateful `KeyValuePairService` store (`set` writes `{ value }`, `get` returns
+  `[stored]`), then `Promise.all` two same-key calls: the second waits on the
+  chain, reads the persisted operation and skips the install. See
+  `workspace-template.service.idempotency.spec.ts`.
 
 ---
 
@@ -41,4 +48,27 @@ after each iteration and it's included in prompts for context.
     the way to get handler coverage into the default suite.
   - Reinstall idempotency is keyed on `pcgAccount` (categories), one
     `orgProfiles` row, `systemKey` (sheets) and `(title, templateKey)` (fiches).
+---
+
+## 2026-09-19 - US-017
+
+- Implemented US-017 as the unit-proof slice for the already-built
+  `WorkspaceTemplateService.applyWorkspaceTemplateOperation` idempotency path
+  (no product code change).
+- Added `workspace-template.service.idempotency.spec.ts` (3 cases):
+  N=3 same-key retries → one install, one workspace update, stable `operationId`
+  and surviving statuses, one persisted record; `Promise.all` same-key calls
+  over a per-key serializing fake lock → one install, deep-equal results;
+  a synchronous-hook seed case → the succeeded `seed-samples` step is not
+  re-resolved on retry (lookup count frozen) so no duplicate seeds.
+- Files changed: new `workspace-template.service.idempotency.spec.ts`,
+  `docs/plan/phases/phase-01-report.md`, this file.
+- **Learnings:**
+  - The sibling `workspace-template.service.spec.ts` mocks `withLock` through,
+    so concurrency was only covered by the Tier-1 integration spec; the unit
+    gap was the "asserted by unit test" AC.
+  - `operationId` is the idempotency key (stable), not a fresh UUID; the §4 doc's
+    "UUID" note is cosmetic and changing it is a wire change with no AC.
+  - `nx lint:diff-with-main` diffs `main...HEAD`, so an untracked new spec is
+    not covered — run `oxlint --type-aware` + `oxfmt --check` directly.
 ---

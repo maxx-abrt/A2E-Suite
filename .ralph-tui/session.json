@@ -3,10 +3,10 @@
   "sessionId": "ff065ea9-77f5-4159-84ea-c6e8236afbc0",
   "status": "running",
   "startedAt": "2026-09-19T17:02:11.593Z",
-  "updatedAt": "2026-09-19T17:08:50.836Z",
-  "currentIteration": 0,
+  "updatedAt": "2026-09-19T17:12:52.088Z",
+  "currentIteration": 1,
   "maxIterations": 20,
-  "tasksCompleted": 0,
+  "tasksCompleted": 1,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -16,7 +16,18 @@
     "totalTasks": 0,
     "tasks": []
   },
-  "iterations": [],
+  "iterations": [
+    {
+      "iteration": 1,
+      "status": "completed",
+      "taskId": "US-016",
+      "taskTitle": "P1.6b (also closes the P1.3 remainder): truthful async post-install completion — root-cause and fix the seed-0-rows hook failure and the \"succeeded (delegated)\" over-report",
+      "taskCompleted": true,
+      "durationMs": 393526,
+      "startedAt": "2026-09-19T17:02:17.307Z",
+      "endedAt": "2026-09-19T17:08:50.833Z"
+    }
+  ],
   "skippedTaskIds": [],
   "cwd": "/Users/maxaubert/Projets/A2E Suite",
   "activeTaskIds": [],
