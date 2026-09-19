@@ -6,6 +6,7 @@ after each iteration and it's included in prompts for context.
 ## Codebase Patterns (Study These First)
 
 - **Persisting an app-owned workspace object from `twenty-front`**: the app declares the object (e.g. `documentRevision`, `documentCommentThread`) in `packages/twenty-apps/internal/a2e-documents/src/objects/`, and the front writes it through hand-written `gql` documents + `useApolloCoreClient()` (the objects are absent from checked-in generated metadata — regen with `nx run twenty-front:graphql:generate` once installed). Permissions are the platform's object permissions on the standard GraphQL API; the client adapter must fail closed on a denied transport (no read leak, no write applied), not add a parallel authz layer.
+- **Copying note/template body blocks into a fresh record must re-key block anchors**: `remapTemplateBlockIds` (`a2e-documents/src/lib/instantiate-template.ts`) is the single anchor re-key authority (fresh ids, internal refs followed, `threadId` untouched, malformed/non-array refused). Reusing it — rather than parsing/copying raw blocknote — is what keeps a copy from aliasing the source's comment/thread state. `createBlockId` is injectable for deterministic tests; note-copy passes it through `buildNoteCopyBlocks`/`buildRecordNoteCopyContent`/`buildRecordNoteCopyPayload`.
 
 ---
 
@@ -45,4 +46,13 @@ after each iteration and it's included in prompts for context.
   - The first unmet US-032 acceptance gap is AC3 (server-side compare-and-set via the app's logic-function pattern). The app CAS primitive is a **filtered update** (`updateX(filter, data)` compiles to one `UPDATE … WHERE … RETURNING`, per phase-04-report lines 158/210/556) — but the document body path can only be a **post-commit repair** guard (SDK has no pre-write hook), so it needs a client-carried expected-revision token to detect staleness at all.
   - `DatabaseEventPayload.properties` carries full `before`/`after` records (`ObjectRecordUpdateEvent`), so a `document.updated` guard can read `before.content`/`after.content` and restore the winner without a second query.
   - AC4 (front `retry` + draft-preservation cases) and AC5 (single-writer guidance docs) remain open and unclaimed once the AC3 claimant reports.
+---
+
+## 2026-09-19 - US-033
+- Closed the first unmet acceptance gap of the committed P3.3 record→document slice: the copied note bodies were parsed and re-emitted with their original block ids, which aliases the source note's anchors. Routed them through the existing template-copy helper `remapTemplateBlockIds` (`parseNoteBlocks` → `remapNoteBlocks`), threading an additive `createBlockId` option through the payload builders.
+- Files changed: `packages/twenty-apps/internal/a2e-documents/src/lib/record-note-copy.ts`, `.../src/lib/__tests__/record-note-copy.test.ts` (17→18 cases), `docs/plan/phases/phase-03-report.md`, `.ralph-tui/progress.md`.
+- **Learnings:**
+  - The prior P3.3 record-note-copy `done-for-review` (2026-09-17) shipped payload/permission/provenance/entry-points, but did **not** reuse `remapTemplateBlockIds`, so AC3 ("through the existing template-copy helper") was genuinely open even though the task had a done entry. Read the current task's acceptance list against the code, not just the report status.
+  - `buildTemplateCopyPayload` is not a drop-in for note copy (it copies only title/content and no relations); the reusable piece is `remapTemplateBlockIds` on each note body. Headings/source-link blocks stay deterministically id'd and are not passed through the re-key.
+  - Gotcha reconfirmed: US-032 edits land in the same checkout concurrently mid-session (`git status` grew files while this run worked). Only the two record-note-copy files are mine; do not revert the sibling session's files.
 ---

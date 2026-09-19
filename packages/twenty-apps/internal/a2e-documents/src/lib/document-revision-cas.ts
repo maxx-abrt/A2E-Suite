@@ -21,6 +21,7 @@ export const DOCUMENT_REVISION_REPAIR_PREFIX = 'repair-';
 
 export type DocumentRevisionContent =
   | { blocknote?: string | null; markdown?: string | null }
+  | string
   | null
   | undefined;
 
@@ -47,12 +48,27 @@ export type DocumentSaveCasResolution =
 
 // A body that no longer reads as text (legacy value, malformed row) is treated
 // as null rather than widening into an untyped value the handler would write
-// back.
+// back. The raw event carries the jsonb column as an object, but a serialized
+// string is accepted too so the decision never depends on the driver's shape.
 export const readDocumentRevisionBody = (
   content: DocumentRevisionContent,
 ): string | null => {
   if (content == null) {
     return null;
+  }
+
+  if (typeof content === 'string') {
+    try {
+      const parsed: unknown = JSON.parse(content);
+
+      return parsed !== null &&
+        typeof parsed === 'object' &&
+        typeof (parsed as { blocknote?: unknown }).blocknote === 'string'
+        ? (parsed as { blocknote: string }).blocknote
+        : null;
+    } catch {
+      return null;
+    }
   }
 
   return typeof content.blocknote === 'string' ? content.blocknote : null;

@@ -41,7 +41,60 @@ describe('useDocumentSaveConflictGuard', () => {
     expect(result.current.conflict).toEqual({
       conflictingBlockIds: ['a'],
       remoteBody: body(paragraph('a', 'Alpha remote')),
+      remoteRevision: null,
     });
+  });
+
+  it('tracks the expected revision token and captures the conflicting one', () => {
+    const { result } = renderHook(() => useDocumentSaveConflictGuard(true));
+    const baseBody = body(paragraph('a', 'Alpha'));
+
+    act(() => {
+      result.current.observeRevision(baseBody, baseBody, 'docrev-1');
+    });
+
+    expect(result.current.getBaseRevision()).toBe('docrev-1');
+
+    act(() => {
+      result.current.observeRevision(
+        body(paragraph('a', 'Alpha remote')),
+        body(paragraph('a', 'Alpha local')),
+        'docrev-2',
+      );
+    });
+
+    expect(result.current.conflict?.remoteRevision).toBe('docrev-2');
+    expect(result.current.getBaseRevision()).toBe('docrev-2');
+  });
+
+  it('records the persisted revision so the next save expects it', () => {
+    const { result } = renderHook(() => useDocumentSaveConflictGuard(true));
+    const persistedBody = body(paragraph('a', 'Alpha'));
+
+    act(() => {
+      result.current.notePersisted(persistedBody, 'docrev-9');
+    });
+
+    expect(result.current.getBaseRevision()).toBe('docrev-9');
+
+    act(() => {
+      result.current.resetBase(persistedBody, 'docrev-10');
+    });
+
+    expect(result.current.getBaseRevision()).toBe('docrev-10');
+  });
+
+  it('adopts a token-only change without raising a conflict', () => {
+    const { result } = renderHook(() => useDocumentSaveConflictGuard(true));
+    const baseBody = body(paragraph('a', 'Alpha'));
+
+    act(() => {
+      result.current.observeRevision(baseBody, baseBody, 'docrev-1');
+      result.current.observeRevision(baseBody, baseBody, 'repair-docrev-1');
+    });
+
+    expect(result.current.conflict).toBeNull();
+    expect(result.current.getBaseRevision()).toBe('repair-docrev-1');
   });
 
   it('advances the base without conflicting on a disjoint concurrent revision', () => {
@@ -144,6 +197,35 @@ describe('useDocumentSaveConflictGuard', () => {
     });
 
     expect(result.current.conflict).toBeNull();
+  });
+
+  it('allows a retry after the conflict is resolved in favour of the local draft', () => {
+    const { result } = renderHook(() => useDocumentSaveConflictGuard(true));
+    const baseBody = body(paragraph('a', 'Alpha'));
+    const localBody = body(paragraph('a', 'Alpha local'));
+
+    act(() => {
+      result.current.observeRevision(baseBody, baseBody, 'docrev-1');
+      result.current.observeRevision(
+        body(paragraph('a', 'Alpha remote')),
+        localBody,
+        'docrev-2',
+      );
+    });
+
+    expect(result.current.conflict).not.toBeNull();
+
+    // "Keep my changes": the local body is persisted against the conflicting
+    // token, then its echo must be clean and the next save must expect the
+    // token we just wrote.
+    act(() => {
+      result.current.notePersisted(localBody, 'docrev-3');
+      result.current.clearConflict();
+      result.current.observeRevision(localBody, localBody, 'docrev-3');
+    });
+
+    expect(result.current.conflict).toBeNull();
+    expect(result.current.getBaseRevision()).toBe('docrev-3');
   });
 
   it('never conflicts when the guard is disabled', () => {

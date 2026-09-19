@@ -5,25 +5,36 @@ import { classifyDocumentSaveConflict } from '@/blocknote-editor/co-editing/util
 export type DocumentSaveConflict = {
   conflictingBlockIds: string[];
   remoteBody: string;
+  // The committed revision token the conflicting body belongs to; the
+  // "keep my changes" action uses it as its expected revision so the
+  // deliberate overwrite is accepted rather than reverted by the guard.
+  remoteRevision: string | null;
 };
 
 export type DocumentSaveConflictGuard = {
   conflict: DocumentSaveConflict | null;
   // Seeds the expected revision (the body the local edits start from) and
   // records an adopted remote body as the new base.
-  resetBase: (body: string) => void;
-  // Records a successful local persist: the server now holds this body.
-  notePersisted: (body: string) => void;
+  resetBase: (body: string, revision?: string | null) => void;
+  // Records a successful local persist: the server now holds this body and
+  // revision.
+  notePersisted: (body: string, revision?: string | null) => void;
+  // The revision token to send as the expected base on the next save.
+  getBaseRevision: () => string | null;
   // Drops the pending conflict without changing the base.
   clearConflict: () => void;
   // Called with the latest record body and the local editing body; classifies
   // a concurrent revision and raises a conflict when it overlaps local edits.
-  observeRevision: (remoteBody: string, localBody: string) => void;
+  observeRevision: (
+    remoteBody: string,
+    localBody: string,
+    remoteRevision?: string | null,
+  ) => void;
 };
 
-// Client-side expected-revision guard for document saves. v1 has no server
-// save/merge protocol, so this compares the latest known record body against
-// the body the local edits were based on: an overlapping concurrent revision
+// Client-side expected-revision guard for document saves. The server-side guard
+// repairs a committed write whose expected token is no longer current, so this
+// tracks the token alongside the base body: an overlapping concurrent revision
 // raises a conflict the editor surfaces while keeping the local draft intact,
 // and the base only advances on an echo of our own write, an adopted remote
 // body, or a disjoint concurrent revision.
@@ -35,22 +46,31 @@ export const useDocumentSaveConflictGuard = (
   // surfaced conflict is the render state.
   // oxlint-disable-next-line twenty/no-state-useref
   const baseBodyRef = useRef<string | null>(null);
+  // oxlint-disable-next-line twenty/no-state-useref
+  const baseRevisionRef = useRef<string | null>(null);
   const [conflict, setConflict] = useState<DocumentSaveConflict | null>(null);
 
-  const resetBase = useCallback((body: string) => {
+  const resetBase = useCallback((body: string, revision?: string | null) => {
     baseBodyRef.current = body;
+    baseRevisionRef.current = revision ?? null;
   }, []);
 
-  const notePersisted = useCallback((body: string) => {
-    baseBodyRef.current = body;
-  }, []);
+  const notePersisted = useCallback(
+    (body: string, revision?: string | null) => {
+      baseBodyRef.current = body;
+      baseRevisionRef.current = revision ?? null;
+    },
+    [],
+  );
+
+  const getBaseRevision = useCallback(() => baseRevisionRef.current, []);
 
   const clearConflict = useCallback(() => {
     setConflict(null);
   }, []);
 
   const observeRevision = useCallback(
-    (remoteBody: string, localBody: string) => {
+    (remoteBody: string, localBody: string, remoteRevision?: string | null) => {
       if (!isEnabled) {
         return;
       }
@@ -63,10 +83,14 @@ export const useDocumentSaveConflictGuard = (
       // would raise a conflict for edits made while the record was loading.
       if (baseBody === null || baseBody === '') {
         baseBodyRef.current = remoteBody;
+        baseRevisionRef.current = remoteRevision ?? null;
         return;
       }
 
       if (remoteBody === baseBody) {
+        // Same body: still adopt the token so a token-only change (a repair
+        // restore) does not leave the expected revision behind.
+        baseRevisionRef.current = remoteRevision ?? null;
         return;
       }
 
@@ -74,6 +98,7 @@ export const useDocumentSaveConflictGuard = (
       // echo, not a concurrent revision.
       if (remoteBody === localBody) {
         baseBodyRef.current = remoteBody;
+        baseRevisionRef.current = remoteRevision ?? null;
         return;
       }
 
@@ -84,11 +109,13 @@ export const useDocumentSaveConflictGuard = (
       });
 
       baseBodyRef.current = remoteBody;
+      baseRevisionRef.current = remoteRevision ?? null;
 
       if (result.outcome === 'conflict') {
         setConflict({
           conflictingBlockIds: result.conflictingBlockIds,
           remoteBody,
+          remoteRevision: remoteRevision ?? null,
         });
       }
     },
@@ -99,6 +126,7 @@ export const useDocumentSaveConflictGuard = (
     conflict,
     resetBase,
     notePersisted,
+    getBaseRevision,
     clearConflict,
     observeRevision,
   };

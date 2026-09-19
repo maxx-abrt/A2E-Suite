@@ -1,4 +1,5 @@
 import { buildAppendPosition } from './fractional-position.ts';
+import { remapTemplateBlockIds } from './instantiate-template.ts';
 
 // "Save as document" from a record copies the linked notes' real bodies into a
 // fresh document instead of snapshotting the record title. A record exposes no
@@ -103,17 +104,23 @@ const linkInlineContent = (label: string, href: string) => ({
   content: [textInlineContent(label)],
 });
 
-const parseNoteBlocks = (
+// Copied note bodies keep their content but must not keep their block anchors:
+// a copy that reused the note's block ids would alias comment/thread state.
+// The template-copy helper re-keys every anchor (and follows internal
+// references) and refuses malformed or non-array bodies, so note-copy reuses it
+// instead of minting a second copy mechanism.
+const remapNoteBlocks = (
   body: RichTextBody | null | undefined,
+  options: { createBlockId?: () => string },
 ): BlockNoteBlock[] => {
-  const blocknote = body?.blocknote;
+  const remapped = remapTemplateBlockIds(body?.blocknote, options);
 
-  if (typeof blocknote !== 'string' || blocknote.trim() === '') {
+  if (remapped === null) {
     return [];
   }
 
   try {
-    const parsed: unknown = JSON.parse(blocknote);
+    const parsed: unknown = JSON.parse(remapped);
 
     return Array.isArray(parsed) ? (parsed as BlockNoteBlock[]) : [];
   } catch {
@@ -192,7 +199,10 @@ export const buildRecordSourceLinkBlock = (
 
 // Each copied note keeps a heading that links back to its own record page, so
 // the document body carries the note-level source link next to the copied body.
-export const buildNoteCopyBlocks = (note: SourceNote): BlockNoteBlock[] => {
+export const buildNoteCopyBlocks = (
+  note: SourceNote,
+  options: { createBlockId?: () => string } = {},
+): BlockNoteBlock[] => {
   const title = note.title?.trim() || NOTE_HEADING_FALLBACK;
 
   const heading: BlockNoteBlock = {
@@ -202,12 +212,13 @@ export const buildNoteCopyBlocks = (note: SourceNote): BlockNoteBlock[] => {
     content: [linkInlineContent(title, buildNoteSourceHref(note.id))],
   };
 
-  return [heading, ...parseNoteBlocks(note.bodyV2)];
+  return [heading, ...remapNoteBlocks(note.bodyV2, options)];
 };
 
 export const buildRecordNoteCopyContent = (
   source: RecordNoteCopySource,
   authorization: Pick<RecordNoteCopyAuthorization, 'canReadSourceNotes'>,
+  options: { createBlockId?: () => string } = {},
 ): RecordNoteCopyContent => {
   const recordName =
     source.recordName?.trim() || DEFAULT_DOCUMENT_TITLE;
@@ -225,7 +236,7 @@ export const buildRecordNoteCopyContent = (
 
   if (authorization.canReadSourceNotes) {
     for (const note of source.notes) {
-      blocks.push(...buildNoteCopyBlocks(note));
+      blocks.push(...buildNoteCopyBlocks(note, options));
 
       const noteMarkdown = note.bodyV2?.markdown;
 
@@ -247,7 +258,7 @@ export const buildRecordNoteCopyContent = (
 export const buildRecordNoteCopyPayload = (
   source: RecordNoteCopySource,
   authorization: RecordNoteCopyAuthorization,
-  options: { position?: string } = {},
+  options: { position?: string; createBlockId?: () => string } = {},
 ): RecordNoteCopyPayload | null => {
   if (!authorization.canReadSourceRecord) {
     return null;
@@ -256,7 +267,7 @@ export const buildRecordNoteCopyPayload = (
   const payload: RecordNoteCopyPayload = {
     title: source.recordName?.trim() || DEFAULT_DOCUMENT_TITLE,
     position: options.position ?? buildAppendPosition(undefined),
-    content: buildRecordNoteCopyContent(source, authorization),
+    content: buildRecordNoteCopyContent(source, authorization, options),
   };
 
   if (source.objectNameSingular === 'company') {

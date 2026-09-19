@@ -109,6 +109,7 @@ test('content copies one note body behind a linked heading', () => {
       ],
     },
     { canReadSourceNotes: true },
+    { createBlockId: () => 'fresh-b1' },
   );
 
   const blocks = JSON.parse(content.blocknote ?? '[]');
@@ -128,11 +129,68 @@ test('content copies one note body behind a linked heading', () => {
   assert.equal(blocks[1].props.level, 3);
   assert.equal(blocks[1].content[0].href, '/object/note/note-1');
   assert.equal(blocks[1].content[0].content[0].text, 'Kickoff');
-  assert.equal(blocks[2].id, 'b1');
+  assert.equal(blocks[2].id, 'fresh-b1');
   assert.equal(
     content.markdown,
     'Source : [Acme](/object/company/company-1)\n\n# Kickoff\n\nHello',
   );
+});
+
+test('copied note bodies get fresh anchors instead of aliasing the note', () => {
+  let blockIdCounter = 0;
+
+  const buildContent = (objectNameSingular: 'company' | 'person') =>
+    buildRecordNoteCopyContent(
+      {
+        objectNameSingular,
+        recordId: `${objectNameSingular}-1`,
+        recordName: 'Acme',
+        notes: [
+          {
+            id: 'note-1',
+            title: 'First',
+            bodyV2: {
+              blocknote: blocknoteBody([
+                { id: 'shared-block', type: 'paragraph' },
+              ]),
+            },
+          },
+          {
+            id: 'note-2',
+            title: 'Second',
+            bodyV2: {
+              blocknote: blocknoteBody([
+                { id: 'shared-block', type: 'paragraph' },
+              ]),
+            },
+          },
+        ],
+      },
+      { canReadSourceNotes: true },
+      { createBlockId: () => `fresh-${++blockIdCounter}` },
+    );
+
+  for (const objectNameSingular of ['company', 'person'] as const) {
+    blockIdCounter = 0;
+
+    const content = buildContent(objectNameSingular);
+    const blocks = JSON.parse(content.blocknote ?? '[]');
+    const bodyBlocks = blocks.filter(
+      (block: { id: string; type: string }) =>
+        block.type === 'paragraph' && block.id !== 'a2e-record-source-link',
+    );
+
+    assert.equal(bodyBlocks.length, 2);
+    assert.deepEqual(
+      bodyBlocks.map((block: { id: string }) => block.id),
+      ['fresh-1', 'fresh-2'],
+    );
+    assert.ok(
+      bodyBlocks.every(
+        (block: { id: string }) => block.id !== 'shared-block',
+      ),
+    );
+  }
 });
 
 test('content tolerates a note without a title or body', () => {

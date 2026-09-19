@@ -1088,3 +1088,20 @@ CLAIMED — US-032/server-expected-revision-cas — deepseek-v4.1-flash — 2026
 **Do not redo:** do not start a third concurrent AC3 attempt on this checkout — the `server-side-compare-and-set` claim is the active lock for the app logic-function + editor files.
 **Remaining:** ~11 other [ ]/[~] tasks ahead in the execution order (P1.3 e2e, P1.6d D02-gated leg, P1.7a export, P1.7b/c Tier-2, P2.1 bullet 5, P2.4/P2.5 e2e, US-032 AC4/AC5, P3.3 record-note-body copy, P3.4+)
 **Next:** orchestrator — reconcile the two live ralph sessions (US-030 already showed the same duplicate); executor — after `server-side-compare-and-set` reports, take US-032's remaining AC4/AC5 or another queued leg.
+
+CLAIMED — US-033/record-note-copy-template-helper — deepseek-v4.1-flash — 2026-09-19T21:40:16Z — base e5824205f4e2b19a241c85aec45e9c95782704f1
+
+## 2026-09-19 21:52 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-033 [P3.3] Record integration — actual selected-note body copy with source link and permission checks · **Slice:** first unmet acceptance gap — route copied note bodies through the existing template-copy helper (`remapTemplateBlockIds`) so anchors are re-keyed (AC3); payload/permission/provenance/entry-point work from 2026-09-17 is left intact
+**Claim:** done-for-review
+**Ready-to-tick:** yes — Tier 0/1 green; AC5 explicitly scopes entry points to "existing command wiring — no browser run", so the previously-recorded Tier-2 journey is informational for the orchestrator
+**Base:** e5824205f4e2b19a241c85aec45e9c95782704f1
+**Changed:**
+- `a2e-documents/src/lib/record-note-copy.ts` — `parseNoteBlocks` replaced by `remapNoteBlocks`, which delegates to `remapTemplateBlockIds` (the template-copy helper) so each copied note's block ids are fresh (internal refs followed, `threadId` untouched, malformed/non-array refused ⇒ no body blocks); `createBlockId` injectable through `buildNoteCopyBlocks` / `buildRecordNoteCopyContent` / `buildRecordNoteCopyPayload` (additive options). Source link + linked note headings + markdown still built here; `companyId`/`personId` unchanged
+- `a2e-documents/src/lib/__tests__/record-note-copy.test.ts` — 17 → 18 cases; existing body-copy case now injects `createBlockId`; new "fresh anchors" case asserts two notes with the same source block id get distinct fresh ids for both company and person
+**Checks:** `node --test src/lib/__tests__/record-note-copy.test.ts` (a2e-documents) → 18/18; `node --test src/lib/__tests__/*.test.ts` → 168/168; `npx tsc --noEmit` → exit 0; `yarn lint` (oxlint 0.16) → 0 warnings/0 errors on 69 files; `npx oxfmt --check <2 .ts files>` → "All matched files may have been excluded" (oxfmt ignores `.ts` in this package — known precedent); `npx twenty dev:build .` → Build succeeded (22 files)
+**Missing for tick:** none at Tier 0/1. Tier-2 (orchestrator): trigger the Cmd+K action from a company and a person (record page/relation/side-panel), confirm the new document opens with copied bodies + source links + record Documents entry; body still carries fresh anchors
+**Do not redo:** `buildRecordNoteCopyPayload` stays the payload authority; `remapTemplateBlockIds` is the single anchor re-key authority (do not fork a second copy path); fail-closed rules (missing `noteTargets` ⇒ unreadable; null source record ⇒ no document) and the two-entry factory split are unchanged
+**Concurrency note:** the working tree also carries the active `US-032/server-side-compare-and-set` claim's edits (`RichTextFieldEditor.tsx`, `useDocumentSaveConflictGuard.ts` + test, `a2e-documents/README.md`, `docs/repository-architecture-audit.md`) — not mine, no file overlap, left untouched
+**Remaining:** ~11 other [ ]/[~] tasks ahead in the execution order (P1.3 e2e, P1.6d D02-gated leg, P1.7a export, P1.7b/c Tier-2, P2.1 bullet 5, P2.4/P2.5 e2e, US-032 AC4/AC5, P3.4+)
+**Next:** orchestrator — tick US-033 (Tier-2 browser leg optional per AC5) and reconcile the two live ralph sessions; executor — US-032 AC4/AC5 or another queued leg

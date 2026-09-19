@@ -56,8 +56,10 @@ parent ([guard-document-parent-cycle.ts](./src/logic-functions/guard-document-pa
 
 A document carries `title`, rich-text `content`, `icon`, `coverColor`,
 `summary`, a `kind` select (`DOCUMENT` / `TEMPLATE`), tags
-(`MEETING_NOTES`, `REFERENCE`, `DRAFT`), a deprecated `isFavorite` flag and
-`archivedAt`. Personal favorites live on the `documentFavorite` join object.
+(`MEETING_NOTES`, `REFERENCE`, `DRAFT`), a deprecated `isFavorite` flag,
+`archivedAt`, and the expected-revision save tokens `contentRevision` /
+`contentBaseRevision` (see *Concurrent saves*). Personal favorites live on the
+`documentFavorite` join object.
 It links to a `company` and a `person` (set null on delete); inverse
 `documents` fields are added to those standard objects. The record page's
 front component renders the cover, a Markdown heading outline and inline child
@@ -115,9 +117,37 @@ with the caller's role, so the platform's object permissions gate access; a
 denied read or write fails closed (no versions shown, no write applied) and the
 editor keeps working against its local buffer.
 
-The same persistence shape backs comment threads. Co-editing presence and the
-expected-revision conflict guard exist, but v1 has no server save/merge
-protocol: do not advertise OT/CRDT or real-time collaborative merge.
+The same persistence shape backs comment threads.
+
+### Concurrent saves (no OT/CRDT)
+
+A save carries an expected revision. The blocknote editor writes the new
+`contentRevision` token and the `contentBaseRevision` it expected on the
+`document` record in the same update. When the expected token no longer matches
+the committed one, the editor withholds the write, keeps the draft and shows a
+conflict banner with **Keep my changes** / **Use saved version**; choosing the
+saved version reseeds the expected token from the conflicting revision.
+
+Because any API client can write `content`, the platform re-checks the committed
+row too. The app SDK exposes only post-commit database events (no pre-write
+hook), so `guard-document-revision-save`
+([guard-document-revision-save.ts](./src/logic-functions/guard-document-revision-save.ts))
+repairs a stale write after it lands: it restores the winning body and its
+revision token in place of the stale one. Two concurrent writers therefore
+converge on one deterministic winner instead of interleaving blocks. This is a
+repair guarantee, not a save/merge protocol: there is no OT/CRDT, no merge
+engine and no new event bus.
+
+**Single-writer guidance.** v1 does not merge concurrent edits to the same body.
+Writers that send the expected revision (the editor) get the conflict banner and
+the repair guarantee; writers that do not send `contentBaseRevision` stay
+last-write-wins at the database level. Coordinate external or automated document
+writers so one owns a given document's content at a time, and prefer routing
+automated edits through the same expected-revision write so a stale write is
+repaired rather than silently applied.
+
+The old in-memory-only claim is superseded: do not advertise OT/CRDT or
+real-time collaborative merge.
 
 ## Development
 

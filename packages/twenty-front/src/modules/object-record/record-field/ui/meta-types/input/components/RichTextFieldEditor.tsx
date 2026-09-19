@@ -8,6 +8,10 @@ import { useResolveCommentUsers } from '@/blocknote-editor/comments/hooks/useRes
 import { BlockEditor } from '@/blocknote-editor/components/BlockEditor';
 import { BlockEditorSaveConflictBanner } from '@/blocknote-editor/co-editing/components/BlockEditorSaveConflictBanner';
 import { useDocumentSaveConflictGuard } from '@/blocknote-editor/co-editing/hooks/useDocumentSaveConflictGuard';
+import {
+  createDocumentContentRevision,
+  FIRST_DOCUMENT_CONTENT_REVISION,
+} from '@/blocknote-editor/co-editing/utils/documentContentRevision';
 import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
 import { useAttachmentSync } from '@/blocknote-editor/hooks/useAttachmentSync';
 import { useReplaceBlockEditorContent } from '@/blocknote-editor/hooks/useReplaceBlockEditorContent';
@@ -215,16 +219,25 @@ export const RichTextFieldEditor = ({
   );
 
   // Shared by the normal persist and the conflict "keep my changes" action so
-  // both write the exact same prepared body; returns it so the conflict guard's
-  // expected revision matches what lands in the cache.
+  // both write the exact same prepared body; returns the body and the new
+  // revision token so the conflict guard's expected revision matches what lands
+  // in the cache. `expectedRevision` is the committed token the write is based
+  // on; the server guard repairs the write when it is no longer current.
   const persistBlocknoteBody = useCallback(
-    (blocknote: string): string => {
+    (
+      blocknote: string,
+      expectedRevision: string | null,
+    ): { body: string; revision: string | null } => {
       const preparedBlocknote = prepareBodyWithSignedUrls(blocknote);
 
       if (onPersistBody) {
         onPersistBody(preparedBlocknote);
-        return preparedBlocknote;
+        return { body: preparedBlocknote, revision: null };
       }
+
+      const contentRevision = isDocumentRecord
+        ? createDocumentContentRevision()
+        : null;
 
       updateOneRecord({
         idToUpdate: recordId,
@@ -234,12 +247,26 @@ export const RichTextFieldEditor = ({
             blocknote: preparedBlocknote,
             markdown: null,
           },
+          ...(isDocumentRecord
+            ? {
+                contentRevision,
+                contentBaseRevision:
+                  expectedRevision ?? FIRST_DOCUMENT_CONTENT_REVISION,
+              }
+            : {}),
         },
       });
 
-      return preparedBlocknote;
+      return { body: preparedBlocknote, revision: contentRevision };
     },
-    [fieldName, objectNameSingular, onPersistBody, recordId, updateOneRecord],
+    [
+      fieldName,
+      objectNameSingular,
+      onPersistBody,
+      recordId,
+      updateOneRecord,
+      isDocumentRecord,
+    ],
   );
 
   const { draft, updateDraft, markDirty, flush, draftResyncKey } =
@@ -254,8 +281,12 @@ export const RichTextFieldEditor = ({
         // side; the draft stays in the editor and is never silently dropped.
         if (isSaveConflictActiveRef.current) return;
 
-        const persistedBody = persistBlocknoteBody(blocknote);
-        saveConflictGuard.notePersisted(persistedBody);
+        const { body, revision } = persistBlocknoteBody(
+          blocknote,
+          saveConflictGuard.getBaseRevision(),
+        );
+
+        saveConflictGuard.notePersisted(body, revision);
       },
     });
 
@@ -298,24 +329,40 @@ export const RichTextFieldEditor = ({
 
   // Observe the record body against the local draft. The cache also carries our
   // own optimistic writes, so a body equal to the draft is an echo and only a
-  // differing body is classified as a concurrent revision.
+  // differing body is classified as a concurrent revision. The committed
+  // revision token rides along so a conflict can be force-resolved with it.
   const remoteRecordBody = fieldValue?.blocknote ?? '';
+  const remoteRecordRevision =
+    (recordInStore as { contentRevision?: string | null } | null | undefined)
+      ?.contentRevision ?? null;
   const { observeRevision } = saveConflictGuard;
 
   useEffect(() => {
-    observeRevision(remoteRecordBody, draft.blocknote);
-  }, [remoteRecordBody, draft.blocknote, observeRevision]);
+    observeRevision(remoteRecordBody, draft.blocknote, remoteRecordRevision);
+  }, [
+    remoteRecordBody,
+    draft.blocknote,
+    remoteRecordRevision,
+    observeRevision,
+  ]);
 
   const handleKeepLocalChanges = () => {
     const localBody = JSON.stringify(editor.document);
-    const persistedBody = persistBlocknoteBody(localBody);
+    const expectedRevision =
+      saveConflictGuard.conflict?.remoteRevision ??
+      saveConflictGuard.getBaseRevision();
+    const { body, revision } = persistBlocknoteBody(
+      localBody,
+      expectedRevision,
+    );
 
-    saveConflictGuard.notePersisted(persistedBody);
+    saveConflictGuard.notePersisted(body, revision);
     saveConflictGuard.clearConflict();
   };
 
   const handleUseSavedVersion = () => {
     const remoteBody = saveConflictGuard.conflict?.remoteBody;
+    const remoteRevision = saveConflictGuard.conflict?.remoteRevision ?? null;
 
     if (!isDefined(remoteBody)) {
       return;
@@ -340,7 +387,7 @@ export const RichTextFieldEditor = ({
     }
 
     updateDraft({ blocknote: remoteBody });
-    saveConflictGuard.resetBase(remoteBody);
+    saveConflictGuard.resetBase(remoteBody, remoteRevision);
     saveConflictGuard.clearConflict();
   };
 

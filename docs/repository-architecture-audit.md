@@ -488,7 +488,7 @@ search and 1k-task scenarios; no latency claim is verified here.
 | --- | --- | --- |
 | Overall structure | Keep the modular monolith, separate worker and metadata-driven apps. | Microservices add deployment, authorization and consistency boundaries without measured need. |
 | App versus core | App metadata/UI for domain features; small shared/server primitives for authorization, durable persistence and atomic mutations. | Copying complete reference backends duplicates identity, tenancy and storage. |
-| Documents collaboration | Persist revisions and reject stale saves atomically; preserve drafts. | OT/CRDT needs a dedicated protocol, migration and editor compatibility project. |
+| Documents collaboration | Persist revisions and version-check saves with a conflict banner; keep the draft and repair a stale write post-commit, and document single-writer guidance. | OT/CRDT needs a dedicated protocol, migration and editor compatibility project. |
 | Realtime delivery | Session-aware authorized topics, visible subscription state, durable-record refetch after reconnect. | Redis pub/sub is not a replay log; adopting another broker is unnecessary before actual durable-message requirements. |
 | Project membership | Validate/complete the existing member junction object and permissions. | Do not wait for a generic many-to-many SDK feature or create another membership system. |
 | Counters/finance invariants | Narrow transactional operations with uniqueness and idempotency. | More client-side checks cannot make multiple API writes atomic. |
