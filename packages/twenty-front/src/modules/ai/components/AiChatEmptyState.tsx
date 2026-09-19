@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 
+import { AiChatContextToolButtons } from '@/ai/components/context-tools/AiChatContextToolButtons';
 import { AiChatSuggestedPrompts } from '@/ai/components/suggested-prompts/AiChatSuggestedPrompts';
 import { useShouldShowAiChatEmptyState } from '@/ai/hooks/useShouldShowAiChatEmptyState';
 
@@ -25,6 +26,7 @@ export const AiChatEmptyState = ({
 
   return (
     <StyledEmptyState>
+      <AiChatContextToolButtons />
       <AiChatSuggestedPrompts isCentered={isCentered} />
     </StyledEmptyState>
   );

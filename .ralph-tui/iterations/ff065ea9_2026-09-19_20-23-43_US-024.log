@@ -1,0 +1,264 @@
+# Iteration 10 Log
+
+## Metadata
+
+- **Task ID**: US-024
+- **Task Title**: P10 (personal dashboard remainder): Cmd+K quick capture (note/task — income reuses the existing Bilan quick entry)
+- **Description**: As an individual user, I want one Cmd+K action to capture a note or task from anywhere, so that I can get thoughts out of my head without navigating to the right app first.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T18:23:43.436Z
+- **Ended At**: 2026-09-19T18:38:53.255Z
+- **Duration**: 15m 9s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-024" PLAN.md
+[94m[bash][0m $ ls docs/plan/phases/ | grep -i phase-10
+[94m[bash][0m $ grep -n "quick capture\|Quick capture\|Cmd+K\|cmd+k\|P10" PLAN.md | head -50
+[94m[bash][0m $ grep -n "US-024" .ralph-tui/session.json 2>/dev/null | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -n "CLAIMED\|quick capture\|Cmd+K\|US-024" docs/plan/phases/phase-10-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-10-report.md
+[94m[bash][0m $ grep -rn "saisie rapide" packages/ --include=*.ts --include=*.tsx -l | head -20
+[94m[bash][0m $ grep -rln "useCommandMenu\|CommandMenuItem\|commandMenu" packages/twenty-front/src/modules/command-m...
+Now let me investigate the existing command-menu primitives (P4.2 create-task, P7.2 Bilan quick entry, create-document).
+[94m[bash][0m $ ls packages/twenty-front/src/modules/command-menu/components/ | head -60
+[94m[bash][0m $ grep -rn "saisie rapide\|Saisie rapide\|quick entry\|quick-entry\|quickEntry" packages/twenty-front/...
+[94m[bash][0m $ ls packages/twenty-front/src/modules/command-menu/
+[94m[bash][0m $ grep -rln "create.*task\|Create.*task\|createTask" packages/twenty-front/src/modules/command-menu pa...
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-front/src/modules/command-menu/constants/ packages/twenty-front/src/modules/comma...
+[94m[bash][0m $ grep -rln "useCommandMenu\|CommandMenuContext\|commandMenu" packages/twenty-front/src/modules --incl...
+[94m[bash][0m $ grep -rln "CommandMenu\|command-menu" packages/twenty-front/src/modules --include="*.tsx" --include=...
+[94m[bash][0m $ find packages/twenty-front/src/modules/command-menu-item -type d | head -60
+[94m[bash][0m $ grep -rln "create.*document\|Create.*Document\|createDocument" packages/twenty-front/src/modules/com...
+[94m[bash][0m $ find packages/twenty-apps/internal -path "*command-menu*" -not -path "*/.twenty/*" | head -40
+[94m[bash][0m $ grep -rln "command-menu\|CommandMenu" packages/twenty-front/src/modules --include="*.ts" --include="...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "createTaskCommand\|createDocumentCommand" packages/twenty-apps/internal/a2e-projects/src p...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/front-components/ packages/twenty-apps/internal/a2...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/node_modules/twenty-sdk/dist/front-component/index.d...
+[94m[bash][0m $ grep -n "Command\|execute" packages/twenty-apps/internal/a2e-documents/node_modules/twenty-sdk/dist/...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "commandMenuSearch\|searchText\|commandMenuSearchInput\|CommandMenuSearch" packages/twenty-...
+[94m[bash][0m $ find packages/twenty-front/src/modules/front-components -type f | head -40
+[94m[bash][0m $ grep -rn "searchText\|searchInput\|title" packages/twenty-front/src/modules/front-components --inclu...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "quick capture\|Quick capture\|quick-capture\|QuickCapture" docs/ packages/ --include="*.md...
+[94m[bash][0m $ grep -rn "frontComponentUniversalIdentifier\|engineComponentKey\|EngineComponentKey\|HeadlessFrontCo...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/command-menu-item/hooks/useCommandMenuItemClick.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/
+[94m[bash][0m $ grep -rn "focus\|widget\|personal" packages/twenty-apps/internal/*/src --include="*.ts" --include="*...
+[94m[bash][0m $ grep -rn "a2e\|A2E" packages/twenty-front/src/modules/command-menu-item packages/twenty-front/src/mo...
+[94m[bash][0m $ grep -rn "contribution\|Contribution\|focus\|pomodoro\|Pomodoro" packages/twenty-front/src/modules -...
+[94m[bash][0m $ grep -rln "pomodoro\|Pomodoro\|focus widget\|FocusWidget" packages/twenty-front/src --include="*.ts"...
+[94m[bash][0m $ grep -rln "home-widget\|HomeWidget\|homeWidget" packages/twenty-front/src packages/twenty-apps/inter...
+[94m[bash][0m $ grep -rln "CommandMenuItem\|commandMenuItem" packages/twenty-front/src/modules/navigation packages/t...
+[94m[bash][0m $ grep -rln "EngineComponentKey\." packages/twenty-front/src/modules --include="*.tsx" --include="*.ts...
+[94m[read][0m
+[94m[bash][0m $ grep -rln "from '@/command-menu/components/CommandMenuItem'" packages/twenty-front/src --include="*....
+[94m[bash][0m $ grep -rln "CommandMenu\b\|CommandMenuList\|commandMenuList" packages/twenty-front/src/modules --incl...
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-front/src/modules/command-menu-item/display/components/ packages/twenty-front/src...
+[94m[bash][0m $ grep -rn "CommandMenuContextProviderContent\|CommandMenuSection\|CommandMenuList\|CommandMenuItems\b...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents/src -maxdepth 1 -type f
+[94m[bash][0m $ grep -rn "STANDARD_OBJECT\|standardObject" packages/twenty-shared/src/constants 2>/dev/null | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/note/standard-objects/note.workspace-entity.ts
+[94m[bash][0m $ grep -rn "nameSingular" packages/twenty-server/src/modules/note/standard-objects/note.workspace-enti...
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-front/src/modules/command-menu-item/display -type f
+[94m[read][0m
+[94m[bash][0m $ grep -rn "OPEN_COMMAND\|openCommand\|commandMenuItemId\|commandMenuItem" packages/twenty-front/src/m...
+[94m[bash][0m $ grep -rn "CommandMenuDisplay\|command-menu-display" packages/twenty-front/src --include="*.ts" --inc...
+[94m[bash][0m $ grep -rln "CreateTaskCommand\|CREATE_TASK\|createTaskCommand\|CreateNoteCommand" packages/twenty-fro...
+[94m[bash][0m $ grep -rln "commandMenuItem\|command-menu-item" packages/twenty-server/src --include="*.ts" | head
+[94m[bash][0m $ grep -rn "create-task\|créer une tâche\|create task\|createTask\|P4.2" docs/plan/phases/*.md | head ...
+[94m[bash][0m $ grep -rn "saisie rapide\|quick-entry\|P7.2" docs/plan/phases/*.md | head -20
+[94m[bash][0m $ grep -n "OpenSidePanelPageParams\|openSidePanelPage\|OpenSidePanel" packages/twenty-apps/internal/a2...
+[94m[bash][0m $ sed -n '130,180p' packages/twenty-apps/internal/a2e-documents/node_modules/twenty-sdk/dist/front-com...
+[94m[read][0m
+[94m[bash][0m $ grep -rln "openSidePanelPage\|frontComponentHostCommunicationApi\|useFrontComponentExecutionContext"...
+[94m[bash][0m $ grep -rn "ViewFrontComponent" packages/twenty-front/src --include="*.ts" --include="*.tsx" | grep -i...
+[94m[bash][0m $ grep -rn "nameSingular" packages/twenty-apps/internal/a2e-projects/src/objects/*.ts | head
+[94m[bash][0m $ grep -rln "nameSingular: 'note'\|nameSingular: \"note\"" packages/twenty-apps --include="*.ts" | gre...
+[94m[bash][0m $ cat packages/twenty-front/src/modules/home-dashboard/registerHomeDashboardWidgets.ts
+[94m[bash][0m $ ls packages/twenty-front/src/modules/command-menu-item/engine-command/hooks/
+[94m[bash][0m $ cat packages/twenty-front/src/modules/command-menu-item/graphql/fragments/commandMenuItemFragment.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/application.config.ts
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-projects/src/roles -type f | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/roles/default-function.role.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/roles/default-function.role.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/twenty-partners/src 2>/dev/null
+[94m[bash][0m $ grep -rn "quick capture\|capture" PLAN.md | head -20
+[94m[read][0m
+[94m[bash][0m $ grep -rn "CREATE_NEW_RECORD" packages/twenty-front/src/modules/command-menu-item/engine-command/cons...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "CommandMenuItemTextInput\|CommandMenuItemDropdown\|CommandMenuItemNumberInput\|CommandMenu...
+[94m[bash][0m $ find packages/twenty-front/src/modules/object-record -name "useCreateOneRecord*" -o -name "useCreate...
+[94m[bash][0m $ grep -rn "useCreateOneRecord\|useCreateManyRecords" packages/twenty-front/src/modules/home-dashboard...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/command-menu/components/CommandMenuItem.tsx
+[94m[read][0m
+[94m[bash][0m $ grep -rn "viewableFrontComponentIdComponentState\|frontComponentId" packages/twenty-front/src/module...
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-front/src/modules/front-components/components/FrontComponentRenderer....
+[94m[bash][0m $ grep -n "US-024\|quick capture\|QuickCapture\|quick-capture" .ralph-tui/progress.md | head -20
+[94m[bash][0m $ git log --oneline -25
+[94m[bash][0m $ git show --stat 4ed2fa8a | head -60
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/side-panel/constants/SidePanelPagesConfig.tsx
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/hooks/useCreateOneRecord.ts
+[94m[bash][0m $ cat packages/twenty-front/src/modules/object-metadata/types/CoreObjectNamePlural.ts 2>/dev/null
+[94m[bash][0m $ find packages/twenty-front/src/modules/object-metadata/types -name "*Singular*"
+[94m[bash][0m $ grep -rn "RecordShowPage" packages/twenty-front/src --include="*.tsx" --include="*.ts" | grep -iv te...
+[94m[read][0m
+[94m[bash][0m $ grep -rln "FrontComponentResolver\|findOneFrontComponent" packages/twenty-server/src --include="*.ts...
+[94m[read][0m
+[94m[bash][0m $ grep -n "note\|Note" PLAN.md | head -40
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-front/src/modules/command-menu-item/engine-command/global -type f
+[94m[bash][0m $ grep -rn "export enum SidePanelPages" -A 60 packages/twenty-shared/src/types/*.ts 2>/dev/null | head...
+[94m[bash][0m $ find packages/twenty-front/src/modules/side-panel/types -type f | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/side-panel/hooks/useSidePanelMenu.ts
+[94m[bash][0m $ sed -n '1,160p' packages/twenty-front/src/modules/side-panel/components/SidePanelRouter.tsx
+[94m[bash][0m $ find packages/twenty-front/src/modules/side-panel/pages -maxdepth 2 -name "*.tsx" | grep -i "compose...
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-front/src/modules/side-panel/pages/compose-calendar-event/components...
+[94m[bash][0m $ grep -in "note\|task\|money\|coin\|currency\|euro\|pencil\|capture\|inbox\|plus" packages/twenty-ui/...
+[94m[bash][0m $ grep -in "euro\|coin\|money\|wallet\|currency\|receipt\|invoice\|cash" packages/twenty-ui/src/icon/i...
+[94m[bash][0m $ grep -rln "export const IconNotes\|IconNotes" packages/twenty-ui/src/icon/components 2>/dev/null | h...
+[94m[bash][0m $ grep -in "IconCoins\|IconCurrencyEuro\|IconCash\|IconReceipt\|IconWallet" packages/twenty-ui/src/ico...
+[94m[bash][0m $ grep -in "Pencil\|Capture\|Plus\b\|Inbox" packages/twenty-ui/src/icon/icon-dictionary.md | head -20
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-front/src/modules/ui/layout/side-panel/components/SidePanelFooter.tsx...
+[94m[bash][0m $ grep -rn "export const SidePanelFooter\|SidePanelFooterProps" packages/twenty-front/src/modules/ui/l...
+[94m[bash][0m $ grep -n "export type TextAreaProps\|type TextAreaProps\|export const TextArea" -A 30 packages/twenty...
+[94m[bash][0m $ find packages/twenty-ui/src/input -name "Button*" | head
+[94m[bash][0m $ grep -rn "ButtonProps\|variant?:\|accent?:\|type ButtonVariant\|type ButtonAccent" packages/twenty-u...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-ui/src/input/Button/Button.tsx
+[94m[bash][0m $ grep -rn "export const useHotkeysOnFocusedElement" -A 25 packages/twenty-front/src/modules/ui/utilit...
+[94m[bash][0m $ grep -rn "enum CoreObjectNameSingular" -A 40 packages/twenty-shared/src/types/*.ts | head -50
+[94m[bash][0m $ find packages/twenty-front/src/modules/object-core -name "*OpenCoreWorkflowFilters*"
+[94m[bash][0m $ grep -rn "SidePanelPages" packages/twenty-front/src/modules/side-panel/hooks/useNavigateSidePanel.ts...
+[94m[bash][0m $ grep -rln "SidePanelPages" packages/twenty-server/src packages/twenty-shared/src 2>/dev/null | head
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-front/jest.config.mjs 2>/dev/null | head -60
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ git rev-parse HEAD
+I've completed my reconnaissance. Let me claim the slice in the phase report per the contract.
+[94m[bash][0m $ cat >> docs/plan/phases/phase-10-report.md <<'EOF'  CLAIMED — US-024/quick-capture-cmdk — deepseek-v...
+[94m[todowrite][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/SidePanelPages.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/SidePanelPages.ts
+[94m[bash][0m $ npx nx build twenty-shared --skip-nx-cache 2>&1 | tail -20
+[94m[write][0m "import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+
+// P10 quick capture targets. Note and task are core CRM objects created
+// through the native record-creation primitive; income... (2492 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/quick-capture/utils/quickCapture.ts
+[94m[write][0m "import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+
+import {
+  buildQuickCaptureCreatePlan,
+  buildQuickCaptureNavigationPlan,
+  DEFAULT_QUICK_CAPTURE_TARGET_ID,
+  DEFAULT_QUICK_CA... (3146 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/quick-capture/utils/__tests__/quickCapture.test.ts
+[94m[bash][0m $ npx jest src/modules/quick-capture/utils/__tests__/quickCapture.test.ts --config=packages/twenty-fro...
+[94m[read][0m
+[94m[bash][0m $ grep -n "export type TextInputProps\|onEnter\|onKeyDown\|onInput" -A 45 packages/twenty-front/src/mo...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-ui/src/input/Button/Button.tsx
+[94m[bash][0m $ find packages/twenty-ui/src/input/Button -name "*.tsx" -o -name "*.ts" | xargs grep -ln "variantStyl...
+[94m[bash][0m $ grep -n "export const useSnackBar" -A 30 packages/twenty-front/src/modules/ui/feedback/snack-bar-man...
+[94m[bash][0m $ grep -rn "import { useSetAtomState" packages/twenty-front/src/modules/ui/utilities/state/jotai/hooks...
+[94m[bash][0m $ grep -n "return {" -A 10 packages/twenty-front/src/modules/ui/feedback/snack-bar-manager/hooks/useSn...
+[94m[bash][0m $ sed -n '160,175p' packages/twenty-front/src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar....
+[94m[write][0m "import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { useSidePanelMenu } from '@/side... (3618 chars)"
+[94m[write][0m "import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import {
+  buildQuickCaptureCreatePlan,
+  buildQuickCaptureNavigationPlan,
+  DEFAULT_QUICK_CAPTURE_TARGET_ID,
+  isQuickCa... (3542 chars)"
+[94m[bash][0m $ grep -rn "IconPlus\b" packages/twenty-ui/src/icon/index.ts | head -2
+[94m[bash][0m $ sed -n '1,14p' packages/twenty-front/src/modules/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElemen...
+[94m[bash][0m $ grep -n "type TextInputSize" -A 3 packages/twenty-front/src/modules/ui/input/components/TextInput.ts...
+[94m[bash][0m $ sed -n '40,66p' packages/twenty-front/src/modules/ui/input/components/TextInput.tsx
+[94m[write][0m "import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
+import { TextInput } from '@/ui/input/compo... (4639 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/side-panel/constants/SidePanelPagesConfig.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/side-panel/constants/SidePanelPagesConfig.tsx
+[94m[write][0m "import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { t } from '@lingui/core/macro';
+import { SidePanelPages } from 'twenty-shared/types';
+import { IconNotes } from 'twenty-... (586 chars)"
+[94m[write][0m "import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { t } from '@lingui/core... (797 chars)"
+[94m[write][0m "import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { QUICK_CAPTURE_COMMAND_ID } from '@/quick-capture/hooks/useQuickCaptureCommand';
+import { useQuickCaptureCommand } ... (1011 chars)"
+[94m[write][0m "import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { useOpenQuickCaptureSidePanel } from '@/quick-capture/hooks/useOpenQuickCaptureSidePanel';
+import {
+  QUICK_CAPTURE... (953 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -60
+[94m[bash][0m $ npx nx build twenty-sdk --skip-nx-cache 2>&1 | tail -25
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -40
+[94m[bash][0m $ grep -n "\"lint\|oxlint\|oxfmt\|typecheck" packages/twenty-front/package.json | head -20
+[94m[bash][0m $ grep -rn "lint:diff-with-main" package.json nx.json packages/twenty-front/project.json 2>/dev/null |...
+[94m[bash][0m $ npx oxfmt --check $FILES
+[94m[bash][0m $ npx oxfmt --check src/modules/quick-capture/utils/quickCapture.ts src/modules/quick-capture/utils/__...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/quick-capture/utils/quickCapture.ts src/module...
+[94m[bash][0m $ ls packages/twenty-shared/.oxfmtrc.json 2>/dev/null
+[94m[bash][0m $ npx oxfmt --check src/types/SidePanelPages.ts 2>&1 | tail -10
+[94m[bash][0m $ find packages/twenty-front/src/modules/side-panel -name "*.test.*" | grep -i "command\|search" | hea...
+[94m[bash][0m $ npx jest --findRelatedTests src/modules/quick-capture/utils/quickCapture.ts src/modules/quick-captur...
+[94m[bash][0m $ npx jest --findRelatedTests src/modules/quick-capture/utils/quickCapture.ts src/modules/quick-captur...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/side-panel/hooks/useNavigateSidePanel.ts
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -30
+[94m[bash][0m $ git status --porcelain
+[94m[todowrite][0m
+[94m[bash][0m $ git status --porcelain -- packages/twenty-front/src/modules/quick-capture/
+[94m[bash][0m $ nothing else pending for US-024. EOF tail -5 docs/plan/phases/phase-10-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -20 .ralph-tui/progress.md
+[94m[bash][0m $ grep -n "^## " .ralph-tui/progress.md | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ keyboard submit uses `useHotkeysOnFocusedElement` with     `SIDE_PANEL_FOCUS_ID` plus the input's ow...
+[94m[bash][0m $ git status --porcelain -- 'packages/**/locales/**' | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/quick-capture/utils/__tests__/quickCapture.test.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/quick-capture/hooks/useQuickCapture.ts
+[94m[todowrite][0m
+US-024 done — reported `done-for-review` (no commit, PLAN.md untouched).
+
+**What shipped:** a native twenty-front "Quick capture" Cmd+K command that opens a side-panel page (text input + Note/Task/Income). Note and Task create core records via the native `useCreateOneRecord` primitive then navigate to the record; Income creates nothing — it presets `sidePanelSearchState` to `saisie rapide` and returns to the command menu, so P7.2's pinned "Bilan : saisie rapide" stays the only income path.
+
+**Files:** `twenty-shared/src/types/SidePanelPages.ts`, `side-panel/constants/SidePanelPagesConfig.tsx`, `command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx`, new `modules/quick-capture/**` (pure `utils/quickCapture.ts` + 13-test spec), plus the phase report and progress log.
+
+**Checks:** twenty-shared + twenty-sdk rebuilt; `tsgo` twenty-front → 0 errors; oxlint/oxfmt on all changed files → clean; `jest --findRelatedTests` → 4 suites / 25 tests pass.
+
+**Left for orchestrator:** Tier-2 browser proof of the capture flow.
+
+<promise>COMPLETE</promise>

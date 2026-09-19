@@ -87,6 +87,19 @@ after each iteration and it's included in prompts for context.
   command. App front components cannot open a sibling front component:
   `frontComponent(id)` resolves a DB id, not the universal identifier, so
   cross-app `openSidePanelPage({ page: ViewFrontComponent })` routing fails.
+- **Consuming the native AI tool registry in a front surface:** the registry
+  is already exposed to twenty-front by `useGetToolIndex` (`ToolIndexResolver` →
+  `ToolRegistryService.buildToolIndex`/`getCatalog`); do not add a resolver or a
+  second table. A registry `LOGIC_FUNCTION` tool carries no app id, so resolve
+  its owning app in the front by mapping the tool name back to a metadata-store
+  `logicFunctionsSelector` entry with a byte-compatible port of the server's
+  `LogicFunctionToolProvider.buildLogicFunctionToolName` (`app_` + lowercased
+  non-alphanumerics collapsed to `_`), then gate fail-closed on
+  `installedApplicationIds` + `canReadObjectRecords` + the current object's
+  `applicationId` (context mapping). `ToolCategory.LOGIC_FUNCTION` is the
+  read-only/proposal category; `ACTION` and `DATABASE_CRUD` are the mutating
+  categories and must never be offered as read-only context buttons. See
+  `ai/utils/getContextToolButtons.ts`, `ai/hooks/useContextToolButtons.ts`.
 ---
 
 
@@ -338,4 +351,30 @@ after each iteration and it's included in prompts for context.
   - A new side-panel page is just an enum member + `SIDE_PANEL_PAGES_CONFIG`
     entry; keyboard submit uses `useHotkeysOnFocusedElement` with
     `SIDE_PANEL_FOCUS_ID` plus the input's own Enter handler.
+---
+
+## 2026-09-19 - US-025
+- Implemented the P9.1 assistant surface's first Tier-0/1 slice: the side-panel
+  assistant (via the shared `AiChatEmptyState`, so full page too) now renders the
+  native registry's per-app tools for the current context as read-only context
+  buttons. No server code, no new registry/table/registration hook, no per-tool
+  front registration.
+- Files changed: new `packages/twenty-front/src/modules/ai/types/ContextToolButton.ts`;
+  new `.../ai/utils/getContextToolButtons.ts` + `__tests__/getContextToolButtons.test.ts`;
+  new `.../ai/hooks/useContextToolButtons.ts`;
+  new `.../ai/components/context-tools/AiChatContextToolButtons.tsx`;
+  modified `.../ai/components/AiChatEmptyState.tsx` + its spec;
+  `docs/plan/phases/phase-01-report.md` (claim + report).
+- **Learnings:**
+  - `isNonEmptyString` is NOT exported by `twenty-shared/utils` (only
+    `isDefined`, `isEmptyObject`, …) despite AGENTS.md naming it — use
+    `isDefined(x) && x.length > 0`.
+  - The registry's `getToolIndex` entries for logic functions carry no app id;
+    the owning app is only recoverable in the front from the metadata-store
+    `logicFunctionsSelector` by re-deriving the server tool name.
+  - `ToolCategory.LOGIC_FUNCTION` = app read/proposal tools; `ACTION` /
+    `DATABASE_CRUD` writes are the mutating categories, so excluding them is the
+    fail-closed read-only policy for the buttons.
+  - twenty-front tsgo is currently 0 errors on this HEAD (no AppPath baseline
+    either), so a clean tsgo run is a meaningful signal here.
 ---

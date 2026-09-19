@@ -17,6 +17,10 @@ jest.mock('@/ai/components/suggested-prompts/AiChatSuggestedPrompts', () => ({
   AiChatSuggestedPrompts: () => <div data-testid="suggested-prompts" />,
 }));
 
+jest.mock('@/ai/components/context-tools/AiChatContextToolButtons', () => ({
+  AiChatContextToolButtons: () => <div data-testid="context-tool-buttons" />,
+}));
+
 const INSTANCE_ID = 'aiChatEmptyStateTest';
 const THREAD_ID = 'thread-1';
 
@@ -44,6 +48,14 @@ describe('AiChatEmptyState', () => {
     });
 
     expect(getByTestId('suggested-prompts')).toBeInTheDocument();
+  });
+
+  it('should render the context tool buttons alongside the suggested prompts', () => {
+    const { getByTestId } = render(<AiChatEmptyState />, {
+      wrapper: Wrapper,
+    });
+
+    expect(getByTestId('context-tool-buttons')).toBeInTheDocument();
   });
 
   it('should render nothing when the current thread is awaiting its first chunk', () => {

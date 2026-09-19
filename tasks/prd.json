@@ -221,12 +221,13 @@
         "Tier 2 stays with the orchestrator: live assistant invocation against installed apps (the standing Tier-2 'live dispatch' legs) is orchestrator-owned; a dated executor entry is appended to the relevant phase report; PLAN.md is not edited; nothing is committed"
       ],
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "notes": "Starting state: not-started (P9.1 untouched; five per-app read-only tools already shipped and registry-proven in batch II). P9.1's first bullet's live validation leg is Tier 2 — this slice builds the surface that the validation and the P9.2 remainders (documents/projects/CRM actions, P9.2b cache, P9.3 audit) are gated on. Positioned last in the batch because P10's queued slices are fully Tier-0/1-progressable while P9.1's own first unmet bullet needs a live stack.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T18:38:53.257Z"
+    "updatedAt": "2026-09-19T18:52:06.991Z"
   }
 }
