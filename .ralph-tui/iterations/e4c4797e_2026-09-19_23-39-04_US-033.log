@@ -1,0 +1,90 @@
+# Iteration 3 Log
+
+## Metadata
+
+- **Task ID**: US-033
+- **Task Title**: [P3.3] Record integration — actual selected-note body copy with source link and permission checks
+- **Description**: As a CRM user, I want the record-to-document command to copy the selected note's actual authorized body with a source link, so that the document contains the real content instead of a title snapshot.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T21:39:04.070Z
+- **Ended At**: 2026-09-19T21:42:11.266Z
+- **Duration**: 3m 7s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "US-033" PLAN.md | head -50
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "P3.3" PLAN.md | head -30
+[94m[bash][0m $ ls docs/plan/ 2>/dev/null
+[94m[bash][0m $ grep -rn "US-033" docs/ .ralph-tui/ tasks/ 2>/dev/null | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "US-033\|P3.3\|record\|note" tasks/prd.json | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ ls -la docs/plan/phases/phase-03-report.md && wc -l docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ grep -n "US-033\|CLAIMED" docs/plan/phases/phase-03-report.md | tail -60
+[94m[bash][0m $ grep -n "US-032\|US-033" docs/plan/phases/phase-03-report.md | tail -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/lib/ && echo "---front-components---" && ls packa...
+[94m[bash][0m $ grep -rn "record-note-copy\|buildRecordNoteCopyPayload\|readRecordNoteCopyInput\|saveRecordAsDocumen...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/record-note-copy.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/instantiate-template.ts
+[94m[bash][0m $ grep -rn "template-copy\|template copy\|copy helper\|remapTemplateBlockIds\|buildTemplateCopyPayload...
+[94m[bash][0m $ sed -n '1,60p' docs/plan/05-template-contracts.md 2>/dev/null | head -60
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite[0m pattern: [96mtemplate-copy|remapTemplateBlockIds|buildTemplateCopyPayload[0m
+[94m[bash][0m $ git log --oneline -15
+[94m[bash][0m $ git diff HEAD --stat -- packages/twenty-apps/internal/a2e-documents/src/lib/record-note-copy.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "companyId\|personId\|company\|person" packages/twenty-apps/internal/a2e-documents/src/objec...
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ tail -5 docs/plan/phases/phase-03-report.md
+Clean-start: dirty files (`.ralph-tui/*`, `tasks/prd.json`, `useDocumentSaveConflictGuard.ts`, `documentContentRevision.ts`) all match the active US-032 claim at phase-03-report:1075/1077 — another executor's in-flight work, no overlap with my target. Proceeding.
+[94m[bash][0m $ printf '\nCLAIMED — US-033/record-note-copy-template-helper — deepseek-v4.1-flash — 2026-09-19T21:40...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/record-note-copy.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/record-note-copy.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/record-note-copy.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/record-note-copy.ts
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ node --test src/lib/__tests__/record-note-copy.test.ts 2>&1 | tail -30
+[94m[bash][0m $ node --test src/lib/__tests__/*.test.ts 2>&1 | tail -12
+[94m[bash][0m $ echo "TSC_EXIT=$?"
+[94m[bash][0m $ yarn lint 2>&1 | tail -15
+[94m[bash][0m $ npx oxfmt --check src/lib/record-note-copy.ts src/lib/__tests__/record-note-copy.test.ts 2>&1 | tail...
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/record-note-copy.ts
+[94m[bash][0m $ git diff --stat
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ git diff -- packages/twenty-apps/internal/a2e-documents/src/lib/record-note-copy.ts
+[94m[bash][0m $ git diff -- packages/twenty-apps/internal/a2e-documents/src/lib/__tests__/record-note-copy.test.ts
+[94m[edit][0m
+[94m[bash][0m $ node --test src/lib/__tests__/record-note-copy.test.ts 2>&1 | tail -8
+[94m[bash][0m $ echo "TSC_EXIT=$?"
+[94m[bash][0m $ node --test src/lib/__tests__/*.test.ts 2>&1 | tail -8
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -4
+[94m[read][0m
+[94m[bash][0m $ grep -n "saveCompanyAsDocumentCommand\|savePersonAsDocumentCommand" packages/twenty-apps/internal/a2...
+[94m[bash][0m $ executor — US-032 AC4/AC5 or another queued leg EOF tail -3 docs/plan/phases/phase-03-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ do not revert the sibling session's files. --- EOF tail -4 .ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain
+Done. US-033 slice complete.
+
+**Slice:** the first unmet acceptance gap — copied note bodies now go through the existing template-copy helper (`remapTemplateBlockIds`) so block anchors are re-keyed instead of aliasing the source note (AC3). The prior committed payload/permission/provenance/entry-point work was left intact.
+
+**Changed:**
+- `packages/twenty-apps/internal/a2e-documents/src/lib/record-note-copy.ts` — `parseNoteBlocks` → `remapNoteBlocks` delegating to `remapTemplateBlockIds`; additive injectable `createBlockId` through `buildNoteCopyBlocks`/`buildRecordNoteCopyContent`/`buildRecordNoteCopyPayload`.
+- `.../src/lib/__tests__/record-note-copy.test.ts` — 17→18 cases, incl. fresh-anchor proof for both company and person.
+- `docs/plan/phases/phase-03-report.md` + `.ralph-tui/progress.md` reports.
+
+**Checks:** `node --test record-note-copy.test.ts` 18/18; full lib suite 168/168; `tsc --noEmit` exit 0; `yarn lint` 0/0; `twenty dev:build .` succeeded. Claim `done-for-review`, `Ready-to-tick: yes`.
+
+<promise>COMPLETE</promise>

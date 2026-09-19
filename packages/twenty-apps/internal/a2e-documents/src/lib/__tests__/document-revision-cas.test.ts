@@ -17,6 +17,15 @@ test('readDocumentRevisionBody reads a blocknote string and normalizes the rest'
   assert.equal(readDocumentRevisionBody(undefined), null);
 });
 
+test('readDocumentRevisionBody also accepts a serialized jsonb string', () => {
+  assert.equal(
+    readDocumentRevisionBody('{"blocknote":"{\\"v\\":1}","markdown":null}'),
+    '{"v":1}',
+  );
+  assert.equal(readDocumentRevisionBody('not json'), null);
+  assert.equal(readDocumentRevisionBody('{"markdown":null}'), null);
+});
+
 test('a write whose expected revision matches the committed one is accepted', () => {
   const resolution = resolveDocumentSaveCas({
     updatedFields: ['content'],
