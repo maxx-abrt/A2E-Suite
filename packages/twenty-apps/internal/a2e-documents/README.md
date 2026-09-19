@@ -67,13 +67,14 @@ linked document.
 
 `post-install`
 ([post-install.ts](./src/logic-functions/post-install.ts)) idempotently seeds a
-welcome document plus four starter templates from
+welcome document plus five starter templates from
 [starter-templates.ts](./src/lib/starter-templates.ts):
 
 - Modèle — Notes de réunion
 - Modèle — Brief de projet
 - Modèle — Spécifications produit (PRD)
 - Modèle — Entretien individuel
+- Modèle — Journal
 
 The gallery lets a user instantiate a template (copies the body into a fresh
 document, so editing never mutates the template), save a document as a new

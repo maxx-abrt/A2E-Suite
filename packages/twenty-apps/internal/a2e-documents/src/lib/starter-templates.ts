@@ -29,6 +29,11 @@ export const STARTER_DOCUMENT_TEMPLATES: StarterDocumentTemplate[] = [
     markdown:
       '# Entretien individuel\n\n## Agenda\n\n## Points de la dernière fois\n\n## Ce qui avance\n\n## Obstacles\n\n## Actions\n\n## Prochain rendez-vous\n',
   },
+  {
+    title: 'Modèle — Journal',
+    markdown:
+      '# Journal\n\n## Date\n\n## Humeur\n\n## Faits marquants\n\n## Ce que j’ai appris\n\n## Gratitude\n\n## Demain\n',
+  },
 ];
 
 export const findMissingStarterTemplates = (

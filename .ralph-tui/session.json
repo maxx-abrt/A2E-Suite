@@ -3,10 +3,10 @@
   "sessionId": "ff065ea9-77f5-4159-84ea-c6e8236afbc0",
   "status": "running",
   "startedAt": "2026-09-19T17:02:11.593Z",
-  "updatedAt": "2026-09-19T18:20:24.878Z",
-  "currentIteration": 7,
+  "updatedAt": "2026-09-19T18:23:37.944Z",
+  "currentIteration": 8,
   "maxIterations": 20,
-  "tasksCompleted": 6,
+  "tasksCompleted": 7,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -86,6 +86,16 @@
       "durationMs": 267591,
       "startedAt": "2026-09-19T17:37:40.371Z",
       "endedAt": "2026-09-19T17:42:07.962Z"
+    },
+    {
+      "iteration": 8,
+      "status": "completed",
+      "taskId": "US-022",
+      "taskTitle": "P3.3 (tree, leg 3): verify favorites are personal (fix if shared) + deep-tree archive/restore/purge unit-testable legs",
+      "taskCompleted": true,
+      "durationMs": 2291390,
+      "startedAt": "2026-09-19T17:42:13.480Z",
+      "endedAt": "2026-09-19T18:20:24.870Z"
     }
   ],
   "skippedTaskIds": [],

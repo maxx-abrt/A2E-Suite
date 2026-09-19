@@ -108,3 +108,17 @@ Still open (Tier-2, orchestrator-only, no running stack at verification time):
 E12 solo journey, first-open-help walkthrough, focus-prefs browser proof, a11y
 rendering proof. Recorded inline on each tick. The pre-existing `StyledDockRoot`
 invalid-CSS bug (US-006 entry) is noted for a separate layout slice.
+
+CLAIMED — US-023/journal-doc-template — deepseek-v4.1-flash — 2026-09-19T19:50:00Z — base 58cfc9bdf2d2ec4feeaf3864817ebe3c9e1f9cbe
+
+## 2026-09-19 19:56 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-023 P10 (personal dashboard remainder): journal doc template · **Slice:** the recorded remaining P10 dashboard content slice — the `Modèle — Journal` starter content (PLAN.md P10 line 1419; prior phase-10 entries track it under US-003)
+**Claim:** done-for-review
+**Ready-to-tick:** yes — every applicable Tier-0 gate green; the only absent evidence is the Tier-2 browser gallery/first-open instantiation journey, which the executor contract forbids and the orchestrator owns
+**Base:** 58cfc9bdf2d2ec4feeaf3864817ebe3c9e1f9cbe
+**Changed:** `packages/twenty-apps/internal/a2e-documents/src/lib/starter-templates.ts` (append `Modèle — Journal`), `.../src/lib/__tests__/starter-templates.test.ts` (four→five title list, updated install-delta expectation, 2 new payload specs), `.../a2e-documents/README.md` + `docs/features.md` (bundle count four→five + journal bullet, kept truthful), `docs/plan/phases/phase-10-report.md`, `.ralph-tui/progress.md`
+**Checks:** `node --test --experimental-strip-types src/lib/__tests__/starter-templates.test.ts` (in a2e-documents) → 6 tests / 6 PASS; `yarn lint` → 0 warnings / 0 errors on 66 files; `yarn typecheck` → clean (no output); `npx twenty dev:build .` → "Build succeeded (20 files)"; `node docs/scripts/check-docs.mjs` → PASS: 25 maintained documents, 199 local inline links
+**Missing for tick:** Tier-2 browser journey (Documents gallery shows/template page offers `Modèle — Journal`, and "utiliser" instantiates a `Journal` DOCUMENT copy) — orchestrator-only; no running stack here.
+**Do not redo:** the journal is content-only code-data in the existing `STARTER_DOCUMENT_TEMPLATES` array — the P1.6e payload helpers/surfaces (`buildTemplateCopyPayload`, `collectGalleryTemplates`, the browser gallery section and the template-page first-open action) already consume it by reference, so no entry-point code was added; no new template engine, no `TEMPLATE_CONTENT_*` server descriptor loader (05-template-contracts §8 stays document-only); app bundle content stays French code-data like its four siblings (app packages have no Lingui runtime), and carries no tokens/IDs/URLs/live records.
+**Remaining:** P10 open: US-024 Cmd+K quick capture (note/task, income reuses the pinned Bilan quick entry), plus US-008..US-015 batch II (P9/app-search).
+**Next:** US-024 Cmd+K quick capture — compose the existing command-menu + record-creation primitives (no second creation system); then orchestrator Tier-2 gallery/first-open pass for both.

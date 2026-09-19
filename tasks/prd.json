@@ -177,9 +177,10 @@
         "Tier 2 stays with the orchestrator: the browser gallery/first-open instantiation journey is orchestrator-owned (same gap all prior P1.6e entries recorded); a dated executor entry is appended to docs/plan/phases/phase-10-report.md; PLAN.md is not edited; nothing is committed"
       ],
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "notes": "Starting state: partial (2 of 4 dashboard deliverables done and verified 2026-09-19; journal template + quick capture queued). Independent of US-024.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-024",
@@ -225,6 +226,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T18:20:24.876Z"
+    "updatedAt": "2026-09-19T18:23:37.944Z"
   }
 }

@@ -268,3 +268,29 @@ after each iteration and it's included in prompts for context.
   - Tier 2 remains: two-session favorites proof, live purge-cron firing, and the
     live `documentFavorites` query/mutation round-trip.
 ---
+
+## 2026-09-19 - US-023
+- Appended the `Modèle — Journal` content template (French, sectioned daily
+  journal) to `a2e-documents/src/lib/starter-templates.ts` — content-only, no
+  entry-point code: `post-install` seeds it as a TEMPLATE and the existing
+  gallery section + template-page first-open action instantiate it by reference.
+- Updated `starter-templates.test.ts` (five-title list, install-delta
+  expectation, 2 new specs proving `buildTemplateCopyPayload` strips the
+  `Modèle — ` prefix and yields a `Journal` DOCUMENT copy), plus the two docs
+  that enumerated "four starter templates" (`a2e-documents/README.md`,
+  `docs/features.md`).
+- Files changed: `packages/twenty-apps/internal/a2e-documents/src/lib/starter-templates.ts`,
+  `.../src/lib/__tests__/starter-templates.test.ts`,
+  `.../a2e-documents/README.md`, `docs/features.md`,
+  `docs/plan/phases/phase-10-report.md`, `.ralph-tui/progress.md`.
+- **Learnings:**
+  - A shipped starter template is content-only: append to
+    `STARTER_DOCUMENT_TEMPLATES`; `findMissingStarterTemplates` makes the seed
+    idempotent by title and the P1.6e payload helpers/surfaces need no change.
+  - App packages (`a2e-*`) carry no Lingui runtime, so template content stays
+    French code-data matching the four shipped siblings; "localized-safe" here
+    means static, locale-stable strings with no tokens/IDs/URLs/live records.
+  - `buildTemplateCopyPayload` strips the shared `TEMPLATE_TITLE_PREFIX`
+    (`Modèle — `), so re-instantiating a copy is prefix-idempotent.
+  - Tier 2 remains: browser gallery/template-page instantiation of the journal.
+---
