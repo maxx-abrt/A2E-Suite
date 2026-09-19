@@ -1,0 +1,182 @@
+# Iteration 8 Log
+
+## Metadata
+
+- **Task ID**: US-032
+- **Task Title**: [P3.2] Atomic expected-revision save with conflict feedback and preserved draft (no OT/CRDT)
+- **Description**: As a document author, I want saves to carry an expected revision, so that stale saves conflict loudly instead of silently overwriting and my draft is preserved on conflict.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T21:34:05.199Z
+- **Ended At**: 2026-09-19T21:43:55.853Z
+- **Duration**: 9m 50s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ ls .ralph-tui/ 2>/dev/null
+I'll start with the mandatory clean-start check and orient myself.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-032" PLAN.md
+[94m[bash][0m $ grep -n "US-032\|CLAIMED\|P3.2\|BLOCKED" docs/plan/phases/phase-03-report.md | tail -60
+Dirty files are Ralph's own state files, not code. Let me find the task section and phase report entries.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) def walk(o,p=''):     if isinstance(o,d...
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents -type f | head -100
+Now let me explore the a2e-documents app and the existing client guard to find the first unmet bullet.
+[94m[bash][0m $ find packages/twenty-front/src/modules/blocknote-editor/co-editing -type f
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents/src -type f | sort
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/objects/document-revision.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/objects/document.object.ts
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rln "persistBlocknoteBody\|EditorVersionHistoryStore\|documentRevision\|DocumentRevision" pack...
+[94m[bash][0m $ grep -rln "documentRevision\|DocumentRevision\|revision" packages/twenty-front/src/modules --include...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor[0m pattern: [96mpersistBlocknoteBody|EditorVersionHistoryStore|documentRevision[0m
+[94m[read][0m
+[94m[bash][0m $ grep -rln "persistBlocknoteBody" packages/twenty-front/src
+[94m[read][0m
+[94m[bash][0m $ grep -rn "pre-write\|post-commit\|compare-and-set\|single-writer\|Version check + conflict" docs/ PL...
+[94m[bash][0m $ grep -rln "cross-cutting\|risk table\|Cross-cutting" docs/ | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/document-cycle.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "atomic\|P3.2" docs/plan/*.md | head -30
+[94m[bash][0m $ grep -rni "expected.revision\|compare-and-set\|compareAndSet\|expectedRevision\|revisionConflict\|sa...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "E05" docs/ PLAN.md | head -30
+[94m[bash][0m $ grep -rn "single-writer\|single writer\|concurrent writer\|stale save" docs/ PLAN.md | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/repository-architecture-audit.md
+[94m[bash][0m $ grep -rn "DatabaseEventPayload\|databaseEventTriggerSettings\|updatedFields" packages/twenty-sdk/src...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "export type ObjectRecordUpdateEvent\|ObjectRecordUpdateEvent =" packages/twenty-shared/src...
+[94m[bash][0m $ grep -rn "ObjectRecordUpdateEvent" packages/twenty-shared/src | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/database-events/object-record-update.event.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/database-events/database-event-payload.type.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/database-events/object-record.base.event.ts
+[94m[bash][0m $ grep -rln "ObjectRecordUpdateEvent" packages/twenty-server/src/engine | head
+[94m[read][0m
+[94m[bash][0m $ grep -rn "RICH_TEXT" packages/twenty-server/src/engine/metadata-modules/field-metadata --include=*.t...
+[94m[bash][0m $ grep -rn "blocknote" packages/twenty-server/src packages/twenty-shared/src 2>/dev/null | grep -v spe...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/hooks/useUpdateOneRecord.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/application.config.ts
+[94m[bash][0m $ sed -n '1,40p' packages/twenty-apps/internal/a2e-documents/src/lib/__tests__/document-cycle.test.ts
+[94m[read][0m
+[94m[read][0m
+I have enough context. Let me read the guard test and banner before implementing.
+[94m[bash][0m $ find packages/twenty-front/src/modules/object-record/record-seeded-draft -type f | grep -v node_modu...
+[94m[bash][0m $ grep -rln "useRecordSeededDraft" packages/twenty-front/src | grep -i test
+[94m[todowrite][0m
+I'll set up a task list, then claim the slice before touching code.
+[94m[bash][0m $ tail -5 docs/plan/phases/phase-03-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ git status --porcelain
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[write][0m "// Server-side compare-and-set for document saves (P3.2). The browser already
+// refuses a save whose expected revision is no longer current, but any API
+// client can write `document.content`, so the... (3933 chars)"
+No overlapping claims on my target files. Now implementing the server-side CAS library.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/objects/document.object.ts
+Now the document fields:
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+import {
+  type DatabaseEventPayload,
+  defineLogicFunction,
+} from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTION_IDS } from '../constants/unive... (2470 chars)"
+[94m[edit][0m
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  DOCUMENT_REVISION_REPAIR_PREFIX,
+  FIRST_DOCUMENT_REVISION,
+  readDocumentRevisionBody,
+  resolveDocumentSaveCas,... (5653 chars)"
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/document-revision-cas.test.ts" 2>&1 | tail...
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -25
+[94m[bash][0m $ yarn lint 2>&1 | tail -25
+[94m[bash][0m $ grep -rn "onPersistBody" packages/twenty-front/src | grep -v node_modules
+[94m[write][0m "import { useCallback, useRef, useState } from 'react';
+
+import { classifyDocumentSaveConflict } from '@/blocknote-editor/co-editing/utils/classifyDocumentSaveConflict';
+
+export type DocumentSaveConfli... (4812 chars)"
+Now update the client guard to track the revision token:
+[94m[write][0m "// Client-side expected-revision save token for a2e-documents `document` saves
+// (P3.2). The server guard `guard-document-revision-save` compares the token a
+// writer expected against the committed ... (571 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/modules/blocknote-editor/co-editing --config=packages/twenty-front/jest.config.mjs 2>&1...
+[94m[bash][0m $ npx jest --findRelatedTests packages/twenty-front/src/modules/object-record/record-field/ui/meta-typ...
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/modules/blocknote-editor/co-editing/hooks/__tests__/useDocumentSaveConflictGuard.test.t...
+[94m[todowrite][0m
+[94m[bash][0m $ grep -n "MAINTAINED_DOCUMENTS" -A 40 docs/scripts/check-docs.mjs | head -50
+[94m[bash][0m $ sed -n '1,200p' packages/twenty-apps/internal/a2e-documents/README.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/README.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/README.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/repository-architecture-audit.md
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -5
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -20
+[94m[bash][0m $ grep -n "parseNoteBlocks" packages/twenty-apps/internal/a2e-documents/src/lib/record-note-copy.ts
+[94m[bash][0m $ yarn test:unit 2>&1 | grep -E "^# (tests|pass|fail|suites)|ℹ (tests|pass|fail)" | tail -10
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ git show HEAD:packages/twenty-apps/internal/a2e-documents/src/objects/document.object.ts 2>/dev/null...
+[94m[bash][0m $ tail -30 ".ralph-tui/iterations/e4c4797e_2026-09-19_23-34-44_US-032.log" 2>/dev/null
+[94m[bash][0m $ grep -n "US-032\|server-expected-revision-cas\|server-side-compare-and-set" docs/plan/phases/phase-0...
+The concurrent session stopped (my claim was 17s earlier), so I proceed. Now the critical front typecheck:
+[94m[bash][0m $ echo "TSGO_EXIT:${PIPESTATUS[0]}"
+[94m[bash][0m $ tail -20 /tmp/tsgo-out.txt
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/blocknote-editor/co-editing/hooks/useDocumentS...
+[94m[bash][0m $ npx oxfmt --check src/modules/blocknote-editor/co-editing/hooks/useDocumentSaveConflictGuard.ts src/...
+[94m[bash][0m $ npx oxfmt --check src/modules/blocknote-editor/co-editing/hooks/useDocumentSaveConflictGuard.ts src/...
+[94m[bash][0m $ npx jest src/modules/blocknote-editor/co-editing/hooks/__tests__/useDocumentSaveConflictGuard.test.t...
+[94m[bash][0m $ echo "EXIT:$?"
+[94m[read][0m
+Let me harden the body reader for either jsonb object or serialized string shape:
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/document-revision-cas.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/document-revision-cas.ts
+[94m[edit][0m
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/document-revision-cas.test.ts" 2>&1 | tail...
+[94m[bash][0m $ echo "EXIT:$?"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/utils/sanitizeRecordInput.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+All checks green. Let me append the phase report and progress bridge.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ grep -n "US-032/server-side-compare-and-set\|US-032/server-expected-revision-cas" docs/plan/phases/p...
+[94m[bash][0m $ git show --stat HEAD | head -30
+[94m[todowrite][0m
+Implemented US-032's first unmet gap (AC3 server-side CAS) plus AC5 docs.
+
+**Server** (`a2e-documents`): two additive nullable `document` fields (`contentRevision` head token, `contentBaseRevision` expected token); pure `document-revision-cas.ts` (13 node cases); `guard-document-revision-save` logic function on `document.updated`/`updatedFields:['content']` that repairs a stale committed write in place (SDK has no pre-write hook), stamping a `repair-` sentinel base so it never re-repairs.
+
+**Front**: `persistBlocknoteBody` writes both tokens on the same update; the save-conflict guard tracks the base revision, captures the conflicting one, and `Keep my changes`/`Use saved version` resolve against it (retry test added). Non-editor writers stay last-write-wins.
+
+**Docs**: a2e-documents README "Concurrent saves" section with single-writer guidance; corrected the audit tradeoff row.
+
+Checks green: app test 13/13, typecheck, lint, `dev:build` (22 files); front co-editing 27 tests, related 135 tests, `tsgo` exit 0, oxlint/oxfmt clean; `check-docs` PASS. Reported `done-for-review`, Ready-to-tick: no — Tier-2 reinstall + two-session browser proof remain (orchestrator). Phase report and `.ralph-tui/progress.md` appended.
+
+Note: a second ralph session claimed the same slice 17s later, did zero code, and its engine auto-committed my app/front changes as `e5824205`/`992d6c03` mid-iteration; my final test edit remains uncommitted for Ralph to pick up.
+
+<promise>COMPLETE</promise>

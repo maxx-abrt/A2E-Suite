@@ -1,12 +1,12 @@
 {
   "version": 1,
-  "sessionId": "6455d7b0-09b6-4e5c-ba20-c39a463e7fdb",
+  "sessionId": "e4c4797e-8eca-417d-bb62-7df2149568f1",
   "status": "running",
-  "startedAt": "2026-09-19T20:42:50.206Z",
-  "updatedAt": "2026-09-19T21:43:55.855Z",
-  "currentIteration": 7,
+  "startedAt": "2026-09-19T21:22:21.057Z",
+  "updatedAt": "2026-09-19T21:45:33.029Z",
+  "currentIteration": 3,
   "maxIterations": 20,
-  "tasksCompleted": 6,
+  "tasksCompleted": 3,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -20,72 +20,32 @@
     {
       "iteration": 1,
       "status": "completed",
-      "taskId": "US-026",
-      "taskTitle": "[P1.6c] Unified setup UI — preview apps/prerequisites/samples/customization, blank/CRM, optional app exclusion (both entrypoints)",
+      "taskId": "US-030",
+      "taskTitle": "[P3.2] Template instantiation — fetch authorized body, remap IDs/anchors, prove copy independence",
       "taskCompleted": true,
-      "durationMs": 310287,
-      "startedAt": "2026-09-19T20:42:58.131Z",
-      "endedAt": "2026-09-19T20:48:08.418Z"
+      "durationMs": 730893,
+      "startedAt": "2026-09-19T21:22:27.811Z",
+      "endedAt": "2026-09-19T21:34:38.704Z"
     },
     {
       "iteration": 2,
       "status": "completed",
-      "taskId": "US-027",
-      "taskTitle": "[P1.6c] Partial-failure UX — continue with successful steps, retry later, empty-catalogue protection",
+      "taskId": "US-032",
+      "taskTitle": "[P3.2] Atomic expected-revision save with conflict feedback and preserved draft (no OT/CRDT)",
       "taskCompleted": true,
-      "durationMs": 401165,
-      "startedAt": "2026-09-19T20:48:14.102Z",
-      "endedAt": "2026-09-19T20:54:55.267Z"
+      "durationMs": 253887,
+      "startedAt": "2026-09-19T21:34:44.492Z",
+      "endedAt": "2026-09-19T21:38:58.379Z"
     },
     {
       "iteration": 3,
       "status": "completed",
-      "taskId": "US-028",
-      "taskTitle": "[P1.3] Fix post-install delegated seeding completing with 0 rows — truthful step status",
+      "taskId": "US-033",
+      "taskTitle": "[P3.3] Record integration — actual selected-note body copy with source link and permission checks",
       "taskCompleted": true,
-      "durationMs": 371442,
-      "startedAt": "2026-09-19T20:55:00.819Z",
-      "endedAt": "2026-09-19T21:01:12.261Z"
-    },
-    {
-      "iteration": 4,
-      "status": "completed",
-      "taskId": "US-029",
-      "taskTitle": "[P1.6d] Persona starter bundles — student/journal/team/non-profit/small-business, ready apps only",
-      "taskCompleted": true,
-      "durationMs": 918810,
-      "startedAt": "2026-09-19T21:01:17.830Z",
-      "endedAt": "2026-09-19T21:16:36.640Z"
-    },
-    {
-      "iteration": 5,
-      "status": "failed",
-      "taskId": "US-030",
-      "taskTitle": "[P3.2] Template instantiation — fetch authorized body, remap IDs/anchors, prove copy independence",
-      "taskCompleted": false,
-      "durationMs": 145071,
-      "startedAt": "2026-09-19T21:16:42.219Z",
-      "endedAt": "2026-09-19T21:19:07.290Z"
-    },
-    {
-      "iteration": 6,
-      "status": "completed",
-      "taskId": "US-030",
-      "taskTitle": "[P3.2] Template instantiation — fetch authorized body, remap IDs/anchors, prove copy independence",
-      "taskCompleted": true,
-      "durationMs": 573582,
-      "startedAt": "2026-09-19T21:19:17.294Z",
-      "endedAt": "2026-09-19T21:28:50.876Z"
-    },
-    {
-      "iteration": 7,
-      "status": "completed",
-      "taskId": "US-031",
-      "taskTitle": "[P3.2] Durable revision history — replace in-memory EditorVersionHistoryStore",
-      "taskCompleted": true,
-      "durationMs": 303009,
-      "startedAt": "2026-09-19T21:28:56.485Z",
-      "endedAt": "2026-09-19T21:33:59.494Z"
+      "durationMs": 187196,
+      "startedAt": "2026-09-19T21:39:04.070Z",
+      "endedAt": "2026-09-19T21:42:11.266Z"
     }
   ],
   "skippedTaskIds": [],
