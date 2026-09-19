@@ -60,6 +60,15 @@ const StyledActionButton = styled.button`
   &:hover {
     border-color: ${themeCssVariables.border.color.blue};
   }
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `;
 
 const StyledActionIcon = styled.span`

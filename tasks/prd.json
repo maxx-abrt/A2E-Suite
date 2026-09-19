@@ -117,14 +117,15 @@
         "A dated entry is appended to the phase report for the touched phase; PLAN.md is not edited; nothing is committed"
       ],
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md task P10 ('Accessibility pass…'), phase P10, handoff position 5. Starting state: NOT STARTED. dependsOn US-002/003/004/005 because 'all new surfaces' must exist before the pass can cover them (PLAN.md: baseline UX and accessibility are required earlier, not deferred to polish — hence this story sits inside the batch rather than after release). Keyboard/focus-trap/reduced-motion behavior is assertable with testing-library; C7 requires keyboard-accessible non-drag alternatives, visible focus, labeled controls, light/dark, fr/en.",
       "dependsOn": [
         "US-002",
         "US-003",
         "US-004",
         "US-005"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-007",
@@ -328,6 +329,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T10:47:08.744Z"
+    "updatedAt": "2026-09-19T10:53:54.141Z"
   }
 }

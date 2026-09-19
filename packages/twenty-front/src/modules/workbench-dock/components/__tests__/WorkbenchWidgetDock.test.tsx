@@ -3,6 +3,7 @@ import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPart
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider, createStore } from 'jotai';
 import { type ReactNode } from 'react';
 
@@ -32,6 +33,27 @@ const renderDock = (workspaceMembers: PartialWorkspaceMember[] = []) => {
   );
 
   return render(<WorkbenchWidgetDock />, { wrapper: Wrapper });
+};
+
+const renderDockBetweenSentinels = () => {
+  const store = createStore();
+
+  store.set(currentWorkspaceMembersState.atom, []);
+
+  const Wrapper = ({ children }: { children: ReactNode }) => (
+    <Provider store={store}>
+      <I18nProvider i18n={i18n}>{children}</I18nProvider>
+    </Provider>
+  );
+
+  return render(
+    <>
+      <button type="button">before dock</button>
+      <WorkbenchWidgetDock />
+      <button type="button">after dock</button>
+    </>,
+    { wrapper: Wrapper },
+  );
 };
 
 describe('WorkbenchWidgetDock', () => {
@@ -89,5 +111,37 @@ describe('WorkbenchWidgetDock', () => {
     expect(
       screen.getByTestId('workbench-widget-button-presence'),
     ).toBeInTheDocument();
+  });
+
+  it('expands a widget by keyboard and exposes it as a labelled region', async () => {
+    renderDock();
+
+    const inboxButton = screen.getByTestId('workbench-widget-button-inbox');
+
+    inboxButton.focus();
+    expect(inboxButton).toHaveFocus();
+
+    await userEvent.keyboard('{Enter}');
+
+    expect(screen.getByTestId('workbench-widget-dock')).toHaveAttribute(
+      'data-mode',
+      'EXPANDED',
+    );
+    expect(screen.getByRole('region', { name: 'inbox' })).toBeInTheDocument();
+  });
+
+  it('does not trap focus because the dock is not a modal', async () => {
+    renderDockBetweenSentinels();
+
+    fireEvent.click(screen.getByTestId('workbench-widget-button-inbox'));
+
+    const collapseButton = screen.getByTestId('workbench-widget-collapse');
+
+    collapseButton.focus();
+    expect(collapseButton).toHaveFocus();
+
+    await userEvent.tab();
+
+    expect(screen.getByText('after dock')).toHaveFocus();
   });
 });

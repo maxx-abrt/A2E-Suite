@@ -47,6 +47,10 @@ const StyledDockRoot = styled.aside<{ isExpanded: boolean }>`
       ? `var(${WORKBENCH_DOCK_WIDTH_CSS_VARIABLE}, 336px)`
       : `${WORKBENCH_DOCK_MINI_WIDTH}px`};
 
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
   @media (max-workbenchwidgetdockwidth: 1199px) {
     bottom: 0;
     box-shadow: ${themeCssVariables.boxShadow.strong};
@@ -225,7 +229,7 @@ export const WorkbenchWidgetDock = () => {
         })}
       </StyledRail>
       {isExpanded && (
-        <StyledExpandedPanel>
+        <StyledExpandedPanel role="region" aria-label={activeTitle}>
           <StyledHeader>
             <StyledTitle>{activeTitle}</StyledTitle>
             <IconButton

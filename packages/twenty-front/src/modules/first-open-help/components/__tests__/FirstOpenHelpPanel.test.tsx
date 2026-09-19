@@ -131,4 +131,29 @@ describe('FirstOpenHelpPanel', () => {
 
     expect(screen.getByTestId('first-open-help-empty')).toBeInTheDocument();
   });
+
+  it('selects an action and dismisses a topic with the keyboard alone', async () => {
+    const onSelectLaunchAction = jest.fn();
+    const onDismissTopic = jest.fn();
+
+    renderPanel({ onSelectLaunchAction, onDismissTopic });
+
+    const action = screen.getByTestId(
+      'first-open-help-action-documents-template',
+    );
+
+    action.focus();
+    expect(action).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    expect(onSelectLaunchAction).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'documents-template' }),
+    );
+
+    const dismiss = screen.getByTestId('first-open-help-dismiss-templates');
+
+    dismiss.focus();
+    expect(dismiss).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    expect(onDismissTopic).toHaveBeenCalledWith('templates');
+  });
 });

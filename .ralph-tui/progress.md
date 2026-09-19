@@ -14,6 +14,7 @@ after each iteration and it's included in prompts for context.
 - **Per-user dismissible front state:** persist a `Record<userId, string[]>` in a `createAtomState({ useLocalStorage: true })` and keep the add/remove/select logic as pure helpers; the hook selects with `currentUserState.id` and treats a null user as a no-op. Avoids a server schema change and survives reload, while a shared browser never leaks one member's hidden UI to another.
 - **Browser-local display preferences (no migration):** one `createAtomState({ useLocalStorage: true, localStorageOptions: { getOnInit: true }, validateInitFn })` + a `useXPreferences` hook of clamped setters + pure `sanitize`/`isValid` utils; publish attributes on `document.documentElement` from one `*ProviderEffect` mounted in `WorkspaceAppProviders` and consume them in `index.css`. Keeps optional P10 preferences out of the workspace-member schema.
 - **base-ui `Switch` in jsdom:** `Toggle`/`Switch` forwards a root click to a synthetic `PointerEvent` on a hidden checkbox; jsdom lacks `PointerEvent`, so a spec that clicks a toggle must alias `window.PointerEvent = MouseEvent` (and query `getByRole('switch', { name })`).
+- **New-surface accessibility pass:** respect reduced motion with the inline Linaria pattern `@media (prefers-reduced-motion: reduce) { transition: none; }` on the animated rule (jsdom cannot assert CSS; the repo precedent is SidePanelTabStripItem); give custom interactive elements a `:focus-visible` outline; expose changing counters/phases as `role="status"` live regions but keep per-second timers out of any live region; mark purely visual re-encodings (habit dots) `aria-hidden`; give an expanded panel `role="region"` + `aria-label`; and assert keyboard operation with `userEvent.tab()`/`{Enter}`. Non-modal docks must NOT trap focus — test that tabbing past the last control lands on a sentinel outside the dock.
 
 ---
 
@@ -66,5 +67,17 @@ after each iteration and it's included in prompts for context.
   - `twenty-ui/icon` exports a curated set: `IconKeyboard` is NOT exported even though it exists in `AllIcons`; the icon dictionary maps `IconCommand` to the command/keyboard concept. `IconTextSize` is exported and fits easy-read.
   - `constants/*.ts` may hold only ONE `const` (`twenty(max-consts-per-file)` max 1), so defaults/bounds/presets live in separate files.
   - Preferences that are optional polish stay browser-local: a workspace-member column would have forced a server migration for display-only state. Use localStorage + a root-attribute provider effect instead.
-  - `atomWithStorage` atoms can be read from a `createAtomSelector` via the `get` helper, which is how the shortcuts preference reaches the global hotkeys config without a parallel system.
+   - `atomWithStorage` atoms can be read from a `createAtomSelector` via the `get` helper, which is how the shortcuts preference reaches the global hotkeys config without a parallel system.
+---
+
+## 2026-09-19 - US-006
+- Ran the P10 accessibility pass over the surfaces that exist: keyboard nav, non-trapping dock, reduced-motion and screen-reader semantics.
+- Pomodoro: phase label + session caption are now `role="status"` live regions; the decorative habit dots are `aria-hidden` so the count is announced once; new keyboard-only spec.
+- first-open-help: custom action buttons get a `:focus-visible` outline and `transition: none` under `prefers-reduced-motion`; new keyboard-only spec.
+- workbench dock: expanded panel is a labelled `role="region"`; `prefers-reduced-motion` on the width transition; new specs for keyboard expand and for NOT trapping focus (dock is non-modal).
+- Files changed: twenty-front `home-dashboard/components/PomodoroWidgetContent.tsx` (+test), `first-open-help/components/FirstOpenHelpPanel.tsx` (+test), `workbench-dock/components/WorkbenchWidgetDock.tsx` (+test), `docs/plan/phases/phase-10-report.md`, `.ralph-tui/progress.md`.
+- **Learnings:**
+  - The 4 touched specs are run as `npx jest <paths> --config=packages/twenty-front/jest.config.mjs`; `npx nx lint:diff-with-main twenty-front` always says "No changed files." for uncommitted work, so the covering lint gate is direct `npx oxlint --type-aware` + `npx oxfmt --check`.
+  - `WorkbenchWidgetDock.tsx` carries pre-existing invalid CSS (`min-workbenchwidgetdockwidth`, `workbenchwidgetdockwidth`, `@media (max-workbenchwidgetdockwidth: …)`), so its width transition and <1200px responsive rules never apply — flagged, not fixed (layout scope).
+  - US-003 is `partial` (journal template + Cmd+K quick capture absent), so this pass covers the P10 surfaces that exist; those two need their own check when they land.
 ---

@@ -1,0 +1,260 @@
+# Iteration 5 Log
+
+## Metadata
+
+- **Task ID**: US-005
+- **Task Title**: P10: Focus/accessibility preferences — Pomodoro, density/easy-read, shortcuts under explicit user control
+- **Description**: As a user, I want explicit Pomodoro, density/easy-read and shortcut preferences so that I control focus and readability instead of adapting to fixed defaults.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T10:38:35.691Z
+- **Ended At**: 2026-09-19T10:47:08.742Z
+- **Duration**: 8m 33s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+I'll start with the clean-start check and gather context per the executor contract.
+[94m[bash][0m $ ls .ralph-tui/ 2>/dev/null
+Dirty files are Ralph engine state only. Let me read the task definition and phase report.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-10-report.md
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96mUS-005[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96mOptional focus|accessibility|density|Pomodoro[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+PLAN.md doesn't contain "US-005" literally. Let me find the P10 task text.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard
+[94m[bash][0m $ grep -rln "density\|easyRead\|easy-read\|shortcuts\|pomodoro" "packages/twenty-front/src/modules" --...
+US-003's Pomodoro widget (the prerequisite US-005 wraps) is shipped. Let me explore the relevant surfaces.
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules[0m pattern: [96mdensity|easyRead|easy-read|shortcuts|pomodoro|Pomodoro[0m
+[94m[bash][0m $ ls -R "packages/twenty-front/src/modules/home-dashboard" && echo "=== workbench-dock ===" && ls "pac...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/PomodoroWidget.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/PomodoroWidgetContent.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/utils/pomodoroTimer.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/registerHomeDashboardWidgets.ts
+[94m[bash][0m $ ls "packages/twenty-front/src/modules/first-open-help" && echo "=== states ===" && ls "packages/twen...
+[94m[bash][0m $ ls "packages/twenty-front/src/modules" | head -120
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help[0m pattern: [96museLocalStorage|localStorage[0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ ls "packages/twenty-front/src/modules/settings" | head -80
+[94m[bash][0m $ ls "packages/twenty-front/src/modules/ui/theme" 2>/dev/null
+[94m[bash][0m $ ls "packages/twenty-front/src/modules/settings/profile" 2>/dev/null
+[94m[bash][0m $ ls "packages/twenty-front/src/modules/settings/components" 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/settings/experience/components/UiScalePicker.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ui/theme/states/persistedUiScaleStepState.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ui/theme/hooks/useUiScale.ts
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mFormatPreferencesSettings|UiScalePicker[0m
+[94m[read][0m
+[94m[bash][0m $ ls -R "packages/twenty-front/src/pages/settings/profile/appearance" 2>/dev/null | head -60
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mpersistedUiScaleStepState|useUiScale|UI_SCALE_MULTIPLIERS[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mSettingsExperience[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ui/theme/components/BaseThemeProvider.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/__stories__/SettingsExperience.stories.tsx
+[94m[read][0m
+[94m[bash][0m $ find "packages/twenty-front/src/modules/keyboard-shortcut-menu" -type f | head -60
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/keyboard-shortcut-menu[0m pattern: [96mshortcut|Shortcut[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/keyboard-shortcut-menu/types/Shortcut.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mfirstHotKey|secondHotKey|areSimultaneous[0m
+[94m[bash][0m $ find "packages/twenty-front/src/modules/ui/utilities/hotkey" -type f | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ui/utilities/hotkey/types/GlobalHotkeysConfig.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ui/utilities/hotkey/components/HotkeyEffect.tsx
+[94m[bash][0m $ grep -rln "GlobalHotkeysConfig\|globalHotkeysConfig\|DefaultGlobalHotkeysConfig" "packages/twenty-fr...
+[94m[read][0m
+[94m[bash][0m $ sed -n '1,120p' "packages/twenty-front/src/modules/ui/utilities/hotkey/hooks/useGlobalHotkeysCallbac...
+[94m[bash][0m $ grep -rn "UserUiScaleProviderEffect" "packages/twenty-front/src" | head
+[94m[bash][0m $ sed -n '1,120p' "packages/twenty-front/src/modules/app/components/SharedAppProviders.tsx"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/index.css
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/app/components/WorkspaceAppProviders.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/HomeWidgetList.tsx
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ sed -n '1,80p' "packages/twenty-front/src/modules/first-open-help/components/__tests__/FirstOpenHelp...
+Let me check the state utilities and a test precedent for the settings/atom pattern.
+[94m[bash][0m $ ls "packages/twenty-front/src/modules/ui/utilities/state/jotai/hooks"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-10-report.md
+No active claims within the last 2h and the prerequisite `focus` Pomodoro widget is shipped. Claiming the slice.
+[94m[bash][0m $ printf '\nCLAIMED — US-005/focus-accessibility-preferences — deepseek-v4.1-flash — %s — base 32be9c7...
+[94m[bash][0m $ ls "packages/twenty-front/src/modules/ui/input/components" | head -80
+[94m[bash][0m $ find "packages/twenty-ui/src" -iname "*Toggle*" | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-ui/src/input/Toggle/Toggle.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ui/input/components/Select.tsx
+[94m[bash][0m $ grep -rln "<Toggle" "packages/twenty-front/src/modules/settings" "packages/twenty-front/src/pages/se...
+[94m[bash][0m $ grep -rn "Toggle" "packages/twenty-front/src/pages/settings" | head -20
+[94m[bash][0m $ sed -n '1,80p' "packages/twenty-front/src/modules/settings/components/SettingsOptions/SettingsOption...
+[94m[bash][0m $ sed -n '1,80p' "packages/twenty-front/src/pages/settings/admin-panel/SettingsAdminApplicationRegistr...
+[94m[bash][0m $ find packages/twenty-front -maxdepth 1 -name ".oxlintrc*"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-oxlint-rules/rules/max-consts-per-file.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/.oxlintrc.json
+[94m[bash][0m $ sed -n '1,60p' "packages/twenty-oxlint-rules/rules/folder-structure.ts" 2>/dev/null
+[94m[bash][0m $ sed -n '1,30p' "packages/twenty-front/src/modules/ui/utilities/state/jotai/hooks/useAtomStateValue.t...
+[94m[write][0m "export type FocusDensity = 'comfortable' | 'compact';
+
+export type FocusPreferences = {
+  density: FocusDensity;
+  easyRead: boolean;
+  shortcutsEnabled: boolean;
+  pomodoroFocusDurationMinutes: numbe... (239 chars)"
+[94m[write][0m "import { type FocusPreferences } from '@/focus-preferences/types/FocusPreferences';
+
+export const DEFAULT_FOCUS_PREFERENCES: FocusPreferences = {
+  density: 'comfortable',
+  easyRead: false,
+  shortcu... (284 chars)"
+[94m[write][0m "import { type FocusDensity } from '@/focus-preferences/types/FocusPreferences';
+
+export const FOCUS_DENSITIES: FocusDensity[] = ['comfortable', 'compact'];
+"
+[94m[write][0m "// Bounds protect the persisted preference from a hand-edited localStorage
+// payload: the widget must never render a 0-second or unbounded timer.
+export const FOCUS_PREFERENCE_BOUNDS = {
+  focusDurat... (274 chars)"
+[94m[write][0m "export const FOCUS_DURATION_PRESET_MINUTES = [15, 25, 45, 60];
+"
+[94m[write][0m "export const FOCUS_SESSION_TARGET_PRESETS = [2, 4, 6, 8];
+"
+Now I'll build the `focus-preferences` module. Starting with types and constants.
+[94m[bash][0m $ grep -rln "IconKeyboard\|IconTypography\|IconTextSize\|IconAccessible\|IconAdjustments" "packages/tw...
+[94m[bash][0m $ ls "packages/twenty-ui/src/icon" | head -30
+[94m[bash][0m $ grep -oE "Icon(Typography|Keyboard|TextSize|Accessible|LetterCase|Adjustments|ClockPlay|Typography)"...
+[94m[write][0m "import { DEFAULT_FOCUS_PREFERENCES } from '@/focus-preferences/constants/DefaultFocusPreferences';
+import { FOCUS_DENSITIES } from '@/focus-preferences/constants/FocusDensities';
+import { FOCUS_PREFER... (2786 chars)"
+[94m[write][0m "import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+
+import { DEFAULT_FOCUS_PREFERENCES } from '@/focus-preferences/constants/DefaultFocusPreferences';
+import { type Fo... (824 chars)"
+[94m[write][0m "import { useCallback } from 'react';
+
+import { focusPreferencesState } from '@/focus-preferences/states/focusPreferencesState';
+import {
+  type FocusDensity,
+  type FocusPreferences,
+} from '@/focus-p... (2325 chars)"
+[94m[write][0m "import { useEffect } from 'react';
+
+import { focusPreferencesState } from '@/focus-preferences/states/focusPreferencesState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAto... (937 chars)"
+[94m[write][0m "import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { Card } from 'twenty-ui/surfaces';
+import { IconKeyboard, IconTextSize } from 'twenty-ui/icon';
+import... (3209 chars)"
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+The Easy read card was accidentally dropped; re-adding it.
+[94m[bash][0m $ sed -n '1,60p' "packages/twenty-front/src/modules/first-open-help/components/__tests__/FirstOpenHelp...
+[94m[bash][0m $ find "packages/twenty-front/src/modules/ui/utilities/state/contexts" -name "RoutedFlow*"
+[94m[read][0m
+[94m[bash][0m $ grep -rln "FirstOpenHelpWidget" "packages/twenty-front/src" | head
+[94m[write][0m "import { useEffect, useState } from 'react';
+
+import { useFocusPreferences } from '@/focus-preferences/hooks/useFocusPreferences';
+import { PomodoroWidgetContent } from '@/home-dashboard/components/Po... (1793 chars)"
+[94m[bash][0m $ sed -n '1,70p' "packages/twenty-front/src/modules/ui/utilities/state/jotai/utils/createAtomSelector....
+[94m[bash][0m $ sed -n '1,40p' "packages/twenty-front/src/modules/ui/utilities/state/jotai/types/SelectorCallbacks.t...
+[94m[write][0m "import { focusPreferencesState } from '@/focus-preferences/states/focusPreferencesState';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
+import { DEFAULT_GLOBAL_HOTKEYS... (1354 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/app/components/WorkspaceAppProviders.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/app/components/WorkspaceAppProviders.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/index.css
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/HomeWidgetList.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/HomeWidgetList.tsx
+[94m[bash][0m $ sed -n '1,80p' "packages/twenty-front/src/modules/ui/input/components/__tests__/Select.test.tsx" 2>/...
+[94m[read][0m
+[94m[bash][0m $ find "packages/twenty-front/src/pages/settings" -name "*.test.*" | head
+[94m[bash][0m $ grep -rln "DropdownComponentInstanceContext" "packages/twenty-front/src" --include="*.test.tsx" | he...
+[94m[bash][0m $ sed -n '1,80p' "packages/twenty-front/src/modules/object-record/record-calendar/components/__tests__...
+[94m[bash][0m $ cat "packages/twenty-front/src/modules/ui/utilities/state/jotai/types/State.ts"
+[94m[bash][0m $ find "packages/twenty-front" -maxdepth 2 -name "jest.config.mjs" -o -maxdepth 2 -name "jest.setup*" ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ui/utilities/state/jotai/utils/createAtomState.ts
+[94m[bash][0m $ ls "packages/twenty-front/src/modules/settings/components/__tests__" 2>/dev/null
+[94m[bash][0m $ sed -n '1,40p' "packages/twenty-front/src/modules/ai/components/__tests__/ThinkingStepsDisplay.test....
+[94m[write][0m "import { DEFAULT_FOCUS_PREFERENCES } from '@/focus-preferences/constants/DefaultFocusPreferences';
+import {
+  clampFocusDurationMinutes,
+  clampFocusSessionTarget,
+  isFocusDensity,
+  isValidFocusPref... (2535 chars)"
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-even... (3274 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ cat "packages/twenty-front/src/modules/ui/utilities/state/jotai/types/Selector.ts"
+[94m[write][0m "import { getDefaultStore } from 'jotai';
+
+import { DEFAULT_FOCUS_PREFERENCES } from '@/focus-preferences/constants/DefaultFocusPreferences';
+import { focusPreferencesState } from '@/focus-preferences/... (1285 chars)"
+Now running the targeted specs.
+[94m[bash][0m $ npx jest src/modules/focus-preferences src/modules/ui/utilities/focus/states/__tests__/currentGlobal...
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/modules/focus-preferences --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -4...
+[94m[bash][0m $ sed -n '120,175p' "node_modules/@base-ui/react/switch/root/SwitchRoot.js"
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/modules/focus-preferences --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -3...
+[94m[bash][0m $ npx jest src/modules/focus-preferences src/modules/ui/utilities/focus/states/__tests__/currentGlobal...
+[94m[bash][0m $ npx jest src/modules/home-dashboard src/modules/workbench-dock src/modules/settings/experience --con...
+Now typecheck inside the touched package.
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -40
+[94m[bash][0m $ grep -n "Keyboard\|Shortcut\|Command\|Text size\|Accessib" "packages/twenty-ui/src/icon/icon-diction...
+[94m[bash][0m $ grep -in "keyboard\|shortcut\|key\b" "packages/twenty-ui/src/icon/icon-dictionary.md" | head -20
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -20
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-front 2>&1 | tail -20
+[94m[bash][0m $ git status --porcelain | grep -E '\.(ts|tsx|css)$'
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/focus-preferences src/modules/ui/utilities/foc...
+[94m[bash][0m $ npx oxfmt --check src/modules/focus-preferences src/modules/ui/utilities/focus/states/__tests__ src/...
+[94m[bash][0m $ npx oxfmt src/modules/focus-preferences src/modules/ui/utilities/focus/states/__tests__ src/modules/...
+[94m[bash][0m $ npx jest src/modules/focus-preferences src/modules/ui/utilities/focus/states/__tests__/currentGlobal...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/focus-preferences src/modules/ui/utilities/foc...
+[94m[bash][0m $ date -u +%Y-%m-%dT%H:%M:%SZ
+All checks green. Appending the phase report entry.
+[94m[bash][0m $ US-006 then runs the keyboard/focus-trap/reduced-motion pass over the new `focus-preferences` surfac...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ the icon dictionary maps `IconCommand` to the command/keyboard concept. `IconTextSize` is exported a...
+[94m[bash][0m $ git status --porcelain && echo "---" && git diff --stat
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/PomodoroWidget.tsx
+[94m[bash][0m $ echo "PLAN.md diff exit: $?"
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -15
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-10-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-10-report.md
+[94m[bash][0m $ tail -3 "docs/plan/phases/phase-10-report.md"
+Done. US-005 is implemented and self-verified.
+
+**What shipped (P10 focus/accessibility preferences):**
+- New `focus-preferences` module in `twenty-front`: a persisted, browser-local `a2e-focus-preferences` atom (validated/sanitized), a `useFocusPreferences` hook, and a `FocusPreferencesSettings` surface with density (Comfortable/Compact), easy-read, Pomodoro duration + daily session target, and a keyboard-shortcuts toggle.
+- Wired into Settings → Experience → "Focus and readability".
+- The shipped `focus` Pomodoro widget now reads duration/target from these prefs (wrapped, not forked).
+- `shortcutsEnabled` gates `currentGlobalHotkeysConfigSelector` when no focus-stack override exists.
+- Density/easy-read are published as root `data-a2e-*` attributes and consumed by `index.css` + `HomeWidgetList`.
+
+**Verification (all green):**
+- 4 new/edited suites / 15 tests PASS; related home-dashboard + workbench-dock + settings suites 17/51 PASS.
+- `tsgo --noEmit`: only the 6 documented `front-components` baseline errors.
+- `nx lint:diff-with-main` → "No changed files." (uncommitted), so direct `oxlint --type-aware` (0/0) + `oxfmt --check` clean.
+- `check-docs.mjs` PASS. PLAN.md untouched; nothing committed.
+
+**Missing for tick (orchestrator/Tier-2 only):** in-browser walkthrough confirming the density/easy-read visual effects, live Pomodoro resize, and Cmd+K suppression.
+
+Report appended to `docs/plan/phases/phase-10-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

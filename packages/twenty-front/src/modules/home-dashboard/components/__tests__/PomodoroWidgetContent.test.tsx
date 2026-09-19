@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import {
   PomodoroWidgetContent,
@@ -82,5 +83,40 @@ describe('PomodoroWidgetContent', () => {
     fireEvent.click(screen.getByTestId('home-pomodoro-reset'));
 
     expect(onReset).toHaveBeenCalledTimes(1);
+  });
+
+  it('announces the phase and session count as polite status regions', () => {
+    renderWidget({ isRunning: true, completedFocusSessions: 2 });
+
+    expect(screen.getByText('Focus in progress')).toHaveAttribute(
+      'role',
+      'status',
+    );
+    expect(screen.getByText('2 of 4 focus sessions today')).toHaveAttribute(
+      'role',
+      'status',
+    );
+  });
+
+  it('keeps the decorative habit dots out of the accessibility tree', () => {
+    renderWidget();
+
+    expect(
+      screen.getByTestId('home-pomodoro-habit-0').parentElement,
+    ).toHaveAttribute('aria-hidden', 'true');
+  });
+
+  it('starts the timer with the keyboard alone', async () => {
+    const onStart = jest.fn();
+
+    renderWidget({ onStart });
+
+    await userEvent.tab();
+
+    expect(screen.getByTestId('home-pomodoro-toggle')).toHaveFocus();
+
+    await userEvent.keyboard('{Enter}');
+
+    expect(onStart).toHaveBeenCalledTimes(1);
   });
 });

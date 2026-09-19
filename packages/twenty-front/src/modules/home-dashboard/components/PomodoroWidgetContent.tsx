@@ -80,13 +80,15 @@ export const PomodoroWidgetContent = ({
 
   return (
     <StyledContainer data-testid="home-pomodoro">
-      <StyledPhaseLabel>
+      <StyledPhaseLabel role="status">
         {isRunning ? t`Focus in progress` : t`Ready to focus`}
       </StyledPhaseLabel>
       <StyledClock data-testid="home-pomodoro-clock">
         {formatPomodoroClock(secondsRemaining)}
       </StyledClock>
-      <StyledHabitRow aria-label={t`Focus session habit`}>
+      {/* The dots only re-encode the caption below; keep them out of the
+          accessibility tree so the count is announced once, not twice. */}
+      <StyledHabitRow aria-hidden="true">
         {Array.from({ length: focusSessionTarget }).map((_, index) => (
           <StyledHabitDot
             key={index}
@@ -96,7 +98,7 @@ export const PomodoroWidgetContent = ({
           />
         ))}
       </StyledHabitRow>
-      <StyledHabitCaption>
+      <StyledHabitCaption role="status">
         {t`${completedFocusSessions} of ${focusSessionTarget} focus sessions today`}
       </StyledHabitCaption>
       <StyledActions>
