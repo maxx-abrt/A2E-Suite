@@ -307,9 +307,10 @@
         "A dated entry is appended to the phase report for the touched phase; PLAN.md is not edited; nothing is committed"
       ],
       "priority": 14,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md P9.3 first bullet, phase P9.3 — dependency-ready for the CRM→Projects→Chat legs: CRM is the verified baseline, P4 verified 2026-09-17 (d19510d2), P5 verified 2026-09-19 (43c89c2a). The trigger is the standard opportunity stage transition (native workflow engine trigger, precedent: the P4.1 recurring generator's native CRON trigger). Live materialization of the template on the workflow engine (createWorkflowVersionStep/Edge + a real deal-won firing) is Tier 2 — orchestrator; the executor ships descriptor + tests, exactly like the P4.1 recipe's executor slice. Cross-app event contract (event ID/type/version, workspace, source record/app, actor, correlation key) is C5-binding — encode it in the payload conventions, not a new bus. Report entry goes to phase-04-report (a2e-projects surface; note the P9.3 bullet there).",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-015",
@@ -336,6 +337,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T11:50:03.347Z"
+    "updatedAt": "2026-09-19T11:59:53.421Z"
   }
 }

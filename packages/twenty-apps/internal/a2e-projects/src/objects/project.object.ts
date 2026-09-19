@@ -15,6 +15,7 @@ import {
   EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIERS,
   LABEL_IDENTIFIER_IDS,
   OBJECT_IDS,
+  PROJECT_FIELD_IDS,
   RELATION_IDS,
 } from '../constants/universal-identifiers.ts';
 
@@ -127,6 +128,19 @@ export default defineObject({
       label: 'Dépensé',
       description: 'Consommé — alimenté depuis A2E Money (P7)',
       icon: 'IconCurrencyEuro',
+      isNullable: true,
+    },
+    {
+      // Deal-won recipe provenance (P9.3): the C5 correlation/idempotency key
+      // of the trigger that created this project, so a replayed workflow run
+      // finds it and skips instead of duplicating. Null on human-made projects.
+      universalIdentifier: PROJECT_FIELD_IDS.recipeCorrelationKey,
+      type: FieldType.TEXT,
+      name: 'recipeCorrelationKey',
+      label: 'Clé de recette',
+      description:
+        'Clé de corrélation/idempotence de la recette qui a créé ce projet',
+      icon: 'IconKey',
       isNullable: true,
     },
     {

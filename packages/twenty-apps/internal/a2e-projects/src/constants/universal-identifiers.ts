@@ -31,6 +31,22 @@ export const EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIERS = {
   document: 'c31a0100-0000-4000-8000-000000000000',
 } as const;
 
+// Optional sibling apps a recipe degrades around. A2E Chat owns `chatChannel`;
+// because this app pins no field on it, the chat leg stays optional — the
+// recipe hides the channel step when the app is absent (C5 degrade rule)
+// instead of making it a hard install prerequisite like `document` above.
+export const EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIERS = {
+  chat: 'e2dce399-87f1-4548-b307-5f368b4d5dd4',
+} as const;
+
+// Standard CRM metadata this app only references (never owns). The opportunity
+// `stage` field is a stock metadata field with a committed universal
+// identifier; the deal-won recipe's database-event filter pins it so no runtime
+// id lookup is needed at descriptor build time.
+export const STANDARD_FIELD_UNIVERSAL_IDENTIFIERS = {
+  opportunityStage: '20202020-6f76-477d-8551-28cd65b2b4b9',
+} as const;
+
 // Both sides of every relation, grouped by the record that owns the foreign key.
 export const RELATION_IDS = {
   projectLead: 'c31b0200-0002-4000-8000-000000000001',
@@ -61,6 +77,13 @@ export const RELATION_IDS = {
   milestoneTasks: 'c31b0300-0002-4000-8000-000000000003',
 } as const;
 
+// App-owned project fields beyond the label identifier. `recipeCorrelationKey`
+// persists the deal-won recipe's provenance key so a replayed trigger can find
+// the project it already created and skip it (C5 idempotency contract).
+export const PROJECT_FIELD_IDS = {
+  recipeCorrelationKey: 'c31b0200-0001-4000-8000-00000000000c',
+} as const;
+
 export const LABEL_IDENTIFIER_IDS = {
   projectName: 'c31b0200-0001-4000-8000-000000000001',
   milestoneName: 'c31b0300-0001-4000-8000-000000000001',
@@ -81,6 +104,10 @@ export const LOGIC_FUNCTION_IDS = {
   // P9.2 read-only Projects tools (standup digest + breakdown context).
   standupDigest: 'c31b0000-0012-4000-8000-00000000000e',
   taskBreakdownContext: 'c31b0000-0012-4000-8000-00000000000f',
+  // P9.3 deal-won recipe actions, exposed as workflow steps through
+  // `workflowActionTriggerSettings` (P4.1 prebuilt-recipe pattern).
+  dealWonCreateProject: 'c31b0000-0012-4000-8000-000000000010',
+  dealWonCreateChannel: 'c31b0000-0012-4000-8000-000000000011',
 } as const;
 
 // Task-extension fields live on the standard task object (app fields,
