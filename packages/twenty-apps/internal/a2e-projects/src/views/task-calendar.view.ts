@@ -16,7 +16,6 @@ import {
 // Native standard task field uuids (twenty-shared STANDARD_OBJECT_FIELDS).
 const taskField = {
   title: '20202020-b386-4cb7-aa5a-08d4a4d92680',
-  status: '20202020-70bc-48f9-89c5-6aa730b151e0',
   dueAt: '20202020-fd99-40da-951b-4cb9a352fce3',
 };
 
@@ -48,7 +47,10 @@ export default defineView({
     },
     {
       universalIdentifier: fieldId(1),
-      fieldMetadataUniversalIdentifier: taskField.status,
+      // Pipeline status column, matching the board's group-by field — not the
+      // native task `status` (the two diverge once the app writes the
+      // pipeline; see the completion filter note below).
+      fieldMetadataUniversalIdentifier: TASK_FIELD_IDS.projectStatus,
       position: 1,
       isVisible: true,
       size: 150,
@@ -64,7 +66,12 @@ export default defineView({
   filters: [
     {
       universalIdentifier: 'c31b0100-0005-4000-8000-000000000003',
-      fieldMetadataUniversalIdentifier: taskField.status,
+      // Completion exclusion reads the app pipeline `projectStatus` — the
+      // same field the board groups on — so a task marked DONE on the board
+      // leaves the calendar too. Filtering the native task `status` would
+      // keep app-created tasks on the calendar forever, since their native
+      // status keeps its TODO default when the pipeline moves to DONE.
+      fieldMetadataUniversalIdentifier: TASK_FIELD_IDS.projectStatus,
       operand: ViewFilterOperand.IS_NOT,
       value: 'DONE',
     },

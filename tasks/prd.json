@@ -173,9 +173,10 @@
         "Manifest build passes; view definition unit-verified; app-local typecheck + test:unit green; live proof deferred (Tier 2)"
       ],
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md:862 (P4.2 `[ ]`, not-started; calendar definition exists in source per P4 ledger row).",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-036",
@@ -351,6 +352,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T21:47:08.452Z"
+    "updatedAt": "2026-09-19T21:53:14.918Z"
   }
 }

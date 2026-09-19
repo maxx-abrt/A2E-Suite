@@ -12,6 +12,7 @@ import {
   TASK_FIELD_IDS,
   VIEW_IDS,
 } from '../../constants/universal-identifiers.ts';
+import { readTaskPipelineStatus } from '../task-status.ts';
 
 type ViewFieldDefinition = {
   universalIdentifier: string;
@@ -62,8 +63,9 @@ const unwrap = async <TDefinition>(
 const NATIVE_TASK_FIELD_IDS = {
   title: '20202020-b386-4cb7-aa5a-08d4a4d92680',
   dueAt: '20202020-fd99-40da-951b-4cb9a352fce3',
-  status: '20202020-70bc-48f9-89c5-6aa730b151e0',
 };
+
+const NATIVE_TASK_STATUS_FIELD_ID = '20202020-70bc-48f9-89c5-6aa730b151e0';
 
 test('the task calendar is a native CALENDAR view on the standard task object', async () => {
   const view = await unwrap<ViewDefinition>(
@@ -101,6 +103,51 @@ test('the calendar is project-scoped through the task project relation filter', 
 
   assert.ok(projectFilter, 'calendar has no task project filter');
   assert.equal(projectFilter.operand, ViewFilterOperand.IS_NOT_EMPTY);
+});
+
+test('the calendar excludes completed tasks on the app pipeline status, not the native status', async () => {
+  const view = await unwrap<ViewDefinition>(
+    '../../views/task-calendar.view.ts',
+  );
+
+  const completionFilter = (view.filters ?? []).find(
+    (filter) => filter.value === 'DONE',
+  );
+
+  assert.ok(completionFilter, 'calendar has no DONE exclusion filter');
+  assert.equal(
+    completionFilter.fieldMetadataUniversalIdentifier,
+    TASK_FIELD_IDS.projectStatus,
+  );
+  assert.notEqual(
+    completionFilter.fieldMetadataUniversalIdentifier,
+    NATIVE_TASK_STATUS_FIELD_ID,
+  );
+  assert.equal(completionFilter.operand, ViewFilterOperand.IS_NOT);
+
+  const displayedStatusField = (view.fields ?? []).find(
+    (viewField) =>
+      viewField.fieldMetadataUniversalIdentifier !==
+        NATIVE_TASK_FIELD_IDS.title &&
+      viewField.fieldMetadataUniversalIdentifier !== TASK_FIELD_IDS.project,
+  );
+
+  assert.ok(displayedStatusField, 'calendar exposes no status column');
+  assert.equal(
+    displayedStatusField.fieldMetadataUniversalIdentifier,
+    TASK_FIELD_IDS.projectStatus,
+  );
+});
+
+test('a task completed on the pipeline is read as done while its native status stays TODO', () => {
+  assert.equal(
+    readTaskPipelineStatus({ status: 'TODO', projectStatus: 'DONE' }),
+    'DONE',
+  );
+  assert.equal(
+    readTaskPipelineStatus({ status: 'TODO', projectStatus: null }),
+    'TODO',
+  );
 });
 
 test('every calendar field, filter and date reference resolves to a declared app or native task field', async () => {

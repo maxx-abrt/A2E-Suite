@@ -1,0 +1,83 @@
+# Iteration 5 Log
+
+## Metadata
+
+- **Task ID**: US-035
+- **Task Title**: [P4.2] Calendar view of task due dates — link into the existing calendar surface
+- **Description**: As a project member, I want task due dates visible on a calendar view, so that I can see deadlines without confusing them with scheduled provider events.
+- **Status**: completed
+- **Task Completed**: No
+- **Promise Detected**: No
+- **Started At**: 2026-09-19T21:45:38.685Z
+- **Ended At**: 2026-09-19T21:49:14.061Z
+- **Duration**: 3m 35s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-035" PLAN.md
+[94m[bash][0m $ grep -n "P4.2\|Calendar view of tasks\|Calendar view of task" PLAN.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ ls docs/plan/phases/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/ && echo "---SRC---" && ls packages/twenty-apps/intern...
+[94m[bash][0m $ ls -la packages/twenty-apps/internal/a2e-projects/src/views/ packages/twenty-apps/internal/a2e-proje...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-board.view.ts
+[94m[bash][0m $ grep -n "US-03[0-9]\|CLAIMED\|calendar\|Calendar" docs/plan/phases/phase-04-report.md | tail -60
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/task-status.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/ && echo "---" && ls packages/twenty...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-calendar.test.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/task-project-status.field.ts
+[94m[bash][0m $ git log --oneline -5 -- packages/twenty-apps/internal/a2e-projects/src/fields/task-project-status.fi...
+[94m[bash][0m $ grep -rn "status\|projectStatus" packages/twenty-apps/internal/a2e-projects/src/lib/starter-projects...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/project-tasks.view.ts
+[94m[bash][0m $ tail -40 docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ grep -rn "status" packages/twenty-shared/src/constants/standard-object-fields.constant.ts 2>/dev/nul...
+[94m[bash][0m $ grep -rln "20202020-70bc-48f9-89c5-6aa730b151e0" packages/twenty-server/src/modules/task/ | head
+[94m[bash][0m $ grep -rln "taskStatus\|TaskStatus" packages/twenty-server/src/modules/task | head
+[94m[bash][0m $ find packages/twenty-server/src -path "*task*" -name "*.ts" | grep -i standard | head
+[94m[bash][0m $ find packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils -iname "*...
+[94m[bash][0m $ grep -n "status" -A 30 packages/twenty-server/src/engine/workspace-manager/twenty-standard-applicati...
+[94m[bash][0m $ grep -rn "ViewFilterOperand.IS_NOT\b" packages/twenty-apps/internal --include=*.ts | grep -v __tests...
+[94m[bash][0m $ grep -rn "ViewFilterOperand.IS_NOT" packages/twenty-apps/internal packages/twenty-apps/examples 2>/d...
+[94m[bash][0m $ grep -rln "turnFilterIntoQueryBuilder\|SELECT.*IS_NOT\|isNot" packages/twenty-server/src/engine 2>/d...
+[94m[bash][0m $ find packages/twenty-front/src -iname "*turnRecordFilter*" | head
+[94m[bash][0m $ grep -rln "turnRecordFilterIntoGqlOperationFilter" packages/twenty-front/src | head
+[94m[bash][0m $ grep -rln "RecordFilter.*GqlOperationFilter\|computeRecordGqlOperationFilter\|recordFilterToGql" pac...
+[94m[bash][0m $ ls packages/twenty-front/src/modules/object-record/record-filter/utils/
+[94m[bash][0m $ grep -rln "GqlOperationFilter\|QueryFilter" packages/twenty-shared/src | head
+[94m[bash][0m $ grep -rn "IS_NOT" packages/twenty-shared/src/utils/filter | head
+[94m[bash][0m $ grep -rn "isNot\|IS_NOT" packages/twenty-shared/src/utils/filter/turnRecordFilterGroupIntoGqlOperati...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+I'll claim the slice and inspect the field-status handling before editing.
+[94m[bash][0m $ printf '\nCLAIMED — US-035/task-calendar-pipeline-status — deepseek-v4.1-flash — 2026-09-19T21:46:42...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-calendar.test.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-calendar.test.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-calendar.test.ts
+Now add the `readTaskPipelineStatus` import:
+
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && node --test --experimental-strip-types "src/lib/__t...
+6/6. Now the package gates.
+
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && yarn test:unit 2>&1 | tail -15
+247/247 (was 245, +2). Now typecheck, lint, format, and manifest build.
+
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && yarn typecheck 2>&1 | tail -8 && echo "===LINT===" ...
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && npx twenty dev:build . 2>&1 | tail -12
+[94m[bash][0m $ " 2>&1 | head -80
+Now check the manifest and formatting of the touched files.
+
+[94m[bash][0m $ ls .oxfmtrc* 2>/dev/null
+Manifest correct. Now format-check the touched files (root config ignores `lib/**`, so use a lib-inclusive copy as prior phases did).
+
+
+--- STDERR ---
+[93m[1m! [0mpermission requested: external_directory (/*); auto-rejecting
