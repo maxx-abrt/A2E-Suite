@@ -1,0 +1,63 @@
+# Iteration 13 Log
+
+## Metadata
+
+- **Task ID**: US-038
+- **Task Title**: [P4.2] Project page — overview widgets (health, milestones, members, activity) + tabs (tasks/board/gantt/files/docs)
+- **Description**: As a project member, I want a complete project page with overview widgets and tabs, so that all project surfaces are reachable from one native page.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T21:59:12.594Z
+- **Ended At**: 2026-09-19T22:00:52.312Z
+- **Duration**: 1m 39s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the clean-start check and task confirmation.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ ls docs/plan/phases/ | tail -20
+[94m[grep][0m [95mPLAN.md[0m pattern: [96mUS-038[0m
+[94m[bash][0m $ grep -n "P4.2\|P4\.2\|project page\|Project page" PLAN.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ ls -R packages/twenty-apps/internal/a2e-projects/src | head -120
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/page-layouts/project.page-layout.ts
+[94m[read][0m
+[94m[bash][0m $ git log --oneline -8 -- packages/twenty-apps/internal/a2e-projects/src/page-layouts/project.page-lay...
+[94m[bash][0m $ git log --oneline -12
+[94m[bash][0m $ grep -n "project-page\|project page\|project.page\|P4.2-project" docs/plan/phases/phase-04-report.md...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/package.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/project-overview.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project.object.ts
+[94m[read][0m
+[94m[bash][0m $ git log -1 --format='%H %ci'
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/project-overview.test.ts
+[94m[bash][0m $ cat >> docs/plan/phases/phase-04-report.md <<'EOF'  CLAIMED — US-038/verify-overview-and-tabs — deep...
+This task's work already exists in source (committed `c1bf077c` + docs tab from US-037 `8debd2e2`). I'll claim the verification slice and run the app-local gates.
+[94m[bash][0m $ echo "TYPECHECK_EXIT=$?"
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -30
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -15
+[94m[bash][0m $ "
+[94m[bash][0m $ yarn lint 2>&1 | tail -8
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ the `project-tasks`/`task-board` view definitions (owned by P4.1/P4.2-board-view). Gantt is delibera...
+All gates green and manifest confirms the full tab set. Writing the report.
+[94m[bash][0m $ tail -20 .ralph-tui/progress.md
+[94m[bash][0m $ a duplicate Gantt tab would double the widget. The manifest confirms: Accueil/Timeline/Tâches/Tablea...
+Verification complete. US-038's deliverable already exists in source and all app-local gates are green.
+
+**Findings**
+- `project.page-layout.ts` is one RECORD_PAGE with overview widgets (Accueil: Champs clés, Description, Aperçu, Temps) and tabs Tâches/Tableau/Fichiers/Documents, plus Gantt + Timeline in the Timeline tab — confirmed in the built manifest.
+- The overview front component was extended, not recreated: health, milestone/member/activity/document counts via pure `lib/project-overview.ts`.
+- Docs tab consumes the US-037 `project.documents` relation (`8debd2e2`); no source changes needed.
+
+**Checks** (a2e-projects): `yarn typecheck` → 0; `yarn test:unit` → 249/249; `yarn lint` → 0 errors (1 pre-existing warning); `npx twenty dev:build .` → Build succeeded (38 files). Only report files touched.
+
+Report `done-for-review` appended to `docs/plan/phases/phase-04-report.md`; progress entry appended to `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>
