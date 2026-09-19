@@ -1,44 +1,38 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+import {
+  extractTasksFromDocument,
+  type ExtractTasksFromDocumentResult,
+} from './handlers/extract-tasks-from-document-handler.ts';
 
-// AI tool seed (P4.3): « extraire les tâches d'un document ».
+export type {
+  ExtractTasksFromDocumentProposedTask,
+  ExtractTasksFromDocumentResult,
+} from './handlers/extract-tasks-from-document-handler.ts';
+
+// AI tool (P9.2): « extraire les tâches d'un document ».
 //
-// This file only REGISTERS the tool on the native registry through
-// `toolTriggerSettings` (P1.5) — no `registerAiTools`, no bespoke table, no
-// manual hook. It stays deliberately inert: no LLM call and no task creation,
-// so P9.2 can consume it (assistant) and replace the handler body with a real
-// extraction that is reviewed and confirmed before any write (C6). The result
-// carries an explicit `STUB_NOT_IMPLEMENTED` status so a caller can never
-// mistake the empty proposal for a finished extraction.
-
-export type ExtractTasksFromDocumentProposedTask = {
-  title: string;
-  description?: string;
-};
-
-export type ExtractTasksFromDocumentResult = {
-  status: 'STUB_NOT_IMPLEMENTED';
-  documentId: string;
-  projectId: string | null;
-  tasks: ExtractTasksFromDocumentProposedTask[];
-};
+// Registered on the native registry through `toolTriggerSettings` (P1.5) — no
+// `registerAiTools`, no bespoke table, no manual hook. The handler is a real
+// deterministic extraction: it reads the document body by id under the
+// caller's authorization and returns a draft of proposals. It never writes —
+// creating the tasks after review is a separate confirmed action (C6).
 
 const handler = async (params: {
   documentId: string;
   projectId?: string;
-}): Promise<ExtractTasksFromDocumentResult> => ({
-  status: 'STUB_NOT_IMPLEMENTED',
-  documentId: params.documentId,
-  projectId: params.projectId ?? null,
-  tasks: [],
-});
+}): Promise<ExtractTasksFromDocumentResult> =>
+  extractTasksFromDocument({
+    documentId: params.documentId,
+    projectId: params.projectId,
+  });
 
 export default defineLogicFunction({
   universalIdentifier: LOGIC_FUNCTION_IDS.extractTasksFromDocument,
   name: 'extract-tasks-from-document',
   description:
-    'Propose les tâches à créer à partir du contenu d’un document (amorçage P9 — lecture seule : aucune tâche n’est créée).',
+    'Propose les tâches à créer à partir du contenu d’un document (lecture seule : aucune tâche n’est créée, les propositions sont à valider).',
   timeoutSeconds: 30,
   toolTriggerSettings: {
     inputSchema: {

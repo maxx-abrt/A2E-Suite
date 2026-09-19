@@ -187,9 +187,10 @@
         "A dated entry is appended to the phase report for the touched phase; PLAN.md is not edited; nothing is committed"
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md P9.2 bullet 'Documents: summarize, extract tasks→P4, translate, improve writing' — this story owns the 'extract tasks→P4' leg only (the committed stub's own header comment names this exact follow-up: replace the handler body with a real extraction, reviewed and confirmed before any write). Read-only tool on the native registry (toolTriggerSettings already declared on the stub — P1.5-verified primitive; no registerAiTools, no new table). The toolTriggerSettings inputSchema already exposes documentId/projectId — keep them. No dependency on US-001 (doc relation): the tool reads the document by id, not via the relation. Domain readiness note: P3 implementation slices are committed but not yet orchestrator-ticked; this tool only depends on the verified document object model (P3.1) — acceptable. Do not add translate/improve-writing here (see US-013). Report entry goes to phase-04-report (P4.3/P9.2 surface).",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-010",
@@ -331,6 +332,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T11:21:14.831Z"
+    "updatedAt": "2026-09-19T11:26:34.864Z"
   }
 }

@@ -74,14 +74,13 @@ monthly calendar on `dueAt`, project-scoped task lists, and the three
   replace.
 - A daily cron purges archived projects, milestones, time entries and labels
   after the 7-day trash retention.
+- `extract-tasks-from-document` is an AI tool that reads a document by id
+  under the caller's authorization and deterministically proposes candidate
+  tasks from its to-do blocks plus a conservative heading/imperative
+  heuristic. It is read-only: no task is created — the proposals are a draft
+  to review, and creation is a separate confirmed action.
 - Front components provide the project overview, time rollup, Gantt
   (virtualized bars with dependency arrows) and the subtask forest.
-
-### Not yet functional
-
-`extract-tasks-from-document` registers an AI tool but is a deliberate stub
-(`STUB_NOT_IMPLEMENTED`): it makes no model call and creates no tasks. Treat
-"extract tasks from a document" as planned, not shipped.
 
 ## Development
 

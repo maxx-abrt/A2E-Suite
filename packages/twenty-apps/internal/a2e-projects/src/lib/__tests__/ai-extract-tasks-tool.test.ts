@@ -4,11 +4,12 @@ import { test } from 'node:test';
 import { LOGIC_FUNCTION_IDS } from '../../constants/universal-identifiers.ts';
 import extractTasksTool from '../../logic-functions/extract-tasks-from-document.logic-function.ts';
 
-// P4.3 AI seed: the « extract tasks from document » tool is registered on the
-// native tool registry the only supported way — a logic function carrying
-// `toolTriggerSettings` (P1.5 / P9.1 rule). The live assistant consumption is
-// P9; here we pin registration + inertness so no earlier phase can silently
-// turn the stub into an unreviewed write path.
+// The « extract tasks from document » tool is registered on the native tool
+// registry the only supported way — a logic function carrying
+// `toolTriggerSettings` (P1.5 / P9.1 rule). The extraction behaviour itself is
+// pinned in `document-task-extraction.test.ts` (pure parser) and
+// `extract-tasks-from-document-handler.test.ts` (caller-scoped read + result
+// statuses); here we only pin registration and the input contract.
 
 const LOGIC_FUNCTION_REGISTRY = Object.values(LOGIC_FUNCTION_IDS) as string[];
 
@@ -43,28 +44,4 @@ test('the tool input is a document id, with an optional target project', () => {
   assert.deepEqual(inputSchema?.required, ['documentId']);
   assert.equal(inputSchema?.properties?.documentId?.type, 'string');
   assert.equal(inputSchema?.properties?.projectId?.type, 'string');
-});
-
-test('the stub is inert: no task is proposed, nothing is created', async () => {
-  const result = await extractTasksTool.config.handler({
-    documentId: 'document-1',
-    projectId: 'project-1',
-  });
-
-  assert.deepEqual(result, {
-    status: 'STUB_NOT_IMPLEMENTED',
-    documentId: 'document-1',
-    projectId: 'project-1',
-    tasks: [],
-  });
-});
-
-test('the stub defaults the optional project to null', async () => {
-  const result = await extractTasksTool.config.handler({
-    documentId: 'document-1',
-  });
-
-  assert.equal(result.status, 'STUB_NOT_IMPLEMENTED');
-  assert.equal(result.projectId, null);
-  assert.deepEqual(result.tasks, []);
 });
