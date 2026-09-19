@@ -3,10 +3,10 @@
   "sessionId": "6455d7b0-09b6-4e5c-ba20-c39a463e7fdb",
   "status": "running",
   "startedAt": "2026-09-19T20:42:50.206Z",
-  "updatedAt": "2026-09-19T21:28:50.879Z",
-  "currentIteration": 5,
+  "updatedAt": "2026-09-19T21:33:59.497Z",
+  "currentIteration": 6,
   "maxIterations": 20,
-  "tasksCompleted": 4,
+  "tasksCompleted": 5,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -66,6 +66,16 @@
       "durationMs": 145071,
       "startedAt": "2026-09-19T21:16:42.219Z",
       "endedAt": "2026-09-19T21:19:07.290Z"
+    },
+    {
+      "iteration": 6,
+      "status": "completed",
+      "taskId": "US-030",
+      "taskTitle": "[P3.2] Template instantiation — fetch authorized body, remap IDs/anchors, prove copy independence",
+      "taskCompleted": true,
+      "durationMs": 573582,
+      "startedAt": "2026-09-19T21:19:17.294Z",
+      "endedAt": "2026-09-19T21:28:50.876Z"
     }
   ],
   "skippedTaskIds": [],

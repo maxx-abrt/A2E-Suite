@@ -118,6 +118,30 @@ describe('EditorVersionHistoryStore', () => {
     expect(store.getVersions()).toEqual([]);
   });
 
+  it('should fail closed and keep local versions when hydration is denied', async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+
+    const persistence: EditorVersionHistoryPersistence = {
+      // A denied read (no permission to documentRevision) rejects at the
+      // transport boundary; the store must not clear history or throw.
+      loadVersions: jest.fn().mockRejectedValue(new Error('Forbidden')),
+      saveVersion: jest.fn().mockResolvedValue(undefined),
+      deleteVersions: jest.fn().mockResolvedValue(undefined),
+    };
+    const store = new EditorVersionHistoryStore({ persistence });
+
+    store.addSnapshot('local-before-hydration');
+    await expect(store.loadFromPersistence()).resolves.toBeUndefined();
+
+    expect(store.getVersions().map((version) => version.body)).toEqual([
+      'local-before-hydration',
+    ]);
+    expect(consoleErrorSpy).toHaveBeenCalled();
+    consoleErrorSpy.mockRestore();
+  });
+
   it('should prune persisted versions beyond the maximum and delete them', async () => {
     const { persistence, deletedVersionIds } = createPersistenceMock([
       { versionId: 'a', createdAt: '2026-01-01T00:00:00.000Z', body: 'v1' },

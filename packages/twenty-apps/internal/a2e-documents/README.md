@@ -2,8 +2,9 @@
 
 A2E Documents is the knowledge part of the suite: a hierarchical tree of
 workspace documents with rich-text content, reusable templates and read-only
-sharing. Comment and version metadata objects are declared but not yet
-surfaced (see below). It is one of the parts that compose the
+sharing. Comment threads and document revisions are persisted in app-owned
+metadata objects and surfaced from the blocknote editor in `twenty-front`
+(see below). It is one of the parts that compose the
 intended **Bureau** work experience; Bureau itself has no separate
 application definition. See the [feature guide](../../../../docs/features.md)
 for how Documents fits next to Projects, Bilan, Drive and Discussions.
@@ -90,8 +91,33 @@ the passphrase / share-management surface is not implemented yet.
 ### Comments and versions
 
 The app declares `documentCommentThread` and `documentRevision` metadata
-objects. There is no dedicated editing surface for them in this package yet;
-do not advertise co-editing, comment threads or revision restore as shipped.
+objects. This package owns that storage schema; the blocknote editor and its
+thread/version-history panels live in `twenty-front`. A revision row carries
+the editor-side `versionId`, the serialized `body`, and an engine `createdAt`,
+and hangs off its document by the `document` relation (`CASCADE`), so deleting
+a document removes its history.
+
+**Retention.** History is capped at the 20 most recent snapshots per document
+(`MAX_VERSIONS_PER_EDITOR`), oldest-first. The editor snapshots after a period
+of typing calm, at most one per interval, and drops the oldest rows both from
+its client buffer and from the server (the pruned rows are deleted), so
+retention is explicit and bounded on both sides rather than a growing log.
+
+**Diff and restore.** The history panel computes a block-level diff between a
+selected revision and the current body. Restoring appends the state being left
+and the restored body as new revisions through the same persistence seam; it
+never rewrites history in place, so the restore is itself undoable and survives
+a reload.
+
+**Permissions.** Revision and comment rows are ordinary workspace records of
+their app-owned objects. Reads and writes go through the standard GraphQL API
+with the caller's role, so the platform's object permissions gate access; a
+denied read or write fails closed (no versions shown, no write applied) and the
+editor keeps working against its local buffer.
+
+The same persistence shape backs comment threads. Co-editing presence and the
+expected-revision conflict guard exist, but v1 has no server save/merge
+protocol: do not advertise OT/CRDT or real-time collaborative merge.
 
 ## Development
 

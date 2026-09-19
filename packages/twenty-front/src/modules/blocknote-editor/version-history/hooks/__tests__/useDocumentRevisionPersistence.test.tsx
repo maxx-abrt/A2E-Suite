@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { useApolloClient } from '@apollo/client/react';
 
+import { EditorVersionHistoryStore } from '@/blocknote-editor/version-history/EditorVersionHistoryStore';
 import { useDocumentRevisionPersistence } from '@/blocknote-editor/version-history/hooks/useDocumentRevisionPersistence';
 
 jest.mock('@apollo/client/react', () => ({
@@ -140,5 +141,107 @@ describe('useDocumentRevisionPersistence', () => {
 
     expect(client.query).not.toHaveBeenCalled();
     expect(client.mutate).not.toHaveBeenCalled();
+  });
+
+  it('round-trips a snapshot through the server transport', async () => {
+    const serverRows: Record<string, unknown>[] = [];
+    const client = {
+      query: jest.fn().mockImplementation(async () => ({
+        data: {
+          documentRevisions: {
+            edges: serverRows.map((node) => ({ node })),
+          },
+        },
+      })),
+      mutate: jest
+        .fn()
+        .mockImplementation(
+          async ({
+            variables,
+          }: {
+            variables: { data: Record<string, unknown> };
+          }) => {
+            serverRows.push({
+              id: `row-${serverRows.length + 1}`,
+              createdAt: '2026-09-17T10:00:00.000Z',
+              ...variables.data,
+            });
+
+            return { data: {} };
+          },
+        ),
+    };
+    mockedUseApolloClient.mockReturnValue(client as never);
+
+    const { result } = renderHook(() =>
+      useDocumentRevisionPersistence({ documentId: DOCUMENT_ID }),
+    );
+
+    const store = new EditorVersionHistoryStore({
+      persistence: result.current,
+    });
+    const snapshot = store.addSnapshot('{"v":1}');
+    // The store writes fire-after-emit; flush the query+mutate chain.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(snapshot).not.toBeNull();
+    expect(client.mutate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variables: {
+          data: {
+            versionId: snapshot?.versionId,
+            body: '{"v":1}',
+            documentId: DOCUMENT_ID,
+          },
+        },
+      }),
+    );
+
+    // A fresh store shares no memory with the first one: reading the same body
+    // back proves the round-trip went through the transport, not the buffer.
+    const reloadedStore = new EditorVersionHistoryStore({
+      persistence: result.current,
+    });
+    await reloadedStore.loadFromPersistence();
+
+    expect(reloadedStore.getVersions().map((version) => version.body)).toEqual([
+      '{"v":1}',
+    ]);
+  });
+
+  it('propagates a denied read so the caller can fail closed', async () => {
+    const client = {
+      query: jest.fn().mockRejectedValue(new Error('Forbidden')),
+      mutate: jest.fn(),
+    };
+    mockedUseApolloClient.mockReturnValue(client as never);
+
+    const { result } = renderHook(() =>
+      useDocumentRevisionPersistence({ documentId: DOCUMENT_ID }),
+    );
+
+    await expect(result.current.loadVersions()).rejects.toThrow('Forbidden');
+  });
+
+  it('does not report success when the write is denied', async () => {
+    const client = {
+      query: jest.fn().mockResolvedValue({
+        data: { documentRevisions: { edges: [] } },
+      }),
+      mutate: jest.fn().mockRejectedValue(new Error('Forbidden')),
+    };
+    mockedUseApolloClient.mockReturnValue(client as never);
+
+    const { result } = renderHook(() =>
+      useDocumentRevisionPersistence({ documentId: DOCUMENT_ID }),
+    );
+
+    await expect(
+      result.current.saveVersion({
+        versionId: 'version-1',
+        createdAt: '2026-09-17T10:00:00.000Z',
+        body: '{"v":1}',
+      }),
+    ).rejects.toThrow('Forbidden');
   });
 });

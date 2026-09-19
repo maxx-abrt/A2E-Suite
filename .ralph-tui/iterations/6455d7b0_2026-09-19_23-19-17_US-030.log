@@ -1,0 +1,88 @@
+# Iteration 6 Log
+
+## Metadata
+
+- **Task ID**: US-030
+- **Task Title**: [P3.2] Template instantiation — fetch authorized body, remap IDs/anchors, prove copy independence
+- **Description**: As a user creating a document from a template, I want instantiation to fetch the authorized template body and remap identifiers, so that my copy is independent, complete and safe.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T21:19:17.294Z
+- **Ended At**: 2026-09-19T21:28:50.876Z
+- **Duration**: 9m 33s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-030" PLAN.md
+[94m[bash][0m $ grep -n "P3.2\|US-029\|US-030\|US-031" PLAN.md | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ ls docs/plan/phases/ && echo "---" && ls docs/tasks/ 2>/dev/null | head -60
+[94m[bash][0m $ grep -n "US-030\|P3.2\|template instantiation\|Template instantiation\|instantiation" docs/plan/phas...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ find . -name "instantiate-template.ts" -not -path "*/node_modules/*" 2>/dev/null
+[94m[bash][0m $ git status --porcelain packages/twenty-apps/internal/a2e-documents/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/instantiate-template.ts
+[94m[read][0m
+[94m[bash][0m $ grep -rn "template deletion\|source template\|template version\|templateVersion\|provenance\|C1" doc...
+[94m[bash][0m $ grep -rn "C1\b" docs/ PLAN.md 2>/dev/null | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[bash][0m $ grep -rn "sourceTemplateKey\|sourceTemplateVersion\|operationId\|TemplateContentProvenance\|provenan...
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents/src -type f -name "*.ts" | head -80
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/objects/document.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/template-gallery.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/save-document-as-template.ts
+[94m[bash][0m $ grep -n "instantiateTemplate\|buildTemplateCopyPayload\|readAuthorizedTemplateCopySource\|createBloc...
+[94m[bash][0m $ python3 -c " import json data=json.load(open('tasks/prd.json')) def walk(o):     if isinstance(o,lis...
+[94m[bash][0m $ grep -rn "TemplateContentProvenance\|sourceTemplateKey" packages/ --include="*.ts" --include="*.tsx"...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/starter-templates.ts
+[94m[bash][0m $ grep -rln "sourceTemplate\|templateKey\|systemKey\|isTemplate\|operationId" packages/twenty-apps/int...
+[94m[bash][0m $ grep -rn "sourceTemplate\|templateKey\|systemKey\|provenance\|operationId" packages/twenty-apps/inte...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/objects/fiche.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/application.config.ts
+[94m[bash][0m $ grep -n "P1.6e\|P1.6b\|P1.6c\|P1.6d" PLAN.md | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/views/templates.view.ts
+[94m[read][0m
+[94m[bash][0m $ grep -n "type DocumentNode\|DocumentNode = \|updatedAt\|createdAt\|revision" packages/twenty-apps/in...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "provenance\|sourceTemplate\|templateKey\|source template" docs/plan/05-template-contracts....
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -rln "instantiate\|buildTemplateCopy\|sourceTemplate" packages/twenty-apps/internal/a2e-project...
+[94m[bash][0m $ grep -rn "provenance\|deletion never\|delete template\|template deletion" docs/plan/phases/phase-03-...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/package.json
+Let me verify the existing slice state and run its checks.
+[94m[bash][0m $ git show --stat aae72f9a | head -30
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/instantiate-template.test.ts" 2>&1 | tail ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ grep -n "provenance\|template\|source" packages/twenty-apps/internal/a2e-documents/README.md | head ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/README.md
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ cat >> docs/plan/phases/phase-03-report.md <<'EOF'  CLAIMED — US-030/template-instantiation-verify —...
+[94m[edit][0m
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/instantiate-template.test.ts" 2>&1 | tail ...
+[94m[bash][0m $ yarn lint 2>&1 | tail -15
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -12
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -15
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -15
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ executor — P3.3 record-note body-copy bullet or another queued leg. EOF tail -16 docs/plan/phases/ph...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git show 679b9f76:.ralph-tui/progress.md | tail -40
+[94m[bash][0m $ spec §5.1/§8 assigns it to P1.6e's descriptor loader. If/when it lands it must be a value copy (key+...
+[94m[bash][0m $ git diff --stat -- docs/plan/phases/phase-03-report.md packages/twenty-apps/internal/a2e-documents/s...
+Verified the committed US-030 slice and closed its remaining unit-level acceptance gaps.
+
+**Outcome: `done-for-review`** (report appended to `docs/plan/phases/phase-03-report.md`, Ralph bridge to `.ralph-tui/progress.md`).
+
+- The prior slice (`aae72f9a`) already routes both template entrypoints through the fail-closed `readAuthorizedTemplateCopySource` and re-keys anchors via `remapTemplateBlockIds`; verified on HEAD.
+- Added 2 unit proofs (16→18) in `instantiate-template.test.ts`: disjoint anchors across two instantiations, and deletion independence (copy holds no template id/block anchor/relation back).
+- Checks: focused test 18/18, `yarn test:unit` 171/171, typecheck exit 0, lint 0/0, `npx twenty dev:build .` → Build succeeded (20 files).
+- `Missing for tick`: Tier-2 E04 browser journey (explicitly deferred by the task); the C1 provenance clause is P1.6e's descriptor contract per `docs/plan/05-template-contracts.md` §5.1/§8 — recorded, not faked.
+
+<promise>COMPLETE</promise>

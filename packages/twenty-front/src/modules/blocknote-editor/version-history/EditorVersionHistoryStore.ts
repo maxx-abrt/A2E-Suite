@@ -64,7 +64,19 @@ export class EditorVersionHistoryStore {
       return;
     }
 
-    const persistedVersions = await this.persistence.loadVersions();
+    let persistedVersions: EditorVersionSnapshot[];
+
+    try {
+      persistedVersions = await this.persistence.loadVersions();
+    } catch (error) {
+      // A denied or failed history read must fail closed: keep whatever local
+      // snapshots exist rather than clearing history, showing no versions, or
+      // surfacing an unhandled rejection to the editor.
+      // eslint-disable-next-line no-console
+      console.error('Failed to load document revisions', error);
+      return;
+    }
+
     const byVersionId = new Map(
       persistedVersions.map((snapshot) => [snapshot.versionId, snapshot]),
     );
