@@ -1,0 +1,209 @@
+# Iteration 1 Log
+
+## Metadata
+
+- **Task ID**: US-001
+- **Task Title**: P4.3: project↔document relation implementation — doc relation on project, linked docs in project overview
+- **Description**: As a workspace member, I want projects to link their documents so that the project overview shows the docs that belong to the work.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T10:08:17.769Z
+- **Ended At**: 2026-09-19T10:16:39.429Z
+- **Duration**: 8m 21s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the mandated clean-start check and task confirmation.
+[94m[bash][0m $ git log --oneline -5
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "P4.3" PLAN.md | head -50
+[94m[bash][0m $ ls docs/plan/phases/ | head -40
+Dirty files are Ralph harness files only (`.ralph-tui/*`, `tasks/prd.json`). Let me confirm the task in PLAN.md and check the phase report.
+[94m[bash][0m $ grep -n "doc relation on project\|linked docs\|project↔document\|project<->document\|P4\.3" PLAN.md
+[94m[bash][0m $ grep -rn "US-001" tasks/prd.json | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -n "D-P4.3-DOC\|P4.3\|US-001\|CLAIMED" docs/plan/phases/phase-04-report.md | tail -60
+[94m[bash][0m $ wc -l docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ grep -n "Execution order" PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ" && ls packages/twenty-apps/
+[94m[bash][0m $ ls packages/twenty-apps/
+Dependencies met, slice is free. Let me claim it and explore the app packages.
+[94m[bash][0m $ grep -n "project-doc-relation-implementation" docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ cat >> docs/plan/phases/phase-04-report.md << 'EOF'  CLAIMED — US-001/project-doc-relation-implement...
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-projects -type f -not -path "*/node_modules/*" -not -path "*/...
+Claim registered, no competing claim. Now exploring the app structures.
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents -type f -not -path "*/node_modules/*" -not -path "*...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/application.config.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/company-projects.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/task-project.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/objects/document.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/fields/company-documents.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/page-layouts/project.page-layout.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/project-overview.ts
+[94m[bash][0m $ grep -rn "Document\|docs\|Docs" packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/project...
+[94m[bash][0m $ grep -rln "page-layout\|pageLayout\|Docs\|Document" packages/twenty-apps/internal/a2e-projects/src/l...
+[94m[bash][0m $ grep -rn "docs tab\|Docs tab\|Document tab\|no Document\|absent" packages/twenty-apps/internal/a2e-p...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/project-overview.test.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/project-tasks.view.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-board.view.ts
+[94m[bash][0m $ grep -rn "WidgetType\|widgetType\|PageLayoutWidgetType" packages/twenty-shared/src/types/ packages/t...
+[94m[bash][0m $ grep -rn "RECORD_TABLE\|RELATION\|FILES\|DISCUSSIONS" packages/twenty-shared/src/constants/ --includ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/page-layout/WidgetType.ts
+[94m[bash][0m $ ls packages/twenty-shared/src/types/page-layout/
+[94m[bash][0m $ grep -rln "RECORD_TABLE" packages/twenty-server/src | head -20
+[94m[bash][0m $ grep -rln "RECORD_TABLE" packages/twenty-front/src | head -20
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/page-layout/page-layout-widget-configuration.type.ts
+[94m[bash][0m $ grep -rln "definePageLayout\|createStandardFlatPageLayout" packages/twenty-server/src/engine/workspa...
+[94m[bash][0m $ find packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils -name "*p...
+[94m[bash][0m $ grep -n "people\|People\|RELATION\|fieldMetadata\|configurationType\|widget" packages/twenty-server/...
+[94m[bash][0m $ grep -rn "RECORD_TABLE\|FieldConfiguration\|relation" packages/twenty-server/src/engine/workspace-ma...
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/node_modules/twenty-sdk/ 2>/dev/null
+[94m[bash][0m $ grep -n "widgetUniversalConfiguration\|PageLayoutWidgetUniversalConfiguration\|WidgetType\|fieldUniv...
+[94m[read][0m
+[94m[bash][0m $ grep -n "PageLayoutWidgetConfiguration\b\|RecordTableConfiguration\|FieldConfiguration\|ViewConfigur...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "frontComponentUniversalIdentifier\|fieldMetadataUniversalIdentifier" packages/twenty-front...
+[94m[bash][0m $ grep -rn "frontComponentUniversalIdentifier\|fieldMetadataUniversalIdentifier\|fieldUniversalIdentif...
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-projects/node_modules/twenty-sdk/dist -name "*.mjs" | xargs g...
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-projects -name "manifest.json" -not -path "*/node_modules/*" ...
+[94m[bash][0m $ python3 -c " import json m=json.load(open('packages/twenty-apps/internal/a2e-projects/.twenty/output...
+[94m[bash][0m $ grep -n "pageLayout\|PageLayout\|frontComponentId\|fieldMetadataId" packages/twenty-apps/internal/a2...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/.twenty/output/manifest.json
+[94m[bash][0m $ grep -n "type FormatRecordSerializedRelationProperties" packages/twenty-shared/dist/**/*.d.ts 2>/dev...
+[94m[bash][0m $ grep -rn "FormatRecordSerializedRelationProperties" packages/twenty-shared/src/ | head
+[94m[bash][0m $ grep -n "definePageLayout\|type PageLayoutConfig\|PageLayoutWidgetConfig\b" packages/twenty-apps/int...
+[94m[bash][0m $ grep -n "PageLayoutConfig\|PageLayoutWidgetConfig" packages/twenty-apps/internal/a2e-projects/node_m...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/FormatRecordSerializedRelationProperties.type.ts
+[94m[bash][0m $ grep -rn "configurationType: 'FIELD'\|configurationType: 'VIEW'\|fieldMetadataId\|fieldMetadataUnive...
+[94m[bash][0m $ grep -rn "configurationType: 'FIELD'\|fieldMetadataId" "packages/twenty-apps/internal/real-estate/sr...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "fieldMetadataUniversalIdentifier\|fieldMetadataId" packages/twenty-server/src/engine/metad...
+[94m[bash][0m $ grep -rn "fieldMetadataUniversalIdentifier\|fieldMetadataId" packages/twenty-server/src/engine/core-...
+[94m[bash][0m $ grep -rln "fieldMetadataUniversalIdentifier" packages/twenty-server/src/engine/ | head -30
+[94m[bash][0m $ grep -rn "configurationType: 'FIELD'\|configurationType: \"FIELD\"" packages/twenty-apps/ --include=...
+[94m[bash][0m $ grep -rn "fieldMetadataUniversalIdentifier\|fieldMetadataId" packages/twenty-apps/ 2>/dev/null | gre...
+[94m[bash][0m $ grep -rn "frontComponentUniversalIdentifier" packages/twenty-server/src/ | grep -v spec | head -20
+[94m[bash][0m $ grep -rln "fromUniversalConfiguration\|toApplicationUniversalConfiguration\|universalConfiguration" ...
+[94m[bash][0m $ grep -rln "PageLayoutWidgetManifest\|pageLayoutWidgetManifest\|from.*page-layout.*universal" package...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "fieldDisplayMode\|fieldUniversalIdentifier" packages/twenty-server/src/engine/workspace-ma...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "enum FieldDisplayMode" -A 10 packages/twenty-server/src/engine/metadata-modules/page-layou...
+[94m[bash][0m $ grep -rn "fieldDisplayMode\|WidgetType.FIELD" packages/twenty-server/src/engine/workspace-manager/tw...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "FieldDisplayMode" packages/twenty-server/src/engine/workspace-manager/twenty-standard-appl...
+[94m[bash][0m $ grep -rln "fieldDisplayMode" packages/twenty-front/src/modules/page-layout/widgets/ | head
+[94m[bash][0m $ find packages/twenty-front/src/modules/page-layout/widgets -maxdepth 1 -type d
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/package.json
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "relationTargetObjectMetadataUniversalIdentifier\|Relation field target\|target metadata" pa...
+[94m[bash][0m $ grep -rln "4f759655-84f8-434d-9c76-ee1850e8c1a4\|A2E Projects" packages/twenty-server/src packages/t...
+[94m[bash][0m $ find packages/twenty-front/src/modules/a2e-workspace -type f | head -40
+[94m[bash][0m $ grep -rn "applicationUniversalIdentifiers\|preset\|Preset" packages/twenty-front/src/modules/a2e-wor...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "applicationUniversalIdentifiers" packages/twenty-front/src/modules/a2e-workspace/ packages...
+[94m[bash][0m $ grep -rn "4f759655-84f8-434d-9c76-ee1850e8c1a4\|19126a9c-7cc0-4368-aaba-c7e5a87b0c48" packages/twent...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/field-vocabulary.ts
+[94m[bash][0m $ grep -rn "oneToMany" packages/twenty-apps/internal/a2e-documents/src/constants/field-vocabulary.ts
+[94m[todowrite][0m
+Now I have a clear picture. Let me set up a todo list and implement.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  OnDeleteAction,
+  RelationType,
+} from 'twenty-sdk/define';
+
+import {
+  EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIERS,
+  OBJECT_IDS,
+  RELATION_IDS,
+} from '../constants... (1234 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project.object.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project.object.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/page-layouts/project.page-layout.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/page-layouts/project.page-layout.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/page-layouts/project.page-layout.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/page-layouts/project.page-layout.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/project-overview.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/project-overview.ts
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/project-overview.test.ts
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ grep -n "every page-layout widget references existing metadata" packages/twenty-apps/internal/a2e-pr...
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+`task-field-integrity.test.ts` also walks project.object.ts, so it needs the new field and external object too.
+[94m[edit][0m
+[94m[edit][0m
+Now let's run the app package gates.
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -40
+[94m[edit][0m
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -40
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -40
+[94m[bash][0m $ yarn lint 2>&1 | tail -30
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -40
+[94m[bash][0m $ python3 - << 'EOF' import json m=json.load(open('packages/twenty-apps/internal/a2e-projects/.twenty/...
+[94m[bash][0m $ python3 - << 'EOF' import json m=json.load(open('packages/twenty-apps/internal/a2e-projects/.twenty/...
+[94m[bash][0m $ python3 - << 'EOF' import json m=json.load(open('packages/twenty-apps/internal/a2e-projects/.twenty/...
+[94m[bash][0m $ python3 - << 'EOF' import json m=json.load(open('packages/twenty-apps/internal/a2e-projects/.twenty/...
+[94m[bash][0m $ git status --porcelain
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/page-layouts/project.page-layout.ts
+Let me review the final front component and page layout to confirm correctness.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/page-layouts/project.page-layout.ts
+All gates pass. Let me append the phase report and progress entries.
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ the pre-existing `document.company`/`company.documents` and `task.project` patterns. Do not add a ju...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ it becomes the caller's contract when Projects joins a preset. --- EOF echo appended
+[94m[bash][0m $ git diff --stat
+[94m[bash][0m $ git status --porcelain && echo "---last claim---" && grep -n "US-001/project-doc-relation-implementa...
+Let me do a final verification run after the last comment edit.
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -5 && yarn test:unit 2>&1 | tail -8
+Done. Implemented US-001 / P4.3 exactly per decision D-P4.3-DOC, all in `packages/twenty-apps/internal/a2e-projects/`:
+
+- **Relation pair**: new `src/fields/document-project.field.ts` (M2O FK on A2E Documents' `document` object, join `projectId`, `SET_NULL`) + inverse `project.documents` O2M in `project.object.ts`, both owned by A2E Projects; new ids in `universal-identifiers.ts` (`…0005`/`…0006` plus the cross-app document object uid).
+- **Project surface**: Documents tab (`project.page-layout.ts:195`) using the native `FIELD` widget on the relation (`fieldDisplayMode: TABLE`), plus a linked-docs count chip in `project-overview.ts` / `project-overview.front-component.tsx`.
+- **Tests updated** to assert the relation shape/symmetry and the tab's presence (replacing P4.2's deliberate-absence assertion).
+
+Checks (Tier 0/1 app-package substitute, no Nx project): `yarn typecheck` clean · `yarn test:unit` 175/175 · `yarn lint` 0 errors (1 pre-existing warning) · `npx twenty dev:build .` Build succeeded and manifest carries both fields + the docs tab. Tier 2 (live install order + browser proof) left to the orchestrator.
+
+Phase report and `.ralph-tui/progress.md` entries appended; `PLAN.md` untouched, nothing committed.
+
+<promise>COMPLETE</promise>

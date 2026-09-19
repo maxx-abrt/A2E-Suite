@@ -1,3 +1,5 @@
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
@@ -18,8 +20,11 @@ jest.mock(
   }),
 );
 
-const renderDock = () => {
+const renderDock = (workspaceMembers: PartialWorkspaceMember[] = []) => {
   const store = createStore();
+
+  store.set(currentWorkspaceMembersState.atom, workspaceMembers);
+
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <Provider store={store}>
       <I18nProvider i18n={i18n}>{children}</I18nProvider>
@@ -64,5 +69,25 @@ describe('WorkbenchWidgetDock', () => {
       'MINI',
     );
     expect(screen.queryByTestId('widget-content-inbox')).toBeNull();
+  });
+
+  it('hides the team-only presence widget for a solo workspace', () => {
+    renderDock([{ id: 'member-1' } as PartialWorkspaceMember]);
+
+    expect(screen.queryByTestId('workbench-widget-button-presence')).toBeNull();
+    expect(
+      screen.getByTestId('workbench-widget-button-inbox'),
+    ).toBeInTheDocument();
+  });
+
+  it('keeps the presence widget when the workspace has collaborators', () => {
+    renderDock([
+      { id: 'member-1' } as PartialWorkspaceMember,
+      { id: 'member-2' } as PartialWorkspaceMember,
+    ]);
+
+    expect(
+      screen.getByTestId('workbench-widget-button-presence'),
+    ).toBeInTheDocument();
   });
 });

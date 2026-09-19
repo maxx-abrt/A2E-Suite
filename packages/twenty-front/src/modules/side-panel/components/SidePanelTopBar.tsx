@@ -21,6 +21,7 @@ import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useIsSoloWorkspace } from '@/workspace-member/hooks/useIsSoloWorkspace';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -129,6 +130,7 @@ export const SidePanelTopBar = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { t } = useLingui();
+  const isSoloWorkspace = useIsSoloWorkspace();
   const { onlineWorkspaceMembers, typingWorkspaceMembers } =
     useWorkspacePresence();
 
@@ -264,13 +266,15 @@ export const SidePanelTopBar = ({
         )}
       </StyledContentContainer>
       <StyledRightControlsContainer>
-        {!isMobile && (
+        {!isMobile && !isSoloWorkspace && (
           <RealtimeTypingIndicator workspaceMembers={typingWorkspaceMembers} />
         )}
-        <RealtimePresenceAvatarStack
-          maxVisible={isMobile ? 3 : 5}
-          workspaceMembers={onlineWorkspaceMembers}
-        />
+        {!isSoloWorkspace && (
+          <RealtimePresenceAvatarStack
+            maxVisible={isMobile ? 3 : 5}
+            workspaceMembers={onlineWorkspaceMembers}
+          />
+        )}
         <StyledHeaderActionsPortal ref={setHeaderActionsPortal} />
         <SidePanelOpenInTabButton />
         {sidePanelPage !== SidePanelPages.RoutedPage && (

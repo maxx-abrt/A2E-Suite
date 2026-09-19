@@ -22,6 +22,9 @@ export type WorkbenchWidgetDefinition = {
   Icon: IconComponent;
   Component?: ComponentType;
   order?: number;
+  // Team-only widget: the dock omits it when the workspace has a single
+  // member (P10 solo), so app widgets can opt into the same degradation.
+  requiresCollaborators?: boolean;
 };
 
 const definitionsById = new Map<string, WorkbenchWidgetDefinition>();
@@ -64,7 +67,12 @@ const DEFAULT_WIDGETS: WorkbenchWidgetDefinition[] = [
   { id: 'comments', Icon: IconMessageCircle, order: 30 },
   { id: 'tasks', Icon: IconCheckbox, order: 40 },
   { id: 'activity', Icon: IconTimelineEvent, order: 50 },
-  { id: 'presence', Icon: IconUsers, order: 60 },
+  {
+    id: 'presence',
+    Icon: IconUsers,
+    order: 60,
+    requiresCollaborators: true,
+  },
 ];
 
 DEFAULT_WIDGETS.forEach((definition) => {

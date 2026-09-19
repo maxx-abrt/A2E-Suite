@@ -3,6 +3,7 @@ import '@/drive/registerDriveUsageWidget';
 import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useIsSoloWorkspace } from '@/workspace-member/hooks/useIsSoloWorkspace';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
@@ -126,7 +127,13 @@ const StyledResizeEdge = styled.div`
 
 export const WorkbenchWidgetDock = () => {
   const { t } = useLingui();
-  const definitions = useWorkbenchWidgetRegistry();
+  const isSoloWorkspace = useIsSoloWorkspace();
+  const registryDefinitions = useWorkbenchWidgetRegistry();
+  const definitions = isSoloWorkspace
+    ? registryDefinitions.filter(
+        (definition) => !definition.requiresCollaborators,
+      )
+    : registryDefinitions;
   const [workbenchWidgetDockMode, setWorkbenchWidgetDockMode] = useAtomState(
     workbenchWidgetDockModeState,
   );

@@ -18,6 +18,7 @@ import { useSendChatTypingIndicator } from '@/chat/hooks/useSendChatTypingIndica
 import { type ChatChannel } from '@/chat/types/ChatChannel';
 import { buildChatThreadReplyMap } from '@/chat/utils/buildChatThreadReplyMap';
 import { getChatReadState } from '@/chat/utils/getChatReadState';
+import { useIsSoloWorkspace } from '@/workspace-member/hooks/useIsSoloWorkspace';
 import { RealtimePresenceAvatarStack } from '~/modules/realtime/components/RealtimePresenceAvatarStack';
 import { RealtimeTypingIndicator } from '~/modules/realtime/components/RealtimeTypingIndicator';
 import { useWorkspacePresence } from '~/modules/realtime/hooks/useWorkspacePresence';
@@ -107,6 +108,7 @@ export const ChatChannelConversation = ({
   const { workspaceMembers } = useChatWorkspaceMembers();
   const { onlineWorkspaceMembers } = useWorkspacePresence();
   const { publishTyping } = useSendChatTypingIndicator();
+  const isSoloWorkspace = useIsSoloWorkspace();
 
   const typingWorkspaceMembers = useMemo(
     () =>
@@ -190,10 +192,16 @@ export const ChatChannelConversation = ({
               <StyledChannelTopic>{channel.topic}</StyledChannelTopic>
             )}
           </StyledChannelHeading>
-          <RealtimeTypingIndicator workspaceMembers={typingWorkspaceMembers} />
-          <RealtimePresenceAvatarStack
-            workspaceMembers={onlineWorkspaceMembers}
-          />
+          {!isSoloWorkspace && (
+            <>
+              <RealtimeTypingIndicator
+                workspaceMembers={typingWorkspaceMembers}
+              />
+              <RealtimePresenceAvatarStack
+                workspaceMembers={onlineWorkspaceMembers}
+              />
+            </>
+          )}
         </StyledConversationHeader>
         <ChatMessageList
           messages={messages}

@@ -37,9 +37,10 @@
         "A dated entry is appended to the phase report for the touched phase; PLAN.md is not edited; nothing is committed"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md task P10 first bullet ('Solo onboarding polish…'), phase P10, handoff position 5. Starting state: NOT STARTED (no prior commit). Builds over existing primitives: P1.3 preset definitions, P2.3 presence (AvatarStack/typing), P2.4 widgets dock registry (inbox preview, assistant, comments, task list, activity, presence), P8.2 Home dashboard widgets. Conditional UI over the workspace member count is front work, unit-testable with testing-library; team features must degrade cleanly for solo workspaces per C7. The E12 solo-usability journey that finally proves it is Tier 2 (orchestrator).",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-003",
@@ -324,6 +325,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T10:16:39.430Z"
+    "updatedAt": "2026-09-19T10:23:09.517Z"
   }
 }

@@ -1,3 +1,4 @@
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -86,14 +87,17 @@ const createSidePanelTopBarStore = ({
       pageId: 'command-menu',
     },
   ],
+  workspaceMembers = [],
 }: {
   sidePanelNavigationStack?: SidePanelNavigationStackItem[];
+  workspaceMembers?: PartialWorkspaceMember[];
 } = {}) => {
   const store = createStore();
 
   store.set(isSidePanelOpenedState.atom, true);
   store.set(sidePanelNavigationStackState.atom, sidePanelNavigationStack);
   store.set(focusStackState.atom, [recordIndexFocusItem]);
+  store.set(currentWorkspaceMembersState.atom, workspaceMembers);
 
   return store;
 };
@@ -143,6 +147,25 @@ describe('SidePanelTopBar', () => {
     expect(screen.getByTestId('presence-avatar-stack')).toBeVisible();
     expect(screen.getByTestId('presence-typing-indicator')).toBeVisible();
     expect(screen.getByTestId('presence-typing-text')).toHaveTextContent('Ada');
+  });
+
+  it('hides collaborator presence for a solo workspace', () => {
+    const ada = {
+      id: 'member-1',
+      userEmail: 'ada@example.com',
+      avatarUrl: null,
+      name: { firstName: 'Ada', lastName: 'Lovelace' },
+    } as PartialWorkspaceMember;
+
+    mockOnlineWorkspaceMembers = [ada];
+    mockTypingWorkspaceMembers = [ada];
+
+    renderSidePanelCommandMenu(
+      createSidePanelTopBarStore({ workspaceMembers: [ada] }),
+    );
+
+    expect(screen.queryByTestId('presence-avatar-stack')).toBeNull();
+    expect(screen.queryByTestId('presence-typing-indicator')).toBeNull();
   });
 
   it('keeps the command menu search input focused while arrowing through items', async () => {
