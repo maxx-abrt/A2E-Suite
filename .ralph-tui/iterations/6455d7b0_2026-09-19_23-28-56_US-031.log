@@ -1,0 +1,108 @@
+# Iteration 7 Log
+
+## Metadata
+
+- **Task ID**: US-031
+- **Task Title**: [P3.2] Durable revision history — replace in-memory EditorVersionHistoryStore
+- **Description**: As a document author, I want revision history persisted server-side, so that retention, block diff and restore-as-new-revision survive reload and respect permissions.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T21:28:56.485Z
+- **Ended At**: 2026-09-19T21:33:59.494Z
+- **Duration**: 5m 3s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the clean-start check and context gathering.
+[94m[bash][0m $ grep -n "US-031" PLAN.md | head -50
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "P3.2\|EditorVersionHistoryStore\|Durable revision" PLAN.md | head -50
+[94m[bash][0m $ grep -n "P3.2\|revision" tasks/prd.json | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+Dependencies are empty (met). Now let me explore the existing pattern and code.
+[94m[bash][0m $ find packages -type d -name "a2e-documents" | grep -v node_modules
+[94m[bash][0m $ grep -rln "EditorVersionHistoryStore" --include="*.ts" --include="*.tsx" . | grep -v node_modules | ...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ ls docs/plan/phases/
+[94m[bash][0m $ grep -rln "documentRevision\|DocumentRevision\|revision" packages/twenty-apps/internal/a2e-documents...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/objects/document-revision.object.ts
+[94m[read][0m
+The work appears already implemented. Let me verify current state thoroughly.
+[94m[bash][0m $ git log --oneline -15
+[94m[bash][0m $ git ls-files packages/twenty-apps/internal/a2e-documents/src/objects/document-revision.object.ts pac...
+[94m[bash][0m $ find packages -path "*node_modules*" -prune -o -name "*.test.*" -print 2>/dev/null | xargs grep -l "...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "permission\|Permission\|fail.closed\|unauthorized\|forbidden" packages/twenty-apps/interna...
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents -name "*.md" | grep -v node_modules | grep -v .twen...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/README.md
+[94m[read][0m
+[94m[bash][0m $ grep -rn "loadFromPersistence\|versionHistoryPersistence\|addRestoreSnapshots\|getBlockLevelDiff" pa...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/BlockEditor.tsx
+[94m[bash][0m $ find packages/twenty-front/src -name "*getBlockLevelDiff*"
+[94m[bash][0m $ grep -rln "useHasObjectReadPermission\|HasObjectReadPermission\|useObjectPermission\|objectPermissio...
+[94m[bash][0m $ grep -rln "canReadObjectRecords\|canUpdateObjectRecords\|useObjectPermissionsForObject\|objectPermis...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "useObjectPermissionsForObject\|ObjectPermissionsForObject" packages/twenty-front/src/modul...
+[94m[bash][0m $ grep -rn "E05\|fail closed\|fail-closed" docs/*.md docs/plan/*.md 2>/dev/null | head -30
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-front/src/modules/object-metadata/hooks/ | grep -i metadata
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-metadata/hooks/useObjectMetadataItem.ts
+[94m[bash][0m $ cat packages/twenty-front/src/modules/settings/roles/role-permissions/objects-permissions/utils/getO...
+[94m[read][0m
+[94m[bash][0m $ grep -n "documentRevisionPersistence\|isDocumentRecord\|useDocumentRevisionPersistence\|useDocumentC...
+[94m[read][0m
+[94m[bash][0m $ tail -40 docs/plan/phases/phase-03-report.md
+Now let me check the phase report tail and current time before claiming.
+[94m[bash][0m $ grep -rn "version\|Version\|revision\|Revision" docs/features.md | head -20
+[94m[bash][0m $ cat >> docs/plan/phases/phase-03-report.md <<'EOF'  CLAIMED — US-031/durable-revision-acceptance-gap...
+No active claims. I'll claim my slice now.
+[94m[read][0m
+[94m[read][0m
+[94m[todowrite][0m
+[94m[bash][0m $ npx jest src/modules/blocknote-editor/version-history src/modules/blocknote-editor/co-editing --conf...
+Baseline green (49 tests). Now implementing the fail-closed store hardening.
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-metadata/hooks/useApolloCoreClient.ts
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/modules/blocknote-editor/version-history --config=packages/twenty-front/jest.config.mjs...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/README.md
+Tests green. Now documenting retention and permissions in the app README.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/README.md
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -20
+[94m[bash][0m $ npx jest src/modules/blocknote-editor/version-history --config=packages/twenty-front/jest.config.mjs...
+[94m[bash][0m $ echo "EXIT: $?"
+[94m[bash][0m $ echo "EXIT: $?"
+[94m[bash][0m $ npx oxfmt --check src/modules/blocknote-editor/version-history/EditorVersionHistoryStore.ts src/modu...
+[94m[bash][0m $ npx oxfmt --check src/modules/blocknote-editor/version-history/EditorVersionHistoryStore.ts src/modu...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ npx jest src/modules/blocknote-editor/version-history --config=packages/twenty-front/jest.config.mjs...
+[94m[bash][0m $ npx jest src/modules/blocknote-editor --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+All green (22 suites / 145 tests). Writing the required reports.
+[94m[bash][0m $ executor — the P3.3 record-note body-copy bullet or another queued leg. EOF tail -4 docs/plan/phases...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git diff --stat -- packages/twenty-front packages/twenty-apps docs/plan/phases/phase-03-report.md .r...
+[94m[todowrite][0m
+US-031 slice complete.
+
+The durable revision history was already shipped in earlier sessions (`documentRevision` object + `useDocumentRevisionPersistence` + store adapter). I closed the remaining executor acceptance gaps:
+
+- **Fail-closed read**: `EditorVersionHistoryStore.loadFromPersistence` now catches a denied/failed adapter read, logs, and keeps local history instead of clearing/crashing.
+- **Tests**: server-transport round-trip (fresh store reads a snapshot back through Apollo, not memory), denied read propagates so the caller fails closed, denied write does not report success, plus a hydration-denial store case. 22 suites / 145 tests green.
+- **Docs**: a2e-documents README now documents `documentRevision` storage, 20-snapshot oldest-first retention pruned on both sides, non-destructive restore-as-new-revision, and permission semantics (platform object permissions, deny fails closed).
+
+Checks: jest 145/145, `tsgo --noEmit` exit 0, oxlint 0/0, oxfmt clean, `check-docs` PASS. Tier 2 (reload/second-session browser, restricted-role live denial, schema regen) remains for the orchestrator. Reports appended to `docs/plan/phases/phase-03-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

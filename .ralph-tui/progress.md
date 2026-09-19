@@ -28,3 +28,11 @@ after each iteration and it's included in prompts for context.
   - Workspace document templates (`kind = TEMPLATE`) have no descriptor key/version/`operationId`, so C1's `TemplateContentProvenance` shape cannot be recorded for P3.2; spec §5.1/§8 assigns it to P1.6e's descriptor loader. If/when it lands it must be a value copy (key+version), never a live relation, or it would re-break deletion independence via the CASCADE parent edge.
   - The a2e-documents package gates are `yarn test:unit` (node --test), `yarn typecheck`, `yarn lint`, `npx twenty dev:build .` — it is not an Nx project, so `nx lint:diff-with-main` returns "Cannot find project".
 ---
+
+## 2026-09-19 - US-030 (independent re-verify)
+- A second concurrent ralph session (agent pid 48678) had already executed US-030 and committed it as `a605200d` with a `done-for-review` phase report. This iteration changed no source; it independently re-ran the slice's Tier-0 test and reports `done-for-review` with zero new changes.
+- Files changed: `docs/plan/phases/phase-03-report.md`, `.ralph-tui/progress.md` only.
+- **Learnings:**
+  - `node --test --experimental-strip-types src/lib/__tests__/instantiate-template.test.ts` → 18/18 on `a605200d`; the slice's E04 browser leg and the P1.6e provenance clause remain the only open items.
+  - Gotcha: two ralph processes can run against one checkout (both acquire/spawn agents); `git status` can acquire new concurrent modifications mid-session. Check `ps` for live sibling opencode agents (children of a `ralph-tui run`) before assuming a dirty tree is a stall.
+---
