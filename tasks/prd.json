@@ -206,9 +206,10 @@
         "Manifest build passes; relation + overview section unit-verified; app-local typecheck + test:unit green; live install proof deferred (Tier 2)"
       ],
       "priority": 12,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md:904 (P4.3 `[ ]`, not-started). Deps met: P3 core verified. Gates the docs tab of US-038.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-038",
@@ -353,6 +354,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T21:56:41.101Z"
+    "updatedAt": "2026-09-19T21:58:47.319Z"
   }
 }
