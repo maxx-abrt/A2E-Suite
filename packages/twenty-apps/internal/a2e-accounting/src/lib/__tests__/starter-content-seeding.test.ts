@@ -168,3 +168,51 @@ test('a rejected Core write surfaces instead of reporting a seed', async () => {
 
   await assert.rejects(seedCategories(client), /unauthorized/);
 });
+
+// The live 0-rows failure: the hook runs to completion but the workspace ends
+// up with no starter rows. A mutation the API accepts but returns no created
+// ids for must report 0 — the install summary cannot claim a seed it did not
+// observe.
+const buildZeroRowWriteClient = () => ({
+  query: async (selection: Record<string, unknown>) => {
+    const plural =
+      Object.keys(selection).find((key) => key !== '__args') ?? '';
+
+    return { [plural]: { edges: [] } };
+  },
+  mutation: async () => ({}),
+});
+
+test('a Core write that creates 0 rows reports 0, never the requested count', async () => {
+  const client = buildZeroRowWriteClient();
+
+  assert.equal(await seedCategories(client), 0);
+  assert.equal(await seedOrgProfile(client), false);
+  assert.equal(await seedStarterSheets(client), 0);
+  assert.equal(await seedStarterFiches(client), 0);
+});
+
+test('a partial Core write reports the rows actually created', async () => {
+  const client = {
+    query: async (selection: Record<string, unknown>) => {
+      const plural =
+        Object.keys(selection).find((key) => key !== '__args') ?? '';
+
+      return { [plural]: { edges: [] } };
+    },
+    mutation: async (selection: Record<string, unknown>) => {
+      const name =
+        Object.keys(selection).find((key) => key !== '__args') ?? '';
+      const data = (
+        selection[name] as { __args: { data: RecordRow[] } }
+      ).__args.data;
+
+      return {
+        [name]: data.slice(0, 1).map((_row, index) => ({ id: `row-${index}` })),
+      };
+    },
+  };
+
+  assert.equal(await seedStarterSheets(client), 1);
+  assert.equal(await seedStarterFiches(client), 1);
+});

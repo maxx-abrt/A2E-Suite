@@ -1,0 +1,146 @@
+# Iteration 2 Log
+
+## Metadata
+
+- **Task ID**: US-027
+- **Task Title**: [P1.6c] Partial-failure UX — continue with successful steps, retry later, empty-catalogue protection
+- **Description**: As a workspace owner whose setup partially failed, I want to see exactly what failed and continue or retry later, so that successful work is kept and my template choice is never silently discarded.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T20:48:14.102Z
+- **Ended At**: 2026-09-19T20:54:55.267Z
+- **Duration**: 6m 41s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "US-027" PLAN.md
+I'll start with the clean-start check and task confirmation.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -rn "P1.6" docs/plan/05-template-contracts.md 2>/dev/null | head -30
+[94m[bash][0m $ ls .ralph-tui/ 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ tail -120 docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ grep -n "C2\|Partial failure\|empty.catalogue\|Empty catalogue\|network error\|permission denial\|sk...
+[94m[bash][0m $ find packages/twenty-front/src/modules/a2e-workspace -type f | sort
+Now let me read the binding spec (C2) and explore the US-026 surface I'll build on.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/utils/resolveTemplatePreview.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/hooks/useWorkspaceTemplatePreview.ts
+[94m[read][0m
+[94m[bash][0m $ grep -rn "shouldAutoSkipInstallAppsStep\|InstallApps\|empty.catalogue\|Empty catalogue" packages/twe...
+[94m[bash][0m $ grep -rn "shouldAutoSkipInstallAppsStep\|InstallAppsContent\|InstallApps" packages/twenty-front/src/...
+[94m[bash][0m $ find packages/twenty-front/src/pages/onboarding packages/twenty-front/src/modules/onboarding -type f...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/InstallAppsContent.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/InstallApps.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/onboarding/utils/shouldAutoSkipInstallAppsStep.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/__tests__/entrypoint-parity.test.tsx
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "CLAIMED" docs/plan/phases/phase-01-report.md | tail -5
+[94m[bash][0m $ cat >> docs/plan/phases/phase-01-report.md << 'EOF'  CLAIMED — US-027/partial-failure-truth — deepse...
+No active conflicting claim: US-026 has its matching `done-for-review` follow-up, so its files are released. Claiming my slice now.
+[94m[bash][0m $ grep -rn "FORBIDDEN\|UNAUTHENTICATED\|networkError\|NETWORK_ERROR\|isApolloError\|ApolloError" packa...
+[94m[bash][0m $ grep -rn "getOperationOutcome\|outcome\|FullyApplied\|fullyApplied\|hasFailedStep" packages/twenty-f...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules[0m pattern: [96mFORBIDDEN|UNAUTHENTICATED|networkError|isNetworkRequestFailed|PERMISSION[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/onboarding/hooks/useInstallOnboardingApps.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+[94m[bash][0m $ grep -rn "SKIPPED\|succeeded\|appliedTemplateKeyVersion\|set-workspace-template\|SET_WORKSPACE_TEMPL...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -niE "loader|clock|progress|pending|running|skip|minus|check|x\b|circle" packages/twenty-ui/src...
+[94m[bash][0m $ grep -rn "IconLoader\|IconClock\|IconProgress\|IconRefresh" packages/twenty-front/src/modules --incl...
+[94m[bash][0m $ grep -rn "export.*IconLoader\|export.*IconClock\|export.*IconCircleDashed\|export.*IconPlayerPause" ...
+[94m[write][0m "import {
+  type ApplyTemplateResult,
+  type ApplyTemplateStep,
+} from '@/a2e-workspace/types/apply-template-operation.types';
+import { isDefined } from 'twenty-shared/utils';
+
+// Whether a setup opera... (1303 chars)"
+Now I'll implement. First, a pure outcome classifier.
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ grep -rn "color:" packages/twenty-ui/src/theme/constants/Colors.ts 2>/dev/null | head -30
+[94m[bash][0m $ find packages/twenty-ui/src -iname "*color*" -path "*theme*" | head
+[94m[bash][0m $ grep -niE "orange|yellow|amber" packages/twenty-ui/src/theme/constants/SecondaryColorsLight.ts | hea...
+[94m[bash][0m $ grep -rn "orange\|yellow" packages/twenty-ui/src/theme/constants/*.ts | grep -iE ":\s" | head
+[94m[read][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+Now the hook must stop reporting success on a partial/failed run.
+[94m[edit][0m
+[94m[write][0m "import {
+  type ApplyTemplateResult,
+  type ApplyTemplateStep,
+} from '@/a2e-workspace/types/apply-template-operation.types';
+import { getApplyTemplateResultOutcome } from '@/a2e-workspace/utils/getAp... (3131 chars)"
+Now the unit suites. First a pure test for the classifier.
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+Now add the failure/retry/skip/empty-catalogue tests to the component suite.
+
+[94m[edit][0m
+Now the hook suite: partial must show an error snackbar, not success.
+
+[94m[edit][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/onboarding/utils/shouldAutoSkipInstallAppsStep.ts
+Now the empty-catalogue protection at the onboarding entrypoint.
+
+[94m[edit][0m
+Now run the focused suites and typecheck.
+
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/a2e-workspace packages/twenty-front/src/modules/onboardin...
+[94m[edit][0m
+All green, but there's a React key warning from my duplicate step keys in the test fixture. Let me fix the key to include status.
+
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/a2e-workspace --config=packages/twenty-front/jest.config....
+[94m[bash][0m $ echo "EXIT:$?"
+[94m[bash][0m $ cd packages/twenty-front && npx oxfmt --check src/modules/a2e-workspace/utils/getApplyTemplateResult...
+Typecheck clean, no key warning. Now lint/format the touched files.
+
+[94m[bash][0m $ cd packages/twenty-front && npx oxlint --type-aware -c .oxlintrc.json src/modules/a2e-workspace/util...
+[94m[bash][0m $ cd packages/twenty-front && npx oxfmt --write src/modules/a2e-workspace/hooks/__tests__/useApplyWork...
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/a2e-workspace packages/twenty-front/src/modules/onboardin...
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -8
+Now run the broader onboarding utils suite plus lint:diff to be thorough, and check docs.
+
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/onboarding/utils packages/twenty-front/src/pages/onboardi...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-front 2>&1 | tail -12
+[94m[bash][0m $ git diff -- packages/twenty-front/src/modules/a2e-workspace/hooks/useApplyWorkspaceTemplateOperation...
+Only declared files touched. Let me review the final diff before reporting.
+
+The diff is clean and scoped. Now writing the phase report and progress entries.
+
+[94m[bash][0m $ P1.6c itself still has the Tier-2 schema regen + live journey and the distinct error-surface contrac...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ grep -n "US-027" docs/plan/phases/phase-01-report.md
+Claim is the most recent for this slice, no stray files, all checks green. Reporting complete.
+
+Implemented US-027 (P1.6c partial-failure UX + empty-catalogue protection):
+
+- **New** `getApplyTemplateResultOutcome.ts`: `applied` only when `appliedTemplateKeyVersion` is set AND no failed/pending/running step, so a partial run can never read as "entire preset applied".
+- **`A2eWorkspaceTemplatePreview`**: truthful per-step status label + distinct icons, partial/failed outcome banner, `Retry remaining steps`; only resets/notifies on a fully applied run so retry reuses the same idempotency key.
+- **`useApplyWorkspaceTemplateOperation`**: success snackbar only on `applied`, error snackbar naming kept work + retry otherwise.
+- **`shouldAutoSkipInstallAppsStep`**: requires the catalogue to be *proven* empty, so a network/errored catalogue can no longer auto-skip past the template picker.
+
+Checks: 9 suites/43 tests + onboarding suites pass, `tsgo --noEmit` clean, oxlint/oxfmt clean, docs check PASS. Left open for tick: Tier-2 schema regen + live browser journey, and the distinct no-apps/network/permission surfaces (need a server error-code contract).
+
+<promise>COMPLETE</promise>

@@ -3,10 +3,10 @@
   "sessionId": "6455d7b0-09b6-4e5c-ba20-c39a463e7fdb",
   "status": "running",
   "startedAt": "2026-09-19T20:42:50.206Z",
-  "updatedAt": "2026-09-19T20:54:55.268Z",
-  "currentIteration": 1,
+  "updatedAt": "2026-09-19T21:01:12.266Z",
+  "currentIteration": 2,
   "maxIterations": 20,
-  "tasksCompleted": 1,
+  "tasksCompleted": 2,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -26,6 +26,16 @@
       "durationMs": 310287,
       "startedAt": "2026-09-19T20:42:58.131Z",
       "endedAt": "2026-09-19T20:48:08.418Z"
+    },
+    {
+      "iteration": 2,
+      "status": "completed",
+      "taskId": "US-027",
+      "taskTitle": "[P1.6c] Partial-failure UX — continue with successful steps, retry later, empty-catalogue protection",
+      "taskCompleted": true,
+      "durationMs": 401165,
+      "startedAt": "2026-09-19T20:48:14.102Z",
+      "endedAt": "2026-09-19T20:54:55.267Z"
     }
   ],
   "skippedTaskIds": [],

@@ -15,6 +15,8 @@ after each iteration and it's included in prompts for context.
 - Lingui `@lingui/react/macro` `t` only renders when used as a tagged template (`t`text``). Calling it as `t({ id, message })` renders an empty node in this codebase — use small components with inline tagged-template branches for dynamic labels (see `ResolutionLabel`/`StepKindLabel`).
 - `twenty-ui` `Checkbox` (base-ui) constructs a `PointerEvent` on click; jsdom lacks it. Front component tests that click a checkbox need the `window.PointerEvent = MouseEvent` shim used in `packages/twenty-ui/src/input/Checkbox/__tests__/Checkbox.test.tsx`.
 - `A2eWorkspaceTemplatePreview` per-app resolution and per-step outcome are both pure front projections beside each other: `resolveTemplatePreview` (previews) and `getApplyTemplateResultOutcome` (operation result). Do not merge either into the server or into the other. Retry correctness depends on NOT calling `resetOperation` on a partial result — the hook instance's reused idempotency key is what resumes the same server operation.
+- Seeders must return the rows `createRecords`/`createRecords`-style helpers actually created (`result[createMutationName] ?? []`), never the requested missing count — a mutation the API accepts but returns 0 ids for would otherwise be reported as a seed. See `a2e-accounting/src/logic-functions/handlers/seed-starter-content.ts`.
+- Mock a dynamic `await import('unzipper')` in a jest spec with `jest.mock('unzipper', () => ({ __esModule: true, default: { Open: { buffer: jest.fn() } } }))`; the service's `const { default: unzipper } = await import('unzipper')` resolves the mocked default. Construct `SdkClientArchiveService` via `Test.createTestingModule` with the `getRepositoryToken`/service providers (no constructor casts).
 
 ---
 
@@ -33,4 +35,14 @@ after each iteration and it's included in prompts for context.
 - **Learnings:**
   - The server's `set-workspace-template` step is `skipped` when a required install failed, so `appliedTemplateKeyVersion` is already a reliable "template row set" signal; combining it with "no failed/in-flight step" is what makes the classifier honest for seed/navigation failures too.
   - Distinct *no apps / network error / permission denial* UI at the apply level is blocked on a server error-code contract (`ApplyTemplateErrorCode` has no permission code and the preview query carries no discriminator) — recorded under `Missing for tick`, not faked front-side.
+---
+
+## 2026-09-19 - US-028
+- Closed the P1.3 delegated-seeding truth gap. Server side (async hook → `failed`/`SEED_FAILED`) and the SDK-layer root-cause fix were already in the tree; this slice added their missing regression coverage and fixed the last over-report in the app hook.
+- Implemented: (1) new SDK-archive staged-extraction spec reproducing the live 0-rows path (a dead extraction must leave the live SDK layer absent, never a package missing `dist/core.mjs`; a complete staged swap wins over a concurrent holder); (2) `seed-starter-content.ts` now returns the rows `createRecords` actually created, not the requested `missing.length`, so a 0-created write reports 0/false.
+- Files changed: new `packages/twenty-server/src/engine/core-modules/sdk-client/__tests__/sdk-client-archive-staged-extraction.spec.ts`; `packages/twenty-apps/internal/a2e-accounting/src/logic-functions/handlers/seed-starter-content.ts`; `.../src/lib/__tests__/starter-content-seeding.test.ts`; phase report.
+- **Learnings:**
+  - The 0-rows incident's root cause is the SDK layer, not the seed payloads: `downloadAndExtractToPackage` now extracts to a staging sibling, verifies `package.json` + `dist/core.mjs`, then renames atomically. A consumer must never see a partial live layer.
+  - `createRecords` returns the created rows (`result[createMutationName] ?? []`). Seeders that return `missing.length` instead over-report on a silent 0-row mutation — always count what was written.
+  - Mock dynamic `await import('unzipper')` by `jest.mock('unzipper', () => ({ __esModule: true, default: { Open: { buffer: jest.fn() } } }))` and cast `unzipper.Open.buffer as unknown as jest.Mock`; the service's `{ default: unzipper }` destructure then resolves the mock.
 ---

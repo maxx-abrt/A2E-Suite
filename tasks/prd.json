@@ -52,9 +52,10 @@
         "The P1.6d Bilan starter hook shares this code path and is covered by the fix, but Bilan bundle content itself stays out of scope (P7 gate)"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md:540-547 (P1.3 `[~]`, partial: partial states + delegated sample-seeding shipped, spec 15/15). Stability-critical: blocks truthful P1.6d seeding. Live scratch re-proof stays Tier 2 (orchestrator).",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-029",
@@ -344,6 +345,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T20:54:55.268Z"
+    "updatedAt": "2026-09-19T21:01:12.265Z"
   }
 }

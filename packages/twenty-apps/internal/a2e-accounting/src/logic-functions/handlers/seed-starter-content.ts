@@ -88,13 +88,16 @@ export const seedCategories = async (
     isArchived: false,
   }));
 
-  await createRecords(
+  // Report what the Core API actually wrote, not what was requested: a
+  // mutation that returns no rows seeded nothing, and the install summary must
+  // not claim otherwise (the live 0-rows failure).
+  const createdCategories = await createRecords(
     client as ReturnType<typeof coreClient>,
     'createFinanceCategories',
     missing,
   );
 
-  return missing.length;
+  return createdCategories.length;
 };
 
 export const seedOrgProfile = async (
@@ -113,24 +116,28 @@ export const seedOrgProfile = async (
     return false;
   }
 
-  await createRecords(client as ReturnType<typeof coreClient>, 'createOrgProfiles', [
-    {
-      legalName: 'Ma structure',
-      structureKind: 'ASSOCIATION',
-      vatMode: 'EXEMPT',
-      defaultVatRate: 0,
-      fiscalYearStartMonth: 1,
-      invoiceNumberPrefix: DEFAULT_INVOICE_PREFIX,
-      invoiceNextNumber: 1,
-      quoteNumberPrefix: DEFAULT_QUOTE_PREFIX,
-      quoteNextNumber: 1,
-      receiptNumberPrefix: DEFAULT_RECEIPT_PREFIX,
-      receiptNextNumber: 1,
-      rupRecognized: false,
-    },
-  ]);
+  const createdProfiles = await createRecords(
+    client as ReturnType<typeof coreClient>,
+    'createOrgProfiles',
+    [
+      {
+        legalName: 'Ma structure',
+        structureKind: 'ASSOCIATION',
+        vatMode: 'EXEMPT',
+        defaultVatRate: 0,
+        fiscalYearStartMonth: 1,
+        invoiceNumberPrefix: DEFAULT_INVOICE_PREFIX,
+        invoiceNextNumber: 1,
+        quoteNumberPrefix: DEFAULT_QUOTE_PREFIX,
+        quoteNextNumber: 1,
+        receiptNumberPrefix: DEFAULT_RECEIPT_PREFIX,
+        receiptNextNumber: 1,
+        rupRecognized: false,
+      },
+    ],
+  );
 
-  return true;
+  return createdProfiles.length > 0;
 };
 
 export const seedStarterSheets = async (
@@ -147,7 +154,7 @@ export const seedStarterSheets = async (
     existing.map((sheet) => sheet.systemKey),
   );
 
-  await createRecords(
+  const createdSheets = await createRecords(
     client as ReturnType<typeof coreClient>,
     'createBookSheets',
     missingSheets.map((sheet: StarterBookSheet) => ({
@@ -162,7 +169,7 @@ export const seedStarterSheets = async (
     })),
   );
 
-  return missingSheets.length;
+  return createdSheets.length;
 };
 
 export const seedStarterFiches = async (
@@ -178,19 +185,21 @@ export const seedStarterFiches = async (
 
   const missingFiches = findMissingStarterFiches(existing);
 
-  if (missingFiches.length > 0) {
-    const payloadByTitle = new Map(
-      starterFichePayloads().map((payload) => [payload.title, payload]),
-    );
-
-    await createRecords(
-      client as ReturnType<typeof coreClient>,
-      'createFiches',
-      missingFiches
-        .map((fiche: StarterFiche) => payloadByTitle.get(fiche.title))
-        .filter((payload) => payload !== undefined),
-    );
+  if (missingFiches.length === 0) {
+    return 0;
   }
 
-  return missingFiches.length;
+  const payloadByTitle = new Map(
+    starterFichePayloads().map((payload) => [payload.title, payload]),
+  );
+
+  const createdFiches = await createRecords(
+    client as ReturnType<typeof coreClient>,
+    'createFiches',
+    missingFiches
+      .map((fiche: StarterFiche) => payloadByTitle.get(fiche.title))
+      .filter((payload) => payload !== undefined),
+  );
+
+  return createdFiches.length;
 };
