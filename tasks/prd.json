@@ -211,9 +211,10 @@
         "A dated entry is appended to the phase report for the touched phase; PLAN.md is not edited; nothing is committed"
       ],
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md P9.2 'Chat: channel/thread summarization, catch-me-up', phase P5 domain — UNLOCKED by the orchestrator's 2026-09-19 verify+tick of P5 (commit 43c89c2a: chat model, GraphQL, realtime publish, page, threads, read state all verified). The P5.2 Cmd+K entry recorded 'AI stub: channel summarizer (P9)' as P9-owned — no stub file exists yet in a2e-chat; this story creates the real tools (do not search for an existing stub). The LLM summarization itself happens in the assistant (existing AI infrastructure); these tools supply authorized, permission-checked data — that is the honest Tier 0/1 slice without the P9.1 surface. Register the new logic functions in the a2e-chat manifest (universal-identifiers constants pattern, LOGIC_FUNCTION_IDS). Report entry goes to phase-05-report.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-011",
@@ -332,6 +333,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T11:26:34.864Z"
+    "updatedAt": "2026-09-19T11:34:07.575Z"
   }
 }
