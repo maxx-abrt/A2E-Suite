@@ -915,3 +915,15 @@ CLAIMED — US-025/assistant-context-tools — deepseek-v4.1-flash — 2026-09-1
 **Do not redo:** `getContextToolButtons`/`buildLogicFunctionToolName`/`humanizeToolLabel` are the single gating authority and are unit-proven; `useContextToolButtons` is the only registry→button wiring; `AiChatContextToolButtons` is the only render seam (mounted once in `AiChatEmptyState`, so it covers side panel and full page). Do not add a parallel tool list, an app-id field to the server DTO, or a per-tool front allowlist.
 **Remaining:** US-025 is the last queued task in Ralph batch III; P9.1's remaining bullets (direct read-only dispatch, mutation draft+confirm, full-page upgrade, streaming/model config/usage logging), P9.2b and P9.3 remain.
 **Next:** orchestrator — run the Tier-2 live assistant dispatch and tick US-025; executor — the next P9.1 bullet (input-schema-aware context mapping / channel context) or another queued leg.
+
+## 2026-09-19 21:55 local — orchestrator — batch III verify (US-016..018, US-025)
+
+**Scope:** verified the ten executor commits since `fa4aa27a` (US-016..US-025); this file's onboarding stories plus the US-025 assistant slice.
+
+**Defect found and fixed (blocker):** `NotificationWatchDTO` (shipped by the earlier P8.2 batch, commit 7e04aa35) declared `targetKind`/`targetId` with implicit-type `@Field`s — a string-literal union and a `| null` union both reflect as `Object`, aborting NestJS GraphQL schema generation. Every integration-suite globalSetup failed with "Undefined type error … NotificationWatchDTO", which also blocks server boot. Executors never run integration suites (orchestrator-only), which is why it slipped through the batch-II tick. Fix: explicit `@Field(() => String)` on both (resolver already validates values; convention matches `guest-document-share.dto.ts`). Notification module 15 suites/83 tests green post-fix; both onboarding integration suites then passed.
+
+**Checks run (HEAD = b61cce0b):** onboarding unit batch `npx jest src/engine/core-modules/onboarding --config=jest.config.mjs` → 8 suites/71 PASS; `NODE_ENV=test npx jest --config jest-integration.config.ts` on `concurrent-same-key-retry` + `template-unavailable-apps-first-use` --runInBand → 2 suites/5 PASS (after the DTO fix; both failed globalSetup before); a2e-accounting `yarn test:unit` → 104/104; `tsgo -p tsconfig.json --noEmit` (twenty-server) → exit 0. No i18n/locale churn in fa4aa27a..HEAD (verified by name-only diff scan).
+
+**Ticks:** P1.6b → `[x]` (US-016/017/018 complete: idempotency/concurrency, delegated seeding truthfulness, partial failure/resume). P9.1 assistant-surface bullet → `[~]` (side-panel half verified; full-page upgrade, schema-aware mapping, channel context, direct dispatch remain).
+
+**Still open (Tier 2):** live Bilan reinstall asserting seeded rows > 0 (gates P1.6d/P1.6b confidence); live assistant dispatch on an app-installed workspace; the recorded `appliedTemplateKeyVersion`-while-seed-failed product call. A live `yarn start` stack was not available this session (DB/Redis up, no server running); these stay the next orchestrator pass.

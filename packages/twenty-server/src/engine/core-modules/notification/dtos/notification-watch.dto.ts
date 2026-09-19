@@ -8,9 +8,10 @@ export class NotificationWatchDTO {
   @Field(() => UUIDScalarType)
   id: string;
 
-  @Field({ nullable: false })
+  // A string-literal union reflects as Object; the resolver validates values.
+  @Field(() => String, { nullable: false })
   targetKind: NotificationWatchTargetKind;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   targetId: string | null;
 }

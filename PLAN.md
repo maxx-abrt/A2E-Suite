@@ -569,10 +569,17 @@ persona, and the conventions every later phase relies on.
       compatibility, inputs, provenance and preview fixtures; reject unknown
       IDs, cycles, unavailable requirements and cross-workspace content.
       (verified 2026-09-17, see phase-01 report, commit 9b50ab87)
-- [ ] **P1.6b Backend operation (after P1.6a/P0.4):** implement one authorized,
+- [x] **P1.6b Backend operation (after P1.6a/P0.4):** implement one authorized,
       resumable setup operation from preset + checkbox choices. Test same-key
       retries/concurrent requests, async post-install completion, registration
       failure and partial results; no fake completed preset or duplicate seeds.
+      — 2026-09-19 orchestrator: verified (US-016/017/018, phase-01-report) —
+      onboarding unit batch 8 suites/71 green on HEAD rerun (incl. new
+      partial-failure spec); Tier-1 integration reruns green after fixing a
+      schema-breaking `NotificationWatchDTO` defect from the earlier P8.2
+      batch (implicit-type `@Field`s broke every integration globalSetup —
+      see P8.2 note); live Bilan install seeds rows is P1.6d's open Tier-2
+      leg. Tier-2 browser journeys remain open.
 - [ ] **P1.6c Front onboarding/Settings (after P1.6b):** preview apps,
       prerequisites, samples and customization; allow blank/CRM, optional app
       exclusion, continue with successful steps and retry later. Empty catalogue
@@ -742,19 +749,38 @@ App: `a2e-documents`.
       `collectExportFidelityWarnings` shipped (unit green; export menu hidden
       for empty docs); nonempty-content export validation in a browser still
       open; phase-03-report 2026-09-16 19:25 entry.
-- [ ] Repair public snapshot sharing: record-level rights, validated plaintext
+- [x] Repair public snapshot sharing: record-level rights, validated plaintext
       or ciphertext-only representation, consistent guest format, display/copy
       URL, revoke, expiry and passphrase UX. P0.2 gates E05.
+      — 2026-09-19 orchestrator: verified (US-019, phase-03-report) —
+      owner-side share panel (existing-share load, passphrase + expiry on
+      create, `/share/<token>` display with copy, revoke) on P0.2's verified
+      server boundary; a2e-documents 142→169 green on HEAD rerun. Known
+      limitation (recorded): copied value is the canonical app path, not an
+      absolute URL — the app SDK pins `twenty-sdk@2.31.0` which lacks
+      `AppPath.DocumentShare`, so absolute assembly needs a new host function.
+      Tier-2 two-browser share/unlock/revoke journey remains open.
 - [ ] Atomic expected-revision save with conflict feedback and preserved draft;
       presence and pure optimistic classification helper exist, but do not
       implement a server save/merge protocol. No OT/CRDT promise in v1.
 
 ### P3.3 Tree & navigation UX
-- [ ] Finish existing document tree: lazy/paginated loading at every depth,
+- [x] Finish existing document tree: lazy/paginated loading at every depth,
       server cycle validation, deterministic sibling ordering and accessible
       move controls. Verify favorites are personal rather than a shared flag;
       test archive/restore/purge across deep trees and more than one API page.
       Existing tree/drag/cron code is a starting point, not full acceptance.
+      — 2026-09-19 orchestrator: verified (US-020/021/022, phase-03-report)
+      — lazy/paginated every depth + deterministic ordering + plural-navigate
+      fix; cycle guard is fail-closed `validateDocumentParentMove` with the
+      recorded platform caveat that an app-owned hook can only repair
+      post-commit (SDK exposes no pre-write hook — synchronous server
+      rejection of a generic GraphQL write would need a new system, logged in
+      phase-03-report); favorites re-implemented personal per-user
+      (`documentFavorite` object); deep-tree archive/restore/purge + trash
+      retention unit-proven; a2e-documents 169/169 green on HEAD rerun
+      (accessible move controls verified 2026-09-17). Tier-2 deep-tree
+      browser journey remains open.
 - [x] Doc page: cover/icon/title/editor/outline; open in side-panel tab or
       full page (addressable URL)
 - [x] Cmd+K: create/open document commands; search provider for docs
@@ -1317,6 +1343,13 @@ financial automation. Notifications depend on P8; PDF form approval on D04.
 - [x] Watchers: watch record/doc/channel → notifications on change
       — 2026-09-19 orchestrator: verified (notificationWatch entity +
       migration with up/down + listener specs green). phase-08-report.
+      Correction 2026-09-19 (batch-III verify): the shipped
+      `NotificationWatchDTO` used implicit-type `@Field`s
+      (string-literal union / `| null`) that reflect as `Object` and
+      aborted GraphQL schema generation — every integration-suite
+      globalSetup failed until fixed with explicit `() => String` /
+      `() => UUIDScalarType`; notification module suites 83/83 green
+      post-fix, onboarding integration reruns pass.
 
 **Acceptance.** Mention in doc and in chat lands in inbox with working deep
 links; quiet hours hold email; badge counts live-update; e2e covers
@@ -1333,9 +1366,15 @@ mention→inbox→open.
       `toolTriggerSettings`; validate install/uninstall/permissions/context
       behavior. P1.5 established this native primitive; do not invent
       `registerAiTools`, a duplicate table or manual registration hooks.
-- [ ] Assistant surface: side-panel assistant + full-page upgrade of
+- [~] Assistant surface: side-panel assistant + full-page upgrade of
       ai-chat; context injection from current view (record/doc/channel/
       invoice) via context-store
+      — 2026-09-19 orchestrator: side-panel half verified (US-025,
+      phase-01-report) — registry-driven context buttons (fail-closed
+      gating, read-only dispatch, mutating categories never offered);
+      ai/utils+components suites green on HEAD rerun. Full-page upgrade,
+      input-schema-aware context mapping, channel-side context and direct
+      tool execution remain; Tier-2 live dispatch open.
 - [ ] Streaming responses (SSE reuse), model provider config (existing AI
       settings), usage logging to event-logs
 - [ ] Prompt/action library: per-app actions rendered as buttons in
@@ -1420,8 +1459,13 @@ app ship with tests.
       journal doc template, quick capture (Cmd+K → note/task/income)
       — 2026-09-19 orchestrator: contribution grid shipped with P8.2;
       Pomodoro `focus` widget verified (US-003 slice, phase-10-report,
-      suites green on HEAD re-run). Journal doc template + Cmd+K quick
-      capture remain (queued executor slices).
+      suites green on HEAD re-run); journal doc template verified
+      (US-023 — five-template bundle, docs/features.md truthful) and
+      Cmd+K quick capture verified (US-024 — note/task native record
+      primitive, income reopens the pinned Bilan command creating no
+      row; quick-capture suite 29/29 green on HEAD rerun incl. US-025
+      context-button specs). Tier-2 browser journeys (gallery
+      instantiation, capture walkthrough) open.
 - [x] Guided first-open help: contextual template/blank actions, dismissible
       explanations and searchable help; no forced overlay tour. Use R15's
       explanatory patterns, not its marketing/pricing claims or mock data.

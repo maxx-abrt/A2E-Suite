@@ -1016,3 +1016,13 @@ CLAIMED — US-022/favorites-personal-and-deep-archive-tests — deepseek-v4.1-f
 **Note:** the twenty-front `tsgo` initially failed with 6 `AppPath` enum-mismatch errors in `useFrontComponentExecutionContext.ts` — not caused by this slice, but by a **stale `twenty-sdk/dist`** whose bundled front-component declaration re-declared a local `AppPath` enum instead of re-exporting `twenty-shared/types`. `npx nx build twenty-sdk --skip-nx-cache` fixed the dist and the gate went green (same class as the documented `twenty-shared/dist` gotcha; the app package pins `twenty-sdk@2.31.0`, so it is unaffected).
 **Remaining:** ~11 other [ ]/[~] tasks ahead (P1.3 e2e, P1.6d D02-gated leg, P1.7a export, P1.7b/c Tier-2, P2.1 bullet 5, P2.4/P2.5 e2e, P3.2 remaining legs, P3.3 record-note-body copy, P3.4+)
 **Next:** orchestrator — run the Tier-2 favorites two-session / purge-cron / deep-tree browser passes and tick US-022 (plus the already-queued US-020/021 browser passes); executor — the P3.3 record-note body-copy bullet or another queued leg.
+
+## 2026-09-19 21:55 local — orchestrator — batch III verify (US-019..022)
+
+**Scope:** verified the documents stories of the ten-commit batch: US-019 owner share panel, US-020 cycle validation, US-021 lazy/ordering/navigate fix, US-022 favorites-personal + deep-tree archive tests.
+
+**Checks run (HEAD = b61cce0b):** a2e-documents `yarn test:unit` → 169/169 PASS (report claimed 167; +2 drift is the US-021-queued navigate-fix specs landing in the same file set — no unrelated churn in the diff scan). Onboarding integration suites were blocked by the `NotificationWatchDTO` schema defect from the P8.2 batch — fixed this session, see phase-01-report's orchestrator entry; all dependent reruns green.
+
+**Ticks:** P3.2 sharing bullet → `[x]` (P0.2 server boundary was already verified; US-019 completes the owner-side UX; the absolute-URL limitation — pinned `twenty-sdk@2.31.0` lacks `AppPath.DocumentShare` — is recorded inline in PLAN.md). P3.3 tree bullet → `[x]` (lazy/paginated every depth, deterministic ordering, fail-closed cycle guard with the SDK pre-write-hook limitation recorded, personal favorites, deep-tree archive/restore/purge; accessible move controls were verified 2026-09-17). The reject-vs-repair platform question stays recorded here in US-020's entry — no PLAN table change needed while the repair guarantee holds.
+
+**Still open (Tier 2):** two-browser share/unlock/revoke journey (E05), deep-tree browser journey across API pages, favorites two-session invisibility, live purge-cron firing. Not runnable this session — no running stack.

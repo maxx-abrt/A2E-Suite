@@ -137,3 +137,13 @@ CLAIMED — US-024/quick-capture-cmdk — deepseek-v4.1-flash — 2026-09-19T18:
 **Rebuild note:** `SidePanelPages.QuickCapture` is re-declared by the bundled `twenty-sdk/dist/front-component/index.d.ts`; if tsgo reports `Property 'QuickCapture' is missing`, rebuild first: `npx nx build twenty-shared --skip-nx-cache && npx nx build twenty-sdk --skip-nx-cache` (same class as the documented `twenty-sdk/dist` gotcha).
 **Remaining:** P10 open: the performance bullet and final regression; then the P9/app-search US-025+ batch.
 **Next:** orchestrator — Tier-2 browser proof of the capture flow; nothing else pending for US-024.
+
+## 2026-09-19 21:55 local — orchestrator — batch III verify (US-023/024)
+
+**Scope:** verified the P10 slices of the batch: US-023 journal doc template, US-024 Cmd+K quick capture.
+
+**Checks run (HEAD = b61cce0b):** twenty-front `npx jest src/modules/quick-capture + getContextToolButtons + AiChatEmptyState --config=jest.config.mjs` → 3 suites/29 PASS; twenty-shared/sdk rebuilt uncached first (US-024 touched `SidePanelPages` — documented dist gotcha) before trusting any dependent result. US-023's six template specs were covered by the a2e-documents unit run logged in phase-03-report (169/169).
+
+**Ticks:** P10 personal-dashboard bullet annotation updated — journal template + quick capture verified; bullet stays `[~]` only because the habit/Pomodoro-adjacent performance bullet of P10 remains open, not because of these two stories.
+
+**Still open (Tier 2):** browser gallery `Modèle — Journal` instantiation proof; Cmd+K capture walkthrough (note→record page, task likewise, income→pinned Bilan command creating no row). Not runnable this session — no running stack.
