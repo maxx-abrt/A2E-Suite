@@ -15,7 +15,7 @@ import { partitionRowsByImportResult } from '@/spreadsheet-import/utils/spreadsh
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { t } from '@lingui/core/macro';
-import { useCallback, useRef } from 'react';
+import { useStore } from 'jotai';
 
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,
@@ -35,17 +35,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     spreadsheetImportCreatedRecordsProgressState,
   );
 
-  // The batch hook reports its progress through this callback, so the ref lets a
-  // failed submit know how many rows were already committed.
-  const createdRecordCountRef = useRef(0);
-
-  const handleBatchedRecordsCount = useCallback(
-    (count: number) => {
-      createdRecordCountRef.current = count;
-      setSpreadsheetImportCreatedRecordsProgress(count);
-    },
-    [setSpreadsheetImportCreatedRecordsProgress],
-  );
+  const store = useStore();
 
   const abortController = new AbortController();
 
@@ -58,7 +48,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     objectNameSingular,
     recordGqlFields,
     mutationBatchSize: SPREADSHEET_IMPORT_CREATE_RECORDS_BATCH_SIZE,
-    setBatchedRecordsCount: handleBatchedRecordsCount,
+    setBatchedRecordsCount: setSpreadsheetImportCreatedRecordsProgress,
     abortController,
     skipPostOptimisticEffect: true,
   });
@@ -106,7 +96,9 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
           const { createdCount, failedCount, isPartial } =
             partitionRowsByImportResult({
               recordsToImport: createInputs,
-              createdRecordCount: createdRecordCountRef.current,
+              createdRecordCount: store.get(
+                spreadsheetImportCreatedRecordsProgressState.atom,
+              ),
             });
 
           if (isPartial) {

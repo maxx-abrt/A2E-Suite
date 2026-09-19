@@ -3,6 +3,7 @@ import { act } from 'react';
 import gql from 'graphql-tag';
 
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
 import { snackBarInternalComponentState } from '@/ui/feedback/snack-bar-manager/states/snackBarInternalComponentState';
@@ -18,17 +19,10 @@ jest.mock('uuid', () => ({
 
 const mockBatchCreateManyRecords = jest.fn().mockResolvedValue([]);
 
-let mockSetBatchedRecordsCount: ((count: number) => void) | undefined;
-
 jest.mock('@/object-record/hooks/useBatchCreateManyRecords', () => ({
-  useBatchCreateManyRecords: (options: {
-    setBatchedRecordsCount?: (count: number) => void;
-  }) => {
-    mockSetBatchedRecordsCount = options.setBatchedRecordsCount;
-    return {
-      batchCreateManyRecords: mockBatchCreateManyRecords,
-    };
-  },
+  useBatchCreateManyRecords: () => ({
+    batchCreateManyRecords: mockBatchCreateManyRecords,
+  }),
 }));
 
 const mockResult = jest.fn(() => ({
@@ -217,7 +211,7 @@ describe('useOpenObjectRecordsSpreadsheetImportDialog', () => {
 
     await act(async () => {
       // Simulate the first batch having been committed before the failing one.
-      mockSetBatchedRecordsCount?.(1);
+      jotaiStore.set(spreadsheetImportCreatedRecordsProgressState.atom, 1);
       await spreadsheetImportDialog.options?.onSubmit(submitData, fakeCsv());
     });
 

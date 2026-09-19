@@ -13,13 +13,14 @@ const buildRow = ({
   name = 'Example',
 }: {
   index: string;
-  errors?: TestRow['__errors'];
+  errors?: ImportedStructuredRowMetadata['__errors'];
   name?: string;
-}): TestRow => ({
-  __index: index,
-  ...(errors !== undefined ? { __errors: errors } : {}),
-  name,
-});
+}): TestRow =>
+  ({
+    __index: index,
+    ...(errors !== undefined ? { __errors: errors } : {}),
+    name,
+  }) as unknown as TestRow;
 
 describe('partitionRowsByValidationErrors', () => {
   it('should classify a row without errors as valid and strip its metadata', () => {
@@ -84,9 +85,9 @@ describe('partitionRowsByValidationErrors', () => {
 
     expect(result.validStructuredRows).toHaveLength(1);
     expect(result.invalidStructuredRows).toHaveLength(1);
-    expect(result.validStructuredRows.length + result.invalidStructuredRows.length).toBe(
-      result.allStructuredRows.length,
-    );
+    expect(
+      result.validStructuredRows.length + result.invalidStructuredRows.length,
+    ).toBe(result.allStructuredRows.length);
   });
 });
 
