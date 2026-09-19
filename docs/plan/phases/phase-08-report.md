@@ -100,3 +100,29 @@ CLAIMED — P8.2-watchers/watch-primitive — deepseek-v4.1-flash — 2026-09-18
 **Remaining:** P8.2-watchers was the last open P8.2 task; the whole P8.2 UX block is now reported
 **Next:** orchestrator ticks P8.2-watchers (and the rest of P8.2) and runs the Tier-2 watch→inbox journey; if a follow-up is wanted, wire `NotificationWatchService.removeWatchesForUser` into `UserWorkspaceService.deleteUserWorkspace` (deliberately not done here to avoid a cross-module circular edge — the event-time ACL prune already drops removed members)
 
+## 2026-09-19 09:20 UTC — orchestrator — P8 verification + tick
+
+Verified all seven P8 executor reports (notification core service,
+realtime push, inbox page, mentions engine, activity feed, email
+notifications, watchers) against diffs `797efd93..7e04aa35`.
+
+Evidence (re-run, uncached):
+- `npx jest packages/twenty-server/src/engine/core-modules/notification --config=packages/twenty-server/jest.config.mjs` (within the 26-suite/130-test chat+notification run) → PASS.
+- `npx jest packages/twenty-front/src/modules/inbox --config=packages/twenty-front/jest.config.mjs` (subset of the 39-suite/207-test front run) → PASS.
+- `npx tsgo -p tsconfig.json --noEmit` in twenty-server → 0 errors.
+- Migration safety: `notification` and `notificationWatch` core tables each carry a generated 2-39 instance command with `up`+`down`, registered in `instance-commands.constant.ts`, epoch-ms strictly greater than every prior 2-39 command (1789711800000, 1789900000000) — CI-enforced rules satisfied.
+- No i18n catalog churn across the range; no renames/deletes; single durable watch primitive covers record/document/channel (C5 respected).
+
+Spot-check: the `notificationWatch` unique index
+`(userId, workspaceId, targetKind, targetId)` matches the service's
+upsert assumptions; watch listener fan-out is failure-isolated (the
+"fan-out down" WARN in test output is the deliberate best-effort path
+with its own spec).
+
+PLAN.md: P8.1 (3/3) and P8.2 (5/5) ticked `[x]` with dated annotations.
+
+Still open (Tier 2, orchestrator-only): live badge increment on a real
+socket, mention→inbox→open deep-link journey (E10), quiet-hours holding
+real email delivery, and with-db execution of the notification suites.
+Recorded inline on the ticks.
+

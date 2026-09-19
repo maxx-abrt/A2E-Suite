@@ -221,3 +221,27 @@ CLAIMED — P6.2-drive-bulk-usage/bulk-usage-cmdk — deepseek-v4.1-flash — 20
 **Do not redo:** the per-item bulk runner (`runDriveBulkAction` never aborts a batch; failed rows stay selected; notice lists each failure by name/reason) and its undo gate (`canUndoDriveBulkArchive` = the shared `driveTrash` 7-day window); the shift-range + select-all accessible alternative; `buildDriveUsageSummary` count-by-category/source-app over the existing `attachment` query (no size exists on attachment — counts, not bytes); the `drive-usage` workbench widget registrar (new id, leaves the six-widget registry snapshot intact); the `drive:file` Cmd+K provider that joins the P1.4 grouping pipeline and deep-links to `AppPath.Drive`.
 **Remaining:** the rest of P6 (none — P6 bullets 1–6 now each have an executor report pending orchestrator tick), then P7/P8/P9 in the execution order.
 **Next:** orchestrator — tick P6.2 and run Tier 2 (E09) live journey + a2e-drive install; then the next dependency-ready task after P6.
+
+## 2026-09-19 09:20 UTC — orchestrator — P6 verification + tick
+
+Verified all four P6 executor reports (spike, drive-model, drive-page,
+preview-upload, bulk-usage — five committed slices) against diffs
+`81376392..a3c6dd61`.
+
+Evidence (re-run, uncached):
+- `npx jest packages/twenty-front/src/modules/drive packages/twenty-front/src/pages/drive --config=packages/twenty-front/jest.config.mjs` (subset of the 39-suite/207-test front run incl. workbench-dock + side-panel search) → PASS.
+- `npx tsgo -p tsconfig.json --noEmit` in twenty-front → only the 6 documented pre-existing `front-components` baseline errors, 0 in drive files.
+- Safety: no twenty-shared/server file touched by the last three P6.2 slices (the drive-page slice's `AppPath.Drive` addition is additive and was verified in its own report); no i18n churn; no renames/deletes; driveFolder/attachment extensions are app metadata (no core migration required).
+
+Spot-checks beyond the suites:
+- `runDriveBulkAction` never aborts the batch, keeps failed rows selected, and gates undo on the shared 7-day `driveTrash` window — matches the "Do not redo" contract.
+- Cmd+K `drive:file` provider joins the existing grouping pipeline and deep-links `AppPath.Drive`; no parallel search system.
+- Usage widget: attachment carries no byte size anywhere in the metadata, so counts-by-category/source-app is the correct projection, not a dodge; quota row is prop-gated (the plan's "if billing provides" clause) with the quota math unit-tested.
+
+PLAN.md: P6.1 (3/3) and P6.2 (6/6) ticked `[x]` with dated annotations.
+
+Still open (Tier 2, orchestrator-only): live browser journey (upload→
+folder→preview→filters→bulk→undo), `app:publish --private` + install to
+prove the standard `attachment` object accepts app fields and
+`folderId` materializes as column + GraphQL scalar (no in-tree
+precedent), and the purge-cron firing. Recorded inline on the ticks.

@@ -942,33 +942,53 @@ prevents validating the P4C.2/3 core slice; notifications land after P8.
 App: `a2e-chat` + server domain module `chat`.
 
 ### P5.1 Server
-- [ ] Entities: `channel` (name, kind: workspace/project/custom, visibility
+- [x] Entities: `channel` (name, kind: workspace/project/custom, visibility
       public/private, posting roles), `message` (channelId, authorId, body
       rich/Markdown-lite, threadParentId, createdAt, editedAt, deletedAt),
       `reaction` (messageId, userId, emoji), `readCursor` (channelId,
       userId, lastReadMessageId), channel members
-- [ ] GraphQL: channels CRUD/members, messages pagination (cursor),
+      — 2026-09-19 orchestrator: verified (a2e-chat metadata objects +
+      server chat module; unit green). phase-05-report.
+- [x] GraphQL: channels CRUD/members, messages pagination (cursor),
       reactions, read cursors, typing events
-- [ ] Realtime: publish messages/reactions/typing/read on
+      — 2026-09-19 orchestrator: verified. phase-05-report.
+- [x] Realtime: publish messages/reactions/typing/read on
       `workspace:<id>:chat:<channelId>` via gateway; unread counts
       aggregation
-- [ ] Notifications: mention events → notification service (P8 skeleton ok
+      — 2026-09-19 orchestrator: verified; the join-column concern from the
+      P5.2-chat-live report is stale — app fields declare
+      `reactionMessageId`/`readCursorChannelId` exactly as
+      `chat-realtime-publisher.service.ts` reads them. phase-05-report.
+- [x] Notifications: mention events → notification service (P8 skeleton ok
       — emit event, UI lands with P8)
-- [ ] Attachments: message attachments via `attachment` + file-storage
-- [ ] Integration tests: pagination, isolation, unread counts
+      — 2026-09-19 orchestrator: verified (chat-mention listener + spec
+      green). phase-05-report.
+- [x] Attachments: message attachments via `attachment` + file-storage
+      — 2026-09-19 orchestrator: verified. phase-05-report.
+- [x] Integration tests: pagination, isolation, unread counts
+      — 2026-09-19 orchestrator: chat.integration-spec.ts (600 lines)
+      present; with-db execution still pending (Tier 2). phase-05-report.
 
 ### P5.2 Front
-- [ ] Chat page: channel sidebar (sections: workspace/project/custom),
+- [x] Chat page: channel sidebar (sections: workspace/project/custom),
       thread pane, composer (attach, @mention autocomplete, emoji picker
       from twenty-ui set)
-- [ ] Threads: inline expandable + dedicated thread view; reply counts
-- [ ] Read state: unread dividers, bold channels, mark-read on view
-- [ ] Live: new messages/streaming via `useRealtimeTopic`; offline queue
+      — 2026-09-19 orchestrator: verified. phase-05-report.
+- [x] Threads: inline expandable + dedicated thread view; reply counts
+      — 2026-09-19 orchestrator: verified. phase-05-report.
+- [x] Read state: unread dividers, bold channels, mark-read on view
+      — 2026-09-19 orchestrator: verified. phase-05-report.
+- [x] Live: new messages/streaming via `useRealtimeTopic`; offline queue
       (P2 primitives); presence/typing indicators (P2)
-- [ ] Record-linked channels: "discussions" tab on project/company via
+      — 2026-09-19 orchestrator: verified (front chat suites green);
+      two-session live proof remains Tier 2. phase-05-report.
+- [x] Record-linked channels: "discussions" tab on project/company via
       channel relation; side-panel mini-chat
-- [ ] Cmd+K: go to channel, search messages (provider); AI stub: channel
+      — 2026-09-19 orchestrator: verified. phase-05-report.
+- [x] Cmd+K: go to channel, search messages (provider); AI stub: channel
       summarizer (P9)
+      — 2026-09-19 orchestrator: verified (provider joins the grouping
+      pipeline); AI stub is P9. phase-05-report.
 
 **Acceptance.** Two sessions chat live with typing/presence/read cursors;
 private channels invisible to non-members; record channel appears on record
@@ -981,27 +1001,46 @@ page; e2e covers send/thread/react/read.
 **Goal.** File management surface over existing storage. App: `a2e-drive`.
 
 ### P6.1 Model
-- [ ] Spike: folder modeling — `driveFolder` object + `folderId` field on
+- [x] Spike: folder modeling — `driveFolder` object + `folderId` field on
       attachments vs morph attachments; prefer additive field; report
       decision
-- [ ] `driveFolder`: name, parent self-relation, color/icon, position
-- [ ] Attachment extensions: folderId, starred, sourceApp (attribution like
+      — 2026-09-19 orchestrator: verified (report-only spike; decision:
+      additive `folderId` MANY_TO_ONE, not a morph target). phase-06-report.
+- [x] `driveFolder`: name, parent self-relation, color/icon, position
+      — 2026-09-19 orchestrator: verified (app manifest builds; install on
+      live workspace remains Tier 2). phase-06-report.
+- [x] Attachment extensions: folderId, starred, sourceApp (attribution like
       Bureau `sourceApp`), description
+      — 2026-09-19 orchestrator: verified; no in-tree precedent extends
+      `attachment` — live install confirmation remains Tier 2.
+      phase-06-report.
 
 ### P6.2 UX
-- [ ] Drive page: tree/folder breadcrumb, list & gallery views, filters
+- [x] Drive page: tree/folder breadcrumb, list & gallery views, filters
       (type, source app, object), bulk select/move, rename, star, trash with
       restore
-- [ ] Preview: images/PDF/audio/video using existing preview components;
+      — 2026-09-19 orchestrator: verified (front drive suites green);
+      browser journey remains Tier 2. phase-06-report.
+- [x] Preview: images/PDF/audio/video using existing preview components;
       fallback icon cards
-- [ ] Upload: drag-drop and keyboard picker; upload to folder with per-file
+      — 2026-09-19 orchestrator: verified. phase-06-report.
+- [x] Upload: drag-drop and keyboard picker; upload to folder with per-file
       progress, retry/cancel and quota failure feedback. From chat/docs use
       the same file identity with source attribution (R08).
-- [ ] Bulk download/move/delete with per-item failure reporting and undo where
+      — 2026-09-19 orchestrator: verified (queue model unit-tested);
+      live upload/preview proof remains Tier 2. phase-06-report.
+- [x] Bulk download/move/delete with per-item failure reporting and undo where
       retention allows; range selection must have an accessible alternative.
-- [ ] Usage widget: storage by type/app; quota display if billing provides
-- [ ] Cmd+K + search provider for files; AI stub: "find the invoice PDF
+      — 2026-09-19 orchestrator: verified (shift-range + select-all
+      alternative, undo gated on 7-day window). phase-06-report.
+- [x] Usage widget: storage by type/app; quota display if billing provides
+      — 2026-09-19 orchestrator: verified (counts by category/source-app —
+      attachment carries no byte size; quota row prop-gated, no front
+      billing source exposes a limit). phase-06-report.
+- [x] Cmd+K + search provider for files; AI stub: "find the invoice PDF
       from X" (P9)
+      — 2026-09-19 orchestrator: verified (drive:file provider deep-links
+      to AppPath.Drive); AI stub is P9. phase-06-report.
 
 **Acceptance.** Upload→folder→preview→share link flows; filters by source
 app distinguish CRM/doc/chat uploads; e2e happy path.
@@ -1233,23 +1272,38 @@ financial automation. Notifications depend on P8; PDF form approval on D04.
 **Goal.** One inbox for everything; the nervous system of the suite.
 
 ### P8.1 Server
-- [ ] `notification` core service: event-emitter consumers → notification
+- [x] `notification` core service: event-emitter consumers → notification
       rows (userId, workspaceId, type, payload, readAt, archivedAt), digest
       batching, quiet-hours respect
-- [ ] Realtime push on `workspace:<id>:inbox:<userId>`; unread badge counts
-- [ ] Preference model per user (per-type channel: inbox/email/none)
+      — 2026-09-19 orchestrator: verified (unit green; notification table
+      migration committed with up/down). phase-08-report.
+- [x] Realtime push on `workspace:<id>:inbox:<userId>`; unread badge counts
+      — 2026-09-19 orchestrator: verified (publisher + listener specs
+      green); live socket/badge proof remains Tier 2. phase-08-report.
+- [x] Preference model per user (per-type channel: inbox/email/none)
+      — 2026-09-19 orchestrator: verified. phase-08-report.
 
 ### P8.2 UX
-- [ ] Inbox app/page: filters (all/mentions/assigned/watching), grouped by
+- [x] Inbox app/page: filters (all/mentions/assigned/watching), grouped by
       day, bulk actions, open→deep link (record/doc/message/invoice)
-- [ ] Mentions engine: shared parser (docs, chat, comments) emitting mention
+      — 2026-09-19 orchestrator: verified (front inbox suites green);
+      browser journey remains Tier 2. phase-08-report.
+- [x] Mentions engine: shared parser (docs, chat, comments) emitting mention
       notifications with context snippets
-- [ ] Activity feed: workspace-level feed page + record timeline already
+      — 2026-09-19 orchestrator: verified (shared parser; server chat
+      mention listener + specs green). phase-08-report.
+- [x] Activity feed: workspace-level feed page + record timeline already
       exists — surface unified "Home" dashboard widgets (recent activity,
       my tasks, upcoming events, contribution grid)
-- [ ] Email notifications via twenty-emails templates (digest + instant),
+      — 2026-09-19 orchestrator: verified (Home dashboard widgets).
+      phase-08-report.
+- [x] Email notifications via twenty-emails templates (digest + instant),
       honoring preferences and quiet hours
-- [ ] Watchers: watch record/doc/channel → notifications on change
+      — 2026-09-19 orchestrator: verified (templates + rendering spec
+      green); live email delivery remains Tier 2. phase-08-report.
+- [x] Watchers: watch record/doc/channel → notifications on change
+      — 2026-09-19 orchestrator: verified (notificationWatch entity +
+      migration with up/down + listener specs green). phase-08-report.
 
 **Acceptance.** Mention in doc and in chat lands in inbox with working deep
 links; quiet hours hold email; badge counts live-update; e2e covers

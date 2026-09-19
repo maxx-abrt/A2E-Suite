@@ -102,3 +102,29 @@ CLAIMED — P5.2-record-linked-channels/record-linked-channels — deepseek-v4.1
 **Do not redo:** the P5.2 chat page/sidebar/thread/read-state UI and the GraphQL surface (`chatMessages`, `chatUnreadCounts`, `sendChatTypingIndicator`, metadata CRUD) are unchanged in behaviour — the page now delegates the conversation region to `ChatChannelConversation` (draft/thread state is component-local so page + panel can coexist); the P2.2 queue and P2.3 presence primitives are untouched. The `DiscussionsWidget` reads the record's channel through the relation and opens the native `SidePanelPages.ChatChannel` panel; the `getTabsRenderableForTargetObject` mapping (`DISCUSSIONS → 'discussions'`) auto-hides the tab when a2e-chat is absent. Additive-only: nothing renamed or deleted; the now-unused `chatComposerDraftState`/`expandedChatThreadParentIdState`/`focusedChatThreadParentIdState` files were left in place.
 **Remaining:** P6, P7, P8, P9 remain (P5.3+ tasks per PLAN; P5.2 front bullets 1–6 now covered across past entries).
 **Next:** orchestrator — run the Tier-2 install-order + browser proof above, then tick. If the migration runner rejects the chat-owned tab on the standard company layout, fall back to a `chat`-owned additive `definePageLayoutTab` variant/overrides path or the standard-layout-template route (shared constant + `standard-company-page-layout.config.ts` + a 2-39 workspace backfill command), and re-run `npx twenty dev:build .`.
+
+## 2026-09-19 09:20 UTC — orchestrator — P5 verification + tick
+
+Verified all six P5 executor reports (P5.1 server, P5.2 page/live/
+record-linked-channels) against the committed diffs `37a203b4..98669254`.
+
+Evidence (re-run, uncached):
+- `npx jest packages/twenty-server/src/modules/chat packages/twenty-server/src/engine/core-modules/notification --config=packages/twenty-server/jest.config.mjs` → 26 suites / 130 tests PASS.
+- `npx jest packages/twenty-front/src/modules/chat packages/twenty-front/src/pages/chat --config=packages/twenty-front/jest.config.mjs` (subset of the 39-suite/207-test run) → PASS.
+- `npx tsgo -p tsconfig.json --noEmit` in twenty-server → 0 errors; twenty-front → only the 6 documented pre-existing `front-components` baseline errors, 0 in chat files.
+- Safety: no i18n catalog churn across the whole range; chat objects are app metadata (no core migration required); no renames/deletes.
+
+One report claim re-checked and **resolved stale**: P5.2-chat-live's
+"Found" note said the realtime publisher reads wrong join-column names.
+The a2e-chat object fields declare exactly `reactionMessageId`,
+`reactionWorkspaceMemberId`, `readCursorChannelId`,
+`readCursorWorkspaceMemberId` (`manyToOne(...)` join columns in
+`chat-reaction.object.ts` / `chat-read-cursor.object.ts`), matching the
+publisher's record types. No defect.
+
+PLAN.md: P5.1 (6/6) and P5.2 (6/6) ticked `[x]` with dated annotations.
+
+Still open (Tier 2, orchestrator-only): two-session live chat journey
+over `/realtime` (E08), `test:integration:with-db-reset` execution of
+`chat.integration-spec.ts`, and the a2e-chat install-order proof.
+Annotation on the P5.1 integration-test bullet records this.
