@@ -2,6 +2,10 @@ import { type A2eWorkspaceTemplate } from '@/a2e-workspace/constants/A2eWorkspac
 import { useApplyWorkspaceTemplateOperation } from '@/a2e-workspace/hooks/useApplyWorkspaceTemplateOperation';
 import { useWorkspaceTemplatePreview } from '@/a2e-workspace/hooks/useWorkspaceTemplatePreview';
 import { type ApplyTemplateStep } from '@/a2e-workspace/types/apply-template-operation.types';
+import {
+  resolveTemplatePreview,
+  type TemplatePreviewAppResolution,
+} from '@/a2e-workspace/utils/resolveTemplatePreview';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
@@ -95,11 +99,40 @@ const StyledApplyButton = styled.div`
   width: 220px;
 `;
 
-const STEP_KIND_LABELS: Record<ApplyTemplateStep['kind'], string> = {
-  INSTALL_APP: 'app installation',
-  NAVIGATION_VISIBILITY: 'navigation update',
-  SEED_SAMPLES: 'sample content',
-  SET_WORKSPACE_TEMPLATE: 'template activation',
+const ResolutionLabel = ({
+  resolution,
+}: {
+  resolution: TemplatePreviewAppResolution;
+}) => {
+  const { t } = useLingui();
+
+  if (resolution === 'install') {
+    return <>{t`will install`}</>;
+  }
+
+  if (resolution === 'keep') {
+    return <>{t`already installed`}</>;
+  }
+
+  return <>{t`unavailable`}</>;
+};
+
+const StepKindLabel = ({ kind }: { kind: ApplyTemplateStep['kind'] }) => {
+  const { t } = useLingui();
+
+  if (kind === 'INSTALL_APP') {
+    return <>{t`app installation`}</>;
+  }
+
+  if (kind === 'NAVIGATION_VISIBILITY') {
+    return <>{t`navigation update`}</>;
+  }
+
+  if (kind === 'SEED_SAMPLES') {
+    return <>{t`sample content`}</>;
+  }
+
+  return <>{t`template activation`}</>;
 };
 
 const StepStatusIcon = ({
@@ -200,37 +233,67 @@ export const A2eWorkspaceTemplatePreview = ({
 
   const hasSteps = isNonEmptyArray(operationResult?.steps ?? []);
 
+  const resolvedPreview = resolveTemplatePreview(
+    preview,
+    deselectedUniversalIdentifiers,
+  );
+
   return (
     <StyledPreviewPanel data-testid="a2e-workspace-template-preview">
-      {preview.apps.map((previewApp) => (
-        <StyledPreviewRow key={previewApp.universalIdentifier}>
-          <StyledRowText>{previewApp.displayName}</StyledRowText>
-          {previewApp.required ? (
+      {resolvedPreview.apps.map((resolvedApp) => (
+        <StyledPreviewRow key={resolvedApp.universalIdentifier}>
+          <StyledRowText>{resolvedApp.displayName}</StyledRowText>
+          {resolvedApp.required && (
             <StyledRowSubText>{t`required`}</StyledRowSubText>
-          ) : previewApp.currentlyInstalled ? (
-            <StyledRowSubText>{t`already installed`}</StyledRowSubText>
-          ) : (
-            <Checkbox
-              aria-label={t`Include ${previewApp.displayName}`}
-              checked={
-                !deselectedUniversalIdentifiers.includes(
-                  previewApp.universalIdentifier,
-                )
-              }
-              onCheckedChange={() =>
-                toggleOptionalApp(previewApp.universalIdentifier)
-              }
-            />
           )}
-          {(!previewApp.registered || !previewApp.versionCompatible) && (
+          <StyledRowSubText>
+            <ResolutionLabel resolution={resolvedApp.resolution} />
+          </StyledRowSubText>
+          {resolvedApp.optional &&
+            resolvedApp.available &&
+            !resolvedApp.currentlyInstalled && (
+              <Checkbox
+                aria-label={t`Include ${resolvedApp.displayName}`}
+                checked={!resolvedApp.excluded}
+                onCheckedChange={() =>
+                  toggleOptionalApp(resolvedApp.universalIdentifier)
+                }
+              />
+            )}
+          {!resolvedApp.available && (
             <StyledBlockedText>
-              {!previewApp.registered
+              {!resolvedApp.registered
                 ? t`not registered on this server`
                 : t`incompatible version`}
             </StyledBlockedText>
           )}
         </StyledPreviewRow>
       ))}
+      {isNonEmptyArray(resolvedPreview.prerequisites) && (
+        <StyledContentList data-testid="a2e-workspace-template-preview-prerequisites">
+          {resolvedPreview.prerequisites.map((prerequisite) => (
+            <StyledContentItem key={prerequisite.universalIdentifier}>
+              {t`Required prerequisite unavailable: ${prerequisite.displayName}`}
+            </StyledContentItem>
+          ))}
+        </StyledContentList>
+      )}
+      {isNonEmptyArray(resolvedPreview.navigationChanges) && (
+        <>
+          <StyledRowSubText>{t`Navigation customization`}</StyledRowSubText>
+          <StyledContentList data-testid="a2e-workspace-template-preview-navigation">
+            {resolvedPreview.navigationChanges.map((navigationChange) => (
+              <StyledContentItem
+                key={`${navigationChange.action}-${navigationChange.universalIdentifier}`}
+              >
+                {navigationChange.action === 'hide'
+                  ? t`Hide ${navigationChange.universalIdentifier}`
+                  : t`Restore ${navigationChange.universalIdentifier}`}
+              </StyledContentItem>
+            ))}
+          </StyledContentList>
+        </>
+      )}
       {isNonEmptyArray(preview.samples) && (
         <>
           <StyledPreviewRow>
@@ -270,10 +333,7 @@ export const A2eWorkspaceTemplatePreview = ({
                 <StepStatusIcon status={step.status} />
               </StyledStepIcon>
               <StyledRowText>
-                {t({
-                  id: STEP_KIND_LABELS[step.kind],
-                  message: STEP_KIND_LABELS[step.kind],
-                })}
+                <StepKindLabel kind={step.kind} />
                 {isDefined(step.targetUniversalIdentifier) && (
                   <StyledRowSubText>
                     {' '}
