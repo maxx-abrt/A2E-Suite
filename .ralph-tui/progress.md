@@ -12,6 +12,8 @@ after each iteration and it's included in prompts for context.
 - **a2e-* app package gates:** `yarn typecheck && yarn lint && yarn test:unit && npx twenty dev:build .` — these apps are not Nx projects, so `npx nx lint:diff-with-main` does not apply.
 - **Solo/conditional front UI:** `useIsSoloWorkspace` (`@/workspace-member/hooks/useIsSoloWorkspace`) = `currentWorkspaceMembersState.length === 1` (0 members ≠ solo). Team-only dock widgets opt in via `WorkbenchWidgetDefinition.requiresCollaborators`; gate containers/rail entries, not the presence primitives (they already no-op on empty).
 - **Per-user dismissible front state:** persist a `Record<userId, string[]>` in a `createAtomState({ useLocalStorage: true })` and keep the add/remove/select logic as pure helpers; the hook selects with `currentUserState.id` and treats a null user as a no-op. Avoids a server schema change and survives reload, while a shared browser never leaks one member's hidden UI to another.
+- **Browser-local display preferences (no migration):** one `createAtomState({ useLocalStorage: true, localStorageOptions: { getOnInit: true }, validateInitFn })` + a `useXPreferences` hook of clamped setters + pure `sanitize`/`isValid` utils; publish attributes on `document.documentElement` from one `*ProviderEffect` mounted in `WorkspaceAppProviders` and consume them in `index.css`. Keeps optional P10 preferences out of the workspace-member schema.
+- **base-ui `Switch` in jsdom:** `Toggle`/`Switch` forwards a root click to a synthetic `PointerEvent` on a hidden checkbox; jsdom lacks `PointerEvent`, so a spec that clicks a toggle must alias `window.PointerEvent = MouseEvent` (and query `getByRole('switch', { name })`).
 
 ---
 
@@ -54,4 +56,15 @@ after each iteration and it's included in prompts for context.
   - The repo's oxlint custom rules bite in two places: `twenty(max-consts-per-file)` allows only ONE non-function `const` per file under `constants/` (so kind-label map and topic list must be separate files), and `twenty(matching-state-variable)` forces the `useAtomState` destructure names to mirror the atom name (`dismissedFirstOpenHelpTopicsState` → `[dismissedFirstOpenHelpTopics, setDismissedFirstOpenHelpTopics]`).
   - `twenty-ui/input`'s `SearchInput` renders fine under jsdom/base-ui and is queryable by placeholder; no manual normalizer needed — reuse `~/utils/normalizeSearchText`.
   - Contextual actions should only NAVIGATE (`useNavigate` to `AppPath.Drive`/`TasksPage`/`/objects/projects`), not re-implement P1.6e's template instantiation; the document-template gallery/entrypoint stays the single source.
+---
+
+## 2026-09-19 - US-005
+- Implemented the P10 focus/accessibility preferences: a persistent, explicit user-control surface in Settings → Experience → "Focus and readability" for density (Comfortable/Compact), easy-read, Pomodoro focus duration + daily session target, and a keyboard-shortcuts toggle.
+- Pomodoro "wrapping, not forking": the shipped `focus` widget now reads duration/target from the preference atom, so its clock and "N of M focus sessions" row follow the user's choice. `shortcutsEnabled` gates `currentGlobalHotkeysConfigSelector` when the focus stack is empty. Density/easy-read publish `data-a2e-density` / `data-a2e-easy-read` on the root; `index.css` widens body text for easy-read and defines `--a2e-density-gap-scale`, consumed by `HomeWidgetList`.
+- Files changed: new `packages/twenty-front/src/modules/focus-preferences/` (types, 5 constants files, sanitize/clamp utils + test, localStorage state, hook, provider effect, settings component + test); new `ui/utilities/focus/states/__tests__/currentGlobalHotkeysConfigSelector.test.ts`; modified `home-dashboard/components/{PomodoroWidget,HomeWidgetList}.tsx`, `home-dashboard/components/__tests__/PomodoroWidget.test.tsx`, `ui/utilities/focus/states/currentGlobalHotkeysConfigSelector.ts`, `app/components/WorkspaceAppProviders.tsx`, `pages/settings/profile/appearance/components/SettingsExperience.tsx`, `src/index.css`.
+- **Learnings:**
+  - `twenty-ui/icon` exports a curated set: `IconKeyboard` is NOT exported even though it exists in `AllIcons`; the icon dictionary maps `IconCommand` to the command/keyboard concept. `IconTextSize` is exported and fits easy-read.
+  - `constants/*.ts` may hold only ONE `const` (`twenty(max-consts-per-file)` max 1), so defaults/bounds/presets live in separate files.
+  - Preferences that are optional polish stay browser-local: a workspace-member column would have forced a server migration for display-only state. Use localStorage + a root-attribute provider effect instead.
+  - `atomWithStorage` atoms can be read from a `createAtomSelector` via the `get` helper, which is how the shortcuts preference reaches the global hotkeys config without a parallel system.
 ---

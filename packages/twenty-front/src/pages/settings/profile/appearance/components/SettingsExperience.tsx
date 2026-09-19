@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 
+import { FocusPreferencesSettings } from '@/focus-preferences/components/FocusPreferencesSettings';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FormatPreferencesSettings } from '@/settings/experience/components/FormatPreferencesSettings';
 import { UiScalePicker } from '@/settings/experience/components/UiScalePicker';
@@ -57,6 +58,14 @@ export const SettingsExperience = () => {
             <LocalePicker />
             <UiScalePicker />
           </StyledInterfaceControls>
+        </Section>
+
+        <Section>
+          <H2Title
+            title={t`Focus and readability`}
+            description={t`Adjust density, easy-read text, Pomodoro timing and keyboard shortcuts`}
+          />
+          <FocusPreferencesSettings />
         </Section>
 
         <Section>

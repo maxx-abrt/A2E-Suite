@@ -1,17 +1,23 @@
 import { useEffect, useState } from 'react';
 
+import { useFocusPreferences } from '@/focus-preferences/hooks/useFocusPreferences';
 import { PomodoroWidgetContent } from '@/home-dashboard/components/PomodoroWidgetContent';
-import {
-  POMODORO_FOCUS_DURATION_SECONDS,
-  POMODORO_FOCUS_SESSION_TARGET,
-} from '@/home-dashboard/utils/pomodoroTimer';
 
 export const PomodoroWidget = () => {
-  const [secondsRemaining, setSecondsRemaining] = useState(
-    POMODORO_FOCUS_DURATION_SECONDS,
-  );
+  const { focusPreferences } = useFocusPreferences();
+  const focusDurationSeconds =
+    focusPreferences.pomodoroFocusDurationMinutes * 60;
+
+  const [secondsRemaining, setSecondsRemaining] =
+    useState(focusDurationSeconds);
   const [isRunning, setIsRunning] = useState(false);
   const [completedFocusSessions, setCompletedFocusSessions] = useState(0);
+
+  useEffect(() => {
+    if (!isRunning) {
+      setSecondsRemaining(focusDurationSeconds);
+    }
+  }, [focusDurationSeconds, isRunning]);
 
   useEffect(() => {
     if (!isRunning) {
@@ -34,20 +40,20 @@ export const PomodoroWidget = () => {
 
     setIsRunning(false);
     setCompletedFocusSessions((completedSessions) => completedSessions + 1);
-    setSecondsRemaining(POMODORO_FOCUS_DURATION_SECONDS);
-  }, [isRunning, secondsRemaining]);
+    setSecondsRemaining(focusDurationSeconds);
+  }, [focusDurationSeconds, isRunning, secondsRemaining]);
 
   return (
     <PomodoroWidgetContent
       secondsRemaining={secondsRemaining}
       isRunning={isRunning}
       completedFocusSessions={completedFocusSessions}
-      focusSessionTarget={POMODORO_FOCUS_SESSION_TARGET}
+      focusSessionTarget={focusPreferences.pomodoroSessionTarget}
       onStart={() => setIsRunning(true)}
       onPause={() => setIsRunning(false)}
       onReset={() => {
         setIsRunning(false);
-        setSecondsRemaining(POMODORO_FOCUS_DURATION_SECONDS);
+        setSecondsRemaining(focusDurationSeconds);
       }}
     />
   );

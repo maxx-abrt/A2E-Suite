@@ -43,6 +43,22 @@ form {
   --dnd-drag-source-opacity: 0.3;
 }
 
+/* Focus preferences (Settings → Experience). Easy read widens text globally;
+   compact density tightens list surfaces that opt into the density scale. */
+[data-a2e-easy-read='true'] body {
+  letter-spacing: 0.012em;
+  line-height: 1.6;
+  word-spacing: 0.04em;
+}
+
+:root[data-a2e-density='compact'] {
+  --a2e-density-gap-scale: 0.6;
+}
+
+:root[data-a2e-density='comfortable'] {
+  --a2e-density-gap-scale: 1;
+}
+
 [data-dnd-dragging='true'] {
   /* dnd-kit can reuse the source node as its moving feedback. In that case,
      feedback opacity must win over the source fade applied by the component. */

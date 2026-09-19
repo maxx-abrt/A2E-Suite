@@ -3,10 +3,10 @@
   "sessionId": "174757dd-d765-4ed1-b381-90cc593ca4ee",
   "status": "running",
   "startedAt": "2026-09-19T10:07:04.586Z",
-  "updatedAt": "2026-09-19T10:38:30.176Z",
-  "currentIteration": 3,
+  "updatedAt": "2026-09-19T10:47:08.745Z",
+  "currentIteration": 4,
   "maxIterations": 20,
-  "tasksCompleted": 3,
+  "tasksCompleted": 4,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -46,6 +46,16 @@
       "durationMs": 279289,
       "startedAt": "2026-09-19T10:23:15.012Z",
       "endedAt": "2026-09-19T10:27:54.301Z"
+    },
+    {
+      "iteration": 4,
+      "status": "completed",
+      "taskId": "US-004",
+      "taskTitle": "P10: Guided first-open help — contextual actions, dismissible explanations, searchable help",
+      "taskCompleted": true,
+      "durationMs": 630377,
+      "startedAt": "2026-09-19T10:27:59.796Z",
+      "endedAt": "2026-09-19T10:38:30.173Z"
     }
   ],
   "skippedTaskIds": [],

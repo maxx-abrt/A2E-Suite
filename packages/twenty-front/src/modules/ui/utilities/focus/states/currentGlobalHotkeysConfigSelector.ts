@@ -1,3 +1,4 @@
+import { focusPreferencesState } from '@/focus-preferences/states/focusPreferencesState';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { DEFAULT_GLOBAL_HOTKEYS_CONFIG } from '@/ui/utilities/hotkey/constants/DefaultGlobalHotkeysConfig';
 import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
@@ -12,7 +13,16 @@ export const currentGlobalHotkeysConfigSelector =
       const lastFocusStackItem = focusStack.at(-1);
 
       if (!isDefined(lastFocusStackItem)) {
-        return DEFAULT_GLOBAL_HOTKEYS_CONFIG;
+        // The user's shortcut preference gates every global hotkey until a
+        // focus-stack surface overrides the config for its own scope.
+        const focusPreferences = get(focusPreferencesState);
+
+        return {
+          ...DEFAULT_GLOBAL_HOTKEYS_CONFIG,
+          enableGlobalHotkeysWithModifiers: focusPreferences.shortcutsEnabled,
+          enableGlobalHotkeysConflictingWithKeyboard:
+            focusPreferences.shortcutsEnabled,
+        };
       }
 
       return lastFocusStackItem.globalHotkeysConfig;

@@ -17,6 +17,7 @@ import { CommandRunner } from '@/command-menu-item/engine-command/components/Com
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
+import { UserFocusPreferencesProviderEffect } from '@/focus-preferences/components/UserFocusPreferencesProviderEffect';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
 import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
 import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/MinimalMetadataLoadEffect';
@@ -59,6 +60,7 @@ export const WorkspaceAppProviders = () => {
                   <ApplicationsLoadEffect />
                   <UserThemeProviderEffect />
                   <UserUiScaleProviderEffect />
+                  <UserFocusPreferencesProviderEffect />
                   <ContextStoreComponentInstanceContext.Provider
                     value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
                   >

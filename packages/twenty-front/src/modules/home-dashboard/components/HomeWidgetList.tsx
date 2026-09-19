@@ -6,10 +6,13 @@ import { type HomeWidgetListEntry } from '@/home-dashboard/types/HomeWidgetListE
 const StyledList = styled.ul`
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: calc(2px * var(--a2e-density-gap-scale, 1));
   list-style: none;
   margin: 0;
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+  padding: calc(
+      ${themeCssVariables.spacing[2]} * var(--a2e-density-gap-scale, 1)
+    )
+    ${themeCssVariables.spacing[3]};
 `;
 
 const StyledEntry = styled.li<{ isOverdue: boolean }>`
@@ -20,8 +23,10 @@ const StyledEntry = styled.li<{ isOverdue: boolean }>`
       ? themeCssVariables.font.color.danger
       : themeCssVariables.font.color.primary};
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[2]};
+  gap: calc(${themeCssVariables.spacing[2]} * var(--a2e-density-gap-scale, 1));
+  padding: calc(
+    ${themeCssVariables.spacing[2]} * var(--a2e-density-gap-scale, 1)
+  );
 
   &:hover {
     background: ${themeCssVariables.background.transparent.light};

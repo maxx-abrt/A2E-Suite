@@ -1,0 +1,1 @@
+export const FOCUS_DURATION_PRESET_MINUTES = [15, 25, 45, 60];

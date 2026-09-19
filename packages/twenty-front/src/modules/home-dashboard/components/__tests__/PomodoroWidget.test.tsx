@@ -1,8 +1,13 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import { getDefaultStore } from 'jotai';
 
+import { DEFAULT_FOCUS_PREFERENCES } from '@/focus-preferences/constants/DefaultFocusPreferences';
+import { focusPreferencesState } from '@/focus-preferences/states/focusPreferencesState';
 import { PomodoroWidget } from '@/home-dashboard/components/PomodoroWidget';
+
+const store = getDefaultStore();
 
 const renderWidget = () =>
   render(
@@ -14,6 +19,7 @@ const renderWidget = () =>
 describe('PomodoroWidget', () => {
   beforeEach(() => {
     jest.useFakeTimers();
+    store.set(focusPreferencesState.atom, DEFAULT_FOCUS_PREFERENCES);
   });
 
   afterEach(() => {
@@ -53,6 +59,36 @@ describe('PomodoroWidget', () => {
     );
     expect(screen.getByTestId('home-pomodoro-toggle')).toHaveTextContent(
       'Start',
+    );
+  });
+
+  it('uses the configured focus duration and session target', () => {
+    store.set(focusPreferencesState.atom, {
+      ...DEFAULT_FOCUS_PREFERENCES,
+      pomodoroFocusDurationMinutes: 15,
+      pomodoroSessionTarget: 2,
+    });
+
+    renderWidget();
+
+    expect(screen.getByTestId('home-pomodoro-clock')).toHaveTextContent(
+      '15:00',
+    );
+    expect(screen.getByText('0 of 2 focus sessions today')).toBeInTheDocument();
+  });
+
+  it('re-syncs the idle clock when the focus duration preference changes', () => {
+    renderWidget();
+
+    act(() => {
+      store.set(focusPreferencesState.atom, {
+        ...DEFAULT_FOCUS_PREFERENCES,
+        pomodoroFocusDurationMinutes: 45,
+      });
+    });
+
+    expect(screen.getByTestId('home-pomodoro-clock')).toHaveTextContent(
+      '45:00',
     );
   });
 

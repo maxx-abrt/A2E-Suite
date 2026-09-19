@@ -1,0 +1,285 @@
+# Iteration 4 Log
+
+## Metadata
+
+- **Task ID**: US-004
+- **Task Title**: P10: Guided first-open help — contextual actions, dismissible explanations, searchable help
+- **Description**: As a new user, I want contextual first-open help with template/blank actions, dismissible explanations and searchable help so that I can start working without a forced overlay tour.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T10:27:59.796Z
+- **Ended At**: 2026-09-19T10:38:30.173Z
+- **Duration**: 10m 30s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "US-004" PLAN.md
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+I'll start with the clean-start check and gather the task context.
+[94m[bash][0m $ grep -n "P10\|Guided first-open\|first-open help" PLAN.md
+[94m[bash][0m $ ls docs/plan/ 2>/dev/null
+[94m[bash][0m $ sed -n '1363,1420p' PLAN.md
+[94m[bash][0m $ sed -n '1,200p' docs/plan/phases/phase-10-report.md
+[94m[bash][0m $ grep -n "R15" docs/plan/02-reference-analysis.md | head -40
+[94m[bash][0m $ git show --stat 0d34f9bc 2>/dev/null | head -60
+[94m[bash][0m $ grep -rni "first.open\|firstOpen" packages/twenty-front/src --include=*.ts --include=*.tsx -l | head...
+[94m[bash][0m $ grep -rni "gallery" packages/twenty-front/src --include=*.ts --include=*.tsx -l | head -40
+[94m[grep][0m [95mpackages/twenty-front/src[0m pattern: [96mfirst-open|firstOpen|FirstOpen[0m
+[94m[grep][0m [95mpackages/twenty-front/src[0m pattern: [96m[Gg]allery[0m
+[94m[bash][0m $ grep -n "P1.6e\|first-open\|gallery\|instantiat" docs/plan/phases/phase-01-report.md | head -40
+[94m[bash][0m $ git log --oneline -30 | cat
+[94m[bash][0m $ ls packages/twenty-apps/ 2>/dev/null
+[94m[grep][0m [95mpackages/twenty-front/src[0m pattern: [96mHelpMenu|help.*menu|SearchableHelp|Onboarding[0m
+[94m[bash][0m $ sed -n '60,95p' docs/plan/02-reference-analysis.md
+[94m[bash][0m $ grep -rni "help" docs/plan/01-codebase-map.md docs/product-experience.md 2>/dev/null | head -40
+[94m[bash][0m $ find packages/twenty-front/src/modules/workbench-dock -type f | sort
+[94m[bash][0m $ grep -rni "help" packages/twenty-front/src/modules/command-menu --include=*.ts --include=*.tsx -l 2>...
+[94m[bash][0m $ sed -n '110,140p' docs/product-experience.md
+[94m[bash][0m $ find packages/twenty-front/src/modules -maxdepth 1 -type d | sort | head -100
+[94m[bash][0m $ grep -rln "WorkbenchWidgetDock\|HomeWidgetList" packages/twenty-front/src --include="*.tsx" 2>/dev/n...
+[94m[bash][0m $ find packages/twenty-front/src/modules/information-banner -type f | sort
+[94m[bash][0m $ find packages/twenty-front/src/modules/a2e-workspace -type f | sort
+[94m[bash][0m $ find packages/twenty-front/src/pages -maxdepth 2 -type d | sort | head -80
+[94m[bash][0m $ grep -rn "A2eWorkspaceTemplatePicker\|A2eSuiteApplicationCard" packages/twenty-front/src --include="...
+[94m[bash][0m $ find packages/twenty-front/src/modules/users -type f | sort | head -60
+[94m[bash][0m $ grep -rn "localStorage" packages/twenty-front/src/modules --include="*.ts" -l 2>/dev/null | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ui/utilities/state/jotai/utils/createAtomState.ts
+[94m[bash][0m $ find packages/twenty-front/src/modules/ui/utilities/state/jotai -type f | sort | head -60
+[94m[read][0m
+[94m[bash][0m $ grep -rn "currentUser.id\|currentUser?.id\|currentUserState" packages/twenty-front/src/modules --inc...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/registry/workbenchWidgetRegistry.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/HomeWidgetList.tsx
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/auth/states/currentUserState.ts
+[94m[bash][0m $ grep -rn "home-dashboard\|workbench" packages/twenty-front/src/pages --include="*.tsx" 2>/dev/null |...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/registerHomeDashboardWidgets.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/hooks/useWorkbenchWidgetRegistry.ts
+[94m[bash][0m $ grep -rln "from '@lingui/core/macro'" packages/twenty-front/src/modules --include="*.ts" 2>/dev/null...
+[94m[bash][0m $ grep -rn "@lingui/core/macro\|@lingui/react/macro" packages/twenty-front/src/modules/drive packages/...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+[94m[read][0m
+[94m[bash][0m $ grep -rni "first-open\|first open\|guided\|dismissible\|searchable help\|help" docs/plan/03-integrat...
+[94m[bash][0m $ grep -rni "first-open\|first open\|guided help\|firstOpenHelp\|help topic\|HelpTopic" packages/twent...
+[94m[bash][0m $ grep -rln "AppPath\." packages/twenty-front/src/modules/navigation 2>/dev/null | head
+[94m[bash][0m $ grep -rn "IconHelp" packages/twenty-ui/src/icon/*.ts packages/twenty-ui/src/icon/**/*.ts 2>/dev/null...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/navigation/hooks/useDefaultHomePagePath.ts
+[94m[bash][0m $ grep -rn "AppPath" packages/twenty-front/src/modules/navigation/hooks/useDefaultHomePagePath.ts
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-shared/src/types/AppPath.ts 2>/dev/null
+[94m[bash][0m $ grep -rn "namePlural\|nameSingular" packages/twenty-apps/internal/a2e-projects/src/objects/*.ts 2>/d...
+[94m[bash][0m $ sed -n '1,20p' packages/twenty-ui/src/icon/icon-dictionary.md
+[94m[bash][0m $ grep -in "help\|template\|shortcut\|search\|compass\|book" packages/twenty-ui/src/icon/icon-dictiona...
+[94m[bash][0m $ grep -n "IconTemplate\|IconHelpCircle\|IconPlus\b\|IconSearch\b\|IconMessageCircleQuestion\|IconBook...
+[94m[bash][0m $ find packages/twenty-ui/src -iname "*SearchInput*" | head
+[94m[bash][0m $ grep -rn "from 'twenty-ui/input'" packages/twenty-front/src/modules/home-dashboard packages/twenty-f...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-ui/src/input/SearchInput/SearchInput.tsx
+[94m[bash][0m $ grep -rn "normalizeSearchText" packages/twenty-front/src packages/twenty-shared/src --include="*.ts"...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/utils/normalizeSearchText.ts
+[94m[bash][0m $ grep -n "input" packages/twenty-ui/package.json | head
+[94m[bash][0m $ grep -n "@/\|~/\|moduleNameMapper" packages/twenty-front/jest.config.mjs 2>/dev/null | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/jest.config.mjs
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/types/HomeWidgetListEntry.ts
+[94m[bash][0m $ grep -rn "@base-ui" packages/twenty-ui/src/input/Button/Button.tsx | head
+[94m[bash][0m $ grep -rln "SearchInput" packages/twenty-front/src --include="*.test.tsx" 2>/dev/null | head
+[94m[bash][0m $ node -e "console.log(require.resolve('@base-ui/react/input'))" 2>&1 | head
+[94m[bash][0m $ tail -5 docs/plan/phases/phase-10-report.md
+Now I'll claim the slice before writing any code.
+[94m[bash][0m $ printf '\nCLAIMED — US-004/first-open-help — deepseek-v4.1-flash — 2026-09-19T10:31:03Z — base 4ed2f...
+[94m[todowrite][0m
+[94m[write][0m "import { type MessageDescriptor } from '@lingui/core';
+
+// R15 contributes explanatory patterns only — a feature explanation, a
+// comparison and an FAQ. The kind drives grouping and labels, never
+// ... (480 chars)"
+[94m[write][0m "import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+
+import {
+  FIRST_OPEN_HELP_TOPIC_KIND_LABELS,
+  FIRST_OPEN_HELP_TOPICS,
+} from '~/modules/first-open-h... (1141 chars)"
+[94m[bash][0m $ rm "packages/twenty-front/src/modules/first-open-help/index.ts"
+[94m[write][0m "import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+
+import {
+  type FirstOpenHelpTopic,
+  type FirstOpenHelpTopicKind,
+} from '~/modules/first-open-help/t... (3975 chars)"
+[94m[write][0m "import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+import { AppPath } from 'twenty-shared/types';
+import {
+  IconFileText,
+  IconPlus,
+  IconSparkles,
+  t... (2418 chars)"
+[94m[write][0m "import { AppPath } from 'twenty-shared/types';
+
+import { type FirstOpenHelpContext } from '~/modules/first-open-help/constants/FirstOpenHelpLaunchActions';
+
+// Ordered most specific first; the first m... (1070 chars)"
+[94m[write][0m "import { type MessageDescriptor } from '@lingui/core';
+
+import { type FirstOpenHelpTopic } from '~/modules/first-open-help/types/FirstOpenHelpTopic';
+import { normalizeSearchText } from '~/utils/norma... (1117 chars)"
+[94m[write][0m "// Dismissals are stored per user so a shared browser never carries one
+// member's hidden help into another member's first open.
+export type DismissedFirstOpenHelpTopicsByUser = Record<string, string... (1703 chars)"
+[94m[write][0m "import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { type DismissedFirstOpenHelpTopicsByUser } from '@/first-open-help/utils/dismissedFirstOpenHelpTopics';
+
+exp... (567 chars)"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ui/utilities/state/jotai/hooks/useAtomState.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ui/utilities/state/jotai/hooks/useAtomStateValue.ts
+[94m[bash][0m $ grep -rn "isNonEmptyString" packages/twenty-front/src/modules/home-dashboard packages/twenty-front/s...
+[94m[bash][0m $ grep -rn "isNonEmptyString" packages/twenty-front/src --include="*.ts" --include="*.tsx" 2>/dev/null...
+[94m[bash][0m $ grep -rln "export const isDefined" packages/twenty-shared/src 2>/dev/null | head
+[94m[write][0m "import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+
+import { currentUserState } from '@/auth/states/currentUserState';
+import { dismissedFirstOpenHelpTopicsState } f... (2222 chars)"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/PomodoroWidgetContent.tsx
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-ui/src/input/Button/Button.tsx
+[94m[write][0m "import { useMemo, useState } from 'react';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { IconRestore, IconX } from 'twenty-ui/icon';
+import { Butto... (9034 chars)"
+[94m[bash][0m $ grep -rn "useLocation" packages/twenty-front/src/pages --include="*.tsx" 2>/dev/null | head -3
+[94m[write][0m "import { useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+
+import { FirstOpenHelpPanel } from '@/first-open-help/components/FirstOpenHelpPanel';
+import {
+  FIRS... (1663 chars)"
+[94m[write][0m "import { IconHelpCircle } from 'twenty-ui/icon';
+
+import { FirstOpenHelpWidget } from '@/first-open-help/components/FirstOpenHelpWidget';
+import { registerWorkbenchWidget } from '~/modules/workbench-d... (698 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/registerFirstOpenHelpWidget.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+[94m[edit][0m
+[94m[write][0m "import { type MessageDescriptor } from '@lingui/core';
+
+import {
+  buildSearchableFirstOpenHelpTopics,
+  searchFirstOpenHelpTopics,
+} from '@/first-open-help/utils/searchFirstOpenHelpTopics';
+import {... (2702 chars)"
+[94m[write][0m "import { resolveFirstOpenHelpContext } from '@/first-open-help/utils/resolveFirstOpenHelpContext';
+
+describe('resolveFirstOpenHelpContext', () => {
+  it('maps the drive and document routes to the docu... (1184 chars)"
+[94m[write][0m "import {
+  dismissFirstOpenHelpTopic,
+  restoreAllFirstOpenHelpTopics,
+  restoreFirstOpenHelpTopic,
+  selectDismissedFirstOpenHelpTopicIds,
+} from '@/first-open-help/utils/dismissedFirstOpenHelpTopics... (2150 chars)"
+[94m[edit][0m
+[94m[read][0m
+[94m[read][0m
+[94m[write][0m "import { type MessageDescriptor } from '@lingui/core';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+impor... (4170 chars)"
+[94m[write][0m "import '@/first-open-help/registerFirstOpenHelpWidget';
+import { getWorkbenchWidgetRegistrySnapshot } from '~/modules/workbench-dock/registry/workbenchWidgetRegistry';
+
+describe('registerFirstOpenHelp... (550 chars)"
+[94m[bash][0m $ npx jest src/modules/first-open-help --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -60
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/modules/first-open-help --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -20
+[94m[read][0m
+[94m[bash][0m $ grep -rln "renderHook" packages/twenty-front/src/modules --include="*.test.tsx" 2>/dev/null | head -...
+[94m[read][0m
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-front/src/modules/ui/utilities/state/contexts/RoutedFlowStateScopeCon...
+[94m[read][0m
+[94m[write][0m "import { currentUserState, type CurrentUser } from '@/auth/states/currentUserState';
+import { useDismissedFirstOpenHelpTopics } from '@/first-open-help/hooks/useDismissedFirstOpenHelpTopics';
+import {... (2582 chars)"
+[94m[bash][0m $ npx jest src/modules/first-open-help --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -30
+[94m[bash][0m $ npx jest src/modules/workbench-dock --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -30
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -40
+[94m[bash][0m $ grep -n "oxlint\|oxfmt\|\"lint\"" package.json | head
+[94m[bash][0m $ console.log(JSON.stringify(p.scripts,null,1))" | head -60
+[94m[bash][0m $ find packages/twenty-front -maxdepth 1 -name ".oxlintrc*" 2>/dev/null
+[94m[bash][0m $ git status --porcelain | cat
+[94m[bash][0m $ printf '%s\n' "$FILES"
+[94m[bash][0m $ npx oxfmt $FILES 2>&1 | tail -20
+[94m[bash][0m $ npx oxfmt --help 2>&1 | head -30
+[94m[bash][0m $ grep -n "modules\|src" .gitignore 2>/dev/null | head
+[94m[bash][0m $ echo "exit=$?"
+[94m[bash][0m $ } | xargs -d '\n' npx oxfmt 2>&1 | tail -20
+[94m[bash][0m $ } | xargs -0 npx oxfmt 2>&1 | tail -20
+[94m[bash][0m $ } | xargs -0 npx oxlint --type-aware -c .oxlintrc.json 2>&1 | tail -40
+[94m[bash][0m $ } | xargs -0 npx oxlint --type-aware -c .oxlintrc.json 2>&1 | grep -E "^  x |^Found"
+[94m[bash][0m $ } | xargs -0 npx oxlint --type-aware -c .oxlintrc.json 2>&1 | grep -E "\-\[src|^  x "
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[write][0m "import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+import { AppPath } from 'twenty-shared/types';
+import {
+  IconFileText,
+  IconPlus,
+  IconSparkles,
+  t... (2368 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/constants/FirstOpenHelpTopics.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/constants/FirstOpenHelpTopics.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/constants/FirstOpenHelpTopics.ts
+[94m[write][0m "import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+
+import { type FirstOpenHelpTopicKind } from '~/modules/first-open-help/types/FirstOpenHelpTopic';
+
+exp... (415 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/components/FirstOpenHelpPanel.tsx
+[94m[edit][0m
+[94m[write][0m "import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+
+import { currentUserState } from '@/auth/states/currentUserState';
+import { dismissedFirstOpenHelpTopicsState } f... (2376 chars)"
+[94m[bash][0m $ } | xargs -0 npx oxlint --type-aware -c .oxlintrc.json 2>&1 | grep -E "\-\[src|^  x |Found"
+[94m[bash][0m $ npx jest src/modules/first-open-help src/modules/workbench-dock --config=packages/twenty-front/jest....
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | grep -cE "first-open-help|workbench-dock"
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-front 2>&1 | tail -15
+[94m[bash][0m $ npx jest src/modules/home-dashboard --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -8
+[94m[bash][0m $ git diff -- packages/twenty-front/src/modules/workbench-dock | cat
+[94m[bash][0m $ find packages/twenty-front/src/modules/first-open-help -type f | sort
+[94m[bash][0m $ executors — US-003 journal doc template (`a2e-documents/starter-templates.ts` + its test) per the pr...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ the document-template gallery/entrypoint stays the single source. --- EOF echo done
+[94m[bash][0m $ git status --porcelain | grep -c "locales/" || true
+[94m[todowrite][0m
+Implemented US-004 P10 guided first-open help as a non-modal workbench dock widget.
+
+**What shipped** (new `packages/twenty-front/src/modules/first-open-help/`):
+- Contextual template/blank launch actions resolved from the route (`resolveFirstOpenHelpContext`) → navigate to Drive / Tasks / Projects (no duplicated P1.6e instantiation)
+- Dismissible explanation cards from R15-style topics (`FEATURE_EXPLANATION`/`COMPARISON`/`FAQ`), no pricing/marketing/mock data
+- Searchable help filtering title/body/keywords via the shared `normalizeSearchText`
+- Per-user dismissal persisted in a localStorage atom keyed by `currentUser.id` (null user = no-op)
+- Registered via the existing `registerWorkbenchWidget` extension point (id `help`, order 5) with a title case in the dock
+
+**Verification:**
+- `npx jest src/modules/first-open-help src/modules/workbench-dock --config=packages/twenty-front/jest.config.mjs` → 9 suites / 30 tests PASS
+- `npx jest src/modules/home-dashboard ...` → 14 suites / 41 tests PASS
+- `npx tsgo -p tsconfig.json --noEmit` → only the 6 documented `front-components` baseline errors, 0 from touched files
+- `npx oxlint --type-aware` → 0/0; `oxfmt` clean; `nx lint:diff-with-main` → "No changed files" (uncommitted; direct run is the covering gate)
+
+Phase report entry and `.ralph-tui/progress.md` appended; no PLAN.md edits, no commits, no locale churn. Remaining gap is the Tier-2 in-browser walkthrough (orchestrator-owned).
+
+<promise>COMPLETE</promise>
