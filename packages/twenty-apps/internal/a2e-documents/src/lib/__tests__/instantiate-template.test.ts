@@ -243,6 +243,50 @@ test('the authorized source keeps the fetched body and tolerates no content', ()
   );
 });
 
+test('two instantiations of the same template get disjoint anchors', () => {
+  const template = {
+    title: 'Modèle — X',
+    content: {
+      blocknote: JSON.stringify([{ id: 'block-a', type: 'paragraph' }]),
+    },
+  };
+  const createBlockId = counterBlockIdFactory();
+
+  const firstCopy = buildTemplateCopyPayload(template, { createBlockId });
+  const secondCopy = buildTemplateCopyPayload(template, { createBlockId });
+
+  assert.notEqual(firstCopy.content.blocknote, secondCopy.content.blocknote);
+});
+
+test('deleting a template never deletes an instantiated copy', () => {
+  const template = {
+    id: 'template-1',
+    title: 'Modèle — X',
+    content: {
+      blocknote: JSON.stringify([{ id: 'block-a', type: 'paragraph' }]),
+      markdown: '# X',
+    },
+  };
+
+  const copy = buildTemplateCopyPayload(template, {
+    createBlockId: counterBlockIdFactory(),
+  });
+  const copySnapshot = JSON.stringify(copy);
+
+  // The copy is a fresh, self-contained record: it holds no template id, no
+  // relation back to the source (a copy is never a child of its template), and
+  // no template block anchors, so dropping the template row cannot cascade to
+  // or alias the copy.
+  assert.equal(copySnapshot.includes('template-1'), false);
+  assert.equal(copySnapshot.includes('block-a'), false);
+
+  delete (template as { id?: string }).id;
+  template.title = '';
+  template.content.markdown = '';
+
+  assert.equal(JSON.stringify(copy), copySnapshot);
+});
+
 test('editing a copy never mutates its template', () => {
   const templateBody = JSON.stringify([
     { id: 'block-a', type: 'paragraph', content: [] },

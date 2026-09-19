@@ -1,0 +1,58 @@
+# Iteration 5 Log
+
+## Metadata
+
+- **Task ID**: US-030
+- **Task Title**: [P3.2] Template instantiation — fetch authorized body, remap IDs/anchors, prove copy independence
+- **Description**: As a user creating a document from a template, I want instantiation to fetch the authorized template body and remap identifiers, so that my copy is independent, complete and safe.
+- **Status**: failed
+- **Task Completed**: No
+- **Promise Detected**: No
+- **Started At**: 2026-09-19T21:16:42.219Z
+- **Ended At**: 2026-09-19T21:19:07.290Z
+- **Duration**: 2m 25s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+I'll start with the clean-start check and confirm my task.
+
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96mUS-030[0m
+[94m[bash][0m $ grep -rn "US-030" docs/ PLAN.md 2>/dev/null | head -30
+Dirty files are Ralph's own session/tracker state — not source changes. Let me find the task in the plan docs.
+
+[94m[bash][0m $ ls docs/plan/ 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -n "P3.2\|Template instantiation\|Copy independence\|template instantiation" PLAN.md | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[bash][0m $ grep -rni "instantiat\|template" packages/twenty-apps/internal/a2e-documents/src --include=*.ts --in...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src 2>/dev/null
+Now let me find the existing template instantiation helper and LIST view in the a2e-documents app.
+
+[94m[bash][0m $ grep -rli "template" packages/twenty-apps/internal/a2e-documents/src 2>/dev/null
+[94m[bash][0m $ ls -R packages/twenty-apps/internal/a2e-documents/src/lib packages/twenty-apps/internal/a2e-document...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/instantiate-template.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/template-gallery.ts
+Interesting — `instantiate-template.ts` and tests already exist. Let me read them plus check the report for prior work.
+[94m[read][0m
+[94m[read][0m
+Now the test file and the browser component to see the gap.
+[94m[bash][0m $ grep -n "US-030\|instantiat\|copy independence\|provenance" docs/plan/phases/phase-03-report.md 2>/d...
+[94m[bash][0m $ tail -60 docs/plan/phases/phase-03-report.md
+Let me check the phase report for prior US-030 work and claims.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/save-document-as-template.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/objects/document.object.ts
+Prior work (2026-09-17, now stale >2h) shipped body-read + anchor remap + independence, but not provenance or delete-independence. Let me examine the object schema and save-as-template to see how provenance can be carried.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/starter-templates.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/field-vocabulary.ts
+[94m[bash][0m $ grep -rn "sourceTemplate\|TemplateContentProvenance\|templateProvenance\|source_template" packages/ ...
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-apps/internal/a2e-documents/README.md 2>/dev/null
+[94m[bash][0m $ grep -n "fresh content IDs\|source-template/version\|provenance" PLAN.md | head -20
+[94m[bash][0m $ grep -rn "fresh content IDs\|source-template\|provenance" docs/ --include=*.md 2>/dev/null | head -2...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/record-note-copy.ts
+[94m[bash][0m $ grep -rn "provenance\|sourceId\|sourceKey\|sourceTemplate" packages/twenty-apps/internal/ --include=...

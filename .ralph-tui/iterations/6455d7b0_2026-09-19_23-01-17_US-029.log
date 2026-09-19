@@ -1,0 +1,175 @@
+# Iteration 4 Log
+
+## Metadata
+
+- **Task ID**: US-029
+- **Task Title**: [P1.6d] Persona starter bundles — student/journal/team/non-profit/small-business, ready apps only
+- **Description**: As a new workspace owner, I want persona starter bundles whose previewed contents only include ready apps, so that I never activate blocked or unavailable modules.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T21:01:17.830Z
+- **Ended At**: 2026-09-19T21:16:36.640Z
+- **Duration**: 15m 18s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the required clean-start protocol.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-029\|P1.6d" PLAN.md | head -50
+[94m[bash][0m $ ls docs/plan/phases/ 2>/dev/null | head -40
+Clean-start: dirty files are Ralph engine artifacts only, no source files. Proceeding.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -rn "US-029" PLAN.md docs/ tasks/prd.json 2>/dev/null | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -n "US-028\|US-029\|US-030" tasks/prd.json | head
+[94m[bash][0m $ grep -n "US-029\|P1.6d\|persona\|starter bundle\|CLAIMED" docs/plan/phases/phase-01-report.md | tail...
+US-028 is `passes: true`. Now checking the phase report for existing claims.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ git log --oneline -15
+[94m[bash][0m $ ls -la packages/twenty-server/src/engine/core-modules/onboarding/constants/workspace-template-defini...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "starterBundleContents\|WorkspaceTemplateBundleCo...
+Prior persona-bundle slice reported done-for-review on 2026-09-18. Let me verify the code actually exists in the current tree.
+[94m[read][0m
+[94m[read][0m
+Work is committed at `bb80ba90`. Since Ralph re-queued it, I need to find the actual unmet gap. Reading the implementation.
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "getWorkspaceTemplatePreview\|starterBundleConten...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "universalIdentifier" packages/twenty-apps/internal/a2e-accounting/src/application-config.t...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && ls packages/twenty-server/src/engine/core-modules/onboard...
+Let me understand what apps are actually "ready" (registered) and inspect the existing tests/fixtures.
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/ packages/twenty-apps/internal/a2e-accounting/
+[94m[read][0m
+[94m[bash][0m $ grep -rn "APPLICATION_UNIVERSAL_IDENTIFIER\s*=" packages/twenty-apps/internal/a2e-projects/src/ pack...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/application.config.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/application.config.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/application.config.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "P7.0\|P7\b\|blocked upstream\|Bilan" PLAN.md | h...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "P1.6d\|starter\|bundle\|persona\|Bilan\|blocked"...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "TemplatePreview\|getWorkspaceTemplatePreview\|s...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "samples\|Samples" packages/twenty-front/src/mod...
+Let me examine the GraphQL surface for the preview and how the front consumes samples.
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "preview\|samples\|starterBundle\|blocked\|NON_PR...
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "Projects" PLAN.md | head -40
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "4f759655-84f8-434d-9c76-ee1850e8c1a4\|a2e-proje...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/utils/resolveTemplatePreview.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/hooks/useWorkspaceTemplatePreview.ts
+[94m[read][0m
+[94m[bash][0m $ git diff --stat HEAD bb80ba90 -- packages/twenty-server/src/engine/core-modules/onboarding packages/...
+Let me verify whether the persona-bundle commit is actually in HEAD's history.
+[94m[bash][0m $ tail -35 docs/plan/phases/phase-01-report.md
+Now I understand the gap. Let me check recent claims and current time before claiming.
+No conflicting claims on my target files. Claiming the slice now.
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && printf '\nCLAIMED — US-029/ready-apps-only-bilan-blocked ...
+[94m[edit][0m
+Now implementing. Server definitions first.
+[94m[edit][0m
+[94m[edit][0m
+Now add the field to the definition type and every entry.
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+Now the server types.
+[94m[edit][0m
+Now the DTO.
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+Now the service preview mapping.
+[94m[edit][0m
+Now update the server fixtures and conformance spec.
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+Now the service spec.
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+Now the front types and resolver.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/utils/resolveTemplatePreview.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/utils/resolveTemplatePreview.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/utils/resolveTemplatePreview.ts
+Now the GraphQL query.
+[94m[edit][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "isNonEmptyArray\|isDefined\|import {" packages/t...
+[94m[edit][0m
+[94m[read][0m
+[94m[bash][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "samples:" packages/twenty-front/src/modules/a2e...
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+Now update the normative contracts doc §6.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+Let me verify no stale references and run server checks.
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "ACCOUNTING_BUNDLE_ITEM" packages/twenty-server/...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && npx tsgo -p tsconfig.json --noEmit...
+[94m[read][0m
+[94m[edit][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "starterBundleContents" packages/twenty-server/s...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && npx tsgo -p tsconfig.json --noEmit...
+Server typecheck clean. Running onboarding unit tests.
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest src/engine/core-modules/onboarding --config=pack...
+Server tests green (73/73). Now front typecheck and tests.
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx tsgo -p tsconfig.json --noEmit ...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest packages/twenty-front/src/modules/a2e-workspace ...
+All green. Now lint/format the touched files.
+[94m[bash][0m $ npx oxfmt --check src/engine/core-modules/onboarding/constants/workspace-template-definitions.consta...
+[94m[bash][0m $ npx oxfmt --check src/modules/a2e-workspace/types/apply-template-operation.types.ts src/modules/a2e-...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && node docs/scripts/check-docs.mjs 2>&1 | tail -8
+All checks green. Verifying the working tree contains only my intended files.
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git status --porcelain
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rln "TemplatePreview\|blockedSamples" packages/twen...
+[94m[read][0m
+[94m[edit][0m
+Let me strengthen the repeat-safe conformance test to cover the new bundle data.
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest src/engine/core-modules/onboarding --config=pack...
+[94m[bash][0m $ npx oxfmt --check src/engine/core-modules/onboarding/__tests__/apply-template-operation-fixtures.spe...
+[94m[bash][0m $ head -30 .ralph-tui/progress.md 2>/dev/null
+Checks complete. Writing the phase report and Ralph bridge.
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && tail -1 docs/plan/phases/phase-01-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && tail -20 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+Final self-verification.
+[94m[bash][0m $ git status --porcelain -- PLAN.md 'packages/**/locales/**' | head
+Done. US-029 slice implemented, self-verified, and reported.
+
+**Slice:** only ready-app content is previewed; Bilan content excluded and recorded as blocked upstream (P7.0 gate), never silently dropped.
+
+**Changes:**
+- Server: persona `starterBundleContents` now holds ready content only; Bilan items moved to a new `blockedStarterBundleContents` tagged `P7.0_SAFETY_GATE`. New `TemplatePreview.blockedSamples` (+ DTO/type) surfaces gated content in the preview unconditionally.
+- Front: `blockedSamples` added to the hand-written type/query/resolver and rendered as a read-only "Deferred content" list with a localized P7.0 reason.
+- Tests: server onboarding 73/73 (was 71), front a2e-workspace 37/37 (was 36); conformance spec now proves Bilan is never in ready contents, blocked content is recorded, and bundle data carries no IDs/tokens/URLs. Contracts doc §6/§7 updated.
+
+**Checks:** server + front `tsgo --noEmit` exit 0; oxlint 0/0; oxfmt clean; `check-docs.mjs` PASS.
+
+**Ready-to-tick: no** — Tier-2 live install/reinstall and the D02 product call on adding a2e-projects to a persona remain orchestrator-only. Report appended to `docs/plan/phases/phase-01-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>
