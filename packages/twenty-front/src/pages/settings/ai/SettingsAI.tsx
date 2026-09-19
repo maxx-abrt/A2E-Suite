@@ -11,6 +11,7 @@ import {
   IconBook,
   IconChartBar,
   IconCpu,
+  IconHistory,
   IconLayoutDashboard,
   IconPlus,
   IconSparkle2,
@@ -21,6 +22,7 @@ import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { SettingsAgentSkillsTab } from '~/pages/settings/ai/components/SettingsAgentSkillsTab';
 import { SettingsAgentToolsTab } from '~/pages/settings/ai/components/SettingsAgentToolsTab';
+import { SettingsAiAuditTab } from '~/pages/settings/ai/components/SettingsAiAuditTab';
 import { SettingsAiModelsTab } from '~/pages/settings/ai/components/SettingsAiModelsTab';
 import { SettingsAiOverviewTab } from '~/pages/settings/ai/components/SettingsAiOverviewTab';
 import { SettingsAiUsageTab } from '~/pages/settings/ai/components/SettingsAiUsageTab';
@@ -61,6 +63,11 @@ export const SettingsAI = () => {
       title: t`Usage`,
       Icon: IconChartBar,
     },
+    {
+      id: SETTINGS_AI_TABS.TABS_IDS.AUDIT,
+      title: t`Audit`,
+      Icon: IconHistory,
+    },
   ];
 
   const resolvedTabId =
@@ -73,6 +80,7 @@ export const SettingsAI = () => {
   const isSkillsTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.SKILLS;
   const isToolsTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.TOOLS;
   const isUsageTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.USAGE;
+  const isAuditTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.AUDIT;
 
   return (
     <SettingsPageLayout
@@ -135,6 +143,7 @@ export const SettingsAI = () => {
         {isSkillsTab && <SettingsAgentSkillsTab />}
         {isToolsTab && <SettingsAgentToolsTab />}
         {isUsageTab && <SettingsAiUsageTab />}
+        {isAuditTab && <SettingsAiAuditTab />}
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

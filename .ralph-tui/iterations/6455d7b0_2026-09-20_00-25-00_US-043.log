@@ -1,0 +1,174 @@
+# Iteration 19 Log
+
+## Metadata
+
+- **Task ID**: US-043
+- **Task Title**: [P9.2b] Permission/workspace-scoped private-result cache — versions, expiry, invalidation
+- **Description**: As a platform maintainer, I want AI results cached per workspace and permission scope with version keys and invalidation, so that private data never leaks across workspaces and stale results expire.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T22:25:00.780Z
+- **Ended At**: 2026-09-19T22:35:02.001Z
+- **Duration**: 10m 1s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "US-043" PLAN.md
+I'll start with the clean-start check and then investigate the task.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -rn "US-043" PLAN.md docs/plan/phases/ 2>/dev/null | head -50
+[94m[bash][0m $ grep -n "P9.2b" PLAN.md | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ ls docs/plan/phases/ | tail -30
+[94m[bash][0m $ grep -rln "US-04[0-9]" docs/plan/phases/
+[94m[bash][0m $ grep -rn "US-04[0-3]" .ralph-tui/ tasks/ docs/ 2>/dev/null | grep -v ".log" | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -rn "aiCacheEntry\|AiCacheEntry\|ai-cache" packages/twenty-server/src/ --include=*.ts -l 2>/dev...
+[94m[bash][0m $ grep -rln "P9.2b\|US-043\|aiCacheEntry\|ai-cache" docs/plan/phases/ packages/ 2>/dev/null | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/objects/ai-cache-entry.object.ts
+[94m[bash][0m $ grep -rn "AiCacheEntry" packages/twenty-server/src --include="*.ts" -l 2>/dev/null | head
+[94m[bash][0m $ grep -n "P9.2b\|US-043\|cost discipline\|private-result\|aiCacheEntry\|ai-cache" docs/plan/phases/ph...
+[94m[bash][0m $ grep -rln "aiCacheEntry\|AiCache\|cacheKey" packages/twenty-apps/internal/a2e-accounting/src/ | head...
+[94m[bash][0m $ done
+[94m[bash][0m $ ls -la docs/plan/phases/ | grep -E "07|09"
+[94m[bash][0m $ print(json.dumps(d,indent=1))" 2>/dev/null | head -120
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) print(list(d.keys())) for k in d:     i...
+[94m[bash][0m $ grep -n "Execution order\|agent handoffs\|US-04\|US-04[0-6]\|P9.2b" PLAN.md | head -40
+[94m[bash][0m $ done
+[94m[bash][0m $ done
+[94m[bash][0m $ head -40 docs/plan/phases/phase-00-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ cat .ralph-tui/config.* 2>/dev/null | head -80
+[94m[bash][0m $ grep -n "phase\|report" .ralph-tui/prompt.hbs | head -40
+[94m[bash][0m $ grep -rn "US-025\|US-026\|US-027\|US-028\|US-029" docs/plan/phases/*.md | grep -i "Task:" | head
+[94m[bash][0m $ grep -rn "^# \|^## .*Report" docs/plan/phases/phase-0*.md docs/plan/phases/phase-10*.md | head
+[94m[bash][0m $ grep -n "^## \|^# " PLAN.md | head -60
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ find packages/twenty-server/src -type f -iname "*cache*" 2>/dev/null | head -40
+[94m[bash][0m $ find packages/twenty-server/src/engine/metadata-modules/ai -maxdepth 2 -type d 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/logic-functions/score-subventions.ts
+[94m[bash][0m $ grep -n "buildAiCacheKey\|contentHash\|catalogVersion\|export" packages/twenty-apps/internal/a2e-acc...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -rn "C6" docs/*.md PLAN.md | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/subvention-matching.ts
+[94m[bash][0m $ head -60 packages/twenty-apps/internal/a2e-accounting/src/lib/__tests__/subventions.test.ts
+[94m[bash][0m $ grep -rln "private-result\|private result\|result-cache\|resultCache\|scoped cache\|cross-workspace"...
+[94m[bash][0m $ grep -n "private-result\|result cache\|cache\|C6" docs/product-experience.md docs/plan/05-template-c...
+[94m[bash][0m $ head -60 docs/tasks/README.md
+[94m[bash][0m $ grep -rn "aiCacheEntry\|ai-cache\|P9.2b" docs/ --include="*.md" | grep -v phases | head -30
+[94m[bash][0m $ grep -rn "cacheKey\|buildAiCacheKey\|payloadHash\|catalogVersion" packages/twenty-apps/internal/a2e-...
+[94m[bash][0m $ find packages/twenty-shared/src -maxdepth 2 -type d | head -40
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-accounting/.oxlintrc.json 2>/dev/null | head -40
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-accounting/src/lib/ packages/twenty-apps/internal/a2e-accountin...
+[94m[bash][0m $ sed -n '185,200p' packages/twenty-apps/internal/a2e-accounting/src/lib/subvention-sources.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/numbering.ts
+[94m[bash][0m $ ls -lat docs/plan/phases/*.md | head
+[94m[bash][0m $ ls -la packages/twenty-apps/internal/a2e-accounting/src/lib/ | head
+[94m[bash][0m $ ps aux | grep -i "ralph" | grep -v grep | head
+[94m[bash][0m $ print(json.dumps(d.get('exports',{}),indent=1)[:1500])"
+Now I'll claim the slice. First let me get the current UTC timestamp and confirm report-tail state.
+[94m[bash][0m $ tail -3 docs/plan/phases/phase-01-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ grep -n "US-043" docs/plan/phases/phase-01-report.md
+[94m[write][0m "// AI RESULT CACHE CONTRACT (P9.2b).
+//
+// The Bilan `aiCacheEntry` object keeps one row per expensive model call, keyed
+// by kind + model + payload digest + catalogue version, so a catalogue refresh... (7118 chars)"
+Now let me create the cache contract module.
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  buildAccessScopeId,
+  computeAiResultExpiresAt,
+  evaluateAiResultReuse,
+  hasAiResultScopeDrift,
+  hasAiResultVe... (9953 chars)"
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/ai-result-cache.test.ts"
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -20
+[94m[bash][0m $ echo "=== EXIT $? ==="
+[94m[bash][0m $ echo "=== EXIT $? ==="
+[94m[bash][0m $ echo "=== EXIT $? ==="
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ git check-ignore -v packages/twenty-apps/internal/a2e-accounting/src/lib/ai-result-cache.ts
+[94m[bash][0m $ git show --stat --oneline 5281cc37 | head -20
+[94m[bash][0m $ git show 5281cc37 -- docs/plan/phases/phase-01-report.md .ralph-tui/progress.md | head -100
+[94m[bash][0m $ head -20 packages/twenty-shared/src/utils/index.ts 2>/dev/null
+[94m[bash][0m $ ls packages/twenty-shared/ | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/ai/index.ts
+[94m[bash][0m $ ls -R packages/twenty-shared/src/ai | head -60
+[94m[bash][0m $ grep -n "P9\|AI\|ai " docs/plan/01-codebase-map.md | head -30
+[94m[bash][0m $ sed -n '60,140p' packages/twenty-shared/package.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/scripts/generateBarrels.ts
+[94m[bash][0m $ grep -n "\"scripts\"\|generate-barrels\|generateBarrels\|barrel" packages/twenty-shared/package.json...
+[94m[bash][0m $ git log --oneline -2 -- packages/twenty-shared/src/ai/utils/index.ts 2>/dev/null
+[94m[bash][0m $ grep -rn "ai/types" packages/twenty-shared/src packages/twenty-server/src packages/twenty-front/src ...
+[94m[bash][0m $ grep -n "\"@/\|paths\|baseUrl" packages/twenty-shared/tsconfig.json tsconfig.base.json 2>/dev/null |...
+[94m[bash][0m $ head -5 packages/twenty-shared/src/ai/utils/format-record-reference.util.ts
+[94m[write][0m "export type AiResultVisibility = 'PRIVATE' | 'PUBLIC_CATALOGUE';
+
+export type AiResultScope = {
+  workspaceId: string;
+  // Opaque fingerprint of the caller's effective permissions (role + grants).
+  ... (1326 chars)"
+The generic cache contract belongs in the shared AI domain (`twenty-shared/ai`), not the app. Let me relocate it there.
+[94m[write][0m "import { type AiAccessScopeInput } from '@/ai/types/ai-result-cache.type';
+import { type AiResultCacheDescriptor } from '@/ai/types/ai-result-cache.type';
+import { type AiResultCacheEntry } from '@/ai... (6218 chars)"
+[94m[write][0m "import {
+  type AiResultCacheDescriptor,
+  type AiResultCacheEntry,
+  type AiResultVersions,
+} from '@/ai/types/ai-result-cache.type';
+import {
+  buildAccessScopeId,
+  computeAiResultExpiresAt,
+  eval... (10212 chars)"
+[94m[bash][0m $ rm packages/twenty-apps/internal/a2e-accounting/src/lib/ai-result-cache.ts packages/twenty-apps/inte...
+[94m[bash][0m $ echo "=== EXIT $? ==="
+[94m[bash][0m $ git diff --stat
+[94m[bash][0m $ git diff packages/twenty-shared/src/ai/index.ts
+[94m[bash][0m $ npx jest packages/twenty-shared/src/ai/utils/__tests__/ai-result-cache.util.spec.ts --config=package...
+[94m[bash][0m $ echo "=== EXIT $? ==="
+[94m[bash][0m $ npx jest packages/twenty-shared/src/ai --config=packages/twenty-shared/jest.config.mjs 2>&1 | tail -...
+[94m[bash][0m $ echo "=== EXIT $? ==="
+[94m[bash][0m $ echo "=== EXIT $? ==="
+[94m[bash][0m $ echo "=== EXIT $? ==="
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/ai/utils/ai-result-cache.util.ts
+[94m[bash][0m $ echo "=== EXIT $? ==="
+[94m[bash][0m $ echo "=== EXIT $? ==="
+[94m[bash][0m $ npx jest packages/twenty-shared/src/ai/utils/__tests__/ai-result-cache.util.spec.ts --config=package...
+[94m[bash][0m $ git status --porcelain --untracked-files=all | grep -i "dist" | head
+[94m[bash][0m $ grep -rn "ai-result-cache" packages/twenty-apps packages/twenty-shared/src packages/twenty-server/sr...
+[94m[bash][0m $ tail -6 docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ tail -15 .ralph-tui/progress.md
+[94m[bash][0m $ git rev-parse HEAD
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ git show --stat --oneline 01586701 | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ ls packages/twenty-shared/src/ai/utils/ai-result-cache.util.ts packages/twenty-shared/src/ai/types/a...
+[94m[bash][0m $ tail -16 docs/plan/phases/phase-01-report.md
+Implemented US-043 as the generic AI result cache contract in the platform shared AI domain.
+
+**Delivered** (`packages/twenty-shared/src/ai/`):
+- `types/ai-result-cache.type.ts` — visibility/scope/versions/descriptor/entry/decision types
+- `utils/ai-result-cache.util.ts` — `resolveAiResultCacheKey` (scoped `workspace+access` key vs `global` key only for reviewed public catalogue), `buildAccessScopeId`, `computeAiResultExpiresAt`, `isAiResultExpired` (fail-closed), version/scope drift guards, `evaluateAiResultReuse` with typed reasons
+- `utils/__tests__/ai-result-cache.util.spec.ts` — 12 cases (scope isolation, role/permission invalidation, version invalidation, expiry, forged-key refusal, global-only-when-reviewed)
+- regenerated `src/ai/index.ts` barrel
+
+**Checks:** jest 12/12 (ai suite 25/25), `tsgo` exit 0, oxlint 0/0, `nx build twenty-shared` success.
+
+Mid-session I relocated the contract from `a2e-accounting/src/lib` (the `aiCacheEntry` object's home) to `twenty-shared/src/ai`, since the story is the *generic* contract and the P7.1f app-object validation stays P7-gated; the app copy is deleted (no duplicate). The relocation was swept into engine commit `01586701`.
+
+Reports appended to `docs/plan/phases/phase-01-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

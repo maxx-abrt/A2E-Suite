@@ -6,5 +6,6 @@ export const SETTINGS_AI_TABS = {
     SKILLS: 'skills',
     TOOLS: 'tools',
     USAGE: 'usage',
+    AUDIT: 'audit',
   },
 } as const;
