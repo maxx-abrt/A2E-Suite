@@ -1,0 +1,162 @@
+# Iteration 20 Log
+
+## Metadata
+
+- **Task ID**: US-045
+- **Task Title**: [P9.3] Settings → AI audit page (usage, logs, provider keys)
+- **Description**: As a workspace admin, I want a Settings → AI page showing usage, logs and provider key status, so that AI activity is auditable and keys are never exposed.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T22:35:09.161Z
+- **Ended At**: 2026-09-19T22:51:59.235Z
+- **Duration**: 16m 50s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-045" PLAN.md
+[94m[bash][0m
+[94m[bash][0m $ grep -n "P9.3\|US-045\|US-041" PLAN.md | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -rn "US-045\|US-041\|US-044\|US-043" tasks/prd.json | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -rln "US-045" docs/ .ralph-tui/ 2>/dev/null | head
+[94m[bash][0m $ grep -n "US-045" docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ grep -n "US-045\|US-044\|US-043\|US-046" docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ tail -40 docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ grep -n "CLAIMED — US-045" docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ ls packages/twenty-front/src/pages/settings/ 2>/dev/null
+[94m[bash][0m $ find packages/twenty-front/src/modules/settings/ai packages/twenty-front/src/pages/settings/ai -type...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/SettingsAI.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+[94m[bash][0m $ find packages/twenty-front/src -iname '*eventlog*' | head -50
+[94m[bash][0m $ grep -rn "SettingsLogs\|SettingsPath.Logs\|AiUsageUserDetail\|SettingsPath.Ai\b" packages/twenty-fro...
+[94m[bash][0m $ grep -n "Logs\|Ai\|AI" packages/twenty-shared/src/types/SettingsPath.ts 2>/dev/null | head -60
+[94m[bash][0m $ grep -rln "SettingsLogs" packages/twenty-front/src/modules packages/twenty-front/src/pages 2>/dev/nu...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/settings/event-logs/components/SettingsLogs.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/constants/SettingsAiTabs.ts
+[94m[bash][0m $ find packages/twenty-front/src/pages/settings/admin-panel -iname '*ai*' | head -40
+[94m[bash][0m $ grep -rn "USAGE_RECORDED\|emitAiTokenUsageEvent\|aiTokenUsage" packages/twenty-server/src | grep -v ...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-server/src/engine/core-modules/usage/types/usage-event.type.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+[94m[bash][0m $ cat packages/twenty-front/src/modules/settings/ai/types/AiModelSummary.ts
+[94m[bash][0m $ grep -n "export type ClientAiModelConfig" packages/twenty-front/src/generated-metadata/graphql.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/generated-metadata/graphql.ts
+[94m[bash][0m $ cat packages/twenty-front/src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderList...
+[94m[bash][0m $ grep -rln "getAiProviders" packages/twenty-server/src --include=*.ts | head
+[94m[read][0m
+[94m[bash][0m $ grep -n "getMaskedProviders\|mask" packages/twenty-server/src/engine/core-modules/admin-panel/servic...
+[94m[read][0m
+[94m[bash][0m $ tail -60 .ralph-tui/progress.md
+[94m[bash][0m $ cat packages/twenty-front/src/modules/settings/usage/hooks/useUsageAnalyticsData.ts
+[94m[bash][0m $ git log --oneline -25
+[94m[bash][0m $ grep -rn "Experience" packages/twenty-front/src/modules/settings/constants packages/twenty-front/src...
+[94m[bash][0m $ grep -rn "SettingsPath.Experience\|SettingsExperience" packages/twenty-front/src | grep -v locales |...
+[94m[bash][0m $ grep -n "EventLogTable" packages/twenty-front/src/generated-metadata/graphql.ts | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/generated-metadata/graphql.ts
+[94m[bash][0m $ cat packages/twenty-front/src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
+[94m[bash][0m $ 
+[94m[bash][0m $ find packages/twenty-server/src -iname '*client-config*service*' | head
+[94m[read][0m
+[94m[bash][0m $ grep -rln "AiProvider\|aiProvider" packages/twenty-server/src/engine --include=*.resolver.ts 2>/dev/...
+[94m[bash][0m $ grep -rn "Provider" packages/twenty-front/src/generated-metadata/graphql.ts | grep -i "query\b" | he...
+[94m[bash][0m $ grep -rln "Settings → AI\|Settings -> AI\|audit page\|Audit page" docs | head
+[94m[bash][0m $ cat packages/twenty-front/src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+[94m[bash][0m $ find packages/twenty-front/src/pages/settings/ai packages/twenty-front/src/modules/settings/ai packa...
+[94m[bash][0m $ cat packages/twenty-front/jest.config.mjs 2>/dev/null | head -60
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/components/__tests__/AiChatEmptyState.test.tsx
+[94m[bash][0m $ grep -rln "eventLogs\|EventLogQueryInput" packages/twenty-server/src/engine/core-modules/event-logs ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/event-logs/event-logs.resolver.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/event-logs/event-logs.service.ts
+[94m[bash][0m $ cat packages/twenty-server/src/engine/core-modules/event-logs/registry/event-log-registry.ts 2>/dev/...
+[94m[bash][0m $ find packages/twenty-front/src/pages/settings/admin-panel -iname '*.tsx' | xargs grep -ln "AiProvide...
+[94m[bash][0m $ grep -rn "GetAiProvidersDocument\|getAiProviders" packages/twenty-front/src | grep -v generated-meta...
+[94m[bash][0m $ grep -n "aiProvider\|AiProvider\|aiModels\|enabledAiModelIds\|smartModel" packages/twenty-front/src/...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/settings/event-logs/hooks/useQueryEventLogs.ts
+[94m[read][0m
+[94m[bash][0m $ grep -n "getAdminFilteredModels\|getResolvedProvidersForAdmin\|getResolvedProviders\b\|isConfigured\...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "getAvailableModels\|isProviderConfigured" packages/twenty-server/src/engine/metadata-module...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-front/src/modules/settings/components/SettingsEnterpriseFeatureGateCa...
+[94m[bash][0m $ cat packages/twenty-front/src/modules/settings/billing/components/SubscriptionInfoContainer.tsx
+[94m[bash][0m $ grep -n "Shield\|History\|Key\b\|Activity" packages/twenty-ui/src/icon/icon-dictionary.md | head -30
+[94m[bash][0m $ ls packages/twenty-ui/src/icon/ | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+[94m[write][0m "import { isNonEmptyString } from 'twenty-shared/utils';
+
+import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
+
+// The audit page must never surface a provider secret; the client co... (1353 chars)"
+[94m[bash][0m $ grep -rn "isNonEmptyString" packages/twenty-shared/src/utils/index.ts packages/twenty-shared/src/uti...
+[94m[bash][0m $ grep -rn "export.*isNonEmptyString\|isNonEmptyString =" packages/twenty-shared/src | head
+[94m[bash][0m $ grep -rn "export const is" packages/twenty-shared/src/utils/guards/*.ts 2>/dev/null | head -20
+[94m[bash][0m $ ls packages/twenty-shared/src/utils/validation 2>/dev/null
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/utils/getAiProviderCredentialStatuses.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/utils/getAiProviderCredentialStatuses.ts
+[94m[bash][0m $ grep -n "billingEntitlements" packages/twenty-front/src/generated-metadata/graphql.ts | head
+[94m[write][0m "import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { isClickHouseConfiguredState } from '@/client... (4837 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/constants/SettingsAiTabs.ts
+Now update `SettingsAI.tsx` to add the Audit tab:
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/SettingsAI.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/SettingsAI.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/SettingsAI.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/SettingsAI.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/SettingsAI.tsx
+[94m[write][0m "import {
+  AI_PROVIDER_CREDENTIAL_MASK,
+  getAiProviderCredentialStatuses,
+} from '~/pages/settings/ai/utils/getAiProviderCredentialStatuses';
+import { type ClientAiModelConfig } from '~/generated-met... (2470 chars)"
+[94m[bash][0m $ grep -n "AUDIT_LOGS" packages/twenty-front/src/generated-metadata/graphql.ts | head -3
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
+import { ... (4830 chars)"
+[94m[bash][0m $ npx jest packages/twenty-front/src/pages/settings/ai/utils/__tests__/getAiProviderCredentialStatuses...
+[94m[bash][0m $ npx jest packages/twenty-front/src/pages/settings/ai/components/__tests__/SettingsAiAuditTab.test.ts...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -40
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-front 2>&1 | tail -50
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/pages/settings/ai/components/SettingsAiAuditTab.tsx sr...
+[94m[bash][0m $ npx oxfmt --check src/pages/settings/ai/components/SettingsAiAuditTab.tsx src/pages/settings/ai/util...
+[94m[bash][0m $ npx oxfmt src/pages/settings/ai/components/SettingsAiAuditTab.tsx src/pages/settings/ai/components/_...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/components/SettingsAiAuditTab.tsx
+[94m[bash][0m $ npx jest packages/twenty-front/src/pages/settings/ai --config=packages/twenty-front/jest.config.mjs ...
+[94m[bash][0m $ npx oxfmt --check src/pages/settings/ai/components/SettingsAiAuditTab.tsx src/pages/settings/ai/util...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/SettingsAI.tsx
+[94m[bash][0m $ npx jest --findRelatedTests src/pages/settings/ai/SettingsAI.tsx src/pages/settings/ai/components/Se...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ git diff --stat
+[94m[bash][0m $ git diff HEAD -- packages/twenty-front/src/pages/settings/ai/components/SettingsAiAuditTab.tsx
+[94m[bash][0m $ tail -25 .ralph-tui/progress.md
+[94m[bash][0m $ git diff HEAD -- packages/twenty-front/src/pages/settings/ai/components/__tests__/SettingsAiAuditTab...
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ tail -5 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -15 docs/plan/phases/phase-01-report.md
+Implemented US-045: a read-only **Audit** tab inside the existing Settings → AI page.
+
+- `SettingsAI.tsx` + `SettingsAiTabs.ts`: added the `Audit` tab (`IconHistory`) — no new settings shell/route.
+- NEW `SettingsAiAuditTab.tsx`: masked provider credentials (from client-config `aiModelsState`, fixed `••••••••` mask) + AI usage logs read from the `USAGE_EVENT` event-log table via the existing `useEventLogs`/`EventLogResultsTable`, gated on `AUDIT_LOGS` + ClickHouse like `SettingsLogs`. No GraphQL/server change, so no plaintext key can appear.
+- NEW `getAiProviderCredentialStatuses.ts` + 2 spec files (7 tests).
+
+Checks: jest 2 suites/7 pass, `tsgo --noEmit` exit 0, oxlint 0/0, oxfmt clean. Note: a twin session's engine already committed the source as `e5075167`; the worktree delta is formatting only.
+
+Report appended to `docs/plan/phases/phase-01-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

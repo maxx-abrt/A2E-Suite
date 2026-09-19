@@ -356,12 +356,13 @@
         "Registered via manifest `toolTriggerSettings` — no new registry/table (P1.5); unit tests green on touched specs; live dispatch deferred (Tier 2)"
       ],
       "priority": 21,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md:1411 (P9.2 `[ ]`, not-started). CRM is the native safe domain (P0 done); Accounting/Projects AI actions stay deferred (P7 / P9.1-gated).",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T22:51:59.236Z"
+    "updatedAt": "2026-09-19T23:03:55.114Z"
   }
 }
