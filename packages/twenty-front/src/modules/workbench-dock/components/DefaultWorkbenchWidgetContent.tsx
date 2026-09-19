@@ -61,6 +61,8 @@ export const getWorkbenchWidgetTitle = (
       return translate`Syna assistant`;
     case 'comments':
       return translate`Comments`;
+    case 'suggestions':
+      return translate`Suggestions`;
     case 'tasks':
       return translate`Tasks`;
     case 'events':

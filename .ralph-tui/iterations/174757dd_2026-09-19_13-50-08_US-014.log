@@ -1,0 +1,256 @@
+# Iteration 14 Log
+
+## Metadata
+
+- **Task ID**: US-014
+- **Task Title**: P9.3: 'deal-won' workflow recipe — prebuilt opt-in template creating project + channel (invoice leg deferred with P7)
+- **Description**: As a workspace admin, I want an opt-in prebuilt workflow recipe that creates a project (and a linked channel) when a deal is won so that cross-app follow-up is one click instead of manual setup.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T11:50:08.840Z
+- **Ended At**: 2026-09-19T11:59:53.420Z
+- **Duration**: 9m 44s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ ls docs/plan/phases/ 2>/dev/null && echo "---" && ls packages/twenty-apps/internal/a2e-projects/src/...
+I'll start with the mandatory clean-start check and orientation.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ ls -la packages/twenty-apps/internal/a2e-projects/src/workflow-templates/
+[94m[bash][0m $ tail -120 docs/plan/phases/phase-04-report.md
+[94m[grep][0m [95mPLAN.md[0m pattern: [96mUS-014[0m
+[94m[bash][0m $ grep -n "US-01[0-9]\|US-014\|CLAIMED" docs/plan/phases/phase-04-report.md | tail -40
+[94m[bash][0m $ sed -n '285,340p' tasks/prd.json
+[94m[read][0m
+[94m[bash][0m $ ls -R packages/twenty-apps/internal/a2e-projects/src/logic-functions/ packages/twenty-apps/internal/...
+No existing US-014 claim. Dirty files are Ralph engine state only. Let me examine the reference workflow template and app structure.
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/lib/
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/src/logic-functions/recurring-task-generator.logic-fu...
+[94m[bash][0m $ grep -rn "workflow-templates" packages/twenty-apps/internal/a2e-projects/ --include=*.ts | grep -v n...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/recurring-task-generator.ts
+[94m[bash][0m $ ls -R packages/twenty-apps/internal/a2e-chat/src 2>/dev/null | head -60
+[94m[bash][0m $ grep -rln "correlation\|idempotency" docs/ packages/twenty-apps/internal/a2e-projects/src --include=...
+[94m[bash][0m $ grep -rn "C5" docs/plan/01-codebase-map.md docs/product-experience.md docs/*.md 2>/dev/null | head -...
+[94m[grep][0m [95mdocs[0m pattern: [96mC5[0m
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-chat/src/constants/universal-identifiers.ts
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite[0m pattern: [96mcross-app contract|correlation key|idempotency key|event ID/type/version[0m
+[94m[bash][0m $ grep -rln "correlationKey\|idempotencyKey\|correlation" packages/twenty-apps/internal/ --include=*.t...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-chat/src/logic-functions/handlers/
+[94m[bash][0m $ sed -n '200,320p' PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[bash][0m $ grep -n "P9.3\|P9\.3" PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/starter-projects.ts
+[94m[bash][0m $ sed -n '1345,1420p' PLAN.md
+[94m[bash][0m $ find packages/twenty-shared/src -iname "*workflow*" | head -40
+[94m[bash][0m $ grep -rn "RECORD_UPDATED\|RECORD_CREATED" packages/twenty-shared/src --include=*.ts | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/workflow/workflow-trigger/types/workflow-trigger.type.ts
+[94m[bash][0m $ cat packages/twenty-shared/src/workflow/schemas/workflow-trigger-schema.ts
+[94m[bash][0m $ cat packages/twenty-shared/src/workflow/schemas/database-event-trigger-schema.ts packages/twenty-sha...
+[94m[bash][0m $ 
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/fields/
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-chat/src/objects/channel.object.ts
+[94m[bash][0m $ done
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/src/objects/chat-channel.object.ts
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "installed\|applications(\|applicationUniversalIdentifier\|findManyApplications" packages/t...
+[94m[bash][0m $ ls packages | grep -i "sdk\|client"
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal[0m pattern: [96mapplication|installedApps|isInstalled[0m
+[94m[bash][0m $ ls packages/twenty-client-sdk/src 2>/dev/null
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-shared/src/workflow/schemas/step-filter-schema.ts packages/twenty-shared/src/wor...
+[94m[bash][0m $ cat packages/twenty-shared/src/logic-function/constants/SeedWorkflowActionTriggerSettings.ts
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/src/logic-functions/post-install.ts
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/package.json
+[94m[bash][0m $ grep -rn "MetadataApiClient\|CoreApiClient" packages/twenty-client-sdk/src --include=*.ts | grep -v ...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal[0m pattern: [96mMetadataApiClient|metadataClient|findManyApplications|applicationRegistrations[0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "findManyApplications" packages/twenty-server/src --include=*.ts | head
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/src/logic-functions/__tests__/recurring-task-generato...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/src/application.config.ts
+[94m[bash][0m $ grep -rln "type DatabaseEventPayload" packages/twenty-sdk packages/twenty-shared 2>/dev/null
+[94m[bash][0m $ grep -rln "DatabaseEventPayload" packages/twenty-sdk packages/twenty-shared packages/twenty-client-s...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/database-events/database-event-payload.type.ts
+[94m[bash][0m $ grep -rn "workflowActionTriggerSettings\|databaseEventTriggerSettings" packages/twenty-sdk/src/sdk/d...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/database-events/object-record-event.event.ts
+[94m[bash][0m $ sed -n '1,200p' packages/twenty-sdk/src/sdk/define/logic-functions/define-logic-function.ts
+[94m[bash][0m $ ls packages/twenty-shared/src/database-events/
+[94m[bash][0m $ cat packages/twenty-shared/src/database-events/object-record.base.event.ts
+[94m[bash][0m $ grep -rln "OpportunityStage" packages/twenty-server/src packages/twenty-front/src 2>/dev/null | head
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages[0m pattern: [96mOpportunityStage[0m
+[94m[bash][0m $ cat packages/twenty-apps/internal/twenty-partners/src/modules/opportunity/constants/opportunity-stag...
+[94m[bash][0m $ grep -rn "CUSTOMER" packages/twenty-server/src/modules/opportunity 2>/dev/null | head
+[94m[bash][0m $ grep -rln "OpportunityStage" packages/twenty-shared/src 2>/dev/null
+[94m[bash][0m $ find packages/twenty-server/src -iname "*opportunity*" 2>/dev/null | head -20
+[94m[bash][0m $ grep -rn "CUSTOMER\|WON" packages/twenty-server/src/engine/workspace-manager/twenty-standard-applica...
+[94m[bash][0m $ grep -n "stage\|Options\|CUSTOMER\|label" packages/twenty-server/src/engine/workspace-manager/twenty...
+[94m[bash][0m $ grep -rin "deal\|gagné\|won\|affaire" docs/product-experience.md docs/applications.md PLAN.md 2>/dev...
+[94m[bash][0m $ grep -rin "deal-won\|deal won\|opportunity.*stage\|CUSTOMER" packages/twenty-apps/internal/a2e-accou...
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-shared/src/types/ViewFilterOperand.ts 2>/dev/null || find packages/tw...
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-chat/src/roles/*.ts 2>/dev/null
+[94m[bash][0m $ sed -n '90,140p' packages/twenty-apps/internal/twenty-partners/src/modules/shared/http/resolve-partn...
+[94m[bash][0m $ cat packages/twenty-client-sdk/src/core/index.ts
+[94m[bash][0m $ sed -n '1,160p' packages/twenty-sdk/src/sdk/define/logic-functions/logic-function-config.ts
+[94m[bash][0m $ find packages/twenty-shared/src/application -name "*.ts" | xargs grep -ln "LogicFunctionManifest" 2>...
+[94m[bash][0m $ cat packages/twenty-shared/src/application/logicFunctionManifestType.ts
+[94m[bash][0m $ cat packages/twenty-shared/src/application/workflowActionTriggerSettingsType.ts
+[94m[bash][0m $ grep -rn "stepFilterGroups" packages/twenty-server/src/modules/workflow --include=*.ts 2>/dev/null |...
+[94m[bash][0m $ grep -rln "stepFilterGroups" packages/twenty-server/src 2>/dev/null | head -20
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/filte...
+[94m[bash][0m $ sed -n '1,160p' packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/ut...
+[94m[bash][0m $ cat packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/utils/__tests_...
+[94m[bash][0m $ grep -rln "STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS" packages/twenty-sdk/src packages/twenty-shared/src...
+[94m[bash][0m $ grep -n "opportunit" packages/twenty-shared/src/metadata/constants/standard-object-universal-identif...
+[94m[bash][0m $ grep -n "stage" packages/twenty-shared/src/metadata/constants/standard-object-fields.constant.ts | h...
+[94m[bash][0m $ cat packages/twenty-server/src/modules/workflow/workflow-executor/utils/resolve-step-filters.util.ts...
+[94m[bash][0m $ find packages/twenty-shared/src/types -iname "*step*"
+[94m[bash][0m $ cat packages/twenty-shared/src/types/StepFilters.ts
+[94m[bash][0m $ sed -n '1,140p' packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/filte...
+[94m[bash][0m $ sed -n '/function evaluateSelectFilter/,/^}/p' packages/twenty-server/src/modules/workflow/workflow-...
+[94m[bash][0m $ cat packages/twenty-server/src/modules/workflow/workflow-executor/utils/resolve-filter-value-and-ope...
+[94m[read][0m
+[94m[read][0m
+[94m[todowrite][0m
+I have enough context. Let me set up my task list and claim the slice.
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ cat >> docs/plan/phases/phase-04-report.md <<'EOF'  CLAIMED — US-014/deal-won-workflow-recipe — deep...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+Claim locked. Now implementing identifiers and the project provenance field.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project.object.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project.object.ts
+Now the pure recipe logic:
+[94m[write][0m "// Recette « affaire gagnée » (P9.3).
+//
+// La partie pure de la recette : à partir d'une transition d'opportunité vers
+// l'étape gagnée, elle dérive la clé de corrélation/idempotence du contrat
+// i... (6801 chars)"
+[94m[bash][0m $ grep -rn "StepLogicalOperator\|ViewFilterOperand\|DatabaseEventPayload" packages/twenty-sdk/src/sdk/...
+[94m[bash][0m $ grep -n "StepLogicalOperator\|StepFilter" packages/twenty-sdk/src/sdk/define/index.ts
+[94m[write][0m "import { LOGIC_FUNCTION_IDS, STANDARD_FIELD_UNIVERSAL_IDENTIFIERS } from '../constants/universal-identifiers.ts';
+import { DEAL_WON_STAGE } from '../lib/deal-won-recipe.ts';
+
+// LA RECETTE DE WORKFLOW... (9155 chars)"
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+
+import {
+  deriveDealWonCorrelationKey,
+  deriveDealWonProjectKey,
+  deriveDealWonProjectName,
+} from '../../lib/deal-won-recipe.ts';
+
+// L'ÉTA... (3426 chars)"
+Now the handlers:
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+import {
+  DEAL_WON_CHANNEL_KIND,
+  DEAL_WON_CHANNEL_VISIBILITY,
+  deriveDealWo... (4228 chars)"
+[94m[write][0m "import { defineLogicFunction } from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+import {
+  coreClient,
+  createDealWonProject,
+  type DealWonCreat... (1434 chars)"
+[94m[write][0m "import { defineLogicFunction } from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+import {
+  createDealWonChannel,
+  coreClient,
+  type DealWonCreat... (1449 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  DEAL_WON_RECIPE_KEY,
+  DEAL_WON_RECIPE_VERSION,
+  buildDealWonEventEnvelope,
+  buildDealWonRecipePlan,
+  deriveDe... (5374 chars)"
+Now the tests:
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  LOGIC_FUNCTION_IDS,
+  STANDARD_FIELD_UNIVERSAL_IDENTIFIERS,
+} from '../../constants/universal-identifiers.ts';
+im... (7574 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  createDealWonProject,
+  type DealWonCreateProjectInput,
+} from '../handlers/deal-won-create-project-handler.ts';
+... (4532 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  createDealWonChannel,
+  type DealWonCreateChannelInput,
+} from '../handlers/deal-won-create-channel-handler.ts';
+... (4831 chars)"
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/deal-won-recipe.test.ts" "src/lib/__tests_...
+[94m[bash][0m $ node --test --experimental-strip-types "src/logic-functions/__tests__/deal-won-create-project-handle...
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -30
+[94m[edit][0m
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -30
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -20
+[94m[bash][0m $ yarn lint 2>&1 | tail -20
+[94m[bash][0m $ npx oxfmt --check src/constants/universal-identifiers.ts src/objects/project.object.ts src/workflow-...
+[94m[bash][0m $ npx oxfmt src/logic-functions/__tests__/deal-won-create-channel-handler.test.ts src/logic-functions/...
+[94m[bash][0m $ ls -a | grep oxfmt
+[94m[bash][0m $ ls -a /Users/maxaubert/Projets/A2E\ Suite/packages/twenty-apps | grep oxfmt
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.oxfmtrc.jsonc
+[94m[bash][0m $ cat > .oxfmtrc.lib.jsonc <<'EOF' {   "$schema": "./node_modules/oxfmt/configuration_schema.json",   ...
+[94m[bash][0m $ cat > .oxfmtrc.lib.jsonc <<'EOF' {   "$schema": "./node_modules/oxfmt/configuration_schema.json",   ...
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -30
+[94m[bash][0m $ grep -o "deal-won-create-project\|deal-won-create-channel\|recipeCorrelationKey\|c31b0200-0001-4000-...
+[94m[bash][0m $ }" 2>&1 | tail -5
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -8
+[94m[bash][0m $ echo "EXIT:$?"
+[94m[bash][0m $ npx nx lint:diff-with-main a2e-projects 2>&1 | tail -10
+[94m[bash][0m $ git status --porcelain
+[94m[read][0m
+All gates green. Let me verify the formatter didn't alter semantics in the key files.
+Now the report and progress entries. Let me check the progress file format first.
+[94m[bash][0m $ tail -40 .ralph-tui/progress.md
+[94m[bash][0m $ sed -n '1,60p' .ralph-tui/progress.md
+[94m[bash][0m $ or executor — US-015 (rules-first Home suggestion cards over the verified P4/P8 domains, invoice rul...
+Now appending the phase report entry:
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ keep it injectable (`() => Promise<boolean>`) so handler tests cover chat-present and chat-absent of...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/.oxfmtrc.lib.jsonc 2>&1
+[94m[todowrite][0m
+US-014 shipped. Summary:
+
+**Recipe** (`src/workflow-templates/deal-won.workflow.ts` + `src/lib/deal-won-recipe.ts`): a native `DATABASE_EVENT` trigger on `opportunity.updated` filtered `stage IS CUSTOMER` (stock Twenty's won stage), chaining create-project → create record-linked channel via `LOGIC_FUNCTION` steps and `nextStepIds` edges. No second bus; opt-in by construction (app source data, not a manifest entity) with a pure `buildDealWonRecipePlan` preview.
+
+**Degradation**: with chat absent the descriptor omits the channel step, and `deal-won-create-channel` independently re-checks `MetadataApiClient` at run time and returns `SKIPPED/CHAT_NOT_INSTALLED`. No field is pinned on `chatChannel` (that would make A2E Chat a hard prerequisite).
+
+**Idempotency**: C5 key `deal-won@v1:<workspace>:opportunity:<id>` persisted on `project.recipeCorrelationKey`; replay returns `ALREADY_EXISTS`. Invoice leg excluded (P7) — asserted by validator + tests.
+
+**Checks** (all green):
+- `yarn test:unit` → 245/245 (+28)
+- `yarn typecheck` / `npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `yarn lint` → 0 errors, 1 pre-existing warning
+- `npx twenty dev:build .` → Build succeeded (38 files); manifest carries both actions + the field
+- `npx nx lint:diff-with-main a2e-projects` → "Cannot find project" (package gates substitute)
+
+Tier-2 (live `createWorkflowVersionStep/Edge` materialization + real deal-won firing) is left for the orchestrator, as required. Report entry appended to `phase-04-report.md` and `.ralph-tui/progress.md`; no PLAN edit, no commit.
+
+<promise>COMPLETE</promise>

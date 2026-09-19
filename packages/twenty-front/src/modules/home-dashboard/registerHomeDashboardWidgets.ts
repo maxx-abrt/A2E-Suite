@@ -1,4 +1,5 @@
 import {
+  IconAlertCircle,
   IconCalendarEvent,
   IconChartBar,
   IconCheckbox,
@@ -7,6 +8,7 @@ import {
 } from 'twenty-ui/icon';
 
 import { ContributionGridWidget } from '@/home-dashboard/components/ContributionGridWidget';
+import { HomeSuggestionsWidget } from '@/home-dashboard/components/HomeSuggestionsWidget';
 import { MyTasksWidget } from '@/home-dashboard/components/MyTasksWidget';
 import { PomodoroWidget } from '@/home-dashboard/components/PomodoroWidget';
 import { RecentActivityWidget } from '@/home-dashboard/components/RecentActivityWidget';
@@ -19,6 +21,12 @@ import {
 // The Home dashboard reuses the P2.4 dock extension points ("tasks" and
 // "activity") instead of adding parallel widgets, and adds two more.
 const HOME_DASHBOARD_WIDGET_DEFINITIONS: WorkbenchWidgetDefinition[] = [
+  {
+    id: 'suggestions',
+    Icon: IconAlertCircle,
+    Component: HomeSuggestionsWidget,
+    order: 35,
+  },
   { id: 'tasks', Icon: IconCheckbox, Component: MyTasksWidget, order: 40 },
   {
     id: 'events',

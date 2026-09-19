@@ -13,6 +13,7 @@ import { Checkbox } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type InboxNotification } from '@/inbox/types/InboxNotification';
+import { getInboxNotificationPreview } from '@/inbox/utils/getInboxNotificationPreview';
 import { resolveNotificationDeepLink } from '@/inbox/utils/resolveNotificationDeepLink';
 
 const StyledRow = styled.div<{ isSelected: boolean }>`
@@ -93,24 +94,6 @@ const StyledTime = styled.span`
   white-space: nowrap;
 `;
 
-const getPayloadPreview = (notification: InboxNotification): string | null => {
-  const payload = notification.payload;
-
-  if (payload === null) {
-    return null;
-  }
-
-  for (const key of ['preview', 'snippet', 'title']) {
-    const value = payload[key];
-
-    if (typeof value === 'string' && value.length > 0) {
-      return value;
-    }
-  }
-
-  return null;
-};
-
 export type InboxNotificationItemProps = {
   notification: InboxNotification;
   isSelected: boolean;
@@ -173,7 +156,7 @@ export const InboxNotificationItem = ({
     }
   };
 
-  const preview = getPayloadPreview(notification);
+  const preview = getInboxNotificationPreview(notification);
 
   return (
     <StyledRow
