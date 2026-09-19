@@ -3,7 +3,7 @@ import { test } from 'node:test';
 
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
-import { OBJECT_IDS, RELATION_IDS, TASK_FIELD_IDS } from '../../constants/universal-identifiers.ts';
+import { OBJECT_IDS, RELATION_IDS, TASK_FIELD_IDS, EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIERS } from '../../constants/universal-identifiers.ts';
 
 // Tier-0 API/manifest integrity for the P4.1 task app fields. The app install
 // path flattens these declarations into field metadata and rejects a relation
@@ -84,6 +84,7 @@ const FIELD_MODULE_PATHS = [
   '../../fields/workspace-member-project-memberships.field.ts',
   '../../fields/project-time-entries.field.ts',
   '../../fields/workspace-member-time-entries.field.ts',
+  '../../fields/document-project.field.ts',
 ];
 
 type OwnedField = {
@@ -225,7 +226,11 @@ test('the six app objects exist once and keep their junction, milestone and time
 
 test('every relation target object and target field resolves', async () => {
   const graph = await loadGraph();
-  const resolvableObjectIds = new Set([...graph.objectIds, ...standardObjectIds]);
+  const resolvableObjectIds = new Set([
+    ...graph.objectIds,
+    ...standardObjectIds,
+    ...Object.values(EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIERS),
+  ]);
   const unresolved: string[] = [];
 
   for (const { origin, field } of graph.ownedFields) {

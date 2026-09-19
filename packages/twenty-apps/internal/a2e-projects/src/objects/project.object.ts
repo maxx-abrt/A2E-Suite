@@ -7,10 +7,12 @@ import {
 
 import {
   manyToOne,
+  oneToMany,
   projectHealthOptions,
   projectStatusOptions,
 } from '../constants/field-vocabulary.ts';
 import {
+  EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIERS,
   LABEL_IDENTIFIER_IDS,
   OBJECT_IDS,
   RELATION_IDS,
@@ -168,6 +170,24 @@ export default defineObject({
         ...manyToOne('companyId'),
         onDelete: OnDeleteAction.SET_NULL,
       },
+    },
+    {
+      // Inverse of document.project (P4.3 D-P4.3-DOC): this app owns both
+      // sides, so the FK is declared on A2E Documents' object while this
+      // inverse lives on our project object. The project page's Documents tab
+      // and the overview count read this relation; the widget hides when A2E
+      // Documents is not installed (no target object).
+      universalIdentifier: RELATION_IDS.projectDocuments,
+      type: FieldType.RELATION,
+      name: 'documents',
+      label: 'Documents',
+      description: 'Documents liés à ce projet',
+      icon: 'IconNotes',
+      relationTargetObjectMetadataUniversalIdentifier:
+        EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIERS.document,
+      relationTargetFieldMetadataUniversalIdentifier:
+        RELATION_IDS.documentProject,
+      universalSettings: oneToMany,
     },
   ],
 });

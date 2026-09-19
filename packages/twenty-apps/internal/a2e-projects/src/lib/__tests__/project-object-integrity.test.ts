@@ -4,6 +4,7 @@ import { test } from 'node:test';
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
 import {
+  EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIERS,
   FRONT_COMPONENT_IDS,
   OBJECT_IDS,
   RELATION_IDS,
@@ -28,6 +29,8 @@ type SelectOption = {
 
 type RelationSettings = {
   relationType?: string;
+  joinColumnName?: string;
+  onDelete?: string;
 };
 
 type FieldDefinition = {
@@ -84,6 +87,8 @@ type PageLayoutWidgetDefinition = {
     configurationType: string;
     frontComponentUniversalIdentifier?: string;
     viewUniversalIdentifier?: string | null;
+    fieldMetadataId?: string;
+    fieldDisplayMode?: string;
   };
 };
 
@@ -161,6 +166,7 @@ const FIELD_MODULE_PATHS = [
   '../../fields/workspace-member-project-memberships.field.ts',
   '../../fields/project-time-entries.field.ts',
   '../../fields/workspace-member-time-entries.field.ts',
+  '../../fields/document-project.field.ts',
 ];
 
 const VIEW_MODULE_PATHS = [
@@ -237,6 +243,14 @@ const standardObjects = Object.values(
 
 const standardObjectIds = new Set(
   standardObjects.map((object) => object.universalIdentifier),
+);
+
+// Objects owned by a sibling app (A2E Documents) that this manifest pins a
+// field on. They are not declared here, so the walk treats them as resolvable
+// providers exactly like the standard objects — the install order guarantees
+// they exist on the workspace first (P4.3 D-P4.3-DOC).
+const externalObjectIds = new Set(
+  Object.values(EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIERS),
 );
 
 const standardFieldIds = new Set<string>();
@@ -319,7 +333,11 @@ const loadGraph = async (): Promise<Graph> => {
     pageLayouts,
     navigationMenuItems,
     roles,
-    resolvableObjectIds: new Set([...objectIds, ...standardObjectIds]),
+    resolvableObjectIds: new Set([
+      ...objectIds,
+      ...standardObjectIds,
+      ...externalObjectIds,
+    ]),
     resolvableFieldIds: new Set([...fieldById.keys(), ...standardFieldIds]),
     frontComponentIds: new Set(Object.values(FRONT_COMPONENT_IDS)),
   };
@@ -636,6 +654,18 @@ test('every page-layout widget references existing metadata', async () => {
         if (view !== undefined && view !== null && !viewIds.has(view)) {
           unresolved.push(`${origin} -> view ${view}`);
         }
+
+        // A FIELD widget points at a field universal identifier; an unknown
+        // one would install as a broken relation widget.
+        const field = widget.configuration?.fieldMetadataId;
+
+        if (
+          widget.configuration?.configurationType === 'FIELD' &&
+          field !== undefined &&
+          !graph.resolvableFieldIds.has(field)
+        ) {
+          unresolved.push(`${origin} -> field ${field}`);
+        }
       }
     }
   }
@@ -643,7 +673,7 @@ test('every page-layout widget references existing metadata', async () => {
   assert.deepEqual(unresolved, []);
 });
 
-test('the project page exposes the overview, timeline and P4.2 tab set', async () => {
+test('the project page exposes the overview, timeline, P4.2 and P4.3 tab set', async () => {
   const graph = await loadGraph();
   const viewIds = new Set(graph.views.map((view) => view.universalIdentifier));
 
@@ -698,18 +728,61 @@ test('the project page exposes the overview, timeline and P4.2 tab set', async (
   assert.equal(filesWidget?.type, 'FILES');
   assert.equal(filesWidget?.configuration?.configurationType, 'FILES');
 
-  // The docs tab waits on the P4.3 project↔document relation decision; no
-  // dead tab is shipped in the meantime.
+  // The P4.3 Documents tab projects the project.documents relation through the
+  // native FIELD widget; it replaced the deliberate absence shipped by P4.2.
+  const documentsWidget = tabsByTitle.get('Documents')?.widgets?.[0];
+
+  assert.equal(documentsWidget?.type, 'FIELD');
   assert.equal(
-    (layout.tabs ?? []).some((tab) =>
-      ['Document', 'Documents', 'Docs'].includes(tab.title),
-    ),
-    false,
+    documentsWidget?.configuration?.configurationType,
+    'FIELD',
   );
+  assert.equal(documentsWidget?.configuration?.fieldMetadataId, RELATION_IDS.projectDocuments);
+  assert.equal(documentsWidget?.configuration?.fieldDisplayMode, 'TABLE');
 
   for (const viewId of [VIEW_IDS.projectTasks, VIEW_IDS.taskBoard]) {
     assert.ok(viewIds.has(viewId), `view ${viewId} not declared`);
   }
+});
+
+test('document.project and its inverse close the project relation with SET_NULL', async () => {
+  const graph = await loadGraph();
+  const findField = (identifier: string) => {
+    const match = graph.ownedFields.find(
+      ({ field }) => field.universalIdentifier === identifier,
+    );
+
+    assert.ok(match, `field ${identifier} not declared`);
+
+    return match;
+  };
+
+  const documentProject = findField(RELATION_IDS.documentProject);
+  const projectDocuments = findField(RELATION_IDS.projectDocuments);
+
+  assert.equal(documentProject.owningObjectUniversalIdentifier, EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIERS.document);
+  assert.equal(documentProject.field.type, 'RELATION');
+  assert.equal(documentProject.field.name, 'project');
+  assert.equal(documentProject.field.universalSettings?.relationType, 'MANY_TO_ONE');
+  assert.equal(documentProject.field.universalSettings?.joinColumnName, 'projectId');
+  assert.equal(documentProject.field.universalSettings?.onDelete, 'SET_NULL');
+  assert.equal(
+    documentProject.field.relationTargetObjectMetadataUniversalIdentifier,
+    OBJECT_IDS.project,
+  );
+  assert.equal(
+    documentProject.field.relationTargetFieldMetadataUniversalIdentifier,
+    RELATION_IDS.projectDocuments,
+  );
+
+  assert.equal(projectDocuments.owningObjectUniversalIdentifier, OBJECT_IDS.project);
+  assert.equal(projectDocuments.field.type, 'RELATION');
+  assert.equal(projectDocuments.field.name, 'documents');
+  assert.equal(projectDocuments.field.universalSettings?.relationType, 'ONE_TO_MANY');
+  assert.equal(
+    projectDocuments.field.relationTargetFieldMetadataUniversalIdentifier,
+    RELATION_IDS.documentProject,
+  );
 });
 
 test('every VIEW navigation item and registered view identifier resolves', async () => {

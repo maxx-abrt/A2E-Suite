@@ -57,12 +57,13 @@ test('member names join the non-empty name parts and fall back when empty', () =
   );
 });
 
-test('the overview summary counts members and keeps the four native signals', () => {
+test('the overview summary counts members and keeps the native signals', () => {
   const summary = buildProjectOverviewSummary({
     health: 'AT_RISK',
     taskCount: 7,
     milestoneCount: 3,
     activityCount: 12,
+    documentCount: 5,
     members: [
       { membershipId: 'm1', role: 'LEAD', displayName: 'Ada Lovelace' },
       { membershipId: 'm2', role: 'MEMBER', displayName: 'Alan Turing' },
@@ -74,6 +75,7 @@ test('the overview summary counts members and keeps the four native signals', ()
     taskCount: 7,
     milestoneCount: 3,
     activityCount: 12,
+    documentCount: 5,
     memberCount: 2,
     members: [
       { membershipId: 'm1', role: 'LEAD', displayName: 'Ada Lovelace' },

@@ -8,14 +8,15 @@ import {
 import {
   FRONT_COMPONENT_IDS,
   OBJECT_IDS,
+  RELATION_IDS,
   VIEW_IDS,
 } from '../constants/universal-identifiers.ts';
 
 // Project record page. Home carries the fields/description/overview widgets
 // and Timeline the activity + gantt widgets; the P4.2 tabs below add the
 // project-scoped task board, task table and file list as separate tabs so
-// each concern is one click away. The docs tab waits on the P4.3
-// project↔document relation decision and is intentionally absent.
+// each concern is one click away. The Documents tab (P4.3) projects the
+// project.documents relation through the native FIELD widget.
 export default definePageLayout({
   universalIdentifier: 'c31b0200-0008-4000-8000-000000000001',
   name: 'Project Record Page',
@@ -188,6 +189,30 @@ export default definePageLayout({
           title: 'Fichiers',
           type: 'FILES',
           configuration: { configurationType: 'FILES' },
+        },
+      ],
+    },
+    {
+      // Documents tab (P4.3): the project.documents relation projected through
+      // the native FIELD widget (the company↔people primitive). It lists the
+      // documents whose `project` FK points at this project. The relation is
+      // cross-app: A2E Documents is a hard install prerequisite, so the tab
+      // can never be rendered without its target object.
+      universalIdentifier: 'c31b0200-0009-4000-8000-000000000007',
+      title: 'Documents',
+      position: 55,
+      icon: 'IconNotes',
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      widgets: [
+        {
+          universalIdentifier: 'c31b0200-000a-4000-8000-00000000000f',
+          title: 'Documents',
+          type: 'FIELD',
+          configuration: {
+            configurationType: 'FIELD',
+            fieldMetadataId: RELATION_IDS.projectDocuments,
+            fieldDisplayMode: 'TABLE',
+          },
         },
       ],
     },

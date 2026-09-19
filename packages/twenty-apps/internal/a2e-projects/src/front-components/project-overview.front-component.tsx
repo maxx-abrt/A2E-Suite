@@ -34,6 +34,7 @@ type OverviewProject = {
   tasks?: { edges?: { node: { id: string } }[] } | null;
   milestones?: { edges?: { node: { id: string } }[] } | null;
   timelineActivities?: { edges?: { node: { id: string } }[] } | null;
+  documents?: { edges?: { node: { id: string } }[] } | null;
   members?: { edges?: { node: OverviewProjectMember }[] } | null;
 };
 
@@ -76,6 +77,10 @@ const ProjectOverview = () => {
           __args: { first: COUNTER_LIMIT },
           edges: { node: { id: true } },
         },
+        documents: {
+          __args: { first: COUNTER_LIMIT },
+          edges: { node: { id: true } },
+        },
         members: {
           __args: { first: MEMBER_LIMIT },
           edges: {
@@ -114,6 +119,7 @@ const ProjectOverview = () => {
         taskCount: loadedProject.tasks?.edges?.length ?? 0,
         milestoneCount: loadedProject.milestones?.edges?.length ?? 0,
         activityCount: loadedProject.timelineActivities?.edges?.length ?? 0,
+        documentCount: loadedProject.documents?.edges?.length ?? 0,
         members,
       }),
     );
@@ -136,6 +142,7 @@ const ProjectOverview = () => {
   const chips = [
     `${summary.taskCount} tâches`,
     `${summary.milestoneCount} jalons`,
+    `${summary.documentCount} documents`,
     `${summary.memberCount} membres`,
     `${summary.activityCount} activités`,
   ];
@@ -163,6 +170,6 @@ export default defineFrontComponent({
   universalIdentifier: FRONT_COMPONENT_IDS.projectOverview,
   name: 'project-overview-widget',
   description:
-    'Aperçu du projet : clé, statut, santé, compteurs de tâches/jalons/membres/activités et équipe depuis les données natives.',
+    'Aperçu du projet : clé, statut, santé, compteurs de tâches/jalons/documents/membres/activités et équipe depuis les données natives.',
   component: ProjectOverview,
 });

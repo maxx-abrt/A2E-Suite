@@ -24,12 +24,24 @@ export const OBJECT_IDS = {
   taskLabel: 'c31b0700-0000-4000-8000-000000000000',
 } as const;
 
+// Objects this app does not own but pins an app-owned field on. The `document`
+// object belongs to A2E Documents (`c31a…` namespace), which the install order
+// (D-P4.3-DOC) requires before A2E Projects so `document.project` resolves.
+export const EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIERS = {
+  document: 'c31a0100-0000-4000-8000-000000000000',
+} as const;
+
 // Both sides of every relation, grouped by the record that owns the foreign key.
 export const RELATION_IDS = {
   projectLead: 'c31b0200-0002-4000-8000-000000000001',
   memberProjects: 'c31b0200-0002-4000-8000-000000000002',
   projectCompany: 'c31b0200-0002-4000-8000-000000000003',
   companyProjects: 'c31b0200-0002-4000-8000-000000000004',
+  // Cross-app relation to A2E Documents' `document` object (P4.3
+  // D-P4.3-DOC): this app owns both sides; the FK (documentProject) lives on
+  // the provider object, the inverse (projectDocuments) on our project object.
+  projectDocuments: 'c31b0200-0002-4000-8000-000000000005',
+  documentProject: 'c31b0200-0002-4000-8000-000000000006',
   projectMilestone: 'c31b0300-0002-4000-8000-000000000001',
   milestoneProjects: 'c31b0300-0002-4000-8000-000000000002',
   projectMemberProject: 'c31b0400-0002-4000-8000-000000000001',

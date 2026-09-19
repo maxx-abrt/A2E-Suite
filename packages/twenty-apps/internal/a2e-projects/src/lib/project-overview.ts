@@ -29,6 +29,7 @@ export type ProjectOverviewSummary = {
   taskCount: number;
   milestoneCount: number;
   activityCount: number;
+  documentCount: number;
   memberCount: number;
   members: ProjectOverviewMember[];
 };
@@ -38,6 +39,7 @@ export type ProjectOverviewCounts = {
   taskCount: number;
   milestoneCount: number;
   activityCount: number;
+  documentCount: number;
   members: ProjectOverviewMember[];
 };
 
@@ -64,12 +66,14 @@ export const buildProjectOverviewSummary = ({
   taskCount,
   milestoneCount,
   activityCount,
+  documentCount,
   members,
 }: ProjectOverviewCounts): ProjectOverviewSummary => ({
   healthLabel: formatProjectHealthLabel(health),
   taskCount,
   milestoneCount,
   activityCount,
+  documentCount,
   memberCount: members.length,
   members,
 });
