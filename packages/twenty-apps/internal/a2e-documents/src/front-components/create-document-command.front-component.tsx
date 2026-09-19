@@ -49,7 +49,7 @@ const CreateDocumentCommand = ({
     }
 
     await navigate(AppPath.RecordShowPage, {
-      objectNameSingular: 'documents',
+      objectNameSingular: 'document',
       objectRecordId: created.id,
     });
   };

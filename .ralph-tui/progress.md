@@ -183,3 +183,33 @@ after each iteration and it's included in prompts for context.
     from the root `.oxfmtrc.jsonc` (`**/lib/**`), so oxfmt needs an override
     config to check app lib files.
 ---
+
+## 2026-09-19 - US-021
+
+- Completed the queued plural→singular `objectNameSingular` navigate fix in
+  a2e-documents (5 sites across `create-document-command`, `document-browser`,
+  `document-page`) — grep confirms no `'documents'` value remains.
+- Added the deterministic across-pages ordering evidence to
+  `document-tree-loading.test.ts`: 2·PAGE_SIZE+3 siblings built with
+  `buildAppendPosition` and merged across 3 cursor pages reproduce the exact
+  fractional-index order with no duplicate/reorder, plus an explicit
+  expand-then-load-more page-state transition test.
+- The lazy per-parent loader (`fetchDocumentsPage` with `first` + `after`,
+  `orderBy position/title/id`, merge/nest helpers) was already committed under
+  `c9a9efe8`; this slice extended tests + fixed navigate rather than recreating it.
+- Files changed: `src/front-components/create-document-command.front-component.tsx`,
+  `src/front-components/document-browser.front-component.tsx`,
+  `src/front-components/document-page.front-component.tsx`,
+  `src/lib/__tests__/document-tree-loading.test.ts`,
+  `docs/plan/phases/phase-03-report.md`.
+- **Learnings:**
+  - The a2e-documents app package has **no JSX/front-component test runner** —
+    `test:unit` is `node --test --experimental-strip-types` over `src/lib` and
+    `src/logic-functions` only. Expand/load-more UI behavior must therefore be
+    proven through the pure page-state helpers (`needsInitialChildrenFetch`,
+    `hasNextChildrenPage`, `mergeTreeChildrenPage`), not rendered components.
+  - The root `.oxfmtrc.jsonc` ignores `**/lib/**`, so oxfmt on app lib specs
+    needs an override config; running the root formatter on an app
+    front-component can also reformat unrelated pre-existing lines — revert that
+    incidental churn to keep the diff scoped.
+---

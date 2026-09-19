@@ -7,7 +7,9 @@ import {
   mergeTreeChildrenPage,
   needsInitialChildrenFetch,
   nestTreeFromChildrenMap,
+  TREE_CHILDREN_PAGE_SIZE,
 } from '../document-tree-loading.ts';
+import { buildAppendPosition } from '../fractional-position.ts';
 
 test('an unseen parent needs its first page and has no more-pages flag', () => {
   assert.equal(needsInitialChildrenFetch(undefined), true);
@@ -130,4 +132,69 @@ test('the nested rebuild tolerates a self-referencing page', () => {
     ['loop'],
   );
   assert.equal(nested[0].children, undefined);
+});
+
+test('expanding a node fetches its first page, then load-more pages the same parent', () => {
+  // Expand: an unseen parent needs exactly one initial fetch and shows no
+  // "Charger plus" until that page reports a next cursor.
+  assert.equal(needsInitialChildrenFetch(undefined), true);
+
+  const firstPageState = {
+    isLoaded: true,
+    endCursor: 'cursor-1',
+    hasNextPage: true,
+  };
+
+  // A second expand must not refetch; the page just offers the next cursor.
+  assert.equal(needsInitialChildrenFetch(firstPageState), false);
+  assert.equal(hasNextChildrenPage(firstPageState), true);
+
+  const lastPageState = {
+    isLoaded: true,
+    endCursor: 'cursor-2',
+    hasNextPage: false,
+  };
+
+  assert.equal(needsInitialChildrenFetch(lastPageState), false);
+  assert.equal(hasNextChildrenPage(lastPageState), false);
+});
+
+test('more than one API page of siblings stays in fractional-index order', () => {
+  // The browser writes each append with a position greater than the previous
+  // sibling, which is the order the server returns keys in. Loading three
+  // cursor pages must therefore reproduce the position sort exactly, with no
+  // reorder across the page boundaries.
+  const siblingCount = TREE_CHILDREN_PAGE_SIZE * 2 + 3;
+  const positions: string[] = [];
+
+  for (let index = 0; index < siblingCount; index++) {
+    positions.push(buildAppendPosition(positions[positions.length - 1]));
+  }
+
+  const orderedNodes = positions.map((position, index) => ({
+    id: `doc-${index}`,
+    position,
+  }));
+
+  const pages = [
+    orderedNodes.slice(0, TREE_CHILDREN_PAGE_SIZE),
+    orderedNodes.slice(TREE_CHILDREN_PAGE_SIZE, TREE_CHILDREN_PAGE_SIZE * 2),
+    orderedNodes.slice(TREE_CHILDREN_PAGE_SIZE * 2),
+  ];
+
+  const merged = pages.reduce(
+    (loaded, page) => mergeTreeChildrenPage(loaded, page),
+    [] as { id: string; position: string }[],
+  );
+
+  assert.deepEqual(
+    merged.map((node) => node.id),
+    orderedNodes.map((node) => node.id),
+  );
+  assert.deepEqual(
+    merged.map((node) => node.position),
+    [...merged]
+      .sort((left, right) => (left.position < right.position ? -1 : 1))
+      .map((node) => node.position),
+  );
 });

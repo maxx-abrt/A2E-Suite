@@ -100,7 +100,7 @@ const appTheme = {
 const openDocument = (documentId: string): void => {
   // NavigateFunction is positional: (to, params, queryParams, options)
   void navigate(AppPath.RecordShowPage, {
-    objectNameSingular: 'documents',
+    objectNameSingular: 'document',
     objectRecordId: documentId,
   });
 };

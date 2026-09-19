@@ -68,7 +68,7 @@ const COVER_FALLBACK = 'var(--t-color-blue)';
 const openDocument = (documentId: string): void => {
   // NavigateFunction is positional: (to, params, queryParams, options)
   void navigate(AppPath.RecordShowPage, {
-    objectNameSingular: 'documents',
+    objectNameSingular: 'document',
     objectRecordId: documentId,
   });
 };
@@ -77,7 +77,7 @@ const openDocumentInSidePanel = (documentId: string): void => {
   void openSidePanelPage({
     page: SidePanelPages.ViewRecord,
     recordId: documentId,
-    objectNameSingular: 'documents',
+    objectNameSingular: 'document',
   });
 };
 
@@ -204,7 +204,7 @@ const DocumentPage = () => {
     }
 
     await navigate(AppPath.RecordShowPage, {
-      objectNameSingular: 'documents',
+      objectNameSingular: 'document',
       objectRecordId: created.id,
     });
   };
