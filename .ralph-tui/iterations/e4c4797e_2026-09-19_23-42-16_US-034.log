@@ -1,0 +1,89 @@
+# Iteration 4 Log
+
+## Metadata
+
+- **Task ID**: US-034
+- **Task Title**: [P4.2] Board view — kanban on task grouped by custom status (prefer existing primitives)
+- **Description**: As a project member, I want a kanban board of tasks grouped by custom status, so that I can move work across the pipeline using Twenty's existing board experience.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T21:42:16.904Z
+- **Ended At**: 2026-09-19T21:45:33.029Z
+- **Duration**: 3m 16s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the clean-start check per the contract.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-034" PLAN.md | head -50
+[94m[bash][0m $ ls docs/plan/phases/ 2>/dev/null && echo "---" && ls docs/plan/ 2>/dev/null
+[94m[bash][0m $ grep -n "P4.2\|Board view\|kanban" PLAN.md | head -50
+[94m[bash][0m $ grep -n "CLAIMED\|US-034\|US-033" docs/plan/phases/phase-04-report.md | tail -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ grep -n "US-034\|US-033" tasks/prd.json | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ git log --oneline -15
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/views/ && echo "---tests---" && ls packages/twenty...
+[94m[bash][0m $ cat .ralph-tui/session-meta.json 2>/dev/null | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-board.view.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/task-project-status.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-board.test.ts
+[94m[bash][0m $ grep -rn "projectStatus\|project status\|reconcile" docs/ --include=*.md -i | grep -iv "phase-04-rep...
+[94m[bash][0m $ grep -rn "projectStatus" packages/twenty-apps/internal/a2e-projects/src/ | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/task-status.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/lib/
+[94m[bash][0m $ git status --porcelain packages/twenty-apps/internal/a2e-projects/src/views/task-board.view.ts packa...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/overdue-tasks.view.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/project-tasks.view.ts
+[94m[bash][0m $ grep -rn "Reconcile existing\|same IDs/status/assignee\|custom-status object" docs/ PLAN.md 2>/dev/n...
+[94m[bash][0m $ grep -rn "C5" docs/plan/*.md docs/*.md 2>/dev/null | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -rn "70bc-48f9-89c5-6aa730b151e0\|taskStatus\|'status'" packages/twenty-shared/src/ --include=*...
+[94m[bash][0m $ grep -rn "TASK_STATUS\|TaskStatus" packages/twenty-shared/src/ | head
+[94m[bash][0m $ grep -rln "standard-object-fields\|STANDARD_OBJECT_FIELDS" packages/twenty-shared/src/ | head
+[94m[bash][0m $ grep -rn "70bc-48f9-89c5-6aa730b151e0" packages/twenty-shared/src/ packages/twenty-server/src/ 2>/de...
+[94m[bash][0m $ grep -rn "TaskStatusEnum\|taskStatus" packages/twenty-server/src packages/twenty-shared/src 2>/dev/n...
+[94m[bash][0m $ grep -n "70bc-48f9-89c5-6aa730b151e0" -A 40 packages/twenty-shared/src/metadata/__tests__/__snapshot...
+[94m[bash][0m $ grep -rln "IN_PROGRESS" packages/twenty-*/src 2>/dev/null | head -20
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "projectStatus\|reconcil\|custom status\|custom-status" docs/plan/phases/phase-04-report.md ...
+[94m[bash][0m $ grep -rn "projectStatus" packages/twenty-apps/internal/a2e-projects/src/constants/field-vocabulary.t...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/package.json
+[94m[bash][0m $ grep -rn "projectStatus\|status" packages/twenty-apps/internal/a2e-projects/src/views/my-tasks.view....
+Board work exists and is committed. Let me verify the checks cover it.
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/task-board.test.ts" 2>&1 | tail -25
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -15
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -8
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -8
+[94m[bash][0m $ grep -rn "projectStatus" docs/ PLAN.md PROMPT.md AGENTS.md 2>/dev/null | grep -v "phase-04-report" |...
+[94m[bash][0m $ grep -rn "status" docs/product-experience.md 2>/dev/null | head -30
+[94m[bash][0m $ " 2>&1 | head -60
+[94m[bash][0m $ grep -n "taskBoard\|projectStatus" packages/twenty-apps/internal/a2e-projects/src/constants/universa...
+[94m[bash][0m $ " 2>&1
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ yarn lint 2>&1 | tail -12
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ wc -l .ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ board test 5/5, full 245/245, tsc exit 0, build 38 files. --- EOF echo done
+[94m[bash][0m $ git status --porcelain
+Verified the existing US-034 board slice; no source changes were needed.
+
+**Claim:** done-for-review · **Ready-to-tick:** yes (Tier 0/1 green)
+- `task-board.view.ts` is a native `KANBAN` on the standard task, `mainGroupBy = TASK_FIELD_IDS.projectStatus` (`c31b0201-…0002`), project-scoped by an `IS_NOT_EMPTY` filter. Manifest confirms type KANBAN + groups `[TODO, IN_PROGRESS, DONE]`.
+- Checks: board spec 5/5, `yarn test:unit` 245/245, `yarn typecheck` exit 0, `yarn lint` 0 errors (1 pre-existing warning), `npx twenty dev:build .` → 38 files.
+- Residual (not this slice): calendar/My-tasks still filter the standard `status`; those are US-035/US-036 legs.
+- Reports appended to `docs/plan/phases/phase-04-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

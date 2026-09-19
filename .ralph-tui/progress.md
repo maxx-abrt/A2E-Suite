@@ -76,3 +76,12 @@ after each iteration and it's included in prompts for context.
   - Status divergence is the open C5 item: board + project page read `projectStatus`; calendar/My-tasks/record tab read the standard `status`. Those are US-035/US-036 legs, not the board slice — do not touch them here.
   - Before reporting, re-run `node --test --experimental-strip-types "src/lib/__tests__/task-board.test.ts"`, `yarn test:unit`, `yarn typecheck`, `npx twenty dev:build .`; board test 5/5, full 245/245, tsc exit 0, build 38 files.
 ---
+
+## 2026-09-19 21:47 UTC - US-034 (re-run)
+- No source change: the immediately prior iteration (2026-09-19 21:44 UTC) already reported the board slice `done-for-review` and the engine committed its report as `8fa199c7`. Per contract §1.3 this session re-verified the committed slice instead of redoing it; nothing was rebuilt.
+- Files changed: `docs/plan/phases/phase-04-report.md`, `.ralph-tui/progress.md` (report only).
+- **Learnings:**
+  - A `done-for-review` landed ~1 minute before this session's claim window; HEAD `8fa199c7` is literally the engine's commit of that report. When Ralph re-invokes on a not-yet-ticked task, re-read the report tail first — if a done entry exists for the same slice, re-verify and re-report, do not re-implement.
+  - Re-confirmed: board test 5/5, `yarn test:unit` 245/245, `yarn typecheck` exit 0, `npx twenty dev:build .` Build succeeded (38 files), manifest board entry still `type KANBAN` / `mainGroupBy c31b0201-0001-…0002` (app `projectStatus`).
+  - Scope boundary is explicit: cross-surface status reconciliation (calendar/My-tasks/record-tab native `status` → `projectStatus`) belongs to US-035/US-036 (US-036 AC bullet 3), not the board slice. Do not fold it into US-034.
+---
