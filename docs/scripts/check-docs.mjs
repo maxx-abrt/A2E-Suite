@@ -11,6 +11,7 @@ export const MAINTAINED_DOCUMENTS = [
   'DEPLOY.md',
   'docs/README.md',
   'docs/applications.md',
+  'docs/features.md',
   'docs/product-experience.md',
   'docs/verification.md',
   'docs/plan/01-codebase-map.md',
@@ -23,6 +24,10 @@ export const MAINTAINED_DOCUMENTS = [
   'docs/templates/handoff.md',
   'packages/twenty-apps/README-A2E.md',
   'packages/twenty-apps/internal/a2e-accounting/README.md',
+  'packages/twenty-apps/internal/a2e-chat/README.md',
+  'packages/twenty-apps/internal/a2e-documents/README.md',
+  'packages/twenty-apps/internal/a2e-drive/README.md',
+  'packages/twenty-apps/internal/a2e-projects/README.md',
 ];
 
 export const checkMarkdown = (content, filePath, targetExists = existsSync) => {

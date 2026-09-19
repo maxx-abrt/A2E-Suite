@@ -141,9 +141,10 @@
         "A dated entry is appended to the phase report for the touched phase; PLAN.md is not edited; nothing is committed"
       ],
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md task P10 ('Docs…'), phase P10, handoff position 5. Starting state: NOT STARTED. Documentation-only story: docs/scripts/check-docs.mjs is the repo's doc gate (PASS required); where no package is touched, lint/typecheck are recorded as N/A per phase-report precedent. Scope: README sections per installed app (a2e-documents, a2e-projects, a2e-accounting, drive/chat/inbox surfaces) and self-host docs for gateway requirements (ws, Redis) — describe behavior that exists; do not document Tier-2-unverified capabilities as done (completion policy: planned/partial/blocked/unverified/verified).",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-008",
@@ -329,6 +330,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T10:53:54.141Z"
+    "updatedAt": "2026-09-19T11:01:53.785Z"
   }
 }

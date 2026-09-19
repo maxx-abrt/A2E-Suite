@@ -233,6 +233,64 @@ connectivity on the server, and the worker serves its own `/readyz` on port
 before traffic routing through the entrypoint gate, not inside the probes.
 Inspect server/worker logs after upgrade if a deployment misbehaves.
 
+## Realtime gateway requirements (WebSocket + Redis)
+
+The A2E realtime gateway carries presence, chat and inbox live updates to the
+front end. A self-hosted deployment must satisfy both halves of its transport:
+the WebSocket upgrade and Redis.
+
+### WebSocket
+
+- The gateway is a raw `ws` server mounted on the **same HTTP port as the
+  API** (default 3000) at path **`/realtime`** — there is no separate
+  WebSocket port. Source:
+  [realtime-gateway.service.ts](packages/twenty-server/src/engine/core-modules/realtime-gateway/services/realtime-gateway.service.ts),
+  path constant in
+  [realtime-gateway.constants.ts](packages/twenty-server/src/engine/core-modules/realtime-gateway/realtime-gateway.constants.ts).
+- The browser derives its URL from `SERVER_URL` as `ws(s)://<host>/realtime`
+  ([RealtimeConstants.ts](packages/twenty-front/src/modules/realtime/constants/RealtimeConstants.ts)).
+  A reverse proxy must therefore forward `Upgrade`/`Connection` headers for
+  `/realtime` on the API port, not just plain HTTP.
+- The server pings every 15 s and terminates a socket that misses a pong
+  (`REALTIME_HEARTBEAT_INTERVAL_MS`). Set the proxy idle/read timeout **above
+  ~30 s** so idle WebSockets are not cut. The server keep-alive is 65 s
+  (`SERVER_KEEP_ALIVE_TIMEOUT_MS`) by design.
+- GraphQL subscriptions / SSE responses share the HTTP API; the proxy must not
+  buffer streaming responses either.
+- The shipped Kubernetes ingress and Helm values do **not** set WebSocket or
+  timeout annotations — a self-hoster adding an ingress controller must add
+  them explicitly.
+
+### Redis
+
+- **Redis is required.** The compose files run `redis:7` with
+  `--maxmemory-policy noeviction` and a `redis-cli ping` healthcheck; server
+  and worker wait for it to be healthy.
+- The gateway fans out through Redis pub/sub on channels prefixed
+  **`a2e:rt:`** ([realtime-publisher.service.ts](packages/twenty-server/src/engine/core-modules/realtime-gateway/services/realtime-publisher.service.ts)),
+  with topics shaped `workspace:<id>[:kind:scope]`. Presence uses short-lived
+  Redis keys (45 s connection, 5 s typing).
+- Set **`REDIS_URL`** (compose default `redis://redis:6379`). An optional
+  **`REDIS_QUEUE_URL`** sends BullMQ to a separate instance; otherwise the
+  queue reuses `REDIS_URL`. Both are read in
+  [redis-client.service.ts](packages/twenty-server/src/engine/core-modules/redis-client/redis-client.service.ts).
+- The worker needs Redis for BullMQ and can publish gateway topics from jobs;
+  with no HTTP adapter it serves **no** WebSocket port. Worker readiness on
+  `WORKER_HEALTH_PORT` (3099) checks database and Redis.
+- If Redis is unavailable: `/readyz` fails, presence operations throw, a topic
+  subscribe is rejected with an `error` envelope instead of a false `ack`, and
+  a publish is logged and dropped. Clients keep durable records and refetch
+  after reconnecting.
+
+### What the transport does not guarantee
+
+Redis pub/sub is **fan-out, not a replay log**. Sequence numbers are
+per-socket and reset on reconnect, so the gateway is at-most-once: a client
+that misses events must refetch the authoritative records (chat messages,
+inbox rows) rather than replay them from the socket. See the
+[architecture audit](docs/repository-architecture-audit.md) (F02/F06) for the
+current authentication and recovery gaps.
+
 ## Troubleshooting
 
 | Symptom                                  | Cause / fix                                                            |

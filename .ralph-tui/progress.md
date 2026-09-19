@@ -15,6 +15,7 @@ after each iteration and it's included in prompts for context.
 - **Browser-local display preferences (no migration):** one `createAtomState({ useLocalStorage: true, localStorageOptions: { getOnInit: true }, validateInitFn })` + a `useXPreferences` hook of clamped setters + pure `sanitize`/`isValid` utils; publish attributes on `document.documentElement` from one `*ProviderEffect` mounted in `WorkspaceAppProviders` and consume them in `index.css`. Keeps optional P10 preferences out of the workspace-member schema.
 - **base-ui `Switch` in jsdom:** `Toggle`/`Switch` forwards a root click to a synthetic `PointerEvent` on a hidden checkbox; jsdom lacks `PointerEvent`, so a spec that clicks a toggle must alias `window.PointerEvent = MouseEvent` (and query `getByRole('switch', { name })`).
 - **New-surface accessibility pass:** respect reduced motion with the inline Linaria pattern `@media (prefers-reduced-motion: reduce) { transition: none; }` on the animated rule (jsdom cannot assert CSS; the repo precedent is SidePanelTabStripItem); give custom interactive elements a `:focus-visible` outline; expose changing counters/phases as `role="status"` live regions but keep per-second timers out of any live region; mark purely visual re-encodings (habit dots) `aria-hidden`; give an expanded panel `role="region"` + `aria-label`; and assert keyboard operation with `userEvent.tab()`/`{Enter}`. Non-modal docks must NOT trap focus — test that tabbing past the last control lands on a sentinel outside the dock.
+- **Docs gate (`docs/scripts/check-docs.mjs`):** only paths listed in `MAINTAINED_DOCUMENTS` are checked. A new user doc is invisible to the gate until its repo-relative path is added there; the checker validates local inline link targets and fenced-code balance (no remote URLs/anchors). From an app package README, `../../../../docs/<file>.md` reaches `docs/`; from `docs/`, app docs are `../packages/twenty-apps/internal/<app>/README.md`.
 
 ---
 
@@ -80,4 +81,13 @@ after each iteration and it's included in prompts for context.
   - The 4 touched specs are run as `npx jest <paths> --config=packages/twenty-front/jest.config.mjs`; `npx nx lint:diff-with-main twenty-front` always says "No changed files." for uncommitted work, so the covering lint gate is direct `npx oxlint --type-aware` + `npx oxfmt --check`.
   - `WorkbenchWidgetDock.tsx` carries pre-existing invalid CSS (`min-workbenchwidgetdockwidth`, `workbenchwidgetdockwidth`, `@media (max-workbenchwidgetdockwidth: …)`), so its width transition and <1200px responsive rules never apply — flagged, not fixed (layout scope).
   - US-003 is `partial` (journal template + Cmd+K quick capture absent), so this pass covers the P10 surfaces that exist; those two need their own check when they land.
+---
+
+## 2026-09-19 - US-007
+- Wrote user-facing feature docs: new per-app `README.md` for `a2e-documents`, `a2e-projects`, `a2e-drive`, `a2e-chat`, a new cross-surface `docs/features.md`, and a new "Realtime gateway requirements (WebSocket + Redis)" section in `DEPLOY.md`; registered the five new docs in `docs/scripts/check-docs.mjs` and linked the feature guide from `README.md` / `docs/README.md`.
+- Files changed: `packages/twenty-apps/internal/{a2e-documents,a2e-projects,a2e-drive,a2e-chat}/README.md`, `docs/features.md`, `DEPLOY.md`, `docs/README.md`, `README.md`, `docs/scripts/check-docs.mjs`, `docs/plan/phases/phase-10-report.md`, `.ralph-tui/progress.md`.
+- **Learnings:**
+  - The realtime transport is `/realtime` WebSocket mounted on the same HTTP port as the API (raw `ws`, no separate port); Redis pub/sub on `a2e:rt:<topic>` is fan-out only, not a replay log, and presence uses short TTL keys.
+  - `docs/scripts/check-docs.mjs` only checks paths in `MAINTAINED_DOCUMENTS`; add new docs there or they are ungated. Doc-only work runs `node docs/scripts/check-docs.mjs` + `node --test docs/scripts/check-docs.test.mjs`; package lint/typecheck are N/A.
+  - The app READMEs must describe declared metadata vs. actually surfaced UI: a2e-documents declares comment/revision objects with no editing surface, and the Projects `extract-tasks-from-document` AI tool is a deliberate `STUB_NOT_IMPLEMENTED`.
 ---

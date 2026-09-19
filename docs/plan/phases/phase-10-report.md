@@ -70,3 +70,17 @@ CLAIMED — US-006/a11y-pass — deepseek-v4.1-flash — 2026-09-19T10:49:27Z �
 **Pre-existing bug found, NOT fixed (out of scope):** `WorkbenchWidgetDock.tsx` `StyledDockRoot` uses invalid CSS from its original commit (`min-workbenchwidgetdockwidth`, `workbenchwidgetdockwidth`, `@media (max-workbenchwidgetdockwidth: …)`), so the width transition the reduced-motion rule targets never fires and the <1200px overlay media queries never apply. Left untouched (layout change, not an a11y fix) — flagged for the orchestrator to schedule separately.
 **Remaining:** P10 open: US-003 journal/quick-capture remainder, US-007 docs, this US-006; plus the P9/app-search US-008..015 batch II
 **Next:** orchestrator Tier-2 a11y rendering pass; executors — US-003 journal doc template (`a2e-documents/src/lib/starter-templates.ts` + test) per the earlier entry's Next, or US-007 docs.
+
+CLAIMED — US-007/docs-per-app-and-gateway — deepseek-v4.1-flash — 2026-09-19T10:58:07Z — base 61a39e7181fc7362152474ece61aca28f2ffab66
+
+## 2026-09-19 11:14 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-007 P10: Docs — user-facing feature docs per app + self-host gateway requirements · **Slice:** the task's single bullet — per-app README feature docs + self-host gateway (ws, Redis) docs
+**Claim:** done-for-review
+**Ready-to-tick:** yes — docs-only change; `docs/scripts/check-docs.mjs` (the repo doc gate) and its own test are green; no package source, spec or schema changed, so package lint/typecheck/tests are N/A per the phase-report precedent
+**Base:** 61a39e7181fc7362152474ece61aca28f2ffab66
+**Changed:** new `packages/twenty-apps/internal/a2e-documents/README.md`, `.../a2e-projects/README.md`, `.../a2e-drive/README.md`, `.../a2e-chat/README.md`, new `docs/features.md`; `DEPLOY.md` (new "Realtime gateway requirements (WebSocket + Redis)" section); `docs/README.md` + `README.md` (link the feature guide); `docs/scripts/check-docs.mjs` (register the 5 new maintained docs); `docs/plan/phases/phase-10-report.md`, `.ralph-tui/progress.md`
+**Checks:** `node docs/scripts/check-docs.mjs` → PASS: 25 maintained documents, 198 local inline links, balanced code fences; `node --test docs/scripts/check-docs.test.mjs` → 6 tests / 6 PASS; package lint/typecheck/unit → N/A (no `.ts/.tsx` touched, so no package gate applies; app package gates unaffected by README-only additions)
+**Missing for tick:** none required by the story. The READMEs describe **observed** source behavior, not runtime verification; no browser/e2e/Tier-2 check is part of US-007. If the orchestrator wants runtime proof of the gateway, that is the separate E12/realtime acceptance, not this documentation task.
+**Do not redo:** a2e-accounting already has a user-facing README (left untouched); `docs/features.md` is the cross-surface index and links each app README; the self-host facts live in `DEPLOY.md` next to the existing Postgres/Redis matrix (compose pins `redis:7`, no host port, `/realtime` on the API port). Do not restate the P10 front-module work (US-002..006) as shipped product features.
+**Remaining:** P10 open: US-003 journal/quick-capture remainder, US-006 (done-for-review, awaiting tick), this US-007; plus the P9/app-search US-008..015 batch II
+**Next:** orchestrator tick pass for US-006/US-007 then Tier-2 E12 solo/no-AI journeys; executor next free P10 slice is US-003's journal doc template (`a2e-documents/src/lib/starter-templates.ts` + its test) per the earlier entries, or the P9/app-search batch.

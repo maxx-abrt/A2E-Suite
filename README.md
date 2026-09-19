@@ -20,6 +20,7 @@ finance app (`a2e-accounting`). Existing CRM journeys remain part of the suite.
 | Understand the fork | [Documentation home](docs/README.md) |
 | Find or install Bilan / Bureau | [Applications and troubleshooting](docs/applications.md) |
 | Understand the intended experience | [Product, templates and file lifecycle](docs/product-experience.md) |
+| Browse what each app and surface does | [Feature surfaces](docs/features.md) |
 | Pick development work | [Delivery plan](PLAN.md) and [architecture audit](docs/repository-architecture-audit.md) |
 | Contribute or run checks | [Agent guide](AGENTS.md), [codebase map](docs/plan/01-codebase-map.md), [verification](docs/verification.md) |
 | Self-host | [Deployment guide](DEPLOY.md); app provisioning is a separate step |

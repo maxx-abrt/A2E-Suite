@@ -12,6 +12,7 @@ explains the fork; upstream product documentation lives in
 | Execute one planned task (executor) | [PROMPT.md](../PROMPT.md) executor workflow + PLAN.md's execution order (or a pinned `docs/tasks/` brief) | Only the chosen task's section + the files it touches |
 | Verify and tick work in batch (orchestrator) | [PROMPT.md](../PROMPT.md) + the new executor phase-report entries | [Delivery plan](../PLAN.md) current state + the diffs |
 | Understand the product and naming | [Product experience](product-experience.md) | [Delivery plan](../PLAN.md) |
+| See what each app and surface does | [Feature surfaces](features.md) | The linked app `README.md` and its source |
 | Find Bilan, Bureau or the app installer | [Applications runbook](applications.md) | The linked catalog, installer and preset source |
 | Locate the code for a change | [Codebase map](plan/01-codebase-map.md) | One adjacent implementation and its tests |
 | Build a native feature | [Integration blueprint](plan/03-integration-blueprint.md) | [Native patterns](plan/04-twenty-native-law.md), [app authoring](../packages/twenty-apps/README-A2E.md) |
