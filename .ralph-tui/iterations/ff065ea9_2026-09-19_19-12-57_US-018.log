@@ -1,0 +1,321 @@
+# Iteration 3 Log
+
+## Metadata
+
+- **Task ID**: US-018
+- **Task Title**: P1.6b: registration failure and partial results — keep successful work, surface exactly what failed, resume with revalidation
+- **Description**: As a workspace owner whose setup operation partially failed, I want the successful steps kept, the failed step named with a safe error, and a resume that revalidates permissions and versions, so that ...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T17:12:57.729Z
+- **Ended At**: 2026-09-19T17:19:27.592Z
+- **Duration**: 6m 29s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ ls docs/plan/phases/
+[94m[bash][0m $ grep -n "P1.6b\|P1\.6b\|US-01[6-9]" PLAN.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "US-01[6-9]\|P1.6b\|CLAIMED" docs/plan/phases/phase-01-report.md | tail -60
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ ls -la packages/twenty-server/src/engine/core-modules/onboarding/ && echo "---tests---" && ls -la pa...
+[94m[read][0m
+[94m[read][0m
+Now let me read the existing tests and the contract doc §4-§6.
+
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[read][0m
+Now let me look at the existing service spec and integration spec for registration failure, plus fixtures.
+
+Now let me read the integration spec for registration failure and the fixtures.
+
+[94m[bash][0m $ grep -rln "concurrent-same-key\|concurrentSameKey" packages/twenty-server/test packages/twenty-serve...
+[94m[read][0m
+[94m[bash][0m $ grep -rln "applyWorkspaceTemplateOperation\|concurrent-same-key\|template-operation" packages/twenty...
+Now let me look at the integration spec mentioned in the report and the resolver.
+
+[94m[bash][0m $ grep -rln "applyWorkspaceTemplateOperation\|concurrent-same-key\|template-operation" packages/twenty...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/onboarding/onboarding.resolver.ts
+Now let me read the resolver and DTO to understand the full contract surface.
+
+[94m[bash][0m $ grep -n "CLAIMED" docs/plan/phases/phase-01-report.md | tail -5
+Now I understand the codebase. Let me check the task dependencies are met (US-017 is done-for-review) and claim my slice. Let me check for other claims in the last 2 hours.
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+US-017 is done-for-review (not committed). US-016/017 changed test files only. My slice touches the same service file's test area but US-017 is complete. No conflict. Let me claim.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ grep -n "US-018/registration-failure-partial-resume" docs/plan/phases/phase-01-report.md
+Claim is the only one for this slice. Now let me analyze the acceptance gaps. The service already implements partial failure/resume. The task's key unmet acceptance is:
+
+1. "Unit tests cover the failure/partial/resume paths against the P1.6a contract shapes" — there ARE tests, but let me assess which gaps remain.
+2. "Optional steps can be skipped without discarding the operation result; unavailable optional apps are excluded rather than failing the bundle"
+
+Let me examine the definitions and check the optional-app behavior more carefully.
+
+[94m[read][0m
+[94m[read][0m
+Important observation: **`optionalApplicationUniversalIdentifiers` is empty for every template.** So the acceptance "optional steps can be skipped without discarding the operation result; unavailable optional apps are excluded rather than failing the bundle" is NOT currently reachable — there are no optional apps declared. Also there is a critical bug:
+
+Looking at `runRemainingSteps` `set-workspace-template` logic:
+- `failedInstallSteps` = install-app steps not succeeded
+- `optionalInstallSteps` = install-app steps not in `requiredApplicationUniversalIdentifiers`
+- `blockingFailedSteps` = failed steps not in optional
+
+But **all apps passed in `requiredApplicationUniversalIdentifiers` are by definition required** (deselected optionals are removed from that list). The `optionalInstallSteps` computation is backwards: apps NOT in `requiredApplicationUniversalIdentifiers` are the deselected optionals — which aren't even in the steps list. Let me re-check.
+
+Actually `buildInitialSteps` builds install steps from `requiredApplicationUniversalIdentifiers`. So all install steps are required. `optionalInstallSteps` would be empty always. So a failed install always blocks. That's correct for required, but there's no optional install path at all.
+
+Now, the task's specific first unmet bullet. Let me re-read the acceptance. The task is `US-018 - P1.6b: registration failure and partial results`. Prerequisite US-017 done. The integration spec already exercises registration failure + same-key resume at Tier 1. The unit spec exercises it too.
+
+Let me determine the actual first unmet acceptance gap. Let me check: "Optional steps can be skipped without discarding the operation result; unavailable optional apps are excluded rather than failing the bundle."
+
+This is the unmet gap. The definitions have empty optional lists, so no template exercises an optional app. But more importantly, the code in `set-workspace-template` handles failed optional install steps — yet no optional install steps are ever built. Let me verify by checking if optional apps are ever added as steps.
+
+`buildInitialSteps` only iterates `requiredApplicationUniversalIdentifiers`. Optional-but-not-deselected apps are *not* installed at all! That's a real defect: the definition's optional apps (when non-empty in future) would never be installed. But currently optional lists are empty so it's latent.
+
+Let me check git log to see if this was the P1.6b design intent. Let me re-read the contract §4: "selectedAppUniversalIdentifiers?: string[]; // subset of definition apps (C2: allow exclusion of optional apps)". And the negative implemented form: required = all minus optional minus deselected. So optional apps NOT deselected should be installed. The doc §3: "must treat required-but-unregistered apps as failed (or skipped if optional)".
+
+So the current `buildInitialSteps` ignoring non-deselected optional apps is a genuine gap. But no template currently declares optional apps. Hmm.
+
+Let me check the sibling suite `template-unavailable-apps-first-use.integration-spec.ts` which covers P1.7c unavailable apps, and understand expectations.
+
+[94m[bash][0m $ grep -n "optional" docs/plan/phases/phase-01-report.md | head -40
+Now I have a clear picture. The registration-failure and partial-resume behavior exists and is tested (unit + integration). The genuine unmet acceptance bullet is:
+
+**"Optional steps can be skipped without discarding the operation result; unavailable optional apps are excluded rather than failing the bundle."**
+
+The definitions declare no optional apps, and the service's `set-workspace-template` logic for optional install steps is unreachable (all built install steps are required). So there's no coverage/proof that optional apps are excluded rather than blocking.
+
+But wait — the task says "Registration failure and partial results". Let me re-read the PRD acceptance carefully:
+
+- AC2: failure mid-operation keeps successful steps, marks failed step with safe localized error/retry info, never reports entire preset applied → **already implemented + tested** (unit `marks a missing app registration...`, integration second case).
+- AC3: Retry after failure resumes same operation without redoing succeeded steps, revalidates permissions and versions on resume → **resume tested**; but "revalidates permissions and versions on resume" — versions: on resume, failed install steps are re-run through `installTemplateApplication` which does `validateWorkspaceCompatibility` again. Permissions: server-derived via resolver guard, no re-check needed (authorization happens per request). Let me verify: the retry is a new GraphQL request, so the `SettingsPermissionGuard` re-runs. Good.
+- AC5: Optional steps skipped; unavailable optional apps excluded rather than failing bundle → **genuine gap** (no optional apps declared, no unit proof).
+
+The most valuable, in-scope slice: add unit coverage that proves the partial/failure/resume paths and optional-app exclusion behavior, and if needed fix the optional-app handling defect. But since no template declares optional apps, adding unit proof requires the service to actually build optional install steps for non-deselected optional apps.
+
+Let me check: is ignoring non-deselected optional apps a bug that would break bundles? Currently every definition has empty optional lists, so no runtime impact. The task explicitly wants "unavailable optional apps are excluded rather than failing the bundle."
+
+Let me check git history / PLAN for whether optional apps were meant to be installed. Read contract again §4: positive form "selectedAppUniversalIdentifiers: subset of definition apps (C2: allow exclusion of optional apps)". So selected = to install. The negative form: omitted field = install everything. Required = all - optional - deselected. So **optional apps that are not deselected should be installed**. `buildInitialSteps` using only `requiredApplicationUniversalIdentifiers` drops them. That's a latent defect.
+
+However, maybe the design intends: optional apps are omitted from install and only appear in preview? That contradicts "unavailable optional apps are excluded rather than failing the bundle" which implies optional apps ARE attempted and if unavailable, excluded.
+
+Let me look for P1.7c conclusions or any report note about optional apps.
+
+[94m[read][0m
+Line 675 confirms it: **"app-optional deselection (E01) is untestable until P1.6d marks an app optional (`optionalApplicationUniversalIdentifiers` is empty)"**.
+
+So the acceptance bullet "Optional steps can be skipped... unavailable optional apps are excluded rather than failing the bundle" cannot be met by declaring optional apps (that's product/content work, D02/P1.6d) without touching definitions and disrupting the fixture conformance spec. But the *service behavior* can be unit-proven by constructing a test with a template that has optional apps. Since definitions are code constants, the service reads them via `getWorkspaceTemplateDefinition(template)`.
+
+Let me check that util.
+
+[94m[bash][0m $ grep -rn "optionalApplication\|requiredApp\|deselected" packages/twenty-front/src/modules/a2e-worksp...
+The task's first unmet acceptance bullet is clear: **unit tests covering the failure/partial/resume paths against the P1.6a contract shapes**, and specifically the optional-step exclusion behavior. The core failure/resume behavior is implemented; what's missing is proof of the *optional* path and the contract-shape conformance.
+
+Given the executor contract says "your slice = the assigned task's FIRST unmet bullet or acceptance gap", and there are already integration tests for registration failure, the highest-value in-scope slice is:
+
+**Add focused unit tests proving: (1) partial failure keeps succeeded steps and marks exact failures with contract-shaped steps; (2) resume revalidates versions on retry; (3) an optional app that is unavailable is excluded (skipped/failed as optional) rather than blocking `set-workspace-template`; (4) succeeded optional deselect does not discard result.**
+
+But #3 requires the service to actually attempt non-deselected optional apps. Currently it does not — optional apps that aren't deselected are silently omitted. That IS the defect to fix: "unavailable optional apps are excluded rather than failing the bundle" implies optional apps should be installed when available and excluded (not fail the bundle) when unavailable.
+
+Let me verify the intended semantics more rigorously by checking the front-end mirror types/usage of optional.
+
+[94m[read][0m
+The front-end treats all non-deselected preview apps (including optional) as selected for install, with checkboxes only for optional. So yes, non-deselected optional apps should be installed; unavailable optional apps should be excluded rather than block the bundle. The current service silently drops them AND would block if they were included and failed. Let me look at the required/optional checkbox logic.
+
+[94m[read][0m
+Confirmed. Optional apps default checked (included). So the service must include non-deselected optional apps in the install steps. This is the latent defect and the first unmet acceptance gap.
+
+Let me now design the slice. I'll:
+
+1. Fix `applyWorkspaceTemplateOperation` to compute `selectedApplicationUniversalIdentifiers` = all definition apps minus deselected (both required and non-deselected optional), and pass those to the operation, while also passing the optional set so `set-workspace-template` treats failed optional installs as non-blocking.
+2. Add unit tests proving: partial failure retains succeeded steps; failed required step blocks template; failed optional step does not block (excluded); resume revalidates version (compatibility failure on retry) and re-runs only failed steps; succeeded steps untouched; contract shapes.
+
+But changing behavior risks breaking existing tests/fixtures. Let me carefully verify the current semantics with the `requiredApplicationUniversalIdentifiers` naming. The method currently filters `definition.applicationUniversalIdentifiers` by:
+- not in `optionalApplicationUniversalIdentifiers`
+- not in `deselectedOptionalAppUniversalIdentifiers`
+
+So `requiredApplicationUniversalIdentifiers` = required minus... wait, both conditions. So it's "required apps that aren't deselected" (deselected optionals aren't in required anyway). It excludes optional apps entirely. So currently optional apps are never installed. To include non-deselected optionals, I need a separate list.
+
+Let me re-read `runRemainingSteps` optional logic. It computes `optionalInstallSteps` = install steps whose target is NOT in `requiredApplicationUniversalIdentifiers`. If I pass a `selectedApplicationUniversalIdentifiers` including optionals, then `required` list correctly identifies which failures block. Actually the current code passes `requiredApplicationUniversalIdentifiers` (only required) and checks failed steps not in that list as optional. If steps now include optional apps, then optional app targets are not in `requiredApplicationUniversalIdentifiers` → correctly non-blocking. **The existing `set-workspace-template` logic already handles this correctly once steps include optional targets.** 
+
+So the minimal fix is: build steps from `selectedApplicationUniversalIdentifiers` (all minus deselected), but keep `requiredApplicationUniversalIdentifiers` for the blocking decision.
+
+Let me look at the exact code path again and check `installTemplateApplication` — it re-validates version on every run including resume. Good for "revalidates versions on resume".
+
+Permissions: "revalidates permissions on resume" is the resolver guard re-running per request. I'll note that.
+
+Let me now write the fix. Current variables:
+
+```ts
+const requiredApplicationUniversalIdentifiers =
+  definition.applicationUniversalIdentifiers.filter(
+    (applicationUniversalIdentifier) =>
+      !definition.optionalApplicationUniversalIdentifiers.includes(...) &&
+      !deselectedOptionalAppUniversalIdentifiers.includes(...),
+  );
+```
+
+I'll introduce `selectedApplicationUniversalIdentifiers` = definition apps minus deselected, and keep `requiredApplicationUniversalIdentifiers` as-is. Then pass both through. `buildInitialSteps` iterates selected. `set-workspace-template` uses required for blocking. `resolveSampleSeedingStep` uses succeeded install steps — includes optional, good (their hooks seed too).
+
+Let me check how `requiredApplicationUniversalIdentifiers` is threaded: parameter of `runOperationUnderIdempotencyLock` and `runRemainingSteps`. I'll add `selectedApplicationUniversalIdentifiers`.
+
+Wait — this changes behavior for all templates. Are there any existing optional apps? All empty. So no behavior change for current definitions. But the fixture conformance and existing tests should still pass. Good, this is additive-safe and latent-fix.
+
+Now for unit testing optional exclusion, I need a template with optional apps. I can't modify definitions without disrupting fixtures. But I *can* mock `get-workspace-template-definition.util`? The service imports it statically. In jest I can `jest.mock` the util module. Let me check how the fixtures spec validates definitions — it compares to `WORKSPACE_TEMPLATE_DEFINITIONS`. If I mock the util only in my new spec, no impact.
+
+Alternatively, I can add optional apps to a real definition — but that's product/content (D02). Better to mock the util in the new service unit spec.
+
+Actually, simpler: `getWorkspaceTemplateDefinition` reads `WORKSPACE_TEMPLATE_DEFINITIONS`. I can `jest.mock` that module in a new spec file to provide a definition with optional apps. Let me verify the fixtures spec doesn't depend on the real module at collector time — it's a separate spec file, mocking is per-file. Good.
+
+Let me design the new spec file `workspace-template.service.partial-failure.spec.ts`. I'll mock `get-workspace-template-definition.util`.
+
+Hmm, but mocking the util means I lose the real definition shape. Let me instead mock the constant module? The util imports `WORKSPACE_TEMPLATE_DEFINITIONS` from the constant. I can `jest.mock` the constant module with a full record. But `getWorkspaceTemplateDefinition` throws for missing enum keys — I need entries for all templates I use.
+
+Actually cleanest: mock `get-workspace-template-definition.util` and return a definition for the template under test. Let me write it that way.
+
+Let me verify the service also imports `TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS` and `STANDARD_NAVIGATION_MENU_ITEMS` — only used in preview/nav, not my path. Fine.
+
+Let me now write the implementation change first.
+
+Current lines 115-124 and the calls at 151-162, 270-276, 342-354.
+
+Let me make the edit.
+
+[94m[edit][0m
+Now let me make the implementation change. I'll compute a `selectedApplicationUniversalIdentifiers` list (all apps minus deselected, including non-deselected optionals) and thread it through as the step-building list, keeping `requiredApplicationUniversalIdentifiers` for the blocking decision.
+
+[94m[edit][0m
+[94m[edit][0m
+Now update `runOperationUnderIdempotencyLock` signature and the `buildInitialSteps`/`runRemainingSteps` calls.
+
+[94m[read][0m
+Now the two `runRemainingSteps` calls and `buildInitialSteps` inside the lock. Let me read that region.
+
+[94m[edit][0m
+I need to update: the resume `runRemainingSteps` (needs selected for step-identity? no — it uses previousSteps), the initial `buildInitialSteps` should use `selectedApplicationUniversalIdentifiers`, and the initial `runRemainingSteps` should pass both. Let me check `runRemainingSteps` signature — it needs `requiredApplicationUniversalIdentifiers` for the blocking decision but steps come from `previousSteps`. So no change to its calls except initial steps. Let me update buildInitialSteps to use selected, and its call site.
+
+Note on resume: `runRemainingSteps` receives `existingOperation.steps`. Its blocking decision uses `requiredApplicationUniversalIdentifiers` (correct). The `optionalInstallSteps` derived there = install steps not in required = optional installs. Good, no change needed.
+
+Update `buildInitialSteps` call and signature.
+
+[94m[edit][0m
+[94m[write][0m "import { ModuleRef } from '@nestjs/core';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+
+import { ApplicationInstallService } from '... (13454 chars)"
+Now let me check the `runRemainingSteps` optional logic once more. Currently:
+
+```ts
+const failedInstallSteps = steps.filter(install && status !== 'succeeded');
+const optionalInstallSteps = steps.filter(install && !requiredApplicationUniversalIdentifiers.includes(target));
+const blockingFailedSteps = failedInstallSteps.filter(failed => !optionalInstallSteps.some(opt => opt.target === failed.target));
+```
+
+If a failed install's target isn't in `required`, it's treated as optional → non-blocking. That's correct now that optional steps exist. But note: a **pending** install step (not succeeded) also counts as failed here. On resume, pending optional/required steps are re-run first, so by the time set-workspace-template runs they've been updated. Fine.
+
+One subtlety: the definition currently has no optional apps, so this is latent. My change makes optional apps install. But is that the right semantics vs. only-optional apps? The preview shows optional apps with checkboxes and `required: false`. Yes.
+
+Now let me write the new unit spec. I'll mock the definition util to provide a template with a required + optional app. Let me write `workspace-template.service.partial-failure.spec.ts`.
+
+Let me first check the enum values for available templates and pick one. I'll use `WorkspaceTemplate.NON_PROFIT` and mock its definition. Actually mocking `get-workspace-template-definition.util` is clean but `jest.mock` hoisting with a mutable variable needs care. Let me instead build a full `WORKSPACE_TEMPLATE_DEFINITIONS` mock for the constants module.
+
+The util imports from the constant module: `WORKSPACE_TEMPLATE_DEFINITIONS` and type. I'll `jest.mock` the constant module and provide a record with the templates I use. But the constant module also exports `TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS` and `WorkspaceTemplateBundleContent` type. The service imports `TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS` at load. I need to provide all runtime exports.
+
+Simpler and more robust: mock `get-workspace-template-definition.util` only. The service imports `getWorkspaceTemplateDefinition` from it. Mock returns a per-template definition. Let me do that.
+
+Let me write the spec now.
+
+Now run the new spec plus the existing service spec to catch regressions.
+
+[94m[bash][0m $ npx jest src/engine/core-modules/onboarding/__tests__/workspace-template.service.partial-failure.spe...
+[94m[edit][0m
+The version-validation mock uses `mockResolvedValueOnce` but each install runs validation, plus `resolveSampleSeedingStep` also calls registration lookups (not version). The install order: required first, then optional. So the first `validateWorkspaceCompatibility` call is for required, second for optional. I wanted required to fail, so it should be the FIRST call incompatible. Let me flip the order.
+
+Actually looking: `mockResolvedValueOnce({compatible:true}).mockResolvedValueOnce({compatible:false})` → first call (required) compatible=true succeeds, second (optional) incompatible. I want required to fail. Flip.
+
+Also note `resolveSampleSeedingStep` is only present when sampleContentEnabled or definition.sampleContentEnabled — neither. Good, no extra calls.
+
+Let me fix the test.
+
+Now the retry: after first attempt, required failed, optional succeeded. On resume, `runRemainingSteps` re-runs only the failed required step. But `validateWorkspaceCompatibility` default is `mockResolvedValue({compatible:true})` — but `mockResolvedValueOnce` consumes first. After `mockClear()` in the test, implementation is cleared? `mockClear` only clears calls, not implementations. The Once queue was consumed. The base implementation `mockResolvedValue({compatible:true})` set in beforeEach remains. Good.
+
+But wait — on the second attempt, `findOneByUniversalIdentifierGlobal` is also called for the failed step. Fine.
+
+Let me rerun.
+
+
+
+[94m[bash][0m $ npx jest src/engine/core-modules/onboarding/__tests__/workspace-template.service.partial-failure.spe...
+All 5 pass. Now run existing specs to check for regressions.
+
+[94m[bash][0m $ npx jest src/engine/core-modules/onboarding --config=packages/twenty-server/jest.config.mjs 2>&1 | g...
+All 71 pass. Now typecheck and lint/format the touched files.
+
+
+
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -20
+Typecheck clean. Now format/lint the two touched files directly (since `lint:diff-with-main` won't see untracked files).
+
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/engine/core-modules/onboarding/__tests__/workspace-tem...
+oxfmt reformatted the files. Re-run the spec after formatting.
+
+[94m[bash][0m $ npx jest src/engine/core-modules/onboarding/__tests__/workspace-template.service.partial-failure.spe...
+Now let me verify the final diff of the service change and check nothing stray.
+
+[94m[bash][0m $ git diff packages/twenty-server/src/engine/core-modules/onboarding/workspace-template.service.ts
+Now let me double-check the `set-workspace-template` optional logic handles the case correctly when there are optional steps. Let me re-read that block after my change (unchanged) with the new semantics: `optionalInstallSteps` = steps not in `requiredApplicationUniversalIdentifiers`. With selected including optionals, optional targets correctly fall outside required. Good.
+
+But there's a subtle bug: on resume, `runRemainingSteps` is passed `requiredApplicationUniversalIdentifiers` (yes, still threaded). Good.
+
+Now the `.ralph-tui` and `tasks/prd.json` dirty files are Ralph's own, not mine. Let me confirm I didn't touch them — they were dirty at start. Yes.
+
+Let me run the related integration spec? That's Tier 1 (needs Postgres/Redis). The task's Tier 0 gate only asks for targeted jest specs. The integration spec is orchestrator Tier 1/2. But my behavior change could affect it — however `optionalApplicationUniversalIdentifiers` is empty for all real templates, so behavior is identical. The existing integration spec will be unchanged. I'll list it as orchestrator check.
+
+Let me verify `prettier`/final format is stable and run oxfmt check.
+
+[94m[bash][0m $ echo "exit=$?"
+Now let me also run `npx nx lint:diff-with-main twenty-server` as the gate states (it'll show no changed files since changes are uncommitted/untracked, but the direct oxlint run above is covering). Let me confirm.
+
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-server 2>&1 | tail -15
+As expected — "No changed files" because the new file is untracked and the target diffs `main...HEAD`. The direct oxlint/oxfmt run is the covering gate.
+
+Now let me write the phase report and Ralph bridge entry.
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ grep -n "Codebase Patterns" .ralph-tui/progress.md | head
+Now the Ralph bridge entry. Let me check the progress.md format.
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+Now append the US-018 entry and add the reusable pattern for mocking code-data definitions to the top patterns section.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+Now add the reusable pattern to the top `Codebase Patterns` section.
+
+
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+Now final self-verify: git status, and re-confirm checks are green after all edits.
+
+[94m[bash][0m $ npx jest src/engine/core-modules/onboarding --config=packages/twenty-server/jest.config.mjs 2>&1 | g...
+All green. My declared changes: `workspace-template.service.ts`, the new spec, the phase report, and `.ralph-tui/progress.md`. The `.ralph-tui/session*`, `tasks/prd.json`, and the US-017 log are Ralph's own engine state (already dirty at start), not mine.
+
+Self-verify summary:
+- All checks listed with literal commands and results ✓
+- Acceptance bullets met or listed under Missing for tick ✓
+- No files outside `Changed` touched ✓
+- `git status` shows only declared + Ralph's own files ✓
+- Claim is the most recent for this slice ✓
+
+<promise>COMPLETE</promise>

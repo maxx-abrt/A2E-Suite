@@ -30,7 +30,16 @@ after each iteration and it's included in prompts for context.
   (`get-workspace-template-definition.util`) in the spec and return a crafted
   definition — never edit the shipped constant (that is a product/content call).
   See `workspace-template.service.partial-failure.spec.ts`.
-
+- **Porting a twenty-front pure util into an app lib:** an internal app's
+  `twenty-sdk`/`twenty-shared` resolve from the pinned npm version (2.31.0), not
+  the workspace, so it cannot import twenty-front internals and may lack newer
+  enum members (e.g. `AppPath.DocumentShare`). Carry a byte-compatible local
+  port in `a2e-documents/src/lib/` (see `share-crypto.ts`, `fractional-position.ts`)
+  and assert compatibility in a node test instead of casting around missing types.
+- **Unit-testing owner-side UI logic without JSX:** extract the create/copy/revoke
+  transitions into a pure reducer (`reduceDocumentSharePanel`) plus pure request
+  builders, test those with `node --test`, and let the front component only wire
+  `useReducer` + the Core API calls. The async handler glue stays Tier-2.
 ---
 
 
@@ -107,4 +116,30 @@ after each iteration and it's included in prompts for context.
   - Resume re-installing a failed app re-runs `validateWorkspaceCompatibility`
     inside `installTemplateApplication`, which is the "revalidate versions on
     resume" AC; permissions are re-checked per request by the resolver guard.
+---
+
+## 2026-09-19 - US-019
+
+- Wired the P3.2 owner-side share-management UX in the a2e-documents browser.
+  Removed the token-discarding `shareDocument`; added a `DocumentSharePanel`
+  that loads any existing share for the document, creates one with an optional
+  passphrase (encrypted client-side) and optional expiry, displays/copies the
+  `/share/<token>` path, and revokes via the workspace-scoped `deleteDocumentShare`.
+- Added pure lib `share-crypto.ts` (byte-compatible port of twenty-front's
+  `deriveShareAesGcmKey`) and `document-share-management.ts` (`buildDocumentSharePath`,
+  `buildExpiryIso`, `hasSharePassphrase`, `buildCreateDocumentShareRequest`,
+  `findDocumentShareForDocument`, `reduceDocumentSharePanel`).
+- Files changed: `src/lib/share-crypto.ts`, `src/lib/document-share-management.ts`,
+  `src/lib/__tests__/share-crypto.test.ts`,
+  `src/lib/__tests__/document-share-management.test.ts`,
+  `src/front-components/document-browser.front-component.tsx`,
+  `docs/plan/phases/phase-03-report.md`.
+- **Learnings:**
+  - The app's pinned `twenty-sdk@2.31.0` lacks `AppPath.DocumentShare` (the
+    workspace `twenty-shared` has it), so the share path is carried locally and
+    asserted in the node test; do not import the enum there.
+  - `findManyDocumentShares` is workspace-scoped and best-effort from the panel:
+    a lookup failure still leaves the create form usable.
+  - Absolute share URLs are impossible from a front component — no host-origin
+    primitive is exposed; copy the canonical app path.
 ---

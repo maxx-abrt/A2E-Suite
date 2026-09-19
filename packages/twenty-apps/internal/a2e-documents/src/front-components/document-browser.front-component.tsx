@@ -1,10 +1,27 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { AppPath, navigate } from 'twenty-sdk/front-component';
+import { AppPath, copyToClipboard, navigate } from 'twenty-sdk/front-component';
 
 import { DOCUMENT_KIND } from '../constants/field-vocabulary.ts';
 import { OBJECT_IDS } from '../constants/universal-identifiers.ts';
+import {
+  buildCreateDocumentShareRequest,
+  buildDocumentSharePath,
+  buildExpiryIso,
+  findDocumentShareForDocument,
+  INITIAL_DOCUMENT_SHARE_PANEL_STATE,
+  reduceDocumentSharePanel,
+  type DocumentShareRecord,
+} from '../lib/document-share-management.ts';
+import { encryptShareBody } from '../lib/share-crypto.ts';
 import {
   buildMoveDocumentPayload,
   collectDocumentsByIdFromSiblings,
@@ -185,6 +202,7 @@ const DocumentBrowser = () => {
   const [draggedDocumentId, setDraggedDocumentId] = useState<string | null>(
     null,
   );
+  const [shareTarget, setShareTarget] = useState<DocumentNode | null>(null);
 
   // Async readers (the page loader and the post-mutation reload) must observe
   // the latest maps without being re-created on every keystroke.
@@ -589,30 +607,6 @@ const DocumentBrowser = () => {
     await reloadTree();
   };
 
-  // Shares snapshot the CURRENT body: later edits stay private until a new
-  // link is created. v1 keeps shares unencrypted; passphrase UI arrives with
-  // the share-management surface (typed DocumentShare mutation fields are not
-  // in the generated CoreApiClient schema yet, hence the raw client call).
-  const shareDocument = async (documentNode: DocumentNode): Promise<void> => {
-    const client = new CoreApiClient();
-
-    await client.mutation({
-      createDocumentShare: {
-        __args: {
-          createDocumentShareInput: {
-            documentRecordId: documentNode.id,
-            titleSnapshot: documentNode.title,
-            bodySnapshot: documentNode.content?.blocknote ?? '',
-          },
-        },
-        id: true,
-        shareToken: true,
-      },
-    } as never);
-
-    await reloadTree();
-  };
-
   const archivedNodes = useMemo(
     () => collectArchivedNodes(documents),
     [documents],
@@ -657,6 +651,12 @@ const DocumentBrowser = () => {
         onChange={(event) => setSearchInput(event.target.value)}
         style={searchInputStyle}
       />
+      {shareTarget !== null && (
+        <DocumentSharePanel
+          documentNode={shareTarget}
+          onClose={() => setShareTarget(null)}
+        />
+      )}
       {isLoadingRoots ? (
         <p style={{ color: appTheme.textSecondary }}>Chargement…</p>
       ) : (
@@ -724,7 +724,7 @@ const DocumentBrowser = () => {
                 onInstantiate={instantiateTemplate}
                 onSaveAsTemplate={saveDocumentAsTemplate}
                 onDuplicateTemplate={duplicateTemplate}
-                onShare={shareDocument}
+                onShare={setShareTarget}
                 onArchive={archiveDocument}
                 onMove={moveDocument}
                 onKeyboardMove={moveDocumentByKeyboard}
@@ -798,6 +798,264 @@ const searchInputStyle = {
   color: appTheme.text,
   padding: appTheme.spacing1,
 } as const;
+
+const sharePanelStyle = {
+  border: `1px solid ${appTheme.border}`,
+  borderRadius: appTheme.radius,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: appTheme.spacing1,
+  padding: appTheme.spacing2,
+} as const;
+
+type DocumentSharePanelProps = {
+  documentNode: DocumentNode;
+  onClose: () => void;
+};
+
+// Owner-side share management: the passphrase never leaves the browser (the
+// body is encrypted before upload), and the returned token is what the owner
+// displays, copies and later revokes.
+const DocumentSharePanel = ({
+  documentNode,
+  onClose,
+}: DocumentSharePanelProps) => {
+  const [panelState, dispatch] = useReducer(
+    reduceDocumentSharePanel,
+    INITIAL_DOCUMENT_SHARE_PANEL_STATE,
+  );
+  const [passphrase, setPassphrase] = useState('');
+  const [expiryDate, setExpiryDate] = useState('');
+
+  // An owner who already shared this document must see that link, otherwise
+  // create would fail ALREADY_EXISTS with no way to revoke. The lookup is
+  // best-effort: a failure still leaves the create form available.
+  useEffect(() => {
+    let isCancelled = false;
+
+    dispatch({ type: 'loadStarted' });
+
+    void (async () => {
+      const client = new CoreApiClient();
+
+      try {
+        const result = (await client.query({
+          findManyDocumentShares: {
+            id: true,
+            shareToken: true,
+            documentRecordId: true,
+            expiresAt: true,
+            isPassphraseProtected: true,
+            createdAt: true,
+          },
+        } as never)) as { findManyDocumentShares?: DocumentShareRecord[] };
+
+        if (isCancelled) {
+          return;
+        }
+
+        dispatch({
+          type: 'loadSucceeded',
+          share: findDocumentShareForDocument(
+            result?.findManyDocumentShares ?? [],
+            documentNode.id,
+          ),
+        });
+      } catch {
+        if (!isCancelled) {
+          dispatch({ type: 'loadSucceeded', share: null });
+        }
+      }
+    })();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [documentNode.id]);
+
+  const handleCreate = async (): Promise<void> => {
+    dispatch({ type: 'createStarted' });
+
+    const client = new CoreApiClient();
+
+    try {
+      const request = await buildCreateDocumentShareRequest({
+        documentRecordId: documentNode.id,
+        titleSnapshot: documentNode.title,
+        bodySnapshot: documentNode.content?.blocknote ?? '',
+        passphrase,
+        expiresAt: buildExpiryIso(expiryDate),
+        encryptShareBody,
+      });
+
+      const result = (await client.mutation({
+        createDocumentShare: {
+          __args: { createDocumentShareInput: request },
+          id: true,
+          shareToken: true,
+          isPassphraseProtected: true,
+          expiresAt: true,
+        },
+      } as never)) as {
+        createDocumentShare?: {
+          shareToken: string;
+          isPassphraseProtected: boolean;
+          expiresAt: string | null;
+        };
+      };
+
+      const createdShare = result?.createDocumentShare;
+
+      if (createdShare === undefined) {
+        throw new Error('missing share');
+      }
+
+      dispatch({
+        type: 'createSucceeded',
+        share: {
+          shareToken: createdShare.shareToken,
+          isPassphraseProtected: createdShare.isPassphraseProtected,
+          expiresAt: createdShare.expiresAt,
+        },
+      });
+    } catch {
+      dispatch({ type: 'failed', message: 'La création du lien a échoué.' });
+    }
+  };
+
+  const handleCopy = async (): Promise<void> => {
+    if (panelState.shareToken === null) {
+      return;
+    }
+
+    try {
+      await copyToClipboard(buildDocumentSharePath(panelState.shareToken));
+      dispatch({ type: 'copySucceeded' });
+    } catch {
+      dispatch({ type: 'failed', message: 'La copie a échoué.' });
+    }
+  };
+
+  const handleRevoke = async (): Promise<void> => {
+    if (panelState.shareToken === null) {
+      return;
+    }
+
+    dispatch({ type: 'revokeStarted' });
+
+    const client = new CoreApiClient();
+
+    try {
+      await client.mutation({
+        deleteDocumentShare: {
+          __args: { shareToken: panelState.shareToken },
+        },
+      } as never);
+
+      dispatch({ type: 'revokeSucceeded' });
+    } catch {
+      dispatch({ type: 'failed', message: 'La révocation a échoué.' });
+    }
+  };
+
+  const isBusy =
+    panelState.status === 'creating' || panelState.status === 'revoking';
+
+  return (
+    <section style={sharePanelStyle}>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <strong>Partager « {documentNode.title} »</strong>
+        <button type="button" onClick={onClose} style={ghostButtonStyle}>
+          fermer
+        </button>
+      </div>
+      {panelState.status === 'loading' ? (
+        <span style={{ color: appTheme.textSecondary }}>
+          Chargement du lien…
+        </span>
+      ) : panelState.shareToken !== null ? (
+        <>
+          {panelState.isExisting && (
+            <span style={{ color: appTheme.textSecondary }}>
+              Un lien existe déjà pour ce document.
+            </span>
+          )}
+          <input
+            type="text"
+            readOnly
+            aria-label="Lien de partage"
+            value={buildDocumentSharePath(panelState.shareToken)}
+            style={searchInputStyle}
+          />
+          <span style={{ color: appTheme.textSecondary }}>
+            {panelState.isPassphraseProtected
+              ? 'Protégé par une phrase secrète'
+              : 'Sans phrase secrète'}
+            {panelState.expiresAt === null
+              ? ''
+              : ` — expire le ${panelState.expiresAt.slice(0, 10)}`}
+          </span>
+          <div style={{ display: 'flex', gap: appTheme.spacing2 }}>
+            <button
+              type="button"
+              disabled={isBusy}
+              onClick={() => void handleCopy()}
+              style={ghostButtonStyle}
+            >
+              {panelState.hasCopied ? 'copié' : 'copier'}
+            </button>
+            <button
+              type="button"
+              disabled={isBusy}
+              onClick={() => void handleRevoke()}
+              style={{ ...ghostButtonStyle, color: appTheme.danger }}
+            >
+              révoquer
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <label style={{ color: appTheme.textSecondary }}>
+            Phrase secrète (facultative)
+            <input
+              type="password"
+              value={passphrase}
+              onChange={(event) => setPassphrase(event.target.value)}
+              style={searchInputStyle}
+            />
+          </label>
+          <label style={{ color: appTheme.textSecondary }}>
+            Expiration (facultative)
+            <input
+              type="date"
+              value={expiryDate}
+              onChange={(event) => setExpiryDate(event.target.value)}
+              style={searchInputStyle}
+            />
+          </label>
+          <button
+            type="button"
+            disabled={isBusy}
+            onClick={() => void handleCreate()}
+            style={ghostButtonStyle}
+          >
+            {panelState.status === 'creating'
+              ? 'Création…'
+              : 'Créer le lien de partage'}
+          </button>
+          <span style={{ color: appTheme.textSecondary }}>
+            La phrase secrète est chiffrée dans le navigateur et n’est jamais
+            transmise.
+          </span>
+        </>
+      )}
+      {panelState.error !== null && (
+        <span style={{ color: appTheme.danger }}>{panelState.error}</span>
+      )}
+    </section>
+  );
+};
 
 type DocumentSectionProps = {
   title: string;
@@ -882,7 +1140,7 @@ type DocumentTreeItemProps = {
   onInstantiate: (templateDocument: DocumentNode) => Promise<void>;
   onSaveAsTemplate: (documentNode: DocumentNode) => Promise<void>;
   onDuplicateTemplate: (templateDocument: DocumentNode) => Promise<void>;
-  onShare: (documentNode: DocumentNode) => Promise<void>;
+  onShare: (documentNode: DocumentNode) => void;
   onArchive: (documentNode: DocumentNode) => Promise<void>;
   onMove: (options: {
     documentId: string;
