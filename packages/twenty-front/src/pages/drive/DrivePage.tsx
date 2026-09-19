@@ -9,6 +9,7 @@ import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { DriveBreadcrumb } from '@/drive/components/DriveBreadcrumb';
 import { DriveBulkActions } from '@/drive/components/DriveBulkActions';
+import { DriveBulkResultNotice } from '@/drive/components/DriveBulkResultNotice';
 import { DriveChildFolders } from '@/drive/components/DriveChildFolders';
 import { DriveFileGallery } from '@/drive/components/DriveFileGallery';
 import { DriveFileList } from '@/drive/components/DriveFileList';
@@ -35,13 +36,29 @@ import {
   type DriveViewMode,
 } from '@/drive/types/DriveRecord';
 import {
+  canUndoDriveBulkArchive,
+  getDriveFileDownloadUrl,
+  runDriveBulkAction,
+  toDriveBulkItem,
+  type DriveBulkFailure,
+  type DriveBulkResult,
+  type DriveBulkUndo,
+} from '@/drive/utils/driveBulkOperations';
+import {
+  filterDriveFiles,
+  getDriveFileName,
+} from '@/drive/utils/driveFileFilter';
+import {
   buildDriveFolderTree,
   getDriveBreadcrumb,
   getDriveFolderDescendantIds,
   listDriveMoveTargets,
 } from '@/drive/utils/driveFolderTree';
-import { filterDriveFiles } from '@/drive/utils/driveFileFilter';
 import { getDriveFilePreviewValue } from '@/drive/utils/driveFilePreview';
+import {
+  selectDriveFilesInRange,
+  toggleDriveFileId,
+} from '@/drive/utils/driveSelection';
 import { isDriveRecordInTrash } from '@/drive/utils/driveTrash';
 import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -142,6 +159,15 @@ const StyledFiles = styled.section`
   overflow-y: auto;
 `;
 
+// The outcome of the last bulk action, kept until dismissed or the member
+// navigates. `undo` is only populated for a trash action that will still accept
+// a restore inside the shared retention window.
+type DriveBulkNotice = {
+  completedCount: number;
+  failures: DriveBulkFailure[];
+  undo: DriveBulkUndo | null;
+};
+
 export const DrivePage = () => {
   const { t } = useLingui();
 
@@ -160,12 +186,14 @@ export const DrivePage = () => {
     renameDriveFolder,
     renameDriveFile,
     setDriveFileStarred,
-    moveDriveFilesToFolder,
     archiveDriveFiles,
     archiveDriveFolders,
     restoreDriveFiles,
     restoreDriveFolders,
     createDriveFolder,
+    moveDriveFileToFolder,
+    archiveDriveFile,
+    restoreDriveFile,
   } = useDriveActions();
 
   const { openFileUpload } = useFileUpload();
@@ -186,6 +214,10 @@ export const DrivePage = () => {
   const [includeSubfolders, setIncludeSubfolders] = useState(false);
   const [isTrashView, setIsTrashView] = useState(false);
   const [selectedFileIds, setSelectedFileIds] = useState<string[]>([]);
+  const [selectionAnchorId, setSelectionAnchorId] = useState<string | null>(
+    null,
+  );
+  const [bulkNotice, setBulkNotice] = useState<DriveBulkNotice | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
   const setFilePreview = useSetAtomState(filePreviewState);
@@ -260,12 +292,37 @@ export const DrivePage = () => {
     includeSubfolders,
   ]);
 
+  const selectedFiles = useMemo(
+    () => visibleFiles.filter((file) => selectedFileIds.includes(file.id)),
+    [visibleFiles, selectedFileIds],
+  );
+
+  const allFilesSelected =
+    visibleFiles.length > 0 && selectedFileIds.length === visibleFiles.length;
+  const canUndoBulkArchive = canUndoDriveBulkArchive(bulkNotice?.undo ?? null);
+
   const loading = foldersLoading || filesLoading;
   const hasError = isDefined(foldersError) || isDefined(filesError);
 
   const resetSelection = () => {
     setSelectedFileIds([]);
+    setSelectionAnchorId(null);
     setActionError(null);
+  };
+
+  // Bulk failures live in the notice, not the single-action error line, and the
+  // failed rows stay selected so the member can retry exactly what failed.
+  const applyBulkResult = (
+    result: DriveBulkResult,
+    undo: DriveBulkUndo | null,
+  ) => {
+    setBulkNotice({
+      completedCount: result.succeededIds.length,
+      failures: result.failures,
+      undo,
+    });
+    setSelectedFileIds(result.failures.map((failure) => failure.id));
+    setSelectionAnchorId(null);
   };
 
   const runAction = async (action: () => Promise<unknown>) => {
@@ -281,22 +338,41 @@ export const DrivePage = () => {
   const handleSelectFolder = (folderId: string | null) => {
     setSelectedFolderId(folderId);
     setIsTrashView(false);
+    setBulkNotice(null);
     resetSelection();
   };
 
   const handleOpenTrash = () => {
     setIsTrashView(true);
     setSelectedFolderId(null);
+    setBulkNotice(null);
     resetSelection();
   };
 
-  const handleToggleSelection = (fileId: string) => {
-    setSelectedFileIds((currentIds) =>
-      currentIds.includes(fileId)
-        ? currentIds.filter((id) => id !== fileId)
-        : [...currentIds, fileId],
-    );
+  const handleToggleSelection = (fileId: string, isRange: boolean = false) => {
+    if (isRange && isDefined(selectionAnchorId)) {
+      setSelectedFileIds(
+        selectDriveFilesInRange({
+          orderedFileIds: visibleFiles.map((file) => file.id),
+          anchorId: selectionAnchorId,
+          targetId: fileId,
+        }),
+      );
+      return;
+    }
+
+    setSelectedFileIds((currentIds) => toggleDriveFileId(currentIds, fileId));
+    setSelectionAnchorId(fileId);
   };
+
+  const handleSelectAll = () => {
+    setSelectedFileIds(
+      allFilesSelected ? [] : visibleFiles.map((file) => file.id),
+    );
+    setSelectionAnchorId(null);
+  };
+
+  const handleDismissBulkNotice = () => setBulkNotice(null);
 
   const handleToggleStar = (file: DriveFile) => {
     void runAction(() => setDriveFileStarred(file.id, !file.starred));
@@ -417,31 +493,92 @@ export const DrivePage = () => {
     });
   };
 
-  const handleBulkMove = (folderId: string | null) => {
-    const fileIds = selectedFileIds;
+  const handleBulkDownload = () => {
+    const items = selectedFiles.map(toDriveBulkItem);
 
-    void runAction(async () => {
-      await moveDriveFilesToFolder(fileIds, folderId);
-      resetSelection();
-    });
+    void (async () => {
+      const result = await runDriveBulkAction({
+        items,
+        action: async ({ file }) => {
+          const url = getDriveFileDownloadUrl(file);
+
+          if (!isDefined(url)) {
+            return 'download-url-missing';
+          }
+
+          await downloadFile(url, getDriveFileName(file));
+        },
+      });
+
+      applyBulkResult(result, null);
+    })();
+  };
+
+  const handleBulkMove = (folderId: string | null) => {
+    const items = selectedFiles.map(toDriveBulkItem);
+
+    void (async () => {
+      const result = await runDriveBulkAction({
+        items,
+        action: ({ id }) => moveDriveFileToFolder(id, folderId),
+      });
+
+      applyBulkResult(result, null);
+    })();
   };
 
   const handleBulkArchive = () => {
-    const fileIds = selectedFileIds;
+    const items = selectedFiles.map(toDriveBulkItem);
+    const archivedAt = new Date().toISOString();
 
-    void runAction(async () => {
-      await archiveDriveFiles(fileIds, new Date().toISOString());
-      resetSelection();
-    });
+    void (async () => {
+      const result = await runDriveBulkAction({
+        items,
+        action: ({ id }) => archiveDriveFile(id, archivedAt),
+      });
+
+      const undo: DriveBulkUndo | null =
+        result.succeededIds.length > 0
+          ? {
+              items: items
+                .filter((item) => result.succeededIds.includes(item.id))
+                .map(({ id, label }) => ({ id, label })),
+              archivedAt,
+            }
+          : null;
+
+      applyBulkResult(result, undo);
+    })();
   };
 
   const handleBulkRestore = () => {
-    const fileIds = selectedFileIds;
+    const items = selectedFiles.map(toDriveBulkItem);
 
-    void runAction(async () => {
-      await restoreDriveFiles(fileIds);
-      resetSelection();
-    });
+    void (async () => {
+      const result = await runDriveBulkAction({
+        items,
+        action: ({ id }) => restoreDriveFile(id),
+      });
+
+      applyBulkResult(result, null);
+    })();
+  };
+
+  const handleUndoBulkArchive = () => {
+    const undo = bulkNotice?.undo;
+
+    if (!isDefined(undo)) {
+      return;
+    }
+
+    void (async () => {
+      const result = await runDriveBulkAction({
+        items: undo.items,
+        action: ({ id }) => restoreDriveFile(id),
+      });
+
+      applyBulkResult(result, null);
+    })();
   };
 
   return (
@@ -483,6 +620,9 @@ export const DrivePage = () => {
                 onArchive={handleBulkArchive}
                 onRestore={handleBulkRestore}
                 onClearSelection={resetSelection}
+                totalFileCount={visibleFiles.length}
+                allSelected={allFilesSelected}
+                onSelectAll={handleSelectAll}
               />
               <DriveTrashedFolders
                 folders={trashedFolders}
@@ -523,6 +663,10 @@ export const DrivePage = () => {
                 onArchive={handleBulkArchive}
                 onRestore={handleBulkRestore}
                 onClearSelection={resetSelection}
+                totalFileCount={visibleFiles.length}
+                allSelected={allFilesSelected}
+                onSelectAll={handleSelectAll}
+                onDownload={handleBulkDownload}
               />
               {filters.search === '' && (
                 <DriveChildFolders
@@ -531,6 +675,15 @@ export const DrivePage = () => {
                 />
               )}
             </>
+          )}
+
+          {isDefined(bulkNotice) && (
+            <DriveBulkResultNotice
+              completedCount={bulkNotice.completedCount}
+              failures={bulkNotice.failures}
+              onUndo={canUndoBulkArchive ? handleUndoBulkArchive : undefined}
+              onDismiss={handleDismissBulkNotice}
+            />
           )}
 
           {isDefined(actionError) && <StyledStatus>{actionError}</StyledStatus>}

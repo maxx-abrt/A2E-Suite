@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -59,8 +59,33 @@ describe('DriveFileList', () => {
     await userEvent.click(screen.getByTestId('drive-file-select-f1'));
     await userEvent.click(screen.getByTestId('drive-file-star-f1'));
 
-    expect(onToggleSelection).toHaveBeenCalledWith('f1');
+    expect(onToggleSelection).toHaveBeenCalledWith('f1', false);
     expect(onToggleStar).toHaveBeenCalledWith(file);
+  });
+
+  it('reports a shift-click as a range selection', () => {
+    const onToggleSelection = jest.fn();
+
+    render(
+      <DriveFileList
+        files={[buildFile({ id: 'f1' }), buildFile({ id: 'f2' })]}
+        selectedFileIds={[]}
+        isTrashView={false}
+        onToggleSelection={onToggleSelection}
+        onToggleStar={jest.fn()}
+        onRename={jest.fn()}
+        onArchive={jest.fn()}
+        onRestore={jest.fn()}
+        onPreview={jest.fn()}
+      />,
+      { wrapper: Wrapper },
+    );
+
+    fireEvent.click(screen.getByTestId('drive-file-select-f2'), {
+      shiftKey: true,
+    });
+
+    expect(onToggleSelection).toHaveBeenCalledWith('f2', true);
   });
 
   it('renames a file through the inline input', async () => {

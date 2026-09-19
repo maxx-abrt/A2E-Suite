@@ -107,7 +107,7 @@ export type DriveFileGalleryProps = {
   files: DriveFile[];
   selectedFileIds: string[];
   isTrashView: boolean;
-  onToggleSelection: (fileId: string) => void;
+  onToggleSelection: (fileId: string, isRange: boolean) => void;
   onToggleStar: (file: DriveFile) => void;
   onArchive: (file: DriveFile) => void;
   onRestore: (file: DriveFile) => void;
@@ -148,7 +148,12 @@ export const DriveFileGallery = ({
                 checked={isSelected}
                 aria-label={t`Select ${fileName}`}
                 data-testid={`drive-file-card-select-${file.id}`}
-                onChange={() => onToggleSelection(file.id)}
+                onChange={(event) =>
+                  onToggleSelection(
+                    file.id,
+                    (event.nativeEvent as MouseEvent).shiftKey,
+                  )
+                }
               />
               {!isTrashView && (
                 <StyledIconButton

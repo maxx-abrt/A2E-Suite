@@ -69,6 +69,8 @@ export const getWorkbenchWidgetTitle = (
       return translate`Activity`;
     case 'contributions':
       return translate`Contributions`;
+    case 'drive-usage':
+      return translate`Drive usage`;
     case 'presence':
       return translate`People online`;
     default:

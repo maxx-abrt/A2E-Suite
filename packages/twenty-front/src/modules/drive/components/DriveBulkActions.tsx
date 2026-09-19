@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { IconArchive, IconRestore, IconX } from 'twenty-ui/icon';
+import { isDefined } from 'twenty-shared/utils';
+import { IconArchive, IconDownload, IconRestore, IconX } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type DriveFolder } from '@/drive/types/DriveRecord';
@@ -50,6 +51,15 @@ const StyledActionButton = styled.button`
   }
 `;
 
+const StyledCheckboxLabel = styled.label`
+  align-items: center;
+  color: ${themeCssVariables.font.color.secondary};
+  cursor: pointer;
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
 export type DriveBulkActionsProps = {
   selectedCount: number;
   moveTargetFolders: DriveFolder[];
@@ -58,6 +68,13 @@ export type DriveBulkActionsProps = {
   onArchive: () => void;
   onRestore: () => void;
   onClearSelection: () => void;
+  // Optional so the bar stays usable without a full file set; when the host
+  // supplies `totalFileCount` it also gets the accessible select-all control
+  // that stands in for shift-click range selection.
+  totalFileCount?: number;
+  allSelected?: boolean;
+  onSelectAll?: () => void;
+  onDownload?: () => void;
 };
 
 export const DriveBulkActions = ({
@@ -68,20 +85,51 @@ export const DriveBulkActions = ({
   onArchive,
   onRestore,
   onClearSelection,
+  totalFileCount = 0,
+  allSelected = false,
+  onSelectAll,
+  onDownload,
 }: DriveBulkActionsProps) => {
   const { t } = useLingui();
   const [targetFolderId, setTargetFolderId] = useState<string>('');
 
-  if (selectedCount === 0) {
+  const isEmptySelection = selectedCount === 0;
+
+  // A selection with no rows to choose from renders nothing, preserving the
+  // pre-bulk-bar behaviour for hosts that do not drive selection.
+  if (totalFileCount === 0 && isEmptySelection) {
     return null;
   }
 
   return (
     <StyledBar data-testid="drive-bulk-actions">
+      {totalFileCount > 0 && isDefined(onSelectAll) && (
+        <StyledCheckboxLabel>
+          <input
+            type="checkbox"
+            checked={allSelected}
+            aria-label={t`Select all files`}
+            data-testid="drive-bulk-select-all"
+            onChange={onSelectAll}
+          />
+          {t`Select all`}
+        </StyledCheckboxLabel>
+      )}
+
       <StyledCount>{t`${selectedCount} selected`}</StyledCount>
 
-      {!isTrashView && (
+      {!isTrashView && !isEmptySelection && (
         <>
+          {isDefined(onDownload) && (
+            <StyledActionButton
+              type="button"
+              data-testid="drive-bulk-download"
+              onClick={onDownload}
+            >
+              <IconDownload size={16} />
+              {t`Download`}
+            </StyledActionButton>
+          )}
           <StyledSelect
             value={targetFolderId}
             aria-label={t`Move to folder`}
@@ -115,7 +163,7 @@ export const DriveBulkActions = ({
         </>
       )}
 
-      {isTrashView && (
+      {isTrashView && !isEmptySelection && (
         <StyledActionButton
           type="button"
           data-testid="drive-bulk-restore"
@@ -126,14 +174,16 @@ export const DriveBulkActions = ({
         </StyledActionButton>
       )}
 
-      <StyledActionButton
-        type="button"
-        aria-label={t`Clear selection`}
-        data-testid="drive-bulk-clear"
-        onClick={onClearSelection}
-      >
-        <IconX size={16} />
-      </StyledActionButton>
+      {!isEmptySelection && (
+        <StyledActionButton
+          type="button"
+          aria-label={t`Clear selection`}
+          data-testid="drive-bulk-clear"
+          onClick={onClearSelection}
+        >
+          <IconX size={16} />
+        </StyledActionButton>
+      )}
     </StyledBar>
   );
 };

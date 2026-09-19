@@ -1,0 +1,316 @@
+# Iteration 21 Log
+
+## Metadata
+
+- **Task ID**: P6.2-drive-preview-upload
+- **Task Title**: P6.2: drive preview + upload — drag-drop, per-file progress, retry/cancel, quota feedback
+- **Description**: As a workspace member, I want previews for common file types and reliable uploads with per-file progress and failure feedback, so that files land where I put them.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-18T23:40:43.344Z
+- **Ended At**: 2026-09-18T23:54:18.280Z
+- **Duration**: 13m 34s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git rev-parse HEAD
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ grep -n "P6.2-drive-preview-upload\|P6.2" PLAN.md | head -50
+[94m[bash][0m $ ls docs/plan/phases/
+[94m[bash][0m $ grep -n "P6.2" PLAN.md
+[94m[bash][0m $ sed -n '940,1060p' PLAN.md
+[94m[bash][0m $ wc -l docs/plan/phases/phase-06-report.md && tail -120 docs/plan/phases/phase-06-report.md
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ git log --oneline -8
+[94m[bash][0m $ grep -rn "CLAIMED" docs/plan/phases/*.md | tail -30
+[94m[bash][0m $ ls -R packages/twenty-front/src/modules/drive | head -80
+[94m[bash][0m $ ls packages/twenty-front/src/pages/drive/ && ls packages/twenty-apps/internal/a2e-drive/src
+[94m[read][0m packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[read][0m packages/twenty-front/src/modules/drive/types/DriveRecord.ts
+[94m[read][0m packages/twenty-front/src/modules/drive/constants.ts
+[94m[task][0m Find existing file preview components
+[94m[read][0m packages/twenty-front/src/modules/drive/hooks/useDriveActions.ts
+[94m[read][0m packages/twenty-front/src/modules/drive/hooks/useDriveFiles.ts
+[94m[read][0m packages/twenty-front/src/modules/drive/components/DriveFileList.tsx
+[94m[read][0m packages/twenty-front/src/modules/drive/components/DriveFileGallery.tsx
+[94m[read][0m packages/twenty-front/src/modules/drive/components/DriveFileCategoryIcon.tsx
+[94m[read][0m packages/twenty-front/src/modules/drive/utils/driveFileFilter.ts
+[94m[read][0m packages/twenty-front/src/modules/activities/files/components/DocumentViewer.tsx
+[94m[read][0m packages/twenty-front/src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
+[94m[read][0m packages/twenty-front/src/modules/file/hooks/useDirectFileUpload.ts
+[94m[bash][0m $ rg -n "XMLHttpRequest|onprogress|onProgress|upload.onprogress" packages/twenty-front/src packages/tw...
+[94m[bash][0m $ rg -rn "quota|storage limit|storageLimit|exceeds the maximum|FileStorageError|MAX_FILE_SIZE" package...
+[94m[bash][0m $ rg -rn "quota|storage limit|STORAGE" packages/twenty-server/src --iglob '!**/locales/**' | head -40
+[94m[grep][0m [95mpackages/twenty-server/src[0m pattern: [96mquota|storage limit|storageLimit|STORAGE[0m
+[94m[grep][0m [95mpackages/twenty-front/src[0m pattern: [96mXMLHttpRequest|onProgress|onprogress[0m
+[94m[grep][0m [95mpackages/twenty-server/src/engine/core-modules/file[0m pattern: [96mexceeds|maxFileSize|MAX_FILE|fileSize|size.*limit|limit.*size[0m
+[94m[grep][0m [95mpackages/twenty-front/src/modules/file[0m pattern: [96mMAX_|maxFileSize|too large|exceeds[0m
+[94m[read][0m packages/twenty-server/src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+[94m[grep][0m [95mpackages/twenty-shared/src[0m pattern: [96mmaxDirectUploadFileSize[0m
+[94m[grep][0m [95mpackages/twenty-front/src[0m pattern: [96mmaxDirectUploadFileSize|maxFileSize|FILE_TOO_LARGE[0m
+[94m[read][0m packages/twenty-server/src/engine/core-modules/file/file-upload/file-upload.exception.ts
+[94m[grep][0m [95mpackages/twenty-server/src[0m pattern: [96mmaxDirectUploadFileSize[0m
+[94m[read][0m packages/twenty-front/src/modules/activities/files/hooks/useUploadAttachmentFile.tsx
+[94m[read][0m packages/twenty-front/src/modules/activities/files/hooks/useUploadAttachmentFiles.ts
+[94m[read][0m packages/twenty-front/src/modules/activities/files/components/DropZone.tsx
+[94m[read][0m packages/twenty-front/src/modules/file-upload/components/FileUploadProvider.tsx
+[94m[read][0m packages/twenty-front/src/modules/file-upload/contexts/FileUploadContext.ts
+[94m[read][0m packages/twenty-front/src/modules/client-config/states/isAttachmentPreviewEnabledState.ts
+[94m[read][0m packages/twenty-front/src/modules/ui/field/display/components/FilesDisplay.tsx
+[94m[read][0m packages/twenty-front/src/modules/file/components/FileIcon.tsx
+[94m[read][0m packages/twenty-front/src/modules/file/utils/getFileCategoryFromExtension.ts
+[94m[read][0m packages/twenty-front/src/modules/activities/files/components/VideoPreview.tsx
+[94m[read][0m packages/twenty-front/src/modules/drive/components/__tests__/DriveFileList.test.tsx
+[94m[read][0m packages/twenty-front/src/modules/drive/utils/__tests__/driveFileFilter.test.ts
+[94m[read][0m packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
+[94m[read][0m packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/utils/uploadMultipleFiles.ts
+[94m[read][0m packages/twenty-front/src/modules/drive/components/DriveToolbar.tsx
+[94m[todowrite][0m
+[94m[bash][0m $ cat >> docs/plan/phases/phase-06-report.md << 'EOF'  CLAIMED — P6.2-drive-preview-upload/preview-and...
+[94m[read][0m packages/twenty-front/src/modules/activities/files/const/previewable-extensions.const.ts
+[94m[read][0m packages/twenty-front/src/modules/activities/files/components/UnavailableFilePreview.tsx
+[94m[grep][0m [95mpackages/twenty-front/src[0m pattern: [96misAttachmentPreviewEnabledState[0m
+[94m[read][0m packages/twenty-front/src/modules/client-config/hooks/useClientConfig.ts
+[94m[todowrite][0m
+[94m[write][0m "import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import ... (2931 chars)"
+[94m[write][0m "import { useLingui } from '@lingui/react/macro';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+import { DriveFileCategoryIcon } from '@/drive... (1589 chars)"
+[94m[read][0m packages/twenty-front/src/modules/activities/files/hooks/useAttachments.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/hooks/useDriveFiles.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveFileList.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveFileList.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveFileList.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveFileList.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveFileList.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveFileList.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveFileGallery.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveFileGallery.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveFileGallery.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveFileGallery.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[read][0m packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[write][0m "import { UnavailableFilePreview } from '@/activities/files/components/UnavailableFilePreview';
+import { styled } from '@linaria/react';
+import { Trans } from '@lingui/react/macro';
+import { useState }... (437 chars)"
+[94m[write][0m "import { UnavailableFilePreview } from '@/activities/files/components/UnavailableFilePreview';
+import { styled } from '@linaria/react';
+import { Trans } from '@lingui/react/macro';
+import { useState }... (1211 chars)"
+[94m[edit][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/activities/files/components/DocumentViewer.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/activities/files/components/DocumentViewer.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/activities/files/components/DocumentViewer.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/activities/files/components/DocumentViewer.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/activities/files/components/DocumentViewer.tsx
+[94m[read][0m packages/twenty-front/src/modules/activities/files/utils/getFileType.ts
+[94m[bash][0m $ ls packages/twenty-front/src/modules/activities/files/components/__tests__ 2>/dev/null
+[94m[read][0m packages/twenty-front/src/modules/activities/files/utils/__tests__/getFileType.test.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/activities/files/utils/getFileType.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/file/hooks/useDirectFileUpload.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/file/hooks/useDirectFileUpload.ts
+[94m[write][0m "import { isDefined } from 'twenty-shared/utils';
+
+// Pure state model for the Drive upload queue. The hook (useDriveUploadQueue)
+// only wires transport and React state to these transitions, so every ... (4652 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/utils/driveUploadQueue.ts
+[94m[read][0m packages/twenty-front/src/modules/object-record/hooks/useCreateOneRecord.ts
+[94m[read][0m packages/twenty-front/src/modules/object-record/hooks/useCreateOneRecord.ts
+[94m[read][0m packages/twenty-front/src/modules/object-record/types/ObjectRecord.ts
+[94m[write][0m "import { useCallback, useRef, useState } from 'react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
+import ... (6539 chars)"
+[94m[write][0m "import { useLingui } from '@lingui/react/macro';
+import { styled } from '@linaria/react';
+import {
+  IconAlertTriangle,
+  IconCircleCheck,
+  IconRefresh,
+  IconX,
+} from 'twenty-ui/icon';
+import { the... (6422 chars)"
+[94m[read][0m packages/twenty-front/src/modules/file-upload/hooks/useFileUpload.ts
+[94m[grep][0m [95mpackages/twenty-front/src[0m pattern: [96mFileUploadProvider[0m
+[94m[read][0m packages/twenty-front/src/modules/activities/files/components/AttachmentUploadTrigger.tsx
+[94m[grep][0m [95mpackages/twenty-front/src/modules/app/routing/utils/createWorkspaceRouteObjects.tsx[0m pattern: [96mDrive|DefaultLayout[0m
+[94m[read][0m packages/twenty-front/src/modules/app/routing/utils/createWorkspaceRouteObjects.tsx
+[94m[grep][0m [95mpackages/twenty-front/src[0m pattern: [96mcreateWorkspaceRouteObjects|DefaultLayout[0m
+[94m[read][0m packages/twenty-front/src/modules/drive/components/__tests__/DriveToolbar.test.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveToolbar.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveToolbar.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveToolbar.tsx
+[94m[write][0m "import { useLingui } from '@lingui/react/macro';
+import { styled } from '@linaria/react';
+import { type ReactNode, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { theme... (2128 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[read][0m packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[read][0m packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[grep][0m [95mpackages/twenty-front/src[0m pattern: [96mDriveFileList|DriveFileGallery|DriveToolbar[0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/__tests__/DriveFileList.test.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/__tests__/DriveFileList.test.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/__tests__/DriveToolbar.test.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/__tests__/DriveToolbar.test.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/__tests__/DriveToolbar.test.tsx
+[94m[write][0m "import {
+  canOpenDriveFilePreview,
+  getDriveFileExtension,
+  getDriveFilePreviewKind,
+  getDriveFilePreviewValue,
+  isDriveFilePreviewable,
+} from '@/drive/utils/driveFilePreview';
+import { type Dri... (3706 chars)"
+[94m[write][0m "import {
+  DRIVE_MAX_UPLOAD_BYTES,
+  classifyDriveUploadFailure,
+  clearFinishedDriveUploadTasks,
+  createDriveUploadTasks,
+  isDriveUploadOverQuota,
+  markDriveUploadTaskCancelled,
+  markDriveUploadT... (4245 chars)"
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+import { type ReactNode } from 'react';
+import { SOURCE_LOCA... (1790 chars)"
+[94m[bash][0m $ grep -rn "export.*IconAlertTriangle\|export.*IconCircleCheck\|export.*IconRefresh" packages/twenty-u...
+[94m[bash][0m $ grep -on "Icon[A-Za-z]*Check[A-Za-z]*\|Icon[A-Za-z]*Circle[A-Za-z]*" packages/twenty-ui/src/icon/ind...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveUploadQueuePanel.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveUploadQueuePanel.tsx
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import ... (4574 chars)"
+[94m[bash][0m $ npx jest src/modules/drive --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -60
+[94m[bash][0m $ npx jest src/modules/activities/files src/modules/file --config=packages/twenty-front/jest.config.mj...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -40
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json \   packages/twenty-front/src/modules/activities/files/com...
+[94m[bash][0m $ cat packages/twenty-front/.oxlintrc.json 2>/dev/null | head -5
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json \   src/modules/activities/files/components/AudioPreview.t...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/hooks/useDriveUploadQueue.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/hooks/useDriveUploadQueue.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/hooks/useDriveUploadQueue.ts
+[94m[bash][0m $ s/abortControllersByTaskId\.current\.get/abortControllersByTaskId.get/g' src/modules/drive/hooks/use...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/hooks/useDriveUploadQueue.ts
+[94m[bash][0m $ cd packages/twenty-front && grep -n "isDefined" src/modules/drive/hooks/useDriveUploadQueue.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveUploadQueuePanel.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveUploadQueuePanel.tsx
+[94m[bash][0m $ /' src/modules/drive/components/__tests__/DriveUploadQueuePanel.test.tsx && grep -n "onRetry" src/mo...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json \   src/modules/activities/files/components/AudioPreview.t...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/drive/hooks/useDriveUploadQueue.ts 2>&1 | grep...
+[94m[bash][0m $ /' src/modules/drive/hooks/useDriveUploadQueue.ts && grep -n "}, \[" src/modules/drive/hooks/useDriv...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/hooks/useDriveUploadQueue.ts
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json \   src/modules/activities/files/components/AudioPreview.t...
+[94m[bash][0m $ git ls-files --others --exclude-standard -- packages/twenty-front
+[94m[bash][0m $ git ls-files --others --exclude-standard -- packages/twenty-front) 2>&1 | tail -30
+[94m[bash][0m $ git ls-files --others --exclude-standard -- packages/twenty-front) 2>&1 | tail -10
+[94m[bash][0m $ npx jest src/modules/drive --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -20
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -20
+[94m[bash][0m $ find packages/twenty-front/src/modules -name "*.stories.tsx" 2>/dev/null | wc -l
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/hooks/useDriveUploadQueue.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/hooks/useDriveUploadQueue.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/hooks/useDriveUploadQueue.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveFileList.tsx
+[94m[bash][0m $ npx jest src/modules/drive --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -8 && npx oxli...
+[94m[bash][0m $ npx jest src/modules/drive --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -8
+[94m[bash][0m $ git ls-files --others --exclude-standard -- packages/twenty-front) 2>&1 | tail -6
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/constants.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[bash][0m $ npx oxfmt packages/twenty-front/src/pages/drive/DrivePage.tsx packages/twenty-front/src/modules/driv...
+[94m[bash][0m $ echo "exit-check-done"
+[94m[bash][0m $ npx jest src/modules/drive src/modules/activities/files --config=packages/twenty-front/jest.config.m...
+[94m[todowrite][0m
+[94m[bash][0m $ git status --porcelain | grep -v "^ M .ralph-tui\|^ M tasks/prd.json\|iterations/"
+[94m[bash][0m $ the audio `AudioPreview` + extension additions. Drive keeps using the standard `attachment`/FILES id...
+[94m[bash][0m $ tail -30 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ adding an optional XHR branch to `useDirectFileUpload` keeps all existing callers on the untouched f...
+[94m[bash][0m $ git status --porcelain
+[94m[todowrite][0m
+P6.2 preview + upload implemented, verified, and reported.
+
+**Preview** — `driveFilePreview.ts` classifies image/PDF/audio/video; list rows and gallery thumbnails open the shared `filePreviewState` modal (`DocumentViewer`), non-previewable files render `DriveFilePreviewFallback` icon cards. Added the missing native `AudioPreview` + audio extensions.
+
+**Upload** — pure queue model (`driveUploadQueue.ts`: progress/retry/cancel/quota), thin `useDriveUploadQueue` writing standard `attachment` rows (`folderId`, `sourceApp:'drive'`), `DriveUploadDropZone` (react-dropzone, no `maxSize` so quota is specific), toolbar keyboard picker via `useFileUpload`, and `DriveUploadQueuePanel` UI. `useDirectFileUpload` gained an optional XHR `onProgress` (fetch path untouched).
+
+**Gates:** tsgo → only the 6 pre-existing `front-components` AppPath errors; jest drive+files → 16 suites / 84 tests; oxlint --type-aware 0/0; oxfmt clean. No `twenty-shared`/server/app/locales touched.
+
+Tier 2 browser journey and live app install left for the orchestrator (noted in the report). Reports appended to `docs/plan/phases/phase-06-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>
+
+--- SUBAGENT TRACE ---
+{
+  "events": [
+    {
+      "id": "subagent_1789774982839_h03uq5h",
+      "type": "spawn",
+      "timestamp": "2026-09-18T23:43:02.839Z",
+      "agentType": "explore",
+      "description": "Find existing file preview components",
+      "prompt": "In the repo /Users/maxaubert/Projets/A2E Suite, explore `packages/twenty-front/src` to find EXISTING components/utilities for previewing attachment/uploaded files. I'm looking for:\n\n1. Components that render an image preview, PDF preview, audio player, video player for an attachment or FileEntity.\n2. Any \"attachment preview\" / \"file preview\" / \"media preview\" modal or card components.\n3. Components that render a fallback file icon based on mime type / file extension.\n4. The types involved: FieldFilesValue / FileItem / FileEntity shape (fields like `fileId`, `label`, `extension`, `url`, `path`, `mimeType`, `type`, `size`).\n5. How existing upload flows work — drag-drop upload, file picker, progress, retry/cancel, quota errors. Look for hooks like `useUploadAttachmentFile`, `useUploadFile`, `useUploadDriveFile`, or components with drag-drop. Report the exact file paths and exported function/hook names and signatures.\n6. Any file-size/quota feedback components (e.g. \"file too large\", MAX_FILE_SIZE, storage limit).\n\nReport the exact file paths with line numbers, exported names, and short signatures/type shapes. Be thorough (medium effort). Do NOT modify any files."
+    },
+    {
+      "id": "subagent_1789774982839_h03uq5h",
+      "type": "error",
+      "timestamp": "2026-09-18T23:43:02.840Z",
+      "agentType": "explore",
+      "description": "Find existing file preview components",
+      "errorMessage": "<task id=\"ses_f491ac403ffeBfLtYPrfgJsLjh\" state=\"completed\">\n<task_result>\nI have everything needed. Here is the complete report.\n\n# Attachment / File Preview & Upload in `packages/twenty-front/src`\n\n## 1. File types (the shapes)\n\n### `FieldFilesValue` — canonical file value type\n`modules/object-record/record-field/ui/types/FieldMetadata.ts:345-352`\n```ts\nexport type FieldFilesValue = {\n  fileId: string;\n  label: string;\n  extension?: string;\n  url?: string;\n  fileCategory?: FileCategory;\n  isDeleted?: boolean;\n};\n```\n- `FileCategory` comes from `twenty-shared`: `modules/file/utils/...` → `packages/twenty-shared/src/types/FileCategory.ts:1-12` — `FILE_CATEGORIES = { ARCHIVE, AUDIO, IMAGE, PRESENTATION, SPREADSHEET, TEXT_DOCUMENT, VIDEO, OTHER }`, `type FileCategory = keyof typeof FILE_CATEGORIES`.\n- Guard: `object-record/record-field/ui/types/guards/isFieldFilesValue.ts:4` — `isFieldFilesValue(value): value is FieldFilesValue[]`.\n\n### `Attachment` (GraphQL `attachment` object)\n`modules/activities/files/types/Attachment.ts:7-36`\n```ts\nexport type Attachment = {\n  id: string; name: string;\n  fullPath: string;                    // @deprecated -> use file[0].url\n  fileCategory: AttachmentFileCategory;// @deprecated -> use file[0].extension\n  file: FieldFilesValue[] | null;\n  createdBy?, createdAt, __typename,\n  // morph target ids: companyId, personId, taskId, noteId, opportunityId,\n  // dashboardId, workflowId, targetCompanyId, targetPersonId, ... \n};\n```\n\n### `AttachmentWithFile` — single-file normalized shape (most useful for preview)\n`modules/activities/files/utils/filterAttachmentsWithFile.ts:5-15`\n```ts\nexport type FieldFilesValueWithUrl = FieldFilesValue & { url: string };\nexport type AttachmentWithFile = Omit<Attachment,'file'> & { file: FieldFilesValueWithUrl };\nexport const filterAttachmentsWithFile = (attachments: Attachment[]): AttachmentWithFile[];\n```\n\n### `AttachmentFileCategory` (legacy, mirror of FileCategory)\n`modules/activities/files/types/AttachmentFileCategory.ts:1-9` — union of the 8 categories.\n\n### `FileWithSignedUrl` / `FileUploadTarget` (upload result)\n`generated-metadata/graphql.ts:2144-2151`\n```ts\nexport type FileWithSignedUrl = { id: UUID; path: string; size: number; url: string; createdAt: DateTime };\n```\n`graphql.ts:2136-2142` — `FileUploadTarget = { fileId, uploadUrl, contentType, expiresAt }`.\n`FileFolder` enum `graphql.ts:2119-2134`: `AgentChat, AppTarball, BuiltFrontComponent, BuiltLogicFunction, CorePicture, Dependencies, Dpa, EmailAttachment, EmailImage, FilesField, GeneratedSdkClient, PublicAsset, Source, Workflow`.\n\n### `DriveFile` (a2e-drive, wraps `attachment`)\n`modules/drive/types/DriveRecord.ts:17-33` — `DriveFile.file?: FieldFilesValue[]`, plus `folderId`, `starred`, `sourceApp`, `description`, `archivedAt`, `target*Id`. There is **no `FileEntity` / `FileItem` type in twenty-front** — the underlying entity fields live server-side; the frontend only ever sees `FieldFilesValue`/`FileWithSignedUrl`.\n\n---\n\n## 2. Preview renderers\n\n### `DocumentViewer` — the central renderer (image/PDF/Office/CSV/video)\n`modules/activities/files/components/DocumentViewer.tsx:191` — lazy-loaded (`GlobalFilePreviewModal.tsx:16`, `AttachmentList.tsx:32`).\n```ts\ntype DocumentViewerProps = { documentName: string; documentUrl: string; documentExtension?: string };\nexport const DocumentViewer: (props) => JSX\n```\n- `PREVIEWABLE_EXTENSIONS` at `modules/activities/files/const/previewable-extensions.const.ts:1` (`bmp csv odt doc docx gif htm html jpg jpeg pdf png ppt pptx tiff txt xls xlsx mp4 webp`).\n- `MIME_TYPE_MAPPING` `DocumentViewer.tsx:165-189` maps extension → mime.\n- Routing logic: not previewable → `UnavailableFilePreview` (line 219); `video/*` → `VideoPreview` (line 243); `csv` → inline `<table>` from `fetchCsvPreview` (line 255); Office on a private URL → unavailable + download (line 287); otherwise `<DocViewer>` from `@cyntler/react-doc-viewer` (line 310) — this handles **image + PDF** rendering. No `<audio>` player exists anywhere in the app; audio falls through to DocViewer or is unavailable. No dedicated image component in this flow.\n- Helpers: `isPrivateUrl` (line 131), `MIME_TYPE_MAPPING`.\n\n### `VideoPreview`\n`modules/activities/files/components/VideoPreview.tsx:17`\n```ts\ntype VideoPreviewProps = { videoName: string; videoUrl: string };\nexport const VideoPreview\n```\nNative `<video controls>`; on error shows `UnavailableFilePreview`.\n\n### `UnavailableFilePreview` — fallback card with download\n`modules/activities/files/components/UnavailableFilePreview.tsx:38`\n```ts\ntype UnavailableFilePreviewProps = { fileName: string; fileUrl: string; message: ReactNode };\n```\n\n### `CallRecordingVideoPlayer` (separate, richer video player)\n`modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx:88`\n```ts\ntype CallRecordingVideoPlayerProps = { ref?: Ref<HTMLVideoElement>; src: string; onRetry: () => Promise<unknown> };\n```\nFirst-frame buffering overlay, playback-error + retry. URL helper: `call-recording/utils/getCallRecordingVideoFileUrl.ts:4` — `getCallRecordingVideoFileUrl(callRecording): string | undefined`. Used by `CallRecordingTranscriptBody.tsx:101`.\n\n### `fetchCsvPreview` (CSV parser)\n`modules/activities/files/utils/fetchCsvPreview.ts:10` — `fetchCsvPreview(url): Promise<{ headers: string[]; rows: string[][] }>` (papaparse, 50 rows).\n\n---\n\n## 3. Preview modal / card components\n\n### `GlobalFilePreviewModal` — global modal, driven by Jotai atom\n`modules/ui/field/display/components/GlobalFilePreviewModal.tsx:75` — mounted app-wide at `modules/app/components/WorkspaceAppProviders.tsx:79`.\n- Reads/writes `filePreviewState` (`modules/ui/field/display/states/filePreviewState.ts:4`): `createAtomState<FieldFilesValue | null>({ key: 'filePreviewState', defaultValue: null })`.\n- Opens on `filePreview` set, header title/download (`downloadFile`), lazy `DocumentViewer`, passes `documentName/documentUrl/documentExtension`. This is the \"attachment preview modal\" primitive reused by field displays.\n\n### `AttachmentList` — local preview modal (records page)\n`modules/activities/files/components/AttachmentList.tsx:96`\n```ts\ntype AttachmentListProps = { targetableObject: ActivityTargetableObject; attachments: Attachment[] };\nexport const AttachmentList\nexport const PREVIEW_MODAL_ID = 'preview-modal'; // line 94\n```\nOwns its own `ModalStatefulWrapper` (`:179`), downloads via `getAttachmentUrl`, renders `DocumentViewer`. Also handles drag-drop upload (see §5).\n\n### Chip / card triggers\n- `modules/ui/field/display/components/FilesDisplay.tsx:19` — `FilesDisplay({ value?: FieldFilesValue[], forceDisableClick?, isUploadWindowOpen?, isFileUploading? })`. On click either downloads (if preview disabled) or sets `filePreviewState`. Renders `UploadFileChip` while uploading/empty.\n- `modules/ui/field/display/components/FileChip.tsx:24` — `FileChip({ file: FieldFilesValue, onClick, forceDisableClick? })`, uses `FileIcon`, handles `isDeleted`.\n- `modules/ui/field/display/components/UploadFileChip.tsx:47` — `UploadFileChip({ isLoading = true })`, spinner/arrow placeholder chip.\n- `modules/ai/components/internal/AgentChatFilePreview.tsx:25` — `AgentChatFilePreview({ file: ExtendedFileUIPart | File, onRemove?, isUploading? })`, pushes into `filePreviewState`.\n- `modules/file/components/AttachmentChip.tsx:64` — `AttachmentChip({ file: {id,name}, onRemove, readonly? })` (email attachments).\n- `modules/settings/legal/components/DpaDocumentPreview.tsx` (DPA-specific, not generic).\n\n---\n\n## 4. Fallback file icon by mime/extension\n\n### `FileIcon` — main icon component\n`modules/file/components/FileIcon.tsx:46`\n```ts\ntype FileIconProps = { fileCategory: AttachmentFileCategory | FileCategory; size?: 'small'|'medium'; thumbnailUrl?: string };\nexport const FileIcon\n```\n- Renders `<img>` thumbnail for `IMAGE` category when `thumbnailUrl` present (falls back to icon on error), else `AvatarOrIcon`/styled icon.\n- Icon map `modules/file/utils/fileIconMappings.ts:14` — `IconMapping: Record<AttachmentFileCategory, IconComponent>` (ARCHIVE→IconFileZip, AUDIO→IconHeadphones, IMAGE→IconPhoto, PRESENTATION→IconPresentation, SPREADSHEET→IconTable, TEXT_DOCUMENT→IconFileText, VIDEO→IconVideo, OTHER→IconFile).\n- Colors `modules/file/hooks/useFileCategoryColors.ts:8` — `useFileCategoryColors(): Record<AttachmentFileCategory, string>` (also overrides from metadata `fileCategory` options). Sibling `useFileIconColors` in `modules/file/hooks/`.\n\n### Extension → category maps (two exist)\n- `modules/activities/files/utils/getFileType.ts:63` — `getFileType(fileName): AttachmentFileCategory` (large extension→category map, line 3).\n- `modules/object-record/record-field/ui/utils/getFileCategoryFromExtension.ts:3` — `getFileCategoryFromExtension(extension?): FileCategory` (subset, used by `FileChip`/`AgentChatFilePreview`).\n\n---\n\n## 5. Upload flows (hooks, signatures, drag-drop, file picker)\n\n### Core low-level upload (pre-signed URL, 3-step)\n`modules/file/hooks/useDirectFileUpload.ts:16`\n```ts\ntype DirectFileUploadOptions = { fileFolder: FileFolder; fieldMetadataId?: string; signal?: AbortSignal };\nexport const useDirectFileUpload = () => ({ uploadFile: (file: File, opts) => Promise<FileWithSignedUrl> });\n```\nCalls `createFileUpload` → HTTP PUT to `uploadTarget.uploadUrl` → `completeFileUpload`. `signal` supports abort (none of the callers below pass one → no cancel UI). Mutations: `modules/file/graphql/mutations/createFileUpload.ts`, `completeFileUpload.ts`. Snackbars on success/failure only, no progress or retry.\n\n### Attachment flows\n- `modules/activities/files/hooks/useUploadAttachmentFile.tsx:12` — `{ uploadAttachmentFile: (file: File, targetableObject: ActivityTargetableObject) => Promise<{ attachmentAbsoluteURL: string; attachmentFileId: string }> }` (uploads to `FileFolder.FilesField` then `createOneRecord` Attachment).\n- `modules/activities/files/hooks/useUploadAttachmentFiles.ts:4` — `{ uploadAttachmentFiles: ({ files: File[]; targetableObject }) => Promise<void> }` (sequential loop).\n- `modules/activities/files/hooks/useCanUploadAttachmentFiles.ts:6` — `useCanUploadAttachmentFiles(targetableObject) => { canUploadFiles: boolean }` (permission `UPLOAD_FILE` + record update).\n- `modules/activities/files/hooks/useAttachments.tsx:6` — `useAttachments(targetableObject) => { attachments, loading, totalCountAttachments }`.\n- `modules/activities/files/hooks/useAttachFileRelatedRecordAction.tsx:14` — `useAttachFileRelatedRecordAction({ targetRecord, onUploadComplete? }): RelatedRecordActionBinding` (hidden input trigger).\n- `modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts:9` — `{ uploadFile: (file: File, fieldMetadataId: string) => Promise<FieldFilesValue> }` (for FILES field, `FileFolder.FilesField`; success/error snackbars).\n- `modules/object-record/record-field/ui/meta-types/utils/uploadMultipleFiles.ts:4` — `uploadMultipleFiles(files, fieldMetadataId, uploadFile): Promise<FieldFilesValue[]>` (sequential).\n- `modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx:24` — the FILES field input; calls `useFileUpload().openFileUpload`, enforces `maxNumberOfValues` with an error snackbar (`:88`), previews via `filePreviewState` (`:160`).\n\n### Drag-drop components\n- `modules/activities/files/components/DropZone.tsx:48` — `DropZone({ setIsDraggingFile, onUploadFiles: (files: File[]) => void })`. Uses `react-dropzone`; `maxSize: maxFileSize` from `useSpreadsheetImportInternal()` (shared spreadsheet config, **not** the attachment/email limit); no `onDropRejected` handler → oversized drops are silently ignored here.\n- `modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx:114` — `DropZone({ onContinue, isLoading })`; `maxSize: maxFileSize`, `onDropRejected` shows a detailed snackbar (`:136-147`), `accept` xls/xlsx/csv.\n- `modules/activities/files/components/FilesCardContent.tsx:40` — drag-enter guard + `DropZone`; empty state `AnimatedPlaceholder type=\"noFile\"` + `AttachmentUploadTrigger`.\n- `modules/activities/files/components/FilesCard.tsx:8` — widgets-card wrapper wiring `useAttachments` + `useUploadAttachmentFiles`.\n- `modules/activities/files/components/AttachmentList.tsx:96` — drag-enter + DropZone for the record page.\n\n### File picker primitives\n- `modules/file-upload/components/FileUploadProvider.tsx:13` + `modules/file-upload/hooks/useFileUpload.ts:4` + `modules/file-upload/contexts/FileUploadContext.ts:5`.\n  - `FileUploadOptions = { multiple?: boolean; accept?: string; onUpload: (files: File[]) => void|Promise<void>; onCancel?: () => void }` (`:5-10`).\n  - `openFileUpload(options)` triggers a hidden `<input type=file>`. Handles the native `cancel` event → `onCancel` (`:57-82`). No progress/retry.\n- `modules/activities/files/components/AttachmentUploadTrigger.tsx:12` — `AttachmentUploadTrigger({ targetableObject, children: ({ openFilePicker }) => ReactNode })`.\n- `modules/activities/files/components/AttachmentFileInput.tsx:17` — `AttachmentFileInput({ ref?, targetableObject, onUploadComplete? })`, hidden `<input type=file multiple>` calling `uploadAttachmentFiles`.\n- `modules/activities/files/components/AttachmentDropdown.tsx` — per-row download/rename/delete menu (see `AttachmentRow.tsx:232`).\n\n### Other upload hooks (all wrap `useDirectFileUpload`, no progress/retry)\n- `modules/activities/emails/hooks/useUploadEmailAttachment.ts:11` — `uploadEmailAttachment(file): Promise<EmailAttachment | null>`, `FileFolder.EmailAttachment`; **enforces `MAX_ATTACHMENT_SIZE`** with `formatFileSize` snackbar (`:20-29`).\n- `modules/activities/emails/hooks/useUploadEmailImage.ts:40` — `FileFolder.EmailImage`, same size guard (`:29-32`).\n- `modules/workflow/workflow-steps/workflow-actions/hooks/useUploadWorkflowFile.ts:11` — `uploadWorkflowFile(file): Promise<WorkflowAttachment | null>`, `FileFolder.Workflow`, size guard (`:19-26`), reads `size`/`type`/`createdAt` from signed URL result.\n- `modules/ai/hooks/useAiChatFileUpload.ts:12` — `{ uploadFiles: (files: File[]) => Promise<void> }`, `FileFolder.AgentChat`, `Promise.allSettled` + failed-count snackbar, selected-files/uploaded-files Jotai states. No size guard, no retry/cancel.\n- `modules/object-record/record-show/hooks/useRecordImageIdentifierUpload.ts:47` — `FileFolder.FilesField` (avatar image).\n- `modules/front-components/hooks/useFrontComponentExecutionContext.ts:529` — `FileFolder.FilesField`.\n\n**Gaps:** no progress bars, no retry, no upload cancellation UI anywhere (only `AbortSignal` plumbed into `useDirectFileUpload` but unused by callers); no storage-quota errors surfaced on the frontend.\n\n---\n\n## 6. Size limits / quota feedback\n\n- `modules/advanced-text-editor/utils/maxAttachmentSize.ts:1` — `export const MAX_ATTACHMENT_SIZE = 10 * 1024 * 1024;` (the only shared byte-limit constant).\n- `modules/file/utils/formatFileSize.ts:1` — `formatFileSize(size: number): string` (\"1.0 MB\"/\"1.0 KB\"/\"B\"). Test at `modules/file/utils/__tests__/formatFileSize.test.ts`.\n- Size-rejection snackbars (pattern: `File \"${fileName}\" exceeds ${maxUploadSize}`): `useUploadEmailAttachment.ts:20-26`, `useUploadEmailImage.ts:29-33`, `useUploadWorkflowFile.ts:19-24`.\n- `modules/spreadsheet-import/types/SpreadsheetImportDialogOptions.ts:41` — `maxFileSize?: number` supplied through `useSpreadsheetImportInternal()` and enforced by both DropZones. Record-capacity feedback: `SPREADSHEET_MAX_RECORD_IMPORT_CAPACITY` in `spreadsheet-import/constants/SpreadsheetMaxRecordImportCapacity.ts`.\n- No `MAX_FILE_SIZE` symbol, no storage-limit/quota component, and no quota-error handling exist in `twenty-front`.\n\n---\n\n## Supporting utilities & config\n\n- `modules/activities/files/utils/downloadFile.ts:3` — `downloadFile(fullPath, fileName)` (fetch → blob → `file-saver` `saveAs`).\n- `modules/activities/utils/getAttachmentUrl.ts:3` — `getAttachmentUrl({ attachment: AttachmentWithFile }): string` → `attachment.file.url`.\n- `modules/client-config/states/isAttachmentPreviewEnabledState.ts:3` — `isAttachmentPreviewEnabledState` boolean atom (default `false`); gates all preview paths (`FilesDisplay`, `FilesFieldInput`, `AttachmentList`).\n- `~/utils/file/getFileNameAndExtension` (imported at `AttachmentRow.tsx:26`, `DocumentViewer.tsx:19`) — splits name/extension.\n- `modules/ui/field/display/components/GlobalFilePreviewModal.tsx` is mounted once via `WorkspaceAppProviders.tsx:79`, so any component can open the global preview by writing the `filePreviewState` atom.\n\n**Summary of the primary reusable primitives:** `DocumentViewer` (rendering), `GlobalFilePreviewModal` + `filePreviewState` (global modal), `AttachmentList`/`AttachmentRow` (record-page list + local modal), `FilesDisplay`/`FileChip` (field chip), `FileIcon` + `IconMapping` (fallback icons), `useDirectFileUpload` (low-level upload), and `useUploadAttachmentFile(s)` / `useUploadFilesFieldFile` / `useFileUpload` + `DropZone` (upload flows).\n</task_result>\n</task>",
+      "durationMs": 1
+    }
+  ],
+  "hierarchy": [
+    {
+      "state": {
+        "id": "subagent_1789774982839_h03uq5h",
+        "agentType": "explore",
+        "description": "Find existing file preview components",
+        "status": "error",
+        "childIds": [],
+        "spawnedAt": "2026-09-18T23:43:02.839Z",
+        "prompt": "In the repo /Users/maxaubert/Projets/A2E Suite, explore `packages/twenty-front/src` to find EXISTING components/utilities for previewing attachment/uploaded files. I'm looking for:\n\n1. Components that render an image preview, PDF preview, audio player, video player for an attachment or FileEntity.\n2. Any \"attachment preview\" / \"file preview\" / \"media preview\" modal or card components.\n3. Components that render a fallback file icon based on mime type / file extension.\n4. The types involved: FieldFilesValue / FileItem / FileEntity shape (fields like `fileId`, `label`, `extension`, `url`, `path`, `mimeType`, `type`, `size`).\n5. How existing upload flows work — drag-drop upload, file picker, progress, retry/cancel, quota errors. Look for hooks like `useUploadAttachmentFile`, `useUploadFile`, `useUploadDriveFile`, or components with drag-drop. Report the exact file paths and exported function/hook names and signatures.\n6. Any file-size/quota feedback components (e.g. \"file too large\", MAX_FILE_SIZE, storage limit).\n\nReport the exact file paths with line numbers, exported names, and short signatures/type shapes. Be thorough (medium effort). Do NOT modify any files.",
+        "endedAt": "2026-09-18T23:43:02.840Z",
+        "durationMs": 1,
+        "result": "<task id=\"ses_f491ac403ffeBfLtYPrfgJsLjh\" state=\"completed\">\n<task_result>\nI have everything needed. Here is the complete report.\n\n# Attachment / File Preview & Upload in `packages/twenty-front/src`\n\n## 1. File types (the shapes)\n\n### `FieldFilesValue` — canonical file value type\n`modules/object-record/record-field/ui/types/FieldMetadata.ts:345-352`\n```ts\nexport type FieldFilesValue = {\n  fileId: string;\n  label: string;\n  extension?: string;\n  url?: string;\n  fileCategory?: FileCategory;\n  isDeleted?: boolean;\n};\n```\n- `FileCategory` comes from `twenty-shared`: `modules/file/utils/...` → `packages/twenty-shared/src/types/FileCategory.ts:1-12` — `FILE_CATEGORIES = { ARCHIVE, AUDIO, IMAGE, PRESENTATION, SPREADSHEET, TEXT_DOCUMENT, VIDEO, OTHER }`, `type FileCategory = keyof typeof FILE_CATEGORIES`.\n- Guard: `object-record/record-field/ui/types/guards/isFieldFilesValue.ts:4` — `isFieldFilesValue(value): value is FieldFilesValue[]`.\n\n### `Attachment` (GraphQL `attachment` object)\n`modules/activities/files/types/Attachment.ts:7-36`\n```ts\nexport type Attachment = {\n  id: string; name: string;\n  fullPath: string;                    // @deprecated -> use file[0].url\n  fileCategory: AttachmentFileCategory;// @deprecated -> use file[0].extension\n  file: FieldFilesValue[] | null;\n  createdBy?, createdAt, __typename,\n  // morph target ids: companyId, personId, taskId, noteId, opportunityId,\n  // dashboardId, workflowId, targetCompanyId, targetPersonId, ... \n};\n```\n\n### `AttachmentWithFile` — single-file normalized shape (most useful for preview)\n`modules/activities/files/utils/filterAttachmentsWithFile.ts:5-15`\n```ts\nexport type FieldFilesValueWithUrl = FieldFilesValue & { url: string };\nexport type AttachmentWithFile = Omit<Attachment,'file'> & { file: FieldFilesValueWithUrl };\nexport const filterAttachmentsWithFile = (attachments: Attachment[]): AttachmentWithFile[];\n```\n\n### `AttachmentFileCategory` (legacy, mirror of FileCategory)\n`modules/activities/files/types/AttachmentFileCategory.ts:1-9` — union of the 8 categories.\n\n### `FileWithSignedUrl` / `FileUploadTarget` (upload result)\n`generated-metadata/graphql.ts:2144-2151`\n```ts\nexport type FileWithSignedUrl = { id: UUID; path: string; size: number; url: string; createdAt: DateTime };\n```\n`graphql.ts:2136-2142` — `FileUploadTarget = { fileId, uploadUrl, contentType, expiresAt }`.\n`FileFolder` enum `graphql.ts:2119-2134`: `AgentChat, AppTarball, BuiltFrontComponent, BuiltLogicFunction, CorePicture, Dependencies, Dpa, EmailAttachment, EmailImage, FilesField, GeneratedSdkClient, PublicAsset, Source, Workflow`.\n\n### `DriveFile` (a2e-drive, wraps `attachment`)\n`modules/drive/types/DriveRecord.ts:17-33` — `DriveFile.file?: FieldFilesValue[]`, plus `folderId`, `starred`, `sourceApp`, `description`, `archivedAt`, `target*Id`. There is **no `FileEntity` / `FileItem` type in twenty-front** — the underlying entity fields live server-side; the frontend only ever sees `FieldFilesValue`/`FileWithSignedUrl`.\n\n---\n\n## 2. Preview renderers\n\n### `DocumentViewer` — the central renderer (image/PDF/Office/CSV/video)\n`modules/activities/files/components/DocumentViewer.tsx:191` — lazy-loaded (`GlobalFilePreviewModal.tsx:16`, `AttachmentList.tsx:32`).\n```ts\ntype DocumentViewerProps = { documentName: string; documentUrl: string; documentExtension?: string };\nexport const DocumentViewer: (props) => JSX\n```\n- `PREVIEWABLE_EXTENSIONS` at `modules/activities/files/const/previewable-extensions.const.ts:1` (`bmp csv odt doc docx gif htm html jpg jpeg pdf png ppt pptx tiff txt xls xlsx mp4 webp`).\n- `MIME_TYPE_MAPPING` `DocumentViewer.tsx:165-189` maps extension → mime.\n- Routing logic: not previewable → `UnavailableFilePreview` (line 219); `video/*` → `VideoPreview` (line 243); `csv` → inline `<table>` from `fetchCsvPreview` (line 255); Office on a private URL → unavailable + download (line 287); otherwise `<DocViewer>` from `@cyntler/react-doc-viewer` (line 310) — this handles **image + PDF** rendering. No `<audio>` player exists anywhere in the app; audio falls through to DocViewer or is unavailable. No dedicated image component in this flow.\n- Helpers: `isPrivateUrl` (line 131), `MIME_TYPE_MAPPING`.\n\n### `VideoPreview`\n`modules/activities/files/components/VideoPreview.tsx:17`\n```ts\ntype VideoPreviewProps = { videoName: string; videoUrl: string };\nexport const VideoPreview\n```\nNative `<video controls>`; on error shows `UnavailableFilePreview`.\n\n### `UnavailableFilePreview` — fallback card with download\n`modules/activities/files/components/UnavailableFilePreview.tsx:38`\n```ts\ntype UnavailableFilePreviewProps = { fileName: string; fileUrl: string; message: ReactNode };\n```\n\n### `CallRecordingVideoPlayer` (separate, richer video player)\n`modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx:88`\n```ts\ntype CallRecordingVideoPlayerProps = { ref?: Ref<HTMLVideoElement>; src: string; onRetry: () => Promise<unknown> };\n```\nFirst-frame buffering overlay, playback-error + retry. URL helper: `call-recording/utils/getCallRecordingVideoFileUrl.ts:4` — `getCallRecordingVideoFileUrl(callRecording): string | undefined`. Used by `CallRecordingTranscriptBody.tsx:101`.\n\n### `fetchCsvPreview` (CSV parser)\n`modules/activities/files/utils/fetchCsvPreview.ts:10` — `fetchCsvPreview(url): Promise<{ headers: string[]; rows: string[][] }>` (papaparse, 50 rows).\n\n---\n\n## 3. Preview modal / card components\n\n### `GlobalFilePreviewModal` — global modal, driven by Jotai atom\n`modules/ui/field/display/components/GlobalFilePreviewModal.tsx:75` — mounted app-wide at `modules/app/components/WorkspaceAppProviders.tsx:79`.\n- Reads/writes `filePreviewState` (`modules/ui/field/display/states/filePreviewState.ts:4`): `createAtomState<FieldFilesValue | null>({ key: 'filePreviewState', defaultValue: null })`.\n- Opens on `filePreview` set, header title/download (`downloadFile`), lazy `DocumentViewer`, passes `documentName/documentUrl/documentExtension`. This is the \"attachment preview modal\" primitive reused by field displays.\n\n### `AttachmentList` — local preview modal (records page)\n`modules/activities/files/components/AttachmentList.tsx:96`\n```ts\ntype AttachmentListProps = { targetableObject: ActivityTargetableObject; attachments: Attachment[] };\nexport const AttachmentList\nexport const PREVIEW_MODAL_ID = 'preview-modal'; // line 94\n```\nOwns its own `ModalStatefulWrapper` (`:179`), downloads via `getAttachmentUrl`, renders `DocumentViewer`. Also handles drag-drop upload (see §5).\n\n### Chip / card triggers\n- `modules/ui/field/display/components/FilesDisplay.tsx:19` — `FilesDisplay({ value?: FieldFilesValue[], forceDisableClick?, isUploadWindowOpen?, isFileUploading? })`. On click either downloads (if preview disabled) or sets `filePreviewState`. Renders `UploadFileChip` while uploading/empty.\n- `modules/ui/field/display/components/FileChip.tsx:24` — `FileChip({ file: FieldFilesValue, onClick, forceDisableClick? })`, uses `FileIcon`, handles `isDeleted`.\n- `modules/ui/field/display/components/UploadFileChip.tsx:47` — `UploadFileChip({ isLoading = true })`, spinner/arrow placeholder chip.\n- `modules/ai/components/internal/AgentChatFilePreview.tsx:25` — `AgentChatFilePreview({ file: ExtendedFileUIPart | File, onRemove?, isUploading? })`, pushes into `filePreviewState`.\n- `modules/file/components/AttachmentChip.tsx:64` — `AttachmentChip({ file: {id,name}, onRemove, readonly? })` (email attachments).\n- `modules/settings/legal/components/DpaDocumentPreview.tsx` (DPA-specific, not generic).\n\n---\n\n## 4. Fallback file icon by mime/extension\n\n### `FileIcon` — main icon component\n`modules/file/components/FileIcon.tsx:46`\n```ts\ntype FileIconProps = { fileCategory: AttachmentFileCategory | FileCategory; size?: 'small'|'medium'; thumbnailUrl?: string };\nexport const FileIcon\n```\n- Renders `<img>` thumbnail for `IMAGE` category when `thumbnailUrl` present (falls back to icon on error), else `AvatarOrIcon`/styled icon.\n- Icon map `modules/file/utils/fileIconMappings.ts:14` — `IconMapping: Record<AttachmentFileCategory, IconComponent>` (ARCHIVE→IconFileZip, AUDIO→IconHeadphones, IMAGE→IconPhoto, PRESENTATION→IconPresentation, SPREADSHEET→IconTable, TEXT_DOCUMENT→IconFileText, VIDEO→IconVideo, OTHER→IconFile).\n- Colors `modules/file/hooks/useFileCategoryColors.ts:8` — `useFileCategoryColors(): Record<AttachmentFileCategory, string>` (also overrides from metadata `fileCategory` options). Sibling `useFileIconColors` in `modules/file/hooks/`.\n\n### Extension → category maps (two exist)\n- `modules/activities/files/utils/getFileType.ts:63` — `getFileType(fileName): AttachmentFileCategory` (large extension→category map, line 3).\n- `modules/object-record/record-field/ui/utils/getFileCategoryFromExtension.ts:3` — `getFileCategoryFromExtension(extension?): FileCategory` (subset, used by `FileChip`/`AgentChatFilePreview`).\n\n---\n\n## 5. Upload flows (hooks, signatures, drag-drop, file picker)\n\n### Core low-level upload (pre-signed URL, 3-step)\n`modules/file/hooks/useDirectFileUpload.ts:16`\n```ts\ntype DirectFileUploadOptions = { fileFolder: FileFolder; fieldMetadataId?: string; signal?: AbortSignal };\nexport const useDirectFileUpload = () => ({ uploadFile: (file: File, opts) => Promise<FileWithSignedUrl> });\n```\nCalls `createFileUpload` → HTTP PUT to `uploadTarget.uploadUrl` → `completeFileUpload`. `signal` supports abort (none of the callers below pass one → no cancel UI). Mutations: `modules/file/graphql/mutations/createFileUpload.ts`, `completeFileUpload.ts`. Snackbars on success/failure only, no progress or retry.\n\n### Attachment flows\n- `modules/activities/files/hooks/useUploadAttachmentFile.tsx:12` — `{ uploadAttachmentFile: (file: File, targetableObject: ActivityTargetableObject) => Promise<{ attachmentAbsoluteURL: string; attachmentFileId: string }> }` (uploads to `FileFolder.FilesField` then `createOneRecord` Attachment).\n- `modules/activities/files/hooks/useUploadAttachmentFiles.ts:4` — `{ uploadAttachmentFiles: ({ files: File[]; targetableObject }) => Promise<void> }` (sequential loop).\n- `modules/activities/files/hooks/useCanUploadAttachmentFiles.ts:6` — `useCanUploadAttachmentFiles(targetableObject) => { canUploadFiles: boolean }` (permission `UPLOAD_FILE` + record update).\n- `modules/activities/files/hooks/useAttachments.tsx:6` — `useAttachments(targetableObject) => { attachments, loading, totalCountAttachments }`.\n- `modules/activities/files/hooks/useAttachFileRelatedRecordAction.tsx:14` — `useAttachFileRelatedRecordAction({ targetRecord, onUploadComplete? }): RelatedRecordActionBinding` (hidden input trigger).\n- `modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts:9` — `{ uploadFile: (file: File, fieldMetadataId: string) => Promise<FieldFilesValue> }` (for FILES field, `FileFolder.FilesField`; success/error snackbars).\n- `modules/object-record/record-field/ui/meta-types/utils/uploadMultipleFiles.ts:4` — `uploadMultipleFiles(files, fieldMetadataId, uploadFile): Promise<FieldFilesValue[]>` (sequential).\n- `modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx:24` — the FILES field input; calls `useFileUpload().openFileUpload`, enforces `maxNumberOfValues` with an error snackbar (`:88`), previews via `filePreviewState` (`:160`).\n\n### Drag-drop components\n- `modules/activities/files/components/DropZone.tsx:48` — `DropZone({ setIsDraggingFile, onUploadFiles: (files: File[]) => void })`. Uses `react-dropzone`; `maxSize: maxFileSize` from `useSpreadsheetImportInternal()` (shared spreadsheet config, **not** the attachment/email limit); no `onDropRejected` handler → oversized drops are silently ignored here.\n- `modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx:114` — `DropZone({ onContinue, isLoading })`; `maxSize: maxFileSize`, `onDropRejected` shows a detailed snackbar (`:136-147`), `accept` xls/xlsx/csv.\n- `modules/activities/files/components/FilesCardContent.tsx:40` — drag-enter guard + `DropZone`; empty state `AnimatedPlaceholder type=\"noFile\"` + `AttachmentUploadTrigger`.\n- `modules/activities/files/components/FilesCard.tsx:8` — widgets-card wrapper wiring `useAttachments` + `useUploadAttachmentFiles`.\n- `modules/activities/files/components/AttachmentList.tsx:96` — drag-enter + DropZone for the record page.\n\n### File picker primitives\n- `modules/file-upload/components/FileUploadProvider.tsx:13` + `modules/file-upload/hooks/useFileUpload.ts:4` + `modules/file-upload/contexts/FileUploadContext.ts:5`.\n  - `FileUploadOptions = { multiple?: boolean; accept?: string; onUpload: (files: File[]) => void|Promise<void>; onCancel?: () => void }` (`:5-10`).\n  - `openFileUpload(options)` triggers a hidden `<input type=file>`. Handles the native `cancel` event → `onCancel` (`:57-82`). No progress/retry.\n- `modules/activities/files/components/AttachmentUploadTrigger.tsx:12` — `AttachmentUploadTrigger({ targetableObject, children: ({ openFilePicker }) => ReactNode })`.\n- `modules/activities/files/components/AttachmentFileInput.tsx:17` — `AttachmentFileInput({ ref?, targetableObject, onUploadComplete? })`, hidden `<input type=file multiple>` calling `uploadAttachmentFiles`.\n- `modules/activities/files/components/AttachmentDropdown.tsx` — per-row download/rename/delete menu (see `AttachmentRow.tsx:232`).\n\n### Other upload hooks (all wrap `useDirectFileUpload`, no progress/retry)\n- `modules/activities/emails/hooks/useUploadEmailAttachment.ts:11` — `uploadEmailAttachment(file): Promise<EmailAttachment | null>`, `FileFolder.EmailAttachment`; **enforces `MAX_ATTACHMENT_SIZE`** with `formatFileSize` snackbar (`:20-29`).\n- `modules/activities/emails/hooks/useUploadEmailImage.ts:40` — `FileFolder.EmailImage`, same size guard (`:29-32`).\n- `modules/workflow/workflow-steps/workflow-actions/hooks/useUploadWorkflowFile.ts:11` — `uploadWorkflowFile(file): Promise<WorkflowAttachment | null>`, `FileFolder.Workflow`, size guard (`:19-26`), reads `size`/`type`/`createdAt` from signed URL result.\n- `modules/ai/hooks/useAiChatFileUpload.ts:12` — `{ uploadFiles: (files: File[]) => Promise<void> }`, `FileFolder.AgentChat`, `Promise.allSettled` + failed-count snackbar, selected-files/uploaded-files Jotai states. No size guard, no retry/cancel.\n- `modules/object-record/record-show/hooks/useRecordImageIdentifierUpload.ts:47` — `FileFolder.FilesField` (avatar image).\n- `modules/front-components/hooks/useFrontComponentExecutionContext.ts:529` — `FileFolder.FilesField`.\n\n**Gaps:** no progress bars, no retry, no upload cancellation UI anywhere (only `AbortSignal` plumbed into `useDirectFileUpload` but unused by callers); no storage-quota errors surfaced on the frontend.\n\n---\n\n## 6. Size limits / quota feedback\n\n- `modules/advanced-text-editor/utils/maxAttachmentSize.ts:1` — `export const MAX_ATTACHMENT_SIZE = 10 * 1024 * 1024;` (the only shared byte-limit constant).\n- `modules/file/utils/formatFileSize.ts:1` — `formatFileSize(size: number): string` (\"1.0 MB\"/\"1.0 KB\"/\"B\"). Test at `modules/file/utils/__tests__/formatFileSize.test.ts`.\n- Size-rejection snackbars (pattern: `File \"${fileName}\" exceeds ${maxUploadSize}`): `useUploadEmailAttachment.ts:20-26`, `useUploadEmailImage.ts:29-33`, `useUploadWorkflowFile.ts:19-24`.\n- `modules/spreadsheet-import/types/SpreadsheetImportDialogOptions.ts:41` — `maxFileSize?: number` supplied through `useSpreadsheetImportInternal()` and enforced by both DropZones. Record-capacity feedback: `SPREADSHEET_MAX_RECORD_IMPORT_CAPACITY` in `spreadsheet-import/constants/SpreadsheetMaxRecordImportCapacity.ts`.\n- No `MAX_FILE_SIZE` symbol, no storage-limit/quota component, and no quota-error handling exist in `twenty-front`.\n\n---\n\n## Supporting utilities & config\n\n- `modules/activities/files/utils/downloadFile.ts:3` — `downloadFile(fullPath, fileName)` (fetch → blob → `file-saver` `saveAs`).\n- `modules/activities/utils/getAttachmentUrl.ts:3` — `getAttachmentUrl({ attachment: AttachmentWithFile }): string` → `attachment.file.url`.\n- `modules/client-config/states/isAttachmentPreviewEnabledState.ts:3` — `isAttachmentPreviewEnabledState` boolean atom (default `false`); gates all preview paths (`FilesDisplay`, `FilesFieldInput`, `AttachmentList`).\n- `~/utils/file/getFileNameAndExtension` (imported at `AttachmentRow.tsx:26`, `DocumentViewer.tsx:19`) — splits name/extension.\n- `modules/ui/field/display/components/GlobalFilePreviewModal.tsx` is mounted once via `WorkspaceAppProviders.tsx:79`, so any component can open the global preview by writing the `filePreviewState` atom.\n\n**Summary of the primary reusable primitives:** `DocumentViewer` (rendering), `GlobalFilePreviewModal` + `filePreviewState` (global modal), `AttachmentList`/`AttachmentRow` (record-page list + local modal), `FilesDisplay`/`FileChip` (field chip), `FileIcon` + `IconMapping` (fallback icons), `useDirectFileUpload` (low-level upload), and `useUploadAttachmentFile(s)` / `useUploadFilesFieldFile` / `useFileUpload` + `DropZone` (upload flows).\n</task_result>\n</task>"
+      },
+      "children": []
+    }
+  ],
+  "stats": {
+    "totalSubagents": 1,
+    "byType": {
+      "explore": 1
+    },
+    "totalDurationMs": 1,
+    "failureCount": 1,
+    "maxDepth": 1
+  }
+}

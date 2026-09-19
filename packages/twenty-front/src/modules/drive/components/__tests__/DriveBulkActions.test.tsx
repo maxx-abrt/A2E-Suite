@@ -118,4 +118,52 @@ describe('DriveBulkActions', () => {
 
     expect(onRestore).toHaveBeenCalled();
   });
+
+  it('exposes an accessible select-all as the range-selection alternative', async () => {
+    const onSelectAll = jest.fn();
+
+    render(
+      <DriveBulkActions
+        selectedCount={0}
+        moveTargetFolders={[]}
+        isTrashView={false}
+        totalFileCount={4}
+        allSelected={false}
+        onSelectAll={onSelectAll}
+        onMove={jest.fn()}
+        onArchive={jest.fn()}
+        onRestore={jest.fn()}
+        onClearSelection={jest.fn()}
+      />,
+      { wrapper: Wrapper },
+    );
+
+    await userEvent.click(screen.getByTestId('drive-bulk-select-all'));
+
+    expect(onSelectAll).toHaveBeenCalled();
+    expect(screen.getByTestId('drive-bulk-actions')).toBeInTheDocument();
+  });
+
+  it('downloads the selection when a download handler is supplied', async () => {
+    const onDownload = jest.fn();
+
+    render(
+      <DriveBulkActions
+        selectedCount={1}
+        moveTargetFolders={[]}
+        isTrashView={false}
+        totalFileCount={1}
+        onDownload={onDownload}
+        onMove={jest.fn()}
+        onArchive={jest.fn()}
+        onRestore={jest.fn()}
+        onClearSelection={jest.fn()}
+      />,
+      { wrapper: Wrapper },
+    );
+
+    await userEvent.click(screen.getByTestId('drive-bulk-download'));
+
+    expect(onDownload).toHaveBeenCalled();
+  });
 });

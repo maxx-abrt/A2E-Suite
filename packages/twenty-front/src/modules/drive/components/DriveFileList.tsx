@@ -102,7 +102,7 @@ export type DriveFileListProps = {
   files: DriveFile[];
   selectedFileIds: string[];
   isTrashView: boolean;
-  onToggleSelection: (fileId: string) => void;
+  onToggleSelection: (fileId: string, isRange: boolean) => void;
   onToggleStar: (file: DriveFile) => void;
   onRename: (fileId: string, name: string) => void;
   onArchive: (file: DriveFile) => void;
@@ -124,7 +124,7 @@ const DriveFileRow = ({
   file: DriveFile;
   isSelected: boolean;
   isTrashView: boolean;
-  onToggleSelection: (fileId: string) => void;
+  onToggleSelection: (fileId: string, isRange: boolean) => void;
   onToggleStar: (file: DriveFile) => void;
   onRename: (fileId: string, name: string) => void;
   onArchive: (file: DriveFile) => void;
@@ -154,7 +154,9 @@ const DriveFileRow = ({
         checked={isSelected}
         aria-label={t`Select ${fileName}`}
         data-testid={`drive-file-select-${file.id}`}
-        onChange={() => onToggleSelection(file.id)}
+        onChange={(event) =>
+          onToggleSelection(file.id, (event.nativeEvent as MouseEvent).shiftKey)
+        }
       />
       <StyledNameCell>
         {isRenaming ? (

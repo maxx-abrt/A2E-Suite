@@ -77,6 +77,14 @@ export const useDriveActions = () => {
       updateDriveFile(fileId, { starred }),
     moveDriveFilesToFolder: (fileIds: string[], folderId: string | null) =>
       runForEach(fileIds, (fileId) => updateDriveFile(fileId, { folderId })),
+    // Single-file variants drive the bulk runner, which needs one independent
+    // promise per row so it can report per-item failures without aborting.
+    moveDriveFileToFolder: (fileId: string, folderId: string | null) =>
+      updateDriveFile(fileId, { folderId }),
+    archiveDriveFile: (fileId: string, archivedAt: string) =>
+      updateDriveFile(fileId, { archivedAt }),
+    restoreDriveFile: (fileId: string) =>
+      updateDriveFile(fileId, { archivedAt: null }),
     moveDriveFolderToParent: (folderId: string, parentId: string | null) =>
       updateDriveFolder(folderId, { parentId }),
     archiveDriveFiles: (fileIds: string[], archivedAt: string) =>
