@@ -16,15 +16,14 @@ import {
 // Native standard task field uuids (twenty-shared STANDARD_OBJECT_FIELDS).
 const taskField = {
   title: '20202020-b386-4cb7-aa5a-08d4a4d92680',
-  status: '20202020-70bc-48f9-89c5-6aa730b151e0',
   dueAt: '20202020-fd99-40da-951b-4cb9a352fce3',
   assignee: '20202020-065a-4f42-a906-e20422c1753f',
 };
 
 // "My tasks" smart list 3/3 — overdue. A task is overdue when its dueAt is
 // in the past and it is not done: the DATE_TIME IS_IN_PAST operand is
-// value-less, and the status comparison keeps the select-status approach
-// (no custom-status object).
+// value-less, and the completion test reads the app pipeline status the
+// board writes (C5) rather than the native task status the app never moves.
 const fieldId = (position: number) => viewFieldId('01', 6, position);
 
 export default defineView({
@@ -45,8 +44,10 @@ export default defineView({
       size: 260,
     },
     {
+      // The app pipeline status the board groups on, not the native task
+      // status — C5: the smart lists must agree with the board/record surfaces.
       universalIdentifier: fieldId(1),
-      fieldMetadataUniversalIdentifier: taskField.status,
+      fieldMetadataUniversalIdentifier: TASK_FIELD_IDS.projectStatus,
       position: 1,
       isVisible: true,
       size: 150,
@@ -81,8 +82,10 @@ export default defineView({
       value: '',
     },
     {
+      // Completion reads the board's pipeline field so a task moved to DONE
+      // on the board actually leaves the overdue list (C5).
       universalIdentifier: 'c31b0100-0005-4000-8000-000000000008',
-      fieldMetadataUniversalIdentifier: taskField.status,
+      fieldMetadataUniversalIdentifier: TASK_FIELD_IDS.projectStatus,
       operand: ViewFilterOperand.IS_NOT,
       value: 'DONE',
     },

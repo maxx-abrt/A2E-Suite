@@ -6,12 +6,15 @@ import {
   ViewType,
 } from 'twenty-sdk/define';
 
-import { VIEW_IDS, viewFieldId } from '../constants/universal-identifiers.ts';
+import {
+  TASK_FIELD_IDS,
+  VIEW_IDS,
+  viewFieldId,
+} from '../constants/universal-identifiers.ts';
 
 // Native standard task field uuids (twenty-shared STANDARD_OBJECT_FIELDS).
 const taskField = {
   title: '20202020-b386-4cb7-aa5a-08d4a4d92680',
-  status: '20202020-70bc-48f9-89c5-6aa730b151e0',
   dueAt: '20202020-fd99-40da-951b-4cb9a352fce3',
   assignee: '20202020-065a-4f42-a906-e20422c1753f',
 };
@@ -43,8 +46,10 @@ export default defineView({
       size: 260,
     },
     {
+      // The app pipeline status the board groups on, not the native task
+      // status — C5: the smart lists must agree with the board/record surfaces.
       universalIdentifier: fieldId(1),
-      fieldMetadataUniversalIdentifier: taskField.status,
+      fieldMetadataUniversalIdentifier: TASK_FIELD_IDS.projectStatus,
       position: 1,
       isVisible: true,
       size: 150,

@@ -104,3 +104,12 @@ after each iteration and it's included in prompts for context.
   - `projectStatus` is a SELECT with `defaultValue 'TODO'`, so app-created rows always carry a pipeline value; a pre-existing NULL row is excluded by `IS_NOT 'DONE'` (`NOT (col IN ('DONE'))` drops NULL) while the board shows it ungrouped. The exact read-time fallback needs an OR `filterGroup`, which no view in this repo exercises — left as a Tier-2 watch item.
   - Gates: calendar 6/6, integrity 12/12, `yarn test:unit` 247/247, typecheck exit 0, lint 0 errors (1 pre-existing), oxfmt clean, `npx twenty dev:build .` 38 files; manifest calendar = fields `[title, projectStatus, project]`, filters `[projectStatus IS_NOT DONE, project IS_NOT_EMPTY]`.
 ---
+
+## 2026-09-19 21:56 UTC - US-036 (conflict, no work)
+- Declared CONFLICT without touching source: a concurrent `ralph-tui` session appended `CLAIMED — US-036/reconcile-smart-list-status` (2026-09-19T22:05:00Z) and was already editing the exact three files this session scoped — `views/my-tasks.view.ts`, `views/created-by-me.view.ts`, `views/overdue-tasks.view.ts` (mtimes 23:54 local). Per contract v4 §3 (file-overlap preflight) this iteration stopped at zero work.
+- Files changed: `docs/plan/phases/phase-04-report.md`, `.ralph-tui/progress.md` (reports only).
+- **Learnings:**
+  - Two `ralph-tui run` processes share this checkout (PIDs 35049, 49648). A parallel session can append a same-task CLAIMED line *between* an initial `grep` and your own claim, then start writing the target files within seconds — re-read the report tail AND `git status` immediately before claiming, not just at session start.
+  - US-036's real unmet gap is C5: the three My-tasks smart-list views display/filter the native task `status`, while the board and calendar read the app `projectStatus`. The parallel `reconcile-smart-list-status` session is applying exactly that re-point; do not duplicate it.
+  - `current-tasks.view.ts` (no nav item, orphan) and the native project record tasks tab remain on native `status` even after the three smart lists are fixed — a separate surface, not part of the My-tasks page AC.
+---

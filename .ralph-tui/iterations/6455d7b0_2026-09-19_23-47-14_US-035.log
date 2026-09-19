@@ -1,0 +1,130 @@
+# Iteration 10 Log
+
+## Metadata
+
+- **Task ID**: US-035
+- **Task Title**: [P4.2] Calendar view of task due dates — link into the existing calendar surface
+- **Description**: As a project member, I want task due dates visible on a calendar view, so that I can see deadlines without confusing them with scheduled provider events.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T21:47:14.107Z
+- **Ended At**: 2026-09-19T21:53:17.013Z
+- **Duration**: 6m 2s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "US-035" PLAN.md
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-03[0-9]\|US-034\|P4.2\|P4\.2" PLAN.md | head -50
+[94m[bash][0m $ ls docs/plan/ 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -rn "US-035\|P4.2" tasks/prd.json | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -n "CLAIMED\|US-035\|US-034\|US-036" docs/plan/phases/phase-04-report.md | tail -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts
+[94m[bash][0m $ git log --oneline -15
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-board.view.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/lib/ && echo "---VIEWS---" && ls packages/twenty-a...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/task-status.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-calendar.test.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/current-tasks.view.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/overdue-tasks.view.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/project-tasks.view.ts
+[94m[bash][0m $ grep -rn "projectStatus" packages/twenty-apps/internal/a2e-projects/src --include=*.ts -l
+[94m[bash][0m $ grep -rln "recordFilter" packages/twenty-server/src/engine/api/graphql/workspace-query-builder/ 2>/d...
+[94m[bash][0m $ grep -rn "projectStatus" packages/twenty-apps/internal/a2e-projects/src -l
+[94m[bash][0m $ grep -rln "IS_NOT" packages/twenty-server/src/engine --include="*.ts" | grep -iv spec | head -30
+[94m[bash][0m $ grep -rln "turnRecordFilterIntoGqlOperationFilter\|getFilterOperandsForFilterableFieldType" packages...
+[94m[bash][0m $ grep -rn "IS_NOT" packages/twenty-front/src/modules/object-record/record-filter/utils/getRecordFilte...
+[94m[bash][0m $ grep -rln "ViewFilterOperand.IS_NOT" packages/twenty-front/src --include="*.ts" | grep -iv spec | he...
+[94m[bash][0m $ grep -n "projectStatus\|status:" packages/twenty-apps/internal/a2e-projects/src/lib/starter-projects...
+[94m[bash][0m $ grep -rln "computeViewRecordGqlOperationFilter" packages/twenty-front/src --include="*.ts" | grep -i...
+[94m[bash][0m $ grep -rln "computeViewRecordGqlOperationFilter\|ViewFilterOperand" packages/twenty-front/src/modules...
+[94m[bash][0m $ grep -rln "IS_NOT" packages/twenty-shared/src --include="*.ts" | head -20
+[94m[bash][0m $ grep -n "IS_NOT" packages/twenty-shared/src/utils/filter/turnRecordFilterIntoGqlOperationFilter.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/filter/turnRecordFilterIntoGqlOperationFilter.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/filter/turnRecordFilterIntoGqlOperationFilter.ts
+[94m[bash][0m $ grep -n "case 'SELECT'\|case 'MULTI_SELECT'\|case 'TEXT'\|case 'ACTOR'" packages/twenty-shared/src/u...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/filter/turnRecordFilterIntoGqlOperationFilter.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-board.test.ts
+[94m[bash][0m $ grep -rln "defineView" packages/twenty-sdk/src | head
+[94m[bash][0m $ grep -n "SELECT\|select" packages/twenty-shared/src/utils/filter/__tests__/turnRecordFilterIntoGqlOp...
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-sdk/src/sdk/define/views/define-view.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/views/view-config.ts
+[94m[bash][0m $ grep -rln "ViewManifest" packages/twenty-shared/src/application/ | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/viewManifestType.ts
+[94m[bash][0m $ grep -n "IS_NOT\|projectStatus\|null" .ralph-tui/progress.md | tail -40
+[94m[bash][0m $ grep -rn "viewFilterGroup\|filterGroup" packages/twenty-front/src/modules/views --include="*.ts" | g...
+[94m[bash][0m $ grep -rn "filterGroups\|viewFilterGroup" packages/twenty-sdk/src/cli/utilities/build --include="*.ts...
+[94m[bash][0m $ grep -rn "filterGroups\|viewFilterGroup" packages/twenty-server/src/engine/workspace-manager --inclu...
+[94m[bash][0m $ grep -rn "\bnot\b" packages/twenty-server/src/engine/twenty-orm/utils/*.ts 2>/dev/null | head
+[94m[bash][0m $ grep -rln "class.*Filter\|Not(" packages/twenty-server/src/engine/twenty-orm/ --include="*.ts" | hea...
+[94m[bash][0m $ grep -rn "not" packages/twenty-server/src/engine/twenty-orm/query-builder/workspace-select-query-bui...
+[94m[read][0m
+[94m[bash][0m $ grep -rln "filterGroups\|viewFilterGroupUniversalIdentifier" packages/twenty-server/src/engine/core-...
+[94m[bash][0m $ grep -rln "viewFilterGroups" packages/twenty-front/src/modules/views --include="*.ts" | grep -iv spe...
+[94m[bash][0m $ grep -n "filters\|filterGroups\|filters?\|viewFilter\|views\|sorts" packages/twenty-apps/internal/a2...
+[94m[bash][0m $ grep -rln "filters\|ViewManifest\|views" packages/twenty-sdk/src/cli/utilities/build/manifest --incl...
+[94m[bash][0m $ grep -rln "recordFilter\|viewFilter\|filter" packages/twenty-front/src/modules/object-record/record-...
+[94m[bash][0m $ grep -n "ViewFilterGroupLogicalOperator\|ViewFilterOperand\|ViewCalendarLayout" packages/twenty-sdk/...
+[94m[bash][0m $ sed -n '1,40p' packages/twenty-shared/src/types/ViewFilterOperand.ts
+[94m[read][0m
+[94m[bash][0m $ grep -n "ilterGroup" packages/twenty-server/src/engine/core-modules/application/application-manifest...
+[94m[bash][0m $ ls packages/twenty-server/src/engine/core-modules/application/application-manifest/converters/ | gre...
+[94m[read][0m
+[94m[bash][0m $ grep -rln "IS_EMPTY" packages/twenty-server/src/engine/workspace-manager/twenty-standard-application...
+[94m[read][0m
+[94m[bash][0m $ grep -rln "filterGroups" packages/twenty-front/src --include="*.ts" | grep -i "test\|fixture" | head
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ cat .ralph-tui/session-meta.json 2>/dev/null | head -40
+[94m[bash][0m $ ls -lat .ralph-tui/iterations/ | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/iterations/e4c4797e_2026-09-19_23-45-38_US-035.log
+[94m[bash][0m $ grep -n "status\|projectStatus\|filterGroups\|readTaskPipelineStatus" packages/twenty-apps/internal/...
+[94m[bash][0m $ ls -l packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts packages/twenty-app...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts
+[94m[bash][0m $ git diff packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts packages/twenty-...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/package.json
+[94m[bash][0m $ cat .oxfmtrc.jsonc 2>/dev/null | head -40
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/task-calendar.test.ts" 2>&1 | tail -20
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -10
+[94m[bash][0m $ yarn lint 2>&1 | tail -12
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -12
+[94m[write][0m "{
+  "$schema": "/Users/maxaubert/Projets/A2E Suite/node_modules/oxfmt/configuration_schema.json",
+  "singleQuote": true,
+  "trailingComma": "all",
+  "endOfLine": "lf",
+  "printWidth": 80,
+  "sortPacka... (626 chars)"
+[94m[bash][0m $ npx oxfmt -c "/var/folders/31/flrpby692pjc8k6vskbtrnn40000gn/T/opencode/oxfmt-lib-inclusive.jsonc" -...
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -15
+[94m[bash][0m $ "
+[94m[bash][0m $ git diff docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/project-object-integrity.test.ts" 2>&1 | t...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/task-project-status.field.ts
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ tail -5 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -3 .ralph-tui/progress.md
+[94m[bash][0m $ manifest calendar = fields `[title, projectStatus, project]`, filters `[projectStatus IS_NOT DONE, p...
+[94m[bash][0m $ git status --porcelain
+Done-for-review — resumed the stalled US-035 iteration (same session, cut off before reporting), verified and finished it.
+
+**Slice:** reconcile `task-calendar.view.ts` with the app pipeline status — status column + DONE-exclusion filter now target `TASK_FIELD_IDS.projectStatus` (was native task `status`), so a board-dragged DONE task leaves the calendar. Existing native CALENDAR view reused, no provider call/invitation.
+
+**Checks:** calendar test 6/6, integrity 12/12, `yarn test:unit` 247/247, `yarn typecheck` exit 0, `yarn lint` 0 errors (1 pre-existing), oxfmt clean, `npx twenty dev:build .` 38 files; manifest confirms fields `[title, projectStatus, project]` and filters `[projectStatus IS_NOT DONE, project IS_NOT_EMPTY]`.
+
+**Missing for tick (Tier 2):** live install/render proof + no-invitation check; noted a NULL-`projectStatus` edge case (field defaults to TODO, so app-created rows are covered).
+
+Report appended to `docs/plan/phases/phase-04-report.md`; progress entry appended to `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

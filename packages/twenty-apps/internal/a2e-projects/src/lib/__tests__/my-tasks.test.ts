@@ -10,8 +10,10 @@ import {
 
 import {
   NAVIGATION_MENU_ITEM_IDS,
+  TASK_FIELD_IDS,
   VIEW_IDS,
 } from '../../constants/universal-identifiers.ts';
+import { readTaskPipelineStatus } from '../task-status.ts';
 
 type ViewFilterDefinition = {
   universalIdentifier: string;
@@ -65,9 +67,11 @@ const unwrap = async <TDefinition>(
 const NATIVE_TASK_FIELD_IDS = {
   title: '20202020-b386-4cb7-aa5a-08d4a4d92680',
   dueAt: '20202020-fd99-40da-951b-4cb9a352fce3',
-  status: '20202020-70bc-48f9-89c5-6aa730b151e0',
   assignee: '20202020-065a-4f42-a906-e20422c1753f',
 };
+
+// The native status the app never moves — the smart lists must NOT read it.
+const NATIVE_TASK_STATUS_FIELD_ID = '20202020-70bc-48f9-89c5-6aa730b151e0';
 
 const CREATED_BY_FIELD_ID =
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.fields.createdBy
@@ -146,16 +150,49 @@ test('the overdue list is dueAt in the past on open (not DONE) tasks', async () 
       filter.fieldMetadataUniversalIdentifier === NATIVE_TASK_FIELD_IDS.dueAt,
   );
   const statusFilter = (view.filters ?? []).find(
-    (filter) =>
-      filter.fieldMetadataUniversalIdentifier === NATIVE_TASK_FIELD_IDS.status,
+    (filter) => filter.value === 'DONE',
   );
 
   assert.ok(dueAtFilter, 'overdue has no dueAt filter');
   assert.equal(dueAtFilter.operand, ViewFilterOperand.IS_IN_PAST);
 
-  assert.ok(statusFilter, 'overdue has no status filter');
+  assert.ok(statusFilter, 'overdue has no DONE exclusion filter');
   assert.equal(statusFilter.operand, ViewFilterOperand.IS_NOT);
-  assert.equal(statusFilter.value, 'DONE');
+  assert.equal(
+    statusFilter.fieldMetadataUniversalIdentifier,
+    TASK_FIELD_IDS.projectStatus,
+  );
+});
+
+test('every smart list reads the board pipeline status, never the native task status', async () => {
+  for (const smartList of SMART_LIST_VIEWS) {
+    const view = await unwrap<ViewDefinition>(smartList.path);
+    const statusColumn = (view.fields ?? []).find(
+      (viewField) =>
+        viewField.fieldMetadataUniversalIdentifier ===
+          NATIVE_TASK_STATUS_FIELD_ID ||
+        viewField.fieldMetadataUniversalIdentifier ===
+          TASK_FIELD_IDS.projectStatus,
+    );
+
+    assert.ok(statusColumn, `${smartList.name} exposes no status column`);
+    assert.equal(
+      statusColumn.fieldMetadataUniversalIdentifier,
+      TASK_FIELD_IDS.projectStatus,
+      `${smartList.name} still displays the native task status`,
+    );
+  }
+});
+
+test('a task completed on the pipeline reads done while its native status stays TODO', () => {
+  assert.equal(
+    readTaskPipelineStatus({ status: 'TODO', projectStatus: 'DONE' }),
+    'DONE',
+  );
+  assert.equal(
+    readTaskPipelineStatus({ status: 'DONE', projectStatus: 'TODO' }),
+    'TODO',
+  );
 });
 
 test('the reserved position-120 nav item is a folder grouping the three smart lists', async () => {

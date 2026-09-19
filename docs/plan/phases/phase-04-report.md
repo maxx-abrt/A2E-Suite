@@ -856,3 +856,20 @@ CLAIMED — US-035/task-calendar-pipeline-status — deepseek-v4.1-flash — 202
 **Do not redo:** the committed native-calendar shape (`d7e680a3`: task object, native `dueAt`, MONTH, project filter); the `c31b*` namespace; `lib/task-status.ts` precedence (`projectStatus` authoritative, standard `status` fallback, unknown → `null`). Do NOT add a calendar-event view, a two-way task/event link, or any provider-sync/creation to this slice — P4C.5 owns opt-in synchronization.
 **Remaining:** US-036 My-tasks, P4.2 project-page/dependency-picker/retroplanning, standing P4.1/P4.2 Tier-2 legs, P4C.2–P4C.5, P6.1.
 **Next:** orchestrator — run the Tier-2 install + live calendar render/no-invitation proof and tick P4.2 calendar; or executor — US-036 (audit `my-tasks.view.ts` / `overdue-tasks.view.ts` and reconcile their status reading).
+
+CLAIMED — US-036/reconcile-smart-list-status — deepseek-v4.1-flash — 2026-09-19T22:05:00Z — base a2b348b7a86f1c7cad11f0a64a777ccd9bd848bd
+
+CLAIMED — US-036/task-status-c5-reconciliation — deepseek-v4.1-flash — 2026-09-19T21:55:00Z — base a2b348b7a86f1c7cad11f0a64a777ccd9bd848bd
+
+## 2026-09-19 21:56 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-036 [P4.2] My-tasks page — assigned to me, created by me, overdue smart lists · **Slice:** C5 status reconciliation of the three smart lists (native `status` → app `projectStatus`), the first unmet acceptance gap (bullet 3)
+**Claim:** conflict
+**Ready-to-tick:** no — overlapping active claim on the exact target files; zero source work done.
+**Base:** a2b348b7a86f1c7cad11f0a64a777ccd9bd848bd
+**Changed:** `docs/plan/phases/phase-04-report.md`, `.ralph-tui/progress.md` (reports only — no source touched).
+**Evidence:** while confirming the slice, a concurrent executor appended `CLAIMED — US-036/reconcile-smart-list-status — deepseek-v4.1-flash — 2026-09-19T22:05:00Z` (report line 860) and by the time of this claim had already modified the exact three files I planned to change — `views/my-tasks.view.ts`, `views/created-by-me.view.ts`, `views/overdue-tasks.view.ts` (mtimes 23:54 local, `git diff --stat` shows +11/+5/+13). Two `ralph-tui run` processes are live on this one checkout (PIDs 35049, 49648), the known dual-session setup. Per contract v4 §3, target-file overlap with another active claim → CONFLICT, stop, zero work.
+**Checks:** none run — conflict declared before any edit; running the suite would race the live editor's half-written tree.
+**Missing for tick:** the concurrent session must finish and report its US-036 slice; nothing is actionable for this iteration.
+**Do not redo:** the three smart-list views — the parallel `US-036/reconcile-smart-list-status` session owns those dirty files this moment. My claim line `US-036/task-status-c5-reconciliation` (line 862) is superseded and claims nothing.
+**Remaining:** US-036 (owned by the concurrent session), P4.2 project-page/dependency-picker/retroplanning, standing P4.1/P4.2 Tier-2 legs, P4C.2–P4C.5, P6.1.
+**Next:** let the `reconcile-smart-list-status` session report; orchestrator ticks US-036 from its phase-report entry (its three-file diff is the C5 reconciliation this iteration also scoped).
