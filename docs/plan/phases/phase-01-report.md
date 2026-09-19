@@ -1039,3 +1039,18 @@ CLAIMED — US-041/ai-usage-log-write-tests — deepseek-v4.1-flash — 2026-09-
 **Do not redo:** streaming is native and already tested — front `sseClient` via `useAgentChatSubscription` (graphql-sse) + server `AgentChatEventPublisherService`/`agent-chat-streaming.service` (4 specs / 26 tests) ARE the SSE reuse; do not add a transport or a per-tool billing enum. Provider config is native: `chat-execution.service.ts:188-202` reads `workspace.smartModel` + `AiModelRegistryService` (existing Admin AI settings).
 **Remaining:** P9.2 documents actions, P9.2b cache/saved runs, P9.3 audit page, plus the remaining P9.1 legs.
 **Next:** orchestrator — verify/tick on the added usage-log proof; then US-042/US-043+/remaining P9.1 legs. Serialize the two `ralph-tui run` sessions sharing this checkout.
+
+CLAIMED — US-043/private-result-cache-contract — deepseek-v4.1-flash — 2026-09-19T22:29:14Z — base d0f57b3a92382eba88d68367a8fd0bec7a37db78
+
+## 2026-09-19 22:31 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-043 [P9.2b] Permission/workspace-scoped private-result cache — versions, expiry, invalidation · **Slice:** private-result cache contract (first unmet acceptance bullet)
+**Claim:** blocked — already claimed
+**Ready-to-tick:** no — zero work done; the exact slice is under an active concurrent claim
+**Base:** d0f57b3a92382eba88d68367a8fd0bec7a37db78
+**Changed:** `docs/plan/phases/phase-01-report.md` (this entry) + `.ralph-tui/progress.md` (Ralph bridge) only — no source files touched
+**Checks:** none run — contract §1.3 (already claimed) + §3 (file-overlap preflight) stop before any work
+**Evidence:** `CLAIMED — US-043/private-result-cache-contract — deepseek-v4.1-flash — 2026-09-19T22:29:14Z — base d0f57b3a…` (last line of this file, appended 14 s before this session's clock read `2026-09-19T22:29:28Z`) with no `blocked`/`conflict` follow-up; two `ralph-tui run` processes are live on this one checkout (PIDs 35049 + 49648) — the recurrent US-030/US-032/US-039/US-040/US-041/US-042 same-checkout hazard. The concurrent claimant chose the same `US-043/private-result-cache-contract` slice id and base commit I intended.
+**Missing for tick:** n/a — blocked; nothing to verify or tick.
+**Do not redo:** the concurrent claimant owns `US-043/private-result-cache-contract`; do not create or edit any `twenty-shared/src/ai` cache-contract files (or a server-side equivalent) until that claim lands (or is abandoned) and its report/commit is visible.
+**Remaining:** US-043 (concurrent claimant); then US-044 saved runs (`dependsOn US-043`), US-045 audit page (`dependsOn US-041`), US-046 CRM core actions.
+**Next:** orchestrator — let the active `US-043/private-result-cache-contract` claim finish, then verify/tick; serialize the two `ralph-tui run` sessions on this single checkout to stop the collision.

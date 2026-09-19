@@ -304,9 +304,10 @@
         "Unit tests: scope isolation, version/permission invalidation, expiry behavior"
       ],
       "priority": 18,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md:1415 (P9.2b `[ ]`, not-started). The P7.1f aiCacheEntry C6 validation bullet stays deferred (P7-gated); this story is the generic cache contract only.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-044",
@@ -359,6 +360,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T22:26:18.625Z"
+    "updatedAt": "2026-09-19T22:30:08.933Z"
   }
 }

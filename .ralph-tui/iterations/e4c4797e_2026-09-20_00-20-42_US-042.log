@@ -1,0 +1,164 @@
+# Iteration 13 Log
+
+## Metadata
+
+- **Task ID**: US-042
+- **Task Title**: [P9.2] Documents AI actions — summarize, translate, improve writing (read-only tools)
+- **Description**: As a document author, I want summarize, translate and improve-writing actions on my documents, so that I get AI help without giving the assistant write access.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T22:20:42.175Z
+- **Ended At**: 2026-09-19T22:26:18.624Z
+- **Duration**: 5m 36s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git log --oneline -5
+I'll start with the mandatory clean-start check and context gathering.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-042" PLAN.md
+[94m[bash][0m $ ls docs/plan/phases/
+Dirty files are Ralph's own tracker state (`.ralph-tui/`, `tasks/prd.json`) plus an untracked iteration log — not source work. Proceeding.
+[94m[bash][0m $ grep -n "P9.2\|summarize\|translate\|improve writing\|improve-writing" PLAN.md
+[94m[bash][0m $ grep -rn "US-042" docs/ .ralph-tui/ tasks/ 2>/dev/null | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "US-042" -A 30 tasks/prd.json | head -60
+[94m[bash][0m $ ls -la docs/plan/phases/ && echo "---" && find docs -name "phase-09*" -o -name "phase-9*" 2>/dev/nul...
+[94m[bash][0m $ grep -n "US-04[0-9]\|P9\.2\|P9 " docs/plan/phases/phase-08-report.md | tail -40
+[94m[bash][0m $ grep -rln "US-041\|US-040\|US-039" docs/plan/phases/
+[94m[bash][0m $ grep -rn "phase-09\|phase 09\|P9" docs/README.md docs/plan/01-codebase-map.md 2>/dev/null | head -30
+[94m[bash][0m $ grep -n "US-041\|US-040\|US-039" docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ grep -n "US-041\|US-040\|US-039" docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ grep -n "^## \|^# " docs/plan/phases/phase-01-report.md | tail -30
+[94m[bash][0m $ wc -l docs/plan/phases/phase-01-report.md && tail -60 docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ head -60 tasks/prd.json
+[94m[bash][0m $ grep -n "phase-01\|phase-09\|phase-1\|phase-9" tasks/prd.json .ralph-tui/session.json .ralph-tui/ses...
+[94m[bash][0m $ grep -rn "US-042\|document-content\|summarize\|translate\|improve" docs/plan/phases/*.md | grep -iv ...
+[94m[bash][0m $ grep -rn "US-042\|US-013\|US-009" docs/plan/phases/*.md | head -40
+[94m[bash][0m $ ls -R packages/twenty-apps/internal/a2e-documents/src/logic-functions/ 2>/dev/null
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/ && echo "---" && cat packages/twenty-apps/intern...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/application.config.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-chat/src/logic-functions/ packages/twenty-apps/internal/a2e-cha...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/logic-functions/ packages/twenty-apps/internal/a2e...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "summarize\|translate\|improve\|amélior\|tradui\|résum" docs/product-experience.md docs/app...
+[94m[bash][0m $ grep -rln "toolTriggerSettings" packages/twenty-apps/internal/
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rln "summarize\|translate\|improve\|action library\|Prompt/action" docs/ | head -20
+[94m[bash][0m $ grep -rn "document-content\|summarize\|translate\|improve" docs/plan/01-codebase-map.md docs/product...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "toolTriggerSettings\|ToolTriggerSettings" packages/twenty-server/src --include=*.ts -l | h...
+[94m[bash][0m $ grep -rn "toolTriggerSettings" packages/twenty-apps/internal/a2e-documents/node_modules/twenty-sdk/d...
+[94m[bash][0m $ grep -rn "category\|read-only\|readOnly\|READ_ONLY" packages/twenty-server/src/engine/metadata-modul...
+[94m[grep][0m [95mpackages/twenty-server/src[0m pattern: [96mtoolTriggerSettings[0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/lib/ packages/twenty-apps/internal/a2e-documents/...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/
+[94m[bash][0m $ ls packages/twenty-server/src/engine/core-modules/ai/ 2>/dev/null
+[94m[bash][0m $ ls packages/twenty-shared/src/ai/ 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/utils/getContextToolButtons.ts
+[94m[bash][0m $ echo "exit $?"
+[94m[bash][0m $ grep -n "twenty\|test:unit\|typecheck\|lint" packages/twenty-apps/internal/a2e-documents/README.md |...
+[94m[bash][0m $ date -u "+%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ grep -n "CLAIMED — " docs/plan/phases/phase-01-report.md | tail -15
+[94m[bash][0m $ tail -80 .ralph-tui/progress.md
+[94m[bash][0m $ grep -n "document-content\|logic function\|AI tool\|Outils\|tool" packages/twenty-apps/internal/a2e-...
+[94m[bash][0m $ grep -rn "phase-09\|phase-9-report\|phase-01-report\|phase report" docs/README.md docs/plan/*.md AGE...
+[94m[bash][0m $ grep -c "P9.2\|US-013" docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ grep -n "US-013\|P9.2\|P3\." docs/plan/phases/phase-03-report.md | head -20
+[94m[bash][0m $ tail -5 docs/plan/phases/phase-03-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+No active claims overlap my files. Appending my claim to the correct phase report (phase-03 = Documents, where US-013 lives).
+[94m[bash][0m $ grep -n "US-042" docs/plan/phases/phase-03-report.md
+[94m[todowrite][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts
+[94m[write][0m "import {
+  coreClient,
+  readDocumentContent,
+  type CoreClientLike,
+  type DocumentContentMetadata,
+  type DocumentContentStatus,
+} from './document-content-handler.ts';
+
+// LECTURE SEULE, SOUS L'AUT... (4314 chars)"
+Now the shared action handler:
+[94m[write][0m "import { defineLogicFunction } from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+import {
+  runDocumentAction,
+  type DocumentActionResult,
+} from ... (1770 chars)"
+[94m[write][0m "import { defineLogicFunction } from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+import {
+  runDocumentAction,
+  type DocumentActionResult,
+} from ... (2045 chars)"
+[94m[write][0m "import { defineLogicFunction } from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+import {
+  runDocumentAction,
+  type DocumentActionResult,
+} from ... (1866 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { runDocumentAction } from '../handlers/document-action-handler.ts';
+import {
+  buildDocument,
+  buildFakeCoreClient,... (5962 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { LOGIC_FUNCTION_IDS } from '../../constants/universal-identifiers.ts';
+import improveDocumentWritingTool from '../..... (3706 chars)"
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -30
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -30
+[94m[bash][0m $ yarn test:unit 2>&1 | grep -Ei "ai-actions|summarize|translate|improve|native AI tool|word budget|ta...
+[94m[bash][0m $ yarn lint 2>&1 | tail -20
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -25
+[94m[bash][0m $ grep -o "summarize-document\|translate-document\|improve-document-writing\|c31a0000-0012-4000-8000-0...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ git log --oneline -5 && echo "---" && git status --porcelain packages/twenty-apps/internal/a2e-docum...
+[94m[bash][0m $ git show --stat 3348b770 | head -40
+[94m[bash][0m $ git show 3348b770 -- docs/plan/phases/phase-03-report.md .ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+The engine auto-committed my slice as `3348b770` mid-session (twin-session hazard), after a twin claimed the same slice and reported `conflict`. My work is committed and green; I'll now append my own `done-for-review` report with evidence.
+[94m[bash][0m $ git rev-parse 85c944dabe5327e6743668d231189857f36a1f7c
+[94m[bash][0m $ date -u "+%Y-%m-%d %H:%M UTC"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain && echo "---diff stat vs HEAD---" && git diff --stat
+[94m[todowrite][0m
+US-042 implemented, verified, and reported.
+
+**Slice:** three read-only document AI action tools (`summarize-document`, `translate-document`, `improve-document-writing`) registered via `toolTriggerSettings`, all delegating to the single US-013 `readDocumentContent` path.
+
+**Claim:** `done-for-review` — `Ready-to-tick: yes` (Tier-2 live assistant dispatch is the only missing leg).
+
+**Gates:** `yarn test:unit` 197/197 (+12), `yarn typecheck` exit 0, `yarn lint` 0/0, `npx twenty dev:build .` success (28 files, manifest lists all three tools with ids `…0006/0007/0008`).
+
+**Note:** a twin ralph session claimed the same slice 5 s after me and withdrew as `conflict`; my files had already landed, so the engine auto-committed them as `3348b770`. I appended the owner `done-for-review` report to `docs/plan/phases/phase-03-report.md` and the `.ralph-tui/progress.md` entry (plus a reusable pattern), and committed nothing myself.
+
+<promise>COMPLETE</promise>
