@@ -78,6 +78,9 @@ export const LOGIC_FUNCTION_IDS = {
   // AI tool seed (P4.3): inert « extract tasks from document » stub consumed
   // by the P9.2 document actions. Registered, never dispatched for writes.
   extractTasksFromDocument: 'c31b0000-0012-4000-8000-00000000000d',
+  // P9.2 read-only Projects tools (standup digest + breakdown context).
+  standupDigest: 'c31b0000-0012-4000-8000-00000000000e',
+  taskBreakdownContext: 'c31b0000-0012-4000-8000-00000000000f',
 } as const;
 
 // Task-extension fields live on the standard task object (app fields,

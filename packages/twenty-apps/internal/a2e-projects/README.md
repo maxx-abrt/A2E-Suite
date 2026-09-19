@@ -79,6 +79,14 @@ monthly calendar on `dueAt`, project-scoped task lists, and the three
   tasks from its to-do blocks plus a conservative heading/imperative
   heuristic. It is read-only: no task is created — the proposals are a draft
   to review, and creation is a separate confirmed action.
+- `standup-digest` assembles the tasks completed, created, still-open-edited
+  and overdue for a project or the workspace since the start of the previous
+  local day (or an explicit `sinceIso`), read under the caller's
+  authorization. It is read-only: the digest is context, never an update.
+- `task-breakdown-context` returns a project's task tree (children through the
+  `parentTask` relation), its milestones and its pipeline status counts — the
+  context an assistant needs to propose a breakdown. It proposes nothing
+  itself and never creates a task.
 - Front components provide the project overview, time rollup, Gantt
   (virtualized bars with dependency arrows) and the subtask forest.
 
