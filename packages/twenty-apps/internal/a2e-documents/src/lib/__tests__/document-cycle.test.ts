@@ -2,11 +2,14 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import {
+  DOCUMENT_PARENT_CYCLE_ERROR_CODE,
+  DOCUMENT_PARENT_CYCLE_ERROR_MESSAGE,
   isDocumentParentCycle,
   readDocumentParentChange,
   readDocumentParentId,
   repairDocumentParentCycle,
   resolveDocumentCycleRepairParentId,
+  validateDocumentParentMove,
   type DocumentParentLoader,
 } from '../document-cycle.ts';
 
@@ -192,8 +195,15 @@ test('repair restores the previous parent when a move would create a cycle', asy
     },
   });
 
-  assert.deepEqual(outcome, { action: 'repaired', parentDocumentId: 'oldParent' });
-  assert.deepEqual(writes, [{ documentId: 'root', parentDocumentId: 'oldParent' }]);
+  assert.deepEqual(outcome, {
+    action: 'repaired',
+    parentDocumentId: 'oldParent',
+    errorCode: DOCUMENT_PARENT_CYCLE_ERROR_CODE,
+    errorMessage: DOCUMENT_PARENT_CYCLE_ERROR_MESSAGE,
+  });
+  assert.deepEqual(writes, [
+    { documentId: 'root', parentDocumentId: 'oldParent' },
+  ]);
 });
 
 test('repair detaches to the root when the move has no previous parent', async () => {
@@ -213,7 +223,12 @@ test('repair detaches to the root when the move has no previous parent', async (
     },
   });
 
-  assert.deepEqual(outcome, { action: 'repaired', parentDocumentId: null });
+  assert.deepEqual(outcome, {
+    action: 'repaired',
+    parentDocumentId: null,
+    errorCode: DOCUMENT_PARENT_CYCLE_ERROR_CODE,
+    errorMessage: DOCUMENT_PARENT_CYCLE_ERROR_MESSAGE,
+  });
   assert.deepEqual(writes, [{ documentId: 'root', parentDocumentId: null }]);
 });
 
@@ -237,4 +252,132 @@ test('repair detaches when the previous parent is itself part of a cycle', async
   });
 
   assert.equal(repairedParentId, null);
+});
+
+// Acceptance: a direct A→B→A move is refused fail-closed and the guard never
+// persists the cyclic target as the parent.
+test('a direct A→B→A move is refused and never persisted', async () => {
+  // B is A's child today; moving A under B would close A→B→A.
+  const loadParentDocumentId = buildLoader({ a: null, b: 'a' });
+  const writes: { documentId: string; parentDocumentId: string | null }[] = [];
+
+  const validation = await validateDocumentParentMove({
+    documentId: 'a',
+    parentDocumentId: 'b',
+    loadParentDocumentId,
+  });
+
+  assert.deepEqual(validation, {
+    allowed: false,
+    errorCode: DOCUMENT_PARENT_CYCLE_ERROR_CODE,
+    errorMessage: DOCUMENT_PARENT_CYCLE_ERROR_MESSAGE,
+  });
+
+  const outcome = await repairDocumentParentCycle({
+    documentId: 'a',
+    parentDocumentId: 'b',
+    previousParentDocumentId: null,
+    loadParentDocumentId,
+    updateParentDocumentId: async (options) => {
+      writes.push(options);
+    },
+  });
+
+  assert.equal(outcome.action, 'repaired');
+  assert.deepEqual(writes, [{ documentId: 'a', parentDocumentId: null }]);
+  assert.ok(
+    writes.every((write) => write.parentDocumentId !== 'b'),
+    'the refused cyclic parent must never be written',
+  );
+});
+
+// Acceptance: a deep A→B→C→A move is refused for the same reason.
+test('a deep A→B→C→A move is refused and repaired away from the cycle', async () => {
+  // Current chain: C → B → A(root); moving A under C closes A→B→C→A.
+  const loadParentDocumentId = buildLoader({ a: null, b: 'a', c: 'b' });
+  const writes: { documentId: string; parentDocumentId: string | null }[] = [];
+
+  const validation = await validateDocumentParentMove({
+    documentId: 'a',
+    parentDocumentId: 'c',
+    loadParentDocumentId,
+  });
+
+  assert.equal(validation.allowed, false);
+
+  const outcome = await repairDocumentParentCycle({
+    documentId: 'a',
+    parentDocumentId: 'c',
+    previousParentDocumentId: null,
+    loadParentDocumentId,
+    updateParentDocumentId: async (options) => {
+      writes.push(options);
+    },
+  });
+
+  assert.equal(outcome.action, 'repaired');
+  assert.deepEqual(writes, [{ documentId: 'a', parentDocumentId: null }]);
+  assert.ok(writes.every((write) => write.parentDocumentId !== 'c'));
+});
+
+// Acceptance: self-parenting is refused too (the shortest cycle of all).
+test('a self-parent move is refused and never persisted', async () => {
+  const loadParentDocumentId = buildLoader({ a: 'b', b: null });
+  const writes: { documentId: string; parentDocumentId: string | null }[] = [];
+
+  const validation = await validateDocumentParentMove({
+    documentId: 'a',
+    parentDocumentId: 'a',
+    loadParentDocumentId,
+  });
+
+  assert.equal(validation.allowed, false);
+
+  const outcome = await repairDocumentParentCycle({
+    documentId: 'a',
+    parentDocumentId: 'a',
+    previousParentDocumentId: 'a',
+    loadParentDocumentId,
+    updateParentDocumentId: async (options) => {
+      writes.push(options);
+    },
+  });
+
+  assert.equal(outcome.action, 'repaired');
+  assert.deepEqual(writes, [{ documentId: 'a', parentDocumentId: null }]);
+  assert.ok(writes.every((write) => write.parentDocumentId !== 'a'));
+});
+
+// Acceptance: relocating a subtree to an unrelated branch stays allowed and
+// the guard writes nothing.
+test('a valid deep cross-branch move is allowed and mutates nothing', async () => {
+  // root → { e → g, f }; moving g from e to f stays acyclic.
+  const loadParentDocumentId = buildLoader({
+    root: null,
+    e: 'root',
+    f: 'root',
+    g: 'e',
+  });
+  const writes: { documentId: string; parentDocumentId: string | null }[] = [];
+
+  const validation = await validateDocumentParentMove({
+    documentId: 'g',
+    parentDocumentId: 'f',
+    loadParentDocumentId,
+  });
+
+  assert.deepEqual(validation, { allowed: true });
+
+  const outcome = await repairDocumentParentCycle({
+    documentId: 'g',
+    parentDocumentId: 'f',
+    previousParentDocumentId: 'e',
+    loadParentDocumentId,
+    updateParentDocumentId: async (options) => {
+      writes.push(options);
+    },
+  });
+
+  assert.deepEqual(outcome, { action: 'none' });
+  assert.equal(writes.length, 0);
 });

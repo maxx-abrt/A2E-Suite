@@ -1,0 +1,168 @@
+# Iteration 4 Log
+
+## Metadata
+
+- **Task ID**: US-019
+- **Task Title**: P3.2 (sharing, bullet 5): owner-side share-management UX — display/copy URL, passphrase field, expiry picker, revoke
+- **Description**: As a document owner, I want to create a share link with an optional passphrase and expiry, see and copy the /share/<token> URL, and revoke it, so that I can share snapshots safely without touching the...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T17:19:33.142Z
+- **Ended At**: 2026-09-19T17:27:52.679Z
+- **Duration**: 8m 19s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "US-019" PLAN.md
+I'll start with the clean-start check and task confirmation.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "P3.2\|sharing" PLAN.md | head -40
+[94m[bash][0m $ ls docs/plan/phases/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "CLAIMED\|snapshot-sharing\|share" docs/plan/phases/phase-03-report.md | tail -40
+[94m[bash][0m $ wc -l docs/plan/phases/phase-03-report.md && tail -80 docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/front-components/ && echo "---" && ls packages/tw...
+[94m[bash][0m $ grep -rln "shareDocument\|documentShare\|DocumentShare" packages/twenty-apps/internal/a2e-documents/...
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-front/src/modules/document-share -type f | sort && echo "===A2E FRONT===" && fi...
+[94m[bash][0m $ grep -rln "share-crypto\|shareCrypto\|encryptShare\|passphrase\|ciphertext" packages/twenty-front/sr...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/document-share/utils/deriveShareAesGcmKey.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/document-share/hooks/useCreateDocumentShare.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/document-share/hooks/useDocumentShare.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/document-share/DocumentShareGuestPage.tsx
+[94m[bash][0m $ grep -rn "DocumentShare" packages/twenty-front/src/modules/app/ packages/twenty-shared/src/ 2>/dev/n...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/lib/ packages/twenty-apps/internal/a2e-documents/...
+[94m[bash][0m $ find packages/twenty-sdk/src -path "*front-component*" -o -name "*.ts" | grep -i front | head
+[94m[bash][0m $ find packages/twenty-server/src -path "*document-share*" -type f | sort
+[94m[bash][0m $ grep -rln "documentShare\|DocumentShare\|document-share" packages/twenty-apps/internal/a2e-documents...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/front-component/index.ts
+[94m[bash][0m $ grep -rn "import" packages/twenty-apps/internal/a2e-documents/src/lib/instantiate-template.ts | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/front-component/functions/navigate.ts
+[94m[bash][0m $ grep -rln "getAppPath" packages/twenty-shared/src | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/front-component/functions/copyToClipboard.ts
+[94m[bash][0m $ grep -rln "copyToClipboard\|window.location\|location.origin" packages/twenty-apps/internal packages...
+[94m[bash][0m $ grep -rn "origin\|hostUrl\|hostUrl\|baseUrl" packages/twenty-sdk/src/sdk/front-component/ | grep -iv...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/front-component/types/FrontComponentExecutionContext.ts
+[94m[bash][0m $ find packages/twenty-front/src -type d -iname "*front*component*" | head
+[94m[bash][0m $ grep -rln "frontComponentHostCommunicationApi\|FrontComponentHost\|front-component" packages/twenty-...
+[94m[read][0m
+[94m[bash][0m $ grep -rln "iframe\|srcdoc" packages/twenty-front-component-renderer/src 2>/dev/null | head
+[94m[bash][0m $ grep -rn "srcDoc\|srcdoc\|sandbox\|location.origin\|baseUrl\|origin" packages/twenty-front-component...
+[94m[bash][0m $ grep -rn "srcDoc\|sandbox\|location.origin\|allow-same-origin" packages/twenty-front-component-rende...
+[94m[bash][0m $ grep -rln "frontComponentHostCommunicationApi" packages/twenty-front/src/modules/front-components/ho...
+[94m[bash][0m $ grep -rn "sandbox\|srcDoc\|srcdoc" packages/twenty-front-component-renderer/src/remote/sandbox/utils...
+[94m[bash][0m $ grep -rn "window.location.origin" packages/twenty-front/src/modules | head -20
+[94m[read][0m
+[94m[bash][0m $ grep -rn "getApplicationVariable" packages/twenty-sdk/src/sdk/front-component/functions/getApplicati...
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-front-component-renderer/src/remote -type f | head -40
+[94m[read][0m
+[94m[bash][0m $ grep -rn "process.env\|FRONT_BASE\|SERVER_BASE\|window\b\|location" packages/twenty-front-component-...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/navigation/getAppPath.ts
+[94m[bash][0m $ grep -rn "AppPathParams\|RecordShowPage" packages/twenty-shared/src/types/*.ts | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/AppPath.ts
+[94m[bash][0m $ sed -n '55,70p' packages/twenty-front/src/modules/app/hooks/useCreateRootAppRouter.tsx
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-apps/internal/a2e-documents/src/lib/__tests__/instantiate-template.te...
+[94m[bash][0m $ grep -rn "deleteDocumentShare\|createDocumentShare\|findManyDocumentShares\|DocumentShare" packages/...
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents/node_modules/twenty-client-sdk -maxdepth 3 -type f ...
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents -name "generated*" -path "*sdk*" | head
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/node_modules/twenty-client-sdk/dist/core/generated/
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-apps/internal/a2e-documents/node_modules/twenty-client-sdk/dist/core/...
+[94m[bash][0m $ sed -n '1,40p' packages/twenty-apps/internal/a2e-documents/node_modules/twenty-client-sdk/dist/core/...
+[94m[bash][0m $ grep -n "query\|mutation\|genql\|createClient\|__args" packages/twenty-apps/internal/a2e-documents/n...
+[94m[bash][0m $ sed -n '1,50p' packages/twenty-apps/internal/a2e-documents/node_modules/twenty-client-sdk/dist/core....
+[94m[bash][0m $ grep -rn "__args" packages/twenty-apps/internal/a2e-documents/src packages/twenty-apps/internal/*/sr...
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-apps/internal/a2e-documents/node_modules/twenty-client-sdk/dist/gener...
+[94m[bash][0m $ grep -rn "clientWrapperTemplate\|GENERATED_CORE" packages/twenty-apps/internal/a2e-documents/node_mo...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/.twenty/output/
+[94m[bash][0m $ grep -rn "isDefined\|isNonEmptyString\|=== undefined\|!== null" packages/twenty-apps/internal/a2e-do...
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-apps/internal/a2e-documents/src/lib/document-tree.ts
+[94m[bash][0m $ git status --porcelain packages/twenty-apps/internal/a2e-documents | head
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-apps/internal/a2e-documents/README.md 2>/dev/null | grep -n "test\|bu...
+[94m[bash][0m $ grep -n "CLAIMED" docs/plan/phases/phase-03-report.md | tail -5
+[94m[bash][0m $ cat >> docs/plan/phases/phase-03-report.md <<'EOF'  CLAIMED — P3.2-snapshot-sharing/owner-share-ux —...
+No active claims in the last 2 hours for this slice. Claiming it now.
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/document-share/hooks/useGuestDocumentShare.ts
+[94m[bash][0m $ grep -rln "useTranslate\|\bmsg\b" packages/twenty-apps/internal/*/src/front-components 2>/dev/null |...
+[94m[bash][0m $ grep -n "useTranslate\|t\`\|'[A-ZÀ-ÿ][^']*'" packages/twenty-apps/internal/a2e-documents/src/front-c...
+[94m[bash][0m $ sed -n '500,600p' packages/twenty-apps/internal/a2e-documents/node_modules/twenty-client-sdk/dist/ge...
+[94m[todowrite][0m
+[94m[write][0m "// Local port of twenty-front's `deriveShareAesGcmKey` util: the app does not
+// declare twenty-shared and cannot import twenty-front modules, so the
+// passphrase crypto is carried here as a pure mod... (2728 chars)"
+[94m[write][0m "import { type EncryptedShareBody } from './share-crypto.ts';
+
+// Owner-side share management, kept pure so the browser component only wires
+// state and calls the Core API. The representation rule liv... (6436 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  decryptShareBody,
+  encryptShareBody,
+} from '../share-crypto.ts';
+
+const BASE64_PATTERN = /^[A-Za-z0-9+/]+={0,2}... (1653 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  buildCreateDocumentShareRequest,
+  buildDocumentSharePath,
+  buildExpiryIso,
+  findDocumentShareForDocument,
+  ha... (7279 chars)"
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -40
+[94m[bash][0m $ grep -rn "DocumentShare" packages/twenty-apps/internal/a2e-documents/node_modules/twenty-sdk/dist/fr...
+[94m[bash][0m $ grep -rn "DocumentShare" packages/twenty-apps/internal/a2e-documents/node_modules/twenty-shared/dist...
+[94m[bash][0m $ grep -rn "DocumentShare" packages/twenty-apps/internal/a2e-documents/node_modules/twenty-sdk/dist/fr...
+[94m[bash][0m $ grep -rn "DocumentShare" packages/twenty-apps/internal/a2e-documents/node_modules/twenty-sdk/dist/*....
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents/node_modules/twenty-sdk/dist -path "*front-componen...
+[94m[bash][0m $ grep -o "share/:shareToken" packages/twenty-apps/internal/a2e-documents/node_modules/twenty-sdk/dist...
+[94m[read][0m
+[94m[bash][0m $ grep -n "twenty-sdk" packages/twenty-apps/internal/a2e-documents/.twenty/output/yarn.lock 2>/dev/nul...
+[94m[read][0m
+[94m[edit][0m
+Now wiring the front component. First the imports:
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -30
+[94m[bash][0m $ yarn lint 2>&1 | tail -30
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -30
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ yarn test:unit 2>&1 | grep -E "^ℹ (tests|pass|fail)"
+[94m[bash][0m $ grep -n "shareDocument\|shareTarget\|DocumentSharePanel\|onShare" packages/twenty-apps/internal/a2e-...
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-front 2>&1 | tail -15
+[94m[bash][0m $ npx oxfmt --check packages/twenty-apps/internal/a2e-documents/src/lib/share-crypto.ts packages/twent...
+[94m[read][0m
+[94m[bash][0m $ sed -n '1,40p' .ralph-tui/progress.md 2>/dev/null
+All gates green. Now appending the phase report.
+[94m[bash][0m $ date -u "+%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ executor — the P3.3 tree legs (favorites-personal verification, deep-tree archive tests) or another ...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ grep -n "stays Tier-2" .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ copy the canonical app path. --- EOF tail -5 .ralph-tui/progress.md
+[94m[bash][0m $ git diff --stat -- packages/twenty-apps/internal/a2e-documents/src/front-components/document-browser...
+[94m[todowrite][0m
+Done. US-019 (P3.2 sharing, bullet 5) implemented and self-verified.
+
+**Changed:** new `share-crypto.ts` (byte-compatible port of twenty-front's client-side AES-GCM), new `document-share-management.ts` (path/expiry/request-builder/reducer), two node test files, and `document-browser.front-component.tsx` (token-discarding `shareDocument` → `DocumentSharePanel` with create/passphrase/expiry, display+copy `/share/<token>`, revoke).
+
+**Checks:** `yarn test:unit` 142/142 · `yarn typecheck` 0 · `yarn lint` 0/0 · `npx twenty dev:build .` succeeded · `npx oxfmt --check` clean · `npx nx lint:diff-with-main twenty-front` "No changed files".
+
+**Claim:** done-for-review · **Ready-to-tick:** no (Tier-2 E05 share/unlock/revoke browser journey is orchestrator-owned). Note recorded: the app's pinned `twenty-sdk@2.31.0` lacks `AppPath.DocumentShare`, so the path is carried locally in the pure lib. Report appended to `docs/plan/phases/phase-03-report.md` and `.ralph-tui/progress.md`; nothing committed, `PLAN.md` untouched.
+
+<promise>COMPLETE</promise>

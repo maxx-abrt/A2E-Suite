@@ -40,6 +40,17 @@ after each iteration and it's included in prompts for context.
   transitions into a pure reducer (`reduceDocumentSharePanel`) plus pure request
   builders, test those with `node --test`, and let the front component only wire
   `useReducer` + the Core API calls. The async handler glue stays Tier-2.
+- **An app cannot synchronously reject a server write:** the app SDK's
+  `LogicFunctionManifest` offers only `databaseEventTriggerSettings` (post-commit
+  `created/updated/deleted/...` — no pre-update action) plus cron/http/server
+  routes/tools. There is no app-owned pre-write hook. So a server-side invariant
+  like "no document-tree cycle" can only be enforced **fail-closed by post-commit
+  repair** (restore the previous acyclic parent or detach to root) on the
+  app-owned object; a true synchronous reject needs a twenty-server
+  `@WorkspaceQueryHook('*.updateOne')` or an app HTTP route. Verify this shape in
+  `packages/twenty-sdk/src/sdk/define/logic-functions/` and
+  `packages/twenty-server/src/engine/.../workspace-query-hook/` before promising
+  rejection.
 ---
 
 
@@ -142,4 +153,33 @@ after each iteration and it's included in prompts for context.
     a lookup failure still leaves the create form usable.
   - Absolute share URLs are impossible from a front component — no host-origin
     primitive is exposed; copy the canonical app path.
+---
+
+---
+
+## 2026-09-19 - US-020
+
+- Extended the existing a2e-documents server-side cycle service rather than
+  building anything new: added `validateDocumentParentMove` (fail-closed
+  decision reusing `isDocumentParentCycle`), a stable
+  `DOCUMENT_PARENT_CYCLE` error code + non-leaking FR message, and made
+  `repairDocumentParentCycle` delegate to the validator and return the coded
+  error on repair.
+- Added the acceptance's exact unit cases to `document-cycle.test.ts`: direct
+  A→B→A, deep A→B→C→A, self-parent, and a valid deep cross-branch move that is
+  allowed and writes nothing.
+- Files changed: `src/lib/document-cycle.ts`,
+  `src/lib/__tests__/document-cycle.test.ts`,
+  `docs/plan/phases/phase-03-report.md`.
+- **Learnings:**
+  - The server guard is a **post-commit repair**, not a synchronous reject:
+    `databaseEventTriggerSettings` only fires after commit and there is no
+    pre-write hook in the app SDK, so `guard-document-parent-cycle` cannot make
+    the original `updateDocument` mutation fail. Bullet 3's "rejected ... mutates
+    nothing" is only satisfiable by the client `buildMoveDocumentPayload`
+    (primary UX) or by a new server-side system (twenty-server pre-query hook /
+    app HTTP route) — reported as the open decision, not implemented.
+  - `node --test` needs `--experimental-strip-types`; `src/lib/**` is excluded
+    from the root `.oxfmtrc.jsonc` (`**/lib/**`), so oxfmt needs an override
+    config to check app lib files.
 ---
