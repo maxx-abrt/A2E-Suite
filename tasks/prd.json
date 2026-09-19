@@ -256,9 +256,10 @@
         "Front suites (ai/utils + ai/components) extended and green on the touched specs; live dispatch proof deferred (Tier 2)"
       ],
       "priority": 15,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md:1369 (P9.1 `[~]`, partial: side-panel half verified US-025 2026-09-19). Deps met: P1.5 native registry verified.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-041",
@@ -356,6 +357,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T22:11:48.188Z"
+    "updatedAt": "2026-09-19T22:15:03.872Z"
   }
 }

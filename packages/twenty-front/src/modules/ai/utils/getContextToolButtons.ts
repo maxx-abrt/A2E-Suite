@@ -13,10 +13,95 @@ export type ContextToolIndexEntry = {
 export type ContextToolLogicFunction = {
   name: string;
   applicationId?: string | null;
+  // The app-declared `toolTriggerSettings.inputSchema`, read straight from the
+  // metadata store — no extra registry call, and no server change.
+  inputSchema?: unknown;
 };
 
 export type ContextToolContext = {
   applicationId?: string | null;
+  objectNameSingular?: string | null;
+  objectUniversalIdentifier?: string | null;
+};
+
+type ContextToolInputSchema = {
+  objectUniversalIdentifier?: string;
+  properties?: Record<string, ContextToolInputSchema>;
+  items?: ContextToolInputSchema;
+  additionalProperties?: boolean | ContextToolInputSchema;
+};
+
+const isContextToolInputSchema = (
+  value: unknown,
+): value is ContextToolInputSchema =>
+  typeof value === 'object' && value !== null;
+
+// The app format names a record-reference input after the object it points at
+// (`documentId`, `projectIds`, …). A property is only ever matched when it
+// names the current object, so a tool is never offered for a context it cannot
+// address.
+const RECORD_ID_PROPERTY_SUFFIXES = ['Id', 'Ids', 'Uid', 'Uids'] as const;
+
+const getRecordIdPropertyNames = (objectNameSingular: string): Set<string> =>
+  new Set(
+    RECORD_ID_PROPERTY_SUFFIXES.map(
+      (suffix) => `${objectNameSingular}${suffix}`,
+    ),
+  );
+
+// Input-schema-aware mapping: a read-only tool qualifies for the current
+// context when its declared input references the context object, even if
+// another app owns that object (the cross-app case). Unreadable schemas fail
+// closed.
+export const toolInputSchemaReferencesObject = ({
+  inputSchema,
+  objectNameSingular,
+  objectUniversalIdentifier,
+}: {
+  inputSchema: unknown;
+  objectNameSingular?: string | null;
+  objectUniversalIdentifier?: string | null;
+}): boolean => {
+  if (!isContextToolInputSchema(inputSchema)) {
+    return false;
+  }
+
+  const recordIdPropertyNames =
+    isDefined(objectNameSingular) && objectNameSingular.length > 0
+      ? getRecordIdPropertyNames(objectNameSingular)
+      : undefined;
+  const hasUniversalIdentifier =
+    isDefined(objectUniversalIdentifier) &&
+    objectUniversalIdentifier.length > 0;
+
+  const visit = (schema: ContextToolInputSchema): boolean => {
+    if (
+      hasUniversalIdentifier &&
+      schema.objectUniversalIdentifier === objectUniversalIdentifier
+    ) {
+      return true;
+    }
+
+    if (isDefined(recordIdPropertyNames) && isDefined(schema.properties)) {
+      for (const propertyName of Object.keys(schema.properties)) {
+        if (recordIdPropertyNames.has(propertyName)) {
+          return true;
+        }
+      }
+    }
+
+    const childSchemas = [
+      ...Object.values(schema.properties ?? {}),
+      ...(isContextToolInputSchema(schema.items) ? [schema.items] : []),
+      ...(isContextToolInputSchema(schema.additionalProperties)
+        ? [schema.additionalProperties]
+        : []),
+    ];
+
+    return childSchemas.some(visit);
+  };
+
+  return visit(inputSchema);
 };
 
 // Mirrors the server's LogicFunctionToolProvider.buildLogicFunctionToolName so
@@ -58,7 +143,15 @@ export const getContextToolButtons = ({
     return [];
   }
 
-  if (!isDefined(context.applicationId) || context.applicationId.length === 0) {
+  const hasContextApplication =
+    isDefined(context.applicationId) && context.applicationId.length > 0;
+  const hasContextObject =
+    (isDefined(context.objectNameSingular) &&
+      context.objectNameSingular.length > 0) ||
+    (isDefined(context.objectUniversalIdentifier) &&
+      context.objectUniversalIdentifier.length > 0);
+
+  if (!hasContextApplication && !hasContextObject) {
     return [];
   }
 
@@ -99,8 +192,20 @@ export const getContextToolButtons = ({
       continue;
     }
 
-    // Context mapping: only the tools of the app that owns the current view.
-    if (applicationId !== context.applicationId) {
+    // Context mapping: the tools of the app that owns the current view, plus
+    // any app tool whose input schema addresses the current object (the
+    // cross-app case, e.g. a project tool reading the open document).
+    const ownsContextApplication =
+      hasContextApplication && applicationId === context.applicationId;
+    const referencesContextObject =
+      !ownsContextApplication &&
+      toolInputSchemaReferencesObject({
+        inputSchema: logicFunction.inputSchema,
+        objectNameSingular: context.objectNameSingular,
+        objectUniversalIdentifier: context.objectUniversalIdentifier,
+      });
+
+    if (!ownsContextApplication && !referencesContextObject) {
       continue;
     }
 

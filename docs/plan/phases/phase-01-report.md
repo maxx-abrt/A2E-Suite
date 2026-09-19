@@ -983,3 +983,18 @@ CLAIMED — US-029/ready-apps-only-bilan-blocked — deepseek-v4.1-flash — 202
 **Do not redo:** `starterBundleContents` is ready-app content only — Bilan (a2e-accounting) contents live in `blockedStarterBundleContents` behind `P7.0_SAFETY_GATE` and are previewed as `blockedSamples`, never as `samples`; do not re-add Bilan to `starterBundleContents` and do not filter `blockedSamples` by server registration (the gate is upstream). `version` stays un-bumped: this is preview metadata only, no apply installs/hides/seeds differently. The seeding source of truth stays each app's post-install hook; the fixture spec is still the drift guard.
 **Remaining:** 10 other [ ]/[~] PLAN tasks ahead in the execution order (P1.3 e2e browser, P1.6d live-install + projects-persona leg, P1.7a export leg, P1.7b Tier-2 journey, P1.7c browser legs, P2.x+).
 **Next:** orchestrator — Tier-2 live install/reinstall (P1.6d seeder blocker) + D02 read of the proposals/Projects question, then tick the P1.6d persona-bundle bullet; executor — P1.7a install-later readiness front leg unless D02 approves a2e-projects in the project-oriented personas.
+
+CLAIMED — US-040/input-schema-aware-context-mapping — deepseek-v4.1-flash — 2026-09-20T00:20:00Z — base b55a22f2fce32f8ab7937aa7ff088e6fb7dd2732
+
+## 2026-09-19 22:15 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-040 [P9.1] Assistant surface — full-page upgrade of ai-chat + input-schema-aware context mapping (+ channel-side context) · **Slice:** input-schema-aware context mapping (first unmet leg)
+**Claim:** conflict
+**Ready-to-tick:** no — zero work done; the target slice and its exact files are under an active concurrent claim
+**Base:** cf69b44660df6af93d16f1bcf8aa7d4996162583
+**Changed:** `docs/plan/phases/phase-01-report.md` (this entry) + `.ralph-tui/progress.md` (Ralph bridge) only — no source files touched
+**Checks:** none run — contract §3 file-overlap preflight stops before any work
+**Evidence:** `CLAIMED — US-040/input-schema-aware-context-mapping … 2026-09-20T00:20:00Z — base b55a22f2…` (phase-01-report.md:987) plus uncommitted edits to exactly my intended files — `packages/twenty-front/src/modules/ai/utils/getContextToolButtons.ts` (+111), `.../ai/hooks/useContextToolButtons.ts` (+22/-6), `.../ai/utils/__tests__/getContextToolButtons.test.ts` (+221) — with mtimes `2026-09-20 00:13` local, the test diff growing between my two reads (30→221 lines). A second ralph session is actively implementing this slice in this checkout (the same two-ralph-session hazard recorded for US-030/US-032).
+**Missing for tick:** n/a — conflict; nothing to verify or tick.
+**Do not redo:** the concurrent claimant owns the input-schema-aware-context-mapping slice and its three files; do not edit `getContextToolButtons.ts` / `useContextToolButtons.ts` / `getContextToolButtons.test.ts` until that claim lands (or is abandoned) and its report/commit is visible.
+**Remaining:** US-040's other legs — full-page upgrade, channel-side context (direct tool execution stays out / Tier 2); then P9.1 streaming + model config + usage logging, P9.2/P9.2b/P9.3.
+**Next:** orchestrator — let the active US-040 claim finish and be verified/ticked; then Ralph may re-dispatch US-040 for the remaining legs (full-page upgrade / channel-side context) with a slice that does not overlap the in-flight files.

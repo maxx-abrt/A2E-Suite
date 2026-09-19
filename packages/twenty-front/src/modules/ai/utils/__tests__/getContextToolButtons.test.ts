@@ -4,10 +4,14 @@ import {
   buildLogicFunctionToolName,
   getContextToolButtons,
   humanizeToolLabel,
+  toolInputSchemaReferencesObject,
 } from '@/ai/utils/getContextToolButtons';
 
 const DOCUMENTS_APP_ID = 'documents-app-id';
 const DRIVE_APP_ID = 'drive-app-id';
+const PROJECTS_APP_ID = 'projects-app-id';
+
+const DOCUMENT_UNIVERSAL_IDENTIFIER = '20202020-document-universal-id';
 
 const documentContentTool = {
   name: 'app_document_content',
@@ -39,6 +43,32 @@ const defaultArguments = {
   installedApplicationIds: new Set([DOCUMENTS_APP_ID, DRIVE_APP_ID]),
   context: { applicationId: DOCUMENTS_APP_ID },
   canReadContextObject: true,
+};
+
+const extractTasksTool = {
+  name: 'app_extract_tasks_from_document',
+  label: 'extract-tasks-from-document',
+  description: 'Propose des tâches à partir d’un document.',
+  category: ToolCategory.LOGIC_FUNCTION,
+};
+
+const extractTasksLogicFunction = {
+  name: 'extract-tasks-from-document',
+  applicationId: PROJECTS_APP_ID,
+  inputSchema: {
+    type: 'object',
+    properties: {
+      documentId: { type: 'string' },
+      projectId: { type: 'string' },
+    },
+    required: ['documentId'],
+  },
+};
+
+const documentContext = {
+  applicationId: DOCUMENTS_APP_ID,
+  objectNameSingular: 'document',
+  objectUniversalIdentifier: DOCUMENT_UNIVERSAL_IDENTIFIER,
 };
 
 describe('getContextToolButtons', () => {
@@ -166,6 +196,197 @@ describe('getContextToolButtons', () => {
       'app_document_content',
       'app_standup_digest',
     ]);
+  });
+
+  it('offers another app’s read-only tool when its input schema addresses the context object', () => {
+    const buttons = getContextToolButtons({
+      ...defaultArguments,
+      context: documentContext,
+      toolIndex: [...defaultArguments.toolIndex, extractTasksTool],
+      logicFunctions: [
+        ...defaultArguments.logicFunctions,
+        extractTasksLogicFunction,
+      ],
+      installedApplicationIds: new Set([
+        DOCUMENTS_APP_ID,
+        DRIVE_APP_ID,
+        PROJECTS_APP_ID,
+      ]),
+    });
+
+    expect(buttons.map(({ toolName }) => toolName)).toEqual([
+      'app_document_content',
+      'app_extract_tasks_from_document',
+    ]);
+  });
+
+  it('matches a record reference declared by object universal identifier', () => {
+    const buttons = getContextToolButtons({
+      ...defaultArguments,
+      context: { applicationId: null, objectNameSingular: 'document', objectUniversalIdentifier: DOCUMENT_UNIVERSAL_IDENTIFIER },
+      toolIndex: [extractTasksTool],
+      logicFunctions: [
+        {
+          name: 'extract-tasks-from-document',
+          applicationId: PROJECTS_APP_ID,
+          inputSchema: {
+            type: 'object',
+            properties: {
+              document: {
+                type: 'record',
+                objectUniversalIdentifier: DOCUMENT_UNIVERSAL_IDENTIFIER,
+              },
+            },
+          },
+        },
+      ],
+      installedApplicationIds: new Set([PROJECTS_APP_ID]),
+    });
+
+    expect(buttons.map(({ toolName }) => toolName)).toEqual([
+      'app_extract_tasks_from_document',
+    ]);
+  });
+
+  it('does not offer an app tool whose input schema addresses a different object', () => {
+    const buttons = getContextToolButtons({
+      ...defaultArguments,
+      context: documentContext,
+      toolIndex: [
+        {
+          name: 'app_task_breakdown_context',
+          label: 'task-breakdown-context',
+          description: 'Structure des tâches d’un projet.',
+          category: ToolCategory.LOGIC_FUNCTION,
+        },
+      ],
+      logicFunctions: [
+        {
+          name: 'task-breakdown-context',
+          applicationId: PROJECTS_APP_ID,
+          inputSchema: {
+            type: 'object',
+            properties: { projectId: { type: 'string' } },
+            required: ['projectId'],
+          },
+        },
+      ],
+      installedApplicationIds: new Set([PROJECTS_APP_ID]),
+    });
+
+    expect(buttons).toEqual([]);
+  });
+
+  it('does not offer another app’s tool when its app is not installed (fail-closed)', () => {
+    const buttons = getContextToolButtons({
+      ...defaultArguments,
+      context: documentContext,
+      toolIndex: [...defaultArguments.toolIndex, extractTasksTool],
+      logicFunctions: [
+        ...defaultArguments.logicFunctions,
+        extractTasksLogicFunction,
+      ],
+      installedApplicationIds: new Set([DOCUMENTS_APP_ID, DRIVE_APP_ID]),
+    });
+
+    expect(buttons.map(({ toolName }) => toolName)).toEqual([
+      'app_document_content',
+    ]);
+  });
+});
+
+describe('toolInputSchemaReferencesObject', () => {
+  it('matches a singular or plural record-id property named after the object', () => {
+    expect(
+      toolInputSchemaReferencesObject({
+        inputSchema: {
+          type: 'object',
+          properties: { documentId: { type: 'string' } },
+        },
+        objectNameSingular: 'document',
+      }),
+    ).toBe(true);
+
+    expect(
+      toolInputSchemaReferencesObject({
+        inputSchema: {
+          type: 'object',
+          properties: { projectIds: { type: 'array' } },
+        },
+        objectNameSingular: 'project',
+      }),
+    ).toBe(true);
+  });
+
+  it('matches a nested record reference by object universal identifier', () => {
+    expect(
+      toolInputSchemaReferencesObject({
+        inputSchema: {
+          type: 'object',
+          properties: {
+            payload: {
+              type: 'object',
+              properties: {
+                document: {
+                  type: 'record',
+                  objectUniversalIdentifier: DOCUMENT_UNIVERSAL_IDENTIFIER,
+                },
+              },
+            },
+          },
+        },
+        objectUniversalIdentifier: DOCUMENT_UNIVERSAL_IDENTIFIER,
+      }),
+    ).toBe(true);
+  });
+
+  it('matches a record reference inside array items', () => {
+    expect(
+      toolInputSchemaReferencesObject({
+        inputSchema: {
+          type: 'object',
+          properties: {
+            documents: {
+              type: 'array',
+              items: {
+                type: 'record',
+                objectUniversalIdentifier: DOCUMENT_UNIVERSAL_IDENTIFIER,
+              },
+            },
+          },
+        },
+        objectUniversalIdentifier: DOCUMENT_UNIVERSAL_IDENTIFIER,
+      }),
+    ).toBe(true);
+  });
+
+  it('fails closed without a usable schema or object reference', () => {
+    const documentContextReference = {
+      objectNameSingular: 'document',
+      objectUniversalIdentifier: DOCUMENT_UNIVERSAL_IDENTIFIER,
+    };
+
+    expect(
+      toolInputSchemaReferencesObject({
+        inputSchema: undefined,
+        ...documentContextReference,
+      }),
+    ).toBe(false);
+    expect(
+      toolInputSchemaReferencesObject({
+        inputSchema: 'not-a-schema',
+        ...documentContextReference,
+      }),
+    ).toBe(false);
+    expect(
+      toolInputSchemaReferencesObject({
+        inputSchema: {
+          type: 'object',
+          properties: { projectId: { type: 'string' } },
+        },
+        ...documentContextReference,
+      }),
+    ).toBe(false);
   });
 });
 

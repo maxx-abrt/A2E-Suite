@@ -187,3 +187,11 @@ after each iteration and it's included in prompts for context.
   - `useBatchCreateManyRecords` (the only import caller) already reports committed-batch counts through `setBatchedRecordsCount`, so partial-failure feedback needs no change to that hook — only a read of the progress state at catch time.
   - Tier-0 gates: `npx jest src/modules/spreadsheet-import src/modules/object-record/spreadsheet-import --config=packages/twenty-front/jest.config.mjs` → 24 suites / 121 tests; `npx tsgo -p tsconfig.json --noEmit` → 0; direct `npx oxlint --type-aware -c .oxlintrc.json <files>` → 0/0 (nx `lint:diff-with-main` reports "No changed files" because HEAD == main).
 ---
+
+## [2026-09-19] - US-040
+- Conflict — did no work. A concurrent same-checkout executor claimed the identical first leg (`CLAIMED — US-040/input-schema-aware-context-mapping — 2026-09-20T00:20:00Z`) and was actively editing exactly my target files; contract v4 §1.3 (already claimed) + §3 (target-file overlap) → stop, report `conflict`, zero source touched (reports only).
+- Files changed: `docs/plan/phases/phase-01-report.md`, `.ralph-tui/progress.md` only.
+- **Learnings:**
+  - The two-ralph-session-on-one-checkout hazard keeps recurring (US-030, US-032, now US-040). `git status` at session start can be clean while a sibling session writes the slice files seconds later — re-check `git status` + the phase-report tail immediately before claiming, and watch file mtimes.
+  - US-025's report called input-schema-aware mapping a "later bullet", but `toolInputSchemaReferencesObject` already ships inside `getContextToolButtons.ts` (committed in d3f262d5); the concurrent US-040 claim is hardening/testing that mapping, not building it from zero. The remaining US-040 legs are full-page upgrade and channel-side context.
+---

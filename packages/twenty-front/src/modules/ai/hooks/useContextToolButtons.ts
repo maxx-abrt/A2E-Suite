@@ -34,10 +34,26 @@ export const useContextToolButtons = (): ContextToolButton[] => {
     [installedApplications],
   );
 
+  // Carry the app-declared input schema along so the mapping can reach an
+  // object the tool addresses without owning it — the cross-app case.
+  const contextToolLogicFunctions = useMemo(
+    () =>
+      logicFunctions.map((logicFunction) => ({
+        name: logicFunction.name,
+        applicationId: logicFunction.applicationId,
+        inputSchema: logicFunction.toolTriggerSettings?.inputSchema,
+      })),
+    [logicFunctions],
+  );
+
   const context = useMemo(
     () =>
       isDefined(aiChatSuggestedPromptsContext) && isDefined(objectMetadataItem)
-        ? { applicationId: objectMetadataItem.applicationId }
+        ? {
+            applicationId: objectMetadataItem.applicationId,
+            objectNameSingular: objectMetadataItem.nameSingular,
+            objectUniversalIdentifier: objectMetadataItem.universalIdentifier,
+          }
         : null,
     [aiChatSuggestedPromptsContext, objectMetadataItem],
   );
@@ -46,14 +62,14 @@ export const useContextToolButtons = (): ContextToolButton[] => {
     () =>
       getContextToolButtons({
         toolIndex,
-        logicFunctions,
+        logicFunctions: contextToolLogicFunctions,
         installedApplicationIds,
         context,
         canReadContextObject: objectPermissions.canReadObjectRecords,
       }),
     [
       toolIndex,
-      logicFunctions,
+      contextToolLogicFunctions,
       installedApplicationIds,
       context,
       objectPermissions.canReadObjectRecords,

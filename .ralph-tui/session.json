@@ -3,10 +3,10 @@
   "sessionId": "6455d7b0-09b6-4e5c-ba20-c39a463e7fdb",
   "status": "running",
   "startedAt": "2026-09-19T20:42:50.206Z",
-  "updatedAt": "2026-09-19T22:11:48.188Z",
-  "currentIteration": 13,
+  "updatedAt": "2026-09-19T22:15:03.873Z",
+  "currentIteration": 15,
   "maxIterations": 20,
-  "tasksCompleted": 12,
+  "tasksCompleted": 13,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -146,6 +146,26 @@
       "durationMs": 99718,
       "startedAt": "2026-09-19T21:59:12.594Z",
       "endedAt": "2026-09-19T22:00:52.312Z"
+    },
+    {
+      "iteration": 14,
+      "status": "completed",
+      "taskId": "US-039",
+      "taskTitle": "[P4] CSV/bulk task import/export — validation and partial-row error feedback on native import",
+      "taskCompleted": true,
+      "durationMs": 649941,
+      "startedAt": "2026-09-19T22:00:58.246Z",
+      "endedAt": "2026-09-19T22:11:48.187Z"
+    },
+    {
+      "iteration": 15,
+      "status": "completed",
+      "taskId": "US-040",
+      "taskTitle": "[P9.1] Assistant surface — full-page upgrade of ai-chat + input-schema-aware context mapping (+ channel-side context)",
+      "taskCompleted": false,
+      "durationMs": 73972,
+      "startedAt": "2026-09-19T22:11:53.858Z",
+      "endedAt": "2026-09-19T22:13:07.830Z"
     }
   ],
   "skippedTaskIds": [],
