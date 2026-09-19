@@ -47,6 +47,9 @@ export const LOGIC_FUNCTION_IDS = {
   guardDocumentParentCycle: 'c31a0000-0012-4000-8000-000000000003',
   documentContent: 'c31a0000-0012-4000-8000-000000000004',
   guardDocumentRevisionSave: 'c31a0000-0012-4000-8000-000000000005',
+  summarizeDocument: 'c31a0000-0012-4000-8000-000000000006',
+  translateDocument: 'c31a0000-0012-4000-8000-000000000007',
+  improveDocumentWriting: 'c31a0000-0012-4000-8000-000000000008',
 } as const;
 
 export const COMMAND_MENU_ITEM_IDS = {

@@ -3,10 +3,10 @@
   "sessionId": "6455d7b0-09b6-4e5c-ba20-c39a463e7fdb",
   "status": "running",
   "startedAt": "2026-09-19T20:42:50.206Z",
-  "updatedAt": "2026-09-19T22:22:07.425Z",
-  "currentIteration": 16,
+  "updatedAt": "2026-09-19T22:24:55.070Z",
+  "currentIteration": 17,
   "maxIterations": 20,
-  "tasksCompleted": 14,
+  "tasksCompleted": 15,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -176,6 +176,16 @@
       "durationMs": 111033,
       "startedAt": "2026-09-19T22:13:12.835Z",
       "endedAt": "2026-09-19T22:15:03.868Z"
+    },
+    {
+      "iteration": 17,
+      "status": "completed",
+      "taskId": "US-041",
+      "taskTitle": "[P9.1] Streaming responses (SSE reuse) + usage logging to event-logs + provider config from existing AI settings",
+      "taskCompleted": true,
+      "durationMs": 416667,
+      "startedAt": "2026-09-19T22:15:10.753Z",
+      "endedAt": "2026-09-19T22:22:07.420Z"
     }
   ],
   "skippedTaskIds": [],

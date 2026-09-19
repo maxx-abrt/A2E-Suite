@@ -224,3 +224,11 @@ after each iteration and it's included in prompts for context.
   - `decrementAndCheckAvailableCredits` and `calculateAndBillUsage` both call `calculateCost` (needs a real model config); `emitAiTokenUsageEvent` / `billNativeWebSearchUsage` do not. Spy `service.calculateCost` in tests to keep them independent of `AiModelRegistryService` pricing.
   - The twin `ralph-tui` session saw my untracked spec, reported `conflict` for the same `US-041/ai-usage-log-write-tests` slice and backed off (progress.md US-041 conflict entry) — the claim-first + immediate file write is what won the race.
 ---
+
+## [2026-09-20] - US-042
+- Conflict — did no work. A concurrent same-checkout executor appended `CLAIMED — US-042/summarize-translate-improve-tools — deepseek-v4.1-flash — 2026-09-19T22:25:00Z — base 85c944da…` and was mid-write on exactly my slice files; contract v4 §1.3 (already claimed) + §3 (target-file overlap) → stop, report `conflict`, zero source touched (reports only). No CLAIMED line appended, to avoid racing the live owner.
+- Files changed: `docs/plan/phases/phase-03-report.md`, `.ralph-tui/progress.md` only.
+- **Learnings:**
+  - US-042's P9.2 Documents actions are three read-only logic-function tools surfaced by `toolTriggerSettings.inputSchema` referencing `documentId` (the P9.1 context-button mapping in `twenty-front` `getContextToolButtons.ts`); they MUST delegate to the existing `readDocumentContent` (`a2e-documents/src/logic-functions/handlers/document-content-handler.ts`) — do not fork a second read path.
+  - Two `ralph-tui run` processes (PIDs 49648 + 35049) are live on this one checkout; the claim and the five target files (mtimes 00:24:11–00:24:20Z local) materialized between my session-start `git status` and my scoping read. Re-read the phase-report tail and per-file mtimes immediately before claiming — same US-030/US-032/US-039/US-040/US-041 hazard.
+---

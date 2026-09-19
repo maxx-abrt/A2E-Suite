@@ -1,0 +1,137 @@
+# Iteration 17 Log
+
+## Metadata
+
+- **Task ID**: US-041
+- **Task Title**: [P9.1] Streaming responses (SSE reuse) + usage logging to event-logs + provider config from existing AI settings
+- **Description**: As a workspace member using the assistant, I want streamed responses and auditable usage logs, so that answers arrive progressively and every AI call is traceable.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T22:15:10.753Z
+- **Ended At**: 2026-09-19T22:22:07.420Z
+- **Duration**: 6m 56s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ git diff --stat
+[94m[grep][0m [95mPLAN.md[0m pattern: [96mUS-041[0m
+[94m[bash][0m $ grep -n "P9.1\|Streaming responses\|SSE reuse" PLAN.md | head -20
+[94m[bash][0m $ sed -n '260,345p' tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -rn "US-041\|US-040\|getContextToolButtons" docs/plan/phases/*.md | tail -40
+[94m[bash][0m $ wc -l docs/plan/phases/phase-01-report.md docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ sed -n '150,210p' .ralph-tui/session.json
+[94m[bash][0m $ find packages/twenty-server/src -type d -iname "*event-log*" -o -type d -iname "*eventLog*" | head
+[94m[bash][0m $ grep -rln "text/event-stream\|EventSource\|SSE\|ServerSentEvent\|sse" packages/twenty-server/src --i...
+[94m[bash][0m $ find packages/twenty-server/src/engine/core-modules/event-logs -type f | head -60
+[94m[bash][0m $ find packages/twenty-server/src/engine/metadata-modules/ai/ai-chat -type f | head -60
+[94m[bash][0m $ grep -rln "text/event-stream\|EventSource\|res.write\|flushHeaders\|@Sse" packages/twenty-server/src...
+[94m[bash][0m $ find packages/twenty-server/src/engine/metadata-modules/ai/ai-billing -type f
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-server/src/engine/core-modules/event-logs/registry/event-log-registr...
+[94m[bash][0m $ wc -l packages/twenty-server/src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service.t...
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-server/src/engine/core-modules/usage -type f | head -60
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publishe...
+[94m[bash][0m $ grep -rln "text/event-stream\|Sse\|@Sse\|writeSseEvent\|SSE" packages/twenty-server/src/engine/core-...
+[94m[bash][0m $ grep -rn "P9.1\|P9.2\|P9.3\|AI provider\|provider config\|ai settings\|AI settings" docs/plan/01-cod...
+[94m[bash][0m $ grep -rln "agentChat" packages/twenty-server/src/engine -l --include="*.ts" | head
+[94m[bash][0m $ find packages/twenty-front/src -iname "*streamingRest*" -o -iname "*streaming-rest*" | head
+[94m[bash][0m $ grep -rln "agentChat\|ai-chat\|agent-chat" packages/twenty-server/src/engine/api/rest packages/twent...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/apollo/utils/streamingRestLink.ts
+[94m[bash][0m $ grep -rn "StreamingRest\|streamingRest" packages/twenty-front/src/modules/apollo/services/apollo.fac...
+[94m[bash][0m $ grep -rln "sendMessage\|streamMessage\|agentChatStream" packages/twenty-front/src/modules/ai --inclu...
+[94m[bash][0m $ find packages/twenty-server/src/engine -type d -iname "*stream*" | head -20
+[94m[bash][0m $ find packages/twenty-server/src/engine/subscriptions -type f | head -30
+[94m[bash][0m $ grep -n "billing\|Billing\|usage\|Usage\|calculateAndBill\|emitAiToken\|record(" packages/twenty-ser...
+[94m[bash][0m $ cat packages/twenty-server/src/engine/core-modules/usage/enums/usage-operation-type.enum.ts packages...
+[94m[bash][0m $ git log --oneline -3 -- packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/agent...
+[94m[bash][0m $ grep -rin "streaming\|SSE\|usage log\|event-log\|event log" .ralph-tui/progress.md docs/plan/phases/...
+[94m[bash][0m $ find packages/twenty-server/src/engine/metadata-modules/ai -name "*.resolver.ts" | head
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-server/src/engine/metadata-modules/ai -name "*.spec.ts" | wc -l
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-server/src/engine/core-modules/usage/listeners/usage-event.listener.t...
+[94m[bash][0m $ ls packages/twenty-apps/internal/ | head -40
+[94m[bash][0m $ grep -rln "usageRecorder\|UsageRecorder\|event-log\|eventLog\|AiBilling" packages/twenty-apps/intern...
+[94m[read][0m
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-apps/internal/a2e-chat/src/logic-functions/handlers/summarize-channel...
+[94m[bash][0m $ grep -rn "logicFunctionExecuted\|LOGIC_FUNCTION_EXECUTED" packages/twenty-server/src --include="*.ts...
+[94m[bash][0m $ grep -rn "track(" packages/twenty-server/src/engine/core-modules/logic-function --include="*.ts" | h...
+[94m[read][0m
+[94m[bash][0m $ grep -n "P9.1\|US-041\|P9 streaming\|streaming" PLAN.md | head -20
+[94m[bash][0m $ grep -n -i "ai\|assistant\|streaming\|usage" docs/plan/01-codebase-map.md | head -30
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/hooks/useAgentChatSubscription.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/01-codebase-map.md
+[94m[bash][0m $ find packages/twenty-server/src -name "*billing*spec.ts" | grep -i ai
+[94m[bash][0m $ cat packages/twenty-server/src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-t...
+[94m[bash][0m $ grep -rn "mapAiStepsToToolCallLogs\|toolCallLogs\|ToolCallLog" packages/twenty-server/src/engine/met...
+[94m[bash][0m $ grep -rln "US-041" docs/ 2>/dev/null | head
+[94m[bash][0m $ grep -rn "AiToolCallLog" packages/twenty-shared/src --include="*.ts" | head
+[94m[bash][0m $ grep -n "US-041" docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ git status --porcelain
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "P9\|assistant\|Assistant" docs/product-experience.md | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/event-logs/emit/events.type.ts
+[94m[bash][0m $ sed -n '1,60p' docs/plan/phases/README.md 2>/dev/null || find docs/plan -iname "README*" | head
+[94m[bash][0m $ sed -n '1,40p' docs/tasks/README.md 2>/dev/null
+[94m[bash][0m $ grep -rn "UsageRecorder\|usageRecorder\|emitAiTokenUsage\|AiBilling\|calculateAndBill\|usageEvent\|e...
+[94m[bash][0m $ cat packages/twenty-server/src/engine/core-modules/usage/enums/usage-unit.enum.ts
+[94m[bash][0m $ grep -n "getEffectiveModelConfig\|resolveModelForAgent\|validateModelAvailability" packages/twenty-s...
+[94m[bash][0m $ echo "base: $(git rev-parse HEAD)"
+[94m[bash][0m $ git log --oneline -5
+[94m[bash][0m $ ps -axo pid,ppid,etime,command | grep -iE "ralph-tui|opencode" | grep -v grep | head -20
+[94m[bash][0m $ printf '\nCLAIMED — US-041/ai-usage-log-write-tests — deepseek-v4.1-flash — 2026-09-19T22:19:30Z — b...
+[94m[bash][0m $ grep -n "CLAIMED\|^## " docs/plan/phases/phase-01-report.md | tail -8
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-server/src/engine/core-modules/billing/services/billing-usage.service...
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-server/src/engine/metadata-modules/ai/ai-models/utils/__tests__/works...
+[94m[read][0m
+[94m[write][0m "import { type LanguageModelUsage } from 'ai';
+import { DiscoveryService } from '@nestjs/core';
+import { Test, type TestingModule } from '@nestjs/testing';
+
+import { BillingUsageService } from 'src/eng... (7933 chars)"
+Now I'll write the server unit test proving the AI usage-log write path reaches the event-logs bridge.
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai/ai-billing/services/__tests__/ai-billing.service.spec.ts --c...
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai/ai-billing/services/__tests__/ai-billing.service.spec.ts --c...
+[94m[bash][0m $ npx jest src/engine/core-modules/usage/services/__tests__/usage-recorder.service.spec.ts src/engine/...
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai/ai-chat/services/__tests__/agent-chat-streaming --config=pac...
+[94m[bash][0m $ npx oxfmt --check packages/twenty-server/src/engine/metadata-modules/ai/ai-billing/services/__tests_...
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-server 2>&1 | tail -20
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/engine/metadata-modules/ai/ai-billing/services/__tests...
+[94m[bash][0m $ npx oxfmt --check src/engine/metadata-modules/ai/ai-billing/services/__tests__/ai-billing.service.sp...
+[94m[bash][0m $ echo "EXIT: $?"
+[94m[bash][0m $ grep -n "usage:" packages/twenty-server/src/engine/metadata-modules/ai/ai-billing/services/__tests__...
+[94m[edit][0m
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/engine/metadata-modules/ai/ai-billing/services/__tests...
+[94m[bash][0m $ tail -20 /tmp/tsgo-ai-billing.log
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai/ai-billing/services/__tests__/ai-billing.service.spec.ts --c...
+[94m[bash][0m $ tail -2 docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ then US-042/US-043+/remaining P9.1 legs. Serialize the two `ralph-tui run` sessions sharing this che...
+[94m[bash][0m $ tail -30 .ralph-tui/progress.md
+[94m[bash][0m $ grep -n "^- \*\*" .ralph-tui/progress.md | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ `emitAiTokenUsageEvent` / `billNativeWebSearchUsage` do not. Spy `service.calculateCost` in tests to...
+[94m[bash][0m $ npx oxfmt --check src/engine/metadata-modules/ai/ai-billing/services/__tests__/ai-billing.service.sp...
+[94m[bash][0m $ git log --oneline -3
+[94m[bash][0m $ git show HEAD:packages/twenty-server/src/engine/metadata-modules/ai/ai-billing/services/__tests__/ai...
+[94m[bash][0m $ grep -n "P9.1 streaming / model-provider config" .ralph-tui/progress.md
+US-041 (P9.1) executor slice complete.
+
+**Verdict:** `done-for-review` — streaming, provider config, and usage logging are all native and already wired; the one uncovered acceptance gap (AC4: AI usage-log writes) is now closed.
+
+**Change:** new `packages/twenty-server/src/engine/metadata-modules/ai/ai-billing/services/__tests__/ai-billing.service.spec.ts` (7 tests) — wires the real `UsageRecorderService` under `AiBillingService` and asserts the `USAGE_RECORDED` event-logs batch (`emitAiTokenUsageEvent` → resourceType AI/AI_CHAT_TOKEN/tokens/TOKEN/modelId/spenders; web-search INVOCATION + quota; zero-count no-op; per-step decrement writes no second entry; `assertAiExecutionAllowed` delegation).
+
+**Checks (all green):** spec 7 passed; existing `agent-chat-streaming.service.*` 4 suites/26 passed (streaming plumbing); `usage-recorder.service.spec.ts` + `build-usage-event-envelopes.spec.ts` 2 suites/13 passed; `tsgo --noEmit` exit 0; oxlint 0/0; oxfmt clean.
+
+**Reported:** `docs/plan/phases/phase-01-report.md` (claim line 1015, report line 1030) + `.ralph-tui/progress.md`. Base `cbeef79c`; spec auto-committed by Ralph as `85c944da`. Tier-2 live streaming remains orchestrator-only.
+
+<promise>COMPLETE</promise>

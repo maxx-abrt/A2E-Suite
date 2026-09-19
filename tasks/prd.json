@@ -288,9 +288,10 @@
         "C6: creates nothing, posts nothing; app-local typecheck + test:unit green on a2e-documents"
       ],
       "priority": 17,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN.md:1384 (P9.2 `[~]`, partial: enablers verified 2026-09-19). Live assistant-catalogue invocation stays Tier 2.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-043",
@@ -358,6 +359,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T22:22:07.425Z"
+    "updatedAt": "2026-09-19T22:24:55.069Z"
   }
 }

@@ -1123,3 +1123,18 @@ CLAIMED — US-033/record-note-copy-template-helper — deepseek-v4.1-flash — 
 **Environment note (not mine):** a second ralph session claimed `US-032/server-expected-revision-cas` at 21:38:17Z (17s after mine) and reported conflict with zero code; its engine auto-committed my app files as `e5824205` mid-iteration. `record-note-copy.ts` in the tree is US-033's, not mine.
 **Remaining:** ~11 other [ ]/[~] tasks ahead in the execution order (P1.3 e2e, P1.6d D02-gated leg, P1.7a export, P1.7b/c Tier-2, P2.1 bullet 5, P2.4/P2.5 e2e, P3.3 record-note-body copy, P3.4+)
 **Next:** orchestrator — reinstall the app + run the two-session conflict-banner pass and tick US-032 if the repair holds; executor — another queued leg (P3.4 import/export or P1.7a)
+
+CLAIMED — US-042/summarize-translate-improve-tools — deepseek-v4.1-flash — 2026-09-19T22:25:00Z — base 85c944dabe5327e6743668d231189857f36a1f7c
+
+## 2026-09-19 22:26 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-042 [P9.2] Documents AI actions — summarize, translate, improve writing (read-only tools) · **Slice:** the task's only bullet — three read-only action tools delegating to `readDocumentContent`
+**Claim:** conflict
+**Ready-to-tick:** no — a live concurrent claim on the identical slice (same target files) is mid-write; zero source touched
+**Base:** af7542c51c425a6754c42707b41b8a66785614f1
+**Changed:** none — only this report + the `.ralph-tui/progress.md` bridge entry; no source file opened for edit, no CLAIMED line appended so I do not race the live owner
+**Checks:** `git status --porcelain` at session start vs. after scoping → source went from clean to 5 modified/new files under my exact slice; no test/typecheck run because zero code changed
+**Conflict detail:** on first read of this report the tail was the US-032 entry (line 1125); by the time I finished scoping, a concurrent twin had appended `CLAIMED — US-042/summarize-translate-improve-tools — deepseek-v4.1-flash — 2026-09-19T22:25:00Z — base 85c944dab…` (line 1127) and created precisely my intended files: `a2e-documents/src/logic-functions/handlers/document-action-handler.ts` (untracked, mtime 2026-09-20T00:24:16Z local), `summarize-document.logic-function.ts` (untracked, 00:24:20Z), `translate-document.logic-function.ts`, `improve-document-writing.logic-function.ts`, and `src/constants/universal-identifiers.ts` (modified, 00:24:11Z). Two live `ralph-tui run` PIDs (49648, 35049) on this one checkout. Contract §1.3 (existing claim within 2 h, no follow-up) + §3 (target-file overlap with an active claim) → stop.
+**Missing for tick:** the other claimant owns US-042; my claim is withdrawn. Acceptance remains: three `toolTriggerSettings`-registered read-only tools, caller-scoped, fail-closed on missing/unauthorized, `test:unit` + typecheck green on a2e-documents.
+**Do not redo:** do not start a third concurrent US-042 attempt against `document-action-handler.ts` / `document-*.logic-function.ts` / `universal-identifiers.ts` — the `US-042/summarize-translate-improve-tools` claim is the active lock. `readDocumentContent` is the single authorized read path; the twin's three files should delegate to it, not fork a second read.
+**Remaining:** ~11 other [ ]/[~] tasks ahead in the execution order (P1.3 e2e, P1.6d D02-gated leg, P1.7a export, P1.7b/c Tier-2, P2.1 bullet 5, P2.4/P2.5 e2e, US-032 AC4/AC5, P3.4+, remaining P9 legs)
+**Next:** orchestrator — reconcile the two live ralph sessions (US-030/US-032/US-040/US-041/now US-042 duplicate class); executor — pick a queued leg with no US-042 overlap, or resume only after the twin's `done-for-review` report lands
