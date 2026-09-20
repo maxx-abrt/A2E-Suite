@@ -1139,3 +1139,25 @@ CLAIMED — US-060/recurrence-rule-model-daily-weekly-expansion — deepseek-v4.
 **Do not redo:** the rule types, `parseCalendarRecurrenceRule`/`serializeCalendarRecurrenceRule`, `expandCalendarRecurrence` and the 50 green tests — all present; do not add monthly expansion, UI wiring, persistence or occurrence-id/detach logic here (US-061/US-062/US-063).
 **Remaining:** 11 tasks left in the Ralph queue after this one (US-061…US-067 + standing P4.1/P4.2/P4.3 Tier-2 legs).
 **Next:** orchestrator — tick US-060; or executor — US-061 (P4C.3b: monthly/position expansion, occurrence identity, skipped/detached occurrences).
+
+CLAIMED — US-061/monthly-expansion-position-termination — deepseek-v4.1-flash — 2026-09-20T17:52:16Z — base 2247c5f2113c1ec81b6fe47a93e8a9483d7c83f7
+
+## 2026-09-20 17:58 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-061 P4C.3b — monthly expansion, position rules and termination semantics · **Slice:** the whole P4C.3b deliverable (monthly-by-date + monthly-by-position expansion + count/until + locale week start, extending the US-060 engine).
+**Claim:** done-for-review
+**Ready-to-tick:** yes — every Tier 0 gate green on the uncommitted tree; no Tier-2 surface exists (no UI/persistence in this slice).
+**Base:** 2247c5f2113c1ec81b6fe47a93e8a9483d7c83f7
+**Changed:** `packages/twenty-front/src/modules/calendar/utils/expandCalendarRecurrence.ts` (monthly branch added to the existing generator; per-month date selection; `weekStartsOnDayIndex` option threaded through the existing normalizer), `.../utils/__tests__/expandCalendarRecurrence.test.ts` (26 new tests + the US-060 placeholder replaced), `docs/plan/phases/phase-04-report.md`, `.ralph-tui/progress.md` (reports only). Model types untouched — no second engine, no new type.
+**AC mapping (evidence):**
+1. Monthly-by-date — `getMonthlyDatesInMonth` yields `seriesStartDate.add({months: interval*step})`; Temporal constrain-clips the day, and each step is measured from DTSTART so clipping never drifts. Pinned: Jan 31 → Feb 28 → Mar 31 (test "clips a 31st series…"), month-end battery for a full year, interval-2 clipping.
+2. Monthly-by-position — the model supports a single positive ordinal 1..4 or `-1`. `getFirstWeekdayOfMonth` + `7*(ordinal-1)` for 1..4, and `7*floor((daysInMonth - day)/7)` for `-1`; a position always exists in every month (asserted: second-Thursday, last-Friday, first-month-before-DTSTART skip). Plain monthly `byWeekdays` (all-Tuesdays) expands every listed weekday of each month, ascending.
+3. Leap-year decision — pinned: Feb 29 → Feb 28 in non-leap years (clipped, not skipped, no drift), back to Feb 29 in leap years; `interval: 12` crosses 2028→2032 both ways.
+4. count/until — reused US-060 semantics unchanged: count counts from series start, until is inclusive, both stop the generator (test "stops at count even for an unbounded window" uses rangeEnd 9999 → finite 4 intervals); `interval < 1` returns `[]` (never a generator that never advances).
+5. Locale week start — `getWeekStartIsoDay` is a thin adapter over the existing `normalizeWeekStartDay` (0=Sun…6=Sat → ISO 1..7; Monday fallback), used to place the week anchor and to order BYDAY by offset from that anchor so the stream stays monotonic. Pinned: a biweekly Sunday series yields Jan 11/Jan 25 under Monday weeks vs Jan 18/Feb 1 under Sunday weeks; invalid `42` and explicit `1` both equal the default. No date logic forked.
+6. Still no UI wiring / persistence / detached occurrences — only the two utils files changed; future-series split not implemented.
+7. Report appended; PLAN.md untouched; nothing committed.
+**Checks:** `npx jest packages/twenty-front/src/modules/calendar/utils/__tests__/expandCalendarRecurrence.test.ts packages/twenty-front/src/modules/calendar/utils/__tests__/calendarRecurrenceRule.test.ts --config=packages/twenty-front/jest.config.mjs` → 2 suites / 67 tests pass (35 expansion incl. all US-060 fixtures + 32 rule); `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0; `npm exec --prefix packages/twenty-front -- oxlint --type-aware -c packages/twenty-front/.oxlintrc.json <2 touched files>` → 0 errors / 0 warnings; `npx oxfmt --check <2 touched files>` → clean. `npx nx lint:diff-with-main twenty-front` diffs `main...HEAD` and finds nothing on an uncommitted tree → substituted the direct oxlint/oxfmt gate above (same files). No `twenty-shared`/server change → shared build N/A.
+**Missing for tick:** none for this slice; Tier-2 N/A (no UI/persistence).
+**Do not redo:** the US-060 daily/weekly expansion + rule types/parse/serialize and their tests — unchanged and green; the monthly branch is inside the one `iterateCalendarRecurrenceDays` generator, so do not add a second expansion path.
+**Remaining:** 10 tasks left in the Ralph queue after this one (US-062…US-067 + standing P4.1/P4.2/P4.3 Tier-2 legs).
+**Next:** orchestrator — tick US-061; or executor — US-062 (P4C.3c: series/occurrence identity + skipped/detached occurrence model).

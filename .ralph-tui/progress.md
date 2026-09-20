@@ -60,3 +60,14 @@ after each iteration and it's included in prompts for context.
   - Front package gates: `npx jest <specs> --config=packages/twenty-front/jest.config.mjs` from repo root; `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit`; `npx oxlint --type-aware -c .oxlintrc.json <files>`; `npx oxfmt --check <files>` (oxfmt rewrites import formatting — run it, then re-check). Jest sets `TZ=GMT`, so every timezone assertion must pass an explicit IANA zone.
   - The server's only recurrence code is the CalDAV `RECURRENCE-ID` importer (external occurrence ids), unrelated to a locally-authored rule — hence front-only placement is correct until the persistence/sync slice.
 ---
+
+## 2026-09-20 - US-061
+- Extended `expandCalendarRecurrence` with monthly-by-date, monthly-by-position (nth/last weekday of month), monthly plain-BYDAY, count/until termination and locale-week-start anchoring, reusing the US-060 generator (no second engine).
+- Files changed: `packages/twenty-front/src/modules/calendar/utils/expandCalendarRecurrence.ts`, `.../utils/__tests__/expandCalendarRecurrence.test.ts`, `docs/plan/phases/phase-04-report.md`, `.ralph-tui/progress.md`.
+- **Learnings:**
+  - `Temporal.PlainDate.add({ months })` constrain-clips the day (Jan 31 → Feb 28) AND anchors on the source date, so month-end clipping never drifts across steps; `start.with({day})` onto a 31-day value throws, so always add months rather than re-apply the day.
+  - `Temporal.PlainDate.with({ day: 31 })` is a RangeError when the target month is short — never use it for clipping.
+  - Ordinal weekday: first occurrence = `firstOfMonth.add({days: (isoDay - firstOfMonth.dayOfWeek + 7) % 7})`; last = that + `7*floor((daysInMonth - day)/7)`.
+  - The repo's oxlint config lives at `packages/twenty-front/.oxlintrc.json`, not root; run `npm exec --prefix packages/twenty-front -- oxlint --type-aware -c packages/twenty-front/.oxlintrc.json <files>`.
+  - `npx nx lint:diff-with-main <pkg>` compares `main...HEAD` and reports "No changed files" on an uncommitted tree — use direct oxlint/oxfmt on the touched files as the substitute gate.
+---

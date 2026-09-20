@@ -8,11 +8,32 @@ import {
   CALENDAR_RECURRENCE_WEEKDAY_TO_DAY_OF_WEEK,
   type CalendarRecurrenceWeekday,
 } from '@/calendar/types/CalendarRecurrenceWeekday';
+import { normalizeWeekStartDay } from '@/calendar/utils/normalizeWeekStartDay';
 
-// Weekly steps are anchored on ISO weeks (Monday first) so the locale week start
-// the grid renders with never changes which dates a rule selects.
-const getIsoWeekMonday = (day: Temporal.PlainDate): Temporal.PlainDate =>
-  day.subtract({ days: day.dayOfWeek - 1 });
+// The grid preference is 0=Sunday..6=Saturday; the recurrence maths needs the
+// ISO weekday (1=Monday..7=Sunday). normalizeWeekStartDay is the single source of
+// the fallback, so week-boundary logic is never forked per caller.
+const getWeekStartIsoDay = (
+  weekStartsOnDayIndex: number | null | undefined,
+): number => {
+  const normalizedWeekStartDay = normalizeWeekStartDay(weekStartsOnDayIndex);
+
+  return normalizedWeekStartDay === 0 ? 7 : normalizedWeekStartDay;
+};
+
+// Start of the locale week that contains `day`.
+const getWeekAnchor = (
+  day: Temporal.PlainDate,
+  weekStartIsoDay: number,
+): Temporal.PlainDate =>
+  day.subtract({ days: (day.dayOfWeek - weekStartIsoDay + 7) % 7 });
+
+const getWeekdayOffset = (
+  weekday: CalendarRecurrenceWeekday,
+  weekStartIsoDay: number,
+): number =>
+  (CALENDAR_RECURRENCE_WEEKDAY_TO_DAY_OF_WEEK[weekday] - weekStartIsoDay + 7) %
+  7;
 
 const sortWeekdays = (
   weekdays: CalendarRecurrenceWeekday[],
@@ -23,12 +44,89 @@ const sortWeekdays = (
       CALENDAR_RECURRENCE_WEEKDAY_TO_DAY_OF_WEEK[right],
   );
 
+// First date with `weekdayIsoDay` inside the month of `monthAnchor`.
+const getFirstWeekdayOfMonth = ({
+  monthAnchor,
+  weekdayIsoDay,
+}: {
+  monthAnchor: Temporal.PlainDate;
+  weekdayIsoDay: number;
+}): Temporal.PlainDate => {
+  const firstOfMonth = monthAnchor.with({ day: 1 });
+
+  return firstOfMonth.add({
+    days: (weekdayIsoDay - firstOfMonth.dayOfWeek + 7) % 7,
+  });
+};
+
+// Dates a monthly rule selects inside the month of `monthAnchor`, ascending, so
+// the caller's early exit on rangeEnd/count/until stays valid.
+const getMonthlyDatesInMonth = ({
+  rule,
+  monthAnchor,
+}: {
+  rule: CalendarRecurrenceRule;
+  monthAnchor: Temporal.PlainDate;
+}): Temporal.PlainDate[] => {
+  if (isDefined(rule.monthlyPosition)) {
+    const firstWeekday = getFirstWeekdayOfMonth({
+      monthAnchor,
+      weekdayIsoDay:
+        CALENDAR_RECURRENCE_WEEKDAY_TO_DAY_OF_WEEK[
+          rule.monthlyPosition.weekday
+        ],
+    });
+
+    // The model only allows 1..4 or -1, so a position always exists: no month is
+    // ever empty and the generator can never spin without producing a date.
+    if (rule.monthlyPosition.ordinal < 0) {
+      return [
+        firstWeekday.add({
+          days:
+            7 * Math.floor((firstWeekday.daysInMonth - firstWeekday.day) / 7),
+        }),
+      ];
+    }
+
+    return [firstWeekday.add({ days: 7 * (rule.monthlyPosition.ordinal - 1) })];
+  }
+
+  if (rule.byWeekdays.length > 0) {
+    return rule.byWeekdays
+      .flatMap((weekday) => {
+        const firstWeekday = getFirstWeekdayOfMonth({
+          monthAnchor,
+          weekdayIsoDay: CALENDAR_RECURRENCE_WEEKDAY_TO_DAY_OF_WEEK[weekday],
+        });
+        const dates: Temporal.PlainDate[] = [];
+
+        for (
+          let date = firstWeekday;
+          date.month === monthAnchor.month;
+          date = date.add({ days: 7 })
+        ) {
+          dates.push(date);
+        }
+
+        return dates;
+      })
+      .sort((left, right) => Temporal.PlainDate.compare(left, right));
+  }
+
+  // Monthly by date: `monthAnchor` is seriesStartDate shifted by whole months and
+  // Temporal constrains the day to the target month, so a 31st series clips to
+  // that month's last day without drifting (each step is measured from DTSTART).
+  return [monthAnchor];
+};
+
 function* iterateCalendarRecurrenceDays({
   rule,
   seriesStartDate,
+  weekStartIsoDay,
 }: {
   rule: CalendarRecurrenceRule;
   seriesStartDate: Temporal.PlainDate;
+  weekStartIsoDay: number;
 }): Generator<Temporal.PlainDate> {
   if (rule.frequency === 'daily') {
     for (let step = 0; ; step += 1) {
@@ -41,15 +139,19 @@ function* iterateCalendarRecurrenceDays({
       rule.byWeekdays.length > 0
         ? sortWeekdays(rule.byWeekdays)
         : [CALENDAR_RECURRENCE_WEEKDAYS[seriesStartDate.dayOfWeek - 1]];
-    const firstWeekMonday = getIsoWeekMonday(seriesStartDate);
+    // Order by offset from the week anchor (not ISO) so a Sunday-start week
+    // yields Sunday before Monday; a non-monotonic stream would break the
+    // caller's break-on-rangeEnd.
+    const weekdayOffsets = weekdays
+      .map((weekday) => getWeekdayOffset(weekday, weekStartIsoDay))
+      .sort((left, right) => left - right);
+    const firstWeekAnchor = getWeekAnchor(seriesStartDate, weekStartIsoDay);
 
     for (let week = 0; ; week += 1) {
-      const weekMonday = firstWeekMonday.add({ weeks: rule.interval * week });
+      const weekAnchor = firstWeekAnchor.add({ weeks: rule.interval * week });
 
-      for (const weekday of weekdays) {
-        const day = weekMonday.add({
-          days: CALENDAR_RECURRENCE_WEEKDAY_TO_DAY_OF_WEEK[weekday] - 1,
-        });
+      for (const weekdayOffset of weekdayOffsets) {
+        const day = weekAnchor.add({ days: weekdayOffset });
 
         // RFC 5545: a weekly BYDAY may name days before DTSTART, but the
         // recurrence set itself starts at DTSTART.
@@ -62,28 +164,50 @@ function* iterateCalendarRecurrenceDays({
     }
   }
 
-  // `monthly` is modelled (see CalendarRecurrenceRule) but expansion is a later
-  // slice (P4C.3b); yielding nothing keeps this engine honest until then.
+  if (rule.frequency === 'monthly') {
+    for (let step = 0; ; step += 1) {
+      const monthAnchor = seriesStartDate.add({
+        months: rule.interval * step,
+      });
+
+      for (const day of getMonthlyDatesInMonth({
+        rule,
+        monthAnchor,
+      })) {
+        // BYDAY/BYPOSITION in the first month may sit before DTSTART; skip those
+        // so the recurrence set starts at the series start.
+        if (Temporal.PlainDate.compare(day, seriesStartDate) < 0) {
+          continue;
+        }
+
+        yield day;
+      }
+    }
+  }
 }
 
-// Expands a daily/weekly rule over the half-open instant window
+// Expands a daily/weekly/monthly rule over the half-open instant window
 // [rangeStart, rangeEnd). Occurrences keep the series start's wall-clock time in
 // `timeZone` (`compatible` disambiguation, same DST contract as
 // buildCalendarEventInstant), so a 09:00 series stays at 09:00 across a DST
 // change even though its instants shift. `count` counts from the series start,
-// not from rangeStart, so a window opened later still respects it.
+// not from rangeStart, so a window opened later still respects it. Weekly
+// interval steps are anchored on the caller's locale week start (Monday when
+// absent), normalised through normalizeWeekStartDay.
 export const expandCalendarRecurrence = ({
   rule,
   seriesStart,
   rangeStart,
   rangeEnd,
   timeZone,
+  weekStartsOnDayIndex,
 }: {
   rule: CalendarRecurrenceRule;
   seriesStart: string;
   rangeStart: string;
   rangeEnd: string;
   timeZone: string;
+  weekStartsOnDayIndex?: number | null;
 }): CalendarRecurrenceOccurrence[] => {
   if (rule.interval < 1) {
     return [];
@@ -96,6 +220,7 @@ export const expandCalendarRecurrence = ({
     return [];
   }
 
+  const weekStartIsoDay = getWeekStartIsoDay(weekStartsOnDayIndex);
   const seriesStartZonedDateTime =
     Temporal.Instant.from(seriesStart).toZonedDateTimeISO(timeZone);
   const seriesStartDate = seriesStartZonedDateTime.toPlainDate();
@@ -112,7 +237,11 @@ export const expandCalendarRecurrence = ({
   const occurrences: CalendarRecurrenceOccurrence[] = [];
   let ordinal = 0;
 
-  for (const day of iterateCalendarRecurrenceDays({ rule, seriesStartDate })) {
+  for (const day of iterateCalendarRecurrenceDays({
+    rule,
+    seriesStartDate,
+    weekStartIsoDay,
+  })) {
     if (isDefined(rule.count) && ordinal >= rule.count) {
       break;
     }

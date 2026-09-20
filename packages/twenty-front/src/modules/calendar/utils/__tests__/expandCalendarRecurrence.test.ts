@@ -177,20 +177,356 @@ describe('expandCalendarRecurrence — bounds', () => {
       }).map((occurrence) => occurrence.day),
     ).toEqual(['2026-01-02']);
   });
+});
 
-  it('expands monthly rules to nothing until P4C.3b', () => {
+describe('expandCalendarRecurrence — monthly by date', () => {
+  it('repeats on the series start day-of-month', () => {
+    expect(
+      expandCalendarRecurrence({
+        rule: buildRule({ frequency: 'monthly' }),
+        seriesStart: '2026-01-15T09:00:00Z',
+        rangeStart: '2026-01-01T00:00:00Z',
+        rangeEnd: '2026-05-01T00:00:00Z',
+        timeZone: 'UTC',
+      }).map((occurrence) => occurrence.day),
+    ).toEqual(['2026-01-15', '2026-02-15', '2026-03-15', '2026-04-15']);
+  });
+
+  it('clips a 31st series to each short month end without drifting', () => {
+    // Pinned decision: Jan 31 -> Feb 28 (not skipped), then back to Mar 31. The
+    // day is re-derived from DTSTART every month, so the February clip never
+    // shifts the rest of the series.
+    expect(
+      expandCalendarRecurrence({
+        rule: buildRule({ frequency: 'monthly' }),
+        seriesStart: '2026-01-31T09:00:00Z',
+        rangeStart: '2026-01-01T00:00:00Z',
+        rangeEnd: '2026-08-01T00:00:00Z',
+        timeZone: 'UTC',
+      }).map((occurrence) => occurrence.day),
+    ).toEqual([
+      '2026-01-31',
+      '2026-02-28',
+      '2026-03-31',
+      '2026-04-30',
+      '2026-05-31',
+      '2026-06-30',
+      '2026-07-31',
+    ]);
+  });
+
+  it('steps whole months with the interval, clipping each target month', () => {
+    expect(
+      expandCalendarRecurrence({
+        rule: buildRule({ frequency: 'monthly', interval: 2 }),
+        seriesStart: '2026-01-15T09:00:00Z',
+        rangeStart: '2026-01-01T00:00:00Z',
+        rangeEnd: '2026-06-01T00:00:00Z',
+        timeZone: 'UTC',
+      }).map((occurrence) => occurrence.day),
+    ).toEqual(['2026-01-15', '2026-03-15', '2026-05-15']);
+  });
+
+  it('keeps the wall-clock time and zone of the series start', () => {
+    const occurrences = expandCalendarRecurrence({
+      rule: buildRule({ frequency: 'monthly' }),
+      seriesStart: '2026-01-15T14:00:00Z',
+      rangeStart: '2026-01-01T00:00:00Z',
+      rangeEnd: '2026-04-01T00:00:00Z',
+      timeZone: 'America/New_York',
+    });
+
+    expect(occurrences.map((occurrence) => occurrence.startsAt)).toEqual([
+      '2026-01-15T14:00:00Z',
+      '2026-02-15T14:00:00Z',
+      '2026-03-15T13:00:00Z',
+    ]);
+    expect(
+      getLocalHours(
+        occurrences.map((occurrence) => occurrence.startsAt),
+        'America/New_York',
+      ),
+    ).toEqual([9, 9, 9]);
+  });
+});
+
+describe('expandCalendarRecurrence — monthly by position', () => {
+  it('expands a positive ordinal to the nth weekday of each month', () => {
+    // Jan 8 2026 is the second Thursday, so the series starts there.
     expect(
       expandCalendarRecurrence({
         rule: buildRule({
           frequency: 'monthly',
-          monthlyPosition: { weekday: 'TU', ordinal: 2 },
+          monthlyPosition: { weekday: 'TH', ordinal: 2 },
         }),
-        seriesStart: '2026-01-13T09:00:00Z',
+        seriesStart: '2026-01-08T09:00:00Z',
         rangeStart: '2026-01-01T00:00:00Z',
         rangeEnd: '2026-04-01T00:00:00Z',
         timeZone: 'UTC',
+      }).map((occurrence) => occurrence.day),
+    ).toEqual(['2026-01-08', '2026-02-12', '2026-03-12']);
+  });
+
+  it('expands -1 to the last occurrence of the weekday in each month', () => {
+    expect(
+      expandCalendarRecurrence({
+        rule: buildRule({
+          frequency: 'monthly',
+          monthlyPosition: { weekday: 'FR', ordinal: -1 },
+        }),
+        seriesStart: '2026-01-30T09:00:00Z',
+        rangeStart: '2026-01-01T00:00:00Z',
+        rangeEnd: '2026-04-01T00:00:00Z',
+        timeZone: 'UTC',
+      }).map((occurrence) => occurrence.day),
+    ).toEqual(['2026-01-30', '2026-02-27', '2026-03-27']);
+  });
+
+  it('skips a first month whose position falls before the series start', () => {
+    // Series starts on the third Tuesday; the January first-Tuesday is before
+    // DTSTART and must not be emitted.
+    expect(
+      expandCalendarRecurrence({
+        rule: buildRule({
+          frequency: 'monthly',
+          monthlyPosition: { weekday: 'TU', ordinal: 1 },
+        }),
+        seriesStart: '2026-01-20T09:00:00Z',
+        rangeStart: '2026-01-01T00:00:00Z',
+        rangeEnd: '2026-03-01T00:00:00Z',
+        timeZone: 'UTC',
+      }).map((occurrence) => occurrence.day),
+    ).toEqual(['2026-02-03']);
+  });
+
+  it('expands every listed weekday of each month when no position is set', () => {
+    expect(
+      expandCalendarRecurrence({
+        rule: buildRule({
+          frequency: 'monthly',
+          byWeekdays: ['WE', 'MO'],
+        }),
+        seriesStart: '2026-01-07T09:00:00Z',
+        rangeStart: '2026-01-01T00:00:00Z',
+        rangeEnd: '2026-03-01T00:00:00Z',
+        timeZone: 'UTC',
+      }).map((occurrence) => occurrence.day),
+    ).toEqual([
+      '2026-01-07',
+      '2026-01-12',
+      '2026-01-14',
+      '2026-01-19',
+      '2026-01-21',
+      '2026-01-26',
+      '2026-01-28',
+      '2026-02-02',
+      '2026-02-04',
+      '2026-02-09',
+      '2026-02-11',
+      '2026-02-16',
+      '2026-02-18',
+      '2026-02-23',
+      '2026-02-25',
+    ]);
+  });
+});
+
+describe('expandCalendarRecurrence — month-end and leap-year battery', () => {
+  it('clips a 31st series across every short month in a year', () => {
+    expect(
+      expandCalendarRecurrence({
+        rule: buildRule({ frequency: 'monthly' }),
+        seriesStart: '2026-01-31T09:00:00Z',
+        rangeStart: '2026-01-01T00:00:00Z',
+        rangeEnd: '2027-01-01T00:00:00Z',
+        timeZone: 'UTC',
+      }).map((occurrence) => occurrence.day),
+    ).toEqual([
+      '2026-01-31',
+      '2026-02-28',
+      '2026-03-31',
+      '2026-04-30',
+      '2026-05-31',
+      '2026-06-30',
+      '2026-07-31',
+      '2026-08-31',
+      '2026-09-30',
+      '2026-10-31',
+      '2026-11-30',
+      '2026-12-31',
+    ]);
+  });
+
+  it('clips a Feb 29 series to Feb 28 in non-leap years and returns to Feb 29 in leap years', () => {
+    // Pinned decision: Feb 29 -> Feb 28 in non-leap years (not skipped, no
+    // drift), and back to Feb 29 whenever the year is a leap year.
+    expect(
+      expandCalendarRecurrence({
+        rule: buildRule({ frequency: 'monthly' }),
+        seriesStart: '2028-02-29T09:00:00Z',
+        rangeStart: '2028-02-01T00:00:00Z',
+        rangeEnd: '2029-04-01T00:00:00Z',
+        timeZone: 'UTC',
+      }).map((occurrence) => occurrence.day),
+    ).toEqual([
+      '2028-02-29',
+      '2028-03-29',
+      '2028-04-29',
+      '2028-05-29',
+      '2028-06-29',
+      '2028-07-29',
+      '2028-08-29',
+      '2028-09-29',
+      '2028-10-29',
+      '2028-11-29',
+      '2028-12-29',
+      '2029-01-29',
+      '2029-02-28',
+      '2029-03-29',
+    ]);
+  });
+
+  it('expands a monthly interval that crosses Feb 29 in both leap and non-leap years', () => {
+    expect(
+      expandCalendarRecurrence({
+        rule: buildRule({ frequency: 'monthly', interval: 12 }),
+        seriesStart: '2028-02-29T09:00:00Z',
+        rangeStart: '2028-01-01T00:00:00Z',
+        rangeEnd: '2033-01-01T00:00:00Z',
+        timeZone: 'UTC',
+      }).map((occurrence) => occurrence.day),
+    ).toEqual([
+      '2028-02-29',
+      '2029-02-28',
+      '2030-02-28',
+      '2031-02-28',
+      '2032-02-29',
+    ]);
+  });
+});
+
+describe('expandCalendarRecurrence — monthly termination', () => {
+  it('stops after count occurrences from the series start', () => {
+    expect(
+      expandCalendarRecurrence({
+        rule: buildRule({ frequency: 'monthly', count: 3 }),
+        seriesStart: '2026-01-31T09:00:00Z',
+        rangeStart: '2026-01-01T00:00:00Z',
+        rangeEnd: '2026-12-01T00:00:00Z',
+        timeZone: 'UTC',
+      }).map((occurrence) => occurrence.day),
+    ).toEqual(['2026-01-31', '2026-02-28', '2026-03-31']);
+  });
+
+  it('counts occurrences before the window toward the limit', () => {
+    expect(
+      expandCalendarRecurrence({
+        rule: buildRule({ frequency: 'monthly', count: 3 }),
+        seriesStart: '2026-01-15T09:00:00Z',
+        rangeStart: '2026-03-01T00:00:00Z',
+        rangeEnd: '2027-01-01T00:00:00Z',
+        timeZone: 'UTC',
+      }).map((occurrence) => occurrence.day),
+    ).toEqual(['2026-03-15']);
+  });
+
+  it('treats until as an inclusive upper bound', () => {
+    expect(
+      expandCalendarRecurrence({
+        rule: buildRule({
+          frequency: 'monthly',
+          until: '2026-03-15T09:00:00Z',
+        }),
+        seriesStart: '2026-01-15T09:00:00Z',
+        rangeStart: '2026-01-01T00:00:00Z',
+        rangeEnd: '2027-01-01T00:00:00Z',
+        timeZone: 'UTC',
+      }).map((occurrence) => occurrence.day),
+    ).toEqual(['2026-01-15', '2026-02-15', '2026-03-15']);
+  });
+
+  it('returns nothing for a non-positive monthly interval', () => {
+    expect(
+      expandCalendarRecurrence({
+        rule: buildRule({ frequency: 'monthly', interval: 0 }),
+        seriesStart: '2026-01-15T09:00:00Z',
+        rangeStart: '2026-01-01T00:00:00Z',
+        rangeEnd: '2027-01-01T00:00:00Z',
+        timeZone: 'UTC',
       }),
     ).toEqual([]);
+    expect(
+      expandCalendarRecurrence({
+        rule: buildRule({ frequency: 'monthly', interval: -1 }),
+        seriesStart: '2026-01-15T09:00:00Z',
+        rangeStart: '2026-01-01T00:00:00Z',
+        rangeEnd: '2027-01-01T00:00:00Z',
+        timeZone: 'UTC',
+      }),
+    ).toEqual([]);
+  });
+
+  it('stops at count even for an unbounded window', () => {
+    expect(
+      expandCalendarRecurrence({
+        rule: buildRule({ frequency: 'monthly', count: 4 }),
+        seriesStart: '2026-01-15T09:00:00Z',
+        rangeStart: '2026-01-01T00:00:00Z',
+        rangeEnd: '9999-01-01T00:00:00Z',
+        timeZone: 'UTC',
+      }).map((occurrence) => occurrence.day),
+    ).toEqual(['2026-01-15', '2026-02-15', '2026-03-15', '2026-04-15']);
+  });
+});
+
+describe('expandCalendarRecurrence — locale week start', () => {
+  it('anchors weekly interval steps on the supplied locale week start', () => {
+    const expandSundaySeries = (weekStartsOnDayIndex: number | null) =>
+      expandCalendarRecurrence({
+        rule: buildRule({
+          frequency: 'weekly',
+          interval: 2,
+          byWeekdays: ['SU'],
+        }),
+        seriesStart: '2026-01-07T10:00:00Z',
+        rangeStart: '2026-01-01T00:00:00Z',
+        rangeEnd: '2026-03-01T00:00:00Z',
+        timeZone: 'UTC',
+        weekStartsOnDayIndex,
+      }).map((occurrence) => occurrence.day);
+
+    // Monday weeks: the first Sunday on/after DTSTART is Jan 11.
+    expect(expandSundaySeries(null)).toEqual([
+      '2026-01-11',
+      '2026-01-25',
+      '2026-02-08',
+      '2026-02-22',
+    ]);
+    // Sunday weeks: Jan 4 is skipped (before DTSTART), so the series lands a week later.
+    expect(expandSundaySeries(0)).toEqual([
+      '2026-01-18',
+      '2026-02-01',
+      '2026-02-15',
+    ]);
+  });
+
+  it('treats an explicit Monday as the default and normalizes invalid preferences', () => {
+    const expandMondaySeries = (weekStartsOnDayIndex: number | null) =>
+      expandCalendarRecurrence({
+        rule: buildRule({
+          frequency: 'weekly',
+          interval: 2,
+          byWeekdays: ['MO'],
+        }),
+        seriesStart: '2026-01-07T10:00:00Z',
+        rangeStart: '2026-01-01T00:00:00Z',
+        rangeEnd: '2026-02-15T00:00:00Z',
+        timeZone: 'UTC',
+        weekStartsOnDayIndex,
+      }).map((occurrence) => occurrence.day);
+
+    expect(expandMondaySeries(1)).toEqual(expandMondaySeries(null));
+    expect(expandMondaySeries(42)).toEqual(expandMondaySeries(null));
   });
 });
 
