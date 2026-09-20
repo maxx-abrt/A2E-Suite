@@ -1,0 +1,83 @@
+# Iteration 13 Log
+
+## Metadata
+
+- **Task ID**: US-066
+- **Task Title**: P9.1 — send-time browsing context carries the chat channel id
+- **Description**: As a chat user asking the assistant about the open channel, I want the dispatched context to include the channel id, so that channel tools operate on the channel I am actually viewing instead of faili...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-20T18:59:14.859Z
+- **Ended At**: 2026-09-20T19:02:01.874Z
+- **Duration**: 2m 47s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-066" PLAN.md
+[94m[bash][0m $ tail -120 docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ stat -f "%Sm %N" -t "%Y-%m-%dT%H:%M:%SZ" packages/twenty-front/src/modules/ai/hooks/useBrowsingConte...
+[94m[bash][0m $ git diff -- packages/twenty-front/src/modules/ai/hooks/useBrowsingContext.ts packages/twenty-front/s...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/hooks/__tests__/useBrowsingContext.test.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/hooks/useBrowsingContext.ts
+[94m[bash][0m $ grep -rn "BrowsingContext" packages/twenty-front/src/modules/ai --include=*.ts --include=*.tsx | gre...
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/ai/hooks/__tests__/useBrowsingContext.test.tsx --config=p...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai[0m pattern: [96mBrowsingContext[0m
+[94m[bash][0m $ grep -rn "browsingContextType\|\.type === 'recordPage'\|\.type === 'listView'" packages/twenty-front...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/hooks/useAgentChat.ts
+[94m[bash][0m $ grep -rln "sendChatMessage" packages/twenty-front/src/modules/ai | head
+[94m[bash][0m $ grep -rn "browsingContext\|BrowsingContext" packages/twenty-server/src --include="*.ts" | grep -v sp...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/graphql/mutations/sendChatMessage.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/hooks/useAiChatSuggestedPromptsContext.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/utils/getAiChatContextStoreInstanceId.ts
+[94m[bash][0m $ sed -n '738,810p' packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/chat-execut...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server[0m pattern: [96mbuildContextFromBrowsingContext|buildRecordPageContext|buildListViewContext[0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "contextString" packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/chat...
+[94m[read][0m
+[94m[edit][0m
+Now I'll add the server-side `chatChannel` handling, mirroring the existing helpers.
+
+[94m[edit][0m
+[94m[bash][0m $ find packages/twenty-server/src/engine/metadata-modules/ai -name "*.spec.ts" | head -30
+Now add server tests. Let me check where the nearest spec lives.
+
+[94m[read][0m
+[94m[bash][0m $ grep -n "constructor" packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/chat-ex...
+[94m[read][0m
+[94m[write][0m "import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
+
+const buildService = () => {
+  const workspaceDomainsService = {
+    buildWorkspaceURL: ... (2259 chars)"
+[94m[bash][0m $ npx jest packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/__tests__/chat-execu...
+Now run the front spec and typechecks.
+
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/ai/hooks/__tests__/useBrowsingContext.test.tsx --config=p...
+[94m[bash][0m $ echo "EXIT: $?"
+[94m[bash][0m $ echo "EXIT: $?"
+Both typechecks pass. Now lint/format on the touched files.
+
+[94m[bash][0m $ npx oxfmt --check src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type.ts src/engine/m...
+[94m[bash][0m $ npx oxfmt --check src/modules/ai/hooks/useBrowsingContext.ts src/modules/ai/types/BrowsingContext.ts...
+All green. Now the docs check and finalize.
+
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ executor — next queued batch-4 slice. EOF
+[94m[bash][0m $ for a private-helper test, `new ChatExecutionService(... as never)` + bracket access keeps the spec ...
+[94m[bash][0m $ git status --porcelain
+US-066 complete.
+
+**Implemented:** `BrowsingContext` (front) and `BrowsingContextType` (server) gained an additive `chatChannel` variant. `useGetBrowsingContext` now reads `selectedChatChannelIdState` on `/discussions` and `viewableChatChannelIdComponentState` at the explicit `getAiChatContextStoreInstanceId` instance on the AI chat page, returning `{ type: 'chatChannel', objectNameSingular, channelId }` before the object-store branch (US-053 precedence preserved). The server context-builder names the channel id inside the existing non-executing `<browsing_context>` guard. No wire change was needed.
+
+**Checks:** front spec 4/4, server spec 3/3, both `tsgo --noEmit` exit 0, oxlint 0/0 + oxfmt clean on all six touched files, `check-docs` PASS.
+
+**Files:** front `ai/types/BrowsingContext.ts`, `ai/hooks/useBrowsingContext.ts` + new spec; server `ai/ai-agent/types/browsingContext.type.ts`, `ai/ai-chat/services/chat-execution.service.ts` + new spec; phase report + progress.md.
+
+**Missing for tick:** Tier 2 — live channel dispatch on an app-installed workspace (orchestrator). Report appended; nothing committed.
+
+<promise>COMPLETE</promise>

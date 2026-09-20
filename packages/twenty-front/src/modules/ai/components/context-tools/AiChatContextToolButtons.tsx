@@ -5,6 +5,7 @@ import { LightButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useContextToolButtons } from '@/ai/hooks/useContextToolButtons';
+import { useDirectToolExecution } from '@/ai/hooks/useDirectToolExecution';
 import { useStageAiChatPreprompt } from '@/ai/hooks/useStageAiChatPreprompt';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -36,6 +37,7 @@ const StyledToolList = styled.div`
 export const AiChatContextToolButtons = () => {
   const { t } = useLingui();
   const contextToolButtons = useContextToolButtons();
+  const { executeContextTool } = useDirectToolExecution();
   const { stageAiChatPreprompt } = useStageAiChatPreprompt();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
 
@@ -53,16 +55,23 @@ export const AiChatContextToolButtons = () => {
             Icon={IconSparkles}
             title={contextToolButton.label}
             accent="secondary"
-            onClick={() =>
-              stageAiChatPreprompt({
-                text: t`Use the "${contextToolButton.label}" action on what I am looking at.`,
-                mode: contextToolButton.requiresConfirmation
-                  ? 'PREFILL'
-                  : 'SEND',
-                draftKey:
-                  currentAiChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
-              })
-            }
+            onClick={() => {
+              // A read-only context tool runs directly from its button; only a
+              // tool that declares confirmation is staged as a draft so the
+              // user still confirms before anything mutates (C6).
+              if (contextToolButton.requiresConfirmation) {
+                stageAiChatPreprompt({
+                  text: t`Use the "${contextToolButton.label}" action on what I am looking at.`,
+                  mode: 'PREFILL',
+                  draftKey:
+                    currentAiChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
+                });
+
+                return;
+              }
+
+              void executeContextTool(contextToolButton);
+            }}
           />
         ))}
       </StyledToolList>

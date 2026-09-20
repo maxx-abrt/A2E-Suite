@@ -8,4 +8,8 @@ export type ContextToolButton = {
   // here, so no button can write without an explicit user confirmation.
   readOnly: boolean;
   requiresConfirmation: boolean;
+  // The app-declared `toolTriggerSettings.inputSchema`, carried from the
+  // metadata store so a direct execution can fill its arguments from the
+  // browsing context and fail closed when a required target is missing.
+  inputSchema?: unknown;
 };

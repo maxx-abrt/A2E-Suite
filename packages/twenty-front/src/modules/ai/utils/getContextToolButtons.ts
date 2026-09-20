@@ -218,6 +218,7 @@ export const getContextToolButtons = ({
       applicationId,
       readOnly: true,
       requiresConfirmation: false,
+      inputSchema: logicFunction.inputSchema,
     });
   }
 

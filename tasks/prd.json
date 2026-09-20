@@ -271,14 +271,15 @@
         "Quality gate: dated entry appended to docs/plan/phases/phase-01-report.md; PLAN.md not edited; nothing committed"
       ],
       "priority": 12,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN task P9.1 assistant-surface bullet [~]. Starting state: PARTIAL — side panel, schema-aware mapping, channel context buttons, streaming, prompt/action library all verified (US-025/040/041/053/054); direct execution is the last named executor leg before the standing Tier-2 live-dispatch proof.",
       "dependsOn": [
         "US-066"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-20T19:02:01.877Z"
+    "updatedAt": "2026-09-20T19:12:42.690Z"
   }
 }
