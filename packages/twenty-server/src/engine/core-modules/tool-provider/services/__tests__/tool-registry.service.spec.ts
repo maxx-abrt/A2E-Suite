@@ -238,3 +238,168 @@ describe('native tool registry has no parallel registration path', () => {
     expect(providerSource).not.toMatch(/@OnApplicationBootstrap|@OnModuleInit/);
   });
 });
+
+// The registry is the boundary every assistant tool call crosses. A restricted
+// member's catalogue is built from their own role + workspace, so a tool they
+// cannot use is simply absent and invocation fails closed with the same single
+// not-found error as a tool that never existed — no "forbidden" surface and no
+// record/object detail leaks. A caller can never point a tool at another
+// workspace: only the server-derived `workspaceId` on the context reaches the
+// executor, never a value carried in tool args.
+describe('restricted-member and cross-workspace denial at the catalogue boundary', () => {
+  const ownerWorkspaceId = 'workspace-id';
+  const foreignWorkspaceId = 'foreign-workspace-id';
+  const privilegedRoleId = 'privileged-role-id';
+  const restrictedRoleId = 'restricted-role-id';
+
+  const buildScopedProvider = ({
+    workspaceId: ownedWorkspaceId,
+    roleId: ownedRoleId,
+    toolName,
+  }: {
+    workspaceId: string;
+    roleId: string;
+    toolName: string;
+  }): ToolProvider => ({
+    category: ToolCategory.LOGIC_FUNCTION,
+    isAvailable: async () => true,
+    generateDescriptors: async (providerContext) =>
+      providerContext.workspaceId === ownedWorkspaceId &&
+      providerContext.roleId === ownedRoleId
+        ? [
+            {
+              name: toolName,
+              label: toolName,
+              description: toolName,
+              category: ToolCategory.LOGIC_FUNCTION,
+              executionRef: {
+                kind: 'logic_function',
+                logicFunctionId: 'logic-function-id',
+              },
+            },
+          ]
+        : [],
+    executeStaticTool: async () => ({
+      success: false,
+      message: 'unused',
+      error: 'unused',
+    }),
+  });
+
+  const buildRegistry = (providers: ToolProvider[]) => {
+    const dispatch = jest.fn();
+
+    return {
+      registry: new ToolRegistryService(
+        providers,
+        { dispatch } as never,
+        { spillIfTooLarge: jest.fn(async (output) => output) } as never,
+      ),
+      dispatch,
+    };
+  };
+
+  it('fails a restricted invocation closed with the same single not-found error as a missing tool', async () => {
+    const { registry, dispatch } = buildRegistry([
+      buildScopedProvider({
+        workspaceId: ownerWorkspaceId,
+        roleId: privilegedRoleId,
+        toolName: 'app_read_secret_document',
+      }),
+    ]);
+
+    const restrictedContext: ToolProviderContext = {
+      workspaceId: ownerWorkspaceId,
+      roleId: restrictedRoleId,
+      rolePermissionConfig: { unionOf: [restrictedRoleId] },
+    };
+
+    const unauthorized = await registry.resolveAndExecute(
+      'app_read_secret_document',
+      {},
+      restrictedContext,
+    );
+    const nonexistent = await registry.resolveAndExecute(
+      'app_never_existed',
+      {},
+      restrictedContext,
+    );
+
+    expect(unauthorized.success).toBe(false);
+    expect(unauthorized.result).toBeUndefined();
+    expect(nonexistent.success).toBe(false);
+    expect(dispatch).not.toHaveBeenCalled();
+
+    // Missing and unauthorized are indistinguishable at this boundary: the
+    // error names only the requested tool, exactly as for a tool that was
+    // never registered.
+    expect(unauthorized.error).toEqual(
+      nonexistent.error?.replace(
+        'app_never_existed',
+        'app_read_secret_document',
+      ),
+    );
+  });
+
+  it('never resolves a tool owned by another workspace', async () => {
+    const { registry, dispatch } = buildRegistry([
+      buildScopedProvider({
+        workspaceId: foreignWorkspaceId,
+        roleId: privilegedRoleId,
+        toolName: 'app_foreign_workspace_tool',
+      }),
+    ]);
+
+    const callerContext: ToolProviderContext = {
+      workspaceId: ownerWorkspaceId,
+      roleId: privilegedRoleId,
+      rolePermissionConfig: { unionOf: [privilegedRoleId] },
+    };
+
+    await expect(registry.getCatalog(callerContext)).resolves.toHaveLength(0);
+
+    const result = await registry.resolveAndExecute(
+      'app_foreign_workspace_tool',
+      {},
+      callerContext,
+    );
+
+    expect(result.success).toBe(false);
+    expect(result.result).toBeUndefined();
+    expect(dispatch).not.toHaveBeenCalled();
+  });
+
+  it('dispatches with the server-derived workspace, ignoring a workspace id carried in tool args', async () => {
+    const { registry, dispatch } = buildRegistry([
+      buildScopedProvider({
+        workspaceId: ownerWorkspaceId,
+        roleId: privilegedRoleId,
+        toolName: 'app_read_document',
+      }),
+    ]);
+
+    dispatch.mockResolvedValue({ success: true, message: 'ok' });
+
+    const callerContext: ToolProviderContext = {
+      workspaceId: ownerWorkspaceId,
+      roleId: privilegedRoleId,
+      rolePermissionConfig: { unionOf: [privilegedRoleId] },
+    };
+
+    const result = await registry.resolveAndExecute(
+      'app_read_document',
+      { documentId: 'foreign-record-id', workspaceId: foreignWorkspaceId },
+      callerContext,
+    );
+
+    expect(result.success).toBe(true);
+    expect(dispatch).toHaveBeenCalledTimes(1);
+
+    const dispatchedContext = dispatch.mock.calls[0][2];
+
+    expect(dispatchedContext.workspaceId).toBe(ownerWorkspaceId);
+    expect(dispatchedContext.rolePermissionConfig).toEqual({
+      unionOf: [privilegedRoleId],
+    });
+  });
+});

@@ -45,6 +45,9 @@ type ExplicitPermissionRow = {
 type GenerateDescriptorsTestOptions = {
   requireExplicitObjectGrants?: boolean;
   explicitPermissionRows?: ExplicitPermissionRow[];
+  // Composed-permission overrides keyed by object nameSingular. The default is
+  // full CRUD; a restricted member's role is expressed by narrowing a subset.
+  permissionsByObjectName?: Record<string, Partial<ObjectPermissions>>;
 };
 
 describe('DatabaseToolProvider', () => {
@@ -75,7 +78,14 @@ describe('DatabaseToolProvider', () => {
       getOrRecompute: jest.fn().mockResolvedValue({
         rolesPermissions: {
           [roleId]: Object.fromEntries(
-            objects.map((object) => [object.id, allObjectPermissions]),
+            objects.map((object) => [
+              object.id,
+              {
+                ...allObjectPermissions,
+                ...(options?.permissionsByObjectName?.[object.nameSingular] ??
+                  {}),
+              },
+            ]),
           ),
         },
         flatObjectPermissionMaps: {
@@ -341,6 +351,96 @@ describe('DatabaseToolProvider', () => {
 
       expect(descriptorNames).toContain('find_many_people');
       expect(descriptorNames).toContain('create_one_person');
+    });
+  });
+
+  // The provider is the assistant catalogue's permission gate: if a restricted
+  // member's role cannot read an object, no read tool for it is ever emitted, so
+  // the model can neither enumerate the object nor name a record from it. The
+  // catalogue is built only from the role's own permissions — the fail-closed
+  // boundary that keeps an unauthorized record indistinguishable from a missing
+  // one (the app-side DOCUMENT_NOT_FOUND single-error pattern, enforced one
+  // layer up). Mutating verbs are separately gated, so a read-only role is
+  // never auto-offered a create/update/delete tool (the server half of the
+  // US-025 read-only gating).
+  describe('restricted-member permission fail-closed', () => {
+    const personObject = createFlatObject({
+      nameSingular: 'person',
+      namePlural: 'people',
+    });
+    const companyObject = createFlatObject({
+      nameSingular: 'company',
+      namePlural: 'companies',
+    });
+
+    it('emits no descriptors at all for an object the role cannot read', async () => {
+      const descriptorNames = await generateDescriptorNames(
+        [personObject, companyObject],
+        {
+          permissionsByObjectName: {
+            company: {
+              canReadObjectRecords: false,
+              canUpdateObjectRecords: false,
+              canSoftDeleteObjectRecords: false,
+            },
+          },
+        },
+      );
+
+      expect(descriptorNames).toContain('find_many_people');
+      expect(descriptorNames).not.toContain('find_many_companies');
+      expect(descriptorNames).not.toContain('find_one_company');
+      expect(descriptorNames).not.toContain('group_by_companies');
+    });
+
+    it('never auto-offers mutating tools to a role granted read-only access', async () => {
+      const descriptorNames = await generateDescriptorNames([personObject], {
+        permissionsByObjectName: {
+          person: {
+            canReadObjectRecords: true,
+            canUpdateObjectRecords: false,
+            canSoftDeleteObjectRecords: false,
+            canDestroyObjectRecords: false,
+          },
+        },
+      });
+
+      expect(descriptorNames).toEqual(
+        expect.arrayContaining([
+          'find_many_people',
+          'find_one_person',
+          'group_by_people',
+        ]),
+      );
+      expect(descriptorNames).toEqual(
+        expect.not.arrayContaining([
+          'create_one_person',
+          'create_many_people',
+          'update_one_person',
+          'update_many_people',
+          'upsert_many_people',
+          'delete_one_person',
+          'delete_many_people',
+        ]),
+      );
+    });
+
+    it('does not leak a mutating-only object through a read tool', async () => {
+      // A role that can update but not read the object must not receive any
+      // read descriptor that would reveal record existence.
+      const descriptorNames = await generateDescriptorNames([personObject], {
+        permissionsByObjectName: {
+          person: {
+            canReadObjectRecords: false,
+            canUpdateObjectRecords: true,
+            canSoftDeleteObjectRecords: false,
+          },
+        },
+      });
+
+      expect(descriptorNames).not.toContain('find_many_people');
+      expect(descriptorNames).not.toContain('find_one_person');
+      expect(descriptorNames).not.toContain('group_by_people');
     });
   });
 });

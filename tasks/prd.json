@@ -226,11 +226,12 @@
         "Quality gate: dated entry appended to docs/plan/phases/phase-01-report.md; PLAN.md not edited; nothing committed"
       ],
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN task P9.1 bullet 1. Starting state: NOT STARTED as a validation deliverable; the fail-closed caller-scoping pattern is established app-side (US-013 readDocumentContent) but not pinned at the provider/registry level.",
       "dependsOn": [
         "US-064"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-066",
@@ -277,6 +278,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-20T18:49:47.949Z"
+    "updatedAt": "2026-09-20T18:54:54.393Z"
   }
 }
