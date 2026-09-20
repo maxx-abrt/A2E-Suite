@@ -182,6 +182,23 @@ export const VIEW_IDS = {
   projectTasks: 'c31b0201-0003-4000-8000-000000000001',
 } as const;
 
+// The one completion filterGroup per task view that excludes DONE while
+// keeping rows whose pipeline status is NULL: SQL `NOT (col IN ('DONE'))`
+// drops NULL too, so the "not DONE" test needs an OR with `projectStatus IS
+// EMPTY`. Both operands are ordinary view filters attached to the group, so
+// the group itself carries no field.
+export const VIEW_FILTER_GROUP_IDS = {
+  taskCalendarCompletion: 'c31b0100-0008-4000-8000-000000000001',
+  taskOverdueCompletion: 'c31b0100-0008-4000-8000-000000000002',
+} as const;
+
+// A SELECT view filter stores its value as a JSON array of option values
+// (the UI writes `JSON.stringify(selectedValues)`), and the query builder
+// parses it with an array schema. A bare `'DONE'` fails that parse at query
+// time, so the value has to be the encoded array even when it holds one
+// option.
+export const SELECT_FILTER_VALUE_DONE = JSON.stringify(['DONE']);
+
 // View fields are positional, so their identifiers are derived. The middle
 // segment is the object index; task-extension view fields use '01'.
 export const viewFieldId = (

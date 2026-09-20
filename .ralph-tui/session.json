@@ -3,10 +3,10 @@
   "sessionId": "996d0217-482c-4a96-b036-789e241df074",
   "status": "running",
   "startedAt": "2026-09-20T17:15:13.692Z",
-  "updatedAt": "2026-09-20T17:26:31.323Z",
-  "currentIteration": 2,
+  "updatedAt": "2026-09-20T17:41:41.143Z",
+  "currentIteration": 4,
   "maxIterations": 20,
-  "tasksCompleted": 2,
+  "tasksCompleted": 3,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -36,6 +36,26 @@
       "durationMs": 264532,
       "startedAt": "2026-09-20T17:20:17.322Z",
       "endedAt": "2026-09-20T17:24:41.854Z"
+    },
+    {
+      "iteration": 3,
+      "status": "completed",
+      "taskId": "US-058",
+      "taskTitle": "P2.4 — dock/tab unit suites green run on current HEAD (unit half of the E2E bullet)",
+      "taskCompleted": true,
+      "durationMs": 103899,
+      "startedAt": "2026-09-20T17:24:47.421Z",
+      "endedAt": "2026-09-20T17:26:31.320Z"
+    },
+    {
+      "iteration": 4,
+      "status": "completed",
+      "taskId": "US-059",
+      "taskTitle": "P4.2 residual — NULL projectStatus fallback via OR filterGroup in task views",
+      "taskCompleted": false,
+      "durationMs": 740978,
+      "startedAt": "2026-09-20T17:26:36.905Z",
+      "endedAt": "2026-09-20T17:38:57.883Z"
     }
   ],
   "skippedTaskIds": [],

@@ -10,6 +10,7 @@ import {
 
 import {
   NAVIGATION_MENU_ITEM_IDS,
+  SELECT_FILTER_VALUE_DONE,
   TASK_FIELD_IDS,
   VIEW_IDS,
 } from '../../constants/universal-identifiers.ts';
@@ -150,7 +151,7 @@ test('the overdue list is dueAt in the past on open (not DONE) tasks', async () 
       filter.fieldMetadataUniversalIdentifier === NATIVE_TASK_FIELD_IDS.dueAt,
   );
   const statusFilter = (view.filters ?? []).find(
-    (filter) => filter.value === 'DONE',
+    (filter) => filter.value === SELECT_FILTER_VALUE_DONE,
   );
 
   assert.ok(dueAtFilter, 'overdue has no dueAt filter');

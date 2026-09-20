@@ -2,13 +2,16 @@ import {
   defineView,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
   ViewCalendarLayout,
+  ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
   ViewOpenRecordIn,
   ViewType,
 } from 'twenty-sdk/define';
 
 import {
+  SELECT_FILTER_VALUE_DONE,
   TASK_FIELD_IDS,
+  VIEW_FILTER_GROUP_IDS,
   VIEW_IDS,
   viewFieldId,
 } from '../constants/universal-identifiers.ts';
@@ -73,13 +76,38 @@ export default defineView({
       // status keeps its TODO default when the pipeline moves to DONE.
       fieldMetadataUniversalIdentifier: TASK_FIELD_IDS.projectStatus,
       operand: ViewFilterOperand.IS_NOT,
-      value: 'DONE',
+      value: SELECT_FILTER_VALUE_DONE,
+      // Attached to the OR completion group below: `IS_NOT 'DONE'` alone is
+      // SQL `NOT (projectStatus IN ('DONE'))`, which is NULL for a row with no
+      // pipeline status and would hide it while the board shows it ungrouped.
+      viewFilterGroupUniversalIdentifier:
+        VIEW_FILTER_GROUP_IDS.taskCalendarCompletion,
+      positionInViewFilterGroup: 0,
+    },
+    {
+      universalIdentifier: 'c31b0100-0005-4000-8000-00000000000a',
+      // NULL pipeline status is "not done" too — the default TODO the field
+      // declaration carries covers app-created rows, this covers the rest.
+      fieldMetadataUniversalIdentifier: TASK_FIELD_IDS.projectStatus,
+      operand: ViewFilterOperand.IS_EMPTY,
+      value: '',
+      viewFilterGroupUniversalIdentifier:
+        VIEW_FILTER_GROUP_IDS.taskCalendarCompletion,
+      positionInViewFilterGroup: 1,
     },
     {
       universalIdentifier: 'c31b0100-0005-4000-8000-000000000005',
       fieldMetadataUniversalIdentifier: TASK_FIELD_IDS.project,
       operand: ViewFilterOperand.IS_NOT_EMPTY,
       value: '',
+    },
+  ],
+  filterGroups: [
+    {
+      universalIdentifier: VIEW_FILTER_GROUP_IDS.taskCalendarCompletion,
+      // (projectStatus IS EMPTY) OR (projectStatus IS NOT 'DONE'): includes
+      // NULL rows, still excludes DONE.
+      logicalOperator: ViewFilterGroupLogicalOperator.OR,
     },
   ],
 });

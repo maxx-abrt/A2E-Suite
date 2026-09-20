@@ -85,9 +85,10 @@
         "Quality gate: dated entry appended to docs/plan/phases/phase-04-report.md; PLAN.md not edited; nothing committed"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN task P4.2 (board/calendar/my-tasks bullets — no literal (after X) on the view bullets). Starting state: PARTIAL — status reconciliation done-for-review (US-034/035/036, awaiting Tier-2 install proofs); this NULL-fallback residual was deliberately left 'for the Tier-2 result' by US-035/036 and is the last executor-tractable leg of the views work.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-060",
@@ -271,6 +272,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-20T17:26:31.322Z"
+    "updatedAt": "2026-09-20T17:41:41.143Z"
   }
 }

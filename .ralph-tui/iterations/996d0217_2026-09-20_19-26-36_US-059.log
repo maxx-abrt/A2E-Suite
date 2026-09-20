@@ -1,0 +1,404 @@
+# Iteration 4 Log
+
+## Metadata
+
+- **Task ID**: US-059
+- **Task Title**: P4.2 residual — NULL projectStatus fallback via OR filterGroup in task views
+- **Description**: As a project member, I want tasks without an app pipeline status to appear consistently across board, calendar and smart lists, so that the surfaces never silently disagree about which tasks exist.
+- **Status**: completed
+- **Task Completed**: No
+- **Promise Detected**: No
+- **Started At**: 2026-09-20T17:26:36.905Z
+- **Ended At**: 2026-09-20T17:38:57.883Z
+- **Duration**: 12m 20s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "US-059" PLAN.md
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "059\|P4.2 residual\|NULL projectStatus" PLAN.md | head -50
+[94m[bash][0m $ ls docs/plan/phases/ && echo "---" && git log --oneline -5
+[94m[bash][0m $ grep -n "P4.2\|P4C\|a2e-projects" PLAN.md | head -40
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "US-034\|US-035\|US-036\|US-059\|NULL\|projectStatus\|filterGroup" docs/plan/phases/phase-04...
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-projects/src -type d | head -60
+[94m[bash][0m $ grep -n "US-059" docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ grep -rn "US-059" .ralph-tui/progress.md tasks/prd.json 2>/dev/null | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -n "CLAIMED\|Task:" docs/plan/phases/phase-04-report.md | tail -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/overdue-tasks.view.ts
+[94m[bash][0m $ grep -rn "defineView\b" packages/twenty-sdk/src | head -20
+[94m[bash][0m $ grep -rn "filterGroup\|FilterGroup\|filterGroups" packages/twenty-sdk/src packages/twenty-shared/src...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/views/define-view.ts
+[94m[bash][0m $ grep -rn "filterGroups\|ViewFilterGroupManifest\|ViewFilterGroupLogicalOperator" packages/twenty-sdk...
+[94m[bash][0m $ find packages/twenty-sdk/src/sdk/define/views -type f
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/views/view-config.ts
+[94m[bash][0m $ grep -rn "ViewManifest\|ViewFilterGroupManifest\|ViewFilterManifest" packages/twenty-shared/src/appl...
+[94m[bash][0m $ grep -rn "ViewFilterGroupManifest\|ViewFilterManifest\|export type ViewManifest" packages/twenty-sha...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/viewManifestType.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/ViewFilterGroupLogicalOperator.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/ViewFilterOperand.ts
+[94m[bash][0m $ grep -rn "filterGroups\|viewFilterGroup\|ViewFilterGroup" packages/twenty-front/src/modules/views pa...
+[94m[bash][0m $ grep -rn "filterGroups\|filterGroup" packages/twenty-sdk/src/cli/utilities/build | head -30
+[94m[bash][0m $ grep -rln "viewFilterGroup\|ViewFilterGroup" packages/twenty-server/src | head -30
+[94m[bash][0m $ grep -rln "ViewFilterGroupManifest\|filterGroups" packages/twenty-sdk/src | head -20
+[94m[bash][0m $ grep -rln "viewFilterGroupUniversalIdentifier\|ViewFilterGroupManifest\|filterGroups" packages/twent...
+[94m[bash][0m $ grep -rln "turnViewFilters\|viewFilterToRecordFilter\|mapViewFilter\|recordFilterGroup" packages/twe...
+[94m[bash][0m $ grep -rn "IS_EMPTY" packages/twenty-front/src/modules/object-record/object-filter-dropdown/utils pac...
+[94m[bash][0m $ grep -rn "getOperandsForFilterType\|ViewFilterOperand.IS_EMPTY\|ViewFilterOperand.IS_NOT\b" packages...
+[94m[bash][0m $ grep -rn "recordFilterGroups\|turnRecordFilterGroupsIntoGqlOperationFilter\|computeRecordGqlOperatio...
+[94m[bash][0m $ ls packages/twenty-front/src/modules/object-record/record-filter/utils/ | head -40
+[94m[bash][0m $ grep -rn "IS_EMPTY\|IS_NOT\b" packages/twenty-shared/src/utils/filter/recordFilterMap.ts packages/tw...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/filter/turnRecordFilterIntoGqlOperationFilter.ts
+[94m[bash][0m $ grep -n "case 'SELECT'\|case 'MULTI_SELECT'\|case FieldMetadataType.SELECT\|SELECT:" packages/twenty...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/filter/turnRecordFilterIntoGqlOperationFilter.ts
+[94m[bash][0m $ grep -rn "IS_EMPTY\|IS_NOT_NULL" packages/twenty-shared/src/utils/filter/turnRecordFilterIntoGqlOper...
+[94m[bash][0m $ grep -rn "SELECT\|MULTI_SELECT" packages/twenty-front/src/modules/object-record/record-filter/utils/...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "getFilterOperandsForFilterableFieldType" packages/twenty-shared/src/utils | head
+[94m[read][0m
+[94m[bash][0m $ grep -n "SELECT" packages/twenty-shared/src/utils/filter/utils/filterOperandsMap.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/filter/utils/filterOperandsMap.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/filter/isEmptinessOperand.ts
+[94m[bash][0m $ grep -rn "isEmptinessOperand\|IS_EMPTY" packages/twenty-shared/src/utils/filter/turnRecordFilterGrou...
+[94m[bash][0m $ grep -rn "isEmptinessOperand" packages --include=*.ts 2>/dev/null | grep -v __tests__ | head -20
+[94m[bash][0m $ grep -rn "isEmptinessOperand" packages/twenty-front/src packages/twenty-shared/src | grep -v __tests...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/filter/checkIfShouldComputeEmptinessFilter.ts
+[94m[bash][0m $ grep -rn "checkIfShouldComputeEmptinessFilter" packages/twenty-front/src packages/twenty-shared/src ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/filter/turnRecordFilterIntoGqlOperationFilter.ts
+[94m[bash][0m $ grep -rn "getEmptyRecordGqlOperationFilter" packages/twenty-shared/src/utils | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/filter/utils/getEmptyRecordGqlOperationFilter.ts
+[94m[read][0m
+[94m[bash][0m $ grep -rn "turnRecordFilterGroupsIntoGqlOperationFilter\|turnRecordFiltersIntoGqlOperationFilter" pac...
+[94m[bash][0m $ grep -rn "computeViewRecordGqlOperationFilter\|getQueryVariablesFromFiltersAndSorts\|turnRecordFilte...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/views/utils/getQueryVariablesFromFiltersAndSorts.ts
+[94m[bash][0m $ grep -rn "export const computeRecordGqlOperationFilter" packages/twenty-shared/src/utils -l
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/filter/computeRecordGqlOperationFilter.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-calendar.test.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/my-tasks.test.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/index.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-board.view.ts
+[94m[bash][0m $ grep -rn "fromViewFilterGroupManifestToUniversalFlatViewFilterGroup\|filterGroups" packages/twenty-s...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/package.json
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/lib/ packages/twenty-apps/internal/a2e-projects/sr...
+[94m[bash][0m $ node -e "console.log(require.resolve('twenty-shared/utils'))" 2>&1 | head -3
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/tsconfig.json
+[94m[bash][0m $ grep -rn "from 'twenty-shared" packages/twenty-apps/internal/a2e-projects/src | head -20
+[94m[bash][0m $ grep -rn "twenty-shared" packages/twenty-sdk/src/sdk/define/views/view-config.ts packages/twenty-sdk...
+[94m[bash][0m $ ls -la packages/twenty-apps/internal/a2e-projects/node_modules/twenty-sdk 2>/dev/null
+[94m[bash][0m $ grep -rn "filterGroups\|ViewFilterGroupManifest" packages/twenty-apps/internal/a2e-projects/node_mod...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ " 2>&1 | head
+[94m[bash][0m $ grep -n "AND: 'AND'\|AND:\"AND\"" packages/twenty-apps/internal/a2e-projects/node_modules/twenty-sdk...
+[94m[bash][0m $ grep -n "AND.*AND.*OR.*OR" packages/twenty-apps/internal/a2e-projects/node_modules/twenty-sdk/dist/d...
+[94m[read][0m
+[94m[read][0m
+Now let me verify the front-end `getOperandLabel` and emptiness handling for SELECT-NULL, then run baseline tests.
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/cli/utilities/build/manifest/manifest-extract-config.ts
+[94m[bash][0m $ grep -rn "filterGroups\|filterGroup" packages/twenty-sdk/src/cli/utilities/build/common/plugins/*.ts...
+[94m[bash][0m $ ls packages/twenty-sdk/src/cli/utilities/build/
+[94m[bash][0m $ grep -rn "filterGroups\|filterGroup" packages/twenty-sdk/src/cli/utilities/build/common/ | head -20
+[94m[bash][0m $ grep -rn "ViewManifest\|views" packages/twenty-sdk/src/cli/utilities/build/manifest/*.ts | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/cli/utilities/build/manifest/manifest-build.ts
+[94m[bash][0m $ grep -rn "extractManifestFromFile\|executeFile\|import(" packages/twenty-sdk/src/cli/utilities/build...
+[94m[read][0m
+Good — `twenty dev:build` actually bundles with esbuild and executes. The manifest will carry the `filterGroups` array verbatim. Now the crucial part: I must prove the client-side filter computation produces OR semantics. Let me build the app and inspect the real manifest, then write a focused test that exercises the actual SDK filter engine.
+
+Let me run the baseline first.
+
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && yarn test:unit 2>&1 | tail -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+262/262 baseline confirmed. Now let me add the claim to the phase report before touching code.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+Now the CLAIM entry:
+
+[94m[bash][0m $ grep -n "US-059/null-project-status-filter-group\|CLAIMED — US-059" "docs/plan/phases/phase-04-repor...
+[94m[bash][0m $ grep -n "VIEW_IDS\|viewFieldId\|FILTER" packages/twenty-apps/internal/a2e-projects/src/constants/uni...
+Claim recorded and re-read; no earlier claim for this slice. Now let me implement. First, add filter group IDs to the constants file.
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts
+Now update the calendar view to use the OR filterGroup. This keeps the `IS_NOT 'DONE'` and adds `IS_EMPTY`, both attached to the group.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/overdue-tasks.view.ts
+Now the overdue view:
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/overdue-tasks.view.ts
+Now let me build the app to verify the manifest carries the filterGroups:
+
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && npx twenty dev:build . 2>&1 | tail -15
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && grep -rn "c31b0100-0005" src/ | sort
+I reused an existing uid. Let me check which ones are taken.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts
+`...0006` is taken by created-by-me. Let me use `...000a` and `...000b` for the new NULL filters.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/overdue-tasks.view.ts
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && npx twenty dev:build . 2>&1 | tail -15
+[94m[bash][0m $ } "
+Build succeeds. Now inspect the manifest to confirm the filterGroups survived the bundle round-trip.
+
+
+
+[94m[bash][0m $ " 2>&1 | head
+Manifest carries the OR group with both filters attached. Now let me verify the client-side computation actually produces OR semantics with a real test. I'll write a focused unit test that imports the app's view definitions and feeds them through the app's bundled filter engine.
+
+First, let me check what the app's node_modules `twenty-sdk` exposes for `computeRecordGqlOperationFilter` — since the test runs via `node --test --experimental-strip-types` resolving from the app dir.
+
+[94m[bash][0m $ " 2>&1 | head
+[94m[bash][0m $ console.log(Object.keys(p.exports).join('\n'))"
+[94m[bash][0m $ " 2>&1 | head -60
+There's a `twenty-sdk/utils` subpath. Let me check what it exposes for filter computation.
+
+[94m[bash][0m $ " 2>&1 | head -50
+The app's bundled SDK doesn't expose the filter engine. The acceptance asks for unit tests asserting **filter-group shape and NULL-inclusion semantics**. I'll write a spec that (a) asserts the view definitions' filter-group shape and (b) verifies the NULL-inclusion semantics by computing the actual GraphQL filter through the real `twenty-shared` engine that the frontend uses.
+
+Let me check if `twenty-shared` is resolvable in the app test context (it's hoisted at repo root).
+
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && node -e "console.log(require.resolve('twenty-shared/utils...
+[94m[bash][0m $ " 2>&1 | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/views/utils/mapViewFiltersToFilters.ts
+[94m[read][0m
+`twenty-shared/utils` (the actual frontend engine) is importable from the app dir. This is the real semantics. Let me write a test that takes the app's view filter definitions, maps them into the engine's `RecordFilter`/`RecordFilterGroup` shape, and asserts the resulting GraphQL `filter` includes NULL.
+
+Let me first understand how the frontend maps a `ViewFilter` to a `RecordFilter` (to replicate the exact mapping).
+
+This is exactly the mapping. Now I'll write a test that reproduces the frontend pipeline for the two app views and asserts the resulting GraphQL filter includes NULL. Let me check the `RecordFilterGroupLogicalOperator` and field metadata shape needed.
+
+
+
+[94m[bash][0m $ "
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+Now let me write the test. I'll create `src/lib/__tests__/null-project-status-filter.test.ts`. It will:
+1. Load the two view definitions.
+2. Assert the filterGroup shape (OR, both filters attached, positions).
+3. Replicate the frontend mapping into `RecordFilter`/`RecordFilterGroup` and run the real `computeRecordGqlOperationFilter` to assert the computed `filter` includes the NULL arm while excluding DONE.
+
+[94m[bash][0m $ grep -n "TASK_FIELD_IDS" packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifi...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  ViewFilterGroupLogicalOperator,
+  ViewFilterOperand,
+} from 'twenty-sdk/define';
+import {
+  FieldMetadataType,
+  ... (8230 chars)"
+Now I'll write the test file. It reproduces the exact frontend mapping (from `mapViewFiltersToFilters`/`mapViewFilterGroupsToRecordFilterGroups`) and runs the real `computeRecordGqlOperationFilter`.
+
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && node --test --experimental-strip-types "src/lib/__t...
+The SELECT filter value must be a JSON array (`convertViewFilterValueToString` yields `'["DONE"]'`). Let me check the real `convertViewFilterValueToString`.
+
+[94m[bash][0m $ grep -rn "convertViewFilterValueToString" packages/twenty-shared/src/utils -l
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/filter/utils/convertViewFilterValueToString.ts
+[94m[edit][0m
+The DB stores a select filter value as a JSON-encoded array `'["DONE"]'`. The frontend mapping passes that string straight through; `turnRecordFilterIntoGqlOperationFilter` parses it with `arrayOfStringsOrVariablesSchema`. So my test must feed `'["DONE"]'`, not `'DONE'`. Let me fix by using `convertViewFilterValueToString` in the test.
+
+[94m[edit][0m
+[94m[edit][0m
+Now update `computeViewGqlFilter` to use the real converter, and the plain-filter test value:
+
+[94m[edit][0m
+The `IS_EMPTY` filter's value is `''`; for SELECT the emptiness path ignores the value. But `arrayOfStringsOrVariablesSchema.parse('')` would throw — let me check how the value flows. `convertViewFilterValueToString('')` returns `''` (string). For emptiness operands, `checkIfShouldComputeEmptinessFilter` short-circuits before value parsing, so it's fine. Let me run.
+
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && node --test --experimental-strip-types "src/lib/__t...
+[94m[bash][0m $ grep -rn "convertViewFilterValueToString\|JSON.stringify\|viewFilterValue" packages/twenty-server/sr...
+The view definition stores `value: 'DONE'` (a plain string), and `convertViewFilterValueToString('DONE')` returns it unchanged. In the real DB, a SELECT view filter stores the JSON array. The view *declaration* value is `'DONE'` but the frontend's stored value is the JSON array. 
+
+Let me verify what value the DB stores for a manifest-declared SELECT filter. The manifest value is `'DONE'` — but `turnRecordFilterIntoGqlOperationFilter` for SELECT parses `arrayOfStringsOrVariablesSchema`, which expects JSON. Let me check how the server converts manifest filter values and whether `convertViewFilterValueToString` is applied. Actually the safest and most correct approach: my test should reflect what the *runtime* value is. Let me check `convertViewFilterValueToString.url` and how existing view filters with `'DONE'` values behave — the US-035 view already shipped with `value: 'DONE'`. Let me check if there's server-side value normalization for select filters.
+
+[94m[bash][0m $ grep -rn "convertViewFilterValueToString" packages/twenty-front/src | head
+The view filter value stored in DB is a plain JSON-encoded value. For a SELECT filter created via the UI, the value is `'["DONE"]'` (array). The manifest declares `value: 'DONE'` — the server stores it verbatim as the string `'DONE'`, and at query time `mapViewFiltersToFilters` passes `'DONE'` through, which then fails `arrayOfStringsOrVariablesSchema`.
+
+This means the existing shipped `IS_NOT 'DONE'` filter on `projectStatus` (value `'DONE'`) would itself throw at query time, unless the value must be a JSON array. This is a pre-existing question about how manifest SELECT filter values must be encoded. Let me check real view filters in the DB via the MCP/postgres, or check Twenty's own standard views' SELECT filter values.
+
+Actually, this is critical: if `value: 'DONE'` fails to parse, the whole view filter throws — meaning US-035's shipped filter is broken, not just the NULL case. Let me verify by looking at how Twenty standard views encode a select filter value in the codebase/snapshots.
+
+
+
+[94m[bash][0m $ grep -rn "IS_NOT" packages/twenty-shared/src/utils/filter/utils/__tests__/getEmptyRecordGqlOperation...
+[94m[bash][0m $ find packages/twenty-shared/src -name "turnRecordFilterIntoGqlOperationFilter*"
+[94m[bash][0m $ grep -n "SELECT\|IS_NOT" packages/twenty-shared/src/utils/filter/__tests__/turnRecordFilterIntoGqlOp...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "value" packages/twenty-server/src/engine/metadata-modules/flat-view-filter/utils/from-crea...
+Confirmed: a SELECT filter's runtime value must be a JSON array string (`'["DONE"]'`). But the app view declaration sets `value: 'DONE'`.
+
+This is a real, pre-existing defect: the shipped US-035 `IS_NOT 'DONE'` filter would throw at query time unless the manifest value is normalized. Let me check whether the server normalizes manifest SELECT values when persisting, since the DB stores the value. Let me look at the real behavior via the workspace DB (postgres MCP is not available as a tool here, but I can query with psql if available). Let me first check the server's view-widget-upsert / manifest->entity path for value handling.
+
+[94m[bash][0m $ grep -rn "viewFilterManifest\|value" packages/twenty-server/src/engine/core-modules/application/appl...
+The manifest value is stored verbatim. So `value: 'DONE'` is stored as `'DONE'` and would break at query time for a SELECT filter. This is important — but it's **pre-existing** (US-035 shipped it). Let me verify against the actual live DB whether it is stored as `'DONE'` or normalized, using the postgres MCP is not available; let me check if psql works.
+
+Actually, more decisive: let me check what Twenty's own standard views use for a select filter value in seeded metadata. Let me search server seed/view fixtures.
+
+[94m[bash][0m $ grep -rn "'\[\"" packages/twenty-server/src/engine/workspace-manager 2>/dev/null | grep -i "filtr\|s...
+[94m[bash][0m $ redis-cli ping 2>&1 | head -1
+Services are up. Let me query the live `Apple` workspace's view filter values for a SELECT filter to learn the real stored encoding.
+
+[94m[bash][0m $ psql -h localhost -U postgres -l 2>&1 | head -20
+[94m[bash][0m $ " 2>&1 | head -50
+`value` is a JSON column. This proves the runtime value must be valid JSON. `value: 'DONE'` in the manifest is **invalid JSON** and would be rejected/mis-stored. Let me query actual values.
+
+[94m[bash][0m $ " 2>&1 | head -50
+Only relation filters exist in the live `Apple` workspace — the app's `projectStatus IS_NOT 'DONE'` filter is not present (Tier-2 install hasn't run since US-035). Let me check the workspace with the installed app, or find any SELECT view filter in any workspace.
+
+[94m[bash][0m $ " 2>&1 | head -20
+[94m[bash][0m $ done
+[94m[bash][0m $ " 2>&1 | head -20
+All metadata lives in `core`. So the earlier query showed only 4 viewFilters total in `core` — the live workspace has almost none, and no app-installed SELECT filter. Let me check all viewFilters across core, including for the standard task/custom objects, to find any SELECT filter encoding.
+
+
+
+[94m[bash][0m $ " 2>&1 | head -20
+[94m[bash][0m $ grep -rln "selectedOptions\|SelectFilterValue" packages/twenty-front/src/modules/object-record/objec...
+[94m[bash][0m $ grep -rn "convertViewFilterValueToString" packages/twenty-front/src/modules/views/hooks/internal/use...
+The `value` column is JSONB/JSON — so the encoded value is a JSON *string containing a JSON array* for select filters (i.e. `"[\"DONE\"]"`). The manifest's `value: 'DONE'` would be stored as the JSON string `"DONE"`, and `convertViewFilterValueToString` returns `DONE` which then fails `arrayOfStringsOrVariablesSchema`.
+
+This means the shipped US-035 filter `value: 'DONE'` is a **latent bug**: at real query time it would throw `ZodError` rather than filter. But that's the pre-existing state, not my residual. However, my task is exactly to fix the completion filter so NULL rows are included. If I ship an OR group whose `IS_NOT` arm still has a non-JSON `'DONE'` value, the filter throws and nothing works.
+
+Let me verify what the value should be by checking the frontend filter UI: a SELECT filter created via UI stores value as `JSON.stringify(['DONE'])`. Let me confirm by checking `convertViewFilterValueToString` usage on write and the filter-dropdown value shape.
+
+Confirmed: a SELECT (option) filter value is `JSON.stringify(selectedOptions.map(o => o.value))` → `'["DONE"]'`. So the correct manifest `value` for the DONE exclusion must be `'["DONE"]'` (a JSON array string), **not** `'DONE'`.
+
+This is a genuine finding: US-035/US-036 shipped `value: 'DONE'`, which at runtime fails to parse and would make the filter throw. Since US-059 explicitly owns "reconcile the completion filters", fixing the value encoding is in scope and necessary for the OR group to actually work.
+
+Let me check how the value flows from manifest → DB: manifest `value: '["DONE"]'` (string) → stored as JSON string `"[\"DONE\"]"` → `convertViewFilterValueToString` returns `'["DONE"]'` → parses fine. Let me verify the handful of app views and tests that assert `value === 'DONE'` so I update them consistently.
+
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && grep -rn "'DONE'\|\"DONE\"\|value: 'DONE'\|=== 'DON...
+The view filters currently use `value: 'DONE'` and the tests find them with `filter.value === 'DONE'`. Since the filter value must be a JSON array string for SELECT, `value: 'DONE'` is wrong at runtime.
+
+However, I need to be careful: this is a *pre-existing* concern beyond my residual, and changing the value encoding touches US-035/036 tests. But the acceptance says "All existing a2e-projects views still build and yarn test:unit stays green" — I can update those tests. Let me first definitively confirm that the manifest SELECT filter `value` must be JSON. Let me check Twenty's standard seeded views which contain a select filter (e.g. opportunity stage), searching the whole repo for a view filter with `operand` IS_NOT and a JSON array value in a `*.ts` view definition.
+
+[94m[bash][0m $ grep -rn "value: JSON.stringify\|value: '\[\"" packages/twenty-server/src packages/twenty-front/src ...
+[94m[read][0m
+Look at the standard view filters — `compute-standard-task-view-filters.util.ts` and `compute-standard-person-view-filters.util.ts`.
+
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "value:" packages/twenty-server/src/engine/works...
+Let me find a standard view filter that filters a SELECT field, to see the exact encoding for a plain select.
+
+
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts
+Only relation filters in standard views. Let me check the frontend's own handling: what value does the UI write for a SELECT filter and how is it read back? The key question: is the DB `value` for a select filter stored as a JSON string of an array (e.g. `"[\"DONE\"]"`), or as a bare JSON string `"DONE"`?
+
+Given `ObjectFilterDropdownOptionSelect.tsx:155` writes `JSON.stringify(selectedOptions.map(o => o.value))`, the value is `'["DONE"]'`. So the manifest must declare `value: '["DONE"]'`.
+
+Let me confirm `convertViewFilterValueToString` on manifest value: manifest `value: '["DONE"]'` is a string → returned as-is → `arrayOfStringsOrVariablesSchema.parse('["DONE"]')` → `['DONE']`. Correct.
+
+So the fix must change every app SELECT completion filter value from `'DONE'` to `'["DONE"]'`. This is a latent bug in the shipped filter, and my OR group depends on it. I'll fix it as part of the reconciliation and update the tests. Let me verify the exact current views and their tests use.
+
+Actually — hold on. Let me check whether the manifest `value` is coerced. `convertViewFilterValueToString` is only called on the frontend read path (`splitViewWithRelated` / `mapViewFiltersToFilters`). The manifest stores `value` in a JSON column. If I pass the JS string `'DONE'`, TypeORM stores JSON string `"DONE"`. On read, GraphQL returns `"DONE"`, `convertViewFilterValueToString("DONE")` → `"DONE"` → parse fails. Confirmed bug.
+
+Let me now decide scope: The acceptance explicitly says "the completion filters ... gain an OR filterGroup so projectStatus IS NULL rows are included while projectStatus = 'DONE' stays excluded, with unit tests asserting the filter-group shape and NULL-inclusion semantics." To have working semantics, the DONE value must be correctly encoded. I'll fix it.
+
+Let me update the two views' DONE values to `'["DONE"]'`. Update the calendar view first.
+
+
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/task-status.ts
+I'll add a shared helper constant for the DONE select filter value so both views and tests stay in sync, and fix the encoding. Let me put it in the constants file.
+
+Actually, a cleaner approach matching house style: define the encoded value inline with a WHY comment. But both views need it, so a shared const is better. Let me add `TASK_PIPELINE_STATUS_FILTER_VALUES` or simply `DONE_FILTER_VALUE`.
+
+Let me check if there's an existing constants/home for this. I'll add to `universal-identifiers.ts` near the filter group IDs — but semantically it's not an identifier. Better in `lib/task-status.ts` which already owns pipeline status semantics (and is explicitly "readTaskPipelineStatus untouched" — but adding a constant doesn't change the function). Let me look at task-status.ts.
+
+
+
+I'll add a `buildSelectFilterValue` helper in `lib/task-status.ts`? No — that's a view concern, not status reading. Better: add a small `lib/view-filter-value.ts` pure util that encodes a select filter value, with tests. But that's over-engineering for a single value.
+
+Simplest idiomatic approach: declare a named const in each view with a WHY comment explaining the JSON-array encoding. To avoid duplication of the literal, put it in the constants file (which already holds view-related constants). Let me add it there.
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+I accidentally created a duplicate. Let me view and fix.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts
+Good, no duplicate — the edit replaced the block and produced the intended result. Now update both views to use the correctly-encoded value and the shared const.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/overdue-tasks.view.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/overdue-tasks.view.ts
+Now update the test to use `convertViewFilterValueToString` correctly on the view's value (which is now already a JSON array string, so `convertViewFilterValueToString` returns it as-is). Let me also update the existing tests that find filters by `filter.value === 'DONE'`. Let me run the test first.
+
+[94m[edit][0m
+Now update the existing tests that locate the DONE filter by `value === 'DONE'`. Let me fix task-calendar.test.ts and my-tasks.test.ts.
+
+
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-calendar.test.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-calendar.test.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/my-tasks.test.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/my-tasks.test.ts
+[94m[read][0m
+Now update my null-filter test to use the shared constant rather than re-deriving, and re-run.
+
+
+
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && node --test --experimental-strip-types "src/lib/__t...
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && grep -n "convertViewFilterValueToString" src/lib/__...
+All 3 pass. Now the `convertViewFilterValueToString` import is unused in the test. Let me clean it up, then run the full suite + gates.
+
+Still used at line 99. Good. Now run the full unit suite, typecheck, lint, and build.
+
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && yarn test:unit 2>&1 | tail -12
+265/265 (262 baseline + 3 new). Now typecheck, lint, build.
+
+
+
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && yarn lint 2>&1 | tail -20
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && yarn typecheck 2>&1 | tail -20
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "type FieldShared" packages/twenty-shared/src/ut...
+Typecheck needs `label` on the field metadata. Lint is clean (1 pre-existing warning, untouched file). Let me fix the typecheck.
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/filter/turnRecordFilterIntoGqlOperationFilter.ts
+[94m[edit][0m
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && yarn typecheck 2>&1 | tail -10 && echo "TYPECHECK_E...
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && node --test --experimental-strip-types "src/lib/__t...
+All green. Let me verify the manifest encodes the DONE value as a JSON array string and re-read the final view files, then run format check.
+
+[94m[bash][0m $ } "
+[94m[bash][0m $ cat .oxfmtrc.jsonc 2>/dev/null | head -30
+The manifest now carries `IS_NOT="[\"DONE\"]"` (a valid JSON array string) plus `IS_EMPTY=""`, in an OR group. Now format check on touched files. The root `.oxfmtrc.jsonc` ignores `**/lib/**`, so I use a lib-inclusive config as prior phases did.
+
+[94m[bash][0m $ rm -rf "$TMP"
+[94m[bash][0m $ rm -rf "$TMP"
+[94m[bash][0m $ rm -rf "$TMP"
+Formatting clean. Let me re-run the full suite to confirm nothing regressed after formatting, then check git status.
+
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git status --porcelain
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && yarn test:unit 2>&1 | tail -10
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git diff packages/twenty-apps/internal/a2e-projects/src/v...
+All green. `git status` shows only my declared files plus the pre-existing Ralph session files (`.ralph-tui/*`, `tasks/prd.json`) and a US-058 log that were already dirty at session start. No stray changes.
+
+Let me review the final diff of my source files to confirm correctness.
+
+[94m[bash][0m $ grep -n "^- \[ \] \*\*" PLAN.md | wc -l
+The diff is clean and correct. Now let me write the phase report entry and the progress.md entry. First the phase report.
+
+Let me determine the "Remaining" count and read the phase report tail for placement.
+
+
+
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && tail -3 docs/plan/phases/phase-04-report.md
+Now append the report entry.
+
+[94m[bash][0m $ or executor — P4C.3 (recurrence model + daily/weekly expansion, US-060). ENTRY cat /tmp/us059_entry....
+
+--- STDERR ---
+[93m[1m! [0mpermission requested: external_directory (/tmp/*); auto-rejecting

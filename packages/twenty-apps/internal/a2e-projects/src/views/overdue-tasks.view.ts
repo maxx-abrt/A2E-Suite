@@ -1,6 +1,7 @@
 import {
   defineView,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
   ViewOpenRecordIn,
   ViewSortDirection,
@@ -8,7 +9,9 @@ import {
 } from 'twenty-sdk/define';
 
 import {
+  SELECT_FILTER_VALUE_DONE,
   TASK_FIELD_IDS,
+  VIEW_FILTER_GROUP_IDS,
   VIEW_IDS,
   viewFieldId,
 } from '../constants/universal-identifiers.ts';
@@ -83,11 +86,32 @@ export default defineView({
     },
     {
       // Completion reads the board's pipeline field so a task moved to DONE
-      // on the board actually leaves the overdue list (C5).
+      // on the board actually leaves the overdue list (C5). Paired in the OR
+      // completion group below with `IS EMPTY`: a NULL pipeline status is
+      // "not done" and must stay, even though `IS_NOT 'DONE'` alone would
+      // drop it (SQL NULL in `NOT (col IN ('DONE'))`).
       universalIdentifier: 'c31b0100-0005-4000-8000-000000000008',
       fieldMetadataUniversalIdentifier: TASK_FIELD_IDS.projectStatus,
       operand: ViewFilterOperand.IS_NOT,
-      value: 'DONE',
+      value: SELECT_FILTER_VALUE_DONE,
+      viewFilterGroupUniversalIdentifier:
+        VIEW_FILTER_GROUP_IDS.taskOverdueCompletion,
+      positionInViewFilterGroup: 0,
+    },
+    {
+      universalIdentifier: 'c31b0100-0005-4000-8000-00000000000b',
+      fieldMetadataUniversalIdentifier: TASK_FIELD_IDS.projectStatus,
+      operand: ViewFilterOperand.IS_EMPTY,
+      value: '',
+      viewFilterGroupUniversalIdentifier:
+        VIEW_FILTER_GROUP_IDS.taskOverdueCompletion,
+      positionInViewFilterGroup: 1,
+    },
+  ],
+  filterGroups: [
+    {
+      universalIdentifier: VIEW_FILTER_GROUP_IDS.taskOverdueCompletion,
+      logicalOperator: ViewFilterGroupLogicalOperator.OR,
     },
   ],
   sorts: [

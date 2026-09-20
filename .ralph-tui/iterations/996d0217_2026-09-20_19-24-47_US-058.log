@@ -1,0 +1,56 @@
+# Iteration 3 Log
+
+## Metadata
+
+- **Task ID**: US-058
+- **Task Title**: P2.4 — dock/tab unit suites green run on current HEAD (unit half of the E2E bullet)
+- **Description**: As a developer handing P2.4 to the orchestrator, I want the existing widget-dock and side-panel-tab unit suites run green on current HEAD, so that the only remaining open leg of the bullet is the brow...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-20T17:24:47.421Z
+- **Ended At**: 2026-09-20T17:26:31.320Z
+- **Duration**: 1m 43s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite[0m pattern: [96mUS-058[0m
+[94m[bash][0m $ ls docs/plan/phases/ && echo "---" && git log --oneline -5
+[94m[bash][0m $ grep -n "P2.4" PLAN.md tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ wc -l docs/plan/phases/phase-02-report.md && grep -n "CLAIMED\|US-058\|US-057\|P2.4" docs/plan/phase...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md
+[94m[bash][0m $ grep -rn "a2e-widgets" packages/twenty-front/src --include=*.ts --include=*.tsx -l
+[94m[bash][0m $ find packages/twenty-front/src/modules/workbench-dock packages/twenty-front/src/modules/side-panel -...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96ma2e-widgets[0m
+[94m[bash][0m $ printf '\nCLAIMED — US-058/dock-tab-unit-green-run — deepseek-v4.1-flash — 2026-09-20T17:26:00Z — ba...
+Claim recorded. Now running the dock + tabs unit suites on current HEAD.
+[94m[bash][0m $ npx jest src/modules/workbench-dock src/modules/side-panel/tabs --config=jest.config.mjs 2>&1 | tail...
+[94m[bash][0m $ grep -rn "a2e-" packages/twenty-front/src/modules/side-panel/tabs/states 2>/dev/null | head
+All 11 suites green (85 tests). Let me check whether tab-persistence/reload-restore tests also live under `side-panel/routing`, to be sure "ALL" suites are covered.
+[94m[bash][0m $ grep -rln "a2e-side-panel-tabs\|SIDE_PANEL_TABS_STORAGE_KEY\|localStorage\|reload\|restore" packages...
+All 11 suites green. Now the quality gates: typecheck and lint.
+[94m[bash][0m $ echo "TSC_EXIT=${PIPESTATUS[0]}"
+[94m[bash][0m $ wc -l /tmp/tsgo.out
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/workbench-dock src/modules/side-panel/tabs 2>&...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ executor — P3.3 tree/record-note-copy is the next Tier-0/1 slice. EOF tail -14 docs/plan/phases/phas...
+All gates green. Appending the phase report entry.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+Now the Ralph progress entry.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ cat >> .ralph-tui/progress.md <<'EOF' ## 2026-09-20 - US-058 - Verified the P2.4 dock/tab unit suite...
+[94m[bash][0m $ git status --porcelain
+Unit half of P2.4 verified green on HEAD `831210bb`, no code change needed.
+
+- **Jest:** `npx jest src/modules/workbench-dock src/modules/side-panel/tabs --config=jest.config.mjs` → **11 suites / 85 tests passed**
+- **Typecheck:** `npx tsgo -p tsconfig.json --noEmit` → exit 0
+- **Lint:** `npx oxlint --type-aware -c .oxlintrc.json src/modules/workbench-dock src/modules/side-panel/tabs` → 0 warnings / 0 errors
+- **Changed:** `docs/plan/phases/phase-02-report.md`, `.ralph-tui/progress.md` only. No browser E2E, no `yarn start`, `PLAN.md` untouched, nothing committed.
+- Browser E2E (`side-panel-tabs.spec.ts`) remains Tier 2 for the orchestrator.
+
+<promise>COMPLETE</promise>

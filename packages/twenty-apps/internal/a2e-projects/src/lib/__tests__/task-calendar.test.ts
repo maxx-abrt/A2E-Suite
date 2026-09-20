@@ -9,6 +9,7 @@ import {
 } from 'twenty-sdk/define';
 
 import {
+  SELECT_FILTER_VALUE_DONE,
   TASK_FIELD_IDS,
   VIEW_IDS,
 } from '../../constants/universal-identifiers.ts';
@@ -111,7 +112,10 @@ test('the calendar excludes completed tasks on the app pipeline status, not the 
   );
 
   const completionFilter = (view.filters ?? []).find(
-    (filter) => filter.value === 'DONE',
+    (filter) =>
+      filter.fieldMetadataUniversalIdentifier ===
+        TASK_FIELD_IDS.projectStatus &&
+      filter.operand === ViewFilterOperand.IS_NOT,
   );
 
   assert.ok(completionFilter, 'calendar has no DONE exclusion filter');
@@ -124,6 +128,7 @@ test('the calendar excludes completed tasks on the app pipeline status, not the 
     NATIVE_TASK_STATUS_FIELD_ID,
   );
   assert.equal(completionFilter.operand, ViewFilterOperand.IS_NOT);
+  assert.equal(completionFilter.value, SELECT_FILTER_VALUE_DONE);
 
   const displayedStatusField = (view.fields ?? []).find(
     (viewField) =>
