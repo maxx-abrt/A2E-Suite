@@ -43,9 +43,10 @@
         "Quality gate: dated entry appended to docs/plan/phases/phase-02-report.md (create the entry under the existing P2 section); PLAN.md not edited; nothing committed"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN task P2.5 (no literal (after X); P0.2 dependency is [x] DONE 2026-09-13). Starting state: PARTIAL — P0.2 verified document-search caller scoping (21 unit + 4 integration green); US-008 fixed the {ilike}-rendered-as-equality bug with SQL-level regression tests (search suites green on HEAD re-run). The live re-proof through an installed app is Tier 2 and stays with the orchestrator.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-058",
@@ -269,6 +270,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-20T17:20:11.739Z"
+    "updatedAt": "2026-09-20T17:24:41.856Z"
   }
 }

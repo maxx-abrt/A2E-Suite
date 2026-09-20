@@ -224,6 +224,42 @@ describe('DocumentSearchProviderService', () => {
     );
   });
 
+  // A document title from a second workspace can never surface: the result is
+  // read solely from the ambient authenticated workspace's repository, so the
+  // caller-supplied id is inert and the rendered query carries no
+  // cross-workspace predicate that could widen the read.
+  it('cannot surface a second workspace document title, however the caller id is passed', async () => {
+    const { ormManager, repositoryFind, getRepository } = buildOrmManagerMock({
+      records: [documentRecord('doc-1', 'Ambient workspace note')],
+    });
+    const provider = new DocumentSearchProviderService(ormManager);
+
+    const result = await provider.search({
+      searchInput: 'note',
+      limit: 5,
+      workspaceId: '3b8e6458-5fc1-4e63-8563-008ccddaa6db',
+    });
+
+    expect(getRepository).toHaveBeenCalledTimes(1);
+    expect(result.items).toEqual([
+      {
+        recordId: 'doc-1',
+        label: 'Ambient workspace note',
+        description: 'Document',
+        path: '/object/documents/doc-1',
+      },
+    ]);
+
+    const findOptions = repositoryFind.mock.calls[0][0] as {
+      where: { title: unknown };
+    };
+    const [sql] = applyFindOptionsToQueryBuilder(buildDocumentQueryBuilder(), {
+      where: findOptions.where,
+    }).getQueryAndParameters();
+
+    expect(sql).not.toContain('workspaceId');
+  });
+
   it('escapes ILIKE wildcards so % and _ match literally', async () => {
     const { ormManager, repositoryFind } = buildOrmManagerMock({
       records: [],
@@ -241,6 +277,42 @@ describe('DocumentSearchProviderService', () => {
         where: expect.objectContaining({
           title: ILike('%100\\%\\_done%'),
         }),
+      }),
+    );
+  });
+
+  // Escaping must cover the escape character itself and a lone wildcard: a
+  // term of just `%` must not become a match-all predicate, and a trailing
+  // backslash must not be able to change how the bound pattern is parsed.
+  it('escapes a lone wildcard and a trailing backslash without changing the pattern', async () => {
+    const { ormManager, repositoryFind } = buildOrmManagerMock({
+      records: [],
+    });
+    const provider = new DocumentSearchProviderService(ormManager);
+
+    await provider.search({
+      searchInput: '%',
+      limit: 5,
+      workspaceId: WORKSPACE_ID,
+    });
+
+    expect(repositoryFind).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ title: ILike('%\\%%') }),
+      }),
+    );
+
+    repositoryFind.mockClear();
+
+    await provider.search({
+      searchInput: '50%\\',
+      limit: 5,
+      workspaceId: WORKSPACE_ID,
+    });
+
+    expect(repositoryFind).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ title: ILike('%50\\%\\\\%') }),
       }),
     );
   });

@@ -46,6 +46,34 @@ describe('AppSearchService', () => {
     ).toHaveBeenCalledTimes(1);
   });
 
+  // Install gate is keyed by app universal identifier: a provider belonging to
+  // an app that is not installed in this workspace must contribute nothing and
+  // must not even be queried, so no title from an uninstalled app can leak into
+  // the federated payload.
+  it('contributes no result from an uninstalled app and never queries its provider', async () => {
+    const uninstalledProvider = buildProvider([
+      {
+        recordId: 'record-secret',
+        label: 'Title from an uninstalled app',
+        path: '/object/secret/record-secret',
+      },
+    ]);
+
+    const service = buildService([
+      { appUniversalIdentifier: APP_A, provider: buildProvider([]) },
+      { appUniversalIdentifier: APP_B, provider: uninstalledProvider },
+    ]);
+
+    const result = await service.searchInstalledAppRecords({
+      searchInput: 'title',
+      workspaceId: WORKSPACE_ID,
+      installedAppUniversalIdentifiers: [APP_A],
+    });
+
+    expect(result).toEqual([]);
+    expect(uninstalledProvider.search).not.toHaveBeenCalled();
+  });
+
   it('returns groups only for apps that produced items', async () => {
     const service = buildService([
       {

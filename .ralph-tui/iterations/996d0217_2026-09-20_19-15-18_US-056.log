@@ -1,0 +1,111 @@
+# Iteration 1 Log
+
+## Metadata
+
+- **Task ID**: US-056
+- **Task Title**: P1.6c residual — InstallApps catalogue list empty-state subtitle
+- **Description**: As a new workspace member choosing apps during onboarding, I want the InstallApps catalogue list to show a distinct, truthful empty-state subtitle when the catalogue is loading, empty, or failed to lo...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-20T17:15:18.654Z
+- **Ended At**: 2026-09-20T17:20:11.738Z
+- **Duration**: 4m 53s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the clean-start check and task confirmation.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-056" PLAN.md | head -20
+Dirty files are Ralph engine state, not code. Let me read the task's PLAN section and phase report.
+[94m[bash][0m $ ls docs/plan/phases/ && echo "---" && grep -n "US-056\|InstallApps" docs/plan/phases/phase-01-report...
+[94m[bash][0m $ grep -n "P1.6c" PLAN.md
+[94m[bash][0m $ grep -n "US-047\|US-056\|catalogue list empty\|empty-state subtitle" PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "CLAIMED\|US-056\|2026-09-20" docs/plan/phases/phase-01-report.md | tail -30
+[94m[bash][0m $ wc -l docs/plan/phases/phase-01-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ ls packages/twenty-front/src/pages/onboarding/
+[94m[glob][0m pattern: [96m**/InstallAppsContent.tsx[0m
+Task is unclaimed and dependencies met. Let me examine the target files.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/InstallApps.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/InstallAppsContent.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/onboarding/utils/shouldAutoSkipInstallAppsStep.ts
+[94m[bash][0m $ ls packages/twenty-front/src/pages/onboarding/__tests__/
+[94m[bash][0m $ grep -rn "InstallAppsContent\|InstallApps\b" packages/twenty-front/src --include=*.tsx --include=*.t...
+[94m[bash][0m $ grep -rn "shouldAutoSkipInstallAppsStep" packages/twenty-front/src --include=*.ts --include=*.tsx -l
+[94m[bash][0m $ grep -rn "shouldAutoSkipInstallAppsStep" packages/twenty-front/src --include='*.ts' --include='*.tsx...
+[94m[bash][0m $ grep -rn "InstallAppsContent\|InstallApps" packages/twenty-front/src --include='*.tsx' --include='*....
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/__stories__/InstallApps.stories.tsx
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/__tests__/entrypoint-parity.test.tsx
+[94m[bash][0m $ ls packages/twenty-front/src/modules/a2e-workspace/components/__tests__/ packages/twenty-front/src/m...
+[94m[read][0m
+[94m[bash][0m $ grep -rln "import { t }" packages/twenty-front/src/modules --include='*.ts' | head
+[94m[bash][0m $ grep -rn "from '@lingui/macro'" packages/twenty-front/src --include='*.ts' | grep -v '.tsx' | head -...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/page-layout/utils/getWidgetTitle.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/marketplace/hooks/useMarketplaceApps.ts
+[94m[bash][0m $ ls packages/twenty-front/src/modules/onboarding/components/ | head -40
+[94m[bash][0m $ grep -rn "StyledOnboardingStepSubtitle" packages/twenty-front/src --include='*.tsx' | head -20
+[94m[bash][0m $ grep -rn "couldn't load\|failed to load\|try again later\|Check your connection" packages/twenty-fro...
+[94m[read][0m
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+Now I'll claim the slice.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ grep -n "CLAIMED — US-056" docs/plan/phases/phase-01-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/InstallAppsContent.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/InstallAppsContent.tsx
+Now wire the failure state from `InstallApps.tsx`:
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/InstallApps.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/InstallAppsContent.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/onboarding/constants/OnboardingInstallableApps.ts
+[94m[read][0m
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+import { type ReactNode } from 'react';
+
+import { useMarketp... (3548 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/__stories__/InstallApps.stories.tsx
+[94m[bash][0m $ npx jest packages/twenty-front/src/pages/onboarding/__tests__/InstallApps.test.tsx --config=packages...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/__tests__/InstallApps.test.tsx
+[94m[bash][0m $ npx jest packages/twenty-front/src/pages/onboarding/__tests__/InstallApps.test.tsx --config=packages...
+[94m[bash][0m $ npx jest packages/twenty-front/src/pages/onboarding/__tests__/InstallApps.test.tsx packages/twenty-f...
+[94m[bash][0m $ echo "tsgo exit: $?"
+[94m[bash][0m $ echo "oxlint exit: $?"
+[94m[bash][0m $ echo "oxfmt exit: $?"
+[94m[glob][0m pattern: [96m**/.oxlintrc.json[0m
+[94m[bash][0m $ echo "oxlint exit: $?"
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/pages/onboarding/__stories__/InstallApps.stories.tsx 2...
+[94m[bash][0m $ npx jest packages/twenty-front/src/pages/onboarding packages/twenty-front/src/modules/onboarding pac...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ git log --oneline -5 && echo "---" && git status --porcelain --ignored=no
+[94m[bash][0m $ git show --stat --oneline 02f39a5d | head -30
+[94m[bash][0m $ ls packages/twenty-front/src/pages/onboarding/__stories__/ && echo "---snaps---" && find packages/tw...
+[94m[bash][0m $ echo "exit: $?"
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ tail -40 .ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain && echo "---" && git rev-parse HEAD
+Done. US-056 slice complete.
+
+**What changed**
+- `InstallAppsContent.tsx`: added optional `catalogueLoadFailed` prop selecting a distinct failure subtitle vs the zero-apps empty-state subtitle; the template picker render is untouched, so it stays mounted in every catalogue state.
+- `InstallApps.tsx`: passes `catalogueLoadFailed={!hasLoadedAvailabilitySuccessfully}` (i.e. `error` defined).
+- New `__tests__/InstallApps.test.tsx` (3 cases: failed → failure subtitle + picker; empty → empty subtitle + picker; success → no failure/empty subtitle + picker).
+- Updated `InstallApps.stories.tsx` `MarketplaceUnavailable` play to expect the new copy.
+- Appended report entry to `phase-01-report.md` and progress entry to `.ralph-tui/progress.md`.
+
+**Gates**: `InstallApps.test.tsx` 3/3; onboarding+a2e-workspace 39 suites/222 pass; `tsgo --noEmit` exit 0; `oxlint --type-aware` 0/0; `oxfmt --check` clean; `check-docs.mjs` PASS. No commit; PLAN.md untouched; US-047 preview/apply components and `useApplyWorkspaceTemplateOperation` untouched; no `graphql:generate`/browser run.
+
+**Tier 2 (orchestrator)**: live `graphql:generate` and the onboarding/Settings browser journey remain open.
+
+<promise>COMPLETE</promise>

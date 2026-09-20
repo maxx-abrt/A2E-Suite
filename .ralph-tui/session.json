@@ -3,10 +3,10 @@
   "sessionId": "996d0217-482c-4a96-b036-789e241df074",
   "status": "running",
   "startedAt": "2026-09-20T17:15:13.692Z",
-  "updatedAt": "2026-09-20T17:20:11.740Z",
-  "currentIteration": 0,
+  "updatedAt": "2026-09-20T17:24:41.857Z",
+  "currentIteration": 1,
   "maxIterations": 20,
-  "tasksCompleted": 0,
+  "tasksCompleted": 1,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -16,7 +16,18 @@
     "totalTasks": 0,
     "tasks": []
   },
-  "iterations": [],
+  "iterations": [
+    {
+      "iteration": 1,
+      "status": "completed",
+      "taskId": "US-056",
+      "taskTitle": "P1.6c residual — InstallApps catalogue list empty-state subtitle",
+      "taskCompleted": true,
+      "durationMs": 293084,
+      "startedAt": "2026-09-20T17:15:18.654Z",
+      "endedAt": "2026-09-20T17:20:11.738Z"
+    }
+  ],
   "skippedTaskIds": [],
   "cwd": "/Users/maxaubert/Projets/A2E Suite",
   "activeTaskIds": [],
