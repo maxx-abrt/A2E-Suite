@@ -3,10 +3,10 @@
   "sessionId": "3587542b-3e4d-4de5-8ce6-62fbbaa47b5e",
   "status": "running",
   "startedAt": "2026-09-20T10:40:42.265Z",
-  "updatedAt": "2026-09-20T11:19:39.375Z",
-  "currentIteration": 3,
+  "updatedAt": "2026-09-20T11:44:36.021Z",
+  "currentIteration": 5,
   "maxIterations": 20,
-  "tasksCompleted": 3,
+  "tasksCompleted": 4,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -46,6 +46,26 @@
       "durationMs": 296419,
       "startedAt": "2026-09-20T10:56:14.306Z",
       "endedAt": "2026-09-20T11:01:10.725Z"
+    },
+    {
+      "iteration": 4,
+      "status": "completed",
+      "taskId": "US-050",
+      "taskTitle": "P4C.2a — local calendar-event core path (create/read/edit foundation per D5.1–D5.4)",
+      "taskCompleted": true,
+      "durationMs": 1103021,
+      "startedAt": "2026-09-20T11:01:16.348Z",
+      "endedAt": "2026-09-20T11:19:39.369Z"
+    },
+    {
+      "iteration": 5,
+      "status": "completed",
+      "taskId": "US-051",
+      "taskTitle": "P4C.2b — calendar page/route with day/week/month + accessible agenda fallback",
+      "taskCompleted": false,
+      "durationMs": 924584,
+      "startedAt": "2026-09-20T11:19:44.981Z",
+      "endedAt": "2026-09-20T11:35:09.565Z"
     }
   ],
   "skippedTaskIds": [],

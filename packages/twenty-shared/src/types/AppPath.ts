@@ -26,6 +26,8 @@ export enum AppPath {
   Inbox = '/inbox',
   // Native workspace file browser (a2e-drive folders + standard attachments).
   Drive = '/drive',
+  // Native workspace calendar over standard calendarEvent rows (P4C.2).
+  Calendar = '/calendar',
   Index = '/',
   // Mobile only: the navigation menu is a page there rather than a drawer.
   Home = '/home',

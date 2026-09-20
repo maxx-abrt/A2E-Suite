@@ -1,0 +1,234 @@
+# Iteration 4 Log
+
+## Metadata
+
+- **Task ID**: US-050
+- **Task Title**: P4C.2a — local calendar-event core path (create/read/edit foundation per D5.1–D5.4)
+- **Description**: As a user without any connected provider, I want to create, read and edit local calendar events through the standard calendarEvent object, so that the calendar is usable with zero external accounts.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-20T11:01:16.348Z
+- **Ended At**: 2026-09-20T11:19:39.369Z
+- **Duration**: 18m 23s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ ls docs/plan/phases/ && echo "---" && ls docs/plan/
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-050" PLAN.md
+[94m[bash][0m $ wc -l docs/plan/phases/phase-04-report.md && tail -120 docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ grep -n "P4C" PLAN.md | head -40
+[94m[bash][0m $ grep -n "US-050\|US-051\|US-052\|P4C.2\|P4C.1" docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[todowrite][0m
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ printf '\nCLAIMED — US-050/local-calendar-event-core-path — deepseek-v4.1-flash — 2026-09-20T11:01:3...
+[94m[bash][0m $ ls packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/services/ packages/tw...
+[94m[glob][0m pattern: [96mpackages/twenty-server/src/modules/calendar/**/*.ts[0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-server/src -name "compute-calendar-event-standard-flat-field-metadata.util.ts" ...
+[94m[bash][0m $ grep -rn "isUICreatable" packages/twenty-server/src/engine/workspace-manager/ 2>/dev/null | head -20
+[94m[bash][0m $ ls packages/twenty-server/src/database/commands/upgrade-version-command/
+[94m[bash][0m $ ls packages/twenty-server/src/database/commands/upgrade-version-command/2-38/ 2>/dev/null | head
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/
+[94m[read][0m
+[94m[bash][0m $ grep -rln "calendarEvent:" packages/twenty-shared/src/metadata/ | head
+[94m[bash][0m $ wc -l packages/twenty-shared/src/metadata/constants/standard-object-fields.constant.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/metadata/constants/standard-object-fields.constant.ts
+[94m[read][0m
+[94m[bash][0m $ grep -rn "isUIEditable" packages/twenty-front/src/ | head -20
+[94m[bash][0m $ grep -rln "timeline-calendar-event" packages/twenty-server/src/
+[94m[bash][0m $ grep -rn "isUIEditable" packages/twenty-front/src --include=*.tsx --include=*.ts | grep -v "testing/...
+[94m[bash][0m $ grep -rn "isUICreatable" packages/twenty-ui/src 2>/dev/null | head
+[94m[bash][0m $ grep -rn "isUICreatable" packages/twenty-front/src --include="*.tsx" --include="*.ts" | grep -v "tes...
+[94m[bash][0m $ grep -rln "objectMetadataRepository\|objectMetadataService\|ObjectMetadataService" packages/twenty-s...
+[94m[bash][0m $ grep -rln "WorkspaceCommand\|WorkspaceCommandRunner" packages/twenty-server/src/database/commands/up...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/base.workspace-entity.ts
+[94m[bash][0m $ grep -rn "workspaceMemberId" packages/twenty-server/src/engine/twenty-orm/ --include="*.ts" | head -...
+[94m[bash][0m $ grep -rn "createdBy?.workspaceMemberId\|createdBy.workspaceMemberId\|createdBy?\.workspaceMemberId" ...
+[94m[bash][0m $ grep -rn "type WorkspaceAuthContext\|WorkspaceAuthContext =" packages/twenty-server/src/engine/core-...
+[94m[read][0m
+[94m[bash][0m $ grep -rln "isUIEditable" packages/twenty-front/src/modules/object-record packages/twenty-front/src/m...
+[94m[bash][0m $ grep -rln "isUIEditable" packages/twenty-front/src/modules 2>/dev/null | grep -v "__tests__" | grep ...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-server/src/modules/calendar -name "*.spec.ts" | head -30
+[94m[bash][0m $ ls packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/utils/__tests__/
+[94m[bash][0m $ grep -rn "createdBy" packages/twenty-server/src/modules/*/standard-objects/*.workspace-entity.ts | g...
+[94m[bash][0m $ grep -rn "createdBy" packages/twenty-server/src/modules/task/standard-objects/task.workspace-entity....
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/composite-types/actor.composite-type.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/task/standard-objects/task.workspace-entity.ts
+[94m[bash][0m $ grep -rn "createdBy: true" packages/twenty-server/src --include="*.ts" | grep -v spec | head -10
+[94m[bash][0m $ grep -rn "\.createdBy" packages/twenty-server/src --include="*.ts" | grep -v spec | grep -v "created...
+[94m[bash][0m $ ls packages/twenty-server/src/modules/calendar/common/query-hooks/calendar-event/
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "isSystem" packages/twenty-server/src/engine/api/graphql/workspace-schema-builder --include...
+[94m[bash][0m $ grep -rn "isUICreatable" packages/twenty-server/src --include="*.ts" | grep -v "twenty-standard-appl...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "calendarEvent" packages/twenty-server/src/engine/workspace-manager/twenty-standard-applica...
+[94m[bash][0m $ grep -rln "isUICreatable\|isUIEditable" packages/twenty-server/src/engine/workspace-manager/twenty-s...
+[94m[bash][0m $ find packages/twenty-server/test/integration -iname "*calendar*" | head -30
+[94m[read][0m
+[94m[bash][0m $ grep -rn "createOne\|CreateOne" packages/twenty-server/src/engine/api/graphql/workspace-schema-build...
+[94m[bash][0m $ grep -rn "isSystem" packages/twenty-server/src/engine/guards --include="*.ts" | grep -v spec | head
+[94m[bash][0m $ grep -rln "ACTOR" packages/twenty-server/src/engine/twenty-orm/ | head
+[94m[bash][0m $ grep -rn "select: {" packages/twenty-server/src/modules/calendar packages/twenty-server/src/engine/c...
+[94m[bash][0m $ ls packages/twenty-server/src/engine/twenty-orm/query-builder/
+Now let me look at a couple more references before writing code.
+[94m[bash][0m $ head -5 packages/twenty-server/src/modules/attachment/standard-objects/attachment.workspace-entity.t...
+[94m[bash][0m $ node -e "console.log(Date.now())"
+[94m[write][0m "import { CalendarChannelVisibility } from 'twenty-shared/types';
+
+export type CalendarEventChannelAccess = {
+  visibility: CalendarChannelVisibility;
+  isOwnedByCurrentUser: boolean;
+};
+
+export type C... (1402 chars)"
+[94m[read][0m
+[94m[write][0m "import { CalendarChannelVisibility } from 'twenty-shared/types';
+
+import { resolveCalendarEventVisibility } from 'src/modules/calendar/common/utils/resolve-calendar-event-visibility.util';
+
+const meta... (2482 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[write][0m "import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
+import { i... (6929 chars)"
+[94m[bash][0m $ cd packages/twenty-server && sed -i '' 's/calendageEventsWithoutChannel/calendarEventsWithoutChannel...
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[read][0m
+[94m[write][0m "import { Command } from 'nest-commander';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
+
+import { ProvisionedWorkspaceCommandRunner } from... (4124 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/modules/calendar/common/utils/__tests__/resolve-calendar-event-visibility.util.spec.ts ...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -40
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-server 2>&1 | tail -15
+[94m[bash][0m $ find . -maxdepth 3 -name ".oxlintrc.json" -not -path "*/node_modules/*" 2>/dev/null | head
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json \   src/modules/calendar/common/utils/resolve-calendar-eve...
+[94m[bash][0m $ npx oxfmt --check \   src/modules/calendar/common/utils/resolve-calendar-event-visibility.util.ts \ ...
+[94m[bash][0m $ npx oxfmt --write src/modules/calendar/common/query-hooks/calendar-event/services/apply-calendar-eve...
+[94m[read][0m
+[94m[bash][0m $ echo "redis_exit=$?"
+[94m[bash][0m $ grep -rln "calendarEvent" packages/twenty-server/test/integration/graphql/suites/hooks/ 2>/dev/null ...
+[94m[bash][0m $ grep -rln "visibility\|Visibility" packages/twenty-server/test/integration/graphql/suites/ | head
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/object-generated/calend...
+[94m[bash][0m $ cat packages/twenty-server/test/integration/graphql/utils/create-one-operation-factory.util.ts 2>/de...
+[94m[bash][0m $ cat packages/twenty-server/test/integration/graphql/suites/object-generated/__snapshots__/calendar-e...
+[94m[bash][0m $ ls packages/twenty-server/src/engine/workspace-manager/dev-seeder/data/constants/ | grep -i calendar
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-server/src/engine/workspace-manager/dev-seeder/data/constants/calenda...
+[94m[bash][0m $ grep -rln "destroyOneOperationFactory\|deleteOneOperationFactory" packages/twenty-server/test/integr...
+[94m[bash][0m $ grep -n "createOneOperationFactory\|destroyOneOperationFactory\|beforeAll\|afterAll\|APPLE_JANE" pac...
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-server/test/integration/graphql/utils/find-one-operation-factory.util.ts package...
+[94m[read][0m
+[94m[bash][0m $ grep -rln "createdByWorkspaceMemberId\|createdBy.*workspaceMemberId" packages/twenty-server/src/engi...
+[94m[bash][0m $ grep -rn "createdBy" packages/twenty-server/src/engine/twenty-orm/utils/format-twenty-orm-event-to-d...
+[94m[bash][0m $ grep -rln "createdBy" packages/twenty-server/src/engine/twenty-orm --include="*.ts" | grep -v spec |...
+[94m[bash][0m $ grep -rn "FieldActorSource.MANUAL" packages/twenty-server/src/engine --include="*.ts" | grep -v spec...
+[94m[bash][0m $ grep -rn "createdByWorkspaceMemberId" packages/twenty-server/src --include="*.ts" | grep -v spec | g...
+[94m[bash][0m $ grep -rn "buildCreatedBy\|createdBy" packages/twenty-server/src/engine/core-modules/actor --include=...
+[94m[write][0m "import { randomUUID } from 'crypto';
+
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/int... (2623 chars)"
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/calendar/calendar-event...
+[94m[edit][0m
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/calendar/calendar-event...
+[94m[bash][0m $ grep -rn "APP_PORT\|setupFilesAfterEnv\|globalSetup" jest-integration.config.ts
+[94m[bash][0m $ sed -n '1,120p' test/integration/utils/setup-test.ts
+[94m[bash][0m $ cat packages/twenty-server/src/modules/calendar/common/calendar-common.module.ts
+[94m[bash][0m $ grep -rln "CalendarEventFindManyPostQueryHook\|CalendarEventFindOnePostQueryHook" packages/twenty-se...
+[94m[bash][0m $ grep -rln "CalendarQueryHookModule" packages/twenty-server/src --include="*.ts" | grep -v "calendar-...
+[94m[bash][0m $ |' src/modules/calendar/common/query-hooks/calendar-event/services/apply-calendar-events-visibility-...
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/calendar/calendar-event...
+[94m[bash][0m $ \n          const visibility = resolveCalendarEventVisibility({|' src/modules/calendar/common/query-...
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/calendar/calendar-event...
+[94m[bash][0m $ tail -20 packages/twenty-server/src/modules/calendar/common/utils/resolve-calendar-event-visibility....
+[94m[bash][0m $ cat packages/twenty-server/test/integration/graphql/utils/find-many-operation-factory.util.ts
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/calendar/calendar-event...
+[94m[edit][0m
+[94m[bash][0m $ echo "exit=$?"
+[94m[bash][0m $ grep -n "eslint-disable-next-line no-console" packages/twenty-server/src/modules/calendar/common/que...
+[94m[bash][0m $ 105,125p' src/modules/calendar/common/query-hooks/calendar-event/services/apply-calendar-events-visi...
+[94m[bash][0m $ npx jest src/modules/calendar/common/utils/__tests__/resolve-calendar-event-visibility.util.spec.ts ...
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/calendar/calendar-event...
+[94m[bash][0m $ npx jest src/engine/workspace-manager/twenty-standard-application --config=packages/twenty-server/je...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -20
+[94m[read][0m
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/engine/workspace-manager/twenty-standard-application/utils/__tests__/compute-calendar-e...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -20
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -20
+[94m[bash][0m $ npx oxfmt --check $FILES 2>&1 | tail -8
+[94m[bash][0m $ npx oxfmt --check ${=FILES} 2>&1 | tail -10
+[94m[bash][0m $ git status --porcelain
+[94m[read][0m
+[94m[bash][0m $ grep -rln "RegisteredWorkspaceCommand\|upgrade-command-registry" packages/twenty-server/src --includ...
+[94m[bash][0m $ tail -20 .ralph-tui/progress.md
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ or executor — US-051 (P4C.2b) the front-end calendar surface, consuming the now-live local create pa...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ an association that cannot be resolved to a channel still hides (unchanged), so `hasChannelAssociati...
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -10
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ git diff -- packages/twenty-server/src/engine/core-modules/calendar/timeline-calendar-event.service....
+[94m[bash][0m $ grep -rn "WorkspaceCacheService" packages/twenty-server/src/database/commands/upgrade-version-comman...
+[94m[todowrite][0m
+US-050 (P4C.2a) implemented and reported `done-for-review`.
+
+**What changed (server/core, additive, standard `calendarEvent` only):**
+- Pure `resolveCalendarEventVisibility` (SHARE → owned → METADATA → local creator FULL/others REDACTED → HIDDEN) + 7 unit cases; wired into the findMany/findOne visibility service (now resolves the creator actor and hoists channel ownership) and the timeline service (owner-full for channel-less events). `/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/calendar/common/utils/resolve-calendar-event-visibility.util.ts:9`
+- Standard metadata: `calendarEvent` `isUICreatable: true`; 7 content fields `isUIEditable: true`, provider-synced metadata fields stay read-only. Existing workspaces get the flags via the new additive `2-39-workspace-command-1789903000000-enable-standard-calendar-event-ui` command.
+- New integration regression spec proves a provider-less, channel-less event created through the standard record mutation is returned to its creator (and fails under the old splice behavior).
+
+**Evidence:** the new unit spec 7/7; `twenty-standard-application` 72/72 + 2 snapshots; `tsgo --noEmit` exit 0; oxlint 0/0; oxfmt clean; Tier-1 calendar integration 3 suites/4 tests pass (`pg_isready`/`redis-cli` OK); `check-docs.mjs` PASS.
+
+**Missing for tick (Tier 2, orchestrator):** live create/edit + second-member redaction browser proof and the 2.39 command on an upgraded workspace. PLAN.md untouched, nothing committed; reports appended to `docs/plan/phases/phase-04-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

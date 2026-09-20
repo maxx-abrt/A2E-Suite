@@ -118,11 +118,12 @@
         "No Tier 2 checks (no browser journey) — list them as Missing for tick"
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN task P4C.2 slice 2 of 3. Front surface over the US-050 core path. \"installable from C2 later too\" stays out of scope (app packaging name is a §10 open decision).",
       "dependsOn": [
         "US-050"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-052",
@@ -217,6 +218,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-20T11:19:39.374Z"
+    "updatedAt": "2026-09-20T11:44:36.020Z"
   }
 }

@@ -59,6 +59,12 @@ const DrivePage = lazy(() =>
   })),
 );
 
+const CalendarPage = lazy(() =>
+  import('~/pages/calendar/CalendarPage').then((module) => ({
+    default: module.CalendarPage,
+  })),
+);
+
 const MobileHomePage = lazy(() =>
   import('~/pages/mobile-home/MobileHomePage').then((module) => ({
     default: module.MobileHomePage,
@@ -166,6 +172,14 @@ export const createWorkspaceRouteObjects = ({
       element: (
         <LazyRoute>
           <DrivePage />
+        </LazyRoute>
+      ),
+    },
+    {
+      path: AppPath.Calendar,
+      element: (
+        <LazyRoute>
+          <CalendarPage />
         </LazyRoute>
       ),
     },
