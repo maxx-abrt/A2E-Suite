@@ -1,0 +1,100 @@
+# Iteration 2 Log
+
+## Metadata
+
+- **Task ID**: US-057
+- **Task Title**: P2.5 — caller-scoped search validation specs (records + document provider)
+- **Description**: As a workspace member, I want global search to return only the records and documents my permissions allow, so that restricted members and members of other workspaces never see titles or content they s...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-20T17:20:17.322Z
+- **Ended At**: 2026-09-20T17:24:41.854Z
+- **Duration**: 4m 24s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the clean-start check and understand the current state.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-057" PLAN.md
+Dirty files are Ralph metadata only. Let me find the task section and phase report.
+[94m[glob][0m pattern: [96mdocs/plan/phases/phase-02-report.md[0m
+[94m[bash][0m $ grep -n "P2.5\|US-057\|US-008\|P0.2" PLAN.md | head -50
+[94m[bash][0m $ wc -l PLAN.md docs/plan/phases/phase-02-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+Dependency P0.2 is DONE. Now let me inspect the phase-02 report for existing claims relevant to P2.5.
+[94m[bash][0m $ grep -n "P2.5\|US-057\|CLAIMED\|search" docs/plan/phases/phase-02-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md
+[94m[bash][0m $ find packages/twenty-server/src/engine/core-modules/search -type f | sort
+[94m[bash][0m $ git log --oneline -15
+Now let me examine the current search module state.
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/search/services/app-search.service.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/search/services/search.service.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/search/utils/format-search-terms.ts
+[94m[read][0m
+[94m[bash][0m $ git log --oneline --all | grep -i "US-008\|ilike\|search" | head -20
+[94m[bash][0m $ git show --stat ed7f499b | head -50
+[94m[bash][0m $ grep -n "US-057" tasks/prd.json
+[94m[bash][0m $ grep -n "US-008\|searchAppRecords\|ILIKE\|ilike" docs/plan/phases/phase-04-report.md | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -rn "escapeForIlike" packages/twenty-shared/src/utils/ | head
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/search/search.resolver.ts
+[94m[read][0m
+[94m[bash][0m $ echo "redis_exit=$?"
+[94m[bash][0m $ grep -rn "US-057\|P2.5-caller\|caller-scoped-search" docs/plan/phases/*.md .ralph-tui/progress.md 2>...
+Now let me establish the environment state and check for active claims. Let me run the preflight and baseline specs.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md
+Preflight green, no active claims. Claiming the slice.
+[94m[bash][0m $ grep -n "US-057" docs/plan/phases/phase-02-report.md
+Claim secured. Let me run the baseline search specs before changes.
+[94m[bash][0m $ npx jest src/engine/core-modules/search --config=jest.config.mjs 2>&1 | tail -30
+[94m[todowrite][0m
+Baseline green (29 tests). Now making the additive spec changes. Let me set up tracking.
+[94m[edit][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/validation/escapeForIlike.ts
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/engine/core-modules/search --config=jest.config.mjs 2>&1 | tail -20
+32 tests green (+3). Now typecheck, lint, format on touched files.
+[94m[bash][0m $ echo "oxfmt_exit=$?"
+[94m[bash][0m $ echo "oxlint_exit=$?"
+[94m[bash][0m $ echo "tsgo_exit=$?"
+Tier-0 all green. Now the Tier-1 integration slice for the records leg.
+[94m[bash][0m $ echo "integration_exit=${PIPESTATUS[0]}"
+Integration 5/5 green (ClickHouse ECONNREFUSED is pre-existing noise). Let me verify scope.
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ tail -40 .ralph-tui/progress.md
+All checks green. Now appending the phase report and Ralph progress bridge.
+[94m[bash][0m $ grep -c '"passes": false' tasks/prd.json
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git diff --stat -- packages/twenty-server
+Final self-verification.
+[94m[bash][0m $ grep -n "US-057" docs/plan/phases/phase-02-report.md
+[94m[todowrite][0m
+Done. US-057 slice complete — `done-for-review`, `Ready-to-tick: yes`.
+
+**What landed** (spec-only, no production change — the P0.2 caller seam + US-008 `ILike()` fix were already correct):
+- `app-search.service.spec.ts`: an uninstalled app's provider carrying items contributes no group and is never queried (install gate keyed by app id) — closes AC4.
+- `document-search-provider.service.spec.ts`: a foreign `workspaceId` is inert (single ambient repository read, ambient label returned, rendered SQL has no `workspaceId` predicate) and a lone `%`/trailing backslash escaping regression — closes AC2 document leg + AC3.
+- Records leg is the existing Tier-1 integration slice, re-run green.
+
+**Checks:** preflight `pg_isready`+`redis-cli ping` OK; search unit `5 suites / 32 tests` (was 29, +3); integration `5/5`; `tsgo --noEmit` exit 0; oxlint/oxfmt clean on the 2 files. No commit, PLAN.md untouched.
+
+**Missing for tick:** only the Tier-2 app-installed `searchAppRecords` re-proof (orchestrator), per the story's own gate.
+
+<promise>COMPLETE</promise>

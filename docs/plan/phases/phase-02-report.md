@@ -642,3 +642,17 @@ CLAIMED — US-057/caller-scoped-search-validation-specs — deepseek-v4.1-flash
 **Do not redo:** the P0.2 caller-context repair (no system context, `escapeForIlike`) and the `resolveRolePermissionConfig`→`getRepository` seam are intact; US-008's `ILike()` fix is intact; the existing `search-caller-permissions.integration-spec.ts` (records: restricted member / foreign workspace) and the document provider's registration, blank, deep-link, caller-role, fail-closed, ambient-scoping, ILIKE-render and malformed-row cases are green — extend, do not rewrite.
 **Remaining:** 10 other [ ]/[~] tasks in this prd (P2.4 unit half, P3.3 tree/record-note-copy, P3.2 sharing/template, P4.x, P4C.1, P5.x, P8.x).
 **Next:** orchestrator — tick P2.5 bullet 1 on this Tier-0/1 evidence; executor — US-058 P2.4 dock/tab unit-suite green run is the next dependency-ready slice.
+
+CLAIMED — US-058/dock-tab-unit-green-run — deepseek-v4.1-flash — 2026-09-20T17:26:00Z — base 831210bbd3544a1baa808eef633c8292065f0b00
+
+## 2026-09-20 17:30 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-058 P2.4 — dock/tab unit suites green run on current HEAD (unit half of the E2E bullet) · **Slice:** last P2.4 bullet — run the existing dock/tab unit suites; browser E2E stays Tier 2
+**Claim:** done-for-review
+**Ready-to-tick:** yes — every existing dock/tab unit suite is green on HEAD 831210bb with no code change needed (unit half of the P2.4 bullet). The browser-E2E leg is Tier 2 and deliberately untouched.
+**Base:** 831210bbd3544a1baa808eef633c8292065f0b00
+**Changed:** `docs/plan/phases/phase-02-report.md` (this report + CLAIMED line only). No production/test file touched — suites were already green.
+**Checks:** `npx jest src/modules/workbench-dock src/modules/side-panel/tabs --config=jest.config.mjs` (twenty-front, in-package) → 11 suites / 85 tests passed (WorkbenchWidgetDock, workbenchWidgetRegistry, getWorkbenchWidgetDockModeAfterResize; SidePanelTabStrip; useSidePanelTabs, useSidePanelTabOpenIntentHandlers; sidePanelTabsEdgeCases; isValidSidePanelTabsSession, serializeSidePanelNavigationStack, sidePanelTabIntentAndContextKey, sidePanelTabsSelection). Covers the persisted keys `a2e-widgets-mode/-active/-width` and `a2e-side-panel-tabs`/`a2e-side-panel-active-tab` incl. reload-restore (localStorage seed) + URL-precedence edge cases. `npx tsgo -p tsconfig.json --noEmit` (twenty-front, in-package) → exit 0, 0 lines. `npx oxlint --type-aware -c .oxlintrc.json src/modules/workbench-dock src/modules/side-panel/tabs` → 0 warnings / 0 errors (46 files). No twenty-shared / migration / locale change.
+**Missing for tick:** Tier 2 only — orchestrator: browser E2E journey `side-panel-tabs.spec.ts` (two records as tabs → switch/close → reload restores permitted context); prior reports logged it blocked on dev server + `packages/twenty-e2e-testing/.env` (ENOSPC watcher limit), never passed.
+**Do not redo:** the 11 suites are green as-is; do not rewrite the dock/tab code or tests. The e2e spec at `packages/twenty-e2e-testing/tests/side-panel-tabs.spec.ts` already exists and typechecks; only the browser run remains.
+**Remaining:** 9 other [ ]/[~] tasks in this prd (P3.3 tree/record-note-copy, P3.2 sharing/template, P4.x, P4C.1, P5.x, P8.x).
+**Next:** orchestrator — tick the P2.4 unit half on this evidence and run the Tier-2 `side-panel-tabs.spec.ts` browser journey; executor — P3.3 tree/record-note-copy is the next Tier-0/1 slice.

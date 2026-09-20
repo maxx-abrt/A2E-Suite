@@ -64,9 +64,10 @@
         "Quality gate: dated entry appended to docs/plan/phases/phase-02-report.md; PLAN.md not edited; nothing committed"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN task P2.4 last bullet (no literal (after X); P0.3 is [x]). Starting state: PARTIAL — dock/tabs code shipped and marked [x] earlier in the section; the unit-suite green run is not recorded on current HEAD; browser E2E historically blocked.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-059",
@@ -270,6 +271,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-20T17:24:41.856Z"
+    "updatedAt": "2026-09-20T17:26:31.322Z"
   }
 }

@@ -32,3 +32,11 @@ after each iteration and it's included in prompts for context.
 ---
 
 
+## 2026-09-20 - US-058
+- Verified the P2.4 dock/tab unit suites are green on current HEAD 831210bb with no code change — the unit half of the P2.4 bullet. Browser E2E stays Tier 2.
+- Files changed: `docs/plan/phases/phase-02-report.md` only (claim + report). No production/test file touched.
+- **Learnings:**
+  - The dock/tab unit surface is exactly two directories: `src/modules/workbench-dock` (3 suites) and `src/modules/side-panel/tabs` (8 suites) = 11 suites / 85 tests. Run `npx jest src/modules/workbench-dock src/modules/side-panel/tabs --config=jest.config.mjs` from `packages/twenty-front`.
+  - Persisted keys: `a2e-widgets-mode/-active/-width` (workbench-dock) and `a2e-side-panel-tabs` / `a2e-side-panel-active-tab` (tabs). Reload-restore and URL-precedence are covered by `sidePanelTabsEdgeCases` + `isValidSidePanelTabsSession`.
+  - `side-panel/routing` suites do NOT reference tabs (only `useOpenRecordInSidePanel` does) — no need to include them in the dock/tab gate.
+---

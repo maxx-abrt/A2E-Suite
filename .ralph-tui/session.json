@@ -3,10 +3,10 @@
   "sessionId": "996d0217-482c-4a96-b036-789e241df074",
   "status": "running",
   "startedAt": "2026-09-20T17:15:13.692Z",
-  "updatedAt": "2026-09-20T17:24:41.857Z",
-  "currentIteration": 1,
+  "updatedAt": "2026-09-20T17:26:31.323Z",
+  "currentIteration": 2,
   "maxIterations": 20,
-  "tasksCompleted": 1,
+  "tasksCompleted": 2,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -26,6 +26,16 @@
       "durationMs": 293084,
       "startedAt": "2026-09-20T17:15:18.654Z",
       "endedAt": "2026-09-20T17:20:11.738Z"
+    },
+    {
+      "iteration": 2,
+      "status": "completed",
+      "taskId": "US-057",
+      "taskTitle": "P2.5 — caller-scoped search validation specs (records + document provider)",
+      "taskCompleted": true,
+      "durationMs": 264532,
+      "startedAt": "2026-09-20T17:20:17.322Z",
+      "endedAt": "2026-09-20T17:24:41.854Z"
     }
   ],
   "skippedTaskIds": [],
