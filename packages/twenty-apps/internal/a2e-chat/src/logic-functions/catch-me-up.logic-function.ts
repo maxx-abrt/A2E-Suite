@@ -1,6 +1,9 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
-import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+import {
+  LOGIC_FUNCTION_IDS,
+  OBJECT_IDS,
+} from '../constants/universal-identifiers.ts';
 import type { ChatToolExecutionContext } from './handlers/chat-tool-support.ts';
 import {
   catchMeUp,
@@ -41,6 +44,7 @@ export default defineLogicFunction({
       properties: {
         channelId: {
           type: 'string',
+          objectUniversalIdentifier: OBJECT_IDS.channel,
           description: 'Identifiant du canal dont on veut les non-lus.',
         },
         sinceIso: {

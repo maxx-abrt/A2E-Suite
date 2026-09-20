@@ -54,6 +54,48 @@ describe('getAiChatSuggestedPrompts', () => {
     ).toContain('research-company');
   });
 
+  it('should offer the per-app actions on their app-owned record pages', () => {
+    expect(
+      getPromptIds({
+        browsingContextType: 'recordPage',
+        objectNameSingular: 'document',
+      }),
+    ).toEqual([
+      'summarize-document',
+      'extract-tasks-from-document',
+      'translate-document',
+      'improve-document-writing',
+    ]);
+
+    expect(
+      getPromptIds({
+        browsingContextType: 'recordPage',
+        objectNameSingular: 'project',
+      }),
+    ).toEqual(['standup-digest', 'task-breakdown-context']);
+
+    expect(
+      getPromptIds({
+        browsingContextType: 'recordPage',
+        objectNameSingular: 'driveFolder',
+      }),
+    ).toEqual(['find-file', 'dedupe-hints']);
+
+    expect(
+      getPromptIds({
+        browsingContextType: 'recordPage',
+        objectNameSingular: CoreObjectNameSingular.Person,
+      }),
+    ).toEqual(['assist-record-enrichment']);
+
+    expect(
+      getPromptIds({
+        browsingContextType: 'recordPage',
+        objectNameSingular: CoreObjectNameSingular.MessageThread,
+      }),
+    ).toEqual(['draft-email-reply']);
+  });
+
   it('should fall back to object-agnostic prompts on a custom object record', () => {
     expect(
       getPromptIds({

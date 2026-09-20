@@ -189,11 +189,12 @@
         "No Tier 2 checks (live assistant-catalogue invocation is Tier 2) — list them as Missing for tick"
       ],
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN task P9.1 \"Prompt/action library\" [ ] — the last unclaimed P9.1 bullet that is executable without a running stack. Serialized after US-053 to avoid same-file races on getContextToolButtons/useContextToolButtons.",
       "dependsOn": [
         "US-053"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-055",
@@ -220,6 +221,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-20T12:14:24.627Z"
+    "updatedAt": "2026-09-20T12:23:20.781Z"
   }
 }

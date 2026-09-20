@@ -2,7 +2,11 @@ import { msg } from '@lingui/core/macro';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import {
   IconCheckbox,
+  IconCopy,
+  IconFiles,
   IconFilter,
+  IconLanguage,
+  IconListCheck,
   IconMail,
   IconMessage,
   IconNotes,
@@ -10,6 +14,7 @@ import {
   IconSearch,
   IconSparkles,
   IconTerminal,
+  IconWand,
 } from 'twenty-ui/icon';
 
 import { type SuggestedPrompt } from '@/ai/types/SuggestedPrompt';
@@ -128,6 +133,84 @@ export const RECORD_PAGE_SUGGESTED_PROMPTS_BY_OBJECT_NAME_SINGULAR: Record<
       label: msg`Create a task`,
       Icon: IconCheckbox,
       prompts: [msg`Create a task for this company: `],
+    },
+  ],
+  // App-owned record pages: the per-app P9.2 read-only actions get wording that
+  // names the action, so the empty state matches the context tool buttons.
+  document: [
+    {
+      id: 'summarize-document',
+      label: msg`Summarize this document`,
+      Icon: IconSparkles,
+      mode: 'SEND',
+      prompts: [msg`Summarize this document.`],
+    },
+    {
+      id: 'extract-tasks-from-document',
+      label: msg`Extract tasks`,
+      Icon: IconListCheck,
+      prompts: [msg`Extract the action items from this document as tasks.`],
+    },
+    {
+      id: 'translate-document',
+      label: msg`Translate this document`,
+      Icon: IconLanguage,
+      prompts: [msg`Translate this document into `],
+    },
+    {
+      id: 'improve-document-writing',
+      label: msg`Improve the writing`,
+      Icon: IconWand,
+      prompts: [msg`Improve the writing of this document: `],
+    },
+  ],
+  project: [
+    {
+      id: 'standup-digest',
+      label: msg`Standup digest`,
+      Icon: IconSparkles,
+      mode: 'SEND',
+      prompts: [msg`Give me the standup digest for this project.`],
+    },
+    {
+      id: 'task-breakdown-context',
+      label: msg`Suggest a task breakdown`,
+      Icon: IconListCheck,
+      prompts: [msg`Suggest a task breakdown for this project: `],
+    },
+  ],
+  driveFolder: [
+    {
+      id: 'find-file',
+      label: msg`Find a file`,
+      Icon: IconSearch,
+      prompts: [msg`Find the file in this folder that `],
+    },
+    {
+      id: 'dedupe-hints',
+      label: msg`Find duplicates`,
+      Icon: IconCopy,
+      mode: 'SEND',
+      prompts: [msg`Find likely duplicate files in this folder.`],
+    },
+  ],
+  [CoreObjectNameSingular.Person]: [
+    {
+      id: 'assist-record-enrichment',
+      label: msg`Enrich this person`,
+      Icon: IconFiles,
+      mode: 'SEND',
+      prompts: [
+        msg`Tell me which identity fields are missing on this person so I can enrich the record.`,
+      ],
+    },
+  ],
+  [CoreObjectNameSingular.MessageThread]: [
+    {
+      id: 'draft-email-reply',
+      label: msg`Draft a reply`,
+      Icon: IconMail,
+      prompts: [msg`Draft a reply to this email thread: `],
     },
   ],
 };

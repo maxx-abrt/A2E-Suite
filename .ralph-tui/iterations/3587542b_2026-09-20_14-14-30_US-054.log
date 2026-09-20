@@ -1,0 +1,184 @@
+# Iteration 10 Log
+
+## Metadata
+
+- **Task ID**: US-054
+- **Task Title**: P9.1 prompt/action library — every shipped read-only app tool surfaces as a context button; missing per-app prompts closed
+- **Description**: As a user on any app's record page, I want that app's read-only AI actions rendered as buttons in context, so that every shipped per-app action is discoverable without typing a prompt.
+- **Status**: completed
+- **Task Completed**: No
+- **Promise Detected**: No
+- **Started At**: 2026-09-20T12:14:30.165Z
+- **Ended At**: 2026-09-20T12:22:19.513Z
+- **Duration**: 7m 49s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-054" PLAN.md
+I'll start with the clean-start check and gather context.
+[94m[bash][0m $ grep -n "P9.1\|US-053\|US-054\|Prompt/action library\|prompt/action library" PLAN.md
+[94m[bash][0m $ ls docs/plan/ 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -rn "US-054\|US-053" tasks/prd.json .ralph-tui/ 2>/dev/null | head -20
+[94m[bash][0m $ grep -n "US-053\|US-054\|CLAIMED" docs/plan/phases/phase-01-report.md | tail -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/utils/getContextToolButtons.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/ && echo "---" && ls packages/twenty-front/src/modules/ai/utils/ | ...
+Dependency US-053 is `passes: true`. Let me explore the key files and app tools.
+[94m[bash][0m $ done
+[94m[bash][0m $ grep -rln "toolTriggerSettings" packages/twenty-apps/internal/ --include=*.ts | grep -v __tests__
+Now let me audit the shipped tools in each app. Let me look at their structure.
+[94m[bash][0m $ grep -rln "toolTriggerSettings" packages/twenty-apps/internal/ | grep -v __tests__
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/logic-functions/find-file.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/logic-functions/dedupe-hints.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/hooks/useContextToolButtons.ts
+[94m[bash][0m $ grep -rln "getContextToolButtons\|ContextToolContext\|contextToolButtons" packages/twenty-front/src ...
+Now let me examine how context is built and passed to `getContextToolButtons`.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/hooks/useAiChatSuggestedPromptsContext.ts
+[94m[bash][0m $ grep -rln "getContextToolButtons\|ContextToolContext" packages/twenty-front/src
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/utils/__tests__/getContextToolButtons.test.ts
+[94m[bash][0m $ done
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/objects/drive-folder.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/src/objects/chat-channel.object.ts
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-drive/src -type d | head -40
+Let me look at the suggested-prompts mechanism.
+[94m[bash][0m $ grep -rln "getAiChatSuggestedPrompts\|SuggestedPrompts\|suggestedPrompts" packages/twenty-front/src/...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/types/AiChatSuggestedPromptsContext.ts
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "toolTriggerSettings\|inputSchema" packages/twenty-sdk/src --include=*.ts | grep -v __tests...
+[94m[bash][0m $ grep -rn "inputSchema" packages/twenty-shared/src --include=*.ts | grep -iv test | head -30
+[94m[bash][0m $ grep -rn "toolTriggerSettings" packages/twenty-sdk/src packages/twenty-shared/src 2>/dev/null | grep...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/toolTriggerSettingsType.ts
+[94m[bash][0m $ grep -rln "buildLogicFunctionToolName" packages/twenty-server/src
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/logic-function/input-json-schema.type.ts
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rln "buildToolInputJsonSchema" packages/twenty-shared/src
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/logic-function/build-tool-input-json-schema.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/logic-function/is-record-object-schema.ts
+[94m[bash][0m $ grep -rn "OBJECT_IDS\|LOGIC_FUNCTION_IDS" packages/twenty-apps/internal/a2e-chat/src/constants/unive...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ grep -rln "contextToolButtons\|ContextToolButton" packages/twenty-front/src/modules/ai/components pa...
+[94m[bash][0m $ grep -rn "useContextToolButtons\|ContextToolButton\b" packages/twenty-front/src | grep -v "__tests__...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/types/ContextToolButton.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-drive/src/fields -type f
+[94m[bash][0m $ grep -rn "find-file\|dedupe-hints\|folderId" packages/twenty-apps/internal/a2e-drive/src/logic-funct...
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-apps/internal -name "*ai-tools-registration*"
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-front/src/modules/logic-functions/states/logicFunctionsSelector.ts 2>...
+[94m[bash][0m $ grep -rn "toolTriggerSettings" packages/twenty-server/src/engine/metadata-modules/logic-function/typ...
+Let me verify the metadata store retains the raw schema and check object identifiers.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/logic-functions/types/LogicFunction.ts
+[94m[bash][0m $ grep -rn "toolTriggerSettings" packages/twenty-shared/src | head
+[94m[bash][0m $ grep -rln "toolTriggerSettings" packages/twenty-server/src/engine/metadata-modules/logic-function | ...
+[94m[bash][0m $ sed -n '1,40p' packages/twenty-shared/src/types/CoreObjectNameSingular.ts
+[94m[bash][0m $ ls packages/twenty-ui/src/icon/ | head
+[94m[bash][0m $ grep -nE "Icon(Language|Wand|ListCheck|Folders|UserSearch|Copy|FileSearch|ListDetails|Checklist|Sear...
+[94m[bash][0m $ grep -niE "translat|language|writ|summar|improv|search|folder|enrich|email|draft|find file|dedup|dup...
+[94m[bash][0m $ done
+Now I'll claim the slice per contract §2.
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ printf '\nCLAIMED — US-054/per-app-surfacing-audit — deepseek-v4.1-flash — 2026-09-20T12:17:47Z — ba...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/cli/utilities/build/manifest/manifest-build.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/types/SuggestedPrompt.ts
+[94m[bash][0m $ grep -rn "export.*IconUsers" packages/twenty-ui/src/icon/index.ts | head -2
+[94m[edit][0m
+Now implementing the gap fixes in the app tool schemas.
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/logic-functions/find-file.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/logic-functions/find-file.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/logic-functions/dedupe-hints.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/logic-functions/dedupe-hints.ts
+Now update the app registration tests to encode the surfacing audit.
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-crm/src/logic-functions/__tests__/
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents/src -name "*.test.ts" | sort
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "extractTasksFromDocument\|standupDigest\|taskBreakdownContext\|OBJECT_IDS" packages/twenty-...
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[write][0m "import { ToolCategory } from 'twenty-shared/ai';
+
+import { getContextToolButtons } from '@/ai/utils/getContextToolButtons';
+
+// P9.1 prompt/action library — systematic per-app surfacing audit.
+//
+// O... (8766 chars)"
+Now I'll create the cross-app surfacing audit spec that exercises the real front mapping end-to-end.
+[94m[edit][0m
+[94m[edit][0m
+Now add the missing per-app suggested prompts.
+[94m[bash][0m $ grep -rn "AgentChatPrepromptMode" packages/twenty-front/src/modules/ai/states/agentChatPrepromptStat...
+[94m[edit][0m
+[94m[edit][0m
+Now let's run the checks. Starting with the front specs.
+[94m[bash][0m $ npx jest src/modules/ai/utils/__tests__/getContextToolButtons.appSurfacing.test.ts src/modules/ai/co...
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -20
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -20
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -20
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -8 && echo "=== LINT ===" && yarn lint 2>&1 | tail -8
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -8 && echo "=== LINT ===" && yarn lint 2>&1 | tail -8
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -8 && echo "=== LINT ===" && yarn lint 2>&1 | tail -8
+[94m[bash][0m $ yarn lint 2>&1 | head -40
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -15
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -15
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -15
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ grep -o "objectUniversalIdentifier[^,]*" packages/twenty-apps/internal/a2e-drive/.twenty/output/mani...
+[94m[bash][0m $ npx jest src/modules/ai --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -12
+[94m[bash][0m $ echo "EXIT:$?"
+[94m[bash][0m $ npx oxfmt --check "${ARR[@]}"
+[94m[bash][0m $ npx oxfmt "src/modules/ai/utils/__tests__/getContextToolButtons.appSurfacing.test.ts" && npx oxfmt -...
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -6
+[94m[bash][0m $ npx jest src/modules/ai/utils/__tests__/getContextToolButtons.appSurfacing.test.ts --config=packages...
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+All checks green. Now writing the phase report and Ralph bridge entries.
+[94m[bash][0m $ executor — next queued batch-4 slice. EOF grep -c "US-054 P9.1 prompt/action library" "docs/plan/pha...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ the schema reference is for the acceptance-mandated input-schema mapping and for cross-app robustnes...
+[94m[read][0m
+Let me verify the final state of the audit spec and re-confirm git status.
+[94m[bash][0m $ git status --porcelain
+Done. Summary of the US-054 slice:
+
+**Audit** — all 12 shipped read-only P9.2 tools now provably surface through the production `getContextToolButtons` input-schema mapping (app-less context), pinned by a new 15-row spec `getContextToolButtons.appSurfacing.test.ts`.
+
+**Gaps closed (additive)** — chat `channelId` → `chatChannel` and drive `folderId` → `driveFolder` gained `objectUniversalIdentifier` in their `toolTriggerSettings.inputSchema`; handlers untouched, LLM descriptor unchanged (server strips it for string nodes), manifest confirms the references reach `.twenty/output/manifest.json`.
+
+**Missing per-app prompts** — new `document`/`project`/`driveFolder`/`person`/`messageThread` entries in the existing `RECORD_PAGE_SUGGESTED_PROMPTS_BY_OBJECT_NAME_SINGULAR` (no new surface).
+
+**Checks (all green):** front audit+prompts 23/23; `src/modules/ai` 55 suites/416; `tsgo` exit 0; oxlint 0/0 + oxfmt clean; a2e-chat 56, a2e-drive 75, a2e-projects 262 unit tests + typecheck/lint/dev:build; `check-docs` PASS. Pre-existing projects lint warning in an untouched file left alone.
+
+**Missing for tick:** Tier-2 live assistant-catalogue invocation (orchestrator). Accounting intentionally excluded (P7-gated).
+
+Report appended to `docs/plan/phases/phase-01-report.md` and the Ralph bridge to `.ralph-tui/progress.md`; nothing committed.

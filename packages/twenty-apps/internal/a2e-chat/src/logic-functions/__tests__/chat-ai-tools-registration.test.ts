@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { LOGIC_FUNCTION_IDS } from '../../constants/universal-identifiers.ts';
+import {
+  LOGIC_FUNCTION_IDS,
+  OBJECT_IDS,
+} from '../../constants/universal-identifiers.ts';
 import catchMeUpTool from '../catch-me-up.logic-function.ts';
 import summarizeChannelTool from '../summarize-channel.logic-function.ts';
 
@@ -43,6 +46,18 @@ test('summarize-channel takes a channel id, with optional thread and limit', () 
   assert.equal(inputSchema?.properties?.maxMessages?.type, 'number');
 });
 
+test('summarize-channel references chatChannel so it surfaces as a context button', () => {
+  // The front `getContextToolButtons` mapping resolves a tool to the open
+  // record through the declared record reference, so the property carries the
+  // app-owned object's universal identifier (P9.1 prompt/action library).
+  const inputSchema = summarizeChannelTool.config.toolTriggerSettings?.inputSchema;
+
+  assert.equal(
+    inputSchema?.properties?.channelId?.objectUniversalIdentifier,
+    OBJECT_IDS.channel,
+  );
+});
+
 test('catch-me-up is declared as a native AI tool', () => {
   assert.equal(
     catchMeUpTool.success,
@@ -71,4 +86,13 @@ test('catch-me-up takes a channel id, with an optional explicit since date', () 
   assert.deepEqual(inputSchema?.required, ['channelId']);
   assert.equal(inputSchema?.properties?.channelId?.type, 'string');
   assert.equal(inputSchema?.properties?.sinceIso?.type, 'string');
+});
+
+test('catch-me-up references chatChannel so it surfaces as a context button', () => {
+  const inputSchema = catchMeUpTool.config.toolTriggerSettings?.inputSchema;
+
+  assert.equal(
+    inputSchema?.properties?.channelId?.objectUniversalIdentifier,
+    OBJECT_IDS.channel,
+  );
 });

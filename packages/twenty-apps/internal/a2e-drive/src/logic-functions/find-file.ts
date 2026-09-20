@@ -1,6 +1,9 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
-import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+import {
+  LOGIC_FUNCTION_IDS,
+  OBJECT_IDS,
+} from '../constants/universal-identifiers.ts';
 import {
   findDriveFile,
   type FindFileInput,
@@ -44,6 +47,7 @@ export default defineLogicFunction({
         },
         folderId: {
           type: 'string',
+          objectUniversalIdentifier: OBJECT_IDS.driveFolder,
           description:
             'Filtre sur le dossier Drive contenant le fichier (optionnel).',
         },

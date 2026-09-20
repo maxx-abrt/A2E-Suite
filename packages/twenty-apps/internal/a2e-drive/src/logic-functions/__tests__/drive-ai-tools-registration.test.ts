@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { LOGIC_FUNCTION_IDS } from '../../constants/universal-identifiers.ts';
+import {
+  LOGIC_FUNCTION_IDS,
+  OBJECT_IDS,
+} from '../../constants/universal-identifiers.ts';
 import dedupeHintsTool from '../dedupe-hints.ts';
 import findFileTool from '../find-file.ts';
 
@@ -40,6 +43,18 @@ test('find-file requires a query and offers metadata filters', () => {
   assert.equal(inputSchema?.properties?.type?.type, 'string');
 });
 
+test('find-file references driveFolder so it surfaces as a context button', () => {
+  // The front `getContextToolButtons` mapping resolves a tool to the open
+  // record through the declared record reference, so the folder filter carries
+  // the app-owned object's universal identifier (P9.1 prompt/action library).
+  const inputSchema = findFileTool.config.toolTriggerSettings?.inputSchema;
+
+  assert.equal(
+    inputSchema?.properties?.folderId?.objectUniversalIdentifier,
+    OBJECT_IDS.driveFolder,
+  );
+});
+
 test('dedupe-hints is declared as a native AI tool', () => {
   assert.equal(
     dedupeHintsTool.success,
@@ -67,4 +82,13 @@ test('dedupe-hints takes only an optional folder scope', () => {
   assert.equal(inputSchema?.type, 'object');
   assert.deepEqual(inputSchema?.required, undefined);
   assert.equal(inputSchema?.properties?.folderId?.type, 'string');
+});
+
+test('dedupe-hints references driveFolder so it surfaces as a context button', () => {
+  const inputSchema = dedupeHintsTool.config.toolTriggerSettings?.inputSchema;
+
+  assert.equal(
+    inputSchema?.properties?.folderId?.objectUniversalIdentifier,
+    OBJECT_IDS.driveFolder,
+  );
 });

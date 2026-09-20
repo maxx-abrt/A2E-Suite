@@ -1,6 +1,9 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
-import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+import {
+  LOGIC_FUNCTION_IDS,
+  OBJECT_IDS,
+} from '../constants/universal-identifiers.ts';
 import {
   buildDedupeHints,
   type DedupeHintsInput,
@@ -34,6 +37,7 @@ export default defineLogicFunction({
       properties: {
         folderId: {
           type: 'string',
+          objectUniversalIdentifier: OBJECT_IDS.driveFolder,
           description:
             'Limiter la recherche de doublons à ce dossier Drive (optionnel).',
         },
