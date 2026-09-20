@@ -1375,18 +1375,38 @@ mention→inbox→open.
       ai/utils+components suites green on HEAD rerun. Full-page upgrade,
       input-schema-aware context mapping, channel-side context and direct
       tool execution remain; Tier-2 live dispatch open.
-- [ ] Streaming responses (SSE reuse), model provider config (existing AI
+      — 2026-09-20 orchestrator: input-schema-aware context mapping
+      verified (US-040 slice, phase-01-report) — schema-driven offers
+      from any installed app's read-only tools
+      (`toolInputSchemaReferencesObject`; front ai 54 suites / 395 green
+      on HEAD re-run); full page shares the single
+      `AiChatEditorSection` mount. Channel-side context and direct tool
+      execution remain; Tier-2 live dispatch open.
+- [x] Streaming responses (SSE reuse), model provider config (existing AI
       settings), usage logging to event-logs
+      — 2026-09-20 orchestrator: verified (US-041, phase-01-report) —
+      native graphql-sse streaming and `workspace.smartModel` provider
+      config confirmed in source; usage-log write proof added
+      (`ai-billing.service.spec.ts`: AI_CHAT_TOKEN / WEB_SEARCH events,
+      quota consumption, count-0 no-op) — billing + streaming suites
+      33/33 green on HEAD re-run. Per-tool-call usage is audited as a
+      Logic Function Executed row (native behavior, documented
+      deviation). Tier-2 live streaming proof open.
 - [ ] Prompt/action library: per-app actions rendered as buttons in
       context (see below)
 
 ### P9.2 Per-app actions (each its own task)
-- [~] Documents: summarize, extract tasks→P4, translate, improve writing
+- [x] Documents: summarize, extract tasks→P4, translate, improve writing
       — 2026-09-19 orchestrator: extract-tasks verified (US-009) and the
       authorized `document-content` access tool shipped (US-013,
       a2e-documents 121/121 green on HEAD re-run) — the enabler for the
       remaining summarize/translate/improve-writing actions, still to
       build.
+      — 2026-09-20 orchestrator: summarize/translate/improve-writing
+      verified (US-042, phase-03-report) — three read-only
+      `toolTriggerSettings` tools delegating to the single authorized
+      `readDocumentContent` path, fail-closed; a2e-documents 197/197
+      green on HEAD re-run. Tier-2 live dispatch open.
 - [~] Projects: task breakdown suggestions, standup digest from activity
       — 2026-09-19 orchestrator: both read-only context tools verified
       (US-012, phase-04-report) — standup digest + task-breakdown
@@ -1408,16 +1428,35 @@ mention→inbox→open.
 - [ ] Accounting: expense categorization, invoice draft from
       opportunity/email, anomaly flags (review-required before commit);
       subvention matching with aiScore/aiReason + saved runs (P7.1f)
-- [ ] CRM core: email reply drafts, record enrichment assist (respect
+- [x] CRM core: email reply drafts, record enrichment assist (respect
       existing enrichment modules)
+      — 2026-09-20 orchestrator: verified (US-046, phase-01-report) —
+      first-party `a2e-crm` app, two read-only caller-context tools
+      (2/2 `toolTriggerSettings` in the built manifest), structurally no
+      write path (`Pick<CoreApiClient,'query'>`); applying a reply or
+      enrichment stays a separate human-confirmed action. 20/20 unit
+      tests, typecheck and app build green on HEAD re-run. Tier-2 live
+      dispatch + restricted-member denial proof open.
 
 ### P9.2b AI cost discipline (from A2EMoney)
-- [ ] Permission/workspace-scoped private-result cache; only public-only
+- [~] Permission/workspace-scoped private-result cache; only public-only
       catalogue results may be shared globally after review (C6). Include
       model/data/catalogue versions, expiry and deletion/role-change invalidation.
+      — 2026-09-20 orchestrator: contract verified (US-043,
+      phase-01-report) — `twenty-shared/src/ai` cache contract (scope
+      keys, model/data/catalogue versions, expiry, drift/invalidation
+      predicates), 25/25 green incl. uncached `twenty-shared` rebuild;
+      private results can only resolve to scoped keys. Wiring into
+      `aiCacheEntry` / `score-subventions` remains (P7-gated per the
+      story).
 - [ ] Saved runs persist authorized results; reopening them makes zero provider
       calls. Test workspace switching, changed permissions and expired results;
       an explicit rerun is a separate user action with a visible cost estimate.
+      — 2026-09-20 orchestrator: not started — commit `01586701`
+      (labeled US-044) is the US-043 contract relocation swept by the
+      engine, not saved-run work (phase-01-report conflict entry).
+      Re-queue against the stable `twenty-shared/src/ai` contract
+      location.
 
 ### P9.3 Smart integrations (cross-app glue)
 - [~] "Workflow recipes": prebuilt workflow templates combining apps (e.g.
@@ -1436,7 +1475,13 @@ mention→inbox→open.
       P4/P8 domains; grep confirmed no invoice rule exists while P7 is
       blocked (documented follow-up); front suites green on HEAD re-run.
       Tier-2 browser proof open.
-- [ ] Audit page: Settings → AI (usage, logs, provider keys)
+- [x] Audit page: Settings → AI (usage, logs, provider keys)
+      — 2026-09-20 orchestrator: verified (US-045, phase-01-report) —
+      read-only Audit tab; provider credentials rendered as a fixed mask
+      derived from client config (no secret can reach a response or the
+      DOM), AI usage via the event-logs table with entitlement gating;
+      settings/ai suites green and front tsgo clean on HEAD re-run.
+      Tier-2 browser proof open.
 
 **Acceptance.** Assistant answers with record context; every AI mutation
 path requires explicit user confirm; usage logged; at least 2 actions per
