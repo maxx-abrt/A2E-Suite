@@ -146,6 +146,8 @@ const FIELD_MODULE_PATHS = [
   '../../fields/note-blocked-tasks.field.ts',
   '../../fields/project-tasks.field.ts',
   '../../fields/task-block-issue.field.ts',
+  '../../fields/task-blocked-by.field.ts',
+  '../../fields/task-blocks.field.ts',
   '../../fields/task-estimate.field.ts',
   '../../fields/task-estimate-label.field.ts',
   '../../fields/task-human-id.field.ts',

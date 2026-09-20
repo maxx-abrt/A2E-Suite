@@ -9,6 +9,7 @@ import {
 import createProjectCommand from '../../command-menu-items/create-project.command-menu-item.ts';
 import createTaskCommand from '../../command-menu-items/create-task.command-menu-item.ts';
 import goToProjectsCommand from '../../command-menu-items/go-to-projects.command-menu-item.ts';
+import openDependenciesCommand from '../../command-menu-items/open-dependencies.command-menu-item.ts';
 import openSubtasksCommand from '../../command-menu-items/open-subtasks.command-menu-item.ts';
 import openTimeTrackerCommand from '../../command-menu-items/open-time-tracker.command-menu-item.ts';
 
@@ -22,6 +23,7 @@ const ALL_COMMANDS = [
   createProjectCommand,
   createTaskCommand,
   goToProjectsCommand,
+  openDependenciesCommand,
   openSubtasksCommand,
   openTimeTrackerCommand,
 ];
@@ -82,6 +84,15 @@ test('the timer stays record-selection scoped while the subtask browser is globa
     'RECORD_SELECTION',
   );
   assert.equal(openSubtasksCommand.config.availabilityType, 'GLOBAL');
+  assert.equal(
+    openDependenciesCommand.config.universalIdentifier,
+    COMMAND_MENU_ITEM_IDS.openDependencies,
+  );
+  assert.equal(
+    openDependenciesCommand.config.frontComponentUniversalIdentifier,
+    FRONT_COMPONENT_IDS.taskDependencies,
+  );
+  assert.equal(openDependenciesCommand.config.availabilityType, 'GLOBAL');
 });
 
 test('command registry identifiers are unique and UUID-shaped', () => {

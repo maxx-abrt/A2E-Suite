@@ -67,9 +67,10 @@
         "No Tier 2 checks (no live install, no browser) — list them as Missing for tick"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN task P4.2 bullet \"Subtasks & dependencies UI\" [~]. Starting state: partial (nested list done, picker + decision open). The phase-04 orchestrator's own next-step delegates the edge decision to an executor brief, so this is not maintainer-blocked. Depends on nothing outside a2e-projects.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-050",
@@ -215,6 +216,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-20T10:56:08.743Z"
+    "updatedAt": "2026-09-20T11:01:10.725Z"
   }
 }

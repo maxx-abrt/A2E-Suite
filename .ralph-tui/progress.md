@@ -7,6 +7,7 @@ after each iteration and it's included in prompts for context.
 
 - **Detect Apollo permission denials with `isGraphqlErrorOfType(error, 'FORBIDDEN')`** (`twenty-front/src/utils/is-graphql-error-of-type.util.ts`). It handles Apollo v4 `CombinedGraphQLErrors` (`.errors[0].extensions`) as well as plain `{extensions}`/`{code}` shapes; do NOT read `error.graphQLErrors` directly — v4 mutation errors do not expose that property, so a manual check silently falls through to "network error".
 - **Template preview/apply error vocabulary is mirrored by hand** between `twenty-server/.../onboarding/types/apply-template-operation.types.ts` and `twenty-front/.../a2e-workspace/types/apply-template-operation.types.ts`; the GraphQL DTO enum registers by MEMBER NAME (wire value == member name). The front union may add client-only codes (`NETWORK_ERROR`) that the server enum omits.
+- **App-owned additive task relations follow the `parentTask`/`subtasks` shape**: add a NEW MANY_TO_ONE field on the standard task (join column, SET_NULL) + its ONE_TO_MANY inverse `defineField`, with fresh universal identifiers only. Cycle guards for these self-relations stay injected-free synchronous libs over a `Map<taskId, linkedId>` (`lib/task-tree.ts`, `lib/task-dependencies.ts`) so `node --test --experimental-strip-types` covers them without a server. Never rename/retarget a committed, installed relation (`blockIssue` is task➜note and stays that way).
 
 ---
 
@@ -28,4 +29,15 @@ after each iteration and it's included in prompts for context.
 - **Learnings:**
   - A report-only slice can already be complete under a differently-named prior entry (`P3.4-feasibility-spike` vs PRD `US-048`); check the phase report for an equivalent done-for-review before doing new work.
   - `check-docs.mjs` maintains a `MAINTAINED_DOCUMENTS` list — a new findings doc is only covered by the gate if registered there; the P4C.1/P3.4 precedent also adds a `docs/README.md` index row.
+---
+
+## [2026-09-20] - US-049
+- Recorded the dependency-edge decision FIRST in `phase-04-report.md`: the edge is a NEW additive `task.blockedBy` self-relation, not the note-targeting `blockIssue`; then implemented it.
+- Added `task-blocked-by.field.ts` (task➜task M2O, join `blockedById`, SET_NULL) + `task-blocks.field.ts` (O2M inverse), new universal identifiers, and a pure `lib/task-dependencies.ts` cycle guard (self/two-node/deep/valid-chain) with 9 `node --test` cases.
+- Built the `task-dependencies` front component (Cmd+K "A2E Projects : dépendances") that refuses cyclic choices before the `updateTask` mutation, plus its command-menu item. Reused the untouched nested-list slice (`task-tree.ts`/`task-subtasks`).
+- Files changed: a2e-projects `src/constants/universal-identifiers.ts`; NEW `src/fields/task-blocked-by.field.ts`, `src/fields/task-blocks.field.ts`, `src/lib/task-dependencies.ts`, `src/lib/__tests__/task-dependencies.test.ts`, `src/front-components/task-dependencies.front-component.tsx`, `src/command-menu-items/open-dependencies.command-menu-item.ts`; `src/lib/__tests__/{task-field-integrity,project-object-integrity,command-availability}.test.ts`; `docs/plan/phases/phase-04-report.md`, `.ralph-tui/progress.md`.
+- **Learnings:**
+  - `blockIssue` is task➜note (join `blockIssueId`), so it cannot express a task-to-task edge; the P4.2 picker needs its own self-relation. Additive-only law forbids retargeting the installed field.
+  - `twenty dev:build .` scans `src/` automatically for standalone `defineField`/`defineFrontComponent`/`defineCommandMenuItem` defaults — new files need no central registry, but the integrity tests keep explicit `FIELD_MODULE_PATHS`/command lists, which must be updated or the new relations go uncovered.
+  - The dependency graph direction matters: adding `T.blockedBy = C` cycles iff walking `C`'s blocker chain reaches `T`; a task at the top of a chain has no dependents, so many candidates stay legal.
 ---

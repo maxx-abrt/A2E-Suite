@@ -74,6 +74,9 @@ export const RELATION_IDS = {
   labelTaskLabels: 'c31b0700-0002-4000-8000-000000000002',
   labelsOnTask: 'c31b0700-0002-4000-8000-000000000004',
   subtasks: 'c31b0100-0002-4000-8000-000000000003',
+  // Dependency edge (US-049): inverse of task.blockedBy, the many side of the
+  // task self-relation. Distinct from the note-targeting blockIssue pair.
+  blocks: 'c31b0100-0002-4000-8000-000000000004',
   milestoneTasks: 'c31b0300-0002-4000-8000-000000000003',
 } as const;
 
@@ -130,6 +133,9 @@ export const TASK_FIELD_IDS = {
   // Retroplanning provenance (P4.2): `<recipeKey>@v<version>:<taskKey>#<genDueAt>`.
   // Its own TEXT slot so replanning can tell an owned task from a manual one.
   retroplanningProvenance: 'c31b0201-0001-4000-8000-00000000000a',
+  // Dependency edge (US-049 decision): task.blockedBy ➜ task, a real
+  // task-to-task precedence link. Additive — blockIssue (task ➜ note) stays.
+  blockedBy: 'c31b0201-0001-4000-8000-00000000000b',
 } as const;
 
 export const COMMAND_MENU_ITEM_IDS = {
@@ -138,6 +144,7 @@ export const COMMAND_MENU_ITEM_IDS = {
   openSubtasks: 'c31b0000-0011-4000-8000-000000000006',
   openTimeTracker: 'c31b0000-0011-4000-8000-000000000007',
   createTask: 'c31b0000-0011-4000-8000-000000000008',
+  openDependencies: 'c31b0000-0011-4000-8000-000000000009',
 } as const;
 
 export const NAVIGATION_MENU_ITEM_IDS = {
@@ -157,6 +164,7 @@ export const FRONT_COMPONENT_IDS = {
   timeTracker: 'c31b0000-0013-4000-8000-000000000009',
   projectTimeRollup: 'c31b0000-0013-4000-8000-00000000000a',
   createTaskCommand: 'c31b0000-0013-4000-8000-00000000000b',
+  taskDependencies: 'c31b0000-0013-4000-8000-00000000000c',
 } as const;
 
 export const VIEW_IDS = {

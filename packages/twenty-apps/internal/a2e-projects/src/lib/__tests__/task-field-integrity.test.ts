@@ -64,6 +64,8 @@ const FIELD_MODULE_PATHS = [
   '../../fields/note-blocked-tasks.field.ts',
   '../../fields/project-tasks.field.ts',
   '../../fields/task-block-issue.field.ts',
+  '../../fields/task-blocked-by.field.ts',
+  '../../fields/task-blocks.field.ts',
   '../../fields/task-estimate.field.ts',
   '../../fields/task-estimate-label.field.ts',
   '../../fields/task-human-id.field.ts',
@@ -446,6 +448,36 @@ test('the blockedBy relation targets the standard note object with a declared in
   assert.equal(
     blockedTasks.relationTargetFieldMetadataUniversalIdentifier,
     TASK_FIELD_IDS.blockIssue,
+  );
+});
+
+test('the dependency is a SET_NULL task self-relation with a declared inverse', async () => {
+  const graph = await loadGraph();
+  const blockedBy = findFieldById(graph, TASK_FIELD_IDS.blockedBy);
+  const blocks = findFieldById(graph, RELATION_IDS.blocks);
+
+  assert.equal(blockedBy.universalSettings?.relationType, 'MANY_TO_ONE');
+  assert.equal(blockedBy.universalSettings?.joinColumnName, 'blockedById');
+  assert.equal(blockedBy.universalSettings?.onDelete, 'SET_NULL');
+  assert.equal(
+    blockedBy.relationTargetObjectMetadataUniversalIdentifier,
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.universalIdentifier,
+  );
+  assert.equal(
+    blockedBy.relationTargetFieldMetadataUniversalIdentifier,
+    RELATION_IDS.blocks,
+  );
+  assert.equal(blocks.universalSettings?.relationType, 'ONE_TO_MANY');
+  assert.equal(
+    blocks.relationTargetFieldMetadataUniversalIdentifier,
+    TASK_FIELD_IDS.blockedBy,
+  );
+
+  // blockIssue stays the task➜note relation; the dependency edge is additive.
+  assert.equal(
+    findFieldById(graph, TASK_FIELD_IDS.blockIssue)
+      .relationTargetObjectMetadataUniversalIdentifier,
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note.universalIdentifier,
   );
 });
 
