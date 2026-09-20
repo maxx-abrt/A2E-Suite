@@ -1,0 +1,188 @@
+# Iteration 14 Log
+
+## Metadata
+
+- **Task ID**: US-067
+- **Task Title**: P9.1 — direct execution of read-only context tools
+- **Description**: As an assistant user, I want to run a suggested read-only tool directly from its context button, so that I get the answer without composing a prompt, while mutating actions remain impossible without e...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-20T19:02:07.442Z
+- **Ended At**: 2026-09-20T19:12:42.685Z
+- **Duration**: 10m 35s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite[0m pattern: [96mUS-067[0m
+[94m[bash][0m $ grep -n "US-067\|P9.1" PLAN.md | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ tail -120 docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ git log --oneline -8
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ echo TZ=$TZ
+[94m[bash][0m $ git log -1 --format='%ci %H' bc817ba7
+[94m[bash][0m $ cat >> docs/plan/phases/phase-01-report.md <<'EOF'  CLAIMED — US-067/direct-readonly-tool-execution ...
+[94m[bash][0m $ find packages/twenty-front/src/modules/ai -type f | sort
+Claiming the slice now.
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/utils/getContextToolButtons.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/hooks/useContextToolButtons.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/types/ContextToolButton.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/hooks/useStageAiChatPreprompt.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/hooks/useAgentChat.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/graphql/mutations/sendChatMessage.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/utils/dispatchAgentChatSendMessageEvent.ts
+[94m[bash][0m $ cd packages/twenty-server && grep -rn "resolveAndExecute\|ToolExecutorService\|executeTool\|runTool"...
+[94m[bash][0m $ cd packages/twenty-front && grep -rn "sendChatMessage\|directTool\|executeTool\|toolExecution\|toolN...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96mresolveAndExecute|ToolExecutorService|executeTool[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mexecuteTool|directTool|toolExecution|runTool[0m
+[94m[read][0m
+[94m[read][0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/ai/ai-chat[0m pattern: [96msendChatMessage|SendChatMessage[0m
+[94m[bash][0m $ grep -rn "direct" docs/plan/ PLAN.md docs/product-experience.md 2>/dev/null | grep -i "tool" | head ...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/hooks/useProcessUIToolCallMessage.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/types/AgentChatMessageUIToolCallPart.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/types/BrowsingContext.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/hooks/useBrowsingContext.ts
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96mexecuteOneLogicFunction|executeLogicFunction|ExecuteLogicFunction|runLogicFunction[0m
+[94m[bash][0m $ find packages/twenty-shared/src/ai -type f | sort
+[94m[bash][0m $ ls docs/plan/phases/
+[94m[read][0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/ai[0m pattern: [96mtoolChoice|forcedTool|selectedTool|directTool|prefill|preapproved|preApproved[0m
+[94m[bash][0m $ grep -rn "AGENT_CHAT_SEND_MESSAGE_EVENT_NAME\|AgentChatSendMessageEventName\|PREFILL\|SEND" packages...
+[94m[bash][0m $ find packages/twenty-server/src/engine/api/mcp -type f | sort
+[94m[bash][0m $ grep -rln "resolveAndExecute\|executeToolFromToolSet" packages/twenty-server/src/engine/metadata-mod...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ sed -n '1,80p' .ralph-tui/progress.md 2>/dev/null
+[94m[bash][0m $ tail -80 .ralph-tui/progress.md 2>/dev/null
+[94m[bash][0m $ git log -p -1 --format="%H %s" -- packages/twenty-front/src/modules/ai/components/context-tools/AiCh...
+[94m[bash][0m $ sed -n '880,1010p' docs/plan/phases/phase-01-report.md
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/ai/types/AgentChatSubscriptionEvent.ts
+[94m[bash][0m $ grep -oE "mutation [A-Za-z]+|query [A-Za-z]+" {}' 2>/dev/null | head -80
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/components/ToolStepRenderer.tsx
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mexecute_tool|tool-execute_tool|executeToolTool|EXECUTE_TOOL[0m
+[94m[bash][0m $ find packages/twenty-front/src/modules/logic-functions -type f | head -40
+[94m[bash][0m $ grep -rn "direct.tool\|direct execution\|direct-execut\|directly" docs/ 2>/dev/null | grep -i "tool\...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/logic-functions/hooks/useExecuteLogicFunction.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/ai/types/ExtendedUIMessagePart.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/hooks/useAiChatSuggestedPromptsContext.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/components/AiChatEmptyState.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/states/agentChatPrepromptState.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/components/AgentChatPrepromptEffect.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/utils/__tests__/getContextToolButtons.test.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -rn "ToolCategory\." packages/twenty-front/src/modules/ai | head
+[94m[bash][0m $ find packages/twenty-server/src/engine/metadata-modules/ai/ai-chat -maxdepth 2 -type f | sort
+[94m[bash][0m $ grep -rn "persist\|saveMessage\|createMessage\|appendMessage\|message-persisted\|publish" packages/t...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ wc -l packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.se...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/states/agentChatErrorComponentFamilyState.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/types/AiChatError.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/utils/createAiChatCodedError.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/utils/aiChatErrorCode.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/components/AiChatErrorRenderer.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/components/AgentChatProviderContent.tsx
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src[0m pattern: [96mtoolTriggerSettings[0m
+[94m[bash][0m $ grep -rn "inputSchema" packages/twenty-apps/internal/a2e-chat/src/logic-functions/summarize-channel....
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/toolTriggerSettingsType.ts
+[94m[read][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/types/ContextToolButton.ts
+Now I'll implement the slice. Starting with types and the pure builder.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/utils/getContextToolButtons.ts
+[94m[write][0m "// Direct execution of a context tool: the button hands the assistant a
+// concrete read-only invocation (tool name + arguments) instead of a prompt.
+// Only app-declared LOGIC_FUNCTION tools are ever... (1104 chars)"
+[94m[write][0m "import { isDefined } from 'twenty-shared/utils';
+
+import { type BrowsingContext } from '@/ai/types/BrowsingContext';
+import { type ContextToolButton } from '@/ai/types/ContextToolButton';
+import {
+  t... (2780 chars)"
+[94m[write][0m "import { t } from '@lingui/core/macro';
+
+import { type BrowsingContext } from '@/ai/types/BrowsingContext';
+import { type ContextToolButton } from '@/ai/types/ContextToolButton';
+import {
+  type Direc... (2290 chars)"
+[94m[write][0m "import { t } from '@lingui/core/macro';
+
+import { type DirectToolInvocation } from '@/ai/types/DirectToolInvocation';
+
+// The context button already resolved the tool and its arguments; the message
+//... (623 chars)"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/states/currentAiChatThreadState.ts
+[94m[bash][0m $ grep -rn "agentChatErrorComponentFamilyState" packages/twenty-front/src/modules/ai --include=*.tsx -...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai[0m pattern: [96magentChatErrorComponentFamilyState[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/components/AiChatStandaloneError.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/hooks/useShouldShowAiChatEmptyState.ts
+[94m[write][0m "import { useCallback } from 'react';
+import { useStore } from 'jotai';
+
+import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
+import { useGetBrowsingContext } from '@/ai/hooks/u... (2703 chars)"
+Now update the component to use the hook.
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[write][0m "import { type BrowsingContext } from '@/ai/types/BrowsingContext';
+import { type ContextToolButton } from '@/ai/types/ContextToolButton';
+import { buildDirectToolInvocation } from '@/ai/utils/buildDir... (4423 chars)"
+[94m[write][0m "import { type BrowsingContext } from '@/ai/types/BrowsingContext';
+import { type ContextToolButton } from '@/ai/types/ContextToolButton';
+import {
+  type DirectToolDispatch,
+  type DirectToolInvocatio... (3679 chars)"
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/ai/utils/__tests__/buildDirectToolInvocation.test.ts pack...
+[94m[bash][0m $ echo "EXIT=$?"
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/ai --config=packages/twenty-front/jest.config.mjs 2>&1 | ...
+[94m[bash][0m $ cd packages/twenty-front && npx oxlint --type-aware -c .oxlintrc.json src/modules/ai/types/ContextTo...
+[94m[bash][0m $ echo "EXIT=$?"
+[94m[bash][0m $ cd packages/twenty-front && npx oxfmt src/modules/ai/utils/__tests__/buildDirectToolInvocation.test....
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -8
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/ai/utils/__tests__/buildDirectToolInvocation.test.ts pack...
+[94m[read][0m
+[94m[read][0m
+[94m[write][0m "import { act, renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
+import { type ReactNode } from 'react';
+
+import { AGENT_CHAT_INSTANCE_ID } from '@/ai/const... (3567 chars)"
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/ai/hooks/__tests__/useDirectToolExecution.test.tsx --conf...
+[94m[bash][0m $ ") open(p,'w').write(s) print("done") PY
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/ai/hooks/__tests__/useDirectToolExecution.test.tsx --conf...
+[94m[bash][0m $ npx oxfmt --check src/modules/ai/hooks/__tests__/useDirectToolExecution.test.tsx 2>&1 | tail -4
+[94m[bash][0m $ echo "TSC_EXIT=$?"
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/ai --config=packages/twenty-front/jest.config.mjs 2>&1 | ...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-front 2>&1 | tail -10
+[94m[bash][0m $ date +"%Y-%m-%d %H:%M"
+[94m[bash][0m $ if the assistant does not execute the named tool deterministically, add the server-side forced-tool ...
+[94m[bash][0m $ deterministic server-side execution (e.g. `toolChoice: { type: 'tool', toolName }` in `ChatExecution...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ git diff -- packages/twenty-front/src/modules/ai/types/ContextToolButton.ts packages/twenty-front/sr...
+Done. Final self-verification:
+
+- `git status --porcelain` shows only my 11 files plus Ralph's own `.ralph-tui/session*`, `tasks/prd.json`, and the pre-existing iteration log — nothing stray, nothing reverted.
+- All Tier 0 gates green: new specs 2+1 suites (12+3 tests), full `src/modules/ai` 59 suites / 435 tests, `tsgo --noEmit` exit 0, oxlint 0/0, oxfmt clean, docs check PASS.
+- Phase report entry appended to `docs/plan/phases/phase-01-report.md`; `PLAN.md` untouched; nothing committed.
+
+What landed (US-067 P9.1 direct execution of read-only context tools):
+- `buildDirectToolInvocation` — pure fail-closed builder: mutating → refused before dispatch, no context → refused, unsatisfiable required input → refused; fills `<object>Id` from record pages and `channelId` from chat channels (US-066).
+- `executeDirectContextTool` — dispatch orchestration with an injected `dispatch` seam; rejected/failed dispatch becomes a surfaced `failed` outcome (no throw, no partial success).
+- `useDirectToolExecution` — reads the browsing context at click time, dispatches through the native assistant composer, writes fail-closed errors into `agentChatErrorComponentFamilyState` so they render in the thread.
+- `AiChatContextToolButtons` — read-only buttons direct-execute; the `requiresConfirmation` → PREFILL draft path is preserved (C6).
+- Specs with mocked dispatch cover happy / unauthorized / missing / mutating-refusal, plus hook-level thread surfacing.
+
+Honest caveat recorded in the report: the server accepts no forced-tool directive, so the production dispatch hands the deterministic invocation to the assistant composer; the orchestrator's Tier-2 live run must confirm the named read-only tool executes deterministically, otherwise threading a `directToolInvocation` to `ChatExecutionService` (`toolChoice: { type: 'tool', toolName }`) is the follow-up.
+
+<promise>COMPLETE</promise>
