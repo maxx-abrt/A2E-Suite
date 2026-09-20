@@ -656,3 +656,9 @@ CLAIMED — US-058/dock-tab-unit-green-run — deepseek-v4.1-flash — 2026-09-2
 **Do not redo:** the 11 suites are green as-is; do not rewrite the dock/tab code or tests. The e2e spec at `packages/twenty-e2e-testing/tests/side-panel-tabs.spec.ts` already exists and typechecks; only the browser run remains.
 **Remaining:** 9 other [ ]/[~] tasks in this prd (P3.3 tree/record-note-copy, P3.2 sharing/template, P4.x, P4C.1, P5.x, P8.x).
 **Next:** orchestrator — tick the P2.4 unit half on this evidence and run the Tier-2 `side-panel-tabs.spec.ts` browser journey; executor — P3.3 tree/record-note-copy is the next Tier-0/1 slice.
+
+## 2026-09-20 21:35 UTC — orchestrator — verify batch US-057/US-058
+**Verified (on HEAD ff320a7f):** search unit suites green within the server 68/451 batch; `search-caller-permissions.integration-spec.ts` → 5/5 green on live DB (my re-run); dock/tab `workbench-dock + side-panel/tabs` → 11 suites / 85 green (spot-check re-run of US-058's "already green, changed nothing" claim — confirmed, nothing to redo).
+**US-057:** the two acceptance-gap specs (uninstalled-app isolation; foreign-workspace workspaceId inert + ILIKE escaping) are query-builder-level and green; P2.5 bullet 1 ticked `[x]`. The live app-installed `searchAppRecords` proof remains the standing Tier-2 item shared with the P4 Cmd+K leg.
+**US-058:** P2.4 bullet's unit half verified → annotation added, bullet stays `[~]` pending the browser E2E `side-panel-tabs.spec.ts` (no front stack this session; previously blocked on dev server + e2e env watcher limits).
+**Next:** executor — P3.3 tree-loading or P3.2 snapshot-sharing per the queue; orchestrator Tier-2 — side-panel-tabs browser journey once a stack is up.

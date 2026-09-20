@@ -589,6 +589,17 @@ persona, and the conventions every later phase relies on.
       `ApplyTemplateErrorCode` discriminator + preview/apply panels; server
       onboarding suite green on HEAD re-run. Open: graphql:generate against a
       live schema, browser journey, InstallApps list empty-state subtitle.
+      — 2026-09-20 orchestrator: subtitle leg closed (US-056, phase-01-report)
+      — distinct load-failure vs zero-apps-available subtitle with the picker
+      retained; InstallApps specs 3/3 + module 39/222 in report, green again
+      in my 98/657 onboarding+ai re-run. The onboarding template integration
+      suites (2/5 on live DB, my re-run) exercise
+      `workspaceTemplatePreview`/`applyWorkspaceTemplateOperation` through
+      the authenticated schema, proving the enum/types execute server-side;
+      the codegen step itself still needs an authenticated introspection
+      (the running server's unauthenticated `/graphql` exposes only the
+      public subset — running codegen now would clobber the generated file)
+      and the browser journey stays open. Keep `[~]`.
 - [~] **P1.6d Starter bundles (after P1.6b and each app's safe slice):** meeting
       notes/project brief/PRD/one-on-one; project delivery/event retroplanning;
       Bilan cashflow/donation/grant/custom sheets and fiches. Add proposed
@@ -691,14 +702,28 @@ Do not add Huly-like navigation density. See blueprint §4–§6.
 - [x] Side-panel tabs: multiple stacked contexts with persisted order,
       middle-click/"open in tab" affordance on records/docs/messages
 - [x] Page-header context: active page sources title/breadcrumb/actions
-- [ ] Run the existing dock/tab unit suites plus browser E2E: two records as
+- [~] Run the existing dock/tab unit suites plus browser E2E: two records as
       tabs → switch/close → reload restores permitted context. Historical
       report says browser E2E was blocked, not passed.
+      — 2026-09-20 orchestrator: unit half verified (US-058, phase-02-report;
+      nothing to redo — suites were already green) — 11 suites / 85 tests on
+      HEAD re-run (dock, registry, tabs, persistence keys incl. reload-restore
+      + URL precedence). Browser E2E `side-panel-tabs.spec.ts` still not run
+      (no front stack this session); keep `[~]`.
 
 ### P2.5 Global search v1
-- [ ] Validate existing records + real document provider through caller
+- [x] Validate existing records + real document provider through caller
       permissions; the document provider is no longer a stub. P0.2 repairs
       system-context bypass and verifies actual query/filter behavior.
+      — 2026-09-20 orchestrator: verified (US-057, phase-02-report) —
+      caller-scoped validation specs land the two acceptance gaps
+      (uninstalled-app isolation: provider contributes no group and its
+      `search` is never invoked; foreign-workspace `workspaceId` inert with
+      exactly one ambient repository read + no `workspaceId` predicate in
+      rendered SQL; ILIKE escaping pinned). search-caller-permissions
+      integration 5/5 green on live-DB re-run; search suites 5/32 on HEAD.
+      Live app-installed `searchAppRecords` re-proof stays on the standing
+      Tier-2 ledger (same item as the P4 Cmd+K leg).
 - [x] Frecency ranking; keyboard navigation; deep links open side panel
 - [ ] Performance budget: measure p95 < 150ms interaction latency on a
       10k-record workspace with stated hardware/network/query conditions.
@@ -869,8 +894,15 @@ Optional advanced authoring is not a prerequisite to this repair slice.
       the live task query (project filter, null-variant orderBy, pagination,
       pageInfo fields) verified; DOM render and the 1k-task benchmark are
       still open (keep `[~]`).
-- [ ] Calendar view of tasks/due dates (link into existing calendar module
+- [~] Calendar view of tasks/due dates (link into existing calendar module
       surface)
+      — 2026-09-20 orchestrator: NULL-projectStatus residual fixed and
+      unit-verified (US-059, phase-04-report) — task-calendar view carries an
+      OR filterGroup (`IS_NOT DONE` encoded-array + `IS_EMPTY`) so
+      NULL-pipeline rows appear while DONE stays excluded; a2e-projects
+      265/265 on HEAD re-run. Tier-2 live-install proof open (create a
+      no-`projectStatus` task → visible on calendar + En retard, DONE stays
+      out).
 - [ ] Retroplanning (R04, after P4.1/C1): choose a reusable project recipe,
       set deadline and timezone, preview task/subtask dates, durations,
       dependencies, assignees and overlap/past-date warnings; confirm creation
@@ -878,8 +910,11 @@ Optional advanced authoring is not a prerequisite to this repair slice.
       or move deadline previews only owned changes and protects manually edited
       dates/completed work. Append versus replace affects the draft unless an
       explicit destructive record-change preview is confirmed (E06).
-- [ ] My-tasks page ("assigned to me" + "created by me" + overdue smart
+- [~] My-tasks page ("assigned to me" + "created by me" + overdue smart
       lists)
+      — 2026-09-20 orchestrator: same US-059 slice — overdue-tasks smart list
+      carries the NULL-including OR filterGroup (unit-verified 265/265);
+      live-install proof open with the calendar bullet above.
 - [ ] Project page: overview widgets (health, milestones, members, activity)
       + tabs (tasks/board/gantt/files/docs)
 - [x] Subtasks & dependencies UI: nested list + dependency picker with
@@ -972,12 +1007,26 @@ primitives; app packaging/name is decided in P4C.1, not inferred from Bureau.
       slot/drag-to-create + keyboard equivalent, overlap lanes, local-only
       edit gating; front 534-test re-run + tsgo green. Tier-2 `/calendar`
       browser proof open; week/month read-only by design in this slice.
-- [ ] **P4C.3 Recurrence (after P4C.2):** daily/weekly/monthly, interval,
+- [~] **P4C.3 Recurrence (after P4C.2):** daily/weekly/monthly, interval,
       weekdays, monthly position, count/until and skipped/detached occurrences.
       Explicit “this occurrence” versus “whole series” edit/delete. Stable series
       and occurrence IDs; no duplicate detached events on retries. Test DST,
       month-end/leap-year, locale week start, long ranges and timezone changes.
       Future-series split is not promised without an additional decision.
+      — 2026-09-20 orchestrator: engine + storage + API verified (US-060
+      through US-063, phase-04-report) — isomorphic engine single-sourced in
+      `twenty-shared/utils/calendar-recurrence` (front re-export shims, no
+      fork); daily/weekly/monthly-by-date/monthly-by-position, count/until,
+      detach state machine with stable `seriesId`/occurrence IDs; recurrence
+      fields on standard `calendarEvent` via 2-39 workspace command
+      `1789904000000` (registered, strictly increasing; recorded deviation:
+      workspace metadata → no instance migration/up-down, `migrate:generate`
+      produced no DDL — same shape as the accepted 2-38 blocklist precedent);
+      Tier-1 integration detaches/re-queries/idempotent-replay green.
+      DST/month-end/leap-year/locale-week-start/long-range/timezone battery
+      green through both front (164 calendar tests) and stored-path (server
+      9-test spec) runs. Kept `[~]`: the this-vs-series edit/delete **UI
+      wiring** and browser proof land with the next slice (P4C.4 gate).
 - [ ] **P4C.4 Reminders/team (after P4C.3 and P8 notification contract):**
       configurable reminders with idempotent delivery, reschedule/cancel,
       quiet-hours/timezone rules; invite/response/visibility rights where
@@ -1386,10 +1435,20 @@ mention→inbox→open.
 **Goal.** One assistant, all apps, explicit and auditable.
 
 ### P9.1 Registry & assistant
-- [ ] Consume existing `LogicFunctionToolProvider`/tool registry and app
+- [x] Consume existing `LogicFunctionToolProvider`/tool registry and app
       `toolTriggerSettings`; validate install/uninstall/permissions/context
       behavior. P1.5 established this native primitive; do not invent
       `registerAiTools`, a duplicate table or manual registration hooks.
+      — 2026-09-20 orchestrator: verified (US-064/US-065/US-066,
+      phase-01-report) — install/uninstall exposure (uninstalled app's tool
+      never offered/invoked), restricted-member fail-closed,
+      cross-workspace denial (foreign id = same not-found as missing),
+      mutating-category guard, and send-time context (browsing context
+      carries the chat `channelId`; server context-builder accepts
+      `chatChannel`) — additive specs only, zero defects found, no new
+      primitive. Server tool-provider+search+ai suites 68/451 green on HEAD
+      re-run. Standing Tier-2 live dispatch on an app-installed workspace
+      remains on the ledger (same item as the assistant-surface bullet).
 - [~] Assistant surface: side-panel assistant + full-page upgrade of
       ai-chat; context injection from current view (record/doc/channel/
       invoice) via context-store
@@ -1406,6 +1465,19 @@ mention→inbox→open.
       on HEAD re-run); full page shares the single
       `AiChatEditorSection` mount. Channel-side context and direct tool
       execution remain; Tier-2 live dispatch open.
+      — 2026-09-20 orchestrator: channel-side context verified (US-066) —
+      `useGetBrowsingContext` reports the open channel id and the server
+      context-builder renders it; direct read-only tool execution verified
+      front-side (US-067) — fail-closed builder (mutating → refusal, no
+      context → refusal, unsatisfiable input → refusal), deterministic
+      invocation through the assistant composer, refusals/errors surfaced in
+      the thread; `requiresConfirmation` still stages a PREFILL draft (C6).
+      Front ai 59 suites / 435 in report; 98/657 combined onboarding+ai on
+      my HEAD re-run. Remains `[~]`: Tier-2 live dispatch + the recorded
+      caveat — the server has no forced-tool parameter, so the live run must
+      confirm the named tool executes deterministically, else thread a
+      `directToolInvocation` arg through `sendChatMessage` →
+      `ChatExecutionService` (`toolChoice`).
 - [x] Streaming responses (SSE reuse), model provider config (existing AI
       settings), usage logging to event-logs
       — 2026-09-20 orchestrator: verified (US-041, phase-01-report) —
