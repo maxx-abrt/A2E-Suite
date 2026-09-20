@@ -105,6 +105,10 @@ type InstallAppsContentProps = {
   onInstall: () => void;
   onSkip: () => void;
   templatePicker?: React.ReactNode;
+  // A failed fetch and a genuinely empty catalogue must not read the same:
+  // the template picker below stays mounted in both, so the copy has to say
+  // why there are no apps without implying the template choice was lost.
+  catalogueLoadFailed?: boolean;
 };
 
 export const InstallAppsContent = ({
@@ -116,11 +120,18 @@ export const InstallAppsContent = ({
   onInstall,
   onSkip,
   templatePicker,
+  catalogueLoadFailed = false,
 }: InstallAppsContentProps) => {
   const { t } = useLingui();
   const theme = useTheme();
 
   const hasApps = isNonEmptyArray(apps);
+
+  const catalogueEmptyStateSubtitle = hasApps
+    ? null
+    : catalogueLoadFailed
+      ? t`We couldn't load the app catalogue. Your template choice is kept — check your connection and try again.`
+      : t`No apps are available to install right now`;
 
   return (
     <StyledOnboardingStepPage>
@@ -133,9 +144,8 @@ export const InstallAppsContent = ({
         </OnboardingStepAnimatedItem>
         <OnboardingStepAnimatedItem index={1}>
           <StyledOnboardingStepSubtitle>
-            {hasApps
-              ? t`Get the most out of your CRM by installing some apps`
-              : t`No apps are available to install right now`}
+            {catalogueEmptyStateSubtitle ??
+              t`Get the most out of your CRM by installing some apps`}
           </StyledOnboardingStepSubtitle>
         </OnboardingStepAnimatedItem>
         {isDefined(creditsRewardPerApp) && hasApps && (

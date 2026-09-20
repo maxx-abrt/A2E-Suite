@@ -162,7 +162,9 @@ export const MarketplaceUnavailable: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
-    await canvas.findByText('No apps are available to install right now');
+    await canvas.findByText(
+      "We couldn't load the app catalogue. Your template choice is kept — check your connection and try again.",
+    );
     expect(canvas.queryByText('Install')).toBeNull();
     await canvas.findByText('Skip');
   },

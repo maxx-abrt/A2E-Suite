@@ -85,6 +85,7 @@ export const InstallApps = () => {
       onInstall={installSelectedAppsAndContinue}
       onSkip={skip}
       templatePicker={templatePicker}
+      catalogueLoadFailed={!hasLoadedAvailabilitySuccessfully}
     />
   );
 };

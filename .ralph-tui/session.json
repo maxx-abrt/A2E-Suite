@@ -3,7 +3,7 @@
   "sessionId": "996d0217-482c-4a96-b036-789e241df074",
   "status": "running",
   "startedAt": "2026-09-20T17:15:13.692Z",
-  "updatedAt": "2026-09-20T17:15:18.661Z",
+  "updatedAt": "2026-09-20T17:20:11.740Z",
   "currentIteration": 0,
   "maxIterations": 20,
   "tasksCompleted": 0,
@@ -19,8 +19,6 @@
   "iterations": [],
   "skippedTaskIds": [],
   "cwd": "/Users/maxaubert/Projets/A2E Suite",
-  "activeTaskIds": [
-    "US-056"
-  ],
+  "activeTaskIds": [],
   "subagentPanelVisible": false
 }

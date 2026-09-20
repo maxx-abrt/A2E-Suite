@@ -20,9 +20,10 @@
         "Quality gate: dated entry appended to docs/plan/phases/phase-01-report.md; PLAN.md not edited; nothing committed"
       ],
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN task P1.6c (after P1.6b — P1.6b is [x] verified 2026-09-19). Starting state: PARTIAL — distinct no-apps/network/permission error surfaces verified 2026-09-20 (US-047, phase-01-report); open legs: list empty-state subtitle (this story), graphql:generate against a live schema + browser journey (orchestrator).",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-057",
@@ -268,6 +269,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-20T17:15:18.659Z"
+    "updatedAt": "2026-09-20T17:20:11.739Z"
   }
 }
