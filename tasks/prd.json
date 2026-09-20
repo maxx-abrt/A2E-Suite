@@ -167,9 +167,10 @@
         "No Tier 2 checks (no live dispatch, no two-session proof) — list them as Missing for tick"
       ],
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN task P9.1 \"Assistant surface\" [~] remaining front leg. Chat domain is verified-safe (P5 all [x] 2026-09-19), satisfying the execution-order gate \"P9 per-domain actions only after that domain is safe\" for the chat surface.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-054",
@@ -219,6 +220,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-20T12:04:46.693Z"
+    "updatedAt": "2026-09-20T12:14:24.627Z"
   }
 }

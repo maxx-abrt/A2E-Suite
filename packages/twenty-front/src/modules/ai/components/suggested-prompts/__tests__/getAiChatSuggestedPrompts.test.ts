@@ -27,6 +27,15 @@ describe('getAiChatSuggestedPrompts', () => {
     ).toEqual(['summarize-view', 'filter-view', 'create-record-in-view']);
   });
 
+  it('should offer channel prompts when a chat channel is open', () => {
+    expect(
+      getPromptIds({
+        browsingContextType: 'chatChannel',
+        objectNameSingular: 'chatChannel',
+      }),
+    ).toEqual(['summarize-channel', 'catch-up-on-channel']);
+  });
+
   it('should offer workflow prompts on a workflow record', () => {
     expect(
       getPromptIds({

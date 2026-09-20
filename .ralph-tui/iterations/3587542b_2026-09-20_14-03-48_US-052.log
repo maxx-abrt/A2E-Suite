@@ -1,0 +1,52 @@
+# Iteration 8 Log
+
+## Metadata
+
+- **Task ID**: US-052
+- **Task Title**: P4C.2c — timezone-aware event create/edit/delete, slot/drag-to-create with keyboard equivalent, save feedback and overlap layout
+- **Description**: As a user working on the calendar page, I want to create events by selecting or dragging a slot (or with the keyboard), edit and delete them timezone-aware, and get clear save feedback with readable o...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-20T12:03:48.976Z
+- **Ended At**: 2026-09-20T12:04:46.692Z
+- **Duration**: 57s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the clean-start check and gather context in parallel.
+[94m[grep][0m pattern: [96mUS-052[0m
+[94m[bash][0m $ git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-052\|P4C.2" "PLAN.md" | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+Dirty tree with calendar files — likely a prior/current US-052 iteration. Let me check the phase report and PLAN.md.
+[94m[bash][0m $ wc -l "docs/plan/phases/phase-04-report.md"
+The report is large. Let me find the US-052/US-051 entries and the tail.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+A prior US-052 claim exists at base = current HEAD. Let me read the tail of the report.
+[94m[bash][0m $ grep -n "US-052" ".ralph-tui/progress.md" | tail -10
+US-052 is already implemented and reported `done-for-review` at base = current HEAD. Per contract §1.3 I must not redo it — I'll verify it still passes and report. Let me check the progress entry and run Tier 0 checks.
+[94m[bash][0m $ npx jest --config=packages/twenty-front/jest.config.mjs "src/modules/calendar" "src/pages/calendar" ...
+[94m[bash][0m $ echo "TSC_EXIT=$?"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+Tests (71/71) and typecheck pass. Let me verify lint/format on the touched front files and confirm the tree matches the report's Change list.
+[94m[bash][0m $ npx oxfmt --check "${ARR[@]}" 2>&1 | tail -20
+Lint ran against wrong paths (0 files). Let me rerun from the package dir with stripped prefixes.
+[94m[bash][0m $ npx oxfmt --check "${ARR[@]}" 2>&1 | tail -6
+[94m[bash][0m $ date -u "+%Y-%m-%d %H:%M UTC"
+All Tier 0 checks green. The slice was already implemented and reported; I verified it, no code changes. Appending the required verification report and progress entry.
+[94m[bash][0m $ no further executor step for P4C.2. EOF echo appended
+[94m[bash][0m $ use the direct oxlint/oxfmt gates because `nx lint:diff-with-main` diffs `main...HEAD` and prints "N...
+[94m[bash][0m $ git status --porcelain | grep -v '^ M \.ralph-tui/\|^?? \.ralph-tui/\| M docs/plan/phases/phase-04-r...
+US-052 (P4C.2c) was already implemented and reported `done-for-review` at the current base `a21fbb0`. Per contract §1.3 I did not redo it — I re-verified the slice and appended the required verification report + progress entry.
+
+Verification (Tier 0, all green, no code changed):
+- `npx jest ... "src/modules/calendar" "src/pages/calendar"` → 13 suites / 71 tests pass
+- `npx tsgo -p tsconfig.json --noEmit` → exit 0
+- oxlint 0/0 + oxfmt clean on the 36 touched front files
+
+Report appended to `docs/plan/phases/phase-04-report.md`; Ralph entry appended to `.ralph-tui/progress.md`. PLAN.md untouched; nothing committed. Tier 2 `/calendar` browser proof remains for the orchestrator.
+
+<promise>COMPLETE</promise>

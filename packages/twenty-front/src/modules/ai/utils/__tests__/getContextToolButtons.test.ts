@@ -10,6 +10,7 @@ import {
 const DOCUMENTS_APP_ID = 'documents-app-id';
 const DRIVE_APP_ID = 'drive-app-id';
 const PROJECTS_APP_ID = 'projects-app-id';
+const CHAT_APP_ID = 'chat-app-id';
 
 const DOCUMENT_UNIVERSAL_IDENTIFIER = '20202020-document-universal-id';
 
@@ -217,6 +218,40 @@ describe('getContextToolButtons', () => {
     expect(buttons.map(({ toolName }) => toolName)).toEqual([
       'app_document_content',
       'app_extract_tasks_from_document',
+    ]);
+  });
+
+  it('offers the chat app tools when the context is a chat channel', () => {
+    const buttons = getContextToolButtons({
+      ...defaultArguments,
+      context: {
+        applicationId: CHAT_APP_ID,
+        objectNameSingular: 'chatChannel',
+      },
+      toolIndex: [
+        {
+          name: 'app_summarize_channel',
+          label: 'summarize-channel',
+          description: 'Résume un canal.',
+          category: ToolCategory.LOGIC_FUNCTION,
+        },
+      ],
+      logicFunctions: [
+        {
+          name: 'summarize-channel',
+          applicationId: CHAT_APP_ID,
+          inputSchema: {
+            type: 'object',
+            properties: { channelId: { type: 'string' } },
+            required: ['channelId'],
+          },
+        },
+      ],
+      installedApplicationIds: new Set([CHAT_APP_ID]),
+    });
+
+    expect(buttons.map(({ toolName }) => toolName)).toEqual([
+      'app_summarize_channel',
     ]);
   });
 

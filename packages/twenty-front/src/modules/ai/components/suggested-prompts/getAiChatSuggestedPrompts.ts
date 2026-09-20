@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import {
+  CHAT_CHANNEL_SUGGESTED_PROMPTS,
   LIST_VIEW_SUGGESTED_PROMPTS,
   RECORD_PAGE_SUGGESTED_PROMPTS,
   RECORD_PAGE_SUGGESTED_PROMPTS_BY_OBJECT_NAME_SINGULAR,
@@ -21,6 +22,10 @@ export const getAiChatSuggestedPrompts = (
 
   if (browsingContextType === 'listView') {
     return LIST_VIEW_SUGGESTED_PROMPTS;
+  }
+
+  if (browsingContextType === 'chatChannel') {
+    return CHAT_CHANNEL_SUGGESTED_PROMPTS;
   }
 
   return (

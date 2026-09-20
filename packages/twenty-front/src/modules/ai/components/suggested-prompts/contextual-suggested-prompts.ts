@@ -4,6 +4,7 @@ import {
   IconCheckbox,
   IconFilter,
   IconMail,
+  IconMessage,
   IconNotes,
   IconPlus,
   IconSearch,
@@ -34,6 +35,23 @@ export const LIST_VIEW_SUGGESTED_PROMPTS: SuggestedPrompt[] = [
     label: msg`Create a record`,
     Icon: IconPlus,
     prompts: [msg`Create a new record in this view. Details: `],
+  },
+];
+
+export const CHAT_CHANNEL_SUGGESTED_PROMPTS: SuggestedPrompt[] = [
+  {
+    id: 'summarize-channel',
+    label: msg`Summarize this channel`,
+    Icon: IconSparkles,
+    mode: 'SEND',
+    prompts: [msg`Summarize the recent messages in this channel.`],
+  },
+  {
+    id: 'catch-up-on-channel',
+    label: msg`Catch me up`,
+    Icon: IconMessage,
+    mode: 'SEND',
+    prompts: [msg`Catch me up on what I missed in this channel.`],
   },
 ];
 
