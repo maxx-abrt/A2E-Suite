@@ -115,3 +115,14 @@ after each iteration and it's included in prompts for context.
   - `LogicFunctionToolProvider` advertises every installed app tool regardless of role — that is *not* a leak by itself, because `ToolExecutorService.dispatchLogicFunction` runs the handler under the caller's `workspaceId`/`userId`/`userWorkspaceId` and the app-side handler does a caller-scoped Core read. Use a caller-supplied `workspaceId` in args and assert it never reaches the `logicFunctionId` execution scope.
   - The US-025 "mutating categories never auto-offered" gating already has a front-side regression test (`getContextToolButtons.test.ts` → "never offers mutating registry categories…"); the complementary server-side guard is a read-only role receiving no `create/update/upsert/delete` descriptor.
 ---
+
+## [2026-09-20] - US-066
+- Added `chatChannel` variant to `BrowsingContext` (front) and `BrowsingContextType` (server, additive); `useGetBrowsingContext` now returns `{ type: 'chatChannel', objectNameSingular, channelId }` from `selectedChatChannelIdState` on `/discussions` and `viewableChatChannelIdComponentState` at the `getAiChatContextStoreInstanceId` instance on the AI chat page, before the object context-store branch.
+- Server `buildContextFromBrowsingContext` names the channel id, still inside the existing non-executing `<browsing_context>` guard.
+- Added specs: `useBrowsingContext.test.tsx` (4), `chat-execution.service.browsing-context.spec.ts` (3).
+- Files changed: front `ai/types/BrowsingContext.ts`, `ai/hooks/useBrowsingContext.ts`, `ai/hooks/__tests__/useBrowsingContext.test.tsx`; server `ai/ai-agent/types/browsingContext.type.ts`, `ai/ai-chat/services/chat-execution.service.ts`, `ai/ai-chat/services/__tests__/chat-execution.service.browsing-context.spec.ts`.
+- **Learnings:**
+  - `useGetBrowsingContext` (send time, imperative store read) and `useAiChatSuggestedPromptsContext` (reactive) are deliberate twins; a new context kind must be added to both to stay consistent.
+  - The wire needed no change: `useAgentChat` sends the whole `BrowsingContext` as the `browsingContext: JSON` mutation variable, so only the server union/context-builder had to learn the new variant.
+  - `ChatExecutionService` has 11 constructor deps; for a private-helper test, `new ChatExecutionService(... as never)` + bracket access keeps the spec cheap without a Nest module.
+---

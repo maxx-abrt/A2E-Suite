@@ -755,6 +755,10 @@ export class ChatExecutionService {
       return this.buildListViewContext(browsingContext);
     }
 
+    if (browsingContext.type === 'chatChannel') {
+      return `The user is viewing the chat channel with ID: ${browsingContext.channelId}.`;
+    }
+
     return '';
   }
 

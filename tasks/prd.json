@@ -249,9 +249,10 @@
         "Quality gate: dated entry appended to docs/plan/phases/phase-01-report.md; PLAN.md not edited; nothing committed"
       ],
       "priority": 11,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN task P9.1 assistant-surface bullet [~] (registration is native per execution order; the domain safety gate for chat is satisfied — P5 verified 2026-09-19). Starting state: PARTIAL — channel-side context buttons + prompts verified (US-053), input-schema mapping verified (US-040); this is the recorded next leg.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-067",
@@ -278,6 +279,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-20T18:54:54.393Z"
+    "updatedAt": "2026-09-20T19:02:01.877Z"
   }
 }

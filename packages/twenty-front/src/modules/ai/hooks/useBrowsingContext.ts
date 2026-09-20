@@ -5,9 +5,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { type BrowsingContext } from '@/ai/types/BrowsingContext';
 import { getAiChatBrowsingContextType } from '@/ai/utils/getAiChatBrowsingContextType';
 import { getAiChatContextStoreInstanceId } from '@/ai/utils/getAiChatContextStoreInstanceId';
+import { viewableChatChannelIdComponentState } from '@/chat/side-panel/states/viewableChatChannelIdComponentState';
+import { selectedChatChannelIdState } from '@/chat/states/selectedChatChannelIdState';
+import { CHAT_CHANNEL_OBJECT_NAME_SINGULAR } from '@/chat/utils/mapChatSearchRecordsToResultItems';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
+import { isCurrentPathDiscussionsPage } from '~/utils/isCurrentPathDiscussionsPage';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
@@ -35,6 +39,28 @@ export const useGetBrowsingContext = () => {
       isSidePanelOpened,
       currentSidePanelPageId: currentSidePanelPage?.pageId,
     });
+
+    // A channel is not a context-store record: mirror the reactive
+    // useAiChatSuggestedPromptsContext — the discussions page keeps the channel
+    // globally, the AI chat's side panel keeps it per side-panel page (the same
+    // instance getAiChatContextStoreInstanceId picks). Channel precedence over
+    // the object context-store is deliberate: the channel is what the user sees.
+    const selectedChatChannelId = store.get(selectedChatChannelIdState.atom);
+    const viewableChatChannelId = store.get(
+      viewableChatChannelIdComponentState.atomFamily({ instanceId }),
+    );
+
+    const chatChannelId = isCurrentPathDiscussionsPage()
+      ? selectedChatChannelId
+      : viewableChatChannelId;
+
+    if (isDefined(chatChannelId)) {
+      return {
+        type: 'chatChannel',
+        objectNameSingular: CHAT_CHANNEL_OBJECT_NAME_SINGULAR,
+        channelId: chatChannelId,
+      };
+    }
 
     const pageType = store.get(
       contextStoreCurrentPageTypeComponentState.atomFamily({

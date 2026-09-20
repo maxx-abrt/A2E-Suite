@@ -12,4 +12,9 @@ export type BrowsingContext =
       viewId: string;
       viewName: string;
       filterDescriptions: string[];
+    }
+  | {
+      type: 'chatChannel';
+      objectNameSingular: string;
+      channelId: string;
     };
