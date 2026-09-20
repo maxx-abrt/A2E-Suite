@@ -1,0 +1,268 @@
+# Iteration 17 Log
+
+## Metadata
+
+- **Task ID**: US-046
+- **Task Title**: [P9.2] CRM core AI — email reply drafts + record enrichment assist (respect existing enrichment modules)
+- **Description**: As a CRM user, I want AI-drafted email replies and an enrichment assist on records, so that routine writing is faster while every mutation stays under my review.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-19T22:48:45.628Z
+- **Ended At**: 2026-09-19T23:03:55.113Z
+- **Duration**: 15m 9s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-046" PLAN.md | head -20
+[94m[bash][0m $ grep -n "P9.2\|P9\.1\|CRM core" PLAN.md | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -rn "US-046\|P9.2" docs/plan/phases/ 2>/dev/null | head -30
+[94m[bash][0m $ grep -n "US-046\|CLAIMED" docs/plan/phases/phase-01-report.md | tail -40
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) def walk(o):     if isinstance(o,dict):...
+[94m[bash][0m $ grep -rli "enrichment\|enrich" packages/twenty-apps packages/twenty-front/src packages/twenty-server...
+[94m[bash][0m $ grep -rli "enrichment\|enrich" packages/twenty-apps packages/twenty-front/src packages/twenty-server...
+[94m[bash][0m $ grep -rli "enrich" packages/twenty-front/src packages/twenty-server/src packages/twenty-shared/src p...
+[94m[bash][0m $ find packages/twenty-apps -name "*.manifest.ts" -not -path "*/node_modules/*" | head
+[94m[bash][0m $ git log --oneline --all 2>/dev/null | grep -i "crm\|US-046" | head
+[94m[bash][0m $ grep -rn -i "crm" docs/applications.md docs/plan/01-codebase-map.md docs/product-experience.md 2>/de...
+[94m[bash][0m $ find packages/twenty-apps/internal/twenty-partners -maxdepth 2 -name "*.ts" -not -path "*/node_modul...
+[94m[bash][0m $ grep -rln "US-046\|CRM core\|email reply" docs 2>/dev/null | head
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-chat/package.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/01-codebase-map.md
+[94m[bash][0m $ grep -rln "EnrichmentService\|enrichRecord\|enrichment" packages/twenty-server/src packages/twenty-f...
+[94m[bash][0m $ find packages/twenty-server/src/engine/core-modules/company-enrichment -type f | head -40
+[94m[bash][0m $ grep -rln "enrichCompany\|enrichPerson\|Enrichment" packages/twenty-server/src/engine/core-modules/c...
+[94m[bash][0m $ cat packages/twenty-apps/public/people-data-labs/package.json
+[94m[bash][0m $ grep -n "US-04[0-9]\|US-03[0-9]\|execution order\|handoff" PLAN.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) def walk(o):     if isinstance(o,dict):...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/src/logic-functions/summarize-document.logic-functio...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/src/logic-functions/handlers/document-action-handler...
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-apps/internal/real-estate/package.json
+[94m[bash][0m $ grep -rn -i "a2e-crm\|a2e crm\|crm app\|A2E CRM" . --include="*.md" --include="*.json" --include="*....
+[94m[bash][0m $ find packages/twenty-apps/internal/twenty-partners/src/modules -type f 2>/dev/null | head
+[94m[bash][0m $ grep -rln "a2e-documents" --include="*.json" --include="*.ts" --include="*.mjs" --include="*.js" --i...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts 2>/dev/null
+[94m[bash][0m $ find packages/twenty-apps -maxdepth 1 -type f
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/applications.md
+[94m[bash][0m $ grep -n -i "US-046\|CRM core\|enrichment\|email reply" .ralph-tui/progress.md | tail -30
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-drive/src -maxdepth 2 -name "*.ts" | grep -i "config\|univers...
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-apps/public/people-data-labs/src -iname "*front*" -o -iname "*command*" -o -ina...
+[94m[bash][0m $ grep -rn -i "reply draft\|email reply\|enrichment assist\|record enrichment\|CRM core" docs/plan doc...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ print(json.dumps(d,indent=2))"
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-drive/src -type f -not -path "*/node_modules/*" | sort
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/logic-functions/find-file.ts
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rln "messageThread" packages/twenty-server/src/modules 2>/dev/null | grep -v spec | head -20
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-apps/internal/a2e-documents/src/logic-functions/__tests__/document-c...
+[94m[bash][0m $ grep -n "twenty-apps\|test:unit\|internal/\*\|apps/" .gitlab-ci.yml agent-config.yml 2>/dev/null | h...
+[94m[bash][0m $ cat agent-config.yml 2>/dev/null | head -60
+[94m[bash][0m $ cat .yarnrc.yml 2>/dev/null | head
+[94m[bash][0m $ print(json.dumps(json.load(open('node_modules/twenty-sdk/package.json')).get('exports',{}),indent=1)...
+[94m[bash][0m $ done
+[94m[bash][0m $ grep -rn "declare const defineLogicFunction\|defineLogicFunction" node_modules/twenty-sdk/dist/defin...
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+I'll claim the slice in the phase report before touching code.
+[94m[bash][0m $ grep -n "US-046" docs/plan/phases/phase-01-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/constants/universal-identifiers.ts
+[94m[bash][0m $ grep -rn "edges: { node" packages/twenty-apps --include=*.ts | grep -v node_modules | grep -v __test...
+[94m[bash][0m $ grep -rn "edges: { node" packages/twenty-apps/internal packages/twenty-apps/public 2>/dev/null | gre...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/logic-functions/post-install.ts
+[94m[bash][0m $ grep -rn "children: {" packages/twenty-apps/internal/a2e-documents/src/front-components/document-pag...
+[94m[bash][0m $ grep -rn "messageThread\|people\|companies" packages/twenty-shared/src 2>/dev/null | grep -i "plural...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/modules/person/standard-objects/person.workspace-entity.ts
+[94m[read][0m
+[94m[bash][0m $ sed -n '1,200p' packages/twenty-front/src/modules/ai/utils/getContextToolButtons.ts 2>/dev/null
+[94m[bash][0m $ print(list(json.load(open('node_modules/twenty-client-sdk/package.json')).get('exports',{}).keys()))...
+[94m[bash][0m $ cat packages/twenty-apps/public/people-data-labs/src/application.config.ts 2>/dev/null | head -40
+[94m[todowrite][0m
+Now let me scaffold the app. First the config files:
+[94m[write][0m "{
+  "name": "a2e-crm",
+  "version": "0.1.0",
+  "license": "MIT",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2",
+    "twenty": ">=2.19.0"
+  },
+  "keywords": ... (789 chars)"
+[94m[write][0m "{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "allowSyntheticDefaultImpo... (758 chars)"
+[94m[write][0m "{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript"],
+  "categories": {
+    "correctness": "off"
+  },
+  "ignorePatterns": ["node_modules", "dist"],
+  "rules": ... (947 chars)"
+[94m[write][0m "# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn
+
+# codegen
+generated
+
+# testing
+/coverage
+/e2e/.auth
+/e2e/.result... (468 chars)"
+[94m[write][0m "24.5.0
+"
+[94m[write][0m "nodeLinker: node-modules
+"
+[94m[write][0m "// Universal identifiers for A2E CRM.
+//
+// A2E Documents owns c31a*, A2E Projects c31b*, A2E Chat c31c* and A2E Drive
+// c31d*, so CRM claims the next free block, c31e*. The app owns no workspace
+// ... (1165 chars)"
+[94m[write][0m "import { defineApplication } from 'twenty-sdk/define';
+
+import { APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/universal-identifiers.ts';
+
+export default defineApplication({
+  universalIdentifi... (425 chars)"
+[94m[write][0m "import { defineApplicationRole } from 'twenty-sdk/define';
+
+import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from '../constants/universal-identifiers.ts';
+
+// Reads only. The CRM tools supply cal... (748 chars)"
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+
+// Shared plumbing for the read-only P9.2 CRM tools.
+//
+// Both tools read a native CRM record (company, person or messageThread)
+// through th... (1952 chars)"
+Now the shared support and handlers:
+[94m[write][0m "import {
+  coreClient,
+  hasNonEmptyString,
+  normalizeOptionalPositiveInt,
+  normalizeOptionalText,
+  type CoreClientLike,
+} from './crm-tool-support.ts';
+
+// LECTURE SEULE, SOUS L'AUTORISATION DE L'... (6107 chars)"
+[94m[write][0m "import {
+  coreClient,
+  hasNonEmptyString,
+  type CoreClientLike,
+} from './crm-tool-support.ts';
+
+// LECTURE SEULE, SOUS L'AUTORISATION DE L'APPELANT (P9.2).
+//
+// Reads a caller-authorized person o... (6506 chars)"
+[94m[write][0m "import { defineLogicFunction } from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+import {
+  buildEmailReplyDraft,
+  type EmailReplyDraftResult,
+} f... (2194 chars)"
+Now the logic-function tool declarations:
+[94m[write][0m "import { defineLogicFunction } from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+import {
+  assistRecordEnrichment,
+  type RecordEnrichmentAssistRe... (2074 chars)"
+Now the test fixtures and suites:
+[94m[write][0m "import type { CoreClientLike } from '../handlers/crm-tool-support.ts';
+
+// A minimal fake caller-context Core API client. `query` is the only method the
+// read-only CRM tools may use, so the type its... (1455 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { buildEmailReplyDraft } from '../handlers/draft-email-reply-handler.ts';
+import { buildFakeCoreClient, findQuery } f... (6678 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { assistRecordEnrichment } from '../handlers/assist-record-enrichment-handler.ts';
+import { buildFakeCoreClient, find... (4460 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { LOGIC_FUNCTION_IDS } from '../../constants/universal-identifiers.ts';
+import assistRecordEnrichmentTool from '../as... (3191 chars)"
+[94m[bash][0m $ node --test --experimental-strip-types "src/logic-functions/__tests__/*.test.ts" 2>&1 | tail -60
+[94m[bash][0m $ node --test --experimental-strip-types "src/logic-functions/__tests__/*.test.ts" 2>&1 | grep -E "^(✔...
+[94m[read][0m
+[94m[edit][0m
+[94m[bash][0m $ node --test --experimental-strip-types "src/logic-functions/__tests__/*.test.ts" 2>&1 | grep -E "^(✔...
+[94m[bash][0m $ node --test --experimental-strip-types "src/logic-functions/__tests__/*.test.ts" 2>&1 | grep -E "^(#...
+[94m[bash][0m $ node --test --experimental-strip-types "src/logic-functions/__tests__/*.test.ts" 2>&1 | tail -15
+[94m[bash][0m $ echo "EXIT:$?"
+[94m[edit][0m
+[94m[bash][0m $ echo "TSC_EXIT:$?"
+[94m[bash][0m $ echo "OXLINT_EXIT:${PIPESTATUS[0]}"
+[94m[bash][0m $ cat packages/twenty-front/src/modules/a2e-workspace/constants/A2eSuiteApplicationUniversalIdentifier...
+[94m[bash][0m $ grep -rn "messageThread" packages/twenty-shared/src 2>/dev/null | grep -i "singular\|name" | head
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-drive/node_modules/.bin/ 2>/dev/null | grep -i twenty
+[94m[bash][0m $ echo "EXIT:${PIPESTATUS[0]}"
+[94m[bash][0m $ print(d.get('bin'),d.get('version'))" 2>/dev/null
+[94m[bash][0m $ echo "EXIT:${PIPESTATUS[0]}"
+[94m[bash][0m $ python3 -c " import json d=json.load(open('.twenty/output/manifest.json')) import re s=json.dumps(d)...
+[94m[bash][0m $ git check-ignore packages/twenty-apps/internal/a2e-crm/.twenty/output/manifest.json && echo "tweny o...
+[94m[bash][0m $ git status --porcelain --untracked-files=all packages/twenty-apps/internal/a2e-crm/ | grep -v "\.twe...
+[94m[bash][0m $ echo "EXIT:${PIPESTATUS[0]}"
+[94m[bash][0m $ head -5 packages/twenty-apps/internal/a2e-drive/yarn.lock 2>/dev/null
+[94m[bash][0m $ echo "EXIT:${PIPESTATUS[0]}"
+[94m[bash][0m $ yarn test:unit 2>&1 | head -20
+[94m[bash][0m $ curl -sI -m 8 https://registry.yarnpkg.com/ -o /dev/null -w "%{http_code}\n" 2>&1 || echo "NETWORK_F...
+[94m[bash][0m $ echo "EXIT:${PIPESTATUS[0]}"
+[94m[bash][0m $ echo "TEST_EXIT:${PIPESTATUS[0]}"
+[94m[bash][0m $ echo "LINT_EXIT:${PIPESTATUS[0]}"
+[94m[bash][0m $ echo "BUILD_EXIT:${PIPESTATUS[0]}"
+[94m[bash][0m $ git check-ignore packages/twenty-apps/internal/a2e-crm/node_modules packages/twenty-apps/internal/a2...
+[94m[bash][0m $ echo "DOCS_EXIT:${PIPESTATUS[0]}"
+[94m[todowrite][0m
+All checks are green. Let me update todos and write the reports.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ tail -30 .ralph-tui/progress.md
+[94m[bash][0m $ grep -n "A generic (non-app) AI contract" .ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git rev-parse HEAD
+[94m[bash][0m $ tail -22 docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ tail -18 .ralph-tui/progress.md
+[94m[todowrite][0m
+US-046 implemented as a new first-party tool-only app `packages/twenty-apps/internal/a2e-crm` (no CRM app existed; CRM is the native domain).
+
+- `draft-email-reply` — caller-scoped read of native `messageThread` (messages oldest-first, participants, bounded to 20); the assistant drafts, the tool never sends/stores/writes.
+- `assist-record-enrichment` — caller-scoped read of native `person`/`company` identity fields + empty-field list; no provider call, no `pdl*` fields, no write, so the existing `people-data-labs` / native enrichment module remains the only write path.
+- Both register solely via manifest `toolTriggerSettings` (no objects/fields, no new registry/table); app role is read-only (`canUpdateAllObjectRecords:false`).
+
+Checks: `yarn test:unit` 20/20 pass, `yarn typecheck` exit 0, `yarn lint` 0/0, `yarn twenty dev:build .` succeeded with both tools in the built manifest, `check-docs.mjs` PASS. Tier-2 live dispatch/denial proof is noted for the orchestrator.
+
+Reports appended to `docs/plan/phases/phase-01-report.md` (claim + done-for-review) and `.ralph-tui/progress.md` (entry + reusable pattern).
+
+<promise>COMPLETE</promise>
