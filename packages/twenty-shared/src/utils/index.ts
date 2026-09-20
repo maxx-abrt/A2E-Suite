@@ -23,6 +23,25 @@ export { upsertIntoArrayOfObjectsComparingId } from './array/upsertIntoArrayOfOb
 export { upsertPropertiesOfItemIntoArrayOfObjectsComparingId } from './array/upsertPropertiesOfItemIntoArrayOfObjectsComparingId';
 export { assertUnreachable } from './assertUnreachable';
 export { base64UrlEncode } from './base64UrlEncode';
+export type { CalendarRecurrenceFrequency } from './calendar-recurrence/types/CalendarRecurrenceFrequency';
+export {
+  CALENDAR_RECURRENCE_FREQUENCIES,
+  CALENDAR_RECURRENCE_FREQUENCY_TO_TOKEN,
+} from './calendar-recurrence/types/CalendarRecurrenceFrequency';
+export type { CalendarRecurrenceMonthlyPosition } from './calendar-recurrence/types/CalendarRecurrenceMonthlyPosition';
+export type { CalendarRecurrenceOccurrence } from './calendar-recurrence/types/CalendarRecurrenceOccurrence';
+export type { CalendarRecurrenceRule } from './calendar-recurrence/types/CalendarRecurrenceRule';
+export type { CalendarRecurrenceWeekday } from './calendar-recurrence/types/CalendarRecurrenceWeekday';
+export {
+  CALENDAR_RECURRENCE_WEEKDAYS,
+  CALENDAR_RECURRENCE_WEEKDAY_TO_DAY_OF_WEEK,
+} from './calendar-recurrence/types/CalendarRecurrenceWeekday';
+export { buildCalendarOccurrenceId } from './calendar-recurrence/utils/buildCalendarOccurrenceId';
+export { buildCalendarSeriesId } from './calendar-recurrence/utils/buildCalendarSeriesId';
+export { expandCalendarRecurrence } from './calendar-recurrence/utils/expandCalendarRecurrence';
+export { normalizeWeekStartDay } from './calendar-recurrence/utils/normalizeWeekStartDay';
+export { parseCalendarRecurrenceRule } from './calendar-recurrence/utils/parseCalendarRecurrenceRule';
+export { serializeCalendarRecurrenceRule } from './calendar-recurrence/utils/serializeCalendarRecurrenceRule';
 export { isCallRecordingTranscriptStatusMarker } from './callRecording/isCallRecordingTranscriptStatusMarker';
 export { parseCallRecordingTranscriptEntries } from './callRecording/parseCallRecordingTranscriptEntries';
 export { conditionalAvailabilityParser } from './command-menu-items/conditionalAvailabilityParser';

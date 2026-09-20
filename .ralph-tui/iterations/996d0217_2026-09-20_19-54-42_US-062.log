@@ -1,0 +1,129 @@
+# Iteration 8 Log
+
+## Metadata
+
+- **Task ID**: US-062
+- **Task Title**: P4C.3c — series/occurrence identity, detach and this-occurrence-vs-series semantics
+- **Description**: As a calendar user, I want to edit or delete a single occurrence of a repeating event without touching the rest of the series, so that rescheduling one meeting never rewrites my whole schedule — and r...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-20T17:54:42.364Z
+- **Ended At**: 2026-09-20T17:59:42.527Z
+- **Duration**: 5m 0s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "US-062" PLAN.md
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "P4C.3\|P4C\b\|US-060\|US-061" PLAN.md | head -50
+[94m[bash][0m $ ls docs/plan/phases/ && echo "---" && ls docs/plan/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "US-060\|US-061\|US-062\|P4C.3" docs/plan/phases/phase-04-report.md | tail -60
+[94m[bash][0m $ tail -120 docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ echo "exit=$?"
+[94m[bash][0m $ ls packages/twenty-front/src/modules/calendar/utils/ packages/twenty-front/src/modules/calendar/type...
+No `CLAIMED` for US-062 yet; dependencies P4C.1/P4C.2 are `[x]`. Let me confirm the report has no US-062 claim and inspect the existing model.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/types/CalendarRecurrenceRule.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/types/CalendarRecurrenceOccurrence.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/types/CalendarEventRecord.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/expandCalendarRecurrence.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/parseCalendarRecurrenceRule.ts
+[94m[bash][0m $ grep -rn "RECURRENCE-ID\|recurrenceId\|recurrence_id" packages/twenty-server/src/modules/calendar --...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/types/CalendarRecurrenceWeekday.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/types/CalendarRecurrenceFrequency.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/types/CalendarRecurrenceMonthlyPosition.ts
+[94m[bash][0m $ grep -rln "RECURRENCE-ID\|recurrenceId" packages/twenty-server/src/modules/calendar packages/twenty-...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "recurrenceId\|RECURRENCE-ID\|occurrence" packages/twenty-server/src/modules/calendar/calen...
+[94m[bash][0m $ grep -rln "hashString\|hash.*uuid\|uuid.*hash\|generateUuid" packages/twenty-shared/src/utils | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/types/CalendarEventDraft.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/normalizeWeekStartDay.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/serializeCalendarRecurrenceRule.ts
+[94m[bash][0m $ date -u +%Y-%m-%dT%H:%M:%SZ && date -u +"%Y-%m-%d %H:%M UTC"
+Now I'll claim the slice in the phase report.
+[94m[bash][0m $ printf '\nCLAIMED — US-062/series-occurrence-identity-detach-state-machine — deepseek-v4.1-flash — 2...
+[94m[todowrite][0m
+[94m[write][0m "// The explicit choice a calendar user makes when editing or deleting a
+// recurring event: touch only the occurrence they clicked, or the whole series.
+// `this-occurrence` materializes a per-occurre... (578 chars)"
+[94m[write][0m "import { type CalendarRecurrenceRule } from '@/calendar/types/CalendarRecurrenceRule';
+
+// A recurrence series is its stable identity plus the rule that expands it.
+// `seriesStart` is the DTSTART ins... (517 chars)"
+[94m[write][0m "import { type CalendarEventInput } from '@/calendar/types/CalendarEventDraft';
+
+// A "this occurrence" edit: the occurrence keeps its deterministic identity but
+// is replaced by its own event payload... (517 chars)"
+[94m[write][0m "import { type CalendarDetachedOccurrence } from '@/calendar/types/CalendarDetachedOccurrence';
+import { type CalendarRecurrenceSeries } from '@/calendar/types/CalendarRecurrenceSeries';
+
+// Pure, pers... (838 chars)"
+Now creating the type files:
+[94m[write][0m "// Stable series identity, derived from the anchor (master) event's id — the one
+// value that must survive every later occurrence, rule or time edit. The prefix
+// namespaces the derived id so it can... (454 chars)"
+[94m[write][0m "// Deterministic occurrence identity: series identity + the occurrence's
+// wall-clock day. The day (not the resolved instant) is deliberate — an
+// occurrence must keep its identity across a DST shif... (604 chars)"
+[94m[write][0m "// Canonical ordering for the exception lists. Occurrence ids start with the
+// series id and end with the ISO day, so a plain lexicographic compare is stable
+// and chronological. Kept in one place s... (454 chars)"
+Now the identity builders and comparator:
+[94m[write][0m "import { type CalendarRecurrenceSeriesState } from '@/calendar/types/CalendarRecurrenceSeriesState';
+import { compareCalendarOccurrenceIds } from '@/calendar/utils/compareCalendarOccurrenceIds';
+
+// "... (1143 chars)"
+[94m[write][0m "import { type CalendarDetachedOccurrence } from '@/calendar/types/CalendarDetachedOccurrence';
+import { type CalendarRecurrenceSeriesState } from '@/calendar/types/CalendarRecurrenceSeriesState';
+impo... (1416 chars)"
+Now the state machine:
+[94m[write][0m "import { type CalendarEventInput } from '@/calendar/types/CalendarEventDraft';
+import { type CalendarRecurrenceRule } from '@/calendar/types/CalendarRecurrenceRule';
+import { type CalendarRecurrenceSe... (1841 chars)"
+[94m[write][0m "import { type CalendarRecurrenceSeriesState } from '@/calendar/types/CalendarRecurrenceSeriesState';
+import { skipCalendarOccurrence } from '@/calendar/utils/skipCalendarOccurrence';
+
+// Scope dispatc... (1067 chars)"
+[94m[read][0m
+[94m[write][0m "import { type CalendarRecurrenceRule } from '@/calendar/types/CalendarRecurrenceRule';
+import { buildCalendarOccurrenceId } from '@/calendar/utils/buildCalendarOccurrenceId';
+import { buildCalendarSer... (5857 chars)"
+Now the tests:
+[94m[write][0m "import { type CalendarEventInput } from '@/calendar/types/CalendarEventDraft';
+import { type CalendarRecurrenceRule } from '@/calendar/types/CalendarRecurrenceRule';
+import { type CalendarRecurrenceSe... (10110 chars)"
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/calendar/utils/__tests__/calendarOccurrenceIdentity.test....
+[94m[bash][0m $ echo "tsgo exit=$?"
+[94m[bash][0m $ echo "oxfmt exit=$?"
+[94m[bash][0m $ echo "oxlint exit=$?"
+[94m[bash][0m $ echo "oxfmt exit=$?"
+[94m[bash][0m $ echo "exit=$?"
+[94m[bash][0m $ npx jest --config=packages/twenty-front/jest.config.mjs "src/modules/calendar" 2>&1 | tail -25
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+All gates green. Now writing the phase report and progress entries.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ or executor — US-063 (P4C.3d: persistence/UI wiring of series + skipped/detached occurrences). EOF e...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ a shared `CalendarSeriesEditScope` type alone would erase the discriminant.   - Reused US-052's `Cal...
+[94m[bash][0m $ git status --porcelain && echo "--- claim check ---" && grep -n "US-062" docs/plan/phases/phase-04-r...
+[94m[todowrite][0m
+US-062 P4C.3c implemented as a pure, persistence-free model (no UI, no storage).
+
+**Delivered**
+- Identity: `buildCalendarSeriesId` (namespaced anchor-event id) + `buildCalendarOccurrenceId` (`<seriesId>@<wall-clock day>` — day-keyed so identity survives DST).
+- State machine: `skipCalendarOccurrence` (exclusion), `detachCalendarOccurrence` (override, upsert by occurrence id = retry-idempotent, re-edit replaces), plus scope dispatchers `applyCalendarEventEdit` / `applyCalendarEventDelete` for explicit `this-occurrence` vs `whole-series`.
+- Whole-series edit swaps rule/DTSTART and preserves exceptions; whole-series delete returns `null`. Future-series split intentionally not implemented.
+- Reused US-052's `CalendarEventInput` as the detached payload.
+
+**Gates**
+- `jest` 2 new specs → 26 pass; full `src/modules/calendar` → 17 suites / 164 pass
+- `tsgo -p tsconfig.json --noEmit` → exit 0
+- `oxlint --type-aware` 13 files → 0/0; `oxfmt --check` → clean
+- Phase report + `.ralph-tui/progress.md` appended; PLAN.md untouched; nothing committed
+
+<promise>COMPLETE</promise>

@@ -1,7 +1,4 @@
-// One expanded occurrence of a rule. `day` is the wall-clock date in the anchor
-// zone (the identity a later slice keys detached/skipped occurrences on) and
-// `startsAt` is the resolved ISO-8601 instant.
-export type CalendarRecurrenceOccurrence = {
-  day: string;
-  startsAt: string;
-};
+// Isomorphic recurrence engine lives in twenty-shared so the server stored-path
+// expansion consumes the exact same rule/expansion code as the front. Re-export
+// only — no logic is forked here.
+export { type CalendarRecurrenceOccurrence } from 'twenty-shared/utils';

@@ -496,6 +496,136 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  recurrenceRule: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'recurrenceRule',
+      type: FieldMetadataType.TEXT,
+      label: i18nLabel(
+        msg({ message: `Recurrence rule`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `RFC 5545 rule for a locally-authored recurring event`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconRepeat',
+      isNullable: true,
+      // Raw RRULE text is calendar-owned, not generic-record-editable.
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  recurrenceTimezone: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'recurrenceTimezone',
+      type: FieldMetadataType.TEXT,
+      label: i18nLabel(
+        msg({ message: `Recurrence timezone`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `IANA timezone the recurring wall-clock time is anchored in`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconWorld',
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  recurrenceSeriesId: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'recurrenceSeriesId',
+      type: FieldMetadataType.TEXT,
+      label: i18nLabel(
+        msg({
+          message: `Recurrence series id`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Stable identity shared by a recurring event and its detached occurrences`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconId',
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  recurrenceOccurrenceDay: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'recurrenceOccurrenceDay',
+      type: FieldMetadataType.TEXT,
+      label: i18nLabel(
+        msg({
+          message: `Recurrence occurrence day`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Wall-clock day a detached occurrence replaces in its series`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconCalendarEvent',
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  recurrenceSkippedOccurrenceDays: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'recurrenceSkippedOccurrenceDays',
+      type: FieldMetadataType.TEXT,
+      label: i18nLabel(
+        msg({
+          message: `Recurrence skipped occurrence days`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `JSON array of occurrence days removed from a recurring series`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconCalendarRepeat',
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   calendarChannelEventAssociations: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

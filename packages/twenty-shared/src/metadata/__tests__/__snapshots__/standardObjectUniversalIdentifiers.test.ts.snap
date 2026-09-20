@@ -368,6 +368,21 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "position": {
         "universalIdentifier": "3587323a-e19f-53f6-b6a5-9d2f105302ce",
       },
+      "recurrenceOccurrenceDay": {
+        "universalIdentifier": "20202020-5b4e-4f0a-9c3d-4d5e6f708192",
+      },
+      "recurrenceRule": {
+        "universalIdentifier": "20202020-9c1a-4f7e-8b3d-1a2b3c4d5e6f",
+      },
+      "recurrenceSeriesId": {
+        "universalIdentifier": "20202020-6a3d-4e9f-8b2c-3c4d5e6f7081",
+      },
+      "recurrenceSkippedOccurrenceDays": {
+        "universalIdentifier": "20202020-4c5f-401b-8d4e-5e6f708192a3",
+      },
+      "recurrenceTimezone": {
+        "universalIdentifier": "20202020-7b2c-4d8e-9a1f-2b3c4d5e6f70",
+      },
       "searchVector": {
         "universalIdentifier": "2cbd5b09-fe96-5454-b3fc-92de22702cda",
       },

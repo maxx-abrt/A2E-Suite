@@ -10,6 +10,7 @@ import { MarkPlatformOwnedStandardObjectsSystemCommand } from 'src/database/comm
 import { SyncMessageListRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788639798701-sync-message-list-record-page.command';
 import { AddDuplicateMessageListCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788639976437-add-duplicate-message-list-command-menu-item.command';
 import { EnableStandardCalendarEventUiCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1789903000000-enable-standard-calendar-event-ui.command';
+import { AddCalendarEventRecurrenceFieldsCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1789904000000-add-calendar-event-recurrence-fields.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -42,6 +43,7 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     SyncMessageListRecordPageCommand,
     AddDuplicateMessageListCommandMenuItemCommand,
     EnableStandardCalendarEventUiCommand,
+    AddCalendarEventRecurrenceFieldsCommand,
   ],
 })
 export class V2_39_UpgradeVersionCommandModule {}

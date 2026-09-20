@@ -19,6 +19,14 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   iCalUid: string | null;
   conferenceSolution: string | null;
   conferenceLink: LinksMetadata;
+  // Local recurrence (never provider-synced): the anchor carries the rule, zone
+  // and skipped days; a detached occurrence carries the same series id plus the
+  // wall-clock day it replaces.
+  recurrenceRule: string | null;
+  recurrenceTimezone: string | null;
+  recurrenceSeriesId: string | null;
+  recurrenceOccurrenceDay: string | null;
+  recurrenceSkippedOccurrenceDays: string | null;
   // Creator actor: local (channel-less) events are owned by the workspace member
   // that created them, which the calendar visibility filter resolves by id.
   createdBy: ActorMetadata;

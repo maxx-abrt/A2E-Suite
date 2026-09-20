@@ -77,6 +77,32 @@ describe('CalendarEvent standard metadata build', () => {
     }
   });
 
+  it('adds local recurrence fields without making them provider-writable UI fields', () => {
+    const fieldByUniversalIdentifier =
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier;
+
+    const recurrenceFieldNames = [
+      'recurrenceRule',
+      'recurrenceTimezone',
+      'recurrenceSeriesId',
+      'recurrenceOccurrenceDay',
+      'recurrenceSkippedOccurrenceDays',
+    ] as const;
+
+    for (const fieldName of recurrenceFieldNames) {
+      const field =
+        fieldByUniversalIdentifier[
+          STANDARD_OBJECTS.calendarEvent.fields[fieldName].universalIdentifier
+        ];
+
+      expect(field).toBeDefined();
+      // Local recurrence is calendar-owned: the generic record UI never edits it
+      // and provider sync never writes it (D5.4 capability matrix).
+      expect(field?.isUIEditable).toBe(false);
+      expect(field?.isNullable).toBe(true);
+    }
+  });
+
   it('uses the important calendar event detail fields on the record page', () => {
     const recordPageViewFields = Object.values(
       allFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier,

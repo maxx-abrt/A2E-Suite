@@ -331,6 +331,21 @@ export const STANDARD_OBJECT_FIELDS = {
     conferenceLink: {
       universalIdentifier: '20202020-35da-43ef-9ca0-e936e9dc237b',
     },
+    recurrenceRule: {
+      universalIdentifier: '20202020-9c1a-4f7e-8b3d-1a2b3c4d5e6f',
+    },
+    recurrenceTimezone: {
+      universalIdentifier: '20202020-7b2c-4d8e-9a1f-2b3c4d5e6f70',
+    },
+    recurrenceSeriesId: {
+      universalIdentifier: '20202020-6a3d-4e9f-8b2c-3c4d5e6f7081',
+    },
+    recurrenceOccurrenceDay: {
+      universalIdentifier: '20202020-5b4e-4f0a-9c3d-4d5e6f708192',
+    },
+    recurrenceSkippedOccurrenceDays: {
+      universalIdentifier: '20202020-4c5f-401b-8d4e-5e6f708192a3',
+    },
     calendarChannelEventAssociations: {
       universalIdentifier: '20202020-bdf8-4572-a2cc-ecbb6bcc3a02',
     },

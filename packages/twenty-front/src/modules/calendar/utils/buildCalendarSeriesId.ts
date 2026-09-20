@@ -1,9 +1,4 @@
-// Stable series identity, derived from the anchor (master) event's id — the one
-// value that must survive every later occurrence, rule or time edit. The prefix
-// namespaces the derived id so it can never collide with a plain event id when
-// the persistence slice stores it next to real records.
-export const buildCalendarSeriesId = ({
-  seriesAnchorEventId,
-}: {
-  seriesAnchorEventId: string;
-}): string => `calendar-series#${seriesAnchorEventId}`;
+// Isomorphic recurrence engine lives in twenty-shared so the server stored-path
+// expansion consumes the exact same rule/expansion code as the front. Re-export
+// only — no logic is forked here.
+export { buildCalendarSeriesId } from 'twenty-shared/utils';
