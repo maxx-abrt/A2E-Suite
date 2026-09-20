@@ -26,6 +26,9 @@ export class CalendarEventFindOnePostQueryHook implements WorkspacePostQueryHook
   ): Promise<void> {
     const isUserContext = isUserAuthContext(authContext);
     const userId = isUserContext ? authContext.user.id : undefined;
+    const workspaceMemberId = isUserContext
+      ? authContext.workspaceMemberId
+      : undefined;
 
     // TODO: this check should be removed
     if (
@@ -48,6 +51,7 @@ export class CalendarEventFindOnePostQueryHook implements WorkspacePostQueryHook
       payload,
       workspace.id,
       userId,
+      workspaceMemberId,
     );
   }
 }

@@ -223,7 +223,9 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconCalendar',
         isSystem: true,
         isAuditLogged: false,
-        isUICreatable: false,
+        // Local (channel-less) events are created through the standard record
+        // UI; provider-synced events still arrive through the import pipeline.
+        isUICreatable: true,
         labelIdentifierFieldMetadataName: 'title',
       },
       workspaceId,

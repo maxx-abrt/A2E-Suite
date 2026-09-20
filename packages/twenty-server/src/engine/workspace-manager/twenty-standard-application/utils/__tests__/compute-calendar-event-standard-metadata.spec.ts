@@ -29,6 +29,54 @@ describe('CalendarEvent standard metadata build', () => {
     ).toBeDefined();
   });
 
+  it('exposes the standard record UI for local (channel-less) events', () => {
+    const calendarEventObject =
+      allFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.calendarEvent.universalIdentifier
+      ];
+
+    expect(calendarEventObject?.isUICreatable).toBe(true);
+    expect(calendarEventObject?.isUIEditable).toBe(true);
+
+    const fieldByUniversalIdentifier =
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier;
+
+    const locallyEditableFieldNames = [
+      'title',
+      'description',
+      'location',
+      'startsAt',
+      'endsAt',
+      'isFullDay',
+      'isCanceled',
+    ] as const;
+
+    for (const fieldName of locallyEditableFieldNames) {
+      expect(
+        fieldByUniversalIdentifier[
+          STANDARD_OBJECTS.calendarEvent.fields[fieldName].universalIdentifier
+        ]?.isUIEditable,
+      ).toBe(true);
+    }
+
+    // Provider-synced metadata stays read-only for the standard record UI.
+    const providerOwnedFieldNames = [
+      'iCalUid',
+      'externalCreatedAt',
+      'externalUpdatedAt',
+      'conferenceSolution',
+      'conferenceLink',
+    ] as const;
+
+    for (const fieldName of providerOwnedFieldNames) {
+      expect(
+        fieldByUniversalIdentifier[
+          STANDARD_OBJECTS.calendarEvent.fields[fieldName].universalIdentifier
+        ]?.isUIEditable,
+      ).toBe(false);
+    }
+  });
+
   it('uses the important calendar event detail fields on the record page', () => {
     const recordPageViewFields = Object.values(
       allFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier,

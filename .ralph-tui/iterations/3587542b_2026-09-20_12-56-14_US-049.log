@@ -1,0 +1,156 @@
+# Iteration 3 Log
+
+## Metadata
+
+- **Task ID**: US-049
+- **Task Title**: P4.2 remainder — dependency-edge decision + dependency picker with cycle validation
+- **Description**: As a user planning project tasks, I want a dependency picker with cycle validation on the decided dependency edge, so that blocked-by relationships are real task-to-task links that can never form a cy...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-20T10:56:14.306Z
+- **Ended At**: 2026-09-20T11:01:10.725Z
+- **Duration**: 4m 56s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "US-049" PLAN.md
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -rn "US-049" PLAN.md tasks/prd.json docs/ 2>/dev/null | head -50
+[94m[bash][0m $ grep -n "P4.2\|Subtasks & dependencies\|dependency picker\|blockIssue" PLAN.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -n "US-049\|dependency-picker\|dependency picker\|CLAIMED" docs/plan/phases/phase-04-report.md ...
+[94m[bash][0m $ grep -n "a2e-projects\|dependency\|cycle\|blockIssue\|parentTask" .ralph-tui/progress.md | head -40
+[94m[bash][0m $ tail -80 docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/ && echo "---SRC---" && ls packages/twenty-apps/intern...
+[94m[bash][0m $ date -u +%Y-%m-%dT%H:%M:%SZ && echo "---" && ls packages/twenty-apps/internal/a2e-projects/src/field...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/README.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/task-subtask.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/task-subtasks.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/task-block-issue.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/task-tree.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/front-components/ && echo "---TESTS---" && ls pack...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[read][0m
+[94m[bash][0m $ grep -n "dependency-picker decision\|dependency edge\|executor — dependency" docs/plan/phases/phase-...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/page-layouts/ && echo "---COMMAND---" && ls packag...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-tree.test.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/constants/ 2>/dev/null
+[94m[bash][0m $ grep -rln "document.*cycle\|parentCycle\|isDocumentParentCycle" packages/twenty-apps/internal/a2e-do...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/document-cycle.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/package.json
+[94m[bash][0m $ echo "EXIT $?"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ grep -n "task\|field\|FIELD\|blockIssue\|parentTask" packages/twenty-apps/internal/a2e-projects/src/...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "55\|ownedFields.length\|fieldById.size\|frontComponentIds\|COMMAND_MENU\|command-menu\|fron...
+[94m[todowrite][0m
+[94m[bash][0m $ date -u +%Y-%m-%dT%H:%M:%SZ
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ tail -8 docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ grep -rn "c31b0100-0002-4000-8000-00000000000\|c31b0201-0001-4000-8000-00000000000b\|c31b0000-0013-4...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[bash][0m $ grep -in "block\|depend\|hierarchy\|link\|arrow" packages/twenty-ui/src/icon/icon-dictionary.md | he...
+[94m[bash][0m $ grep -rn "icon:" packages/twenty-apps/internal/a2e-projects/src/fields/ packages/twenty-apps/interna...
+[94m[bash][0m $ ls packages/twenty-sdk/src/define/ 2>/dev/null
+[94m[bash][0m $ grep -n "IconGitBranch\b\|IconArrowUp\b\|IconArrowDownRight\b" packages/twenty-ui/src/icon/providers...
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  OnDeleteAction,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import {
+  RELATION_IDS,
+  TASK_FIELD_IDS,
+} from '../const... (1314 chars)"
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import {
+  RELATION_IDS,
+  TASK_FIELD_IDS,
+} from '../constants/universal-ide... (926 chars)"
+[94m[write][0m "// Pure rules of the task dependency edge and its picker cycle guard.
+//
+// The dependency comes from the task self-relation (task.blockedBy ➜ task):
+// the foreign key lives on the blocked task, so f... (4624 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  buildTaskDependencyPayload,
+  collectTaskDependencyCandidates,
+  collectTaskDependencyIdMap,
+  isTaskDependencyCy... (5250 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  buildTaskDependencyPayload,
+  collectTaskDependencyCandidates,
+  collectTaskDependencyIdMap,
+  isTaskDependencyCy... (5100 chars)"
+[94m[edit][0m
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/task-dependencies.test.ts"
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[write][0m "import { useCallback, useEffect, useMemo, useState } from 'react';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { AppPath, n... (7570 chars)"
+[94m[write][0m "import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+import {
+  COMMAND_MENU_ITEM_IDS,
+  FRONT_COMPONENT_IDS,
+} from '../constants/universal-identifiers.ts';
+
+// Opens the dependency picker. GL... (652 chars)"
+[94m[bash][0m $ grep -rn "COMMAND_MENU_ITEM_IDS\|command-menu-items\|openSubtasks\|FRONT_COMPONENT_IDS" packages/twe...
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -30
+[94m[bash][0m $ echo "TYPECHECK_EXIT=$?"
+[94m[bash][0m $ echo "LINT_EXIT=$?"
+[94m[bash][0m $ echo "BUILD_EXIT=$?"
+[94m[bash][0m $ ls -R .twenty/output 2>/dev/null | head -40
+[94m[bash][0m $ grep -o "blockedBy\|blockedById\|c31b0000-0011-4000-8000-000000000009\|c31b0000-0013-4000-8000-00000...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ echo "DOCS_EXIT=$?"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain
+[94m[todowrite][0m
+US-049 implemented and self-verified.
+
+**Decision (recorded first):** dependency edge = new additive `task.blockedBy` self-relation; `blockIssue` (task→note) left untouched.
+
+**Shipped:** `task-blocked-by`/`task-blocks` fields, pure `lib/task-dependencies.ts` cycle guard, `task-dependencies` picker front component + command item, 9 new unit tests + integrity/command registry updates.
+
+**Gates:** `yarn test:unit` 259/259, targeted `node --test` 9/9, `yarn typecheck` 0, `yarn lint` 0 errors (1 pre-existing), `npx twenty dev:build .` 40 files, docs check PASS. Tier 2 install/browser proof listed as Missing; PLAN.md untouched, nothing committed.
+
+<promise>COMPLETE</promise>

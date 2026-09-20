@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import groupBy from 'lodash.groupby';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
-import { CalendarChannelVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
@@ -14,6 +12,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
+import { resolveCalendarEventVisibility } from 'src/modules/calendar/common/utils/resolve-calendar-event-visibility.util';
 
 @Injectable()
 export class ApplyCalendarEventsVisibilityRestrictionsService {
@@ -31,6 +30,7 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
     calendarEvents: CalendarEventWorkspaceEntity[],
     workspaceId: string,
     userId?: string,
+    workspaceMemberId?: string,
   ) {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -41,12 +41,14 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
             'calendarChannelEventAssociation',
           );
 
+        const eventIds = calendarEvents.map((event) => event.id);
+
         const calendarChannelCalendarEventsAssociations =
-          await calendarChannelEventAssociationRepository.find({
-            where: {
-              calendarEventId: In(calendarEvents.map((event) => event.id)),
-            },
-          });
+          eventIds.length > 0
+            ? await calendarChannelEventAssociationRepository.find({
+                where: { calendarEventId: In(eventIds) },
+              })
+            : [];
 
         const calendarChannelIds = [
           ...new Set(
@@ -66,64 +68,58 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
               })
             : [];
 
-        const calendarChannelMap = new Map(
-          calendarChannelsFromCore.map((channel) => [channel.id, channel]),
+        const ownedConnectedAccountIds =
+          await this.findOwnedConnectedAccountIds(userId, workspaceId);
+
+        const eventIdsWithAssociation = new Set(
+          calendarChannelCalendarEventsAssociations.map(
+            (association) => association.calendarEventId,
+          ),
         );
 
+        const creatorWorkspaceMemberIdByEventId =
+          await this.findCreatorWorkspaceMemberIdByEventId(
+            eventIds.filter((eventId) => !eventIdsWithAssociation.has(eventId)),
+          );
+
         for (let i = calendarEvents.length - 1; i >= 0; i--) {
-          const associations = calendarChannelCalendarEventsAssociations.filter(
-            (association) =>
-              association.calendarEventId === calendarEvents[i].id,
-          );
+          const event = calendarEvents[i];
 
-          const calendarChannels = associations
+          const eventAssociations =
+            calendarChannelCalendarEventsAssociations.filter(
+              (association) => association.calendarEventId === event.id,
+            );
+
+          const channelAccesses = eventAssociations
             .map((association) =>
-              calendarChannelMap.get(association.calendarChannelId),
+              calendarChannelsFromCore.find(
+                (channel) => channel.id === association.calendarChannelId,
+              ),
             )
-            .filter(isDefined);
+            .filter(isDefined)
+            .map((channel) => ({
+              visibility: channel.visibility,
+              isOwnedByCurrentUser: ownedConnectedAccountIds.has(
+                channel.connectedAccountId,
+              ),
+            }));
 
-          const calendarChannelsGroupByVisibility = groupBy(
-            calendarChannels,
-            (channel) => channel.visibility,
-          );
+          const isCreatedByCurrentUser =
+            isDefined(workspaceMemberId) &&
+            creatorWorkspaceMemberIdByEventId.get(event.id) ===
+              workspaceMemberId;
 
-          if (
-            calendarChannelsGroupByVisibility[
-              CalendarChannelVisibility.SHARE_EVERYTHING
-            ]
-          ) {
+          const visibility = resolveCalendarEventVisibility({
+            hasChannelAssociation: eventAssociations.length > 0,
+            channelAccesses,
+            isCreatedByCurrentUser,
+          });
+
+          if (visibility === 'FULL') {
             continue;
           }
 
-          if (isDefined(userId)) {
-            const userWorkspace = await this.userWorkspaceRepository.findOne({
-              where: { userId, workspaceId },
-              select: ['id'],
-            });
-
-            if (userWorkspace) {
-              const connectedAccounts =
-                await this.connectedAccountRepository.find({
-                  where: {
-                    calendarChannels: {
-                      id: In(calendarChannels.map((channel) => channel.id)),
-                    },
-                    userWorkspaceId: userWorkspace.id,
-                    workspaceId,
-                  },
-                });
-
-              if (connectedAccounts.length > 0) {
-                continue;
-              }
-            }
-          }
-
-          if (
-            calendarChannelsGroupByVisibility[
-              CalendarChannelVisibility.METADATA
-            ]
-          ) {
+          if (visibility === 'REDACTED') {
             calendarEvents[i].title =
               FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
             calendarEvents[i].description =
@@ -138,6 +134,58 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
       },
       authContext,
       { lite: true },
+    );
+  }
+
+  private async findOwnedConnectedAccountIds(
+    userId: string | undefined,
+    workspaceId: string,
+  ): Promise<Set<string>> {
+    if (!isDefined(userId)) {
+      return new Set();
+    }
+
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { userId, workspaceId },
+      select: ['id'],
+    });
+
+    if (!isDefined(userWorkspace)) {
+      return new Set();
+    }
+
+    const connectedAccounts = await this.connectedAccountRepository.find({
+      where: { userWorkspaceId: userWorkspace.id, workspaceId },
+      select: { id: true },
+    });
+
+    return new Set(connectedAccounts.map((account) => account.id));
+  }
+
+  // Local events carry no channel association, so their creator (the owner) is
+  // read from the record's created-by actor. Only fetched for those rows, and
+  // through the ORM directly so the post-query hook cannot recurse into itself.
+  private async findCreatorWorkspaceMemberIdByEventId(
+    channelLessEventIds: string[],
+  ): Promise<Map<string, string | null>> {
+    if (channelLessEventIds.length === 0) {
+      return new Map();
+    }
+
+    const calendarEventRepository =
+      this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
+        'calendarEvent',
+      );
+
+    const calendarEventsWithoutChannel = await calendarEventRepository.find({
+      where: { id: In(channelLessEventIds) },
+    });
+
+    return new Map(
+      calendarEventsWithoutChannel.map((calendarEvent) => [
+        calendarEvent.id,
+        calendarEvent.createdBy?.workspaceMemberId ?? null,
+      ]),
     );
   }
 }

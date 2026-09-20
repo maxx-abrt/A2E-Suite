@@ -3,10 +3,10 @@
   "sessionId": "3587542b-3e4d-4de5-8ce6-62fbbaa47b5e",
   "status": "running",
   "startedAt": "2026-09-20T10:40:42.265Z",
-  "updatedAt": "2026-09-20T11:01:10.725Z",
-  "currentIteration": 2,
+  "updatedAt": "2026-09-20T11:19:39.375Z",
+  "currentIteration": 3,
   "maxIterations": 20,
-  "tasksCompleted": 2,
+  "tasksCompleted": 3,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -36,6 +36,16 @@
       "durationMs": 54977,
       "startedAt": "2026-09-20T10:55:13.765Z",
       "endedAt": "2026-09-20T10:56:08.742Z"
+    },
+    {
+      "iteration": 3,
+      "status": "completed",
+      "taskId": "US-049",
+      "taskTitle": "P4.2 remainder — dependency-edge decision + dependency picker with cycle validation",
+      "taskCompleted": true,
+      "durationMs": 296419,
+      "startedAt": "2026-09-20T10:56:14.306Z",
+      "endedAt": "2026-09-20T11:01:10.725Z"
     }
   ],
   "skippedTaskIds": [],

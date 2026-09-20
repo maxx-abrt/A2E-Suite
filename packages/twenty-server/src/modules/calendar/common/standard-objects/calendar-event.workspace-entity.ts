@@ -1,4 +1,4 @@
-import { type LinksMetadata } from 'twenty-shared/types';
+import { type ActorMetadata, type LinksMetadata } from 'twenty-shared/types';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
@@ -19,6 +19,9 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   iCalUid: string | null;
   conferenceSolution: string | null;
   conferenceLink: LinksMetadata;
+  // Creator actor: local (channel-less) events are owned by the workspace member
+  // that created them, which the calendar visibility filter resolves by id.
+  createdBy: ActorMetadata;
   calendarChannelEventAssociations: EntityRelation<
     CalendarChannelEventAssociationWorkspaceEntity[]
   >;

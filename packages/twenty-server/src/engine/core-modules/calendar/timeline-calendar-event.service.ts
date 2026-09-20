@@ -283,8 +283,15 @@ export class TimelineCalendarEventService {
 
         const participants = await Promise.all(participantPromises);
 
-        const hasFullAccess = event.calendarChannelEventAssociations.some(
-          (association) => {
+        // A channel-less event is local: its creator owns it. Otherwise the same
+        // per-channel visibility as imported events applies.
+        const isOwnedLocalEvent =
+          event.calendarChannelEventAssociations.length === 0 &&
+          event.createdBy?.workspaceMemberId === currentWorkspaceMemberId;
+
+        const hasFullAccess =
+          isOwnedLocalEvent ||
+          event.calendarChannelEventAssociations.some((association) => {
             const channel = calendarChannelMap.get(
               association.calendarChannelId,
             );
@@ -293,8 +300,7 @@ export class TimelineCalendarEventService {
               channel?.visibility === 'SHARE_EVERYTHING' ||
               channel?.isOwnedByCurrentUser
             );
-          },
-        );
+          });
 
         const visibility = hasFullAccess
           ? CalendarChannelVisibility.SHARE_EVERYTHING
