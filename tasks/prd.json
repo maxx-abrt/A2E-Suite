@@ -1,368 +1,219 @@
 {
-  "name": "A2E Suite — Tier 0/1 batch II: stability & usability (dependency-ready, Twenty-native reuse)",
-  "description": "Executor batch extracted from PLAN.md (reconciled 2026-09-19 ledger). Scope rule: only `[ ]`/`[~]` bullets whose own dependency references are `[x]`/DONE, implementation + unit-test work only (Tier 0/1 per the executor contract; no running app, no browser/e2e/multi-session, no 621-spec sweep). Maximal reuse of existing Twenty primitives (views, settings surfaces, command menu, context-store, tool registry, native import/export, template service) — no parallel systems. Deferred — needs orchestrator (Tier 2, NOT in this batch): P1.1 uninstall live proof; P1.3 e2e preset journey; P1.7c E01–E04/E12; P2.1 Redis fan-out across instances + real-session integration tests (note: P2.1 bullets 1/3 overlap P0.3 DONE work — orchestrator to reconcile); P2.4 dock/tab browser E2E; P2.5 live provider validation + p95<150ms budget; P3.2 comment-reload/second-session leg + nonempty-export browser leg + share absolute-URL (needs SDK pin decision); P4.1 installed relations/permissions/layouts live validation; P4.2 Gantt DOM render + 1k-task benchmark, time-tracker DOM heartbeat, live app-installed searchAppRecords re-proof; P5 with-db integration suite execution + two-session live chat; P6 live install/upload/preview proofs; P8 live socket/badge + live email delivery; P9 live dispatch proofs (assistant, chat PRIVATE denial, drive, projects, recipe materialization, suggestions browser); P10 performance profiling + final regression (full e2e, clean-2.39 upgrade chain, uninstall-everything); P0 leftover full 621-spec sweep (chunked) + prod-composition checks. Deferred — blocked upstream: ALL P7 bullets (P7.0 gate BLOCKED/UNVERIFIED live: replay/numbering/rounding/period-close/alternate-API proofs, live iban-denial proof, reviewer sign-off, D03/D04); P1.6d Bilan sheet/fiche legs (P7 + seeding); P1.6e, P1.7a, P1.7b remaining legs (literal dep P1.6c open); P3.4 all three bullets (gated on durable-save acceptance / feasibility check / explicitly deferred); P4.2 retroplanning (after P4.1, not [x]) and dependency-picker completion (maintainer decision: blockIssue is task→note); P4.3 calendar links (P4C.5 owns); P4C.2 (P4C.1 §10 product confirmation pending) and chained P4C.3/4/5; P9.2 Accounting AI + Projects AI suggestion layer (P9.1/P7-gated); P9.3 workflow-recipe and suggestions remaining legs (P7 + Tier 2).",
-  "branchName": "ralph/a2e-tier01-stability-usability",
+  "name": "A2E Suite — batch 4: remaining unlocked executor slices (Tier 0/1)",
+  "description": "Extraction of every PLAN.md [ ]/[~] bullet across P1–P10 whose literal (after X) dependencies are [x]/DONE and whose remaining acceptance is executable at Tier 0/1 (no running app, no browser/e2e, no app install). tasks/prd.json was empty at extraction time, so no task IDs were excluded as duplicates; story IDs continue at US-047 to avoid colliding with US-001..US-046 already referenced in PLAN.md annotations and phase reports. Slices already implemented done-for-review by batches US-026..US-046 but not yet orchestrator-ticked are deliberately NOT re-extracted — their leftover legs are Tier 2 and are listed in the PRD's deferral notes.",
+  "branchName": "ralph/a2e-batch-4-unlocked-executor-slices",
   "userStories": [
     {
-      "id": "US-026",
-      "title": "[P1.6c] Unified setup UI — preview apps/prerequisites/samples/customization, blank/CRM, optional app exclusion (both entrypoints)",
-      "description": "As a workspace owner, I want onboarding and Settings to preview exactly what a template will apply before anything is installed, so that I can choose blank/CRM or exclude optional apps with full knowledge.",
+      "id": "US-047",
+      "title": "P1.6c remainder — distinct no-apps / network / permission error surfaces for the unified setup operation",
+      "description": "As a user setting up or re-templating a workspace, I want no-apps-available, network-error and permission-denial failures to be visibly distinct when I preview or apply a template, so that I never lose my template choice and always know what actually failed.",
       "acceptanceCriteria": [
-        "PLAN.md P1.6c verbatim: 'preview apps, prerequisites, samples and customization; allow blank/CRM, optional app exclusion' — the preview shows resolved apps (install/keep/unavailable), prerequisites, optional samples and customization before any apply",
-        "Both entrypoints (onboarding template step and Settings → workspace template) call the same P1.6b setup operation — C2 verbatim: 'Unify preset and manual app selection into one resolved request; no double install path.'",
-        "C1 verbatim: 'Unavailable optional apps can be excluded; required dependency errors block only the affected bundle.'",
-        "Built on existing Twenty front primitives (existing InstallApps onboarding page patterns, Settings sections, navigation) — no parallel setup UI, no new shell",
-        "Front unit suites cover preview resolution states (install/keep/unavailable), exclusion toggles and entrypoint parity; no browser run"
+        "C2 contract (PLAN.md, verbatim): \"No apps available, network error and permission denial must have distinct UI, without losing template choice.\"",
+        "`ApplyTemplateErrorCode` gains the missing codes additively (permission / no-apps-available discriminator) so preview and apply results can tell the three failure kinds apart — the server contract addition US-027 recorded as a separate slice (\"the preview query exposes no error discriminator (`useWorkspaceTemplatePreview` returns `error` but the component renders the same 'Preview unavailable' panel), and `ApplyTemplateErrorCode` has no permission code\")",
+        "The preview/apply front components render a distinct panel per failure kind (no apps available vs network error vs permission denial) instead of the single \"Preview unavailable\" panel, and the template choice is preserved in all three",
+        "Empty-catalogue protection stays intact (US-027): `shouldAutoSkipInstallAppsStep` cannot auto-skip on an errored catalogue — template choice cannot be discarded",
+        "P1.6c bullet (PLAN.md, verbatim) remains satisfied by the existing US-026/US-027 work — reuse it, do not rebuild: \"preview apps, prerequisites, samples and customization; allow blank/CRM, optional app exclusion, continue with successful steps and retry later. Empty catalogue cannot discard template choice. Both entrypoints use the same operation.\"",
+        "Additive only: no rename/removal of existing error codes, DTO fields or GraphQL surface; hand-written preview/operation documents stay in place (the `graphql:generate` switch is orchestrator Tier 2)",
+        "Starting state: partial — US-026 (preview resolved states) and US-027 (partial-failure truth + retry + empty-catalogue) are done-for-review in docs/plan/phases/phase-01-report.md; this story is that report's explicitly named next executor slice",
+        "A dated executor report is appended to docs/plan/phases/phase-01-report.md; PLAN.md is not edited; nothing is committed",
+        "Tier 0: `npx nx lint:diff-with-main <touched-pkg>` passes (add --configuration=fix to auto-fix)",
+        "Tier 0: `npx tsgo -p tsconfig.json --noEmit` passes inside each touched package",
+        "Tier 0: `npx jest <touched-spec> --config=packages/<pkg>/jest.config.mjs` passes for every spec added or edited",
+        "Tier 0: if `twenty-shared` is touched, `npx nx build twenty-shared --skip-nx-cache` passes first",
+        "No Tier 2 checks (no `yarn start`, no browser journey, no `app:publish`/`app:install`, no live schema regen) — list them as Missing for tick"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "PLAN.md:583 (P1.6c `[ ]`, not-started). Deps met: P1.6b verified 2026-09-19 (US-016/017/018). Unlocks P1.6e/P1.7a/P1.7b remaining legs. Tier-2 browser journey deferred to orchestrator.",
+      "notes": "PLAN task P1.6c (after P1.6b, which is [x] verified 2026-09-19). Starting state: partial — two of three P1.6c executor legs shipped done-for-review (US-026/US-027, phase-01-report); this is the third named slice. Remaining after this story: Tier-2 schema regen + live onboarding/Settings browser journey (orchestrator).",
       "dependsOn": [],
       "completionNotes": "Completed by agent"
     },
     {
-      "id": "US-027",
-      "title": "[P1.6c] Partial-failure UX — continue with successful steps, retry later, empty-catalogue protection",
-      "description": "As a workspace owner whose setup partially failed, I want to see exactly what failed and continue or retry later, so that successful work is kept and my template choice is never silently discarded.",
+      "id": "US-048",
+      "title": "P3.4 gate — native-primitive/license feasibility check for advanced authoring blocks (report-only)",
+      "description": "As a maintainer deciding the authoring backlog, I want the native-primitive/license feasibility check recorded per candidate block, so that advanced controls are staged on evidence and unsupported features are explicitly deferred rather than silently accepted.",
       "acceptanceCriteria": [
-        "PLAN.md P1.6c verbatim: 'continue with successful steps and retry later. Empty catalogue cannot discard template choice.'",
-        "C2 verbatim: 'Partial failure keeps successful work, shows exactly what failed, allows retry/skip optional steps, and never reports the entire preset applied.'",
-        "C2 verbatim: 'No apps available, network error and permission denial must have distinct UI, without losing template choice.'",
-        "Retry revalidates permissions and versions on resume (C2) and reuses the same operation; per-step status (pending/running/succeeded/failed/skipped) rendered truthfully from the P1.6b operation result",
-        "Front unit suites cover the failure/retry/skip states and the empty-catalogue protection; no browser run"
+        "Feasibility check recorded per candidate block from the PLAN.md bullet (verbatim list): \"embedded native record views, charts, math/diagrams, multi-column authoring, text review accept/reject, font/page-layout/export controls\" — for each: native-primitive availability in the current codebase, license compatibility, and an implementation sketch or a defer recommendation",
+        "\"PDF/DOCX fidelity is required; reference ODT export is deferred pending this feasibility review, not overlooked\" (PLAN.md verbatim) — the record states both explicitly",
+        "\"Stage behind advanced controls; never import reference packages or invent a JSON database engine\" (PLAN.md verbatim) — recorded as binding constraints on any follow-up implementation",
+        "\"Each supported block must round-trip save/reload/export; unsupported features remain explicitly deferred, not silently accepted\" (PLAN.md verbatim) — each recommended item carries its round-trip obligation; every non-recommended item has an explicit defer entry with the reason",
+        "No `Inspiration apps (bureaubilan)` code is read, run, imported or copied — feature ideas only (reference boundary)",
+        "Report-only: findings appended to docs/plan/phases/phase-03-report.md (P4C.1 spike precedent); no product code, no schema/GraphQL change, no PLAN.md edit, nothing committed",
+        "Starting state: not-started — this check is the stated precondition of the P3.4 backlog bullet and has never been performed",
+        "Docs gate: `node docs/scripts/check-docs.mjs` passes",
+        "Tier 0: `npx tsgo -p tsconfig.json --noEmit` and targeted jest for any touched package (expected: none — docs only); `npx nx lint:diff-with-main <pkg>` N/A if no package touched, say so explicitly",
+        "No Tier 2 checks — list them as Missing for tick"
       ],
       "priority": 2,
-      "passes": true,
-      "notes": "PLAN.md:583 (P1.6c `[ ]`). Builds on US-026's preview surface; C2 contract is the binding spec (docs/plan/05-template-contracts.md).",
-      "dependsOn": [
-        "US-026"
-      ],
-      "completionNotes": "Completed by agent"
+      "passes": false,
+      "notes": "PLAN task P3.4 second bullet's internal precondition. Starting state: not-started (the bullet is gated on this check). Report-only, mirroring the P4C.1 spike pattern. Unlocks the P3.4 advanced-authoring decision (D07) without committing to any implementation.",
+      "dependsOn": []
     },
     {
-      "id": "US-028",
-      "title": "[P1.3] Fix post-install delegated seeding completing with 0 rows — truthful step status",
-      "description": "As a workspace owner applying a preset, I want post-install sample/starter seeding to actually write its rows and report failure truthfully, so that 'succeeded (delegated)' never over-reports a broken install.",
+      "id": "US-049",
+      "title": "P4.2 remainder — dependency-edge decision + dependency picker with cycle validation",
+      "description": "As a user planning project tasks, I want a dependency picker with cycle validation on the decided dependency edge, so that blocked-by relationships are real task-to-task links that can never form a cycle.",
       "acceptanceCriteria": [
-        "PLAN.md P1.3 verbatim scope: 'Complete preset orchestration through existing server service (not a new logic-function): partial-state reporting, owned navigation and optional samples' — the remaining leg is the recorded live seeding failure",
-        "Ledger verbatim: 'live scratch shows app post-install hooks completing while seeding 0 rows (phase-01-report 2026-09-16 orchestrator entry) — \"succeeded (delegated)\" can over-report until the hook failure is fixed'",
-        "Root-cause the 0-rows failure and fix it inside the existing workspace-template service / app post-install hooks — no new logic-function, no new table, no parallel seeding system",
-        "A delegated seeding step that wrote 0 rows cannot report succeeded — it reports failed/skipped with a safe, localized reason (C2 truthful per-step status)",
-        "Regression unit tests reproduce the 0-rows path and assert row-count-truthful statuses; the existing 15/15 partial-state spec batch stays green; fix is additive (no preset behavior change for already-working paths)",
-        "The P1.6d Bilan starter hook shares this code path and is covered by the fix, but Bilan bundle content itself stays out of scope (P7 gate)"
+        "The dependency-edge decision is recorded FIRST in docs/plan/phases/phase-04-report.md with rationale (phase-04 orchestrator next-step, verbatim: \"executor — dependency-picker decision (`blockIssue` task→note vs new self-relation) then the picker\") — PLAN.md caveat verbatim: \"`blockIssue` is task→note so the dependency edge needs a maintainer decision before the picker\"",
+        "Dependency picker implemented with cycle validation; cycles denied (PLAN.md bullet verbatim: \"Subtasks & dependencies UI: nested list + dependency picker with cycle validation\")",
+        "If a self-relation is chosen it is a NEW additive app-owned field on task (no rename/removal of `blockIssue` or any existing field; no third status; no sync workflow) — following the app-owned relation precedents in .ralph-tui/progress.md Codebase Patterns",
+        "The nested-list slice stays untouched and reused (2026-09-17 orchestrator: \"nested list slice live (roots via `parentTask: {is:NULL}`, children via `parentTask {id}`, reparent write verified)\") — do not rebuild it",
+        "Cycle validation is unit-tested: self-dependency, two-node cycle, deep cycle, and a valid chain all behave correctly (pure decision lib + injected-free signature so node --test covers it without a server, per the document-revision-cas precedent)",
+        "Starting state: partial — nested list live; picker and edge decision not built (Current-state ledger: \"dependency/time integrity\" still needed)",
+        "A dated executor report is appended to docs/plan/phases/phase-04-report.md; PLAN.md is not edited; nothing is committed",
+        "Tier 0 app gates: `yarn typecheck && yarn lint && npx twenty dev:build .` pass in packages/twenty-apps/internal/a2e-projects (not an Nx project — `nx lint:diff-with-main` is N/A, say so)",
+        "Tier 0: `yarn test:unit` passes in the app; targeted `node --test --experimental-strip-types <new-spec>` passes",
+        "No Tier 2 checks (no live install, no browser) — list them as Missing for tick"
       ],
       "priority": 3,
-      "passes": true,
-      "notes": "PLAN.md:540-547 (P1.3 `[~]`, partial: partial states + delegated sample-seeding shipped, spec 15/15). Stability-critical: blocks truthful P1.6d seeding. Live scratch re-proof stays Tier 2 (orchestrator).",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
+      "passes": false,
+      "notes": "PLAN task P4.2 bullet \"Subtasks & dependencies UI\" [~]. Starting state: partial (nested list done, picker + decision open). The phase-04 orchestrator's own next-step delegates the edge decision to an executor brief, so this is not maintainer-blocked. Depends on nothing outside a2e-projects.",
+      "dependsOn": []
     },
     {
-      "id": "US-029",
-      "title": "[P1.6d] Persona starter bundles — student/journal/team/non-profit/small-business, ready apps only",
-      "description": "As a new workspace owner, I want persona starter bundles whose previewed contents only include ready apps, so that I never activate blocked or unavailable modules.",
+      "id": "US-050",
+      "title": "P4C.2a — local calendar-event core path (create/read/edit foundation per D5.1–D5.4)",
+      "description": "As a user without any connected provider, I want to create, read and edit local calendar events through the standard calendarEvent object, so that the calendar is usable with zero external accounts.",
       "acceptanceCriteria": [
-        "PLAN.md P1.6d verbatim: 'Add proposed student/journal/team/non-profit/small-business bundles with previewed contents and only compatible ready apps; keep CRM-only available.'",
-        "Bundles defined as data in the existing workspace-template/preset definitions; preview payloads unit-tested like the shipped Bilan sheet fixtures",
-        "Only ready apps included (Documents/Projects); Bilan content excluded and recorded as blocked upstream (P7.0 gate) — unavailable optional apps are excluded per C1/C2, never silently dropped",
-        "C1 verbatim: 'Samples default off and are distinguishable from operational defaults (e.g. ledger/categories).'",
-        "Repeat-safe by construction: bundle payloads carry no record IDs, tokens, share URLs or live finance rows (C1 construction rule)"
+        "\"Local events reuse standard `calendarEvent` (no parallel backend)\" (phase-04 D5.1, verbatim) — no new calendar object, no second event store",
+        "A provider-independent local create path exists — phase-04 §9 gap 1 (verbatim): \"No provider-independent (local) create path; composer hard-requires a connected account + sync-enabled channel\"",
+        "Channel-less `calendarEvent` rows are no longer dropped by the visibility hook — \"local events need a core read-filter change, not just a new mutation\" (§9 gap 2, verbatim)",
+        "Standard CRUD can create/edit calendar events from the UI path: address `calendarEvent` `isUICreatable: false` with all fields `isUIEditable: false` (§9 gap 7, verbatim) — additively, without touching provider-synced metadata semantics",
+        "App boundary respected (D5.2/§9 gap 10): no app routes, query hooks or sync drivers are added; local-event ownership stays core; \"apps cannot add routes, query hooks or sync drivers\"",
+        "Sharing reuses channel `visibility` + per-user ownership (D5.3, verbatim); the workspace default share setting and local-field-vs-marker questions stay recorded as §10 open decisions — do not silently choose them",
+        "Provider capability matrix respected (D5.4): create pushable / update+delete read-back-only / recurrence import-metadata-only — this story adds no provider push and no recurrence rule store (§9 gap 3 untouched; P4C.3 owns recurrence)",
+        "Timezone handling reuses the existing user timezone + composer time zone (phase-04 findings: \"Timezone handling exists (user timezone + composer time zone)\"); quiet-hours rules stay deferred to P4C.4/P8",
+        "Starting state: not-started — P4C.1 spike ([x], done-for-review) recorded the decisions and §9 gaps as the starting contract; no P4C.2 code exists",
+        "A dated executor report is appended to docs/plan/phases/phase-04-report.md; PLAN.md is not edited; nothing is committed",
+        "Tier 0: `npx nx lint:diff-with-main twenty-server` passes; `npx tsgo -p tsconfig.json --noEmit` passes inside twenty-server",
+        "Tier 0: `npx jest <touched-spec> --config=packages/twenty-server/jest.config.mjs` passes for every spec added or edited",
+        "Tier 1: preflight `pg_isready -h localhost && redis-cli ping`; run the calendar-area integration slice on the existing `test` DB (`NODE_ENV=test npx jest --config jest-integration.config.ts test/integration/graphql/suites/<calendar-area> --runInBand`); reset the DB only if schema/migrations changed",
+        "Additive only: any new server entity/metadata change follows the migration + upgrade-command rules (generated migration with up/down under the current 2-39 directory, strictly increasing epoch-ms timestamp)",
+        "No Tier 2 checks (no `yarn start`, no browser, no provider credentials) — list them as Missing for tick"
       ],
       "priority": 4,
-      "passes": true,
-      "notes": "PLAN.md:587 (P1.6d `[~]`, partial: Bilan payloads shipped, persona bundles unshipped). Bilan legs deferred — blocked upstream (P7). dependsOn US-028 so seeding inherits the truthful hook path.",
-      "dependsOn": [
-        "US-028"
-      ],
-      "completionNotes": "Completed by agent"
+      "passes": false,
+      "notes": "PLAN task P4C.2 (after P4C.1 [x] / P0.2 [x] — literal deps DONE). Split into three ralph-sized slices (US-050/051/052) because the full P4C.2 bullet exceeds one session. This slice is the server/core foundation the phase-04 orchestrator explicitly handed to executors: \"executor — P4C.2 core UX, treating findings §9 gaps 1–3/6–7 and decisions D5.1/D5.3 as the starting contract\". §10 maintainer confirmations are recorded as downstream, not blockers.",
+      "dependsOn": []
     },
     {
-      "id": "US-030",
-      "title": "[P3.2] Template instantiation — fetch authorized body, remap IDs/anchors, prove copy independence",
-      "description": "As a user creating a document from a template, I want instantiation to fetch the authorized template body and remap identifiers, so that my copy is independent, complete and safe.",
+      "id": "US-051",
+      "title": "P4C.2b — calendar page/route with day/week/month + accessible agenda fallback",
+      "description": "As a user, I want a real calendar page with day/week/month views, an accessible agenda fallback and today/range navigation, so that I can see and navigate my events without Projects or a provider.",
       "acceptanceCriteria": [
-        "PLAN.md P3.2 verbatim: 'Complete template instantiation + gallery composition: helper and LIST view exist, but browser does not select template content. Fetch authorized body, remap IDs/anchors and prove copy independence (C1, E04).'",
-        "C1 verbatim: 'Instantiate fresh content IDs with source-template/version provenance; validate/remap relations and block/comment identifiers. Editing a copy does not mutate its template.'",
-        "Template body fetched under the caller's authorization — fail-closed on missing/unauthorized template (reuse the verified authorized-content access pattern, US-013 enabler)",
-        "C1 verbatim: 'Template deletion never deletes existing instances.' — unit-proven",
-        "Copy independence proven by unit tests: fresh IDs, remapped anchors/relations, provenance recorded (source template key + version), editing the copy never mutates the template",
-        "No browser run; the E04 gallery-instantiation journey leg stays deferred to the orchestrator"
+        "\"Day/week/month plus accessible agenda fallback\" (PLAN.md P4C.2 verbatim) — the agenda fallback is keyboard-accessible and usable without drag",
+        "\"today/range navigation\" (PLAN.md verbatim)",
+        "\"all-day/multi-day/timed events, title/location/description/color\" (PLAN.md verbatim) — all four fields render and are distinguished visually",
+        "A calendar page/route exists — phase-04 §9 gap 6 (verbatim): \"No calendar page/route; calendar is a view type + agenda widget only\" — reuse Twenty navigation/page primitives, no parallel shell (C7)",
+        "Renders events created through the US-050 local path (and existing provider-imported events read-only); empty and error states are recoverable and honest",
+        "Light+dark themes, responsive narrow screens, Lingui fr+en for all user-facing strings, canonical icons from `packages/twenty-ui/src/icon/icon-dictionary.md` (global acceptance gates 5)",
+        "Keyboard-accessible non-drag alternatives and visible focus for every interaction introduced (C7 acceptance in every vertical slice)",
+        "Starting state: not-started (no calendar page exists; the a2e-projects task CALENDAR view is a separate, validated surface — do not touch it)",
+        "A dated executor report is appended to docs/plan/phases/phase-04-report.md; PLAN.md is not edited; nothing is committed",
+        "Tier 0: `npx nx lint:diff-with-main twenty-front` passes; `npx tsgo -p tsconfig.json --noEmit` passes inside twenty-front",
+        "Tier 0: `npx jest <touched-spec> --config=packages/twenty-front/jest.config.mjs` passes for every spec added or edited",
+        "No Tier 2 checks (no browser journey) — list them as Missing for tick"
       ],
       "priority": 5,
-      "passes": true,
-      "notes": "PLAN.md:739 (P3.2 `[ ]`, not-started; helper + LIST view exist). Deps met: P1.6a [x], P3 core verified (US-019/020/021/022).",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
+      "passes": false,
+      "notes": "PLAN task P4C.2 slice 2 of 3. Front surface over the US-050 core path. \"installable from C2 later too\" stays out of scope (app packaging name is a §10 open decision).",
+      "dependsOn": [
+        "US-050"
+      ]
     },
     {
-      "id": "US-031",
-      "title": "[P3.2] Durable revision history — replace in-memory EditorVersionHistoryStore",
-      "description": "As a document author, I want revision history persisted server-side, so that retention, block diff and restore-as-new-revision survive reload and respect permissions.",
+      "id": "US-052",
+      "title": "P4C.2c — timezone-aware event create/edit/delete, slot/drag-to-create with keyboard equivalent, save feedback and overlap layout",
+      "description": "As a user working on the calendar page, I want to create events by selecting or dragging a slot (or with the keyboard), edit and delete them timezone-aware, and get clear save feedback with readable overlaps, so that scheduling feels reliable without a provider.",
       "acceptanceCriteria": [
-        "PLAN.md P3.2 verbatim: 'Persist revision history; current `EditorVersionHistoryStore` is an in-memory ring buffer. Retention, block diff and restore-as-new-revision must survive reload and respect permissions (E05).'",
-        "Persistence reuses app-owned metadata patterns (additive revision object in a2e-documents with generated migration if a table is needed) — no parallel version engine, no hand-created workspace tables",
-        "Restore creates a new revision (never a destructive in-place rewrite); read/write permission checks fail closed; retention policy explicit and documented in the app docs",
-        "Unit tests: store round-trips through the server transport (not memory), block diff computed between revisions, restore-as-new-revision, unauthorized access denied",
-        "Reload-survival browser proof stays deferred to the orchestrator (Tier 2)"
+        "\"timezone-aware creation/edit/delete\" (PLAN.md P4C.2 verbatim) — DST and timezone-change behavior covered by unit tests on the pure date helpers",
+        "\"slot selection/drag-to-create with keyboard equivalent\" (PLAN.md verbatim) — the keyboard path is a first-class alternative, not an afterthought (C7)",
+        "\"Save feedback, overlap layout and empty/error states\" (PLAN.md verbatim) — overlapping events render in a readable layout; save failures are recoverable",
+        "Front `updateCalendarEvent`/`deleteCalendarEvent` mutations + form exist — phase-04 §9 gap 5 (verbatim): \"No front-end `updateCalendarEvent`/`deleteCalendarEvent` mutation or form\"",
+        "Edit/delete applies to local events; provider-synced events stay visibly read-only for update/delete (D5.4 matrix — read-back-only), with no unsolicited provider invitations (P4C.5 boundary: \"Displaying a deadline must not automatically send provider invitations\")",
+        "Starting state: not-started (composer exists for provider events only; no local edit/delete form)",
+        "A dated executor report is appended to docs/plan/phases/phase-04-report.md; PLAN.md is not edited; nothing is committed",
+        "Tier 0: `npx nx lint:diff-with-main twenty-front` passes; `npx tsgo -p tsconfig.json --noEmit` passes inside twenty-front",
+        "Tier 0: `npx jest <touched-spec> --config=packages/twenty-front/jest.config.mjs` passes for every spec added or edited",
+        "No Tier 2 checks (no browser journey, no provider adapters) — list them as Missing for tick"
       ],
       "priority": 6,
-      "passes": true,
-      "notes": "PLAN.md:742 (P3.2 `[ ]`, not-started). Mirrors the shipped documentCommentThread persistence pattern.",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
+      "passes": false,
+      "notes": "PLAN task P4C.2 slice 3 of 3. Completes the P4C.2 bullet; P4C.3 (recurrence), P4C.4 (reminders/team) and P4C.5 (task/project links) remain blocked on their own upstream deps and are NOT part of this batch.",
+      "dependsOn": [
+        "US-050",
+        "US-051"
+      ]
     },
     {
-      "id": "US-032",
-      "title": "[P3.2] Atomic expected-revision save with conflict feedback and preserved draft (no OT/CRDT)",
-      "description": "As a document author, I want saves to carry an expected revision, so that stale saves conflict loudly instead of silently overwriting and my draft is preserved on conflict.",
+      "id": "US-053",
+      "title": "P9.1 remainder — channel-side assistant context injection",
+      "description": "As a user chatting in a channel, I want the assistant to inject the current channel as context, so that context buttons and suggested prompts work on chat surfaces exactly as they do on records and documents.",
       "acceptanceCriteria": [
-        "PLAN.md P3.2 verbatim: 'Atomic expected-revision save with conflict feedback and preserved draft; presence and pure optimistic classification helper exist, but do not implement a server save/merge protocol. No OT/CRDT promise in v1.'",
-        "E05 anchor: 'Stale saves cannot silently overwrite' — concurrent writers produce a deterministic winner, never interleaved corruption",
-        "Server-side compare-and-set implemented via the app's existing logic-function pattern (SDK exposes no pre-write hook — post-commit repair only, per the phase-03-recorded platform caveat); no merge protocol, no OT/CRDT, no new event bus",
-        "Conflict feedback and preserved draft wired through the existing editor stores; front unit tests cover conflict, retry and draft preservation",
-        "Single-writer guidance documented alongside (cross-cutting risk table: 'Version check + conflict banner; single-writer guidance in docs')"
+        "Context injection from current view (record/doc/channel/invoice) via context-store — the channel leg (PLAN.md P9.1 [~] bullet verbatim: \"context injection from current view (record/doc/channel/invoice) via context-store\"; orchestrator note verbatim: \"Channel-side context and direct tool execution remain\")",
+        "A chat-channel context populates the assistant context store — today `useAiChatSuggestedPromptsContext` reads only the object context store while the channel lives in `selectedChatChannelIdState` / `viewableChatChannelIdComponentState` (US-040 learning); channel tools (a2e-chat summarize/catch-me-up, registered via `toolTriggerSettings`) become offerable on channel surfaces",
+        "The side-panel assistant and the full page keep sharing the single `AiChatEditorSection`/`AiChatEmptyState` mount — \"do not add a second full-page shell or a parallel tool list\" (US-040 learning, binding)",
+        "Registry-driven context buttons stay fail-closed gated, read-only dispatch, mutating categories never offered (US-025 verified behavior preserved); PRIVATE-channel denial stays enforced by the tool's caller-permission scoping (US-010)",
+        "No new registry, table or registration hook (P1.5/P9.1 verbatim constraint: \"do not invent `registerAiTools`, a duplicate table or manual registration hooks\")",
+        "Starting state: partial — side-panel, full-page mount, input-schema-aware mapping and streaming/usage verified (US-025/US-040/US-041); channel-side context is the named remaining front leg; direct tool execution and Tier-2 live dispatch stay out of this story",
+        "A dated executor report is appended to docs/plan/phases/phase-01-report.md; PLAN.md is not edited; nothing is committed",
+        "Tier 0: `npx nx lint:diff-with-main twenty-front` passes; `npx tsgo -p tsconfig.json --noEmit` passes inside twenty-front",
+        "Tier 0: `npx jest <touched-spec> --config=packages/twenty-front/jest.config.mjs` passes for every spec added or edited",
+        "No Tier 2 checks (no live dispatch, no two-session proof) — list them as Missing for tick"
       ],
       "priority": 7,
-      "passes": true,
-      "notes": "PLAN.md:763 (P3.2 `[ ]`, not-started). Presence + optimistic classification helpers already exist and must be reused. Gates the P3.4 template/import bullet (still deferred this batch).",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
+      "passes": false,
+      "notes": "PLAN task P9.1 \"Assistant surface\" [~] remaining front leg. Chat domain is verified-safe (P5 all [x] 2026-09-19), satisfying the execution-order gate \"P9 per-domain actions only after that domain is safe\" for the chat surface.",
+      "dependsOn": []
     },
     {
-      "id": "US-033",
-      "title": "[P3.3] Record integration — actual selected-note body copy with source link and permission checks",
-      "description": "As a CRM user, I want the record-to-document command to copy the selected note's actual authorized body with a source link, so that the document contains the real content instead of a title snapshot.",
+      "id": "US-054",
+      "title": "P9.1 prompt/action library — every shipped read-only app tool surfaces as a context button; missing per-app prompts closed",
+      "description": "As a user on any app's record page, I want that app's read-only AI actions rendered as buttons in context, so that every shipped per-app action is discoverable without typing a prompt.",
       "acceptanceCriteria": [
-        "PLAN.md P3.3 verbatim: 'Record integration: preserve existing company/person relation fields; implement actual selected-note body copy with source link and permission checks. Existing record command/title snapshot is not note-body copying. Test both record types and open from search/relation/side-panel.'",
-        "C5 verbatim: 'Copying a note into a document copies actual authorized content and records provenance; linking must not silently duplicate content.'",
-        "Body copy goes through the existing template-copy helper with permission checks failing closed on unauthorized notes; provenance/source link recorded on the copy",
-        "Both record types (company and person) covered by unit tests; existing company/person relation fields preserved (additive only)",
-        "Entry points reachable from search/relation/side-panel per existing command wiring — no browser run"
+        "\"Prompt/action library: per-app actions rendered as buttons in context\" (PLAN.md P9.1 verbatim) — audited against every shipped read-only tool: a2e-documents (summarize/translate/improve-writing/extract-tasks + document-content access), a2e-projects (standup-digest/task-breakdown), a2e-chat (summarize/catch-me-up), a2e-drive (find-file/dedupe-hints), a2e-crm (draft-email-reply/assist-record-enrichment)",
+        "Each tool surfaces on its context object's page via the existing `getContextToolButtons` input-schema mapping (`<objectNameSingular>Id` property or `objectUniversalIdentifier`) — no `registerAiTools`, no duplicate table, no manual registration hooks, no per-action read/query (P1.5 + progress.md patterns, binding)",
+        "Gaps found by the audit are closed additively (thin `defineLogicFunction` + universal id + schema referencing the existing authorized read path — never a forked second read); every read-only tool delegates to its app's single authorized read (US-013 `readDocumentContent` pattern)",
+        "Accounting stays excluded while P7 is blocked (P9.2 accounting bullet is P7-gated) — no accounting tool, no aiCacheEntry touch",
+        "Every AI mutation path requires explicit user confirm; no tool gains a write path (C6, acceptance verbatim: \"every AI mutation path requires explicit user confirm\")",
+        "Missing per-app suggested prompts are added through the existing suggested-prompts context, not a new library surface",
+        "Starting state: partial — the mapping and most tools shipped (US-025/US-040/US-042/US-046); no systematic per-app surfacing audit exists",
+        "A dated executor report is appended to docs/plan/phases/phase-01-report.md; PLAN.md is not edited; nothing is committed",
+        "Tier 0: per touched app package `yarn typecheck && yarn lint && npx twenty dev:build .` and `yarn test:unit`; for twenty-front `npx tsgo -p tsconfig.json --noEmit` + targeted jest + `npx nx lint:diff-with-main twenty-front`",
+        "No Tier 2 checks (live assistant-catalogue invocation is Tier 2) — list them as Missing for tick"
       ],
       "priority": 8,
-      "passes": true,
-      "notes": "PLAN.md:787 (P3.3 `[ ]`, not-started). Reuses the document template-copy helper; do not invent a second copy mechanism.",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
+      "passes": false,
+      "notes": "PLAN task P9.1 \"Prompt/action library\" [ ] — the last unclaimed P9.1 bullet that is executable without a running stack. Serialized after US-053 to avoid same-file races on getContextToolButtons/useContextToolButtons.",
+      "dependsOn": [
+        "US-053"
+      ]
     },
     {
-      "id": "US-034",
-      "title": "[P4.2] Board view — kanban on task grouped by custom status (prefer existing primitives)",
-      "description": "As a project member, I want a kanban board of tasks grouped by custom status, so that I can move work across the pipeline using Twenty's existing board experience.",
+      "id": "US-055",
+      "title": "P9.2b saved runs — authorized persisted results with zero-provider-call re-open, scoped by the twenty-shared cache contract",
+      "description": "As a user re-opening a saved AI run, I want the authorized result to come back with zero provider calls, so that re-reading my work never costs money or leaks scope.",
       "acceptanceCriteria": [
-        "PLAN.md P4.2 verbatim: 'Board view (kanban by custom status — extend view types if needed; prefer existing kanban view on task with status grouping)'",
-        "P4 acceptance verbatim: 'Existing board/My tasks/calendar definitions must be validated, not recreated.' — audit the existing a2e-projects board definition and complete missing UX, do not build a second board system",
-        "Status semantics reconciled before adding any status logic (C5: 'Reconcile existing `status` versus `projectStatus` before adding more status logic.')",
-        "Moving a task between groups updates the same status every surface reads (C5: 'board, My tasks, project page, due-date calendar and record tasks tab show the same IDs/status/assignee')",
-        "Manifest build passes; view/field definitions unit-verified; app-local typecheck + test:unit green; live install proof deferred (Tier 2)"
+        "\"Saved runs persist authorized results; reopening them makes zero provider calls.\" (PLAN.md P9.2b verbatim)",
+        "\"Test workspace switching, changed permissions and expired results\" (PLAN.md verbatim) — a saved run from another workspace, after a role/permission change (ACCESS_CHANGED/KEY_MISMATCH), or past expiry (EXPIRED) never resolves, per the `twenty-shared/src/ai` contract (`evaluateAiResultReuse` reasons FRESH/KEY_MISMATCH/NOT_REVIEWED/EXPIRED/VERSION_MISMATCH/ACCESS_CHANGED)",
+        "\"an explicit rerun is a separate user action with a visible cost estimate\" (PLAN.md verbatim) — rerun is never implicit and always surfaces the estimate before executing",
+        "Implementation sits against the stable `twenty-shared/src/ai` contract location (orchestrator re-queue note, verbatim: \"Re-queue against the stable `twenty-shared/src/ai` contract location\") — pure domain + types + tests there, mirroring the US-043 barrel/type/utils structure",
+        "The P7-gated `a2e-accounting` `aiCacheEntry` object and `score-subventions` are NOT touched (US-043 learning: app-side wiring is P7-gated; app logic functions cannot import twenty-shared) — no workspace-object migration",
+        "\"Private results can only resolve to scoped keys\" (US-043 contract); only reviewed public-catalogue results may resolve globally (C6, verbatim: \"only public-only catalogue results may be shared globally after review\")",
+        "Saved-run re-open makes no new provider call and no new quota consumption is billed for the cached read (C6 verbatim: \"Saved-run re-open must incur no new provider call\")",
+        "Starting state: not-started — commit 01586701 (labeled US-044) was the US-043 contract relocation, not saved-run work (orchestrator conflict entry, verbatim: \"not started\")",
+        "A dated executor report is appended to docs/plan/phases/phase-01-report.md; PLAN.md is not edited; nothing is committed",
+        "Tier 0: if `twenty-shared` is touched, `npx nx build twenty-shared --skip-nx-cache` passes FIRST, then dependent typechecks",
+        "Tier 0: `npx jest <touched-spec> --config=packages/twenty-shared/jest.config.mjs` (and any other touched package's config) passes; `npx tsgo -p tsconfig.json --noEmit` passes inside each touched package; `npx nx lint:diff-with-main <pkg>` passes",
+        "No Tier 2 checks (no live provider call, no workspace switching journey) — list them as Missing for tick"
       ],
       "priority": 9,
-      "passes": true,
-      "notes": "PLAN.md:855 (P4.2 `[ ]`, not-started; board definition exists in source per P4 ledger row).",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-035",
-      "title": "[P4.2] Calendar view of task due dates — link into the existing calendar surface",
-      "description": "As a project member, I want task due dates visible on a calendar view, so that I can see deadlines without confusing them with scheduled provider events.",
-      "acceptanceCriteria": [
-        "PLAN.md P4.2 verbatim: 'Calendar view of tasks/due dates (link into existing calendar module surface)'",
-        "C5 verbatim: 'Calendar distinguishes task due dates from scheduled events/time blocks. Displaying a deadline must not automatically send provider invitations.'",
-        "Reuses the existing calendar view definition/primitives in a2e-projects (validated, not recreated); no two-way task/event link — P4C.5 owns opt-in synchronization",
-        "Manifest build passes; view definition unit-verified; app-local typecheck + test:unit green; live proof deferred (Tier 2)"
-      ],
-      "priority": 10,
-      "passes": true,
-      "notes": "PLAN.md:862 (P4.2 `[ ]`, not-started; calendar definition exists in source per P4 ledger row).",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-036",
-      "title": "[P4.2] My-tasks page — assigned to me, created by me, overdue smart lists",
-      "description": "As a workspace member, I want a My-tasks page with assigned-to-me, created-by-me and overdue smart lists, so that my own work is reachable in one place.",
-      "acceptanceCriteria": [
-        "PLAN.md P4.2 verbatim: 'My-tasks page ('assigned to me' + 'created by me' + overdue smart lists)'",
-        "Reuses the existing My-tasks view definitions in a2e-projects (validated, not recreated); filter definitions unit-verified",
-        "C5: same task IDs/status/assignee as board and record surfaces — the smart lists are filters over the standard task, not a parallel task store",
-        "Manifest build passes; app-local typecheck + test:unit green; live proof deferred (Tier 2)"
-      ],
-      "priority": 11,
-      "passes": true,
-      "notes": "PLAN.md:871 (P4.2 `[ ]`, not-started; my-tasks view definition exists in source per P4 ledger row).",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-037",
-      "title": "[P4.3] Project ↔ document relation — linked docs on project overview",
-      "description": "As a project member, I want to link documents to a project and see them on the project overview, so that project knowledge lives one click away.",
-      "acceptanceCriteria": [
-        "PLAN.md P4.3 verbatim: 'Documents: doc relation on project; project overview shows linked docs'",
-        "Additive relation field only (direction following the existing cross-app precedent, e.g. invoice→project); no renames/removals, no duplicate document objects",
-        "C5 verbatim: 'Stable record links open in the native side panel or full page and show a safe missing/removed state, never another tenant.'",
-        "C4: optional cross-app link degrades safely when Documents is not installed",
-        "Manifest build passes; relation + overview section unit-verified; app-local typecheck + test:unit green; live install proof deferred (Tier 2)"
-      ],
-      "priority": 12,
-      "passes": true,
-      "notes": "PLAN.md:904 (P4.3 `[ ]`, not-started). Deps met: P3 core verified. Gates the docs tab of US-038.",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-038",
-      "title": "[P4.2] Project page — overview widgets (health, milestones, members, activity) + tabs (tasks/board/gantt/files/docs)",
-      "description": "As a project member, I want a complete project page with overview widgets and tabs, so that all project surfaces are reachable from one native page.",
-      "acceptanceCriteria": [
-        "PLAN.md P4.2 verbatim: 'Project page: overview widgets (health, milestones, members, activity) + tabs (tasks/board/gantt/files/docs)'",
-        "Existing overview component completed, not recreated (P4 ledger: overview exists in source); tabs reuse existing page-layout/tab primitives",
-        "Docs tab consumes the US-037 project↔document relation; gantt tab embeds the existing timeline widget (its DOM render/1k-task benchmark proof stays Tier 2 with the orchestrator)",
-        "Widgets and tabs unit-verified; manifest build passes; app-local typecheck + test:unit green"
-      ],
-      "priority": 13,
-      "passes": true,
-      "notes": "PLAN.md:873 (P4.2 `[ ]`, partial-by-ledger: overview component exists). dependsOn US-037 for the docs tab.",
-      "dependsOn": [
-        "US-037"
-      ],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-039",
-      "title": "[P4] CSV/bulk task import/export — validation and partial-row error feedback on native import",
-      "description": "As a project member, I want to import and export tasks in bulk with validation and per-row error feedback, so that bulk edits are safe and failures are understandable.",
-      "acceptanceCriteria": [
-        "PLAN.md P4 acceptance verbatim: 'Add CSV/bulk task import/export with validation and partial-row error feedback (R03), reusing native import.'",
-        "Native import/export pipelines reused — no new import engine; escaping and field/permission mapping validated",
-        "Partial failures report per-row errors without silent partial commits; successful rows keep their result",
-        "Unit tests cover validation, escaping and error feedback paths"
-      ],
-      "priority": 14,
-      "passes": true,
-      "notes": "PLAN.md:923-924 (P4 acceptance paragraph — a plan need without its own checkbox). Explicitly reuses native import per the bullet.",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-040",
-      "title": "[P9.1] Assistant surface — full-page upgrade of ai-chat + input-schema-aware context mapping (+ channel-side context)",
-      "description": "As a workspace member, I want the assistant available as a full page with context from my current view, so that I can work with AI beyond the side panel without leaving context behind.",
-      "acceptanceCriteria": [
-        "PLAN.md P9.1 verbatim: 'Assistant surface: side-panel assistant + full-page upgrade of ai-chat; context injection from current view (record/doc/channel/invoice) via context-store'",
-        "Ledger verbatim remaining legs: 'Full-page upgrade, input-schema-aware context mapping, channel-side context and direct tool execution remain' — full-page upgrade, input-schema-aware context mapping and channel-side context are in scope; direct tool execution stays out (dispatch proofs are Tier 2)",
-        "Reuses existing ai-chat components and the context-store — no new assistant shell; US-025 behavior preserved: fail-closed gating, read-only dispatch, mutating categories never offered",
-        "Front suites (ai/utils + ai/components) extended and green on the touched specs; live dispatch proof deferred (Tier 2)"
-      ],
-      "priority": 15,
-      "passes": true,
-      "notes": "PLAN.md:1369 (P9.1 `[~]`, partial: side-panel half verified US-025 2026-09-19). Deps met: P1.5 native registry verified.",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-041",
-      "title": "[P9.1] Streaming responses (SSE reuse) + usage logging to event-logs + provider config from existing AI settings",
-      "description": "As a workspace member using the assistant, I want streamed responses and auditable usage logs, so that answers arrive progressively and every AI call is traceable.",
-      "acceptanceCriteria": [
-        "PLAN.md P9.1 verbatim: 'Streaming responses (SSE reuse), model provider config (existing AI settings), usage logging to event-logs'",
-        "Reuses the existing SSE infrastructure — no new transport; model provider configuration read from the existing AI settings surface",
-        "Usage entries written to event-logs per assistant/tool call (consumed later by US-043's audit page)",
-        "Server unit tests cover streaming plumbing and usage-log writes; live streaming proof deferred (Tier 2)"
-      ],
-      "priority": 16,
-      "passes": true,
-      "notes": "PLAN.md:1378 (P9.1 `[ ]`, not-started). Gates US-043 (audit page needs usage data).",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-042",
-      "title": "[P9.2] Documents AI actions — summarize, translate, improve writing (read-only tools)",
-      "description": "As a document author, I want summarize, translate and improve-writing actions on my documents, so that I get AI help without giving the assistant write access.",
-      "acceptanceCriteria": [
-        "PLAN.md P9.2 verbatim: 'Documents: summarize, extract tasks→P4, translate, improve writing' — extract-tasks is verified (US-009); this story builds the remaining three actions on the verified authorized `document-content` access tool (US-013)",
-        "All three tools are read-only, caller-permission-scoped, and fail closed to a safe error on missing/unauthorized documents (same pattern as US-009/US-013)",
-        "Registered via manifest `toolTriggerSettings` on app logic functions — no new AI registry, table or registration hook (P1.5)",
-        "C6: creates nothing, posts nothing; app-local typecheck + test:unit green on a2e-documents"
-      ],
-      "priority": 17,
-      "passes": true,
-      "notes": "PLAN.md:1384 (P9.2 `[~]`, partial: enablers verified 2026-09-19). Live assistant-catalogue invocation stays Tier 2.",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-043",
-      "title": "[P9.2b] Permission/workspace-scoped private-result cache — versions, expiry, invalidation",
-      "description": "As a platform maintainer, I want AI results cached per workspace and permission scope with version keys and invalidation, so that private data never leaks across workspaces and stale results expire.",
-      "acceptanceCriteria": [
-        "PLAN.md P9.2b verbatim: 'Permission/workspace-scoped private-result cache; only public-only catalogue results may be shared globally after review (C6). Include model/data/catalogue versions, expiry and deletion/role-change invalidation.'",
-        "Reuses/extends the existing aiCacheEntry patterns — workspace/access-scoped keys with model/data/catalogue versions; C6 verbatim: 'No cross-workspace cache leak.'",
-        "Invalidation on permission/data changes and role changes; expiry honored; no global sharing of anything but reviewed public-catalogue results",
-        "Unit tests: scope isolation, version/permission invalidation, expiry behavior"
-      ],
-      "priority": 18,
-      "passes": true,
-      "notes": "PLAN.md:1415 (P9.2b `[ ]`, not-started). The P7.1f aiCacheEntry C6 validation bullet stays deferred (P7-gated); this story is the generic cache contract only.",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-044",
-      "title": "[P9.2b] Saved runs — authorized persisted results, zero-provider-call re-open, explicit rerun with cost estimate",
-      "description": "As a workspace member, I want saved AI runs I can reopen without new provider calls, with any rerun as an explicit action showing a cost estimate, so that reopening history never costs money or leaks data.",
-      "acceptanceCriteria": [
-        "PLAN.md P9.2b verbatim: 'Saved runs persist authorized results; reopening them makes zero provider calls. Test workspace switching, changed permissions and expired results; an explicit rerun is a separate user action with a visible cost estimate.'",
-        "Persistence keyed to the US-043 cache contract (workspace/access-scoped, versioned); re-open serves authorized stored results only",
-        "Unit tests cover workspace switching, changed permissions and expired results; rerun is a distinct action with a visible cost estimate",
-        "C6: saved-run re-open must incur no new provider call — asserted by test"
-      ],
-      "priority": 19,
-      "passes": true,
-      "notes": "PLAN.md:1418 (P9.2b `[ ]`, not-started). dependsOn US-043 (cache layer is the storage contract).",
-      "dependsOn": [
-        "US-043"
-      ],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-045",
-      "title": "[P9.3] Settings → AI audit page (usage, logs, provider keys)",
-      "description": "As a workspace admin, I want a Settings → AI page showing usage, logs and provider key status, so that AI activity is auditable and keys are never exposed.",
-      "acceptanceCriteria": [
-        "PLAN.md P9.3 verbatim: 'Audit page: Settings → AI (usage, logs, provider keys)'",
-        "Reuses existing Settings section patterns and navigation — no new settings shell; page is read-only",
-        "Usage/logs read from event-logs (written by US-041); provider keys shown masked only — plaintext keys never rendered, never in GraphQL responses added by this page",
-        "Front suites for the touched specs green; no browser run"
-      ],
-      "priority": 20,
-      "passes": true,
-      "notes": "PLAN.md:1439 (P9.3 `[ ]`, not-started). dependsOn US-041 (usage data source).",
-      "dependsOn": [
-        "US-041"
-      ],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-046",
-      "title": "[P9.2] CRM core AI — email reply drafts + record enrichment assist (respect existing enrichment modules)",
-      "description": "As a CRM user, I want AI-drafted email replies and an enrichment assist on records, so that routine writing is faster while every mutation stays under my review.",
-      "acceptanceCriteria": [
-        "PLAN.md P9.2 verbatim: 'CRM core: email reply drafts, record enrichment assist (respect existing enrichment modules)'",
-        "Read-only draft tools, caller-permission-scoped, fail closed on unauthorized records; review-required before any commit — C6: no AI auto-posting",
-        "Existing enrichment modules are reused, never duplicated or bypassed",
-        "Registered via manifest `toolTriggerSettings` — no new registry/table (P1.5); unit tests green on touched specs; live dispatch deferred (Tier 2)"
-      ],
-      "priority": 21,
-      "passes": true,
-      "notes": "PLAN.md:1411 (P9.2 `[ ]`, not-started). CRM is the native safe domain (P0 done); Accounting/Projects AI actions stay deferred (P7 / P9.1-gated).",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
+      "passes": false,
+      "notes": "PLAN task P9.2b \"Saved runs\" [ ] — explicitly re-queued by the 2026-09-20 orchestrator. Storage-backed wiring into app objects stays P7-gated; this story delivers the contract-level saved-run domain (persist/reopen/rerun semantics) with tests, ready for wiring once P7 unblocks.",
+      "dependsOn": []
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-19T23:03:55.114Z"
+    "updatedAt": "2026-09-20T10:55:08.148Z"
   }
 }

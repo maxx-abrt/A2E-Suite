@@ -661,6 +661,40 @@ describe('WorkspaceTemplateService', () => {
         required: true,
       });
     });
+
+    it('flags NO_APPS_AVAILABLE when a template expects apps but none are registered', async () => {
+      findOneByUniversalIdentifierGlobal.mockResolvedValue(null);
+
+      const preview = await service.getWorkspaceTemplatePreview({
+        workspaceId,
+        template: WorkspaceTemplate.INDIVIDUAL,
+      });
+
+      expect(preview.errorCode).toBe('NO_APPS_AVAILABLE');
+    });
+
+    it('leaves the discriminator empty when at least one expected app is registered', async () => {
+      findOneByUniversalIdentifierGlobal.mockResolvedValue(
+        buildRegistration('registration-1'),
+      );
+      validateWorkspaceCompatibility.mockResolvedValue({ compatible: true });
+
+      const preview = await service.getWorkspaceTemplatePreview({
+        workspaceId,
+        template: WorkspaceTemplate.INDIVIDUAL,
+      });
+
+      expect(preview.errorCode).toBeNull();
+    });
+
+    it('never flags a CRM-only template as no-apps-available', async () => {
+      const preview = await service.getWorkspaceTemplatePreview({
+        workspaceId,
+        template: WorkspaceTemplate.CRM,
+      });
+
+      expect(preview.errorCode).toBeNull();
+    });
   });
 
   describe('navigation visibility', () => {

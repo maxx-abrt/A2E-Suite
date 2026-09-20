@@ -4,8 +4,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { type A2eWorkspaceTemplate } from '@/a2e-workspace/constants/A2eWorkspaceTemplates';
 import { APPLY_WORKSPACE_TEMPLATE_OPERATION } from '@/a2e-workspace/graphql/mutations/applyWorkspaceTemplateOperation';
-import { type ApplyTemplateResult } from '@/a2e-workspace/types/apply-template-operation.types';
+import {
+  type ApplyTemplateErrorCode,
+  type ApplyTemplateResult,
+} from '@/a2e-workspace/types/apply-template-operation.types';
 import { getApplyTemplateResultOutcome } from '@/a2e-workspace/utils/getApplyTemplateResultOutcome';
+import { getWorkspaceTemplateSetupErrorCode } from '@/a2e-workspace/utils/getWorkspaceTemplateSetupErrorCode';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -45,6 +49,10 @@ export const useApplyWorkspaceTemplateOperation = () => {
   const [idempotencyKey, setIdempotencyKey] = useState<string | null>(null);
   const [operationResult, setOperationResult] =
     useState<ApplyTemplateResult | null>(null);
+  // Distinct apply failure kind (C2): a denied permission must read differently
+  // from a network outage, and the template choice stays resumable either way.
+  const [operationErrorCode, setOperationErrorCode] =
+    useState<ApplyTemplateErrorCode | null>(null);
 
   const applyTemplateOperation = useCallback(
     async ({
@@ -85,6 +93,11 @@ export const useApplyWorkspaceTemplateOperation = () => {
 
         if (isDefined(applyTemplateResult)) {
           setOperationResult(applyTemplateResult);
+          setOperationErrorCode(null);
+        } else {
+          // The server answered without a result and without an error: treat it
+          // as an unreachable operation rather than a silent success.
+          setOperationErrorCode('NETWORK_ERROR');
         }
 
         // A partial/failed run is not a finished setup: never report the whole
@@ -104,9 +117,17 @@ export const useApplyWorkspaceTemplateOperation = () => {
         }
 
         return applyTemplateResult;
-      } catch {
+      } catch (error) {
+        const errorCode =
+          getWorkspaceTemplateSetupErrorCode({ error }) ?? 'NETWORK_ERROR';
+
+        setOperationErrorCode(errorCode);
+
         enqueueErrorSnackBar({
-          message: t`Failed to apply the workspace template. You can retry: only failed steps are re-run.`,
+          message:
+            errorCode === 'PERMISSION_DENIED'
+              ? t`You do not have permission to apply workspace templates. Your template choice is kept.`
+              : t`Failed to apply the workspace template. You can retry: only failed steps are re-run.`,
         });
 
         return null;
@@ -124,12 +145,14 @@ export const useApplyWorkspaceTemplateOperation = () => {
   const resetOperation = useCallback(() => {
     setIdempotencyKey(null);
     setOperationResult(null);
+    setOperationErrorCode(null);
   }, []);
 
   return {
     applyTemplateOperation,
     resetOperation,
     operationResult,
+    operationErrorCode,
     idempotencyKey,
     isLoading: loading,
   };

@@ -10,6 +10,7 @@ export const WORKSPACE_TEMPLATE_PREVIEW = gql`
       templateKey
       version
       blocked
+      errorCode
       apps {
         universalIdentifier
         displayName

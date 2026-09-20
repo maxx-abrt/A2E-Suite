@@ -3,6 +3,7 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
+import { GraphQLError } from 'graphql';
 import { type ReactNode } from 'react';
 
 import { APPLY_WORKSPACE_TEMPLATE_OPERATION } from '@/a2e-workspace/graphql/mutations/applyWorkspaceTemplateOperation';
@@ -132,6 +133,7 @@ describe('useApplyWorkspaceTemplateOperation', () => {
 
     expect(mockEnqueueErrorSnackBar).toHaveBeenCalledTimes(1);
     const firstKey = result.current.idempotencyKey;
+    expect(result.current.operationErrorCode).toBe('NETWORK_ERROR');
 
     expect(firstKey).toBe(OPERATION_IDEMPOTENCY_KEY);
 
@@ -140,8 +142,40 @@ describe('useApplyWorkspaceTemplateOperation', () => {
     });
 
     expect(result.current.idempotencyKey).toBe(firstKey);
+    expect(result.current.operationErrorCode).toBeNull();
     expect(mockEnqueueSuccessSnackBar).toHaveBeenCalledTimes(1);
     expect(mockEnqueueErrorSnackBar).toHaveBeenCalledTimes(1);
+  });
+
+  it('reports a permission denial as its own error code', async () => {
+    const variables = {
+      input: {
+        idempotencyKey: OPERATION_IDEMPOTENCY_KEY,
+        template: 'INDIVIDUAL',
+      },
+    };
+
+    const { result } = renderOperationHook([
+      {
+        request: {
+          query: APPLY_WORKSPACE_TEMPLATE_OPERATION,
+          variables,
+        },
+        result: {
+          errors: [
+            new GraphQLError('Forbidden', {
+              extensions: { code: 'FORBIDDEN' },
+            }),
+          ],
+        },
+      },
+    ]);
+
+    await act(async () => {
+      await result.current.applyTemplateOperation({ template: 'INDIVIDUAL' });
+    });
+
+    expect(result.current.operationErrorCode).toBe('PERMISSION_DENIED');
   });
 
   it('never reports success on a partial result and returns it for retry', async () => {

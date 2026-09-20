@@ -1,8 +1,12 @@
 import { type A2eWorkspaceTemplate } from '@/a2e-workspace/constants/A2eWorkspaceTemplates';
 import { useApplyWorkspaceTemplateOperation } from '@/a2e-workspace/hooks/useApplyWorkspaceTemplateOperation';
 import { useWorkspaceTemplatePreview } from '@/a2e-workspace/hooks/useWorkspaceTemplatePreview';
-import { type ApplyTemplateStep } from '@/a2e-workspace/types/apply-template-operation.types';
+import {
+  type ApplyTemplateErrorCode,
+  type ApplyTemplateStep,
+} from '@/a2e-workspace/types/apply-template-operation.types';
 import { getApplyTemplateResultOutcome } from '@/a2e-workspace/utils/getApplyTemplateResultOutcome';
+import { getWorkspaceTemplateSetupErrorCode } from '@/a2e-workspace/utils/getWorkspaceTemplateSetupErrorCode';
 import {
   resolveTemplatePreview,
   type TemplatePreviewAppResolution,
@@ -14,9 +18,11 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Checkbox, MainButton } from 'twenty-ui/input';
 import {
   IconAlertTriangle,
+  IconApps,
   IconCheck,
   IconClock,
   IconLoader,
+  IconLock,
   IconPlayerPause,
   IconX,
 } from 'twenty-ui/icon';
@@ -108,6 +114,7 @@ const StyledStepIcon = styled.span<{ status: ApplyTemplateStep['status'] }>`
 
 const StyledFooter = styled.div`
   display: flex;
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-end;
   width: 100%;
 `;
@@ -202,6 +209,73 @@ const StepStatusLabel = ({
   return <>{t`skipped`}</>;
 };
 
+// Distinct failure surface per C2: "no apps available", a network failure and a
+// permission denial each get their own icon, message and test id, and the
+// template choice stays actionable (apply is only blocked for a denial that
+// would also refuse the apply mutation).
+const SetupFailurePanel = ({
+  errorCode,
+  isBlocked,
+  onRetryPreview,
+  onApply,
+  isApplying,
+}: {
+  errorCode: ApplyTemplateErrorCode;
+  isBlocked: boolean;
+  onRetryPreview: () => void;
+  onApply: () => void;
+  isApplying: boolean;
+}) => {
+  const { t } = useLingui();
+
+  const isPermissionDenied = errorCode === 'PERMISSION_DENIED';
+  const isNoAppsAvailable = errorCode === 'NO_APPS_AVAILABLE';
+  const isApplyDisabled = isApplying || isPermissionDenied || isBlocked;
+
+  return (
+    <StyledPreviewPanel
+      data-testid={`a2e-workspace-template-preview-${errorCode
+        .toLowerCase()
+        .replace(/_/g, '-')}`}
+    >
+      <StyledBlockedText>
+        {isPermissionDenied ? (
+          <IconLock size={themeCssVariables.icon.size.sm} />
+        ) : isNoAppsAvailable ? (
+          <IconApps size={themeCssVariables.icon.size.sm} />
+        ) : (
+          <IconAlertTriangle size={themeCssVariables.icon.size.sm} />
+        )}
+        {isPermissionDenied
+          ? t`You do not have permission to preview or apply workspace templates. Your template choice is kept — ask an administrator for the applications permission.`
+          : isNoAppsAvailable
+            ? t`No apps are available on this server right now. Your template choice is kept — you can still continue with the CRM-only setup.`
+            : t`Could not load the template preview. Your template choice is kept — check your connection and retry.`}
+      </StyledBlockedText>
+      <StyledFooter>
+        {!isPermissionDenied && (
+          <StyledApplyButton>
+            <MainButton
+              title={t`Retry preview`}
+              onClick={onRetryPreview}
+              disabled={isApplying}
+              fullWidth
+            />
+          </StyledApplyButton>
+        )}
+        <StyledApplyButton>
+          <MainButton
+            title={t`Apply template`}
+            onClick={onApply}
+            disabled={isApplyDisabled}
+            fullWidth
+          />
+        </StyledApplyButton>
+      </StyledFooter>
+    </StyledPreviewPanel>
+  );
+};
+
 export type A2eWorkspaceTemplatePreviewProps = {
   template: A2eWorkspaceTemplate;
   onApplied?: () => void;
@@ -215,13 +289,19 @@ export const A2eWorkspaceTemplatePreview = ({
   const [deselectedUniversalIdentifiers, setDeselectedUniversalIdentifiers] =
     useState<string[]>([]);
   const [sampleContentEnabled, setSampleContentEnabled] = useState(false);
-  const { preview, isLoading: isLoadingPreview } = useWorkspaceTemplatePreview({
+  const {
+    preview,
+    isLoading: isLoadingPreview,
+    error: previewError,
+    refetch: refetchPreview,
+  } = useWorkspaceTemplatePreview({
     template,
   });
   const {
     applyTemplateOperation,
     resetOperation,
     operationResult,
+    operationErrorCode,
     isLoading: isApplying,
   } = useApplyWorkspaceTemplateOperation();
 
@@ -266,23 +346,20 @@ export const A2eWorkspaceTemplatePreview = ({
     return null;
   }
 
-  if (!isDefined(preview)) {
+  const setupErrorCode = getWorkspaceTemplateSetupErrorCode({
+    previewErrorCode: preview?.errorCode,
+    error: previewError,
+  });
+
+  if (!isDefined(preview) || isDefined(setupErrorCode)) {
     return (
-      <StyledPreviewPanel>
-        <StyledRowSubText>
-          {t`Preview unavailable — the template can still be applied.`}
-        </StyledRowSubText>
-        <StyledFooter>
-          <StyledApplyButton>
-            <MainButton
-              title={t`Apply template`}
-              onClick={handleApply}
-              disabled={isApplying}
-              fullWidth
-            />
-          </StyledApplyButton>
-        </StyledFooter>
-      </StyledPreviewPanel>
+      <SetupFailurePanel
+        errorCode={setupErrorCode ?? 'NETWORK_ERROR'}
+        isBlocked={preview?.blocked ?? false}
+        onRetryPreview={refetchPreview}
+        onApply={handleApply}
+        isApplying={isApplying}
+      />
     );
   }
 
@@ -407,6 +484,17 @@ export const A2eWorkspaceTemplatePreview = ({
           {operationOutcome === 'partial'
             ? t`Some steps failed. Successful steps are kept; retry re-runs only the remaining ones.`
             : t`Setup did not complete. Retry re-runs the same operation.`}
+        </StyledOutcomeBanner>
+      )}
+      {isDefined(operationErrorCode) && (
+        <StyledOutcomeBanner
+          data-testid="a2e-workspace-template-preview-operation-error"
+          isFailed
+        >
+          <IconAlertTriangle size={themeCssVariables.icon.size.sm} />
+          {operationErrorCode === 'PERMISSION_DENIED'
+            ? t`You do not have permission to apply this template. Your template choice is kept.`
+            : t`Could not reach the server to apply the template. Your template choice is kept — retry.`}
         </StyledOutcomeBanner>
       )}
       {hasSteps && (

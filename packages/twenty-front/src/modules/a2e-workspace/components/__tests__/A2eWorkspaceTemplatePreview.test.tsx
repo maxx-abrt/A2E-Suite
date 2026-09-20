@@ -8,6 +8,7 @@ import { A2eWorkspaceTemplatePreview } from '@/a2e-workspace/components/A2eWorks
 import { useApplyWorkspaceTemplateOperation } from '@/a2e-workspace/hooks/useApplyWorkspaceTemplateOperation';
 import { useWorkspaceTemplatePreview } from '@/a2e-workspace/hooks/useWorkspaceTemplatePreview';
 import {
+  type ApplyTemplateErrorCode,
   type ApplyTemplateResult,
   type ApplyTemplateStep,
   type TemplatePreview,
@@ -28,6 +29,7 @@ const mockedUseApplyWorkspaceTemplateOperation = jest.mocked(
 
 const mockApplyTemplateOperation = jest.fn();
 const mockResetOperation = jest.fn();
+const mockRefetchPreview = jest.fn();
 
 const buildApp = (
   overrides: Partial<TemplatePreviewApp> = {},
@@ -101,18 +103,22 @@ const buildPartialResult = (
 });
 
 const setupHooks = (
-  preview: TemplatePreview,
+  preview: TemplatePreview | null,
   operationResult: ApplyTemplateResult | null = null,
+  previewError?: unknown,
+  operationErrorCode: ApplyTemplateErrorCode | null = null,
 ) => {
   mockedUseWorkspaceTemplatePreview.mockReturnValue({
     preview,
     isLoading: false,
-    error: undefined,
-  });
+    error: previewError,
+    refetch: mockRefetchPreview,
+  } as unknown as ReturnType<typeof useWorkspaceTemplatePreview>);
   mockedUseApplyWorkspaceTemplateOperation.mockReturnValue({
     applyTemplateOperation: mockApplyTemplateOperation,
     resetOperation: mockResetOperation,
     operationResult,
+    operationErrorCode,
     idempotencyKey: null,
     isLoading: false,
   } as unknown as ReturnType<typeof useApplyWorkspaceTemplateOperation>);
@@ -369,5 +375,76 @@ describe('A2eWorkspaceTemplatePreview', () => {
     expect(
       screen.queryByTestId('a2e-workspace-template-preview-operation-outcome'),
     ).not.toBeInTheDocument();
+  });
+
+  it('renders a distinct permission-denied panel and keeps the template choice', () => {
+    setupHooks(null, null, {
+      extensions: { code: 'FORBIDDEN' },
+    });
+
+    render(<A2eWorkspaceTemplatePreview template="INDIVIDUAL" />, {
+      wrapper: Wrapper,
+    });
+
+    expect(
+      screen.getByTestId('a2e-workspace-template-preview-permission-denied'),
+    ).toHaveTextContent('Your template choice is kept');
+    expect(
+      screen.queryByTestId('a2e-workspace-template-preview-network-error'),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Apply template' }),
+    ).toBeDisabled();
+  });
+
+  it('renders a distinct network-error panel with a preview retry', async () => {
+    const user = userEvent.setup();
+    setupHooks(null, null, { networkError: new Error('offline') });
+
+    render(<A2eWorkspaceTemplatePreview template="INDIVIDUAL" />, {
+      wrapper: Wrapper,
+    });
+
+    expect(
+      screen.getByTestId('a2e-workspace-template-preview-network-error'),
+    ).toHaveTextContent('Your template choice is kept');
+    expect(
+      screen.getByRole('button', { name: 'Apply template' }),
+    ).toBeEnabled();
+
+    await user.click(screen.getByRole('button', { name: 'Retry preview' }));
+
+    expect(mockRefetchPreview).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders a distinct no-apps-available panel from the server discriminator', () => {
+    setupHooks(buildPreview({ errorCode: 'NO_APPS_AVAILABLE', blocked: true }));
+
+    render(<A2eWorkspaceTemplatePreview template="INDIVIDUAL" />, {
+      wrapper: Wrapper,
+    });
+
+    expect(
+      screen.getByTestId('a2e-workspace-template-preview-no-apps-available'),
+    ).toHaveTextContent('No apps are available');
+    // A blocked no-apps preview keeps the choice but cannot apply.
+    expect(
+      screen.getByRole('button', { name: 'Apply template' }),
+    ).toBeDisabled();
+  });
+
+  it('renders a distinct apply-error banner for a permission denial and keeps the choice', () => {
+    setupHooks(buildPreview(), null, undefined, 'PERMISSION_DENIED');
+
+    render(<A2eWorkspaceTemplatePreview template="INDIVIDUAL" />, {
+      wrapper: Wrapper,
+    });
+
+    expect(
+      screen.getByTestId('a2e-workspace-template-preview-operation-error'),
+    ).toHaveTextContent('do not have permission');
+    expect(
+      screen.getByRole('button', { name: 'Apply template' }),
+    ).toBeEnabled();
   });
 });

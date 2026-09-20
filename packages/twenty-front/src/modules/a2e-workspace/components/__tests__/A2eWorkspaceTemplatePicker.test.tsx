@@ -56,6 +56,7 @@ describe('A2eWorkspaceTemplatePicker', () => {
       preview,
       isLoading: false,
       error: undefined,
+      refetch: jest.fn(),
     });
     mockedUseApplyWorkspaceTemplateOperation.mockReturnValue({
       applyTemplateOperation: jest.fn(),

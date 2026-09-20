@@ -1,6 +1,7 @@
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import {
+  type ApplyTemplateErrorCode,
   type ApplyTemplateResult,
   type ApplyTemplateStep,
   type OperationStepErrorCode,
@@ -46,6 +47,15 @@ export enum OperationStepErrorCodeEnum {
 
 registerEnumType(OperationStepErrorCodeEnum, {
   name: 'OperationStepErrorCode',
+});
+
+export enum ApplyTemplateErrorCodeEnum {
+  PERMISSION_DENIED = 'PERMISSION_DENIED',
+  NO_APPS_AVAILABLE = 'NO_APPS_AVAILABLE',
+}
+
+registerEnumType(ApplyTemplateErrorCodeEnum, {
+  name: 'ApplyTemplateErrorCode',
 });
 
 @ObjectType()
@@ -171,9 +181,14 @@ export class TemplatePreviewDTO implements TemplatePreview {
   // visible but apply is refused.
   @Field(() => Boolean)
   blocked: boolean;
+
+  // Distinct failure discriminator (C2); null when the preview is complete.
+  @Field(() => ApplyTemplateErrorCodeEnum, { nullable: true })
+  errorCode?: ApplyTemplateErrorCode | null;
 }
 
 export type {
+  ApplyTemplateErrorCode,
   ApplyTemplateResult,
   ApplyTemplateStep,
   OperationStepErrorCode,

@@ -24,6 +24,7 @@ import {
   OnboardingExceptionCode,
 } from 'src/engine/core-modules/onboarding/onboarding.exception';
 import {
+  type ApplyTemplateErrorCode,
   type ApplyTemplateResult,
   type ApplyTemplateStep,
   type OperationStepErrorCode,
@@ -699,6 +700,18 @@ export class WorkspaceTemplateService {
         .map((previewApp) => previewApp.universalIdentifier),
     );
 
+    // A template that expects apps but has none registered on this server is
+    // "no apps available", not a broken preview: the client must be able to
+    // tell that apart from a permission denial or a network failure (C2).
+    // CRM-only expects no apps, so it never carries this discriminator.
+    const errorCode: ApplyTemplateErrorCode | null =
+      isNonEmptyArray(definition.applicationUniversalIdentifiers) &&
+      !isNonEmptyArray(
+        previewApps.filter((previewApp) => previewApp.registered),
+      )
+        ? 'NO_APPS_AVAILABLE'
+        : null;
+
     return {
       templateKey: template,
       version: definition.version,
@@ -724,6 +737,7 @@ export class WorkspaceTemplateService {
         }),
       ),
       blocked,
+      errorCode,
     };
   }
 

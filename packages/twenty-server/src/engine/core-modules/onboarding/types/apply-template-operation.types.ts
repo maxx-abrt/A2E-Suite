@@ -68,6 +68,12 @@ export type TemplatePreviewBlockedSample = TemplatePreviewSample & {
   blockedBy: string;
 };
 
+// Preview/apply failure discriminator (C2): a client must be able to tell "no
+// apps available" from a permission denial instead of collapsing both into one
+// generic "unavailable" state. The server produces only the catalogue states;
+// the client adds NETWORK_ERROR for a fetch that never reached the server.
+export type ApplyTemplateErrorCode = 'PERMISSION_DENIED' | 'NO_APPS_AVAILABLE';
+
 export type TemplatePreview = {
   templateKey: string;
   version: number;
@@ -76,4 +82,5 @@ export type TemplatePreview = {
   samples: TemplatePreviewSample[];
   blockedSamples: TemplatePreviewBlockedSample[];
   blocked: boolean;
+  errorCode?: ApplyTemplateErrorCode | null;
 };

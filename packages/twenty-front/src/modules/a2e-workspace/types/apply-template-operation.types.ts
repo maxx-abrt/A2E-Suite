@@ -68,6 +68,15 @@ export type TemplatePreviewBlockedSample = TemplatePreviewSample & {
   blockedBy: string;
 };
 
+// Distinct failure surfaces for the unified setup operation (C2): "no apps
+// available", a network failure and a permission denial must never collapse
+// into one generic "unavailable" state. The server emits the catalogue states;
+// NETWORK_ERROR is added client-side for a fetch that never reached the server.
+export type ApplyTemplateErrorCode =
+  | 'PERMISSION_DENIED'
+  | 'NO_APPS_AVAILABLE'
+  | 'NETWORK_ERROR';
+
 export type TemplatePreview = {
   templateKey: string;
   version: number;
@@ -76,4 +85,5 @@ export type TemplatePreview = {
   samples: TemplatePreviewSample[];
   blockedSamples: TemplatePreviewBlockedSample[];
   blocked: boolean;
+  errorCode?: ApplyTemplateErrorCode | null;
 };

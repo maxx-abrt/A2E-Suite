@@ -17,7 +17,7 @@ export const useWorkspaceTemplatePreview = ({
 }: {
   template: A2eWorkspaceTemplate | null;
 }) => {
-  const { data, loading, error } = useQuery<
+  const { data, loading, error, refetch } = useQuery<
     WorkspaceTemplatePreviewQueryData,
     WorkspaceTemplatePreviewQueryVariables
   >(WORKSPACE_TEMPLATE_PREVIEW, {
@@ -31,5 +31,6 @@ export const useWorkspaceTemplatePreview = ({
     preview: data?.workspaceTemplatePreview ?? null,
     isLoading: loading && template !== null,
     error,
+    refetch,
   };
 };
