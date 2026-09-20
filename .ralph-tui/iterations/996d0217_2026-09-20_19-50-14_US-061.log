@@ -1,0 +1,98 @@
+# Iteration 7 Log
+
+## Metadata
+
+- **Task ID**: US-061
+- **Task Title**: P4C.3b — monthly expansion, position rules and termination semantics
+- **Description**: As a calendar user, I want events that repeat monthly on a fixed day or ordinal position (e.g. third Thursday), with count/until termination, so that month-length quirks never shift or silently drop m...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-20T17:50:14.198Z
+- **Ended At**: 2026-09-20T17:54:36.794Z
+- **Duration**: 4m 22s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-061\|US-060\|P4C.3\|P4C.2" PLAN.md | head -50
+[94m[bash][0m $ ls docs/plan/phases/ && echo "---" && tail -80 docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) import sys def walk(o):     if isinstan...
+[94m[bash][0m $ ls packages/twenty-front/src/modules/calendar/utils/ packages/twenty-front/src/modules/calendar/type...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/expandCalendarRecurrence.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/types/CalendarRecurrenceRule.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/types/CalendarRecurrenceMonthlyPosition.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/types/CalendarRecurrenceWeekday.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/normalizeWeekStartDay.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/parseCalendarRecurrenceRule.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/serializeCalendarRecurrenceRule.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/types/CalendarRecurrenceOccurrence.ts
+[94m[read][0m
+[94m[bash][0m $ grep -rn "normalizeWeekStartDay\|weekStartDay\|weekStartsOn" packages/twenty-front/src/modules/calen...
+[94m[bash][0m $ grep -rln "recurrence\|Recurrence" docs/ | head -30
+[94m[bash][0m $ grep -rn "normalizeWeekStartDay\|weekStartDay\|weekStartsOn" packages/twenty-front/src/modules/calen...
+[94m[bash][0m $ grep -n "recurrence\|Recurrence\|recur" docs/plan/02-reference-analysis.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/types/CalendarRecurrenceFrequency.ts
+[94m[bash][0m $ wc -l packages/twenty-front/src/modules/calendar/utils/__tests__/calendarRecurrenceRule.test.ts
+[94m[bash][0m $ git log --oneline -15
+[94m[bash][0m $ grep -rn "expandCalendarRecurrence\|parseCalendarRecurrenceRule\|serializeCalendarRecurrenceRule" pa...
+[94m[bash][0m $ "
+[94m[bash][0m $ "
+[94m[bash][0m $ "
+[94m[bash][0m $ "
+[94m[bash][0m $ "
+Now let me compute the expected fixture values independently to pin tests:
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+Now I'll claim the slice, then implement.
+[94m[bash][0m $ cat >> docs/plan/phases/phase-04-report.md <<'EOF'  CLAIMED — US-061/monthly-expansion-position-term...
+[94m[bash][0m $ grep -n "US-061/monthly-expansion" docs/plan/phases/phase-04-report.md
+[94m[write][0m "import { Temporal } from 'temporal-polyfill';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type CalendarRecurrenceOccurrence } from '@/calendar/types/CalendarRecurrenceOccurrence';
+impor... (8797 chars)"
+Claim verified. Now implementing the monthly expansion engine:
+[94m[edit][0m
+Now the tests. First replace the US-060 placeholder assertion:
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/calendar/utils/__tests__/expandCalendarRecurrence.test.ts...
+All 35 tests pass. Now the typecheck and lint gates:
+
+[94m[bash][0m $ echo "TSGO_EXIT=$?"
+[94m[bash][0m $ echo "OXFMT_EXIT=$?"
+[94m[bash][0m $ echo "OXFMT_EXIT=$?"
+[94m[bash][0m $ echo "EXIT=$?"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/expandCalendarRecurrence.ts
+`seriesStartDate` is an unused param I left in `getMonthlyDatesInMonth`. Removing it:
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/expandCalendarRecurrence.ts
+[94m[bash][0m $ npm exec --prefix packages/twenty-front -- oxlint --type-aware -c packages/twenty-front/.oxlintrc.js...
+Lint clean. Re-running tests + typecheck after the refactor:
+
+[94m[bash][0m $ npx oxfmt --check packages/twenty-front/src/modules/calendar/utils/expandCalendarRecurrence.ts packa...
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/calendar/utils/__tests__/expandCalendarRecurrence.test.ts...
+[94m[bash][0m $ echo "TSGO_EXIT=$?"
+All gates green. Verifying scope and the working tree:
+
+[94m[bash][0m $ git diff --stat
+[94m[bash][0m $ or executor — US-062 (P4C.3c: series/occurrence identity + skipped/detached occurrence model). EOF e...
+Only my 2 source files plus the report are mine (session/prd/iteration are Ralph's engine). Now appending the report and progress entries:
+
+[94m[bash][0m $ run `npm exec --prefix packages/twenty-front -- oxlint --type-aware -c packages/twenty-front/.oxlint...
+[94m[bash][0m $ grep -c "US-061/monthly-expansion" docs/plan/phases/phase-04-report.md
+Done. Summary of US-061 (P4C.3b):
+
+**Implemented** monthly expansion in the existing US-060 engine — no second path:
+- `expandCalendarRecurrence.ts:1` adds a `monthly` branch to `iterateCalendarRecurrenceDays`, plus a `weekStartsOnDayIndex` option routed through the existing `normalizeWeekStartDay`.
+- Monthly-by-date (Temporal constrain-clips, anchored on DTSTART so clipping never drifts), monthly-by-position (nth 1..4 / last `-1` weekday), plain monthly BYDAY.
+- count/until and non-positive-interval guards reused unchanged; weekly interval steps now honor locale week start.
+
+**Pinned decisions (tests):** Jan 31 → Feb 28 (not skipped, no drift); Feb 29 → Feb 28 in non-leap, back to Feb 29 in leap; count/until finite on a 9999 window.
+
+**Gates:** jest 2 suites / 67 tests green (35 expansion), `tsgo --noEmit` exit 0, oxlint 0/0, oxfmt clean.
+
+Report and `.ralph-tui/progress.md` appended; PLAN.md untouched; nothing committed.
+
+<promise>COMPLETE</promise>
