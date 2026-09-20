@@ -1,0 +1,88 @@
+# Iteration 5 Log
+
+## Metadata
+
+- **Task ID**: US-059
+- **Task Title**: P4.2 residual — NULL projectStatus fallback via OR filterGroup in task views
+- **Description**: As a project member, I want tasks without an app pipeline status to appear consistently across board, calendar and smart lists, so that the surfaces never silently disagree about which tasks exist.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-20T17:39:02.907Z
+- **Ended At**: 2026-09-20T17:41:41.143Z
+- **Duration**: 2m 38s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "US-059" PLAN.md
+I'll start with the mandatory clean-start check and context gathering.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-059\|US-058\|P4.2" PLAN.md | head -50
+[94m[bash][0m $ tail -100 docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ grep -n "US-059\|null-project-status\|US-058" docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ ls -la .ralph-tui/iterations/ | tail -20
+[94m[bash][0m $ ls -la .ralph-tui/ | head
+[94m[bash][0m $ grep -n "US-034\|US-035\|US-036" PLAN.md | head
+[94m[bash][0m $ head -40 .ralph-tui/iterations/996d0217_2026-09-20_19-26-36_US-059.log
+[94m[bash][0m $ tail -60 .ralph-tui/iterations/996d0217_2026-09-20_19-26-36_US-059.log
+The working tree has US-059 changes and a matching CLAIMED entry on the current base. Let me inspect the prior iteration log to understand state.
+[94m[bash][0m $ git diff packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts packages/twenty-...
+[94m[bash][0m $ git diff packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/my-tasks.test.ts packages/twen...
+[94m[read][0m
+The previous iteration did the work but stalled on a `/tmp` permission error while writing its report. Let me verify the existing changes rather than redo them.
+[94m[bash][0m $ grep -rn "filterGroups" packages/twenty-sdk/src/sdk/define/views/ packages/twenty-shared/src/applica...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/views/view-config.ts
+[94m[bash][0m $ grep -rn "ViewFilterGroupLogicalOperator\|ViewFilterGroupManifest" packages/twenty-sdk/src packages/...
+The previous iteration produced solid work. Let me verify the SDK supports the schema and run the gates.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/viewManifestType.ts
+[94m[bash][0m $ grep -rln "mapViewFilterGroupsToRecordFilterGroups\|mapViewFiltersToFilters" packages/twenty-front/s...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/views/utils/mapViewFiltersToFilters.ts
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/views/ && echo "---LIB---" && ls packages/twenty-a...
+[94m[bash][0m $ grep -rn "projectStatus\|IS_NOT\|DONE\|filterGroups" packages/twenty-apps/internal/a2e-projects/src/...
+[94m[bash][0m $ grep -rn "readTaskPipelineStatus\|precedence\|projectStatus" packages/twenty-apps/internal/a2e-proje...
+Board includes NULL (no DONE filter), so consistency hole is only the two named views. Let me run the gates.
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/null-project-status-filter.test.ts" "src/l...
+[94m[bash][0m $ yarn lint 2>&1 | tail -12
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -8
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -8
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -15
+[94m[bash][0m $ ls -R packages/twenty-apps/internal/a2e-projects/.twenty/output 2>/dev/null | head -40
+[94m[bash][0m $ grep -rln "c31b0100-0008-4000-8000-000000000001\|taskCalendarCompletion\|filterGroups" packages/twen...
+[94m[bash][0m $ python3 -c " import json m=json.load(open('packages/twenty-apps/internal/a2e-projects/.twenty/output...
+[94m[bash][0m $ git diff --stat docs/plan/phases/phase-04-report.md && echo "---" && git diff docs/plan/phases/phase...
+All gates pass. Let me verify working tree cleanliness.
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ sed -n '860,900p' PLAN.md
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) def walk(o):     if isinstance(o,dict):...
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) # find structure def find_list(o):     ...
+[94m[bash][0m $ grep -n "c31b0100-0008\|00000000000a\|00000000000b\|000000000008\|c31b0100-0005" packages/twenty-app...
+[94m[bash][0m $ grep -rn "c31b0100-0005-4000-8000-00000000000a\|c31b0100-0005-4000-8000-00000000000b\|c31b0100-0008-...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-board.view.ts
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+Everything verified. Let me write the phase report and progress entries.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain && echo "---PLAN diff---" && git diff --stat PLAN.md
+Done. Resumed the stalled US-059 claim, verified the previous iteration's implementation, re-ran all gates, and recorded the reports.
+
+**Slice:** OR completion `filterGroup` on `task-calendar.view.ts` + `overdue-tasks.view.ts` — `(projectStatus IS_EMPTY) OR (projectStatus IS NOT 'DONE')`, keeping NULL rows while excluding DONE.
+
+**Verification (all green):**
+- `null-project-status-filter.test.ts` + touched suites → 16/16
+- `yarn test:unit` → 265/265 (262 baseline + 3 new)
+- `yarn typecheck` → exit 0; `yarn lint` → 0 errors (1 pre-existing warning)
+- `npx twenty dev:build .` → `Build succeeded (40 files)`; manifest read-back confirms both OR groups
+
+Key findings: schema is real (`ViewManifest.filterGroups` at `twenty-shared/src/application/viewManifestType.ts:43,94`, `defineView` at `twenty-sdk/.../define-view.ts:44`); SELECT filter values must be JSON-array encoded; board needs no change (no completion filter, NULL already ungrouped); `current-tasks.view.ts`, native tab, and `lib/task-status.ts` untouched.
+
+Phase report + `.ralph-tui/progress.md` entries appended; PLAN.md untouched; nothing committed.
+
+<promise>COMPLETE</promise>
