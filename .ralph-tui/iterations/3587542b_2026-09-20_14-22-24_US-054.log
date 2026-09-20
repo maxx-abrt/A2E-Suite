@@ -1,0 +1,46 @@
+# Iteration 11 Log
+
+## Metadata
+
+- **Task ID**: US-054
+- **Task Title**: P9.1 prompt/action library — every shipped read-only app tool surfaces as a context button; missing per-app prompts closed
+- **Description**: As a user on any app's record page, I want that app's read-only AI actions rendered as buttons in context, so that every shipped per-app action is discoverable without typing a prompt.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-20T12:22:24.524Z
+- **Ended At**: 2026-09-20T12:23:20.780Z
+- **Duration**: 56s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "US-054" PLAN.md
+I'll start with the mandatory clean-start check and locate my task context.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -rn "US-054" PLAN.md docs/plan/ docs/tasks/ 2>/dev/null | head -50
+[94m[bash][0m $ grep -n "US-053\|US-054\|CLAIMED" docs/plan/phases/phase-01-report.md | tail -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[read][0m
+A previous US-054 iteration already claimed and completed this exact slice (`done-for-review` at 12:21 UTC, base matches current HEAD), with the work uncommitted in the tree. Per contract §1.3 and the Stop Condition, I must verify and not redo. Let me confirm the audited work actually passes.
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/ai/utils/__tests__/getContextToolButtons.appSurfacing.tes...
+[94m[bash][0m $ git diff packages/twenty-apps/internal/a2e-chat/src/logic-functions/summarize-channel.logic-function...
+Work is present and the audit test passes. Let me verify the app-side schema references and run the app gates.
+[94m[bash][0m $ git diff packages/twenty-front/src/modules/ai/components/suggested-prompts/contextual-suggested-prom...
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -15
+Work is present and matches the completed report. Let me run the app registration specs and front typecheck to confirm the slice is green.
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -15
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -15
+[94m[bash][0m $ echo "EXIT:$?"
+All gates green. Let me check the Ralph progress bridge before appending my report.
+[94m[bash][0m $ tail -30 .ralph-tui/progress.md
+[94m[bash][0m $ date -u "+%Y-%m-%d %H:%M UTC"
+Everything is already implemented and green; the phase report and progress bridge already carry a `done-for-review` entry. I'll append a verification-pass report per contract §1.3/Stop Condition and stop.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ per contract §1.3/Stop Condition a second executor must only re-verify and report `done-for-review`,...
+[94m[bash][0m $ git status --porcelain | grep -v "^?? .ralph-tui/iterations"
+US-054 was already completed by the immediately-preceding run at the same base commit. Per contract §1.3/Stop Condition I verified rather than redid it: the 15-row `getContextToolButtons.appSurfacing.test.ts` audit (12 tools), the five added suggested-prompt entries, and the chat/drive `objectUniversalIdentifier` schema refs are all present; front `tsgo` + targeted jest + a2e-chat/drive/projects unit suites are green. Appended a `done-for-review` verification entry to `docs/plan/phases/phase-01-report.md` and `.ralph-tui/progress.md`. Nothing else touched, nothing committed.
+
+<promise>COMPLETE</promise>

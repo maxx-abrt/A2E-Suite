@@ -41,6 +41,13 @@ export type {
   AiAccessScopeInput,
   ResolvedAiResultCacheKey,
 } from './types/ai-result-cache.type';
+export type {
+  AiSavedRun,
+  AiSavedRunReopenDecision,
+  AiSavedRunRerunReason,
+  AiRerunEstimate,
+  AiSavedRunRerunDecision,
+} from './types/ai-saved-run.type';
 export type { AskQuestionAnswer } from './types/AskQuestionAnswer';
 export type { AskQuestionItem } from './types/AskQuestionItem';
 export type { AskQuestionOption } from './types/AskQuestionOption';
@@ -75,6 +82,13 @@ export {
   hasAiResultScopeDrift,
   evaluateAiResultReuse,
 } from './utils/ai-result-cache.util';
+export {
+  toAiResultCacheEntry,
+  createAiSavedRun,
+  reopenAiSavedRun,
+  estimateAiSavedRunRerun,
+  executeAiSavedRunRerun,
+} from './utils/ai-saved-run.util';
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
 export { isAiSdkPackage } from './utils/is-ai-sdk-package.util';

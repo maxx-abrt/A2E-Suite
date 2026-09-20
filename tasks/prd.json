@@ -215,12 +215,13 @@
         "No Tier 2 checks (no live provider call, no workspace switching journey) — list them as Missing for tick"
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN task P9.2b \"Saved runs\" [ ] — explicitly re-queued by the 2026-09-20 orchestrator. Storage-backed wiring into app objects stays P7-gated; this story delivers the contract-level saved-run domain (persist/reopen/rerun semantics) with tests, ready for wiring once P7 unblocks.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-20T12:23:20.781Z"
+    "updatedAt": "2026-09-20T12:26:45.815Z"
   }
 }
