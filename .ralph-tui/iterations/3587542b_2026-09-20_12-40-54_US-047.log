@@ -1,0 +1,200 @@
+# Iteration 1 Log
+
+## Metadata
+
+- **Task ID**: US-047
+- **Task Title**: P1.6c remainder — distinct no-apps / network / permission error surfaces for the unified setup operation
+- **Description**: As a user setting up or re-templating a workspace, I want no-apps-available, network-error and permission-denial failures to be visibly distinct when I preview or apply a template, so that I never los...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-20T10:40:54.705Z
+- **Ended At**: 2026-09-20T10:55:08.143Z
+- **Duration**: 14m 13s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "US-047" PLAN.md | head -20
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "P1.6c\|US-047\|US-027\|US-026" PLAN.md | head -40
+[94m[bash][0m $ grep -n "US-047" tasks/prd.json | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ sed -n '1,80p' tasks/prd.json
+[94m[bash][0m $ ls docs/plan/phases/ && wc -l docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ grep -n "US-026\|US-027\|US-047\|P1.6c\|CLAIMED" docs/plan/phases/phase-01-report.md | tail -60
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rln "WorkspaceTemplatePreview\|shouldAutoSkipInstal...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rln "ApplyTemplateErrorCode\|applyTemplateErrorCode...
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rln "shouldAutoSkipInstallAppsStep\|useWorkspaceTem...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/hooks/useWorkspaceTemplatePreview.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/onboarding/utils/shouldAutoSkipInstallAppsStep.ts
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "workspaceTemplatePreview\|applyWorkspaceTemplate...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/onboarding/onboarding.resolver.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "getWorkspaceTemplatePreview\|applyWorkspaceTempl...
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "ApplyTemplateErrorCode" --include="*.ts" --incl...
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "ErrorCode\|errorCode\|permission\|PERMISSION\|no...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/utils/resolveTemplatePreview.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "No apps available\|no apps available\|permissio...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "C2" docs/plan/*.md | grep -i "app\|error\|disti...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rln "FORBIDDEN\|PermissionDenied\|permissionDenied\...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "networkError\|ApolloError\|ServerError\|isApoll...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/apollo/utils/isUnauthenticatedGraphQLError.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "FORBIDDEN\|PermissionDeniedException\|extension...
+[94m[bash][0m $ find packages/twenty-server -name "schema.gql" 2>/dev/null | grep -v node_modules | head
+[94m[bash][0m $ grep -rn "ApplyTemplateErrorCode" .ralph-tui/ tasks/ 2>/dev/null | head
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/onboarding/onboarding.exception.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/InstallApps.tsx
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "shouldAutoSkipInstallAppsStep\|hasLoadedAppsSuc...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/InstallAppsContent.tsx
+[94m[bash][0m $ git grep -n "ApplyTemplateErrorCode" $(git rev-list --all 2>/dev/null | head -50) 2>/dev/null | head
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git show f5befe00 --stat | head -40 && echo "=====a605200...
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "getWorkspaceTemplatePreview\|describe(\|it(\|con...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && ls packages/twenty-server/src/engine/core-modules/onboard...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "getWorkspaceTemplatePreview\|describe(\|it(" pac...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && ls packages/twenty-front/src/modules/a2e-workspace/utils/...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "IconWifiOff\|IconLock\b\|IconShieldLock\|IconAp...
+[94m[bash][0m $ ls packages/twenty-ui/src/icon/components 2>/dev/null | grep -i "wifi\|lock\|apps\|cloud" | head
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && ls packages/twenty-ui/src/icon/components | grep -iE "wif...
+[94m[bash][0m $ ls packages/twenty-ui/src/icon/components | grep -iE "^Icon(Plug|World|Globe|Refresh|Reload|Wifi|Clo...
+[94m[bash][0m $ find packages/twenty-ui/src/icon -maxdepth 1 -name "*.ts" | head
+[94m[todowrite][0m
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && printf '\nCLAIMED — US-047/distinct-error-surfaces — deep...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "US-047" docs/plan/phases/phase-01-report.md
+[94m[todowrite][0m
+Now the server contract type addition:
+[94m[edit][0m
+[94m[edit][0m
+Now the server DTO:
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[write][0m "import { type ApplyTemplateErrorCode } from '@/a2e-workspace/types/apply-template-operation.types';
+import { isDefined } from 'twenty-shared/utils';
+
+type ApolloLikeError = {
+  graphQLErrors?: { exten... (1470 chars)"
+[94m[edit][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/hooks/useWorkspaceTemplatePreview.ts
+[94m[edit][0m
+Now add a gap to the footer and add the failure panel component:
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[write][0m "import { getWorkspaceTemplateSetupErrorCode } from '@/a2e-workspace/utils/getWorkspaceTemplateSetupErrorCode';
+
+describe('getWorkspaceTemplateSetupErrorCode', () => {
+  it('returns null when the previ... (1411 chars)"
+[94m[read][0m
+[94m[edit][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "TemplatePreview\|errorCode\|preview" packages/tw...
+[94m[edit][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest packages/twenty-front/src/modules/a2e-workspace/...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest packages/twenty-server/src/engine/core-modules/o...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx tsgo -p tsconfig.json --noEmit ...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "useWorkspaceTemplatePreview\|refetch\|mockReturn...
+[94m[read][0m
+[94m[edit][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx tsgo -p tsconfig.json --noEmit ...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && npx tsgo -p tsconfig.json --noEmit...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx nx lint:diff-with-main twenty-front 2>&1 | tail -40
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx oxlint --type-aware -c .oxlintr...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx oxfmt --check src/modules/a2e-w...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx nx lint:diff-with-main twenty-server 2>&1 | tail -20
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && npx oxlint --type-aware -c .oxlint...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && npx oxfmt src/engine/core-modules/...
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest packages/twenty-front/src/modules/a2e-workspace ...
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+Now add the apply-error component test at the end:
+[94m[edit][0m
+Now the hook test additions:
+[94m[edit][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest packages/twenty-front/src/modules/a2e-workspace ...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "result: {" packages/twenty-front/src --include=...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "FORBIDDEN" packages/twenty-front/src --include=...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && find packages/twenty-front/src -name "is-graphql-error-of...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && cat packages/twenty-front/src/utils/get-graphql-error-ext...
+[94m[write][0m "import { type ApplyTemplateErrorCode } from '@/a2e-workspace/types/apply-template-operation.types';
+import { isDefined } from 'twenty-shared/utils';
+import { isGraphqlErrorOfType } from '~/utils/is-gr... (871 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest packages/twenty-front/src/modules/a2e-workspace ...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx tsgo -p tsconfig.json --noEmit ...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx oxlint --type-aware -c .oxlintr...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && npx oxlint --type-aware -c .oxlint...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && node docs/scripts/check-docs.mjs 2>&1 | tail -20
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git status --porcelain
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest packages/twenty-front/src/modules/a2e-workspace ...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx tsgo -p tsconfig.json --noEmit ...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "name: 'ApplyTemplateErrorCode'\|ApplyTemplateEr...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest packages/twenty-server/src/engine/core-modules/o...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && npx tsgo -p tsconfig.json --noEmit...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -c '"id": "US-' tasks/prd.json && grep -o '"id": "US...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -o '"id": "US-[0-9]*"' tasks/prd.json
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git diff --stat
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "Preview unavailable" packages docs --include="*...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git diff packages/twenty-server/src/engine/core-modules/o...
+[94m[bash][0m $ git status --porcelain
+[94m[todowrite][0m
+US-047 done-for-review.
+
+**What shipped (additive, no renames/removals):**
+- Server: new `ApplyTemplateErrorCode` (`PERMISSION_DENIED` | `NO_APPS_AVAILABLE`) + nullable `TemplatePreview.errorCode`, DTO enum `ApplyTemplateErrorCode` + field; service sets `NO_APPS_AVAILABLE` only when a template expects apps and none are registered (CRM-only stays null).
+- Front: wire-mirror type (+ client-only `NETWORK_ERROR`), new pure classifier `getWorkspaceTemplateSetupErrorCode` reusing `isGraphqlErrorOfType(error,'FORBIDDEN')`; `A2eWorkspaceTemplatePreview` renders distinct `…-permission-denied` / `…-network-error` / `…-no-apps-available` panels and a distinct apply-error banner instead of the single "Preview unavailable" panel; `useWorkspaceTemplatePreview` exposes `refetch`; `useApplyWorkspaceTemplateOperation` exposes `operationErrorCode` + distinct snackbars. Template choice is kept in all three; `shouldAutoSkipInstallAppsStep` untouched.
+- Specs: classifier (5), preview component (+4), apply hook (+2), server preview errorCode (+3).
+
+**Checks:** front a2e-workspace jest 9 suites/47 pass; server onboarding jest 8 suites/76 pass; front + server `tsgo --noEmit` exit 0; `lint:diff-with-main` success (vacuous on uncommitted tree) plus direct `oxlint --type-aware`/`oxfmt --check` clean on all 14 touched files; `check-docs.mjs` PASS.
+
+**Missing for tick (Tier 2):** `graphql:generate` against a running server for the new enum/field, and the live onboarding/Settings three-panel browser journey. Also noted a scope boundary: the `InstallApps` catalogue list still has one load-failure empty state (outside AC #3's named components).
+
+Report appended to `docs/plan/phases/phase-01-report.md`; Ralph bridge appended to `.ralph-tui/progress.md`. PLAN.md untouched, nothing committed.
+
+<promise>COMPLETE</promise>

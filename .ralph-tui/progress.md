@@ -20,3 +20,12 @@ after each iteration and it's included in prompts for context.
   - `npx nx lint:diff-with-main` diffs `main...HEAD`, so it prints "No changed files." on an uncommitted slice; run `npx oxlint --type-aware` / `npx oxfmt --check` on the touched files directly for real coverage.
 ---
 
+
+## [2026-09-20] - US-048
+- Verified the P3.4 native-primitive/license feasibility check already exists (performed 2026-09-18 as `P3.4-feasibility-spike`, committed `7c372028`): artifact `docs/plan/p3.4-advanced-authoring-feasibility.md`, indexed in README and registered in `check-docs.mjs`.
+- Met every acceptance bullet (six-block matrix with native primitive + license + verdict, PDF/DOCX-required vs ODT-deferred, advanced-controls/reference-package constraints, per-block round-trip obligation, explicit defers, Inspiration-apps boundary). No new product code.
+- Files changed: `docs/plan/phases/phase-03-report.md` (done-for-review entry), `.ralph-tui/progress.md` (this entry).
+- **Learnings:**
+  - A report-only slice can already be complete under a differently-named prior entry (`P3.4-feasibility-spike` vs PRD `US-048`); check the phase report for an equivalent done-for-review before doing new work.
+  - `check-docs.mjs` maintains a `MAINTAINED_DOCUMENTS` list — a new findings doc is only covered by the gate if registered there; the P4C.1/P3.4 precedent also adds a `docs/README.md` index row.
+---
