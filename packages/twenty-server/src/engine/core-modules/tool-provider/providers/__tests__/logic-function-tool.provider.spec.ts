@@ -113,6 +113,98 @@ describe('LogicFunctionToolProvider', () => {
     expect(descriptors).toHaveLength(0);
   });
 
+  // Install/uninstall exposure: the flat maps are the only registry. An
+  // installed app contributes its toolTriggerSettings functions; uninstalling
+  // the app soft-deletes those functions (deletedAt set on the very same row,
+  // no separate registration), so the provider must stop advertising them.
+  // These pin the native primitive P1.5 established — there is no
+  // `registerAiTools`, no duplicate table and no manual unregistration hook to
+  // compensate for.
+  it('stops advertising an app tool once its logic function is deleted on uninstall', async () => {
+    const installed = buildFlatLogicFunction({
+      universalIdentifier: 'fn-uid-installed',
+      id: 'fn-id-installed',
+      name: 'Summarize Channel',
+      toolTriggerSettings: {},
+    });
+
+    const whileInstalled = await generateDescriptors([installed]);
+
+    expect(whileInstalled.map((descriptor) => descriptor.name)).toEqual([
+      'app_summarize_channel',
+    ]);
+
+    const afterUninstall = await generateDescriptors([
+      { ...installed, deletedAt: '2026-02-01T00:00:00.000Z' },
+    ]);
+
+    expect(afterUninstall).toHaveLength(0);
+  });
+
+  it('keeps the other installed apps\u2019 tools and drops only the uninstalled app\u2019s', async () => {
+    const keptTool = buildFlatLogicFunction({
+      universalIdentifier: 'fn-uid-kept',
+      id: 'fn-id-kept',
+      name: 'Find File',
+      toolTriggerSettings: {},
+    });
+    const removedTool = buildFlatLogicFunction({
+      universalIdentifier: 'fn-uid-removed',
+      id: 'fn-id-removed',
+      name: 'Summarize Channel',
+      toolTriggerSettings: {},
+    });
+
+    const afterUninstall = await generateDescriptors([
+      keptTool,
+      { ...removedTool, deletedAt: '2026-02-01T00:00:00.000Z' },
+    ]);
+
+    expect(afterUninstall.map((descriptor) => descriptor.name)).toEqual([
+      'app_find_file',
+    ]);
+  });
+
+  it('adds an app tool when the app is installed with its toolTriggerSettings function', async () => {
+    const beforeInstall = await generateDescriptors([]);
+
+    expect(beforeInstall).toHaveLength(0);
+
+    const afterInstall = await generateDescriptors([
+      buildFlatLogicFunction({
+        universalIdentifier: 'fn-uid-newly-installed',
+        id: 'fn-id-newly-installed',
+        name: 'Draft Email Reply',
+        description: 'Drafts a reply from the caller context',
+        toolTriggerSettings: {},
+      }),
+    ]);
+
+    expect(afterInstall).toHaveLength(1);
+    expect(afterInstall[0]).toMatchObject({
+      name: 'app_draft_email_reply',
+      executionRef: {
+        kind: 'logic_function',
+        logicFunctionId: 'fn-id-newly-installed',
+      },
+    });
+  });
+
+  // A logic function without toolTriggerSettings is not an AI surface, so
+  // installing such an app must not add one — the exposure filter is the
+  // settings, not app membership.
+  it('does not advertise an installed app function that has no toolTriggerSettings', async () => {
+    const descriptors = await generateDescriptors([
+      buildFlatLogicFunction({
+        universalIdentifier: 'fn-uid-cron',
+        id: 'fn-id-cron',
+        name: 'Nightly Cleanup',
+      }),
+    ]);
+
+    expect(descriptors).toHaveLength(0);
+  });
+
   it('falls back to the default input schema when toolTriggerSettings has none', async () => {
     const descriptors = await generateDescriptors([
       buildFlatLogicFunction({

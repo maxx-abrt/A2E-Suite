@@ -1,0 +1,340 @@
+# Iteration 9 Log
+
+## Metadata
+
+- **Task ID**: US-063
+- **Task Title**: P4C.3d — recurrence persistence on calendarEvent + upgrade command + integration slice
+- **Description**: As a calendar user, I want my repeating events and their detached occurrences to survive reload and server round-trips, so that the recurrence I configured is what everyone sees after reconnect.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-20T17:59:48.136Z
+- **Ended At**: 2026-09-20T18:39:16.019Z
+- **Duration**: 39m 27s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-063" PLAN.md
+[94m[bash][0m $ grep -n "P4C.3\|P4C\.3\|US-060\|US-061\|US-062" PLAN.md | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "US-063\|P4C.3\|CLAIMED" docs/plan/phases/phase-04-report.md | tail -60
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ git diff --stat .ralph-tui/session-meta.json .ralph-tui/session.json tasks/prd.json
+[94m[bash][0m $ find packages/twenty-front/src/modules/calendar -type f | head -80
+[94m[bash][0m $ find packages/twenty-server/src -type d -iname "*calendar*"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ find packages/twenty-server/src/database/commands/upgrade-version-command -maxdepth 1 -type d
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-server/src -name "*.ts" -path "*calendar-event*" | grep -i "standard\|metadata"...
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-shared/src -path "*calendar*" -name "*.ts" | head -20
+[94m[bash][0m $ grep -rln "calendarEvent" packages/twenty-shared/src --include="*.ts" 2>/dev/null | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/types/CalendarRecurrenceSeriesState.ts
+[94m[bash][0m $ done
+[94m[bash][0m $ grep -n "calendarEvent\|CalendarEvent" packages/twenty-shared/src/metadata/constants/standard-object...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/metadata/constants/standard-object-fields.constant.ts
+[94m[read][0m
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) print(type(d), list(d.keys()) if isinst...
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) for s in d['userStories']:     if s.get...
+[94m[bash][0m $ grep -rln "recurrence\|Recurrence\|RRULE\|rrule" packages/twenty-server/src packages/twenty-shared/s...
+[94m[bash][0m $ grep -rn "recurrence\|Recurrence\|RECURRENCE" packages/twenty-server/src/modules/calendar/calendar-e...
+[94m[bash][0m $ python3 -c " import json for p in ['packages/twenty-shared/package.json','packages/twenty-front/pack...
+[94m[bash][0m $ wc -l packages/twenty-front/src/modules/calendar/utils/expandCalendarRecurrence.ts packages/twenty-f...
+[94m[bash][0m $ find packages/twenty-server/test/integration/graphql/suites -iname "*calendar*" -o -iname "*recur*" ...
+[94m[read][0m
+[94m[bash][0m $ grep -rln "createFieldMetadata\|fieldMetadata.*INSERT\|add.*field" packages/twenty-server/src/databa...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/docs/UPGRADE_COMMANDS.md
+[94m[bash][0m $ grep -rn "TWENTY_CURRENT_VERSION" packages/twenty-shared/src packages/twenty-server/src --include="*...
+[94m[bash][0m $ grep -rln "expandCalendarRecurrence\|parseCalendarRecurrenceRule\|serializeCalendarRecurrenceRule\|C...
+[94m[bash][0m $ ls packages/twenty-shared/src/utils | head -40
+[94m[bash][0m $ grep -rn "calendar" packages/twenty-shared/src/utils/date/*.ts | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/expandCalendarRecurrence.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/database/commands/generate-instance-command.command.ts
+[94m[bash][0m $ grep -rln "async down" packages/twenty-server/src/database/commands/upgrade-version-command --includ...
+[94m[bash][0m $ done
+[94m[bash][0m $ python3 -c " import json d=json.load(open('packages/twenty-shared/package.json')) print(json.dumps(d...
+[94m[bash][0m $ grep -rln "normalizeWeekStartDay\|CalendarRecurrence\|expandCalendarRecurrence\|buildCalendarOccurre...
+[94m[bash][0m $ head -30 packages/twenty-shared/src/utils/index.ts
+[94m[bash][0m $ python3 -c " import json d=json.load(open('package.json')) print(json.dumps(d.get('scripts',{}), ind...
+[94m[bash][0m $ find packages/twenty-shared -name "*.mjs" -o -name "*.ts" -path "*script*" | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/scripts/generateBarrels.ts
+[94m[bash][0m $ grep -rn "generateBarrels" --include="*.json" --include="*.ts" --include="*.yml" --include="*.yaml" ...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "calendarEvent" packages/twenty-server/src/engine/workspace-manager/twenty-standard-applica...
+[94m[bash][0m $ grep -rn "from '@/utils" packages/twenty-shared/src/utils/date/*.ts | head
+[94m[bash][0m $ grep -rn "export.*isDefined" packages/twenty-shared/src/utils/validation/index.ts 2>/dev/null | head
+[94m[todowrite][0m
+I've mapped the architecture. This is a large slice; let me set up a task list and start with the isomorphic engine move.
+[94m[bash][0m $ printf '\nCLAIMED — US-063/recurrence-persistence-calendar-event — deepseek-v4.1-flash — 2026-09-20T...
+[94m[write][0m "export type CalendarRecurrenceFrequency = 'daily' | 'weekly' | 'monthly';
+
+export const CALENDAR_RECURRENCE_FREQUENCIES: CalendarRecurrenceFrequency[] = [
+  'daily',
+  'weekly',
+  'monthly',
+];
+
+// RF... (496 chars)"
+[94m[write][0m "export type CalendarRecurrenceWeekday =
+  | 'MO'
+  | 'TU'
+  | 'WE'
+  | 'TH'
+  | 'FR'
+  | 'SA'
+  | 'SU';
+
+// ISO order (Monday first) so serialized BYDAY lists and weekly expansion are
+// deterministic... (628 chars)"
+[94m[write][0m "import { type CalendarRecurrenceWeekday } from './CalendarRecurrenceWeekday';
+
+// "second Tuesday" / "last Friday". `ordinal` is 1..4 for the first through
+// fourth weekday of the month and -1 for th... (336 chars)"
+[94m[write][0m "import { type CalendarRecurrenceFrequency } from './CalendarRecurrenceFrequency';
+import { type CalendarRecurrenceMonthlyPosition } from './CalendarRecurrenceMonthlyPosition';
+import { type CalendarRe... (796 chars)"
+[94m[write][0m "// One expanded occurrence of a rule. `day` is the wall-clock date in the anchor
+// zone (the identity detached/skipped occurrences are keyed on) and `startsAt`
+// is the resolved ISO-8601 instant.
+ex... (281 chars)"
+[94m[write][0m "// Calendar start day uses the 0=Sunday..6=Saturday index stored on the
+// workspace member format preferences. Values outside that range fall back to
+// Monday so the grid stays deterministic instead... (527 chars)"
+Now the utils:
+[94m[write][0m "import { Temporal } from 'temporal-polyfill';
+import { isDefined } from '@/utils/validation';
+
+import {
+  CALENDAR_RECURRENCE_FREQUENCIES,
+  CALENDAR_RECURRENCE_FREQUENCY_TO_TOKEN,
+} from '../types/Ca... (5599 chars)"
+[94m[write][0m "import { isDefined } from '@/utils/validation';
+
+import { CALENDAR_RECURRENCE_FREQUENCY_TO_TOKEN } from '../types/CalendarRecurrenceFrequency';
+import { type CalendarRecurrenceRule } from '../types/Ca... (1465 chars)"
+[94m[write][0m "import { Temporal } from 'temporal-polyfill';
+import { isDefined } from '@/utils/validation';
+
+import { type CalendarRecurrenceOccurrence } from '../types/CalendarRecurrenceOccurrence';
+import { type ... (8673 chars)"
+[94m[write][0m "// Deterministic occurrence identity: series identity + the occurrence's
+// wall-clock day. The day (not the resolved instant) is deliberate — an
+// occurrence must keep its identity across a DST shif... (604 chars)"
+[94m[write][0m "// Stable series identity, derived from the anchor (master) event's id — the one
+// value that must survive every later occurrence, rule or time edit. The prefix
+// namespaces the derived id so it can... (454 chars)"
+[94m[write][0m "// Isomorphic recurrence engine lives in twenty-shared so the server stored-path
+// expansion consumes the exact same rule/expansion code as the front. Re-export
+// only — no logic is forked here.
+exp... (349 chars)"
+Now replace the front implementations with re-export shims so there is a single source of truth:
+[94m[write][0m "// Isomorphic recurrence engine lives in twenty-shared so the server stored-path
+// expansion consumes the exact same rule/expansion code as the front. Re-export
+// only — no logic is forked here.
+exp... (348 chars)"
+[94m[write][0m "// Isomorphic recurrence engine lives in twenty-shared so the server stored-path
+// expansion consumes the exact same rule/expansion code as the front. Re-export
+// only — no logic is forked here.
+exp... (275 chars)"
+[94m[write][0m "// Isomorphic recurrence engine lives in twenty-shared so the server stored-path
+// expansion consumes the exact same rule/expansion code as the front. Re-export
+// only — no logic is forked here.
+exp... (264 chars)"
+[94m[write][0m "// Isomorphic recurrence engine lives in twenty-shared so the server stored-path
+// expansion consumes the exact same rule/expansion code as the front. Re-export
+// only — no logic is forked here.
+exp... (270 chars)"
+[94m[write][0m "// Isomorphic recurrence engine lives in twenty-shared so the server stored-path
+// expansion consumes the exact same rule/expansion code as the front. Re-export
+// only — no logic is forked here.
+exp... (258 chars)"
+[94m[write][0m "// Isomorphic recurrence engine lives in twenty-shared so the server stored-path
+// expansion consumes the exact same rule/expansion code as the front. Re-export
+// only — no logic is forked here.
+exp... (264 chars)"
+[94m[write][0m "// Isomorphic recurrence engine lives in twenty-shared so the server stored-path
+// expansion consumes the exact same rule/expansion code as the front. Re-export
+// only — no logic is forked here.
+exp... (268 chars)"
+[94m[write][0m "// Isomorphic recurrence engine lives in twenty-shared so the server stored-path
+// expansion consumes the exact same rule/expansion code as the front. Re-export
+// only — no logic is forked here.
+exp... (261 chars)"
+[94m[write][0m "// Isomorphic recurrence engine lives in twenty-shared so the server stored-path
+// expansion consumes the exact same rule/expansion code as the front. Re-export
+// only — no logic is forked here.
+exp... (262 chars)"
+[94m[write][0m "// Isomorphic recurrence engine lives in twenty-shared so the server stored-path
+// expansion consumes the exact same rule/expansion code as the front. Re-export
+// only — no logic is forked here.
+exp... (258 chars)"
+[94m[bash][0m $ grep -n "^import\|from '" packages/twenty-front/src/modules/calendar/utils/__tests__/calendarRecurre...
+[94m[bash][0m $ npx nx build twenty-shared --skip-nx-cache 2>&1 | tail -30
+[94m[bash][0m $ git status --porcelain packages/twenty-shared | head -40
+[94m[bash][0m $ npx jest --config=packages/twenty-front/jest.config.mjs "src/modules/calendar" 2>&1 | tail -30
+[94m[bash][0m $ npx tsgo -p packages/twenty-shared/tsconfig.json --noEmit 2>&1 | tail -20
+[94m[bash][0m $ npx tsgo -p packages/twenty-front/tsconfig.json --noEmit 2>&1 | tail -30
+[94m[todowrite][0m
+[94m[bash][0m $ cat packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/buil...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+[94m[bash][0m $ grep -rn "v5\|validate as uuidValidate" packages/twenty-server/src packages/twenty-shared/src --incl...
+[94m[bash][0m $ cat packages/twenty-front/src/modules/calendar/utils/buildCalendarEventInputFromDraft.ts
+[94m[bash][0m $ grep -n "calendarEvent" packages/twenty-shared/src/metadata/__tests__/__snapshots__/standardObjectUn...
+[94m[read][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/metadata/constants/standard-object-fields.constant.ts
+[94m[bash][0m $ grep -n "IconRepeat\|IconWorld\|IconHash\|IconCalendarEvent\|IconCalendarOff\|IconCalendarRepeat" pa...
+[94m[bash][0m $ grep -rn "IconRepeat\b" packages/twenty-ui/src/icon/*.ts 2>/dev/null | head
+[94m[bash][0m $ grep -in "repeat\|recur" packages/twenty-ui/src/icon/icon-dictionary.md | head
+[94m[bash][0m $ grep -n "IconHash\|IconCalendarOff\|IconId\|IconCalendarClock" packages/twenty-ui/src/icon/index.ts ...
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[bash][0m $ npx jest packages/twenty-shared/src/metadata/__tests__/standardObjectUniversalIdentifiers.test.ts --...
+[94m[bash][0m $ npx nx build twenty-shared --skip-nx-cache 2>&1 | tail -8
+[94m[bash][0m $ npx jest src/engine/workspace-manager/twenty-standard-application --config=packages/twenty-server/je...
+[94m[bash][0m $ npx jest src/engine/workspace-manager/twenty-standard-application/utils/__tests__/get-standard-objec...
+[94m[bash][0m $ git diff packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/__tes...
+[94m[bash][0m $ git diff packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/__tes...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "validateBuildAndRunWorkspaceMigration(" packages/twenty-server/src/database/commands/upgra...
+[94m[read][0m
+[94m[write][0m "import { Command } from 'nest-commander';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
+
+import { ProvisionedWorkspaceCommandRunner } from... (6179 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ find packages/twenty-server/src -iname "*upgrade-command-registry*" -o -iname "*registered-workspace...
+[94m[bash][0m $ ls packages/twenty-server/src/database/commands/upgrade-version-command/*.ts
+[94m[bash][0m $ ls packages/twenty-server/src/modules/calendar/common/utils/ packages/twenty-server/src/modules/cale...
+[94m[write][0m "import {
+  buildCalendarOccurrenceId,
+  buildCalendarSeriesId,
+  expandCalendarRecurrence,
+  parseCalendarRecurrenceRule,
+  type CalendarRecurrenceOccurrence,
+} from 'twenty-shared/utils';
+
+// The sto... (3989 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[write][0m "import { type StoredCalendarEventRecurrenceRecord } from 'src/modules/calendar/common/utils/expand-stored-calendar-event-recurrence.util';
+import { expandStoredCalendarEventRecurrence } from 'src/modu... (3941 chars)"
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/modules/calendar/common/utils/__tests__/expand-stored-calendar-event-recurrence.util.sp...
+[94m[bash][0m $ ls packages/twenty-server/test/integration/graphql/utils/ | head -60
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-server/test/integration/graphql/utils/find-many-operation-factory.uti...
+[94m[bash][0m $ cat packages/twenty-server/test/integration/graphql/utils/destroy-one-operation-factory.util.ts
+[94m[bash][0m $ sed -n '1,40p' packages/twenty-server/jest-integration.config.ts
+[94m[write][0m "import { randomUUID } from 'crypto';
+
+import { buildCalendarOccurrenceId, buildCalendarSeriesId } from 'twenty-shared/utils';
+
+import { createOneOperationFactory } from 'test/integration/graphql/utils... (6745 chars)"
+[94m[bash][0m $ python3 -c " import json,re s=open('packages/twenty-server/tsconfig.json').read() print(s[:1500]) "
+[94m[bash][0m $ grep -rln "from 'src/" packages/twenty-server/test/integration/graphql/suites | xargs grep -l "from ...
+[94m[bash][0m $ sed -n '1,20p' packages/twenty-server/test/integration/graphql/suites/application-user-role-intersec...
+[94m[edit][0m
+[94m[bash][0m $ grep -rn "isUIEditable" packages/twenty-server/src/engine/api/graphql --include="*.ts" | head
+[94m[bash][0m $ cat packages/twenty-server/src/engine/api/graphql/workspace-schema-builder/utils/apply-type-options-...
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-server/src/engine/api/graphql/workspace-schema-builder/graphql-type-...
+[94m[bash][0m $ redis-cli ping
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-server/test/integration/utils/setup-test.ts
+[94m[bash][0m $ npx tsgo -p packages/twenty-server/tsconfig.json --noEmit 2>&1 | tail -30
+[94m[bash][0m $ git status --porcelain | awk '{print $2}'
+[94m[bash][0m $ npx oxlint --type-aware -c packages/twenty-server/.oxlintrc.json \   packages/twenty-server/src/data...
+[94m[bash][0m $ npx oxlint --type-aware -c packages/twenty-shared/.oxlintrc.json packages/twenty-shared/src/utils/ca...
+[94m[bash][0m $ npx oxlint --type-aware -c packages/twenty-front/.oxlintrc.json $(git status --porcelain | awk '{pri...
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-server/test/integration/utils/create-app.ts
+[94m[bash][0m $ python3 -c " import json d=json.load(open('packages/twenty-server/project.json')) t=d.get('targets',...
+[94m[bash][0m $ grep -E "PG_DATABASE_URL|DATABASE_URL" packages/twenty-server/.env.test 2>/dev/null | head
+[94m[bash][0m $ " 2>&1 | head
+[94m[bash][0m $ find packages/twenty-server/src/database/commands -maxdepth 1 -type d
+[94m[bash][0m $ python3 -c " import json d=json.load(open('packages/twenty-server/project.json')) print(json.dumps(d...
+[94m[bash][0m $ grep -rn "@Command({" packages/twenty-server/src/database/commands --include="*.ts" | grep -i "sync\...
+[94m[bash][0m $ npx nx database:reset twenty-server 2>&1 | tail -40
+[94m[bash][0m $ "
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/calendar/calendar-event...
+[94m[bash][0m $ grep -rn "isUIEditable\|isUIReadOnly" packages/twenty-server/src/engine/workspace-manager/twenty-sta...
+[94m[bash][0m $ grep -n "isUIEditable\|isUIReadOnly\|writable\|isReadOnly\|description" packages/twenty-server/src/e...
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils...
+[94m[edit][0m
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/calendar/calendar-event...
+[94m[write][0m "import {
+  buildCalendarSeriesId,
+  expandCalendarRecurrence,
+  parseCalendarRecurrenceRule,
+  type CalendarRecurrenceOccurrence,
+} from 'twenty-shared/utils';
+
+// The stored projection of a standard ... (3890 chars)"
+[94m[edit][0m
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/calendar/calendar-event...
+[94m[bash][0m $ npx jest src/modules/calendar/common/utils/__tests__/expand-stored-calendar-event-recurrence.util.sp...
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/calendar --runInBand 2>...
+[94m[bash][0m $ echo "SERVER_TSGO_EXIT=$?"
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ echo "DONE"
+[94m[edit][0m
+[94m[bash][0m $ echo "DONE"
+[94m[bash][0m $ npx jest src/modules/calendar/common/utils/__tests__/expand-stored-calendar-event-recurrence.util.sp...
+[94m[bash][0m $ npx jest packages/twenty-shared/src/metadata --config=packages/twenty-shared/jest.config.mjs 2>&1 | ...
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/object-generated/calend...
+[94m[bash][0m $ npx oxfmt --check \   packages/twenty-shared/src/utils/calendar-recurrence \   packages/twenty-share...
+[94m[bash][0m $ npx oxfmt --check packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/ut...
+[94m[bash][0m $ echo "TSGO_DONE"
+[94m[bash][0m $ npx jest --config jest-integration.config.ts test/integration/graphql/suites/calendar --runInBand 2>...
+Let me add explicit test evidence that recurrence fields stay non-UI-editable (local-only, provider metadata untouched):
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/engine/workspace-manager/twenty-standard-application/utils/__tests__/compute-calendar-e...
+[94m[bash][0m $ npx oxlint --type-aware -c packages/twenty-server/.oxlintrc.json \   packages/twenty-server/src/data...
+[94m[bash][0m $ npx jest --config=packages/twenty-front/jest.config.mjs "src/modules/calendar" 2>&1 | tail -8
+[94m[bash][0m $ git diff --stat | tail -30
+[94m[edit][0m
+Let me strengthen stored-path coverage (month-end, leap-year, locale week start, long range) in the server util spec:
+[94m[read][0m
+[94m[edit][0m
+[94m[bash][0m $ grep -n "weekStartsOnDayIndex\|Sunday weeks\|Monday weeks\|biweekly\|Jan 11\|Jan 25\|Feb 1\|2026-01-...
+[94m[read][0m
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/modules/calendar/common/utils/__tests__/expand-stored-calendar-event-recurrence.util.sp...
+[94m[bash][0m $ npx oxlint --type-aware -c packages/twenty-server/.oxlintrc.json packages/twenty-server/src/modules/...
+[94m[bash][0m $ npx jest src/modules/calendar/common/utils/__tests__/expand-stored-calendar-event-recurrence.util.sp...
+[94m[bash][0m $ echo "SERVER_TSGO_DONE"
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-server/src/database/commands/command-runners/workspace.command-runner...
+[94m[bash][0m $ npx nx run twenty-server:database:migrate:generate --name us-063-recurrence-fields --type fast 2>&1 ...
+[94m[bash][0m $ git diff packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.cons...
+[94m[bash][0m $ echo "reverted"
+[94m[todowrite][0m
+Now let me append the phase report:
+[94m[bash][0m $ or executor — US-064 (next P4C.3 bullet / P4C.4 unblocks once P4C.3 is accepted), wiring the calenda...
+[94m[bash][0m $ tail -30 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ both were up. Integration calendar suites boot in ~4s, so iterate directly. --- EOF echo appended
+[94m[bash][0m $ git status --porcelain PLAN.md || echo "PLAN untouched"
+[94m[bash][0m $ grep -c "US-063/recurrence-persistence-calendar-event" docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ echo "FRONT_TSGO_DONE"
+[94m[todowrite][0m
+US-063 complete. Summary:
+
+**What landed**
+- **Isomorphic engine:** the pure recurrence engine (types, parse/serialize, expansion, occurrence/series identity) moved to `packages/twenty-shared/src/utils/calendar-recurrence/`; the 11 front files are now re-export shims, so all `@/calendar/...` imports and 164 front tests stay green with one implementation.
+- **Additive storage on standard `calendarEvent`:** 5 nullable TEXT fields (`recurrenceRule`, `recurrenceTimezone`, `recurrenceSeriesId`, `recurrenceOccurrenceDay`, `recurrenceSkippedOccurrenceDays`), non-UI-editable so provider-synced rows are untouched.
+- **2.39 workspace upgrade command** `1789904000000` (strictly increasing > US-050's), module-registered, migrating existing workspaces via `validateBuildAndRunWorkspaceMigration`.
+- **Stored-path expansion util** + Tier-1 integration slice: create recurring anchor → expand in stored timezone across DST → detach an occurrence → re-query still detached → replay yields no duplicate.
+
+**Verification:** server/front/shared `tsgo` exit 0; 164 front calendar tests, 78 standard-application + 9 server util tests, 2 suites/3 Tier-1 calendar integration tests, plus object-generated/create-calendar-event suites all green; oxlint/oxfmt clean. `NODE_ENV=test nx database:reset` run because the standard schema changed.
+
+**One flagged deviation:** the AC's "generated migration … up + down" clause — this is a standard-metadata change, so there is no core/instance DDL (workspace commands have no `down`; `migrate:generate` only produced unrelated pre-existing FK drift, which I deleted/reverted). Recorded as the explicit storage decision in `docs/plan/phases/phase-04-report.md`, consistent with the accepted US-050/blocklist/messageCampaign field-addition pattern.
+
+Reports appended to `docs/plan/phases/phase-04-report.md` and `.ralph-tui/progress.md`; PLAN.md untouched; nothing committed.
+
+<promise>COMPLETE</promise>

@@ -204,9 +204,10 @@
         "Quality gate: dated entry appended to docs/plan/phases/phase-01-report.md; PLAN.md not edited; nothing committed"
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN task P9.1 bullet 1 (no literal (after X); execution order: 'P9 per-domain actions only after that domain is safe; registration is already native'). Starting state: NOT STARTED as a validation deliverable — 12 per-app tools individually verified (US-009..013/042/046/054) but no server-side spec pins install/uninstall exposure of the provider itself.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-065",
@@ -276,6 +277,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-20T18:39:16.026Z"
+    "updatedAt": "2026-09-20T18:49:47.949Z"
   }
 }

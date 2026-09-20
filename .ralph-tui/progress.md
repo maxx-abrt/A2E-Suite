@@ -95,3 +95,12 @@ after each iteration and it's included in prompts for context.
   - The "generated migration + up/down" clause does not map to a standard-field change: workspace commands have no `down`, and `database:migrate:generate` only emits unrelated pre-existing FK drift. Recorded the storage decision in the report and flagged the deviation for the orchestrator.
   - Preflight `pg_isready -h localhost && redis-cli ping` before Tier-1; both were up. Integration calendar suites boot in ~4s, so iterate directly.
 ---
+
+## 2026-09-20 - US-064
+- Landed the P9.1 install/uninstall exposure regression proof for the native tool registry (no production change — behavior was already correct via the P1.5 `toolTriggerSettings` primitive).
+- Files changed: `packages/twenty-server/src/engine/core-modules/tool-provider/providers/__tests__/logic-function-tool.provider.spec.ts` (+4 cases), new `packages/twenty-server/src/engine/core-modules/tool-provider/services/__tests__/tool-registry.service.spec.ts` (catalogue-resolution specs + a provider-source grep-proof block), `docs/plan/phases/phase-01-report.md`, `.ralph-tui/progress.md`.
+- **Learnings:**
+  - App AI surface is the workspace flat maps, not an explicit registration: the provider filters `flatLogicFunctionMaps.byUniversalIdentifier` on `deletedAt === null` + `isDefined(toolTriggerSettings)`. Uninstall soft-deletes the logic-function row in place (`deletedAt` set), so the tool vanishes with no unregistration call — pin lifecycle at the provider AND at `ToolRegistryService.getCatalog`/`buildToolIndex`, since that is where the assistant resolves the catalogue.
+  - `ToolRegistryService` is a plain class: construct it with `new ToolRegistryService(providers, toolExecutorService as never, toolOutputSpillService as never)`; `getCatalog`/`buildToolIndex` only need `isAvailable` + `generateDescriptors` from each provider, so a real `LogicFunctionToolProvider` over a fake `WorkspaceManyOrAllFlatEntityMapsCacheService` is enough (no Nest module needed).
+  - Grep-proof as a spec tripwire: `readFileSync(join(__dirname, '..','..','providers','logic-function-tool.provider.ts'))` and assert it contains `toolTriggerSettings` and matches none of `registerAiTools|registerTool|addAiTool|aiToolRegistry`. Repo-wide `rg` confirms no `registerAiTools` symbol and no duplicate AI registry entity/table anywhere in `packages`.
+---
