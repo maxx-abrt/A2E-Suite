@@ -142,12 +142,13 @@
         "No Tier 2 checks (no browser journey, no provider adapters) — list them as Missing for tick"
       ],
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN task P4C.2 slice 3 of 3. Completes the P4C.2 bullet; P4C.3 (recurrence), P4C.4 (reminders/team) and P4C.5 (task/project links) remain blocked on their own upstream deps and are NOT part of this batch.",
       "dependsOn": [
         "US-050",
         "US-051"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-053",
@@ -218,6 +219,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-20T11:44:36.020Z"
+    "updatedAt": "2026-09-20T12:04:46.693Z"
   }
 }

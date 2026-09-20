@@ -17,6 +17,7 @@ export const useCalendarEvents = () => {
       endsAt: true,
       isFullDay: true,
       isCanceled: true,
+      externalCreatedAt: true,
     },
     orderBy: [{ startsAt: 'AscNullsLast' }],
     limit: 500,

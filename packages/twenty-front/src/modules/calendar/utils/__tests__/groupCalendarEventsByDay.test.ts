@@ -14,6 +14,7 @@ const buildEvent = (
   endsAt: null,
   isFullDay: false,
   isCanceled: false,
+  externalCreatedAt: null,
   ...overrides,
 });
 

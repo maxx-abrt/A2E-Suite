@@ -1,0 +1,303 @@
+# Iteration 7 Log
+
+## Metadata
+
+- **Task ID**: US-052
+- **Task Title**: P4C.2c — timezone-aware event create/edit/delete, slot/drag-to-create with keyboard equivalent, save feedback and overlap layout
+- **Description**: As a user working on the calendar page, I want to create events by selecting or dragging a slot (or with the keyboard), edit and delete them timezone-aware, and get clear save feedback with readable o...
+- **Status**: completed
+- **Task Completed**: No
+- **Promise Detected**: No
+- **Started At**: 2026-09-20T11:44:41.657Z
+- **Ended At**: 2026-09-20T12:03:43.956Z
+- **Duration**: 19m 2s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ ls -la "/Users/maxaubert/Projets/A2E Suite/docs/plan/phases/" | grep phase-04
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96mUS-052[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ printf '\nCLAIMED — US-052/calendar-timezone-crud-slot-drag-overlap — deepseek-v4.1-flash — %s — bas...
+[94m[bash][0m $ find packages/twenty-front/src/modules/calendar -type f | sort
+Dependencies US-050/US-051 are `passes: true` and done-for-review. No CLAIMED entry for US-052. Let me claim and explore.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/hooks/useCalendarEvents.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/types/CalendarEventRecord.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/types/CalendarEventSpan.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/CalendarDayView.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/CalendarWeekView.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/CalendarEventChip.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/CalendarEventDetails.tsx
+[94m[bash][0m $ ls packages/twenty-front/src/modules/object-record/hooks
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/getCalendarEventSpan.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/groupCalendarEventsByDay.ts
+[94m[bash][0m $ grep -rln "createCalendarEvent\|updateCalendarEvent\|deleteCalendarEvent" packages/twenty-front/src ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/hooks/useUpdateOneRecord.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/hooks/useDeleteOneRecord.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/hooks/useCreateOneRecord.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/formatCalendarEventTime.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/CalendarToolbar.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/getCalendarViewDays.ts
+[94m[read][0m
+[94m[bash][0m $ grep -n "external\|iCal\|conference\|isFullDay\|isCanceled\|startsAt\|endsAt" "packages/twenty-serve...
+[94m[bash][0m $ find packages/twenty-front/src/modules/side-panel -name "useOpenCalendarEventInSidePanel*"
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/side-panel/hooks/useOpenCalendarEventInSidePanel.ts
+[94m[bash][0m $ grep -rn "isDisabled\|disabled" packages/twenty-ui/src/input/button/components/Button.tsx 2>/dev/nul...
+[94m[bash][0m $ cat packages/twenty-front/src/modules/calendar/constants/CalendarEventAccentColors.ts
+[94m[bash][0m $ find packages/twenty-ui/src/input -path "*components*Button*" -name "*.tsx" | head
+[94m[bash][0m $ find packages/twenty-ui/src -name "Button.tsx" | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-ui/src/input/Button/Button.tsx
+[94m[bash][0m $ find packages/twenty-server/src -name "*calendar-event*field*" | head
+[94m[read][0m
+[94m[bash][0m $ grep -rln "CalendarEventRecord\|buildEvent" packages/twenty-front/src/modules/calendar | sort
+[94m[bash][0m $ grep -rn "isFullDay: false\|startsAt: null" packages/twenty-front/src/modules/calendar/utils/__tests...
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-front/src/modules/calendar -name "*.tsx" | xargs -I{} echo {}
+[94m[todowrite][0m
+[94m[write][0m "import { type Temporal } from 'temporal-polyfill';
+
+// A minute-precision position on the calendar in the user's time zone. Slots are
+// the unit shared by the grid, drag-to-create and the keyboard se... (389 chars)"
+[94m[write][0m "// A timed event placed in a day column. Ratios are fractions of the full day so
+// the view stays resolution-independent; `columnIndex`/`columnCount` spread
+// overlapping events across readable lane... (382 chars)"
+[94m[write][0m "// Keyboard slot selection. `anchorIndex` is the slot where the selection began,
+// `focusIndex` is the slot currently focused; both are indices into the day's
+// slot list (0 = 00:00). A null anchor ... (528 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/types/CalendarEventRecord.ts
+[94m[write][0m "import { type Temporal } from 'temporal-polyfill';
+
+// Editable form state for a local event. Times are kept as day + hour/minute so
+// a DST change between save and edit never silently shifts the wal... (706 chars)"
+Now the pure helpers and constants.
+[94m[write][0m "// Day-grid geometry shared by the slot grid, overlap layout and keyboard
+// selection so the three never disagree on what a "slot" is.
+export const CALENDAR_DAY_MINUTES = 24 * 60;
+
+export const CALEN... (504 chars)"
+[94m[write][0m "import { Temporal } from 'temporal-polyfill';
+
+import { type CalendarEventSlot } from '@/calendar/types/CalendarEventSlot';
+
+// `compatible` disambiguation is the DST contract: a time inside a spring-... (878 chars)"
+[94m[write][0m "import { isDefined, parseToInstantOrThrow } from 'twenty-shared/utils';
+
+import { type CalendarEventSlot } from '@/calendar/types/CalendarEventSlot';
+
+// Inverse of buildCalendarEventInstant: an insta... (709 chars)"
+[94m[write][0m "import { Temporal } from 'temporal-polyfill';
+import { isNonEmptyString, parseToInstantOrThrow } from 'twenty-shared/utils';
+
+import { CALENDAR_MIN_EVENT_MINUTES } from '@/calendar/constants/CalendarT... (2358 chars)"
+[94m[write][0m "import { Temporal } from 'temporal-polyfill';
+
+import { type CalendarEventDraft } from '@/calendar/types/CalendarEventDraft';
+import { type CalendarEventSlot } from '@/calendar/types/CalendarEventSlot... (1652 chars)"
+[94m[write][0m "import { Temporal } from 'temporal-polyfill';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type CalendarEventDraft } from '@/calendar/types/CalendarEventDraft';
+import { type CalendarEve... (2277 chars)"
+[94m[write][0m "import { isDefined } from 'twenty-shared/utils';
+
+import { type CalendarEventRecord } from '@/calendar/types/CalendarEventRecord';
+
+// D5.4 read-back-only boundary: provider-synced rows carry external... (392 chars)"
+[94m[write][0m "import { Temporal } from 'temporal-polyfill';
+import { isDefined, parseToInstantOrThrow } from 'twenty-shared/utils';
+
+import {
+  CALENDAR_DAY_MINUTES,
+  CALENDAR_MIN_EVENT_MINUTES,
+} from '@/calendar... (1987 chars)"
+[94m[write][0m "import { type CalendarEventOverlapLayout } from '@/calendar/types/CalendarEventOverlapLayout';
+
+export type CalendarEventInterval = {
+  eventId: string;
+  startMinutes: number;
+  endMinutes: number;
+}... (2183 chars)"
+[94m[write][0m "import { type CalendarEventSlotSelection } from '@/calendar/types/CalendarEventSlotSelection';
+
+export const INITIAL_CALENDAR_SLOT_SELECTION: CalendarEventSlotSelection = {
+  anchorIndex: null,
+  focu... (1569 chars)"
+Now the specs for the pure helpers.
+[94m[write][0m "import { Temporal } from 'temporal-polyfill';
+
+import { buildCalendarEventInstant } from '@/calendar/utils/buildCalendarEventInstant';
+import { getCalendarEventSlotFromInstant } from '@/calendar/utils... (2562 chars)"
+[94m[write][0m "import { Temporal } from 'temporal-polyfill';
+
+import { type CalendarEventDraft } from '@/calendar/types/CalendarEventDraft';
+import { buildCalendarEventInputFromDraft } from '@/calendar/utils/buildCa... (2558 chars)"
+[94m[write][0m "import { Temporal } from 'temporal-polyfill';
+
+import { type CalendarEventRecord } from '@/calendar/types/CalendarEventRecord';
+import { buildCalendarEventDraftFromEvent } from '@/calendar/utils/build... (2162 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[write][0m "import { Temporal } from 'temporal-polyfill';
+
+import { type CalendarEventRecord } from '@/calendar/types/CalendarEventRecord';
+import { getCalendarEventDayInterval } from '@/calendar/utils/getCalenda... (2733 chars)"
+[94m[write][0m "import { layoutCalendarEventOverlaps } from '@/calendar/utils/layoutCalendarEventOverlaps';
+
+describe('layoutCalendarEventOverlaps', () => {
+  it('gives sequential events the full width', () => {
+    ... (2897 chars)"
+[94m[write][0m "import {
+  getCalendarSlotSelectionRange,
+  INITIAL_CALENDAR_SLOT_SELECTION,
+  reduceCalendarSlotSelection,
+} from '@/calendar/utils/calendarSlotSelection';
+
+describe('reduceCalendarSlotSelection', ()... (2186 chars)"
+[94m[write][0m "import { Temporal } from 'temporal-polyfill';
+
+import {
+  buildCalendarEventDraftFromSlotRange,
+  getCalendarSlotFromIndex,
+  getCalendarSlotIndex,
+} from '@/calendar/utils/calendarEventSlots';
+
+const... (1271 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/hooks/useCalendarEvents.ts
+[94m[bash][0m $ npx jest --config=packages/twenty-front/jest.config.mjs "src/modules/calendar/utils/__tests__" 2>&1 ...
+[94m[bash][0m $ grep -rn "export.*isNonEmptyString" packages/twenty-shared/src | head
+[94m[bash][0m $ ls packages/twenty-shared/src/utils/ | grep -i "guard\|is-" | head -40
+[94m[bash][0m $ grep -rn "export" packages/twenty-shared/src/utils/index.ts | head -60
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/buildCalendarEventInputFromDraft.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/buildCalendarEventInputFromDraft.ts
+[94m[bash][0m $ npx jest --config=packages/twenty-front/jest.config.mjs "src/modules/calendar/utils/__tests__" 2>&1 ...
+[94m[bash][0m $ npx jest --config=packages/twenty-front/jest.config.mjs "src/modules/calendar/utils/__tests__" 2>&1 ...
+[94m[edit][0m
+[94m[bash][0m $ npx jest --config=packages/twenty-front/jest.config.mjs "src/modules/calendar/utils/__tests__" 2>&1 ...
+[94m[write][0m "import { useCallback, useState } from 'react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+
+import { type CalendarEventInput } from '@/calendar/types/CalendarEventDraft';
+import { ty... (2872 chars)"
+[94m[write][0m "import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { type FormEvent } from 'react';
+import { Temporal } from 'temporal-polyfill';
+import { isDefined } fro... (9898 chars)"
+[94m[bash][0m $ grep -rn "md\|sm" packages/twenty-ui/src/theme/constants/Border*.ts 2>/dev/null | head
+[94m[bash][0m $ grep -rn "medium\|light\|strong" packages/twenty-ui/src/theme/constants/BorderCommon.ts packages/twe...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/CalendarEventComposer.tsx
+[94m[write][0m "import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants'... (3219 chars)"
+[94m[write][0m "import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { type KeyboardEvent, useMemo, useReducer, useRef } from 'react';
+import { Temporal, type Temporal as T... (7585 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/CalendarDayTimeGrid.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/CalendarDayTimeGrid.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/CalendarEventBlock.tsx
+[94m[write][0m "import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { type Temporal } from 'temporal-polyfill';
+import { themeCssVariables } from 'twenty-ui/theme-constant... (2970 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/CalendarEventDetails.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/CalendarEventDetails.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/CalendarEventDetails.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/CalendarEventDetails.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/CalendarEventDetails.tsx
+Now wire the page.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | head -60
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/hooks/useCalendarEventMutations.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/hooks/useCalendarEventMutations.ts
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | head -60
+[94m[bash][0m $ npx jest --config=packages/twenty-front/jest.config.mjs "src/modules/calendar" "src/pages/calendar" ...
+[94m[bash][0m $ npx jest --findRelatedTests packages/twenty-front/src/pages/calendar/CalendarPage.tsx packages/twent...
+[94m[bash][0m $ git status --porcelain | awk '{print $2}' | grep -E "twenty-front/(src/modules/calendar|src/pages/ca...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json "${ARR[@]}" 2>&1 | tail -40
+[94m[bash][0m $ ls packages/twenty-front/.oxlintrc* 2>/dev/null
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json "${ARR[@]}" 2>&1 | tail -40
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json "${ARR[@]}" 2>&1 | grep -E "^  x |-->|,-\[" | head -60
+[94m[bash][0m $ find ../../node_modules -path "*oxlint*" -name "*.js" 2>/dev/null | head
+[94m[bash][0m $ grep -n "no-state-useref" -A 40 ../../node_modules/oxlint/dist/plugins.js | head -80
+[94m[bash][0m $ grep -rn "Don't use useRef for state management" ../../node_modules/oxlint/dist/*.js | head
+[94m[bash][0m $ grep -rn "useRef" src/modules --include=*.tsx | grep -v "__stories__" | head -20
+[94m[bash][0m $ grep -rn "useRef" src/modules --include="*.tsx" | grep -v "__stories__" | head -20
+[94m[bash][0m $ strings ../../node_modules/oxlint/dist/*.node 2>/dev/null | grep -i "no-state-useref\|state manageme...
+[94m[bash][0m $ ls ../../node_modules/oxlint/dist/ | head -30
+[94m[bash][0m $ grep -n "isPointerSelecting\|slotRefs" src/modules/calendar/components/CalendarDayTimeGrid.tsx
+[94m[bash][0m $ s/slotRefs/slotElementsRef/g' CalendarDayTimeGrid.tsx && grep -n "isPointerSelectingRef\|slotElement...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/calendarEventSlots.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/CalendarDayTimeGrid.tsx
+[94m[bash][0m $ rm src/modules/calendar/constants/CalendarTimeConstants.ts
+[94m[write][0m "// Total minutes in a calendar day; the denominator for vertical event ratios.
+export const CALENDAR_DAY_MINUTES = 24 * 60;
+"
+[94m[write][0m "// The day grid's row height in minutes: one selectable slot per hour.
+export const CALENDAR_SLOT_MINUTES = 60;
+"
+[94m[write][0m "import { CALENDAR_DAY_MINUTES } from '@/calendar/constants/CalendarDayMinutes';
+import { CALENDAR_SLOT_MINUTES } from '@/calendar/constants/CalendarSlotMinutes';
+
+export const CALENDAR_SLOTS_PER_DAY =... (247 chars)"
+[94m[write][0m "import { CALENDAR_SLOT_MINUTES } from '@/calendar/constants/CalendarSlotMinutes';
+
+export const CALENDAR_SLOTS_PER_HOUR = 60 / CALENDAR_SLOT_MINUTES;
+"
+[94m[write][0m "// A timed event with no end (or a zero-length one) still needs a visible block.
+export const CALENDAR_MIN_EVENT_MINUTES = 30;
+"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/getCalendarEventDayInterval.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/buildCalendarEventInputFromDraft.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/CalendarDayTimeGrid.tsx
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json "${ARR[@]}" 2>&1 | tail -30
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/object-record/record-picker/multiple-record-pi...
+[94m[bash][0m $ find ../.. -maxdepth 5 -path "*oxlint*" -name "*.js" 2>/dev/null | grep -v node_modules | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-oxlint-rules/rules/no-state-useref.ts
+[94m[bash][0m $ sed -n '15,22p' src/modules/auth/components/VerifyLoginTokenEffect.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/CalendarDayTimeGrid.tsx
+[94m[bash][0m $ npx oxfmt --check "${ARR[@]}" 2>&1 | tail -20
+[94m[bash][0m $ npx oxfmt --check "${ARR[@]}" 2>&1 | tail -5
+[94m[bash][0m $ npx jest --config=packages/twenty-front/jest.config.mjs "src/modules/calendar" 2>&1 | tail -6
+[94m[bash][0m $ npx jest --config=packages/twenty-front/jest.config.mjs "src/modules/calendar" 2>&1 | tail -6
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-front 2>&1 | tail -8
+[94m[bash][0m $ npx jest --findRelatedTests packages/twenty-front/src/pages/calendar/CalendarPage.tsx packages/twent...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/CalendarEventComposer.tsx
+[94m[bash][0m $ npx oxfmt --check src/modules/calendar/components/CalendarEventComposer.tsx 2>&1 | tail -3
+[94m[bash][0m $ grep -rn "CalendarEventDetails\|CalendarDayView\|CalendarEventComposer\|useCalendarEventMutations" s...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[bash][0m $ echo "tsgo done"
+[94m[bash][0m $ npx jest --findRelatedTests packages/twenty-front/src/pages/calendar/CalendarPage.tsx packages/twent...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ sed -n '1,20p' .ralph-tui/progress.md
+[94m[bash][0m $ tail -25 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ native `<button>` slots give the keyboard path for free, and `preventDefault` on Enter/Space suppres...
+[94m[bash][0m $ no further executor step for P4C.2. EOF echo appended
+[94m[todowrite][0m
+US-052 P4C.2c implemented and self-verified.
+
+**Claim:** done-for-review · **Ready-to-tick:** yes
+
+**What shipped** (all in `packages/twenty-front`, no server/shared changes):
+- Pure timezone seams — `buildCalendarEventInstant`/`getCalendarEventSlotFromInstant`/`buildCalendarEventInputFromDraft`/`buildCalendarEventDraftFromEvent`, DST-tested (gap shifts forward, fold keeps earlier offset, cross-zone day placement).
+- Day view is now a 24-slot grid: pointer drag selects a range, `role="grid"` keyboard does Arrow navigation + Enter/Shift+Arrow/Escape via the pure `reduceCalendarSlotSelection`; native `<button>` slots make the keyboard path first-class.
+- `CalendarEventComposer` dialog form + `useCalendarEventMutations` (`createCalendarEvent`/`updateCalendarEvent`/`deleteCalendarEvent`) with `Saving…`/`role="alert"` recoverable errors.
+- `layoutCalendarEventOverlaps` renders overlapping timed events in lanes; `isLocalCalendarEvent` gates Edit/Delete so provider-synced rows show a read-only notice (no provider mutation → no unsolicited invitations).
+
+**Checks (green):** calendar jest 13 suites/71 tests; `--findRelatedTests` 2/41 incl. panel-route registry; `tsgo --noEmit` exit 0; direct oxlint 0/0 + oxfmt clean (`lint:diff-with-main` reports "No changed files." for the uncommitted slice).
+
+**Missing for tick:** Tier 2 browser journey only (day-view create/edit/delete, drag+keyboard, overlap lanes, provider read-only, DST days, themes) — orchestrator runs it. Reports appended to `docs/plan/phases/phase-04-report.md` and `.ralph-tui/progress.md`; PLAN.md untouched, nothing committed.

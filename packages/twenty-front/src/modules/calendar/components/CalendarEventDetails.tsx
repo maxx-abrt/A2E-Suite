@@ -12,9 +12,12 @@ import { useOpenCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenCalen
 type CalendarEventDetailsProps = {
   event: CalendarEventRecord;
   isAllDay: boolean;
+  isLocal: boolean;
   timeZone: string;
   locale?: string;
   onClose: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
 };
 
 const StyledDetails = styled.aside<{ color: string }>`
@@ -56,6 +59,11 @@ const StyledFieldLabel = styled.span`
   margin-right: ${themeCssVariables.spacing[1]};
 `;
 
+const StyledActions = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
 const StyledCloseButton = styled.button`
   background: transparent;
   border: none;
@@ -73,9 +81,12 @@ const StyledCloseButton = styled.button`
 export const CalendarEventDetails = ({
   event,
   isAllDay,
+  isLocal,
   timeZone,
   locale,
   onClose,
+  onEdit,
+  onDelete,
 }: CalendarEventDetailsProps) => {
   const { t } = useLingui();
   const { openCalendarEventInSidePanel } = useOpenCalendarEventInSidePanel();
@@ -116,6 +127,29 @@ export const CalendarEventDetails = ({
         variant="secondary"
         onClick={() => openCalendarEventInSidePanel(event.id)}
       />
+      {isLocal ? (
+        <StyledActions>
+          <Button
+            title={t`Edit`}
+            size="small"
+            variant="secondary"
+            dataTestId="calendar-event-edit"
+            onClick={onEdit}
+          />
+          <Button
+            title={t`Delete`}
+            size="small"
+            variant="secondary"
+            accent="danger"
+            dataTestId="calendar-event-delete"
+            onClick={onDelete}
+          />
+        </StyledActions>
+      ) : (
+        <StyledField data-testid="calendar-event-read-only">
+          {t`This event is synced from a connected calendar and is read-only.`}
+        </StyledField>
+      )}
     </StyledDetails>
   );
 };

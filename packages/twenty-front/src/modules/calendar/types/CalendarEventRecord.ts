@@ -10,4 +10,7 @@ export type CalendarEventRecord = {
   endsAt: string | null;
   isFullDay: boolean;
   isCanceled: boolean;
+  // Provider-synced rows carry external timestamps; local (channel-less) rows
+  // created through the standard record path do not. This is the read-only gate.
+  externalCreatedAt: string | null;
 };

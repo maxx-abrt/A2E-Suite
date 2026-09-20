@@ -8,14 +8,22 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CalendarAgendaView } from '@/calendar/components/CalendarAgendaView';
 import { CalendarDayView } from '@/calendar/components/CalendarDayView';
+import { CalendarEventComposer } from '@/calendar/components/CalendarEventComposer';
 import { CalendarEventDetails } from '@/calendar/components/CalendarEventDetails';
 import { CalendarMonthView } from '@/calendar/components/CalendarMonthView';
 import { CalendarToolbar } from '@/calendar/components/CalendarToolbar';
 import { CalendarWeekView } from '@/calendar/components/CalendarWeekView';
+import { useCalendarEventMutations } from '@/calendar/hooks/useCalendarEventMutations';
 import { useCalendarEvents } from '@/calendar/hooks/useCalendarEvents';
+import { type CalendarEventDraft } from '@/calendar/types/CalendarEventDraft';
+import { type CalendarEventSlot } from '@/calendar/types/CalendarEventSlot';
 import { type CalendarViewMode } from '@/calendar/types/CalendarViewMode';
+import { buildCalendarEventDraftFromEvent } from '@/calendar/utils/buildCalendarEventDraftFromEvent';
+import { buildCalendarEventDraftFromSlotRange } from '@/calendar/utils/calendarEventSlots';
+import { buildCalendarEventInputFromDraft } from '@/calendar/utils/buildCalendarEventInputFromDraft';
 import { getCalendarViewDays } from '@/calendar/utils/getCalendarViewDays';
 import { groupCalendarEventsByDay } from '@/calendar/utils/groupCalendarEventsByDay';
+import { isLocalCalendarEvent } from '@/calendar/utils/isLocalCalendarEvent';
 import { navigateCalendarAnchor } from '@/calendar/utils/navigateCalendarAnchor';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -61,12 +69,26 @@ export const CalendarPage = () => {
   const { timeZone, calendarStartDay } = useDateTimeFormat();
   const dateLocale = useAtomStateValue(dateLocaleState);
   const { events, loading, error, refetch } = useCalendarEvents();
+  const {
+    createCalendarEvent,
+    updateCalendarEvent,
+    deleteCalendarEvent,
+    isSaving,
+    error: mutationError,
+    resetError,
+  } = useCalendarEventMutations();
 
   const [mode, setMode] = useState<CalendarViewMode>('month');
   const [anchorDate, setAnchorDate] = useState<Temporal.PlainDate>(() =>
     Temporal.Now.plainDateISO(timeZone),
   );
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [composer, setComposer] = useState<{
+    mode: 'create' | 'edit';
+    eventId: string | null;
+    draft: CalendarEventDraft;
+  } | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   const {
     days: viewDays,
@@ -180,10 +202,115 @@ export const CalendarPage = () => {
     setAnchorDate(Temporal.Now.plainDateISO(timeZone));
   };
 
+  const handleCreateEventFromSlots = ({
+    startSlot,
+    endSlot,
+  }: {
+    startSlot: CalendarEventSlot;
+    endSlot: CalendarEventSlot;
+  }) => {
+    resetError();
+    setStatusMessage(null);
+    setComposer({
+      mode: 'create',
+      eventId: null,
+      draft: buildCalendarEventDraftFromSlotRange({ startSlot, endSlot }),
+    });
+  };
+
+  const handleEditSelectedEvent = () => {
+    if (!isDefined(selectedEvent)) {
+      return;
+    }
+
+    resetError();
+    setStatusMessage(null);
+    setComposer({
+      mode: 'edit',
+      eventId: selectedEvent.id,
+      draft: buildCalendarEventDraftFromEvent({
+        event: selectedEvent,
+        timeZone,
+      }),
+    });
+  };
+
+  const handleDeleteSelectedEvent = async () => {
+    if (!isDefined(selectedEvent)) {
+      return;
+    }
+
+    const didDelete = await deleteCalendarEvent(selectedEvent.id);
+
+    if (didDelete) {
+      setSelectedEventId(null);
+      setStatusMessage(t`Event deleted`);
+      refetch();
+    }
+  };
+
+  const handleComposerSubmit = async () => {
+    if (!isDefined(composer)) {
+      return;
+    }
+
+    const input = buildCalendarEventInputFromDraft({
+      draft: composer.draft,
+      timeZone,
+    });
+
+    if (composer.mode === 'create') {
+      const didCreate = await createCalendarEvent(input);
+
+      if (didCreate) {
+        setComposer(null);
+        setStatusMessage(t`Event created`);
+        refetch();
+      }
+
+      return;
+    }
+
+    if (!isDefined(composer.eventId)) {
+      return;
+    }
+
+    const didUpdate = await updateCalendarEvent({
+      id: composer.eventId,
+      input,
+    });
+
+    if (didUpdate) {
+      setComposer(null);
+      setStatusMessage(t`Event updated`);
+      refetch();
+    }
+  };
+
+  const handleComposerDelete = async () => {
+    if (!isDefined(composer?.eventId)) {
+      return;
+    }
+
+    const didDelete = await deleteCalendarEvent(composer.eventId);
+
+    if (didDelete) {
+      setComposer(null);
+      setSelectedEventId(null);
+      setStatusMessage(t`Event deleted`);
+      refetch();
+    }
+  };
+
   const hasError = isDefined(error);
   const errorMessage = isGraphqlErrorOfType(error, 'FORBIDDEN')
     ? t`You do not have access to calendar events`
     : t`Could not load calendar events`;
+  const composerErrorMessage = isDefined(mutationError)
+    ? isGraphqlErrorOfType(mutationError, 'FORBIDDEN')
+      ? t`You do not have permission to change this event`
+      : t`Could not save the event. Please try again.`
+    : null;
 
   return (
     <StyledPage data-testid="calendar-page">
@@ -199,9 +326,12 @@ export const CalendarPage = () => {
         <CalendarEventDetails
           event={selectedEvent}
           isAllDay={selectedSpan?.isAllDay ?? selectedEvent.isFullDay}
+          isLocal={isLocalCalendarEvent(selectedEvent)}
           timeZone={timeZone}
           locale={dateLocale.locale}
           onClose={() => setSelectedEventId(null)}
+          onEdit={handleEditSelectedEvent}
+          onDelete={() => void handleDeleteSelectedEvent()}
         />
       )}
       <StyledContent>
@@ -248,6 +378,7 @@ export const CalendarPage = () => {
                 timeZone={timeZone}
                 locale={dateLocale.locale}
                 onSelectEvent={handleSelectEvent}
+                onCreateEventFromSlots={handleCreateEventFromSlots}
               />
             )}
             {mode === 'agenda' && (
@@ -266,6 +397,28 @@ export const CalendarPage = () => {
           </>
         )}
       </StyledContent>
+      {isDefined(statusMessage) && (
+        <StyledStatus aria-live="polite">{statusMessage}</StyledStatus>
+      )}
+      {isDefined(composer) && (
+        <CalendarEventComposer
+          mode={composer.mode}
+          draft={composer.draft}
+          isSaving={isSaving}
+          errorMessage={composerErrorMessage}
+          onChange={(draft) => setComposer({ ...composer, draft })}
+          onSubmit={() => void handleComposerSubmit()}
+          onCancel={() => {
+            resetError();
+            setComposer(null);
+          }}
+          onDelete={
+            composer.mode === 'edit'
+              ? () => void handleComposerDelete()
+              : undefined
+          }
+        />
+      )}
     </StyledPage>
   );
 };

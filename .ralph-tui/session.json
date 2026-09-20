@@ -3,10 +3,10 @@
   "sessionId": "3587542b-3e4d-4de5-8ce6-62fbbaa47b5e",
   "status": "running",
   "startedAt": "2026-09-20T10:40:42.265Z",
-  "updatedAt": "2026-09-20T11:44:36.021Z",
-  "currentIteration": 5,
+  "updatedAt": "2026-09-20T12:04:46.693Z",
+  "currentIteration": 7,
   "maxIterations": 20,
-  "tasksCompleted": 4,
+  "tasksCompleted": 5,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -66,6 +66,26 @@
       "durationMs": 924584,
       "startedAt": "2026-09-20T11:19:44.981Z",
       "endedAt": "2026-09-20T11:35:09.565Z"
+    },
+    {
+      "iteration": 6,
+      "status": "completed",
+      "taskId": "US-051",
+      "taskTitle": "P4C.2b — calendar page/route with day/week/month + accessible agenda fallback",
+      "taskCompleted": true,
+      "durationMs": 561421,
+      "startedAt": "2026-09-20T11:35:14.594Z",
+      "endedAt": "2026-09-20T11:44:36.015Z"
+    },
+    {
+      "iteration": 7,
+      "status": "completed",
+      "taskId": "US-052",
+      "taskTitle": "P4C.2c — timezone-aware event create/edit/delete, slot/drag-to-create with keyboard equivalent, save feedback and overlap layout",
+      "taskCompleted": false,
+      "durationMs": 1142299,
+      "startedAt": "2026-09-20T11:44:41.657Z",
+      "endedAt": "2026-09-20T12:03:43.956Z"
     }
   ],
   "skippedTaskIds": [],
