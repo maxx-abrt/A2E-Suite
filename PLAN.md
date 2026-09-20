@@ -580,10 +580,15 @@ persona, and the conventions every later phase relies on.
       batch (implicit-type `@Field`s broke every integration globalSetup —
       see P8.2 note); live Bilan install seeds rows is P1.6d's open Tier-2
       leg. Tier-2 browser journeys remain open.
-- [ ] **P1.6c Front onboarding/Settings (after P1.6b):** preview apps,
+- [~] **P1.6c Front onboarding/Settings (after P1.6b):** preview apps,
       prerequisites, samples and customization; allow blank/CRM, optional app
       exclusion, continue with successful steps and retry later. Empty catalogue
       cannot discard template choice. Both entrypoints use the same operation.
+      — 2026-09-20 orchestrator: distinct no-apps/network/permission error
+      surfaces verified (US-047, phase-01-report) — additive
+      `ApplyTemplateErrorCode` discriminator + preview/apply panels; server
+      onboarding suite green on HEAD re-run. Open: graphql:generate against a
+      live schema, browser journey, InstallApps list empty-state subtitle.
 - [~] **P1.6d Starter bundles (after P1.6b and each app's safe slice):** meeting
       notes/project brief/PRD/one-on-one; project delivery/event retroplanning;
       Bilan cashflow/donation/grant/custom sheets and fiches. Add proposed
@@ -803,6 +808,11 @@ App: `a2e-documents`.
       packages or invent a JSON database engine.
       Each supported block must round-trip save/reload/export; unsupported
       features remain explicitly deferred, not silently accepted.
+      — 2026-09-20 orchestrator: feasibility check accepted (US-048,
+      phase-03-report; artifact `docs/plan/p3.4-advanced-authoring-feasibility.md`,
+      2026-09-18) — per-block native-primitive + license verdicts recorded.
+      Implementation stays `[ ]`: gated behind durable save/share acceptance
+      (P3.2/P3.3) and D07 AGPL-vs-commercial `xl-*` ratification.
 - [ ] Guest editing is **deferred**, despite reference schema support. V1 public
       links are read-only snapshots; richer guest collaboration needs a separate
       authorization/concurrency decision and acceptance, not a flag flip.
@@ -872,12 +882,18 @@ Optional advanced authoring is not a prerequisite to this repair slice.
       lists)
 - [ ] Project page: overview widgets (health, milestones, members, activity)
       + tabs (tasks/board/gantt/files/docs)
-- [~] Subtasks & dependencies UI: nested list + dependency picker with
+- [x] Subtasks & dependencies UI: nested list + dependency picker with
       cycle validation — 2026-09-17 orchestrator: nested list slice live
       (roots via `parentTask: {is:NULL}`, children via `parentTask {id}`,
       reparent write verified); dependency picker + its cycle tests NOT
       built, and `blockIssue` is task→note so the dependency edge needs a
       maintainer decision before the picker (keep `[~]`).
+      — 2026-09-20 orchestrator: edge decided + picker verified (US-049,
+      phase-04-report) — NEW additive `task.blockedBy` self-relation
+      (`blockedById`, SET_NULL + `blocks` inverse; `blockIssue` note-link
+      untouched), Cmd+K picker with cycle refusal; a2e-projects 262/262 on
+      HEAD re-run incl. 9 dependency tests, manifest build carries both
+      fields. Tier-2 install/browser proof open.
 - [~] Time tracker: start/stop on task (presence-adjacent), entries list,
       per-project rollup widget — 2026-09-17 orchestrator: data layer live
       (`createTimeEntries`→row, task `timeEntries` filter + null-variant
@@ -943,11 +959,19 @@ primitives; app packaging/name is decided in P4C.1, not inferred from Bureau.
       (calendarEvent `isUICreatable=false`, 0 of 24 fields recurrence-named).
       Decisions D5.1–D5.4 feed P4C.2; §10 open items still need product
       confirmation before P4C.2 starts.
-- [ ] **P4C.2 Core UX (after P4C.1/P0.2):** day/week/month plus accessible
+- [x] **P4C.2 Core UX (after P4C.1/P0.2):** day/week/month plus accessible
       agenda fallback, today/range navigation, all-day/multi-day/timed events,
       title/location/description/color, timezone-aware creation/edit/delete,
       slot selection/drag-to-create with keyboard equivalent. Save feedback,
       overlap layout and empty/error states; installable from C2 later too.
+      — 2026-09-20 orchestrator: verified in three slices (US-050/051/052,
+      phase-04-report) — local create path on standard `calendarEvent`
+      (+2-39 workspace command `1789903000000`, strictly increasing,
+      registered; integration specs 3 suites/4 tests green on HEAD re-run),
+      `/calendar` page day/week/month/agenda, timezone-aware CRUD with
+      slot/drag-to-create + keyboard equivalent, overlap lanes, local-only
+      edit gating; front 534-test re-run + tsgo green. Tier-2 `/calendar`
+      browser proof open; week/month read-only by design in this slice.
 - [ ] **P4C.3 Recurrence (after P4C.2):** daily/weekly/monthly, interval,
       weekdays, monthly position, count/until and skipped/detached occurrences.
       Explicit “this occurrence” versus “whole series” edit/delete. Stable series
@@ -1392,8 +1416,15 @@ mention→inbox→open.
       33/33 green on HEAD re-run. Per-tool-call usage is audited as a
       Logic Function Executed row (native behavior, documented
       deviation). Tier-2 live streaming proof open.
-- [ ] Prompt/action library: per-app actions rendered as buttons in
+- [x] Prompt/action library: per-app actions rendered as buttons in
       context (see below)
+      — 2026-09-20 orchestrator: verified (US-053/US-054, phase-01-report)
+      — channel-side assistant context injection + 15-row per-app surfacing
+      audit (all 12 shipped read-only tools map through input-schema
+      references incl. the chat `channelId`/drive `folderId` gaps fixed) +
+      missing per-app suggested prompts; front ai suites green on HEAD
+      re-run, app builds verified. Standing Tier-2 live dispatch and the
+      direct-tool-execution leg remain open; accounting stays P7-gated.
 
 ### P9.2 Per-app actions (each its own task)
 - [x] Documents: summarize, extract tasks→P4, translate, improve writing
@@ -1449,14 +1480,20 @@ mention→inbox→open.
       private results can only resolve to scoped keys. Wiring into
       `aiCacheEntry` / `score-subventions` remains (P7-gated per the
       story).
-- [ ] Saved runs persist authorized results; reopening them makes zero provider
+- [~] Saved runs persist authorized results; reopening them makes zero provider
       calls. Test workspace switching, changed permissions and expired results;
       an explicit rerun is a separate user action with a visible cost estimate.
-      — 2026-09-20 orchestrator: not started — commit `01586701`
-      (labeled US-044) is the US-043 contract relocation swept by the
-      engine, not saved-run work (phase-01-report conflict entry).
-      Re-queue against the stable `twenty-shared/src/ai` contract
-      location.
+      — 2026-09-20 orchestrator (later same day): contract-level domain
+      verified (US-055, phase-01-report) — persist/reopen/rerun at
+      `twenty-shared/src/ai` with zero-provider-call re-open,
+      ACCESS_CHANGED/EXPIRED/VERSION_MISMATCH/NOT_REVIEWED refusals and a
+      confirmation-gated rerun estimate; 36/36 green incl. uncached
+      `twenty-shared` rebuild. Open: storage-backed wiring into
+      `aiCacheEntry`/`score-subventions` (P7-gated, same as the cache bullet
+      above) + live provider-call-count journey (Tier 2). The earlier
+      "not started" note below was superseded by this entry.
+      (Historical: commit `01586701` labeled US-044 was the US-043 contract
+      relocation, not saved-run work.)
 
 ### P9.3 Smart integrations (cross-app glue)
 - [~] "Workflow recipes": prebuilt workflow templates combining apps (e.g.

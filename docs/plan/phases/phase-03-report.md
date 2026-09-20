@@ -1165,3 +1165,7 @@ CLAIMED — US-042/summarize-translate-improve-tools — deepseek-v4.1-flash —
 **Do not redo:** the feasibility check is evidence, not a go-ahead; `docs/plan/p3.4-advanced-authoring-feasibility.md` is the single artifact — do not fork a second feasibility doc; the advanced-blocks implementation bullet stays closed behind durable save/share acceptance (P3.2/P3.3) and D07; never import reference packages or invent a JSON engine.
 **Remaining:** ~11 other [ ]/[~] tasks ahead in the execution order (P1.3 e2e, P1.6d D02-gated leg, P1.7a export, P1.7b/c Tier-2, P2.1 bullet 5, P2.4/P2.5 e2e, US-032 AC4/AC5, P3.4+, remaining P9 legs)
 **Next:** orchestrator — tick US-048 (P3.4-feasibility-spike artifact accepted) and hand D07 the license position; executor — a queued non-overlapping leg (P1.7a export or the P3.4 CSV/JSON portability leg).
+
+## 2026-09-20 15:50 UTC — orchestrator — US-048 accepted
+**Verified:** the report-only deliverable re-checked — `docs/plan/p3.4-advanced-authoring-feasibility.md` exists, is indexed in `docs/README.md`, registered in `check-docs.mjs`; `node docs/scripts/check-docs.mjs` → PASS (25 docs / 200 links) on HEAD. Zero product code, zero Tier-2 checks applicable.
+**PLAN.md:** the P3.4 advanced-blocks bullet stays `[ ]` with a dated annotation — the feasibility check is accepted evidence, not implementation; gated behind P3.2/P3.3 durable acceptance and D07 (`xl-*` AGPL-vs-commercial). **D07 owner:** the license position in that artifact needs ratification before any XL dependency is wired.
