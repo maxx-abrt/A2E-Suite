@@ -673,9 +673,17 @@ Do not add Huly-like navigation density. See blueprint §4–§6.
       document/chat topics (P0.3).
 - [x] Heartbeat/ping-pong and dead-socket cleanup source exists; verify metrics
       emissions rather than only the declared counter keys.
-- [ ] Real-session integration tests for auth, tenant/topic isolation,
+- [~] Real-session integration tests for auth, tenant/topic isolation,
       subscription failure and authoritative reconnect refetch. Per-socket
       sequence numbers are not durable replay cursors.
+      — 2026-09-22 orchestrator: in-harness half verified (US-072/US-073,
+      phase-02-report) — 12/12 green on orchestrator re-run, clean exit, 0
+      open handles; new cases cover subscription-failure acks
+      (malformed/unknown topic, non-member token, record/channel ACL
+      denial) and reconnect fresh-seq with no backlog replay; isolation
+      cases pre-existing and green. Real-session browser legs (reconnect
+      refetch, two-session handshake) and multi-instance fan-out remain
+      Tier-2, shared with bullets 1–2 residuals (tasks/deferred-batch7.md).
 - [x] Unit tests for topic parsing/auth and envelope serialization exist;
       historical isolated harness results do not close the real-session gate.
 
