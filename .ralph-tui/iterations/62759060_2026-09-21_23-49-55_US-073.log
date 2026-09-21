@@ -1,0 +1,91 @@
+# Iteration 4 Log
+
+## Metadata
+
+- **Task ID**: US-073
+- **Task Title**: P2.1 bullet 5 (Tier-1 portion) — extend the realtime gateway integration spec with subscription-failure acknowledgements and reconnect/seq-cursor semantics
+- **Description**: As a platform engineer validating the realtime gateway, I want real-session integration tests covering subscription failure acknowledgements and authoritative reconnect semantics (fresh sequence numbe...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-21T21:49:55.914Z
+- **Ended At**: 2026-09-21T21:54:34.150Z
+- **Duration**: 4m 38s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the clean-start check and gather context.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ redis-cli ping
+[94m[bash][0m $ grep -n "US-073\|P2.1" "PLAN.md" | head -50
+[94m[bash][0m $ grep -rn "US-072\|US-073" .ralph-tui/progress.md | tail -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ grep -n "US-073\|US-072" docs/plan/phases/phase-02-report.md | tail -40
+[94m[bash][0m $ ls packages/twenty-server/test/integration/realtime-gateway/ && wc -l packages/twenty-server/test/in...
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-server/src/engine/core-modules/realtime-gateway/services/ packages/twenty-server/...
+[94m[bash][0m $ find packages/twenty-server/src/engine/core-modules/realtime-gateway -type f | head -50
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ tail -90 docs/plan/phases/phase-02-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/jest-integration-realtime.config.ts
+[94m[bash][0m $ git log --oneline -6 && echo "---" && git log --oneline -3 -- packages/twenty-server/test/integratio...
+[94m[bash][0m $ grep -n "\"id\"\|\"dependsOn\"" tasks/prd.json | grep -A1 -B1 "US-073"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m
+[94m[bash][0m $ grep -rn "US-073" docs/ .ralph-tui/ 2>/dev/null
+[94m[read][0m
+[94m[bash][0m $ grep -rn "REALTIME_.*_MESSAGE\|REALTIME_HEARTBEAT_INTERVAL_MS\|REALTIME_MAX_SUBSCRIPTIONS" packages/...
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ wc -l docs/plan/phases/phase-02-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md
+[94m[bash][0m $ grep -n "US-073" docs/plan/phases/phase-02-report.md
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+Now let me add the new test cases at the end of the spec.
+[94m[bash][0m $ echo "EXIT=${pipestatus[1]}"
+[94m[bash][0m $ echo "EXIT=${pipestatus[1]}"
+[94m[bash][0m $ echo "EXIT=${pipestatus[1]}"
+[94m[bash][0m $ echo "EXIT=${pipestatus[1]}"
+[94m[bash][0m $ echo "EXIT=${pipestatus[1]}"
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ echo "EXIT=${pipestatus[1]}"
+[94m[bash][0m $ echo "EXIT=${pipestatus[1]}"
+[94m[bash][0m $ echo "EXIT=${pipestatus[2]}"
+[94m[bash][0m $ echo "EXIT=${pipestatus[1]}"
+[94m[bash][0m $ echo "EXIT=${pipestatus[1]}"
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ echo "EXIT=${pipestatus[1]}"
+[94m[bash][0m $ git diff packages/twenty-server/test/integration/realtime-gateway/realtime-gateway.integration-spec....
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain && echo "---" && git diff --stat
+Done. Slice implemented and all gates green.
+
+**What changed**
+- `packages/twenty-server/test/integration/realtime-gateway/realtime-gateway.integration-spec.ts` (tests-only, no `src` change): 4 new cases — malformed/unknown topic-shape acks, non-member-token ack, record/channel ACL-denial acks (via a denying `RealtimeTopicAccessService` double using the canonical denial constants), and authoritative reconnect (fresh per-socket seq, no backlog replay).
+- `docs/plan/phases/phase-02-report.md` + `.ralph-tui/progress.md`: report entry and Ralph memory (plus a reusable "keeper socket" pattern).
+
+**Checks**
+- preflight `pg_isready -h localhost && redis-cli ping` → OK
+- `NODE_ENV=test npx jest --config jest-integration-realtime.config.ts` → 2 suites / 12 tests passed, EXIT=0
+- same with `--detectOpenHandles` → EXIT=0, 0 handles
+- `npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx oxlint --type-aware -c .oxlintrc.json <spec>` → 0/0; `oxfmt --check` clean
+
+**Residual (orchestrator/Tier 2):** live record/channel ACL revocation journey (needs installed a2e-chat + DB), multi-instance fan-out outage/recovery, browser two-session handshake. PLAN.md untouched; nothing committed.
+
+<promise>COMPLETE</promise>

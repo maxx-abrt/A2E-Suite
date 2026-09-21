@@ -3,10 +3,10 @@
   "sessionId": "62759060-f93f-4957-a474-d7bc9aabefd7",
   "status": "running",
   "startedAt": "2026-09-21T21:36:59.042Z",
-  "updatedAt": "2026-09-21T21:54:34.154Z",
-  "currentIteration": 3,
+  "updatedAt": "2026-09-21T21:54:34.635Z",
+  "currentIteration": 4,
   "maxIterations": 20,
-  "tasksCompleted": 1,
+  "tasksCompleted": 2,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -46,6 +46,16 @@
       "durationMs": 478204,
       "startedAt": "2026-09-21T21:41:52.182Z",
       "endedAt": "2026-09-21T21:49:50.386Z"
+    },
+    {
+      "iteration": 4,
+      "status": "completed",
+      "taskId": "US-073",
+      "taskTitle": "P2.1 bullet 5 (Tier-1 portion) — extend the realtime gateway integration spec with subscription-failure acknowledgements and reconnect/seq-cursor semantics",
+      "taskCompleted": true,
+      "durationMs": 278236,
+      "startedAt": "2026-09-21T21:49:55.914Z",
+      "endedAt": "2026-09-21T21:54:34.150Z"
     }
   ],
   "skippedTaskIds": [],
