@@ -1,0 +1,98 @@
+# Iteration 5 Log
+
+## Metadata
+
+- **Task ID**: US-071
+- **Task Title**: WorkbenchWidgetDock StyledDockRoot invalid CSS fix — width transition and <1200px overlay media queries never fire
+- **Description**: As a user of the workbench widgets dock, I want the dock's width CSS to be valid so that the width transition the reduced-motion accessibility rule targets actually fires and the <1200px floating-over...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-21T17:59:56.497Z
+- **Ended At**: 2026-09-21T18:05:41.133Z
+- **Duration**: 5m 44s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-071" PLAN.md | head -50
+[94m[glob][0m pattern: [96m**/WorkbenchWidgetDock*[0m
+[94m[glob][0m pattern: [96mdocs/plan/phases/phase-02-report.md[0m
+[94m[bash][0m $ grep -rn "US-071\|WorkbenchWidgetDock\|StyledDockRoot" docs/plan/phases/phase-02-report.md docs/plan...
+[94m[bash][0m $ grep -rn "US-071\|US-058\|WorkbenchWidgetDock" PLAN.md tasks/prd.json 2>/dev/null | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -n "US-071\|CLAIMED" docs/plan/phases/phase-02-report.md | tail -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "a2e-widgets" packages/twenty-front/src/modules/workbench-dock/ packages/twenty-front/src/m...
+[94m[glob][0m pattern: [96m**/workbench-dock/states/*.ts[0m
+[94m[bash][0m $ grep -rn "WORKBENCH_DOCK_WIDTH_CSS_VARIABLE\|a2e-workbench-dock\|workbenchWidgetDockWidth" packages/...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "WORKBENCH_DOCK_WIDTH_CSS_VARIABLE" packages/twenty-front/src
+[94m[bash][0m $ grep -rln "getComputedStyle\|styleSheets\|toHaveStyle" packages/twenty-front/src --include=*.test.ts...
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-front/jest.config.mjs 2>/dev/null
+[94m[bash][0m $ grep -rn "\"@linaria" package.json
+[94m[bash][0m $ ls packages/twenty-front/__mocks__/ 2>/dev/null
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md
+[94m[bash][0m $ grep -n "US-071" docs/plan/phases/phase-02-report.md
+[94m[bash][0m $ sed -n '1,60p' node_modules/@linaria/react/package.json 2>/dev/null
+[94m[bash][0m $ npx jest src/modules/workbench-dock/components/__tests__/WorkbenchWidgetDock.test.tsx --config=packa...
+[94m[bash][0m $ sed -n '1,80p' node_modules/@linaria/react/dist/index.js
+[94m[bash][0m $ npx jest src/modules/workbench-dock/components/__tests__/WorkbenchWidgetDock.test.tsx --config=packa...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/node_modules/@linaria/react/dist/index.js
+[94m[bash][0m $ grep -rln "readFileSync" packages/twenty-front/src --include="*.test.ts" --include="*.test.tsx" --in...
+[94m[bash][0m $ grep -rln "readFileSync\|readFile" packages/twenty-front/src 2>/dev/null | grep -i "test\|spec" | he...
+[94m[bash][0m $ grep -rn "a2e-workbench-dock\|a2e-widgets" packages --include="*.ts" --include="*.tsx" --include="*....
+[94m[bash][0m $ grep -rn "a2e-workbench-dock-workbenchWidgetDockWidth" . --exclude-dir=node_modules --exclude-dir="....
+[94m[read][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+[94m[bash][0m $ echo "exit=$?"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx
+[94m[bash][0m $ sed -n '1,60p' jest.preset.js
+[94m[edit][0m
+Now let me add test coverage. First, let me add a behavioral assertion to the existing suite:
+[94m[write][0m "import { readFileSync } from 'fs';
+import { join } from 'path';
+
+// jsdom plus the mocked @linaria/react runtime never materialise Linaria's
+// generated stylesheet, so the authored template source is... (1586 chars)"
+[94m[bash][0m $ npx jest src/modules/workbench-dock src/modules/side-panel/tabs --config=packages/twenty-front/jest....
+[94m[bash][0m $ echo "EXIT=${pipestatus[1]}"
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json packages/twenty-front/src/modules/workbench-dock/component...
+[94m[bash][0m $ ls packages/twenty-front/.oxlintrc.json packages/twenty-server/.oxlintrc.json .oxlintrc.json 2>&1
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/workbench-dock/components/WorkbenchWidgetDock....
+[94m[bash][0m $ npx oxfmt --check src/modules/workbench-dock/components/WorkbenchWidgetDock.tsx src/modules/workbenc...
+[94m[bash][0m $ npx oxfmt src/modules/workbench-dock/components/__tests__/WorkbenchWidgetDockStyles.test.ts 2>&1 | t...
+[94m[read][0m
+[94m[bash][0m $ npx jest src/modules/workbench-dock src/modules/side-panel/tabs --config=packages/twenty-front/jest....
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-02-report.md
+[94m[bash][0m $ tail -30 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -5 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain && echo "---diffstat---" && git diff --stat -- packages/twenty-front docs/pla...
+US-071 done.
+
+**Fix:** `WorkbenchWidgetDock.tsx` `StyledDockRoot` (plus the same typo class in `StyledExpandedPanel`/`StyledResizeEdge`) now uses valid CSS: `min-width`/`width`/`max-width`, `transition: width …`, `@media (max-width: 1199px/767px)`, and a var()-based width `--a2e-widgets-width` (matches the persisted `a2e-widgets-*` keys). No P2.4 semantics changed.
+
+**Checks (all green):**
+- `npx jest src/modules/workbench-dock src/modules/side-panel/tabs --config=packages/twenty-front/jest.config.mjs` → 12 suites / 88 tests (was 11/85; new source-guard spec + 1 runtime spec)
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx oxlint --type-aware -c .oxlintrc.json <3 touched files>` → 0/0; `oxfmt --check` clean
+
+Report appended to `docs/plan/phases/phase-02-report.md`; `progress.md` updated (incl. a new Codebase Pattern: Linaria CSS isn't observable in jest). Tier-2 browser rendering proof recorded as the only missing leg. Nothing committed; PLAN.md untouched.
+
+<promise>COMPLETE</promise>
