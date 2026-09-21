@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "sessionId": "62759060-f93f-4957-a474-d7bc9aabefd7",
+  "status": "running",
+  "startedAt": "2026-09-21T21:36:59.042Z",
+  "updatedAt": "2026-09-21T21:49:50.392Z",
+  "currentIteration": 2,
+  "maxIterations": 20,
+  "tasksCompleted": 0,
+  "isPaused": false,
+  "agentPlugin": "opencode",
+  "model": "opencode-go/deepseek-v4.1-flash",
+  "trackerState": {
+    "plugin": "json",
+    "executionScopes": [],
+    "totalTasks": 0,
+    "tasks": []
+  },
+  "iterations": [
+    {
+      "iteration": 1,
+      "status": "completed",
+      "taskId": "US-072",
+      "taskTitle": "P2.1 harness — fix the hung realtime-gateway.integration-spec.ts teardown so both realtime integration specs exit cleanly",
+      "taskCompleted": false,
+      "durationMs": 131979,
+      "startedAt": "2026-09-21T21:39:00.575Z",
+      "endedAt": "2026-09-21T21:41:12.554Z"
+    },
+    {
+      "iteration": 2,
+      "status": "completed",
+      "taskId": "US-072",
+      "taskTitle": "P2.1 harness — fix the hung realtime-gateway.integration-spec.ts teardown so both realtime integration specs exit cleanly",
+      "taskCompleted": false,
+      "durationMs": 29614,
+      "startedAt": "2026-09-21T21:41:17.563Z",
+      "endedAt": "2026-09-21T21:41:47.177Z"
+    }
+  ],
+  "skippedTaskIds": [],
+  "cwd": "/Users/maxaubert/Projets/A2E Suite",
+  "activeTaskIds": [],
+  "subagentPanelVisible": false
+}

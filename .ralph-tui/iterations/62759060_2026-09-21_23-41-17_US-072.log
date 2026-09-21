@@ -1,0 +1,39 @@
+# Iteration 2 Log
+
+## Metadata
+
+- **Task ID**: US-072
+- **Task Title**: P2.1 harness — fix the hung realtime-gateway.integration-spec.ts teardown so both realtime integration specs exit cleanly
+- **Description**: As an executor or orchestrator running the realtime integration slice, I want realtime-gateway.integration-spec.ts to tear down every socket and Redis handle it opens so that the run finishes green an...
+- **Status**: completed
+- **Task Completed**: No
+- **Promise Detected**: No
+- **Started At**: 2026-09-21T21:41:17.563Z
+- **Ended At**: 2026-09-21T21:41:47.177Z
+- **Duration**: 29s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96mUS-072[0m
+[94m[bash][0m $ grep -n "US-072\|CLAIMED\|P2.1" docs/plan/phases/phase-02-report.md | tail -40
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96mP2\.1[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "US-072" docs/plan/phases/phase-02-report.md
+[94m[bash][0m $ cat >> docs/plan/phases/phase-02-report.md <<'EOF'  CLAIMED — US-072/realtime-gateway-spec-teardown ...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/jest-integration-realtime.config.ts
+No US-072 claim exists. Dependencies P0.1/P0.3 are done. Claiming now.
+[94m[bash][0m $ ls test/integration/realtime-gateway/
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/realtime-gateway[0m pattern: [96mduplicate\(|createClient|new IORedis|onModuleDestroy|onModuleInit|onApplicationShutdown|redisClient[0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ redis-cli ping
+[94m[read][0m
+[94m[bash][0m $ tail -40 /tmp/gw.log
+Preflight green. Reproducing the gateway spec hang first (hard 150s cap).
+
+--- STDERR ---
+[93m[1m! [0mpermission requested: external_directory (/tmp/*); auto-rejecting

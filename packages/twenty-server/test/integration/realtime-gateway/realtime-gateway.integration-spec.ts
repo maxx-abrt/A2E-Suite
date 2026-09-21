@@ -13,6 +13,11 @@ import { RealtimeTopicAuthorizationService } from 'src/engine/core-modules/realt
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
+import { RealtimeTopicAccessService } from 'src/engine/core-modules/realtime-gateway/services/realtime-topic-access.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
+import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import IORedis from 'ioredis';
 
 const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
@@ -20,6 +25,13 @@ const USER_ID = '20202020-e6b5-4680-8a32-b8209737156b';
 const USER_ID_MEMBER = '20202020-3957-4908-9c36-2929a23f8357';
 const WORKSPACE_MEMBER_ID = '20202020-1e7c-43d9-a5db-685b506d816';
 const WORKSPACE_MEMBER_ID_MEMBER = '20202020-3957-4908-9c36-2929a23f8353';
+
+// The authorization service resolves membership from the workspace member
+// cache on every subscribe, so the isolated app needs that map without a DB.
+const WORKSPACE_MEMBER_ID_BY_USER_ID: Record<string, string> = {
+  [USER_ID]: WORKSPACE_MEMBER_ID,
+  [USER_ID_MEMBER]: WORKSPACE_MEMBER_ID_MEMBER,
+};
 
 const waitForMessage = (
   webSocket: WebSocket,
@@ -48,10 +60,28 @@ const waitForMessage = (
     webSocket.addEventListener('message', onMessage);
   });
 
+// Browsers always send Origin on a WebSocket handshake and the gateway
+// rejects origin-less upgrades (audit F02), so the client mirrors the
+// same-origin URL the upgrade handler compares against.
+const originForWebSocketUrl = (url: string): string => {
+  const parsedUrl = new URL(url);
+  const originProtocol = parsedUrl.protocol === 'wss:' ? 'https:' : 'http:';
+
+  return `${originProtocol}//${parsedUrl.host}`;
+};
+
+// Every socket the suite opens, so afterAll can close stragglers before
+// httpServer.close — its callback never fires while a socket is still open.
+const openSockets = new Set<WebSocket>();
+
 const openSocket = (url: string) =>
   new Promise<WebSocket>((resolve, reject) => {
-    const webSocket = new WebSocket(url);
+    const webSocket = new WebSocket(url, {
+      origin: originForWebSocketUrl(url),
+    });
 
+    openSockets.add(webSocket);
+    webSocket.once('close', () => openSockets.delete(webSocket));
     webSocket.on('open', () => resolve(webSocket));
     webSocket.on('error', reject);
   });
@@ -141,6 +171,39 @@ describe('Realtime Gateway (isolated app)', () => {
               ),
           },
         },
+        // Membership is resolved from the workspace member cache on every
+        // subscribe; this map mirrors the ids embedded in the test tokens so
+        // the real authorization service runs without a database.
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: () =>
+              Promise.resolve({
+                flatWorkspaceMemberMaps: {
+                  idByUserId: WORKSPACE_MEMBER_ID_BY_USER_ID,
+                },
+              }),
+          },
+        },
+        // Session-cookie tokens and record/channel ACLs are not exercised by
+        // this suite (they need the HTTP session / permissioned repository);
+        // the gateway only reaches them through the paths under test here.
+        {
+          provide: UserSessionService,
+          useValue: {},
+        },
+        {
+          provide: UserSessionCookieService,
+          useValue: {},
+        },
+        {
+          provide: RealtimeTopicAccessService,
+          useValue: {},
+        },
+        {
+          provide: TwentyConfigService,
+          useValue: { get: () => undefined },
+        },
         {
           provide: HttpAdapterHost,
           useValue: {
@@ -168,10 +231,25 @@ describe('Realtime Gateway (isolated app)', () => {
   });
 
   afterAll(async () => {
+    // Close every socket the suite opened before closing the server: a socket
+    // left open by a failing/timed-out test keeps httpServer.close's callback
+    // from ever firing, which is what left the jest process alive forever.
+    await Promise.all(
+      [...openSockets].map((webSocket) => closeSocket(webSocket)),
+    );
+    openSockets.clear();
+
+    // nestApp.close() runs onModuleDestroy: the gateway clears its heartbeat
+    // interval and WebSocketServer, and the publisher quits the duplicate
+    // Redis subscriber connection it opened for pub/sub.
     await nestApp.close();
+
     await new Promise<void>((resolve) => {
       httpServer.close(() => resolve());
     });
+
+    // The test-owned publisher client (RedisClientService.getClient()) is not
+    // released by the app's destroy hook.
     await redisClient.quit();
   });
 

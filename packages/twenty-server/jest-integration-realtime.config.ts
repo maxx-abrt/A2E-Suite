@@ -18,8 +18,6 @@ if (process.env.NODE_ENV === 'test') {
 
 process.env.IS_CONFIG_VARIABLES_IN_DB_ENABLED = 'false';
 
-const tsConfig = require('./tsconfig.json');
-
 const jestConfig = {
   prettierPath: null,
   silent: false,
