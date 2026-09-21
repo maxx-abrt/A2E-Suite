@@ -46,14 +46,15 @@
         "Quality gate: dated entry appended to docs/plan/phases/phase-02-report.md listing the new cases, what bullet-5 acceptance they close, and the named orchestrator residual; PLAN.md not edited; nothing committed"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN task P2.1 bullet 5 (after P0.1/P0.3 — both [x]). Starting state: PARTIAL — the isolated harness boots its own Nest app (Redis + ws, no DB) via jest-integration-realtime.config.ts; 6 existing tests cover auth rejection and tenant/topic isolation (packages/twenty-server/test/integration/realtime-gateway/realtime-gateway.integration-spec.ts). Remaining in-process delta: subscription-failure acks + reconnect/seq-cursor semantics (this story). Out of scope here (orchestrator): record/channel ACL revocation journey (bullet 3, needs installed a2e-chat runtime), multi-instance worker↔server fan-out with outage/recovery (bullet 2), browser real handshake (bullet 1 residual) — all in tasks/deferred-batch7.md. dependsOn US-072: never build new cases on a harness that hangs.",
       "dependsOn": [
         "US-072"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-21T21:49:50.391Z"
+    "updatedAt": "2026-09-21T21:54:34.153Z"
   }
 }

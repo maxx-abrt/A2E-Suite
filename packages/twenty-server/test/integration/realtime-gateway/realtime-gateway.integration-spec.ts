@@ -13,7 +13,11 @@ import { RealtimeTopicAuthorizationService } from 'src/engine/core-modules/realt
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
-import { RealtimeTopicAccessService } from 'src/engine/core-modules/realtime-gateway/services/realtime-topic-access.service';
+import {
+  REALTIME_CHANNEL_ACCESS_DENIED_MESSAGE,
+  REALTIME_RECORD_ACCESS_DENIED_MESSAGE,
+  RealtimeTopicAccessService,
+} from 'src/engine/core-modules/realtime-gateway/services/realtime-topic-access.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
@@ -196,9 +200,20 @@ describe('Realtime Gateway (isolated app)', () => {
           provide: UserSessionCookieService,
           useValue: {},
         },
+        // The real service reads record/channel ACLs through a permissioned
+        // repository (DB). The isolated harness has no DB, so it denies every
+        // record/channel topic with the canonical denial messages: that keeps
+        // the gateway's subscription-failure acknowledgement path under test
+        // while the ACL decision itself stays unit-tested and the revocation
+        // journey stays a Tier-2 orchestrator residual.
         {
           provide: RealtimeTopicAccessService,
-          useValue: {},
+          useValue: {
+            assertCanAccessObjectRecord: () =>
+              Promise.reject(new Error(REALTIME_RECORD_ACCESS_DENIED_MESSAGE)),
+            assertCanAccessChatChannel: () =>
+              Promise.reject(new Error(REALTIME_CHANNEL_ACCESS_DENIED_MESSAGE)),
+          },
         },
         {
           provide: TwentyConfigService,
@@ -493,5 +508,192 @@ describe('Realtime Gateway (isolated app)', () => {
     });
 
     await closeSocket(webSocket);
+  });
+
+  it('rejects malformed and unknown topic shapes but keeps the socket usable', async () => {
+    const webSocket = await openSocket(baseUrl);
+
+    const malformedTopics = [
+      'not-a-topic',
+      `workspace:${WORKSPACE_ID}:not-a-kind`,
+      'workspace:not-a-uuid',
+    ];
+
+    for (const topic of malformedTopics) {
+      subscribe(webSocket, topic, adminToken());
+
+      // The error echoes the offending topic so a client can attribute the
+      // failure to the subscribe that caused it.
+      await expect(
+        waitForMessage(webSocket, (envelope) => envelope.type === 'error'),
+      ).resolves.toMatchObject({
+        topic,
+        seq: 0,
+        type: 'error',
+        payload: { message: `Invalid realtime topic: ${topic}` },
+      });
+    }
+
+    subscribe(webSocket, `workspace:${WORKSPACE_ID}`, adminToken());
+
+    await expect(
+      waitForMessage(webSocket, (envelope) => envelope.type === 'ack'),
+    ).resolves.toMatchObject({ payload: { action: 'subscribed' } });
+
+    await closeSocket(webSocket);
+  });
+
+  it('rejects a token whose user is not a workspace member but keeps the socket usable', async () => {
+    const webSocket = await openSocket(baseUrl);
+
+    const nonMemberToken = signToken({
+      sub: '20202020-1111-4111-8111-111111111111',
+      userId: '20202020-1111-4111-8111-111111111111',
+      workspaceId: WORKSPACE_ID,
+      workspaceMemberId: '20202020-2222-4222-8222-222222222222',
+      userWorkspaceId: '20202020-3333-4333-8333-333333333333',
+      type: JwtTokenTypeEnum.ACCESS,
+      authProvider: 'password',
+    });
+
+    subscribe(webSocket, `workspace:${WORKSPACE_ID}`, nonMemberToken);
+
+    await expect(
+      waitForMessage(webSocket, (envelope) => envelope.type === 'error'),
+    ).resolves.toMatchObject({
+      payload: { message: 'User is not a member of the workspace' },
+    });
+
+    subscribe(webSocket, `workspace:${WORKSPACE_ID}`, adminToken());
+
+    await expect(
+      waitForMessage(webSocket, (envelope) => envelope.type === 'ack'),
+    ).resolves.toMatchObject({ payload: { action: 'subscribed' } });
+
+    await closeSocket(webSocket);
+  });
+
+  it('rejects record and channel topics the caller cannot access but keeps the socket usable', async () => {
+    const webSocket = await openSocket(baseUrl);
+
+    const channelTopic = `workspace:${WORKSPACE_ID}:chat:20202020-4444-4444-8444-444444444444`;
+
+    subscribe(webSocket, channelTopic, adminToken());
+
+    await expect(
+      waitForMessage(webSocket, (envelope) => envelope.type === 'error'),
+    ).resolves.toMatchObject({
+      topic: channelTopic,
+      payload: { message: REALTIME_CHANNEL_ACCESS_DENIED_MESSAGE },
+    });
+
+    const recordTopic = `workspace:${WORKSPACE_ID}:object:company:20202020-5555-4555-8555-555555555555`;
+
+    subscribe(webSocket, recordTopic, adminToken());
+
+    await expect(
+      waitForMessage(webSocket, (envelope) => envelope.type === 'error'),
+    ).resolves.toMatchObject({
+      topic: recordTopic,
+      payload: { message: REALTIME_RECORD_ACCESS_DENIED_MESSAGE },
+    });
+
+    subscribe(webSocket, `workspace:${WORKSPACE_ID}`, adminToken());
+
+    await expect(
+      waitForMessage(webSocket, (envelope) => envelope.type === 'ack'),
+    ).resolves.toMatchObject({ payload: { action: 'subscribed' } });
+
+    await closeSocket(webSocket);
+  });
+
+  it('starts a reconnected socket at a fresh sequence without replaying the backlog', async () => {
+    const topic = `workspace:${WORKSPACE_ID}`;
+
+    // A stable subscriber keeps the topic's Redis subscription alive while the
+    // first socket drops, so the case measures the reconnect contract rather
+    // than the publisher's asynchronous Redis unsubscribe timing.
+    const keeperSocket = await openSocket(baseUrl);
+
+    subscribe(keeperSocket, topic, adminToken());
+    await waitForMessage(keeperSocket, (envelope) => envelope.type === 'ack');
+
+    const firstSocket = await openSocket(baseUrl);
+
+    subscribe(firstSocket, topic, memberToken());
+    await waitForMessage(firstSocket, (envelope) => envelope.type === 'ack');
+
+    const firstEventPromise = waitForMessage(
+      firstSocket,
+      (envelope) => envelope.type === 'event',
+    );
+
+    await publisherService.publish(topic, { step: 'before-reconnect' });
+
+    const firstEvent = await firstEventPromise;
+
+    expect(firstEvent.seq).toBe(1);
+
+    const firstFollowUpPromise = waitForMessage(
+      firstSocket,
+      (envelope) => envelope.type === 'event',
+    );
+
+    await publisherService.publish(topic, { step: 'before-reconnect-2' });
+
+    await expect(firstFollowUpPromise).resolves.toMatchObject({ seq: 2 });
+
+    await closeSocket(firstSocket);
+
+    // Published after the first socket closed: Redis pub/sub retains nothing,
+    // so a reconnecting socket must not receive this as a replayed backlog.
+    const keeperOfflinePromise = waitForMessage(
+      keeperSocket,
+      (envelope) =>
+        envelope.type === 'event' &&
+        (envelope.payload as { step?: string }).step === 'while-offline',
+    );
+
+    await publisherService.publish(topic, { step: 'while-offline' });
+
+    await keeperOfflinePromise;
+
+    const secondSocket = await openSocket(baseUrl);
+
+    subscribe(secondSocket, topic, adminToken());
+
+    const reconnectAck = await waitForMessage(
+      secondSocket,
+      (envelope) => envelope.type === 'ack',
+    );
+
+    expect(reconnectAck.seq).toBe(0);
+
+    const reconnectedEventPromise = waitForMessage(
+      secondSocket,
+      (envelope) => envelope.type === 'event',
+    );
+
+    await publisherService.publish(topic, { step: 'after-reconnect' });
+
+    const reconnectedEvent = await reconnectedEventPromise;
+
+    // A fresh per-socket cursor: seq 1 again (not the keeper's next value) and
+    // the current live publish, not one of the earlier events.
+    expect(reconnectedEvent.seq).toBe(1);
+    expect(reconnectedEvent.payload).toEqual({ step: 'after-reconnect' });
+
+    const reconnectedFollowUpPromise = waitForMessage(
+      secondSocket,
+      (envelope) =>
+        envelope.type === 'event' &&
+        (envelope.payload as { step?: string }).step === 'after-reconnect-2',
+    );
+
+    await publisherService.publish(topic, { step: 'after-reconnect-2' });
+
+    await expect(reconnectedFollowUpPromise).resolves.toMatchObject({ seq: 2 });
+
+    await Promise.all([closeSocket(secondSocket), closeSocket(keeperSocket)]);
   });
 });
