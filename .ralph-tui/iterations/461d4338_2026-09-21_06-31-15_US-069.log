@@ -1,0 +1,177 @@
+# Iteration 2 Log
+
+## Metadata
+
+- **Task ID**: US-069
+- **Task Title**: P9.1 residual — directToolInvocation forced-tool arg threaded through sendChatMessage → ChatExecutionService (toolChoice)
+- **Description**: As an assistant integration validating deterministic tool execution, I want an additive directToolInvocation argument on sendChatMessage that the server turns into a forced toolChoice for that turn so...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-21T04:31:15.267Z
+- **Ended At**: 2026-09-21T17:34:51.379Z
+- **Duration**: 13h 3m 36s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the executor contract's clean-start check.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ ls docs/plan/phases/
+Dirty files are Ralph's own tracker state (`.ralph-tui/*`, `tasks/prd.json`) — expected engine churn, not source. Base: `055f8d4d`. Now let me read the task's PLAN section and phase report.
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96mUS-069[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96mP9\.1|directToolInvocation|forced-tool[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md[0m pattern: [96mUS-069|directToolInvocation|CLAIMED[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ tail -n 40 docs/plan/phases/phase-01-report.md
+No US-069 claim yet. Let me read the PLAN P9.1 section and verify dependencies.
+[94m[bash][0m $ printf '\nCLAIMED — US-069/direct-tool-invocation-forced-choice — deepseek-v4.1-flash — 2026-09-21T0...
+[94m[read][0m
+Task is clear. Now let me claim the slice and read the touched files.
+[94m[read][0m
+Now let me read the execution service and the streaming service chain.
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service.ts[0m pattern: [96mstreamAgentChat|streamChat\(|ChatExecutionOptions|browsingContext[0m
+Let me trace the streaming service chain to thread the argument.
+[94m[bash][0m $ grep -rln "streamChat(" packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/ && echo "---"...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+Let me examine the ToolRegistryService entry points.
+[94m[read][0m
+[94m[bash][0m $ grep -rn "isMutating\|mutating\|MUTATING" packages/twenty-server/src/engine/core-modules/tool-provid...
+[94m[bash][0m $ grep -rn "type ToolCategory\|ToolCategory =" packages/twenty-shared/src/ | head
+[94m[bash][0m $ grep -rn "category" packages/twenty-front/src/modules/ai/utils/getContextToolButtons.ts | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/ai/constants/tool-category.const.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/utils/buildDirectToolInvocation.ts
+[94m[read][0m
+[94m[bash][0m $ grep -rn "requiresConfirmation\|prefill\|PREFILL" packages/twenty-server/src/engine/core-modules/too...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "AI_CHAT_TOOL_NAMES_TO_PRELOAD\|getToolsByName\|buildToolIndex" packages/twenty-server/src/...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/ai/ai.exception.ts
+[94m[bash][0m $ grep -n "TOOL\|REFUS\|FORBIDDEN\|PERMISSION\|NOT_FOUND" packages/twenty-server/src/engine/metadata-m...
+Let me look at how US-064/065 encoded denial semantics in their specs.
+[94m[bash][0m $ grep -rln "cross-workspace\|restricted-member\|uninstalled" packages/twenty-server/src/engine/core-m...
+[94m[bash][0m $ find packages/twenty-server/src -name "*tool-registry*spec*" -o -name "*registry*spec*" | head
+[94m[bash][0m $ grep -n "permission\|denied\|not-found\|notFound\|foreign\|workspace\|restricted\|mutating\|LOGIC_FU...
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/__tests__/chat...
+[94m[bash][0m $ sed -n '1,200p' packages/twenty-front/src/modules/ai/components/context-tools/AiChatContextToolButto...
+[94m[bash][0m $ grep -rln "PREFILL\|prefill\|requiresConfirmation" packages/twenty-front/src/modules/ai/ packages/tw...
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-server/src/engine/core-modules/tool-provider/types/tool-descriptor.ty...
+[94m[bash][0m $ grep -rn "requiresConfirmation\|mutating\|Mutating\|isReadOnly\|readOnly" packages/twenty-server/src...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "AiExceptionCode" packages/twenty-server/src/engine/metadata-modules/ai/interceptors/ai-gra...
+[94m[bash][0m $ grep -rln "jest.mock('ai'\|streamText" packages/twenty-server/src/engine/metadata-modules/ai/ | head...
+[94m[bash][0m $ grep -rln "jest.mock('ai'\|streamText" packages/twenty-server/src/ | head -20
+[94m[bash][0m $ grep -rn "toolChoice" packages/twenty-server/node_modules/ai/dist/index.d.ts 2>/dev/null | head -20 ...
+Let me verify the AI SDK's `toolChoice` type and check `isNonEmptyString` usage.
+[94m[bash][0m $ ls packages/twenty-server/node_modules/ai/dist/ 2>/dev/null | head
+[94m[bash][0m $ find /Users/maxaubert/Projets/A2E\ Suite -name "index.d.ts" -path "*node_modules/ai/*" 2>/dev/null |...
+[94m[bash][0m $ cat node_modules/ai/package.json 2>/dev/null | grep '"version"'
+[94m[bash][0m $ grep -n "declare type ToolChoice\|ToolChoice =" node_modules/ai/dist/index.d.ts | head
+[94m[bash][0m $ sed -n '126,132p' node_modules/ai/dist/index.d.ts
+[94m[bash][0m $ sed -n '1,40p' packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-kind-...
+[94m[bash][0m $ sed -n '1,40p' packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/utils/build-full-system...
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-server/src/engine/metadata-modules/ai/ai-models/types/ai-model-config...
+[94m[bash][0m $ grep -rn "isNonEmptyString" packages/twenty-shared/src/utils/index.ts packages/twenty-shared/src/uti...
+[94m[bash][0m $ grep -rn "isNonEmptyString" packages/twenty-server/src/engine/metadata-modules/ai/ | head -5
+[94m[bash][0m $ find packages/twenty-shared/src/utils -name "*.ts" | xargs grep -ln "export const isNonEmptyString" ...
+[94m[bash][0m $ grep -rln "case AiExceptionCode\." packages/twenty-server/src/ | head
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-server/src/engine/metadata-modules/ai/utils/ai-graphql-api-exception...
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-server/src/engine/metadata-modules/ai/filters/ai-api-exception.filter...
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/message-prunin...
+[94m[bash][0m $ grep -n "export type UserContext" -A 15 packages/twenty-server/src/engine/metadata-modules/ai/ai-age...
+[94m[todowrite][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/ai/ai.exception.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/ai/ai.exception.ts
+[94m[edit][0m
+[94m[write][0m "import { isNonEmptyString } from '@sniptt/guards';
+import { ToolCategory } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type ToolIndexEntry } from 'src/engine/co... (1507 chars)"
+Now the util:
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[read][0m
+[94m[edit][0m
+Now thread through the resolver and service chain:
+[94m[edit][0m
+[94m[bash][0m $ grep -n "fileAttachments: FileAttachmentInput\[\] | null," packages/twenty-server/src/engine/metadat...
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+Now the streaming service:
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ echo "EXIT:${pipestatus[1]:-$?}"
+[94m[write][0m "import { ToolCategory } from 'twenty-shared/ai';
+
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import { resolveDirectToolInvocation } from '... (2231 chars)"
+[94m[read][0m
+[94m[edit][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/jest.config.mjs
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai/ai-chat/services/__tests__/chat-execution.service.browsing-c...
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai/ai-chat/utils/__tests__/resolve-direct-tool-invocation.util....
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/utils/provider-options...
+[94m[bash][0m $ cat packages/twenty-shared/src/ai/constants/ai-sdk-package.const.ts 2>/dev/null | head -30
+[94m[write][0m "import { streamText } from 'ai';
+import { ToolCategory } from 'twenty-shared/ai';
+
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import { Cha... (5976 chars)"
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai/ai-chat/services/__tests__/chat-execution.service.direct-too...
+Now run the regression suites affected by the changed files:
+[94m[bash][0m $ npx jest --findRelatedTests src/engine/metadata-modules/ai/ai.exception.ts src/engine/metadata-modul...
+[94m[bash][0m $ ls src/engine/metadata-modules/ai/ai-chat/jobs/__tests__/ 2>/dev/null
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai/ai-chat/services/__tests__/agent-chat-streaming.service.clai...
+[94m[bash][0m $ ls -a | grep oxlint
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/engine/metadata-modules/ai/ai.exception.ts src/engine/...
+[94m[bash][0m $ npx oxfmt --check src/engine/metadata-modules/ai/ai.exception.ts src/engine/metadata-modules/ai/util...
+[94m[bash][0m $ npx oxfmt src/engine/metadata-modules/ai/ai-chat/services/__tests__/chat-execution.service.direct-to...
+[94m[bash][0m $ git diff --stat && echo "---" && git diff packages/twenty-server/src/engine/metadata-modules/ai/ai-c...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -20
+[94m[bash][0m $ echo "TSGO_EXIT:${pipestatus[1]:-$?}"
+[94m[bash][0m $ git diff packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/chat-execution.servi...
+Let me review the full service diff for correctness:
+[94m[bash][0m $ git diff packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat.resolver...
+[94m[todowrite][0m
+[94m[bash][0m $ tail -n 30 .ralph-tui/progress.md
+[94m[bash][0m $ date -u "+%Y-%m-%d %H:%M UTC"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ no GraphQL codegen — the checked-in schema predates the arg. --- EOF tail -n 20 .ralph-tui/progress....
+Let me strengthen the denial-case spec to literally cover each class:
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai/ai-chat/utils/__tests__/resolve-direct-tool-invocation.util....
+[94m[bash][0m $ npx oxfmt --check src/engine/metadata-modules/ai/ai-chat/utils/__tests__/resolve-direct-tool-invocat...
+[94m[bash][0m $ echo "TSGO_EXIT:${pipestatus[1]:-$?}"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ git status --porcelain
+Implementation complete. Summary:
+
+**US-069 — `directToolInvocation` forced-tool arg threaded `sendChatMessage → ChatExecutionService`**
+
+- **Resolver**: nullable `@Args('directToolInvocation', { type: () => String, nullable: true })` on `sendChatMessage`, forwarded through `AgentChatStreamingService` → `StreamAgentChatJobData` → job → `ChatExecutionService.streamChat`.
+- **Forced choice**: new pure `resolveDirectToolInvocation` util validates the name against the caller-scoped catalogue (`buildToolIndex` → `getCatalog`). A `LOGIC_FUNCTION` (read-only) tool is hydrated via `getToolsByName` and forced with `toolChoice: { type: 'tool', toolName }`; the kickoff `'required'` forcing is unchanged.
+- **Fail-closed**: unknown/uninstalled/restricted/cross-workspace names throw the single new `DIRECT_TOOL_INVOCATION_NOT_AVAILABLE` (ForbiddenError) before any provider call. Non-read-only names are never forced — tool not loaded, `toolChoice` stays `'auto'`.
+- Additive only: no registry/table/hook, no tool-provider change, no `graphql:generate`, no front edit.
+
+**Gates**: `tsgo --noEmit` exit 0 · oxlint 0/0 · oxfmt clean · new specs 7/7 + 5/5 · 8 related ai-chat suites 62/62 (incl. browsing-context) · `--findRelatedTests` 2964 pass · `check-docs.mjs` PASS.
+
+Report appended to `docs/plan/phases/phase-01-report.md` (`Claim: done-for-review`, `Ready-to-tick: yes`). PLAN.md untouched; nothing committed. Only the Tier-2 live forced-tool dispatch remains for the orchestrator.
+
+<promise>COMPLETE</promise>

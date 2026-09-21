@@ -1,6 +1,7 @@
-import { Command } from 'twenty-sdk/front-component';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { AppPath, navigate } from 'twenty-sdk/front-component';
+import { Command, navigate } from 'twenty-sdk/front-component';
+
+import { CHAT_DISCUSSIONS_PATH } from '../lib/chat-navigation.ts';
 
 // GO TO CHAT (anatomy rule: every app pins "Go to <app>").
 export const GO_TO_CHAT_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
@@ -8,9 +9,7 @@ export const GO_TO_CHAT_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
 
 const GoToChatCommand = () => {
   const execute = async (): Promise<void> => {
-    await navigate(AppPath.RecordIndexPage, {
-      objectNamePlural: 'chatChannels',
-    });
+    await navigate(CHAT_DISCUSSIONS_PATH);
   };
 
   return <Command execute={execute} />;
@@ -19,6 +18,6 @@ const GoToChatCommand = () => {
 export default defineFrontComponent({
   universalIdentifier: GO_TO_CHAT_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   name: 'go-to-chat-command',
-  description: 'Ouvre la vue Tous les canaux.',
+  description: 'Ouvre la page des discussions.',
   component: GoToChatCommand,
 });
