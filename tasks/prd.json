@@ -88,12 +88,13 @@
         "Quality gate: dated entry appended to docs/plan/phases/phase-02-report.md (dock home; cross-reference the phase-10 flag); PLAN.md not edited; nothing committed"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": "Flagged-defect conclusion (little wave): the P10 accessibility bullet is [x] (US-006) — this story is the separately-scheduled layout fix recorded in the Current-state ledger and phase-10-report, not an open checkbox. Starting state: NOT STARTED — defect verbatim in phase-10-report line 70. Keep the fix inside WorkbenchWidgetDock.tsx styling; no layout rework beyond making the CSS valid.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-21T17:59:51.000Z"
+    "updatedAt": "2026-09-21T18:05:41.133Z"
   }
 }

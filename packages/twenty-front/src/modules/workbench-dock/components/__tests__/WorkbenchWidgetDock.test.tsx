@@ -144,4 +144,12 @@ describe('WorkbenchWidgetDock', () => {
 
     expect(screen.getByText('after dock')).toHaveFocus();
   });
+
+  it('publishes the persisted dock width as a px CSS custom property', () => {
+    renderDock();
+
+    expect(
+      document.documentElement.style.getPropertyValue('--a2e-widgets-width'),
+    ).toBe('336px');
+  });
 });

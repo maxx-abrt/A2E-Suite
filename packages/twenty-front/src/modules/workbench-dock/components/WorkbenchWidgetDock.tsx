@@ -28,8 +28,7 @@ import {
 } from '~/modules/workbench-dock/utils/getWorkbenchWidgetDockModeAfterResize';
 
 const WORKBENCH_DOCK_MINI_WIDTH = 48;
-const WORKBENCH_DOCK_WIDTH_CSS_VARIABLE =
-  '--a2e-workbench-dock-workbenchWidgetDockWidth';
+const WORKBENCH_DOCK_WIDTH_CSS_VARIABLE = '--a2e-widgets-width';
 
 const StyledDockRoot = styled.aside<{ isExpanded: boolean }>`
   background: ${themeCssVariables.background.secondary};
@@ -37,12 +36,11 @@ const StyledDockRoot = styled.aside<{ isExpanded: boolean }>`
   display: flex;
   flex: 0 0 auto;
   height: 100%;
-  min-workbenchwidgetdockwidth: ${WORKBENCH_DOCK_MINI_WIDTH}px;
+  min-width: ${WORKBENCH_DOCK_MINI_WIDTH}px;
   overflow: hidden;
   position: relative;
-  transition: workbenchWidgetDockWidth
-    ${themeCssVariables.animation.duration.normal}s ease;
-  workbenchwidgetdockwidth: ${({ isExpanded }) =>
+  transition: width ${themeCssVariables.animation.duration.normal}s ease;
+  width: ${({ isExpanded }) =>
     isExpanded
       ? `var(${WORKBENCH_DOCK_WIDTH_CSS_VARIABLE}, 336px)`
       : `${WORKBENCH_DOCK_MINI_WIDTH}px`};
@@ -51,7 +49,7 @@ const StyledDockRoot = styled.aside<{ isExpanded: boolean }>`
     transition: none;
   }
 
-  @media (max-workbenchwidgetdockwidth: 1199px) {
+  @media (max-width: 1199px) {
     bottom: 0;
     box-shadow: ${themeCssVariables.boxShadow.strong};
     position: absolute;
@@ -60,14 +58,12 @@ const StyledDockRoot = styled.aside<{ isExpanded: boolean }>`
     z-index: ${RootStackingContextZIndices.WorkbenchWidgetDock};
   }
 
-  @media (max-workbenchwidgetdockwidth: 767px) {
+  @media (max-width: 767px) {
     border: 1px solid ${themeCssVariables.border.color.medium};
     border-radius: ${themeCssVariables.border.radius.md};
     bottom: ${themeCssVariables.spacing[4]};
     height: ${({ isExpanded }) => (isExpanded ? 'min(520px, 72vh)' : 'auto')};
-    max-workbenchwidgetdockwidth: calc(
-      100vw - ${themeCssVariables.spacing[4]} * 2
-    );
+    max-width: calc(100vw - ${themeCssVariables.spacing[4]} * 2);
     right: ${themeCssVariables.spacing[4]};
     top: auto;
   }
@@ -94,7 +90,7 @@ const StyledExpandedPanel = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  min-workbenchwidgetdockwidth: 0;
+  min-width: 0;
   overflow: hidden;
 `;
 
@@ -125,7 +121,7 @@ const StyledContent = styled.div`
 `;
 
 const StyledResizeEdge = styled.div`
-  @media (max-workbenchwidgetdockwidth: 767px) {
+  @media (max-width: 767px) {
     display: none;
   }
 `;
