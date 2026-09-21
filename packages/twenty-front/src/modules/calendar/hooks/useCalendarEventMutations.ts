@@ -3,6 +3,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { type CalendarEventInput } from '@/calendar/types/CalendarEventDraft';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
@@ -16,6 +17,11 @@ const CALENDAR_EVENT_GQL_FIELDS = {
   isFullDay: true,
   isCanceled: true,
   externalCreatedAt: true,
+  recurrenceRule: true,
+  recurrenceTimezone: true,
+  recurrenceSeriesId: true,
+  recurrenceOccurrenceDay: true,
+  recurrenceSkippedOccurrenceDays: true,
 };
 
 // Front create/update/delete over the standard `calendarEvent` record path. No
@@ -28,6 +34,9 @@ export const useCalendarEventMutations = () => {
   });
   const { updateOneRecord } = useUpdateOneRecord();
   const { deleteOneRecord } = useDeleteOneRecord({
+    objectNameSingular: CoreObjectNameSingular.CalendarEvent,
+  });
+  const { deleteManyRecords } = useDeleteManyRecords({
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
   });
 
@@ -82,12 +91,21 @@ export const useCalendarEventMutations = () => {
     [deleteOneRecord, runMutation],
   );
 
+  // Whole-series delete removes the anchor plus every detached occurrence row in
+  // one mutation, so no orphan sibling survives the series deletion.
+  const deleteCalendarEvents = useCallback(
+    (ids: string[]) =>
+      runMutation(() => deleteManyRecords({ recordIdsToDelete: ids })),
+    [deleteManyRecords, runMutation],
+  );
+
   const resetError = useCallback(() => setError(null), []);
 
   return {
     createCalendarEvent,
     updateCalendarEvent,
     deleteCalendarEvent,
+    deleteCalendarEvents,
     isSaving,
     error,
     resetError,

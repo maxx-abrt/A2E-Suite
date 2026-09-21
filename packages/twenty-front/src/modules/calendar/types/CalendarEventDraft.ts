@@ -24,4 +24,11 @@ export type CalendarEventInput = {
   endsAt: string;
   isFullDay: boolean;
   isCanceled: boolean;
+  // Recurrence columns. Optional so the plain create/edit path (US-050/052)
+  // stays source-compatible; a scoped recurrence write sets them explicitly.
+  recurrenceRule?: string | null;
+  recurrenceTimezone?: string | null;
+  recurrenceSeriesId?: string | null;
+  recurrenceOccurrenceDay?: string | null;
+  recurrenceSkippedOccurrenceDays?: string | null;
 };

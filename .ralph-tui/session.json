@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "sessionId": "461d4338-e2a6-49ca-ada7-2e44ea4961f1",
+  "status": "running",
+  "startedAt": "2026-09-21T04:16:56.301Z",
+  "updatedAt": "2026-09-21T04:31:09.652Z",
+  "currentIteration": 0,
+  "maxIterations": 20,
+  "tasksCompleted": 0,
+  "isPaused": false,
+  "agentPlugin": "opencode",
+  "model": "opencode-go/deepseek-v4.1-flash",
+  "trackerState": {
+    "plugin": "json",
+    "executionScopes": [],
+    "totalTasks": 0,
+    "tasks": []
+  },
+  "iterations": [],
+  "skippedTaskIds": [],
+  "cwd": "/Users/maxaubert/Projets/A2E Suite",
+  "activeTaskIds": [],
+  "subagentPanelVisible": false
+}

@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,20 +12,36 @@ import { CalendarDayView } from '@/calendar/components/CalendarDayView';
 import { CalendarEventComposer } from '@/calendar/components/CalendarEventComposer';
 import { CalendarEventDetails } from '@/calendar/components/CalendarEventDetails';
 import { CalendarMonthView } from '@/calendar/components/CalendarMonthView';
+import { CalendarSeriesScopeDialog } from '@/calendar/components/CalendarSeriesScopeDialog';
 import { CalendarToolbar } from '@/calendar/components/CalendarToolbar';
 import { CalendarWeekView } from '@/calendar/components/CalendarWeekView';
 import { useCalendarEventMutations } from '@/calendar/hooks/useCalendarEventMutations';
 import { useCalendarEvents } from '@/calendar/hooks/useCalendarEvents';
-import { type CalendarEventDraft } from '@/calendar/types/CalendarEventDraft';
+import {
+  type CalendarEventDraft,
+  type CalendarEventInput,
+} from '@/calendar/types/CalendarEventDraft';
+import { type CalendarEventRecord } from '@/calendar/types/CalendarEventRecord';
 import { type CalendarEventSlot } from '@/calendar/types/CalendarEventSlot';
+import { type CalendarSeriesEditScope } from '@/calendar/types/CalendarSeriesEditScope';
 import { type CalendarViewMode } from '@/calendar/types/CalendarViewMode';
 import { buildCalendarEventDraftFromEvent } from '@/calendar/utils/buildCalendarEventDraftFromEvent';
 import { buildCalendarEventDraftFromSlotRange } from '@/calendar/utils/calendarEventSlots';
 import { buildCalendarEventInputFromDraft } from '@/calendar/utils/buildCalendarEventInputFromDraft';
+import { getCalendarEventOccurrenceDay } from '@/calendar/utils/getCalendarEventOccurrenceDay';
 import { getCalendarViewDays } from '@/calendar/utils/getCalendarViewDays';
 import { groupCalendarEventsByDay } from '@/calendar/utils/groupCalendarEventsByDay';
+import { isCalendarLocalEditSurface } from '@/calendar/utils/isCalendarLocalEditSurface';
 import { isLocalCalendarEvent } from '@/calendar/utils/isLocalCalendarEvent';
 import { navigateCalendarAnchor } from '@/calendar/utils/navigateCalendarAnchor';
+import { parseCalendarRecurrenceRule } from '@/calendar/utils/parseCalendarRecurrenceRule';
+import {
+  planCalendarOccurrenceDelete,
+  planCalendarOccurrenceEdit,
+  planCalendarSeriesDelete,
+  planCalendarSeriesEdit,
+} from '@/calendar/utils/planCalendarSeriesMutations';
+import { shouldPromptCalendarSeriesScope } from '@/calendar/utils/shouldPromptCalendarSeriesScope';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatRecordCalendarWeekRange } from '@/object-record/record-calendar/utils/formatRecordCalendarWeekRange';
@@ -73,6 +90,7 @@ export const CalendarPage = () => {
     createCalendarEvent,
     updateCalendarEvent,
     deleteCalendarEvent,
+    deleteCalendarEvents,
     isSaving,
     error: mutationError,
     resetError,
@@ -87,6 +105,13 @@ export const CalendarPage = () => {
     mode: 'create' | 'edit';
     eventId: string | null;
     draft: CalendarEventDraft;
+    // null for create and for a plain single-event edit; set when the user
+    // picked a scope in the recurring-event dialog.
+    editScope: CalendarSeriesEditScope | null;
+    occurrenceDay: string | null;
+  } | null>(null);
+  const [scopePrompt, setScopePrompt] = useState<{
+    action: 'edit' | 'delete';
   } | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
@@ -140,6 +165,47 @@ export const CalendarPage = () => {
         .flat()
         .find((span) => span.event.id === selectedEventId)
     : undefined;
+
+  const selectedSeriesId = isDefined(selectedEvent)
+    ? selectedEvent.recurrenceSeriesId
+    : null;
+
+  // All rows belonging to the selected event's series. The anchor carries the
+  // rule; detached siblings share the series id and name the day they replace.
+  const selectedSeriesEvents = useMemo(() => {
+    if (!isDefined(selectedEvent)) {
+      return [];
+    }
+
+    if (!isNonEmptyString(selectedSeriesId)) {
+      return [selectedEvent];
+    }
+
+    return events.filter(
+      (event) => event.recurrenceSeriesId === selectedSeriesId,
+    );
+  }, [events, selectedEvent, selectedSeriesId]);
+
+  const selectedSeriesAnchor = useMemo(() => {
+    if (!isDefined(selectedEvent)) {
+      return null;
+    }
+
+    return (
+      selectedSeriesEvents.find((event) =>
+        isNonEmptyString(event.recurrenceRule),
+      ) ??
+      (isNonEmptyString(selectedEvent.recurrenceRule) ? selectedEvent : null)
+    );
+  }, [selectedEvent, selectedSeriesEvents]);
+
+  const selectedSeriesDetachedEvents = useMemo(
+    () =>
+      selectedSeriesEvents.filter((event) =>
+        isNonEmptyString(event.recurrenceOccurrenceDay),
+      ),
+    [selectedSeriesEvents],
+  );
 
   const title = useMemo(() => {
     if (mode === 'week') {
@@ -214,7 +280,27 @@ export const CalendarPage = () => {
     setComposer({
       mode: 'create',
       eventId: null,
+      editScope: null,
+      occurrenceDay: null,
       draft: buildCalendarEventDraftFromSlotRange({ startSlot, endSlot }),
+    });
+  };
+
+  const openComposerForEvent = ({
+    event,
+    editScope,
+    occurrenceDay,
+  }: {
+    event: CalendarEventRecord;
+    editScope: CalendarSeriesEditScope | null;
+    occurrenceDay: string | null;
+  }) => {
+    setComposer({
+      mode: 'edit',
+      eventId: event.id,
+      editScope,
+      occurrenceDay,
+      draft: buildCalendarEventDraftFromEvent({ event, timeZone }),
     });
   };
 
@@ -225,18 +311,194 @@ export const CalendarPage = () => {
 
     resetError();
     setStatusMessage(null);
-    setComposer({
-      mode: 'edit',
-      eventId: selectedEvent.id,
-      draft: buildCalendarEventDraftFromEvent({
-        event: selectedEvent,
-        timeZone,
-      }),
+
+    if (
+      shouldPromptCalendarSeriesScope({ event: selectedEvent, viewMode: mode })
+    ) {
+      setScopePrompt({ action: 'edit' });
+      return;
+    }
+
+    openComposerForEvent({
+      event: selectedEvent,
+      editScope: null,
+      occurrenceDay: null,
     });
+  };
+
+  const updateOccurrence = async ({
+    occurrenceDay,
+    input,
+  }: {
+    occurrenceDay: string;
+    input: CalendarEventInput;
+  }): Promise<boolean> => {
+    if (!isDefined(selectedSeriesAnchor)) {
+      setStatusMessage(t`Could not update this occurrence`);
+      return false;
+    }
+
+    const plan = planCalendarOccurrenceEdit({
+      anchorEvent: selectedSeriesAnchor,
+      detachedEvents: selectedSeriesDetachedEvents,
+      occurrenceDay,
+      eventInput: input,
+    });
+
+    if (!isDefined(plan)) {
+      setStatusMessage(t`Could not update this occurrence`);
+      return false;
+    }
+
+    const didUpsert = isDefined(plan.detachedEventId)
+      ? await updateCalendarEvent({
+          id: plan.detachedEventId,
+          input: plan.detachedInput,
+        })
+      : await createCalendarEvent(plan.detachedInput);
+
+    if (!didUpsert) {
+      return false;
+    }
+
+    if (isDefined(plan.anchorUpdate)) {
+      const didUpdateAnchor = await updateCalendarEvent({
+        id: plan.anchorUpdate.id,
+        input: plan.anchorUpdate.input,
+      });
+
+      if (!didUpdateAnchor) {
+        return false;
+      }
+    }
+
+    setStatusMessage(t`Event updated`);
+    refetch();
+
+    return true;
+  };
+
+  const updateSeries = async (input: CalendarEventInput): Promise<boolean> => {
+    if (!isDefined(selectedSeriesAnchor)) {
+      setStatusMessage(t`Could not update this series`);
+      return false;
+    }
+
+    const rule = isNonEmptyString(selectedSeriesAnchor.recurrenceRule)
+      ? parseCalendarRecurrenceRule(selectedSeriesAnchor.recurrenceRule)
+      : null;
+
+    if (rule === null) {
+      setStatusMessage(t`Could not update this series`);
+      return false;
+    }
+
+    const plan = planCalendarSeriesEdit({
+      anchorEvent: selectedSeriesAnchor,
+      detachedEvents: selectedSeriesDetachedEvents,
+      rule,
+      seriesStart: input.startsAt,
+      eventInput: input,
+    });
+
+    if (!isDefined(plan)) {
+      setStatusMessage(t`Could not update this series`);
+      return false;
+    }
+
+    const didUpdate = await updateCalendarEvent({
+      id: plan.anchorId,
+      input: plan.anchorInput,
+    });
+
+    if (didUpdate) {
+      setStatusMessage(t`Event updated`);
+      refetch();
+    }
+
+    return didUpdate;
+  };
+
+  const deleteOccurrence = async (occurrenceDay: string): Promise<boolean> => {
+    if (!isDefined(selectedSeriesAnchor)) {
+      setStatusMessage(t`Could not delete this occurrence`);
+      return false;
+    }
+
+    const plan = planCalendarOccurrenceDelete({
+      anchorEvent: selectedSeriesAnchor,
+      detachedEvents: selectedSeriesDetachedEvents,
+      occurrenceDay,
+    });
+
+    if (!isDefined(plan)) {
+      setStatusMessage(t`Could not delete this occurrence`);
+      return false;
+    }
+
+    if (isDefined(plan.detachedEventId)) {
+      const didDeleteDetached = await deleteCalendarEvent(plan.detachedEventId);
+
+      if (!didDeleteDetached) {
+        return false;
+      }
+    }
+
+    if (isDefined(plan.anchorUpdate)) {
+      const didUpdateAnchor = await updateCalendarEvent({
+        id: plan.anchorUpdate.id,
+        input: plan.anchorUpdate.input,
+      });
+
+      if (!didUpdateAnchor) {
+        return false;
+      }
+    }
+
+    setStatusMessage(t`Event deleted`);
+    refetch();
+
+    return true;
+  };
+
+  const deleteSeries = async (): Promise<boolean> => {
+    if (!isDefined(selectedSeriesAnchor)) {
+      setStatusMessage(t`Could not delete this series`);
+      return false;
+    }
+
+    const plan = planCalendarSeriesDelete({
+      anchorEvent: selectedSeriesAnchor,
+      detachedEvents: selectedSeriesDetachedEvents,
+    });
+
+    if (!isDefined(plan)) {
+      setStatusMessage(t`Could not delete this series`);
+      return false;
+    }
+
+    const didDelete = await deleteCalendarEvents(plan.seriesDeleteIds);
+
+    if (didDelete) {
+      setStatusMessage(t`Event deleted`);
+      refetch();
+    }
+
+    return didDelete;
   };
 
   const handleDeleteSelectedEvent = async () => {
     if (!isDefined(selectedEvent)) {
+      return;
+    }
+
+    resetError();
+    setStatusMessage(null);
+
+    if (
+      shouldPromptCalendarSeriesScope({ event: selectedEvent, viewMode: mode })
+    ) {
+      setScopePrompt({ action: 'delete' });
       return;
     }
 
@@ -247,6 +509,68 @@ export const CalendarPage = () => {
       setStatusMessage(t`Event deleted`);
       refetch();
     }
+  };
+
+  const handleChooseScope = (scope: CalendarSeriesEditScope) => {
+    if (!isDefined(selectedEvent) || !isDefined(scopePrompt)) {
+      return;
+    }
+
+    const action = scopePrompt.action;
+    setScopePrompt(null);
+
+    if (action === 'edit') {
+      if (scope === 'this-occurrence') {
+        const occurrenceDay = getCalendarEventOccurrenceDay({
+          event: selectedEvent,
+          timeZone,
+        });
+
+        if (!isDefined(occurrenceDay)) {
+          setStatusMessage(t`Could not edit this occurrence`);
+          return;
+        }
+
+        openComposerForEvent({
+          event: selectedEvent,
+          editScope: 'this-occurrence',
+          occurrenceDay,
+        });
+        return;
+      }
+
+      openComposerForEvent({
+        event: selectedSeriesAnchor ?? selectedEvent,
+        editScope: 'whole-series',
+        occurrenceDay: null,
+      });
+      return;
+    }
+
+    if (scope === 'this-occurrence') {
+      const occurrenceDay = getCalendarEventOccurrenceDay({
+        event: selectedEvent,
+        timeZone,
+      });
+
+      if (!isDefined(occurrenceDay)) {
+        setStatusMessage(t`Could not delete this occurrence`);
+        return;
+      }
+
+      void deleteOccurrence(occurrenceDay).then((didDelete) => {
+        if (didDelete) {
+          setSelectedEventId(null);
+        }
+      });
+      return;
+    }
+
+    void deleteSeries().then((didDelete) => {
+      if (didDelete) {
+        setSelectedEventId(null);
+      }
+    });
   };
 
   const handleComposerSubmit = async () => {
@@ -271,6 +595,33 @@ export const CalendarPage = () => {
       return;
     }
 
+    if (
+      composer.editScope === 'this-occurrence' &&
+      isDefined(composer.occurrenceDay)
+    ) {
+      const didUpdateOccurrence = await updateOccurrence({
+        occurrenceDay: composer.occurrenceDay,
+        input,
+      });
+
+      if (didUpdateOccurrence) {
+        setComposer(null);
+        setSelectedEventId(null);
+      }
+
+      return;
+    }
+
+    if (composer.editScope === 'whole-series') {
+      const didUpdateSeries = await updateSeries(input);
+
+      if (didUpdateSeries) {
+        setComposer(null);
+      }
+
+      return;
+    }
+
     if (!isDefined(composer.eventId)) {
       return;
     }
@@ -289,6 +640,31 @@ export const CalendarPage = () => {
 
   const handleComposerDelete = async () => {
     if (!isDefined(composer?.eventId)) {
+      return;
+    }
+
+    if (
+      composer.editScope === 'this-occurrence' &&
+      isDefined(composer.occurrenceDay)
+    ) {
+      const didDelete = await deleteOccurrence(composer.occurrenceDay);
+
+      if (didDelete) {
+        setComposer(null);
+        setSelectedEventId(null);
+      }
+
+      return;
+    }
+
+    if (composer.editScope === 'whole-series') {
+      const didDelete = await deleteSeries();
+
+      if (didDelete) {
+        setComposer(null);
+        setSelectedEventId(null);
+      }
+
       return;
     }
 
@@ -327,6 +703,7 @@ export const CalendarPage = () => {
           event={selectedEvent}
           isAllDay={selectedSpan?.isAllDay ?? selectedEvent.isFullDay}
           isLocal={isLocalCalendarEvent(selectedEvent)}
+          isEditable={isCalendarLocalEditSurface(mode)}
           timeZone={timeZone}
           locale={dateLocale.locale}
           onClose={() => setSelectedEventId(null)}
@@ -399,6 +776,18 @@ export const CalendarPage = () => {
       </StyledContent>
       {isDefined(statusMessage) && (
         <StyledStatus aria-live="polite">{statusMessage}</StyledStatus>
+      )}
+      {isDefined(scopePrompt) && isDefined(selectedEvent) && (
+        <CalendarSeriesScopeDialog
+          action={scopePrompt.action}
+          eventTitle={selectedEvent.title}
+          isSaving={isSaving}
+          onChooseScope={handleChooseScope}
+          onCancel={() => {
+            resetError();
+            setScopePrompt(null);
+          }}
+        />
       )}
       {isDefined(composer) && (
         <CalendarEventComposer

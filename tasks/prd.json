@@ -1,285 +1,97 @@
 {
-  "name": "A2E Suite — dependency-ready executor batch (P1.6c residual, P2 validation, P4.2 residual, P4C.3 recurrence, P9.1 legs)",
-  "description": "Executor-tier (Tier 0/1) stories extracted from PLAN.md's open [ ]/[~] bullets whose literal (after X) dependencies are [x]/DONE as of 2026-09-20, minus every slice already done-for-review in phase reports (US-030..055) whose only missing legs are Tier 2 (orchestrator). All P7 work is excluded while the P7.0 safety gate stays UNVERIFIED; P1.6e/P1.7a/P1.7b (after P1.6c [~]), P3.4 (after durable save/share acceptance + D07), P4.2 retroplanning and P4C.5 (after P4.1 [ ]), and P4C.4 (after P4C.3) are blocked upstream. Deferred lists: tasks/deferred-batch5.md.",
-  "branchName": "ralph/dependency-ready-batch-execution",
+  "name": "A2E Suite — dependency-ready executor batch 6 (P4C.3 this-vs-series UI wiring, P9.1 forced-tool arg, flagged-defect conclusions)",
+  "description": "Executor-tier (Tier 0/1) stories extracted from PLAN.md's open [ ]/[~] bullets as of 2026-09-21 whose literal (after X) dependencies are [x]/DONE. tasks/prd.json was empty at extraction time, so no IDs were excluded as already-present; prior batches US-001..067 are done-for-review and ticked/ledger-recorded. After batch 5, the entire remaining Tier 0/1 residue is four stories: the last executor leg of P4C.3 (this-occurrence-vs-whole-series edit/delete UI wiring — engine/storage/API already verified US-060..063), the last executor leg of P9.1 (directToolInvocation/toolChoice threading — the recorded PLAN caveat), and two flagged defects concluded as small waves (a2e-chat go-to-chat landing on the record index instead of /discussions — phase-05 report; WorkbenchWidgetDock StyledDockRoot invalid CSS so the reduced-motion transition and <1200px overlay media queries never fire — phase-10 report and PLAN ledger). Everything else open in PLAN.md is Tier 2 or blocked upstream: see tasks/deferred-batch6.md (19 orchestrator items, the blocked-upstream table incl. all of P7 while the P7.0 gate is UNVERIFIED, and the ticking-leverage note). All P7 work excluded while P7.0 remains BLOCKED/UNVERIFIED.",
+  "branchName": "ralph/dependency-ready-batch-6",
   "userStories": [
     {
-      "id": "US-056",
-      "title": "P1.6c residual — InstallApps catalogue list empty-state subtitle",
-      "description": "As a new workspace member choosing apps during onboarding, I want the InstallApps catalogue list to show a distinct, truthful empty-state subtitle when the catalogue is loading, empty, or failed to load, so that an empty catalogue never reads as a lost template choice or silently bypasses the picker.",
+      "id": "US-068",
+      "title": "P4C.3 residual — this-occurrence-vs-whole-series edit/delete UI wiring on /calendar",
+      "description": "As a calendar user editing or deleting one occurrence of a recurring local event, I want an explicit 'this occurrence' versus 'whole series' choice so that my edit or delete applies exactly to the scope I intend, detached exceptions are preserved by whole-series changes, and no duplicate detached events appear on retries.",
       "acceptanceCriteria": [
-        "PLAN P1.6c bullet (verbatim): preview apps, prerequisites, samples and customization; allow blank/CRM, optional app exclusion, continue with successful steps and retry later. Empty catalogue cannot discard template choice. Both entrypoints use the same operation. — this story closes the last executor leg: the InstallApps/InstallAppsContent list empty-state subtitle (explicitly scoped out of US-047)",
-        "packages/twenty-front/src/pages/onboarding/InstallApps.tsx / InstallAppsContent.tsx distinguish catalogue load failure from zero-apps-available with a distinct subtitle, and neither state can auto-skip the template picker (extends the shouldAutoSkipInstallAppsStep guarantee that an unloaded/errored catalogue never auto-skips)",
-        "Subtitle copy uses the Lingui t macro (fr+en source strings via macro; translation catalogs are NOT committed) and icons come from twenty-ui/icon",
-        "Unit specs cover: failed load -> failure subtitle + picker retained; empty catalogue -> empty state + picker retained; successful load -> no subtitle",
-        "Do NOT modify the unified preview/apply components already verified by US-047 (A2eWorkspaceTemplatePreview path) and do NOT touch useApplyWorkspaceTemplateOperation",
-        "Do NOT run graphql:generate or any browser journey (Tier 2, orchestrator); leave the hand-written GraphQL documents as shipped",
+        "PLAN P4C.3 bullet (verbatim): daily/weekly/monthly, interval, weekdays, monthly position, count/until and skipped/detached occurrences. Explicit \"this occurrence\" versus \"whole series\" edit/delete. Stable series and occurrence IDs; no duplicate detached events on retries. Test DST, month-end/leap-year, locale week start, long ranges and timezone changes. Future-series split is not promised without an additional decision. — this story closes the last executor leg named in the ledger: the this-vs-series edit/delete UI wiring (browser proof stays orchestrator)",
+        "A scope-choice dialog (options: this occurrence / whole series — NO 'this and following' option; future-series split is explicitly not implemented) is shown when editing or deleting an event that carries recurrence series fields (seriesId/series state); plain non-recurring events edit and delete directly with no dialog",
+        "'This occurrence' edit routes through packages/twenty-front/src/modules/calendar/utils/applyCalendarEventEdit.ts scope 'this-occurrence' (materializes a detached replacement via detachCalendarOccurrence); repeated edits/retries of the same occurrence never create duplicate detached rows (engine idempotency, US-060..063)",
+        "'Whole series' edit uses scope 'whole-series' (rule swap, optional seriesStart) and already-detached occurrences/exclusions are preserved — unit-spec assert via the dispatcher's documented exception-preserving behavior",
+        "Delete mirrors the scopes via applyCalendarEventDelete.ts: occurrence → exclusion via skipCalendarOccurrence (re-delete idempotent, also drops that occurrence's detached replacement); whole series → anchor deletion with no leftover series state (dispatcher returns null)",
+        "Dialog reachable from the surfaces where local editing exists today (day view, agenda, event composer/details via useCalendarEventMutations.ts); week/month stay read-only exactly as shipped in US-052 — no new edit paths there",
+        "Do NOT touch packages/twenty-shared/src/utils/calendar-recurrence (verified engine), the server persistence slice, or recurrence fields/upgrade command 1789904000000; do NOT implement future-series split",
+        "Copy uses the Lingui t macro (fr+en source strings via macro; translation catalogs are NOT committed) and icons from twenty-ui/icon; light/dark via existing UI primitives",
+        "Unit specs cover: recurring vs non-recurring dialog decision, edit dispatch both scopes, delete dispatch both scopes incl. retry idempotency, exception preservation on whole-series edit, week/month no-dialog",
         "Quality gate: cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit exits 0",
         "Quality gate: npx oxlint --type-aware -c .oxlintrc.json <touched files> -> 0 errors / 0 warnings (npx nx lint:diff-with-main twenty-front prints 'No changed files.' on uncommitted slices — direct oxlint is the substitute gate, prior-phase precedent)",
-        "Quality gate: npx jest <touched specs> --config=packages/twenty-front/jest.config.mjs green",
-        "Quality gate: dated entry appended to docs/plan/phases/phase-01-report.md; PLAN.md not edited; nothing committed"
+        "Quality gate: npx jest <touched specs> --config=packages/twenty-front/jest.config.mjs green, incl. the existing calendar suites (US-050..052 lineage) with no regression",
+        "Quality gate: dated entry appended to docs/plan/phases/phase-04-report.md; PLAN.md not edited; nothing committed"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "PLAN task P1.6c (after P1.6b — P1.6b is [x] verified 2026-09-19). Starting state: PARTIAL — distinct no-apps/network/permission error surfaces verified 2026-09-20 (US-047, phase-01-report); open legs: list empty-state subtitle (this story), graphql:generate against a live schema + browser journey (orchestrator).",
+      "notes": "PLAN task P4C.3 (after P4C.2 — P4C.2 is [x] verified 2026-09-20). Starting state: PARTIAL — engine single-sourced in twenty-shared/utils/calendar-recurrence, detach state machine with stable seriesId/occurrence IDs, recurrence fields on standard calendarEvent (2-39 workspace command 1789904000000), Tier-1 integration detaches/re-queries/idempotent-replay green and DST battery green (US-060..063, phase-04-report). Open legs: this UI wiring (this story) + browser proof (Tier 2, orchestrator — item 14 of tasks/deferred-batch6.md). Scope dispatchers applyCalendarEventEdit/applyCalendarEventDelete already exist in packages/twenty-front/src/modules/calendar/utils/ with ZERO non-test consumers — verified 2026-09-21; wire them, do not rewrite them.",
       "dependsOn": [],
       "completionNotes": "Completed by agent"
     },
     {
-      "id": "US-057",
-      "title": "P2.5 — caller-scoped search validation specs (records + document provider)",
-      "description": "As a workspace member, I want global search to return only the records and documents my permissions allow, so that restricted members and members of other workspaces never see titles or content they should not.",
+      "id": "US-069",
+      "title": "P9.1 residual — directToolInvocation forced-tool arg threaded through sendChatMessage → ChatExecutionService (toolChoice)",
+      "description": "As an assistant integration validating deterministic tool execution, I want an additive directToolInvocation argument on sendChatMessage that the server turns into a forced toolChoice for that turn so the Tier-2 live run can prove the named read-only tool executes deterministically, with fail-closed validation against the caller's tool catalog.",
       "acceptanceCriteria": [
-        "PLAN P2.5 bullet 1 (verbatim): Validate existing records + real document provider through caller permissions; the document provider is no longer a stub. P0.2 repairs system-context bypass and verifies actual query/filter behavior.",
-        "Executor-tier specs (query-builder-level per the US-008 precedent, and/or a Tier-1 integration slice under packages/twenty-server test/integration) prove: a restricted member's search returns only authorized records; records and document titles from a second workspace never appear; the a2e-documents search provider runs under the caller auth context with no system-context bypass",
-        "ILIKE user input stays escaped — a regression assertion proves search terms cannot inject wildcards or change query semantics",
-        "An uninstalled app's search provider contributes no results (registry keyed by app id)",
-        "If behavior is already correct, the specs land as the bullet's executor-tier validation proof; any defect found is fixed additively with a failing-then-passing test",
-        "Live app-installed searchAppRecords re-proof stays Tier 2 (orchestrator) — do not attempt it",
-        "Quality gate (Tier 1 preflight): pg_isready -h localhost && redis-cli ping must pass, else report BLOCKED naming the service; integration runs use NODE_ENV=test npx jest --config jest-integration.config.ts on the existing test DB without resetting it",
+        "PLAN P9.1 assistant-surface ledger note (verbatim): Remains [~]: Tier-2 live dispatch + the recorded caveat — the server has no forced-tool parameter, so the live run must confirm the named tool executes deterministically, else thread a `directToolInvocation` arg through `sendChatMessage` → `ChatExecutionService` (`toolChoice`). — this story implements exactly that threading; the Tier-2 live dispatch stays orchestrator",
+        "Additive nullable directToolInvocation argument on the sendChatMessage mutation in packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat.resolver.ts (minimal shape consistent with the existing @Args style; existing calls stay source-compatible)",
+        "Threaded into packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service.ts as a forced toolChoice for that turn — the service already has a toolChoice seam (~line 483, isWorkspaceSetupKickoffTurn ? 'required' : 'auto'); the kickoff-turn behavior is unchanged",
+        "Fail-closed validation: the named tool must resolve in the caller's catalog (ToolRegistryService.getCatalog(context) / getToolsByCategories — the P1.5-established native entry points); unknown, uninstalled-app, restricted-member or cross-workspace tool → refusal error with no provider call (mirrors US-064/065 semantics)",
+        "Mutating-category tools are never auto-executed: a forced invocation of a mutating tool still stages the PREFILL draft with requiresConfirmation per C6 — never posts/submits",
+        "Do NOT add any new AI registry/table/install hook (P1.5 law: reuse LogicFunctionToolProvider + toolTriggerSettings); do NOT change tool-provider surfaces; do NOT run graphql:generate (Tier 2 — the checked-in generated schema predates this arg; hand-written consumption is the prior-phase precedent); front-side composer wiring is deliberately out of scope (US-067 already verified composer invocation)",
+        "Unit specs: forced read-only tool executes deterministically (provider receives the forced choice); each denial case (unknown/uninstalled/restricted/foreign); mutating tool → draft not execution; no regression in the chat-execution suites incl. chat-execution.service.browsing-context.spec.ts",
         "Quality gate: cd packages/twenty-server && npx tsgo -p tsconfig.json --noEmit exits 0",
-        "Quality gate: npx nx lint:diff-with-main twenty-server clean (or direct oxlint on touched files when uncommitted)",
+        "Quality gate: npx oxlint --type-aware -c .oxlintrc.json <touched files> -> 0 errors / 0 warnings (npx nx lint:diff-with-main twenty-server prints 'No changed files.' on uncommitted slices — direct oxlint is the substitute gate, prior-phase precedent)",
         "Quality gate: npx jest <touched specs> --config=packages/twenty-server/jest.config.mjs green",
-        "Quality gate: dated entry appended to docs/plan/phases/phase-02-report.md (create the entry under the existing P2 section); PLAN.md not edited; nothing committed"
+        "Quality gate: dated entry appended to docs/plan/phases/phase-01-report.md; PLAN.md not edited; nothing committed"
       ],
       "priority": 2,
-      "passes": true,
-      "notes": "PLAN task P2.5 (no literal (after X); P0.2 dependency is [x] DONE 2026-09-13). Starting state: PARTIAL — P0.2 verified document-search caller scoping (21 unit + 4 integration green); US-008 fixed the {ilike}-rendered-as-equality bug with SQL-level regression tests (search suites green on HEAD re-run). The live re-proof through an installed app is Tier 2 and stays with the orchestrator.",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
+      "passes": false,
+      "notes": "PLAN task P9.1 assistant-surface bullet (after P1.5 — [x]; registry validation US-064..067 verified 2026-09-20). Starting state: PARTIAL — side-panel + full-page surface, input-schema-aware context mapping, channel-side context, direct read-only execution, streaming/model config/usage logging all verified; open legs: this forced-tool arg (this story) + Tier-2 live dispatch on an app-installed workspace (orchestrator). Resolver and service paths verified in-tree 2026-09-21.",
+      "dependsOn": []
     },
     {
-      "id": "US-058",
-      "title": "P2.4 — dock/tab unit suites green run on current HEAD (unit half of the E2E bullet)",
-      "description": "As a developer handing P2.4 to the orchestrator, I want the existing widget-dock and side-panel-tab unit suites run green on current HEAD, so that the only remaining open leg of the bullet is the browser E2E the orchestrator owns.",
+      "id": "US-070",
+      "title": "a2e-chat go-to-chat command/nav lands on /discussions instead of the chatChannels record index",
+      "description": "As a chat user invoking 'Go to Discussions' from Cmd+K, I want the a2e-chat command and nav entry to land on the dedicated /discussions chat page with its channel sidebar so that the registered route is actually reachable from the app's own entry points.",
       "acceptanceCriteria": [
-        "PLAN P2.4 bullet (verbatim): Run the existing dock/tab unit suites plus browser E2E: two records as tabs -> switch/close -> reload restores permitted context. Historical report says browser E2E was blocked, not passed. — this story completes the unit-suite half; the browser E2E stays Tier 2",
-        "Locate and run ALL existing widget-dock + side-panel-tab unit suites (front modules persisting a2e-widgets-* and tab state) with npx jest --config=packages/twenty-front/jest.config.mjs",
-        "Every red suite is repaired additively, or a pre-existing failure is recorded with its root cause in the phase report (never skipped silently)",
-        "The phase report records suite names, test counts, and the HEAD commit so the unit half of the bullet is evidencable for the orchestrator's tick",
-        "No browser/E2E attempt and no yarn start (Tier 2 — orchestrator only)",
-        "Quality gate: cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit exits 0",
-        "Quality gate: npx oxlint --type-aware -c .oxlintrc.json <touched files> -> 0 errors / 0 warnings",
-        "Quality gate: npx jest <dock/tab suites> --config=packages/twenty-front/jest.config.mjs green",
-        "Quality gate: dated entry appended to docs/plan/phases/phase-02-report.md; PLAN.md not edited; nothing committed"
+        "Provenance (phase-05-report, verbatim): the route is registered but nothing links to it yet — the a2e-chat app's `Discussions` nav item is `VIEW → chatChannels` and its `go-to-chat` command navigates to that record index; pointing the app nav/command at `AppPath.Discussions` (or a `LINK` nav row) is the next wiring step, naturally owned by `P5.2-chat-live`'s Cmd+K \"go to channel\" — this story closes that flagged wiring gap",
+        "packages/twenty-apps/internal/a2e-chat/src/front-components/go-to-chat.front-component.tsx navigates to AppPath.Discussions (verified available in the pinned SDK: node_modules/twenty-sdk AppPath enum contains Discussions = '/discussions'), landing on the chat page with the channel sidebar instead of the chatChannels record index",
+        "The a2e-chat nav entry pointing at the chatChannels record index is repointed at the Discussions page (or an additive LINK nav row to /discussions is used if VIEW cannot express it under the pinned SDK) — additive/deprecate only, no removal of existing entries",
+        "No host (twenty-front/twenty-server) changes: the /discussions route already exists (createWorkspaceRouteObjects.tsx, isDiscussionsPath.ts) — do not add routes",
+        "Unit/integrity specs updated: the navigation target is asserted (extend chat-object-integrity.test.ts or add a spec), keeping the existing 54-test a2e-chat suite green",
+        "Quality gate: cd packages/twenty-apps/internal/a2e-chat && yarn typecheck && yarn lint && npx twenty dev:build . all green (manifest builds with the changed front component)",
+        "Quality gate: cd packages/twenty-apps/internal/a2e-chat && yarn test:unit green",
+        "Quality gate: dated entry appended to docs/plan/phases/phase-05-report.md; PLAN.md not edited; nothing committed"
       ],
       "priority": 3,
-      "passes": true,
-      "notes": "PLAN task P2.4 last bullet (no literal (after X); P0.3 is [x]). Starting state: PARTIAL — dock/tabs code shipped and marked [x] earlier in the section; the unit-suite green run is not recorded on current HEAD; browser E2E historically blocked.",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
+      "passes": false,
+      "notes": "Flagged-defect conclusion (little wave): the P5.2 Cmd+K bullet is [x] (search provider verified 2026-09-19) — this story is the recorded reachability follow-up from phase-05-report, not an open checkbox. Starting state: NOT STARTED — go-to-chat.front-component.tsx verified 2026-09-21 still calling navigate(AppPath.RecordIndexPage, { objectNamePlural: 'chatChannels' }); SDK AppPath.Discussions availability verified in node_modules/twenty-sdk. Tier-2 browser proof of the landing page stays orchestrator.",
+      "dependsOn": []
     },
     {
-      "id": "US-059",
-      "title": "P4.2 residual — NULL projectStatus fallback via OR filterGroup in task views",
-      "description": "As a project member, I want tasks without an app pipeline status to appear consistently across board, calendar and smart lists, so that the surfaces never silently disagree about which tasks exist.",
+      "id": "US-071",
+      "title": "WorkbenchWidgetDock StyledDockRoot invalid CSS fix — width transition and <1200px overlay media queries never fire",
+      "description": "As a user of the workbench widgets dock, I want the dock's width CSS to be valid so that the width transition the reduced-motion accessibility rule targets actually fires and the <1200px floating-overlay media query actually applies.",
       "acceptanceCriteria": [
-        "Recorded residual from US-034/US-035/US-036 (PLAN P4.2 scope, C5): rows with projectStatus NULL are dropped by the IS_NOT 'DONE' completion filter (SQL NOT (col IN ('DONE')) excludes NULL) while the board shows them ungrouped — reconcile this",
-        "Either: the completion filters in the affected a2e-projects views (task-calendar, overdue-tasks; board ungrouped consistency if applicable) gain an OR filterGroup so projectStatus IS NULL rows are included while projectStatus = 'DONE' stays excluded, with unit tests asserting the filter-group shape and NULL-inclusion semantics",
-        "Or: the attempt is recorded as infeasible with the exact view-filter schema constraint cited (file + line) in the phase report, and the task-project-status TODO default is documented as the coverage mechanism — a silent no-op is not an acceptable outcome",
-        "No third status, no status-sync workflow; lib/task-status.ts readTaskPipelineStatus precedence (projectStatus authoritative, standard status fallback, unknown -> null) untouched (C5)",
-        "All existing a2e-projects views still build and yarn test:unit stays green (262/262 baseline)",
-        "Do NOT re-point current-tasks.view.ts or the native record tasks tab (explicitly out of scope per US-036)",
-        "Quality gate: cd packages/twenty-apps/internal/a2e-projects && yarn typecheck && yarn lint && npx twenty dev:build . succeed (app is not an Nx project — package gates substitute, prior-phase precedent)",
-        "Quality gate: node --test --experimental-strip-types <touched test files> green and yarn test:unit green",
-        "Quality gate: dated entry appended to docs/plan/phases/phase-04-report.md; PLAN.md not edited; nothing committed"
+        "Provenance (phase-10-report, verbatim): Pre-existing bug found, NOT fixed (out of scope): `WorkbenchWidgetDock.tsx` `StyledDockRoot` uses invalid CSS from its original commit (`min-workbenchwidgetdockwidth`, `workbenchwidgetdockwidth`, `@media (max-workbenchwidgetdockwidth: …)`), so the width transition the reduced-motion rule targets never fires and the <1200px overlay media queries never apply. Left untouched (layout change, not an a11y fix) — flagged for the orchestrator to schedule separately. PLAN P10 a11y tick note repeats: Pre-existing `StyledDockRoot` invalid-CSS bug (width transition / media queries never fire) flagged in phase-10-report for a separate layout fix",
+        "Replace the invalid property/media names in StyledDockRoot with valid CSS (custom-property-based widths consistent with the persisted localStorage keys a2e-widgets-*) so the width transition fires and the <1200px overlay media query applies",
+        "P2.4 semantics preserved — no functional change beyond the CSS fix: collapsible MINI/EXPANDED, resizable persisted widths, snap-collapse threshold (12px rule), floating overlay < 1200px, navigator float < 768px, pluggable widget registry",
+        "Additive only: no dock feature removed or renamed; reduced-motion rule now targets a transition that can actually fire (the a11y tick's goal)",
+        "Unit specs: the existing dock/tab suites stay green (11 suites / 85 tests per US-058); extend coverage as far as jsdom allows (assert the generated style uses var()-based widths and a px-based media query instead of the invalid names)",
+        "Do NOT run a browser rendering proof (Tier 2, orchestrator — item 19 of tasks/deferred-batch6.md); record it as the missing-for-tick leg in the report entry",
+        "Quality gate: cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit exits 0",
+        "Quality gate: npx oxlint --type-aware -c .oxlintrc.json <touched files> -> 0 errors / 0 warnings (npx nx lint:diff-with-main twenty-front prints 'No changed files.' on uncommitted slices — direct oxlint is the substitute gate, prior-phase precedent)",
+        "Quality gate: npx jest <touched specs> --config=packages/twenty-front/jest.config.mjs green, incl. the dock/registry/tabs suites",
+        "Quality gate: dated entry appended to docs/plan/phases/phase-02-report.md (dock home; cross-reference the phase-10 flag); PLAN.md not edited; nothing committed"
       ],
       "priority": 4,
-      "passes": true,
-      "notes": "PLAN task P4.2 (board/calendar/my-tasks bullets — no literal (after X) on the view bullets). Starting state: PARTIAL — status reconciliation done-for-review (US-034/035/036, awaiting Tier-2 install proofs); this NULL-fallback residual was deliberately left 'for the Tier-2 result' by US-035/036 and is the last executor-tractable leg of the views work.",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-060",
-      "title": "P4C.3a — recurrence rule model + daily/weekly expansion engine",
-      "description": "As a calendar user, I want events that repeat daily or weekly on a configurable interval, so that my standing commitments appear on the calendar without manual duplication.",
-      "acceptanceCriteria": [
-        "PLAN P4C.3 bullet (verbatim, whole-task scope for reference): daily/weekly/monthly, interval, weekdays, monthly position, count/until and skipped/detached occurrences. Explicit 'this occurrence' versus 'whole series' edit/delete. Stable series and occurrence IDs; no duplicate detached events on retries. Test DST, month-end/leap-year, locale week start, long ranges and timezone changes. Future-series split is not promised without an additional decision. — this story is the first slice: rule model + daily/weekly expansion",
-        "Pure recurrence-rule model (no new dependency, no DB): freq daily|weekly|monthly, interval, byWeekdays, monthlyPosition, count/until — types + parse/serialize as pure utils in packages/twenty-front/src/modules/calendar (or twenty-shared only if a server consumer is immediate; justify in the report)",
-        "Deterministic expansion of daily and weekly (incl. byWeekdays) rules over a bounded range window, pure and unit-tested",
-        "Fixture battery green for: DST spring-forward/fall-back placement, long-range windows, and timezone changes (occurrence wall-clock preserved across zone shifts)",
-        "No UI wiring, no persistence, no detached-occurrence handling (US-061/US-062/US-063 own those); future-series split explicitly NOT implemented (PLAN: 'not promised without an additional decision')",
-        "Quality gate: cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit exits 0 (and packages/twenty-shared tsgo + npx nx build twenty-shared --skip-nx-cache first if twenty-shared was touched)",
-        "Quality gate: npx oxlint --type-aware -c .oxlintrc.json <touched files> -> 0 errors / 0 warnings; npx oxfmt --check <touched files> clean",
-        "Quality gate: npx jest <touched specs> --config=packages/twenty-front/jest.config.mjs green",
-        "Quality gate: dated entry appended to docs/plan/phases/phase-04-report.md (P4C section); PLAN.md not edited; nothing committed"
-      ],
-      "priority": 5,
-      "passes": true,
-      "notes": "PLAN task P4C.3 (after P4C.2 — P4C.2 ticked [x] 2026-09-20 by the orchestrator, US-050/051/052 verified). Starting state: NOT STARTED — P4C.1 found 0 of 24 calendarEvent fields recurrence-named and US-050 shipped 'no recurrence rule store'; grep confirms zero recurrence code in front/server calendar.",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-061",
-      "title": "P4C.3b — monthly expansion, position rules and termination semantics",
-      "description": "As a calendar user, I want events that repeat monthly on a fixed day or ordinal position (e.g. third Thursday), with count/until termination, so that month-length quirks never shift or silently drop my events.",
-      "acceptanceCriteria": [
-        "PLAN P4C.3 bullet (verbatim, slice): monthly rules incl. monthly position, count/until termination — extending the US-060 model and expansion engine, no second engine",
-        "Monthly-by-date and monthly-by-position (ordinal weekday) expansion unit-tested; month-end clipping (Jan 31 -> Feb ends) and leap-year Feb 29 behavior decided and pinned by tests",
-        "count/until termination semantics unit-tested: both bounds honored, never infinite, never negative-interval",
-        "Locale week start honored wherever week boundaries affect the window (normalizes with the existing normalizeWeekStartDay util — do not fork date logic)",
-        "Month-end/leap-year fixture battery green alongside the existing US-060 fixtures",
-        "Still no UI wiring, no persistence, no detached occurrences (later stories); future-series split NOT implemented",
-        "Quality gate: cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit exits 0",
-        "Quality gate: npx oxlint --type-aware -c .oxlintrc.json <touched files> -> 0 errors / 0 warnings; npx oxfmt --check clean",
-        "Quality gate: npx jest <touched specs> --config=packages/twenty-front/jest.config.mjs green",
-        "Quality gate: dated entry appended to docs/plan/phases/phase-04-report.md; PLAN.md not edited; nothing committed"
-      ],
-      "priority": 6,
-      "passes": true,
-      "notes": "PLAN task P4C.3 (after P4C.2 [x]). Starting state: NOT STARTED; builds directly on US-060's model — extend it, do not inline a second expansion path.",
-      "dependsOn": [
-        "US-060"
-      ],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-062",
-      "title": "P4C.3c — series/occurrence identity, detach and this-occurrence-vs-series semantics",
-      "description": "As a calendar user, I want to edit or delete a single occurrence of a repeating event without touching the rest of the series, so that rescheduling one meeting never rewrites my whole schedule — and retries never create duplicate detached events.",
-      "acceptanceCriteria": [
-        "PLAN P4C.3 bullet (verbatim, slice): skipped/detached occurrences. Explicit 'this occurrence' versus 'whole series' edit/delete. Stable series and occurrence IDs; no duplicate detached events on retries.",
-        "Stable series ID + deterministic occurrence ID derivation (from series identity + occurrence start) as pure functions, unit-tested",
-        "'This occurrence' delete materializes an exclusion (skipped); 'this occurrence' edit materializes an override (detached replacement) — pure state machine, unit-tested, including editing an already-detached occurrence",
-        "'Whole series' edit/delete semantics defined and unit-tested; future-series split NOT implemented (PLAN: additional decision required)",
-        "Retry idempotence unit-proven: materializing the same detached occurrence twice (same series + occurrence identity) yields exactly one event",
-        "DST/month-end interaction with occurrence identity covered by fixtures (an occurrence keeps its identity across a DST shift)",
-        "Still no UI wiring and no persistence (US-063 owns storage); all behavior proven at the pure-function level",
-        "Quality gate: cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit exits 0",
-        "Quality gate: npx oxlint --type-aware <touched files> -> 0/0; npx oxfmt --check clean",
-        "Quality gate: npx jest <touched specs> --config=packages/twenty-front/jest.config.mjs green",
-        "Quality gate: dated entry appended to docs/plan/phases/phase-04-report.md; PLAN.md not edited; nothing committed"
-      ],
-      "priority": 7,
-      "passes": true,
-      "notes": "PLAN task P4C.3 (after P4C.2 [x]). Starting state: NOT STARTED; consumes US-060/US-061's model. Keep the identity/detach logic pure so US-063 can wire persistence without re-design.",
-      "dependsOn": [
-        "US-060",
-        "US-061"
-      ],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-063",
-      "title": "P4C.3d — recurrence persistence on calendarEvent + upgrade command + integration slice",
-      "description": "As a calendar user, I want my repeating events and their detached occurrences to survive reload and server round-trips, so that the recurrence I configured is what everyone sees after reconnect.",
-      "acceptanceCriteria": [
-        "PLAN P4C.3 bullet (verbatim, slice): stable series and occurrence IDs persist; test DST, month-end/leap-year, locale week start, long ranges and timezone changes through the stored path",
-        "Recurrence storage lands additively on the standard calendarEvent object (new standard fields or an explicitly recorded storage decision consistent with P4C.1/D5.1 'no parallel calendar backend'), with a generated migration and an upgrade command under the current TWENTY_CURRENT_VERSION directory (2-39/), strictly increasing epoch-ms timestamp, up + down, module-registered — never rewrite committed commands",
-        "Integration slice (Tier 1, NODE_ENV=test, no DB reset unless schema changed): create a recurring event -> expansion query returns the expected occurrences in range; detach one occurrence -> it stays detached across re-query; replaying the same detach yields no duplicate",
-        "Timezone-aware expansion honored end-to-end (occurrence starts computed in the event's timezone; DST fixture asserted through the stored path)",
-        "Provider-synced metadata stays untouched — recurrence is local-only in this slice (no provider push, per the D5.4 capability matrix)",
-        "If Postgres/Redis are down: report BLOCKED naming the service after the pg_isready/redis-cli preflight — do not fake the run",
-        "Quality gate: cd packages/twenty-server && npx tsgo -p tsconfig.json --noEmit exits 0",
-        "Quality gate: npx nx lint:diff-with-main twenty-server clean (or direct oxlint on touched files); targeted npx jest <specs> --config=packages/twenty-server/jest.config.mjs green",
-        "Quality gate: Tier-1 integration slice green: NODE_ENV=test npx jest --config jest-integration.config.ts <calendar suites touched>",
-        "Quality gate: dated entry appended to docs/plan/phases/phase-04-report.md; PLAN.md not edited; nothing committed"
-      ],
-      "priority": 8,
-      "passes": true,
-      "notes": "PLAN task P4C.3 (after P4C.2 [x]). Starting state: NOT STARTED. Precedent for the upgrade-command pattern: 2-39-workspace-command-1789903000000 (US-050, audited by the orchestrator) and the P8.1 notification migration with up/down. P4C.4 (reminders/team) unblocks once P4C.3 as a whole is accepted.",
-      "dependsOn": [
-        "US-060",
-        "US-061",
-        "US-062"
-      ],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-064",
-      "title": "P9.1 — native tool registry: install/uninstall exposure validation",
-      "description": "As an assistant user, I want the assistant to offer exactly the tools of my installed apps, so that uninstalling an app removes its AI surface and installing one adds it, with no manual registration anywhere.",
-      "acceptanceCriteria": [
-        "PLAN P9.1 bullet 1 (verbatim): Consume existing LogicFunctionToolProvider/tool registry and app toolTriggerSettings; validate install/uninstall/permissions/context behavior. P1.5 established this native primitive; do not invent registerAiTools, a duplicate table or manual registration hooks.",
-        "Executor-tier specs over packages/twenty-server/src/engine/core-modules/tool-provider/providers/logic-function-tool.provider.ts (and the assistant catalogue resolution path) assert: an app's toolTriggerSettings logic functions appear only while the app is installed; after uninstall they are absent from the catalogue",
-        "A grep-proof assertion/record that no registerAiTools hook, duplicate registry table or manual registration path exists",
-        "Caller identity is server-derived (workspace/user from context, never client-supplied) — pinned by spec",
-        "If behavior is already correct the specs land as the bullet's regression proof; any defect is fixed additively with a failing-then-passing test",
-        "Live dispatch proof stays Tier 2 (orchestrator)",
-        "Quality gate: cd packages/twenty-server && npx tsgo -p tsconfig.json --noEmit exits 0",
-        "Quality gate: npx nx lint:diff-with-main twenty-server clean (or direct oxlint on touched files)",
-        "Quality gate: npx jest <touched specs> --config=packages/twenty-server/jest.config.mjs green",
-        "Quality gate: dated entry appended to docs/plan/phases/phase-01-report.md; PLAN.md not edited; nothing committed"
-      ],
-      "priority": 9,
-      "passes": true,
-      "notes": "PLAN task P9.1 bullet 1 (no literal (after X); execution order: 'P9 per-domain actions only after that domain is safe; registration is already native'). Starting state: NOT STARTED as a validation deliverable — 12 per-app tools individually verified (US-009..013/042/046/054) but no server-side spec pins install/uninstall exposure of the provider itself.",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-065",
-      "title": "P9.1 — native tool registry: caller permission and cross-workspace denial validation",
-      "description": "As a restricted workspace member, I want AI tools to obey my permissions, so that the assistant can never read or expose records my role denies or records from another workspace.",
-      "acceptanceCriteria": [
-        "PLAN P9.1 bullet 1 (verbatim, slice): validate permissions/context behavior of the native registry",
-        "Specs assert a tool invocation under a restricted member's context fails closed when the underlying object/record is unauthorized, with no existence leak (mirrors the apps' DOCUMENT_NOT_FOUND single-error pattern)",
-        "Specs assert cross-workspace record IDs are denied for read-only tools; results never cross the caller's workspace boundary",
-        "Specs pin that mutating tool categories are never auto-offered (the US-025 fail-closed gating) — a regression guard, not new gating logic",
-        "If behavior is already correct the specs land as the bullet's permission-validation proof; any defect is fixed additively with a failing-then-passing test",
-        "Live restricted-member dispatch proof stays Tier 2 (orchestrator)",
-        "Quality gate: cd packages/twenty-server && npx tsgo -p tsconfig.json --noEmit exits 0",
-        "Quality gate: npx nx lint:diff-with-main twenty-server clean (or direct oxlint on touched files)",
-        "Quality gate: npx jest <touched specs> --config=packages/twenty-server/jest.config.mjs green",
-        "Quality gate: dated entry appended to docs/plan/phases/phase-01-report.md; PLAN.md not edited; nothing committed"
-      ],
-      "priority": 10,
-      "passes": true,
-      "notes": "PLAN task P9.1 bullet 1. Starting state: NOT STARTED as a validation deliverable; the fail-closed caller-scoping pattern is established app-side (US-013 readDocumentContent) but not pinned at the provider/registry level.",
-      "dependsOn": [
-        "US-064"
-      ],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-066",
-      "title": "P9.1 — send-time browsing context carries the chat channel id",
-      "description": "As a chat user asking the assistant about the open channel, I want the dispatched context to include the channel id, so that channel tools operate on the channel I am actually viewing instead of failing to resolve it.",
-      "acceptanceCriteria": [
-        "PLAN P9.1 assistant-surface residual (2026-09-20 note): 'Channel-side context and direct tool execution remain' — US-053's recorded learning: 'The send-time useGetBrowsingContext/BrowsingContext still carries no channel id, so a dispatched chat tool cannot yet resolve the channel from context — that is the next leg'",
-        "The send-time browsing-context path (useGetBrowsingContext / BrowsingContext type in packages/twenty-front/src/modules/ai) carries the selected channel id on /discussions (global selectedChatChannelIdState) and the side-panel channel on the AI chat page, with chatChannel context type preserved",
-        "Channel context precedence over the object context-store preserved (US-053 behavior unchanged); record-page contexts unchanged",
-        "Unit specs: channel selected -> context carries the id; no channel -> field absent (never an empty string); object context unchanged on record pages; side-panel read uses an explicit non-empty contextStoreInstanceId (US-053 learning)",
-        "No live dispatch attempt (Tier 2 — orchestrator)",
-        "Quality gate: cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit exits 0",
-        "Quality gate: npx oxlint --type-aware -c .oxlintrc.json <touched files> -> 0/0; npx oxfmt --check clean",
-        "Quality gate: npx jest <touched specs> --config=packages/twenty-front/jest.config.mjs green",
-        "Quality gate: dated entry appended to docs/plan/phases/phase-01-report.md; PLAN.md not edited; nothing committed"
-      ],
-      "priority": 11,
-      "passes": true,
-      "notes": "PLAN task P9.1 assistant-surface bullet [~] (registration is native per execution order; the domain safety gate for chat is satisfied — P5 verified 2026-09-19). Starting state: PARTIAL — channel-side context buttons + prompts verified (US-053), input-schema mapping verified (US-040); this is the recorded next leg.",
-      "dependsOn": [],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-067",
-      "title": "P9.1 — direct execution of read-only context tools",
-      "description": "As an assistant user, I want to run a suggested read-only tool directly from its context button, so that I get the answer without composing a prompt, while mutating actions remain impossible without explicit confirmation.",
-      "acceptanceCriteria": [
-        "PLAN P9.1 assistant-surface residual (2026-09-20 note): 'the direct-tool-execution leg remain[s]'",
-        "A context tool button can dispatch its read-only tool directly — input schema filled from the browsing context (including the US-066 channel id where applicable) — and the result renders in the assistant thread",
-        "Only read-only tools can direct-execute; mutating categories are never offered and a refusal is spec-pinned (fail-closed, C6: no AI auto-posting)",
-        "Failure paths (missing/unauthorized target) surface the app's fail-closed error in the thread — no crash, no partial result presented as success",
-        "Unit specs with mocked dispatch cover: happy path, unauthorized target, missing target, mutating-tool refusal",
-        "No live dispatch against a running stack (Tier 2 — orchestrator); usage logging continues via the native Logic Function Executed path (documented deviation, US-041)",
-        "Quality gate: cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit exits 0",
-        "Quality gate: npx oxlint --type-aware -c .oxlintrc.json <touched files> -> 0/0; npx oxfmt --check clean",
-        "Quality gate: npx jest <touched specs> --config=packages/twenty-front/jest.config.mjs green",
-        "Quality gate: dated entry appended to docs/plan/phases/phase-01-report.md; PLAN.md not edited; nothing committed"
-      ],
-      "priority": 12,
-      "passes": true,
-      "notes": "PLAN task P9.1 assistant-surface bullet [~]. Starting state: PARTIAL — side panel, schema-aware mapping, channel context buttons, streaming, prompt/action library all verified (US-025/040/041/053/054); direct execution is the last named executor leg before the standing Tier-2 live-dispatch proof.",
-      "dependsOn": [
-        "US-066"
-      ],
-      "completionNotes": "Completed by agent"
+      "passes": false,
+      "notes": "Flagged-defect conclusion (little wave): the P10 accessibility bullet is [x] (US-006) — this story is the separately-scheduled layout fix recorded in the Current-state ledger and phase-10-report, not an open checkbox. Starting state: NOT STARTED — defect verbatim in phase-10-report line 70. Keep the fix inside WorkbenchWidgetDock.tsx styling; no layout rework beyond making the CSS valid.",
+      "dependsOn": []
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-20T19:12:42.690Z"
+    "updatedAt": "2026-09-21T04:31:09.651Z"
   }
 }

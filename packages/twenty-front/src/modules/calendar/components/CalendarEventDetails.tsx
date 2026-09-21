@@ -13,6 +13,7 @@ type CalendarEventDetailsProps = {
   event: CalendarEventRecord;
   isAllDay: boolean;
   isLocal: boolean;
+  isEditable: boolean;
   timeZone: string;
   locale?: string;
   onClose: () => void;
@@ -82,6 +83,7 @@ export const CalendarEventDetails = ({
   event,
   isAllDay,
   isLocal,
+  isEditable,
   timeZone,
   locale,
   onClose,
@@ -127,7 +129,7 @@ export const CalendarEventDetails = ({
         variant="secondary"
         onClick={() => openCalendarEventInSidePanel(event.id)}
       />
-      {isLocal ? (
+      {isLocal && isEditable ? (
         <StyledActions>
           <Button
             title={t`Edit`}
@@ -145,6 +147,10 @@ export const CalendarEventDetails = ({
             onClick={onDelete}
           />
         </StyledActions>
+      ) : isLocal ? (
+        <StyledField data-testid="calendar-event-read-only-view">
+          {t`Switch to the day or agenda view to edit this event.`}
+        </StyledField>
       ) : (
         <StyledField data-testid="calendar-event-read-only">
           {t`This event is synced from a connected calendar and is read-only.`}

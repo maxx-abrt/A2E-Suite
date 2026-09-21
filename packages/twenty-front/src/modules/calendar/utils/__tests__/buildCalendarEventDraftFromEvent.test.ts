@@ -13,6 +13,11 @@ const buildEvent = (
   isFullDay: false,
   isCanceled: false,
   externalCreatedAt: null,
+  recurrenceRule: null,
+  recurrenceTimezone: null,
+  recurrenceSeriesId: null,
+  recurrenceOccurrenceDay: null,
+  recurrenceSkippedOccurrenceDays: null,
   ...overrides,
 });
 
