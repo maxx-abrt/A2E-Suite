@@ -1307,3 +1307,6 @@ CLAIMED — US-069/direct-tool-invocation-forced-choice — deepseek-v4.1-flash 
 **Do not redo:** US-066/067 front direct-execution path, `buildContextFromBrowsingContext`, kickoff `toolChoice: 'required'`, the preload set (`search_help_center`/`app_exa_web_search`), `ToolRegistryService`, and the queued-message path (directive intentionally dropped there, like `modelId`/`browsingContext`).
 **Remaining:** 2 more queued tasks (US-070/US-071) + standing P4.1/P4.2/P4.3/P9 Tier-2 legs.
 **Next:** orchestrator — Tier-2 live forced-tool dispatch then tick the P9.1 assistant-surface forced-tool leg; executor — next queued task US-070.
+
+## 2026-09-21 20:16 CEST — orchestrator verification — US-069
+Diff audited: only the declared ai-chat/ai files, additive arg threading, no unrelated churn. Independent re-runs: both direct-tool-invocation suites 12/12 (7 util fail-closed cases + 5 service cases, incl. the mutating-tool "never forced, never loaded" assertion); `npx tsgo -p tsconfig.json --noEmit` in twenty-server → exit 0. P9.1 annotation updated in PLAN.md. Tier-2 live dispatch NOT run: the running dev server's dist predates this commit — a live-schema probe confirms `SendChatMessageInput.directToolInvocation` is absent until a server restart; leg stays open for the next stack cycle.

@@ -1234,3 +1234,6 @@ CLAIMED — US-068/this-vs-series-edit-delete-ui-wiring — deepseek-v4.1-flash 
 **Do not redo:** the pure dispatchers `applyCalendarEventEdit`/`applyCalendarEventDelete` and the US-060..063 engine/storage/upgrade-command (untouched, still single-sourced in `twenty-shared/utils/calendar-recurrence`); `useCalendarEvents`/`useCalendarEventMutations` keep the native object-record path (no parallel store); do not add a recurrence-rule editor or front occurrence expansion here.
 **Remaining:** 3 tasks left in the Ralph queue after this one (US-069…US-071) + standing P4.1/P4.2/P4.3 Tier-2 legs.
 **Next:** orchestrator — run the Tier-2 recurrence this-vs-series browser proof and tick P4C.3; or executor — US-069 (P9.1 forced-tool arg).
+
+## 2026-09-21 20:15 CEST — orchestrator verification — US-068
+Diff audited against the report: only the declared calendar files, no churn beyond them. Independent re-runs: `calendarSeriesScopeMutation.test.ts` 16/16; full front calendar module sweep 18 suites / 180 tests green (up from 164 — +16, no regression); `docs/scripts/check-docs.mjs` PASS. UI-wiring half of P4C.3 annotated verified in PLAN.md; `[~]` kept for the Tier-2 browser journey (scope-dialog edit/delete on live `/calendar`) and view-level occurrence expansion (separate slice, correctly not claimed). No schema/entity change → no migration owed.

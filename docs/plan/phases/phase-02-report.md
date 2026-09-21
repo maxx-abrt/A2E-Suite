@@ -676,3 +676,6 @@ CLAIMED — US-071/styled-dock-root-valid-css — deepseek-v4.1-flash — 2026-0
 **Do not redo:** the P2.4 dock semantics (MINI/EXPANDED collapse, persisted `a2e-widgets-mode/-active/-width`, 12px snap threshold, widget registry, solo-workspace presence filtering) are untouched and green; the US-058 11 suites/85 tests remain green — extend, do not rewrite.
 **Remaining:** US-071 is the last executor story in prd batch 6 alongside US-070 (a2e-chat go-to-chat); everything else open in PLAN.md is Tier 2 or blocked upstream.
 **Next:** orchestrator — tick US-071 on this Tier-0 evidence and run the Tier-2 browser rendering proof; no executor follow-up remains in this story.
+
+## 2026-09-21 20:16 CEST — orchestrator verification — US-071
+Diff audited: only the declared dock files. The fix is genuinely corrective — `min-workbenchwidgetdockwidth`/`workbenchwidgetdockwidth` were never valid CSS (a mangled find-replace), and the new `--a2e-widgets-width` var correctly re-pairs with the existing `workbenchWidgetDockWidthState` jotai atom (`key: 'a2e-widgets-width'`), confirmed by grep. Independent re-runs: `WorkbenchWidgetDockStyles.test.ts` + `WorkbenchWidgetDock.test.tsx` → 2 suites / 9 tests green. PLAN.md accessibility bullet annotated with the closure; Tier-2 browser rendering proof (transition + overlay media queries) stays open.

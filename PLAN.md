@@ -1027,6 +1027,15 @@ primitives; app packaging/name is decided in P4C.1, not inferred from Bureau.
       green through both front (164 calendar tests) and stored-path (server
       9-test spec) runs. Kept `[~]`: the this-vs-series edit/delete **UI
       wiring** and browser proof land with the next slice (P4C.4 gate).
+      — 2026-09-21 orchestrator: UI wiring verified (US-068, phase-04-report)
+      — scope dialog (`CalendarSeriesScopeDialog`) on recurring
+      edit/delete with this-occurrence/whole-series only; isomorphic
+      `planCalendarSeriesMutations` planning (no "this and following",
+      detach survives whole-series edits); 283-line mutation planner spec +
+      180/180 front calendar suites green on my HEAD re-run. Kept `[~]`:
+      browser proof (scope dialog journeys on live /calendar) and
+      occurrence expansion in the view (front renders anchor + detached
+      rows only — expansion is a separate P4C.4+ slice).
 - [ ] **P4C.4 Reminders/team (after P4C.3 and P8 notification contract):**
       configurable reminders with idempotent delivery, reschedule/cancel,
       quiet-hours/timezone rules; invite/response/visibility rights where
@@ -1478,6 +1487,18 @@ mention→inbox→open.
       confirm the named tool executes deterministically, else thread a
       `directToolInvocation` arg through `sendChatMessage` →
       `ChatExecutionService` (`toolChoice`).
+      — 2026-09-21 orchestrator: the forced-tool parameter now exists
+      (US-069, phase-01-report) — nullable `directToolInvocation` arg
+      threaded resolver→streaming→job→`ChatExecutionService`; fail-closed
+      catalogue validation (unknown/uninstalled/cross-workspace →
+      `DIRECT_TOOL_INVOCATION_NOT_AVAILABLE` before any provider call);
+      read-only (`LOGIC_FUNCTION`) tools forced via `toolChoice`, mutating
+      tools never loaded nor forced (stays `'auto'` — the front PREFILL
+      draft owns staging). 12/12 direct-invocation specs green on my re-run;
+      server tsgo clean. Remains `[~]`: Tier-2 live dispatch on a
+      rebuilt server (running dist predates the arg; live schema probe
+      confirms `SendChatMessageInput.directToolInvocation` absent until
+      restart).
 - [x] Streaming responses (SSE reuse), model provider config (existing AI
       settings), usage logging to event-logs
       — 2026-09-20 orchestrator: verified (US-041, phase-01-report) —
@@ -1647,6 +1668,13 @@ app ship with tests.
       (width transition / media queries never fire) flagged in
       phase-10-report for a separate layout fix. Tier-2 rendering proof
       open.
+      — 2026-09-21 orchestrator: the flagged invalid-CSS bug fixed and
+      unit-verified (US-071, phase-02-report) — mangled `workbenchwidgetdockwidth`
+      properties corrected to real `width`/`min-width`/`max-width`/
+      `max-width` media queries; width var re-paired with the existing
+      `a2e-widgets-width` jotai atom; 9/9 dock suites green on my re-run.
+      Tier-2 rendering proof (transition + overlay media queries in a
+      browser) still open.
 - [x] Docs: user-facing feature docs (README sections per app), self-host
       docs for gateway requirements (ws, Redis)
       — 2026-09-19 orchestrator: verified (US-007, phase-10-report) — 4 app
@@ -1716,6 +1744,7 @@ release claims. E2E must exercise host + sandbox + server/worker composition.
 | D06 | Canonical GitLab CI/release pipeline, runner/tooling provisioning and supported DB versions | Maintainers + platform; P0.1/P0.5 release |
 | D07 | Advanced editor fidelity/licensing, guest editing, native mobile and music scope | Product + UX/platform; P3.4/P10 optional backlog, not initial safe slice |
 | D08 | Standalone external Drive/Forms/CRM/core sources absent; request source if further feature extraction is desired | Product/source owner; no claim of exhaustive external-project features |
+| D09 | App nav/menu entry targeting a bespoke internal route (e.g. a2e-chat sidebar → `/discussions`): host `NavigationMenuItemType` LINK is external-only (`z.string().url()` + `https://` prefixing) and the app-pinned published SDK (≤2.41.0) lacks `AppPath.Discussions`; go-to-chat command now lands on `/discussions` (US-070), the sidebar row stays VIEW→chatChannels until the host allows internal-route nav items or a Discussions-bearing SDK version is published and repinned | Product + platform; host `getLinkNavigationMenuItemComputedLink` pass-through or SDK release, then a2e-chat `channels.navigation-menu-item.ts` repoint |
 
 ## Definition of done (program level)
 
