@@ -169,6 +169,8 @@ export class AgentChatResolver {
       nullable: true,
     })
     fileAttachments: FileAttachmentInput[] | null,
+    @Args('directToolInvocation', { type: () => String, nullable: true })
+    directToolInvocation: string | undefined,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
@@ -249,6 +251,7 @@ export class AgentChatResolver {
     const result = await this.agentChatStreamingService.streamAgentChat({
       threadId,
       browsingContext: browsingContext ?? null,
+      directToolInvocation: directToolInvocation ?? null,
       modelId,
       userWorkspaceId,
       workspace,

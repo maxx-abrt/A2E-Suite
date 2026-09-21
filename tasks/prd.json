@@ -46,9 +46,10 @@
         "Quality gate: dated entry appended to docs/plan/phases/phase-01-report.md; PLAN.md not edited; nothing committed"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "PLAN task P9.1 assistant-surface bullet (after P1.5 — [x]; registry validation US-064..067 verified 2026-09-20). Starting state: PARTIAL — side-panel + full-page surface, input-schema-aware context mapping, channel-side context, direct read-only execution, streaming/model config/usage logging all verified; open legs: this forced-tool arg (this story) + Tier-2 live dispatch on an app-installed workspace (orchestrator). Resolver and service paths verified in-tree 2026-09-21.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-070",
@@ -92,6 +93,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-21T04:31:09.651Z"
+    "updatedAt": "2026-09-21T17:34:51.384Z"
   }
 }

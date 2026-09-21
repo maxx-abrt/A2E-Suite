@@ -12,6 +12,7 @@ export type StreamAgentChatJobData = {
   workspaceId: string;
   messages: ExtendedUIMessage[];
   browsingContext: BrowsingContextType | null;
+  directToolInvocation?: string | null;
   modelId?: string;
   lastUserMessageText: string;
   lastUserMessageParts: ExtendedUIMessagePart[];

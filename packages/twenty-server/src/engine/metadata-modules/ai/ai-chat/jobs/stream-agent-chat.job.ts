@@ -458,6 +458,7 @@ export class StreamAgentChatJob {
               turnId: data.existingTurnId,
               messages: data.messages,
               browsingContext: data.browsingContext,
+              directToolInvocation: data.directToolInvocation,
               modelId: data.modelId,
               onCodeExecutionUpdate,
               onCompaction,

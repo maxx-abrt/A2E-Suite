@@ -46,6 +46,7 @@ type StreamAgentChatOptions = {
   workspace: WorkspaceEntity;
   text: string;
   browsingContext: BrowsingContextType | null;
+  directToolInvocation?: string | null;
   modelId?: string;
   messageId?: string;
   fileAttachments?: AiChatFileAttachment[];
@@ -159,6 +160,7 @@ export class AgentChatStreamingService {
     workspace,
     text,
     browsingContext,
+    directToolInvocation,
     modelId,
     messageId,
     fileAttachments,
@@ -265,6 +267,7 @@ export class AgentChatStreamingService {
           workspaceId: workspace.id,
           messages: previousMessages,
           browsingContext,
+          directToolInvocation: directToolInvocation ?? null,
           modelId,
           lastUserMessageText: text,
           lastUserMessageParts: userMessageParts,

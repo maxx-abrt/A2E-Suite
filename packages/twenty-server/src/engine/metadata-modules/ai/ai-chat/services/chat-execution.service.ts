@@ -81,6 +81,7 @@ import {
   injectCacheBreakpoint,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-chat/utils/replace-unsupported-file-parts.util';
+import { resolveDirectToolInvocation } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-direct-tool-invocation.util';
 import { tagAiChatKindScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-kind-scope.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -101,6 +102,9 @@ export type ChatExecutionOptions = {
   turnId?: string;
   messages: ExtendedUIMessage[];
   browsingContext: BrowsingContextType | null;
+  // Names a read-only tool the whole turn is forced onto (deterministic
+  // execution). Caller-scoped: validated against the catalogue below.
+  directToolInvocation?: string | null;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
   onCompaction?: () => void;
   modelId?: string;
@@ -140,6 +144,7 @@ export class ChatExecutionService {
     turnId,
     messages,
     browsingContext,
+    directToolInvocation,
     onCodeExecutionUpdate,
     onCompaction,
     modelId,
@@ -171,6 +176,24 @@ export class ChatExecutionService {
       { userId, userWorkspaceId, locale },
     );
 
+    const directToolInvocationDecision = resolveDirectToolInvocation({
+      directToolInvocation,
+      toolCatalog,
+    });
+
+    if (directToolInvocationDecision.kind === 'refuse') {
+      throw new AiException(
+        `Tool "${directToolInvocation}" is not available for direct invocation`,
+        AiExceptionCode.DIRECT_TOOL_INVOCATION_NOT_AVAILABLE,
+      );
+    }
+
+    if (directToolInvocationDecision.kind === 'skip-mutating') {
+      this.logger.warn(
+        `Ignoring direct tool invocation "${directToolInvocation}": mutating tools are never auto-executed`,
+      );
+    }
+
     const skillCatalog = await this.skillService.findAllFlatSkills(
       workspace.id,
     );
@@ -184,6 +207,33 @@ export class ChatExecutionService {
       toolContext,
       { compactOutput: true, spillLargeOutput: true },
     );
+
+    // A forced tool is not normally preloaded, so it must be hydrated here to
+    // be callable at all; if its schema cannot be resolved it is refused rather
+    // than forced into a stream that cannot execute it.
+    const forcedToolName =
+      directToolInvocationDecision.kind === 'force'
+        ? directToolInvocationDecision.toolName
+        : undefined;
+
+    const forcedTools = isDefined(forcedToolName)
+      ? await this.toolRegistry.getToolsByName([forcedToolName], toolContext, {
+          compactOutput: true,
+          spillLargeOutput: true,
+        })
+      : {};
+
+    const forcedToolChoice =
+      isDefined(forcedToolName) && isDefined(forcedTools[forcedToolName])
+        ? { type: 'tool' as const, toolName: forcedToolName }
+        : undefined;
+
+    if (isDefined(forcedToolName) && !isDefined(forcedToolChoice)) {
+      throw new AiException(
+        `Tool "${forcedToolName}" is not available for direct invocation`,
+        AiExceptionCode.DIRECT_TOOL_INVOCATION_NOT_AVAILABLE,
+      );
+    }
 
     const resolvedModelId = modelId ?? workspace.smartModel;
 
@@ -216,6 +266,7 @@ export class ChatExecutionService {
     const directTools: ToolSet = {
       ...preloadedTools,
       ...nativeTools,
+      ...forcedTools,
     };
 
     const isWorkspaceSetupThread =
@@ -480,7 +531,10 @@ export class ChatExecutionService {
       messages: [systemMessage, ...modelMessages],
       tools: activeTools,
       // Every step of the kickoff turn is forced so it cannot end in prose; stopWhen ends it at the first ask_questions.
-      toolChoice: isWorkspaceSetupKickoffTurn ? 'required' : 'auto',
+      // A direct tool invocation forces that one read-only tool for the turn; the kickoff forcing takes precedence.
+      toolChoice: isWorkspaceSetupKickoffTurn
+        ? 'required'
+        : (forcedToolChoice ?? 'auto'),
       abortSignal,
       stopWhen: (step) =>
         stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||

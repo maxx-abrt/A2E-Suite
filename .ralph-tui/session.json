@@ -3,10 +3,10 @@
   "sessionId": "461d4338-e2a6-49ca-ada7-2e44ea4961f1",
   "status": "running",
   "startedAt": "2026-09-21T04:16:56.301Z",
-  "updatedAt": "2026-09-21T04:31:09.652Z",
-  "currentIteration": 0,
+  "updatedAt": "2026-09-21T17:34:51.385Z",
+  "currentIteration": 1,
   "maxIterations": 20,
-  "tasksCompleted": 0,
+  "tasksCompleted": 1,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -16,7 +16,18 @@
     "totalTasks": 0,
     "tasks": []
   },
-  "iterations": [],
+  "iterations": [
+    {
+      "iteration": 1,
+      "status": "completed",
+      "taskId": "US-068",
+      "taskTitle": "P4C.3 residual — this-occurrence-vs-whole-series edit/delete UI wiring on /calendar",
+      "taskCompleted": true,
+      "durationMs": 848933,
+      "startedAt": "2026-09-21T04:17:00.714Z",
+      "endedAt": "2026-09-21T04:31:09.647Z"
+    }
+  ],
   "skippedTaskIds": [],
   "cwd": "/Users/maxaubert/Projets/A2E Suite",
   "activeTaskIds": [],
