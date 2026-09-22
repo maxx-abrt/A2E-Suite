@@ -1,63 +1,36 @@
 {
   "version": 1,
-  "sessionId": "62759060-f93f-4957-a474-d7bc9aabefd7",
+  "sessionId": "70fd32f8-4a9e-4aae-9e2a-bf81a2d99680",
   "status": "running",
-  "startedAt": "2026-09-21T21:36:59.042Z",
-  "updatedAt": "2026-09-21T21:54:34.635Z",
-  "currentIteration": 4,
+  "startedAt": "2026-09-22T14:43:22.384Z",
+  "updatedAt": "2026-09-22T14:57:49.245Z",
+  "currentIteration": 0,
   "maxIterations": 20,
-  "tasksCompleted": 2,
+  "tasksCompleted": 0,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
   "trackerState": {
     "plugin": "json",
     "executionScopes": [],
-    "totalTasks": 0,
-    "tasks": []
+    "prdPath": "./tasks/prd.json",
+    "totalTasks": 2,
+    "tasks": [
+      {
+        "id": "US-074",
+        "title": "Fix a2e-projects install-time workspace-schema build failure — relation target has no object metadata (object-metadata-with-relations-gql-object-type.generator.ts:117)",
+        "status": "open",
+        "completedInSession": false
+      },
+      {
+        "id": "US-075",
+        "title": "Fix CRM nav-restore defect — template apply unconditionally skips the navigation step when the hide-list is empty, so STUDENT-deleted CRM nav rows are never restored (workspace-template.service.ts:392-401)",
+        "status": "open",
+        "completedInSession": false
+      }
+    ]
   },
-  "iterations": [
-    {
-      "iteration": 1,
-      "status": "completed",
-      "taskId": "US-072",
-      "taskTitle": "P2.1 harness — fix the hung realtime-gateway.integration-spec.ts teardown so both realtime integration specs exit cleanly",
-      "taskCompleted": false,
-      "durationMs": 131979,
-      "startedAt": "2026-09-21T21:39:00.575Z",
-      "endedAt": "2026-09-21T21:41:12.554Z"
-    },
-    {
-      "iteration": 2,
-      "status": "completed",
-      "taskId": "US-072",
-      "taskTitle": "P2.1 harness — fix the hung realtime-gateway.integration-spec.ts teardown so both realtime integration specs exit cleanly",
-      "taskCompleted": false,
-      "durationMs": 29614,
-      "startedAt": "2026-09-21T21:41:17.563Z",
-      "endedAt": "2026-09-21T21:41:47.177Z"
-    },
-    {
-      "iteration": 3,
-      "status": "completed",
-      "taskId": "US-072",
-      "taskTitle": "P2.1 harness — fix the hung realtime-gateway.integration-spec.ts teardown so both realtime integration specs exit cleanly",
-      "taskCompleted": true,
-      "durationMs": 478204,
-      "startedAt": "2026-09-21T21:41:52.182Z",
-      "endedAt": "2026-09-21T21:49:50.386Z"
-    },
-    {
-      "iteration": 4,
-      "status": "completed",
-      "taskId": "US-073",
-      "taskTitle": "P2.1 bullet 5 (Tier-1 portion) — extend the realtime gateway integration spec with subscription-failure acknowledgements and reconnect/seq-cursor semantics",
-      "taskCompleted": true,
-      "durationMs": 278236,
-      "startedAt": "2026-09-21T21:49:55.914Z",
-      "endedAt": "2026-09-21T21:54:34.150Z"
-    }
-  ],
+  "iterations": [],
   "skippedTaskIds": [],
   "cwd": "/Users/maxaubert/Projets/A2E Suite",
   "activeTaskIds": [],

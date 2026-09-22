@@ -18,6 +18,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { SCHEMA_SDL_CACHE_DEPENDENCIES } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/constants/schema-sdl-cache-dependencies.constant';
+import { augmentFlatEntityMapsWithRelationTargets } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/utils/augment-flat-entity-maps-with-relation-targets.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -105,6 +106,17 @@ export class WorkspaceGraphqlSchemaSDLService {
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
         );
+
+      // A relation field can target an object owned by a different application
+      // (cross-app relation). The application-scoped filter above drops that
+      // target, which would make the schema generator throw on a valid field.
+      ({ flatObjectMetadataMaps, flatFieldMetadataMaps } =
+        augmentFlatEntityMapsWithRelationTargets({
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          allFlatObjectMetadataMaps,
+          allFlatFieldMetadataMaps,
+        }));
 
       if (isDefined(allFlatIndexMaps)) {
         flatIndexMaps = this.filterFlatEntityMapsByApplicationIds(
