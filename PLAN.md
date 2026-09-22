@@ -2,73 +2,167 @@
 
 [Documentation home](docs/README.md) · [Product experience](docs/product-experience.md) · [Applications runbook](docs/applications.md)
 
-## Current delivery order — reconciled 2026-09-12
+**Reconciled 2026-09-22 — baseline `84f8be4d`.** This revision restructures the
+plan around one outcome: **A2E Suite ships as one ready product on the Twenty
+base** — apps pre-provisioned at install, onboarding that lands on a useful
+workspace, native UI throughout. It replaces the delivery-order section with
+hardened milestones (M0–M6); the historical P1–P10 scope is retained below for
+traceability, unchanged. Old checkmarks remain historical evidence, not
+release-readiness.
 
-**Goal:** a calm, modular workspace for individuals and teams, with Bureau
-(work/knowledge) and Bilan (finance) integrated into Twenty's native shell.
-CRM stays usable but is not the only starting point. Reference apps supply
-feature expectations, not code to run beside Twenty.
+## Product definition (what "done" looks like)
 
-The assigned issue determines session scope. When asked to choose roadmap
-work, use the order below. `D0`–`D5` are delivery work packages, not claims of
-implementation. The detailed `P1`–`P10` scope is retained below for traceability;
-its old checkboxes are **historical**, not a release-readiness dashboard.
+One install of A2E Suite, no separate products:
 
-| Order | Work package | Required outcome / exit evidence | Depends on |
+- **Bureau** (work/knowledge) = Documents + Projects + Tasks, experienced as one
+  calm Notion-like surface in Twenty's native sidebar. No new sidebar, no new
+  shell — app entries inside Twenty's navigation, reorderable/hideable like
+  native items.
+- **Bilan** (finance) = the `a2e-accounting` app: books, invoices, budgets,
+  fiches, subventions.
+- **Collaboration** = Chat, Inbox/notifications, shared Drive over native
+  storage, presence — all optional, all native-looking.
+- **One install system**: deploying the suite (docker compose / Coolify / Helm)
+  results in all A2E apps registered, catalog-visible and preset-installable.
+  No per-server manual `app:publish` ritual for a stock deployment.
+- **Full templates**: every persona preset actually installs its apps AND seeds
+  real starter content (docs, project, board, fiche skeletons), with preview and
+  no-duplicate retries.
+- **Smart but graceful**: AI actions available in context (Cmd+K, assistant,
+  per-record buttons) with explicit confirm-before-mutate; useful with AI
+  disabled entirely.
+
+Non-goals (unchanged): no second backend, no parallel auth, no reference-app
+code integration, no fork of the design system. Twenty primitives only, per
+[the native law](docs/plan/04-twenty-native-law.md).
+
+## Why the product doesn't feel new yet — diagnosis (2026-09-22)
+
+Verified against the repository, this is the gap between code shipped
+(~50k lines across 6 internal apps, 185+ commits since 09-13) and what a user
+sees on a fresh deployment:
+
+| # | Gap | Evidence | Fixed by |
 | --- | --- | --- | --- |
-| D0 | Reproducible baseline and safety | Node/Yarn + dependencies + disposable DB/browser checks; compatible SDK/server matrix; explicit app build/unit/install checks; resolve audit F01–F03 access risks and F10 release/recovery gaps before broad release | Maintainer CI/release decision; audit Stage A |
-| D1 | Discoverable, reliable applications | Visible Applications empty/unavailable states; Bilan registration/publication/install journey; Projects discovery/preset wiring; confirm Bureau bundle vs registration; requested/applied/failed preset status and retry; Individual → CRM navigation regression | D0; Bureau packaging decision |
-| D2 | Complete starter templates | Versioned, localized starter packs at creation and in Settings; preview, optional samples, stable provenance, repeat-safe apply and visible partial failure; native workflow recipes where applicable | D1; product template contracts |
-| D3 | Reliable Bureau foundation | Finish existing Documents/Projects journeys: durable document state, authorized sharing/search, complete tree/actions, task membership/relations, atomic numbering and retry-safe time tracking; real install/upgrade and multi-user tests | D0/D1; audit B1–B4 |
-| D4 | Reliable Bilan foundation | Verify existing finance metadata and seeding; deterministic currency/rounding, idempotent transactional ledger/numbering, period locks, permissions; complete invoice/fiche UI/export; finance-domain review | D0/D1; audit B5; project rollups after D3 |
-| D5 | Expand without overwhelming users | Drive over existing storage; durable Chat/Inbox; permission-aware AI; performance, accessibility and solo/team polish. Deliver one complete user journey at a time | Relevant D0–D4 gates, not merely source presence |
+| G1 | **Apps never reach a stock deployment — proven at file level.** The production image ([Dockerfile](packages/twenty-docker/twenty/Dockerfile)) copies server/front/shared/emails but **no `twenty-apps/` directory at all**, and [docker-compose.coolify.yml](docker-compose.coolify.yml) pulls that image (`ghcr.io/maxx-abrt/a2e-suite`). Apps also need manual `dev:build` → `app:publish --private` → `app:install` per server. Fresh install = stock Twenty, zero A2E apps. | Dockerfile COPY list (lines 9–67); applications.md §"Where is the installation system?"; phase-00 P0.4 did it manually for one app | M1 |
+| G2 | **Presets under-install.** Only `a2e-documents` is preset-requested (plus accounting for 2 personas); Projects/Chat/Drive never offered; `sampleContentEnabled: false` everywhere; known live-seeds-0-rows defect in post-install hooks (phase-01 2026-09-16). | [workspace-template-definitions.constant.ts](packages/twenty-server/src/engine/core-modules/onboarding/constants/workspace-template-definitions.constant.ts) | M2 |
+| G3 | **Verification is mostly Tier-1** (unit/in-harness). ~30 browser/live proofs deferred to the Tier-2 ledger, so live UX trails code and defects hide there. | [tasks/deferred-batch7.md](tasks/deferred-batch7.md) | M0 gate + every milestone's acceptance |
+| G4 | **Onboarding copy describes intent, not product.** Picker descriptions ("Personal workspace with Documents…") don't match the target experience; no Bureau grouping, no starter-content preview in UI strings. | [A2eWorkspaceTemplates.ts](packages/twenty-front/src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts) | M2 |
+| G5 | **Bureau is not packaged.** No bundle/preset composes Documents+Projects into one entry point; the decision has been open since 09-12. | PLAN decisions ledger D-decisions; product-experience.md | M2 (decision D-B1 folded in) |
 
-### Current readiness, not old ticks
+The fix is NOT new UI frameworks or more surfaces — it is closing G1/G2
+(provisioning + presets + seeding), then running the deferred live journeys (G3)
+so what exists actually works in a browser.
 
-| Area | Observed | Still needed before a completion claim |
+## Milestones — the only execution order
+
+Each milestone is a work package with a single accountable outcome, hard
+acceptance gates (browser-level, not unit-only), and a definition of the
+minimum product increment a user can touch. Status is one of
+`planned / partial / blocked / verified`, with a dated handoff.
+
+| # | Milestone | Outcome (user-visible) | Exit evidence (all required) | Status |
+| --- | --- | --- | --- | --- |
+| M0 | **Live-verification baseline** | The suite runs locally end-to-end as one product | `yarn start` boots front+server+worker; the Tier-2 ledger's blocking proofs executed: (a) live seeded-workspace preset apply with rows > 0, (b) browser journeys for onboarding, documents tree, projects board, calendar recurring edit, chat two-session. A failing journey blocks its milestone, not "deferred" | partial — P0.1–P0.5 verified at Tier-1; browser journeys pending (deferred-batch7) |
+| M1 | **One-command app provisioning** (kills G1) | Deploying the suite = all A2E apps registered + catalog-visible; Settings → Applications shows the A2E section on a fresh server | (a) Image carries built app manifests: Dockerfile gains `twenty-apps` build stages (SDK `dev:build` per app in CI) + artifacts, and the server registers them on boot (reuse the existing application-sync/registration path — no invented platform); (b) `docker compose up` on a clean volume yields 6 registered apps without manual CLI, verified in the A2E section; (c) preset install works on that same deployment; (d) uninstall-preflight still refuses populated apps; (e) upgrade path 0.x → next on a populated workspace; (f) CI workflow (cd-docker-image) builds apps into the GHCR image so pulls are complete | planned |
+| M2 | **Presets that build a workspace** (kills G2/G4/G5) | Persona choice → apps installed AND starter content seeded → land on a useful Home with one primary action | (a) All 6 apps added to presets where personas need them (decision D-B1 executed: Bureau = documents+projects bundle entry); (b) live seeding verified rows > 0 for each persona (fix the post-install hook defect); (c) preview shows apps + content + blocked items honestly; (d) retry idempotent — no duplicate seeds; (e) individual→CRM→individual nav restoration e2e green; (f) onboarding copy reflects the real product (Bureau/Bilan wording) | partial — P1.6b/c unit-verified; live seeding + persona expansion open |
+| M3 | **Bureau complete** (Documents+Projects+Calendar) | Notion-like: tree editor with durable save/history, project boards, my-tasks, calendar with recurrence — all native surfaces | (a) Every P3/P4/P4C Tier-2 bullet in the ledger executed or explicitly descoped with reason; (b) E04/E05/E06/E07 browser journeys green on the M1 deployment; (c) doc↔task↔calendar cross-links work from record pages; (d) no new sidebar/shell — verified against the native-law §5 checklist per app | partial — engines and data layers largely verified at Tier-1; browser journeys pending |
+| M4 | **Bilan safe & complete** | Finance flows end-to-end: invoice→payment→ledger, fiches, subventions, budgets | (a) P7.0 safety gate live proofs (replay, numbering, period locks, alternate-API stamping); (b) P7.1d/2 open legs (invoice PDF+send, fiche editors, reports, grant wizard); (c) E10/E11 journeys green; (d) finance/privacy reviewer sign-off recorded | partial — app code strong, live proofs blocked behind M0 |
+| M5 | **Collaboration & smart layer** | Chat/Inbox/Drive/AI feel built-in, calm, and permission-safe | (a) Chat two-session live proof (P5 Tier-2); (b) inbox mention→deep-link journey; (c) drive upload/preview journey; (d) AI direct-tool live dispatch incl. server restart with the `directToolInvocation` arg; (e) every AI mutation shows confirm-first; (f) solo-mode degradation re-verified | partial — all built at Tier-1; live journeys pending |
+| M6 | **Release polish** | "Best app possible": fast, graceful, fr/en, accessible | (a) Performance budgets measured (p95 search < 150ms @10k records; 1k-task Gantt); (b) E12 usability pass with recorded sessions; (c) full e2e regression green; (d) upgrade-from-clean-2.39 + uninstall-everything→CRM-works rehearsals; (e) release notes declare accepted/deferred scope | planned |
+
+### Milestone discipline
+
+- **A milestone is done when its exit evidence is green, or items are explicitly
+  descoped with a dated reason in the phase report.** No other path to "done".
+- Every milestone's browser proof runs against the M1 provisioning target
+  (docker or compose), not a hand-tuned dev workspace — that's what makes G1
+  stay fixed.
+- Tier-1 (unit/integration) work continues per the P-phase tasks below where it
+  unblocks milestones, but **ticking Tier-1 no longer advances a milestone** —
+  only the exit evidence does.
+- Executors still self-select from the first dependency-ready milestone row
+  (or a pinned `docs/tasks/` brief) and append phase reports; the orchestrator
+  verifies, ticks, commits. Unchanged from PROMPT.md.
+
+## Immediate next actions (first three slices)
+
+1. **M1a — provisioning path decision + implementation.** Investigate the
+   cleanest native mechanism (build apps into the server image + registration
+   step at startup, or a documented one-command provisioning script wired into
+   DEPLOY.md/docker-compose). Constraint: no invented platform — use the
+   application-sync/registration services that already exist. Deliverable: a
+   clean-volume `docker compose up` where Settings → Applications lists all 6
+   A2E apps.
+2. **M0a — start the dev stack and run the five blocking browser journeys**
+   (deferred-batch7 rows 2/7/9/12/14 are the highest-leverage). Record results
+   in phase reports; each failure becomes the next executor slice.
+3. **M2a — fix live seeding (rows > 0) for documents, then accounting**; then
+   expand preset definitions (Projects into project-oriented personas; Bureau
+   bundle wording per D-B1) and update the picker copy.
+
+## Native-first rules (binding — why this plan cannot drift into "weird UI")
+
+These come from [04-twenty-native-law.md](docs/plan/04-twenty-native-law.md)
+and remain the contract for every milestone:
+
+1. **One sidebar — Twenty's.** App entries via `defineNavigationMenuItem`
+   (DB-backed, user-reorderable in Settings → Experience). Never a parallel
+   sidebar, dock, or workspace switcher. The widgets dock and side-panel tabs
+   (P2) are the only sanctioned extra chrome and stay opt-in.
+2. **Metadata before code**: `defineObject`/`defineView`/`definePageLayout` for
+   anything expressible; front components only for genuinely novel layouts
+   (Gantt, calendar grid, chat, explorer) — built with twenty-ui primitives and
+   Linaria, canonical icons from the icon dictionary.
+3. **Feature availability = app install state** (+ native feature flags), never
+   env-var-only gating for user-facing features.
+4. **Same collaboration model**: workspace members/roles/permissions; no
+   project-membership auth, no guest editing until a separate contract exists.
+5. **A feature is done only when it clears native-law §5** (objects visible in
+   Settings → Objects, views behave, nav item reorderable, Cmd+K create/go-to,
+   side-panel opens, search returns) — verified in a browser.
+
+## Decisions still open (unchanged unless noted)
+
+The D01–D09 ledger below stands. New/absorbed decisions:
+
+| ID | Decision | Owner / gate |
 | --- | --- | --- |
-| Activation/templates (P1) | Settings section, preset definitions and installer calls | Registration/provisioning, visible partial failure, reverse navigation transition, actual starter content and lifecycle tests |
-| Realtime/workbench (P2) | Gateway/client, dock/tabs and presence code | Session-auth alignment, topic permissions, failure/reconnect behavior and measured performance |
-| Documents (P3) | App plus editor/share/search surfaces | Persistence, permissions, action-input/tree completeness and real multi-session journeys |
-| Projects (P4) | Six objects, task fields, table/board/calendar definitions, overview and human-ID function | Wiring/install verification, atomic numbering, dependency/time integrity and missing UX; member junction and milestones already exist in source |
-| Bilan (P7) | Fourteen app objects, finance/fiche helpers, event/cron functions and UI | Packaged install/runtime checks, server invariants, encryption, complete editors/exports and domain review; catalogue is currently workspace app metadata, not the planned global service |
-| Bureau packaging; starter packs; Drive/Chat/Inbox/expanded AI | Product requirements and some shared infrastructure | Complete native app journeys; Bureau has no separate manifest; full starter packs are not implemented |
+| D-B1 | Bureau packaging: bundle Documents+Projects under one preset entry (recommended) vs distinct registration — folded into M2, must be settled before M2 exit | Product; M2a |
+| D-M1 | App provisioning mechanism: image-baked manifests + startup registration vs provisioning script in DEPLOY.md/compose vs both — M1a investigates and records the choice | Maintainer; M1a |
 
-Evidence and reproducible acceptance scenarios:
-[architecture audit](docs/repository-architecture-audit.md),
-[application inventory](docs/applications.md),
-[UX/template/file contracts](docs/product-experience.md).
-No runtime capability is newly certified by this documentation rework.
+Historical D01–D09 remain in the Unresolved decisions table below, verbatim.
 
-### Decisions before implementation
+## House acceptance gates (apply to EVERY task)
 
-1. **Bureau packaging:** recommended composition of existing Documents/Projects;
-   confirm whether users install a distinct registration or a bundle/preset.
-2. **Lifecycle:** distinguish hide/disable/uninstall; agree on data retention,
-   export and dependent-app behavior before calling activation reversible.
-3. **Delivery:** select authoritative GitLab or external CI, supported
-   SDK/server/PostgreSQL versions and a reproducible app provisioning path.
-4. **Finance:** approve catalogue scope and compliance expectations with a
-   domain reviewer; do not port reference claims as guarantees.
-
-### Completion policy
-
-Use `planned`, `partial`, `blocked/unverified`, or `verified` with a dated
-handoff linking source and actual checks. A task is verified only when its own
-acceptance and neighboring integration checks pass. A phase is not complete
-because one helper or manifest builds. Preserve historical reports, append
-corrections, and use [task](docs/templates/task.md) / [handoff](docs/templates/handoff.md)
-templates for new work.
+1. `npx nx lint:diff-with-main <pkg>` clean; typecheck via
+   `npx tsgo -p tsconfig.json --noEmit` in each touched package.
+2. If `twenty-shared` touched: `npx nx build twenty-shared --skip-nx-cache`.
+3. New server entities: generated migration
+   (`database:migrate:generate --type fast|slow`) + upgrade command only under
+   the actual `TWENTY_CURRENT_VERSION` directory (currently `2-39/`), with
+   strictly increasing epoch-ms timestamp, `up` + `down`; app metadata uses
+   the native manifest/migration path, not hand-created workspace tables.
+4. Unit tests for new services/hooks; integration test for server modules;
+   one e2e happy-path per app. **Milestone exit evidence additionally requires
+   the browser journeys listed in the milestone table.**
+5. UI: light+dark themes, responsive, Lingui fr+en, canonical icons from
+   `packages/twenty-ui/src/icon/icon-dictionary.md`.
+6. No committed i18n catalog churn; no AI-attributed commits.
+7. Additive only: no renames/removals of existing tables, fields, GraphQL
+   fields, routes. Deprecate, don't delete.
+8. Executors append phase reports and never tick; the orchestrator verifies,
+   ticks and commits in one pass. Planning-only changes verify doc integrity.
 
 ---
 
-## Historical feature scope — P1–P10
+# Historical feature scope — P1–P10
 
 **Retained for requirements/history, not automatic task selection.** Earlier
 `[x]` marks below record prior implementation claims; they do not establish
-installation, security, persistence or end-to-end acceptance. Current delivery
-order and readiness above take precedence. Do not bulk-retick this list from a
-source inventory.
+installation, security, persistence or end-to-end acceptance. Milestones M0–M6
+above now drive sequencing; use this section to locate requirements, reports
+and Tier-1/Tier-2 status of each leg. Do not bulk-retick this list.
 
 **Mission.** Evolve A2E Suite (Twenty fork, currently v2.39.0) into a coherent,
 modular workspace: documents, projects/tasks, a full calendar experience,
@@ -81,7 +175,9 @@ more apps later and remove apps with an explicit data policy.
 **Planning-only revision — 2026-09-12, baseline `3e664c89`.** This revision
 changes requirements and execution guidance, not product code. Source present
 is not the same as shipped-to-users or acceptance-tested. No deployment or
-product readiness is certified here.
+product readiness is certified here. The 2026-09-22 revision restructures
+delivery order into M0–M6 and adds the G1–G5 diagnosis; the P-phase content
+below is untouched.
 
 **Reference boundary (all sources, without exception).**
 `Inspiration apps (bureaubilan)` contains distinct apps from multiple projects,
@@ -106,8 +202,6 @@ companies, and classic CRM teams.
   progress · `[x]` historical completion claim · `[!]` historical blocker.
 - Do not infer runtime readiness from these marks. Reconcile a specific
   requirement with current code and executed acceptance checks when assigned.
-- Use D0–D5 above for sequencing; the original phase order below is retained
-  to locate requirements and reports, not to block urgent safety repairs.
 - **Phase reports.** Each phase has `docs/plan/phases/phase-<n>-report.md`.
   Append a dated entry for every work session: what was done, decisions,
   deviations, files touched, what's next. This is the handoff log for the
@@ -128,34 +222,12 @@ companies, and classic CRM teams.
   `twenty-ui/icon`, `twenty-shared/utils` guards, upgrade-command rules, no
   i18n catalog commits, no AI attribution in commits).
 
-## Global acceptance gates (apply to EVERY task)
-
-1. `npx nx lint:diff-with-main <pkg>` clean; typecheck via
-   `npx tsgo -p tsconfig.json --noEmit` in each touched package.
-2. If `twenty-shared` touched: `npx nx build twenty-shared --skip-nx-cache`.
-3. New server entities: generated migration
-   (`database:migrate:generate --type fast|slow`) + upgrade command only under
-   the actual `TWENTY_CURRENT_VERSION` directory (currently `2-39/`), with
-   strictly increasing epoch-ms timestamp, `up` + `down`; app metadata uses
-   the native manifest/migration path, not hand-created workspace tables.
-4. Unit tests for new services/hooks; integration test for server modules;
-   one e2e happy-path per app.
-5. UI: light+dark themes, responsive, Lingui fr+en, canonical icons from
-   `packages/twenty-ui/src/icon/icon-dictionary.md`.
-6. No committed i18n catalog churn; no AI-attributed commits.
-7. Additive only: no renames/removals of existing tables, fields, GraphQL
-   fields, routes. Deprecate, don't delete.
-8. For implementation, the orchestrator updates the phase report and ticks
-   only accepted tasks in the same commit; executor sessions leave reports,
-   not ticks. For planning-only changes, check source/link integrity,
-   scope and consistency and report runtime limitations; do not tick product work.
-
 ## Current-state ledger — source evidence, not release certification
 
 Paths below are repository-relative. Historical test logs remain in existing
 phase reports; the [architecture audit](./docs/repository-architecture-audit.md)
 F01–F14 records further risks. Its proposed stabilization work is incorporated
-below rather than a competing product backlog.
+into the milestones above rather than a competing product backlog.
 
 | Capability | Observed in current implementation | Missing acceptance / correction |
 | --- | --- | --- |
@@ -348,22 +420,19 @@ User tests in E12 must validate the flow before describing it as intuitive.
 
 ## Execution order and agent handoffs
 
-1. **P0** reproducible checks and access/lifecycle containment (audit Stage A).
-2. **P1.6a–c / P1.7a–b** template/setup/lifecycle contracts and connected flow;
-   stabilize existing P1/P2 behavior, not replace it. Starter bundles/reuse
-   (P1.6d/e) and cross-app acceptance (P1.7c) complete per safe vertical slice;
-   they do not block implementation of the very apps they need to validate.
-3. **P3 repair → P4 existing slice → P4C calendar**. P7 safety work can run once
-   P0 passes; project-finance links require P4. P6 provides enhanced file UX,
-   not a prerequisite for existing receipt storage.
-4. **P5/P8** after real session auth, durable persistence and reconnect gates;
-   **P7 expansion** after finance invariants and domain decisions.
-5. **P9** per-domain actions only after that domain is safe; registration is
-   already native. **P10** final usability/release regression; baseline UX
-   and accessibility are required earlier, not deferred to polish.
+1. **M0** live-verification baseline; **M1** one-command provisioning; **M2**
+   presets that build a workspace (these three run first — they are why the
+   product doesn't feel shipped yet; see the diagnosis table).
+2. **M3** Bureau complete (P3 repair → P4 slices → P4C calendar), **M4** Bilan
+   (P7 safety work after M0; project-finance links after P4 legs).
+3. **M5** collaboration/AI (P5/P8 after realtime/persistence gates; P9 per
+   domain after that domain's milestone acceptance), **M6** release polish.
+4. P-phase tasks below remain the requirement source for each milestone leg;
+   Tier-1 items may be executed any time they unblock a milestone, but only
+   milestone exit evidence advances status.
 
 Two roles execute this plan (PROMPT.md): **executor** sessions self-select the
-next dependency-ready slice from the order below — the first unmet bullet of
+next dependency-ready slice from the order above — the first unmet bullet of
 the first ready task, or a pinned `docs/tasks/` brief — and append a short
 report to the task's phase file; they never edit this file. The
 **orchestrator** runs on demand: verifies reports in batch, runs the
@@ -376,20 +445,20 @@ update guidance without implementing or falsely ticking product work.
 
 ## Phase index
 
-| # | Phase | Delivers | Depends on |
+| # | Phase | Delivers | Milestone |
 |---|---|---|---|
-| P0 | Verification and safety | Reproducible gates, access/realtime/lifecycle repairs, release recovery | — |
-| P1 | Templates, setup and lifecycle | Reusable presets/content, unified onboarding/install, customization and team entry | P0.1/4; starter content lands per app |
-| P2 | Realtime and optional workbench | Existing gateway, presence, reconnect, dock/tabs/search repairs | P0.2/3 |
-| P3 | Documents | Durable tree/editor/templates/history/share/export | P0.2, P1.6a–c; P2 for presence |
-| P4 | Projects and tasks | Validate existing metadata; boards, subtasks, dependencies, retroplanning and time | P0, P1.6a–c; P3 for doc links |
-| P4C | Full calendar | Local/provider ownership, day/week/month, recurrence, reminders, links | P4C.1 depends P0.1/P1.6a; P4 for task links; P8 for reminders |
-| P5 | Live chat | Channels, threads, mentions, reactions, read cursors | P0.3/P2; P8 for notification UI |
-| P6 | Drive | File/folder browser, previews, bulk actions, usage | P0.2/4, P1.7a |
-| P7 | Bilan finance and funding | Safe books/budgets/invoices, eight fiches, grant reporting/discovery and privacy | P0, P1.6a–c; P4 for projects; P6 enhances existing receipts |
-| P8 | Inbox and activity | Notifications, mentions, quiet hours and team feeds | P0.3/P2; contract can precede P5 UI |
-| P9 | Unified AI | Native registry consumption, assistant actions, reviewed cross-app recipes | Each underlying domain's safety/acceptance |
-| P10 | Usability and release polish | Solo/team journeys, accessibility, performance, regression | Relevant vertical slices; P0.5 for release |
+| P0 | Verification and safety | Reproducible gates, access/realtime/lifecycle repairs, release recovery | M0 |
+| P1 | Templates, setup and lifecycle | Reusable presets/content, unified onboarding/install, customization and team entry | M2 (M1 for provisioning legs) |
+| P2 | Realtime and optional workbench | Existing gateway, presence, reconnect, dock/tabs/search repairs | M0/M5 |
+| P3 | Documents | Durable tree/editor/templates/history/share/export | M3 |
+| P4 | Projects and tasks | Validate existing metadata; boards, subtasks, dependencies, retroplanning and time | M3 |
+| P4C | Full calendar | Local/provider ownership, day/week/month, recurrence, reminders, links | M3 |
+| P5 | Live chat | Channels, threads, mentions, reactions, read cursors | M5 |
+| P6 | Drive | File/folder browser, previews, bulk actions, usage | M5 |
+| P7 | Bilan finance and funding | Safe books/budgets/invoices, eight fiches, grant reporting/discovery and privacy | M4 |
+| P8 | Inbox and activity | Notifications, mentions, quiet hours and team feeds | M5 |
+| P9 | Unified AI | Native registry consumption, assistant actions, reviewed cross-app recipes | M5 |
+| P10 | Usability and release polish | Solo/team journeys, accessibility, performance, regression | M6 |
 
 P0 is a prerequisite repair gate, not a new product module. P4C is the full
 calendar milestone alongside Projects; a task CALENDAR view alone cannot close
@@ -495,8 +564,8 @@ authorization and persistence checks pass.
 **Exit:** recorded real commands/artifacts and passing P0-specific tests for
 existing auth/search/share/session/lifecycle boundaries; baseline failures have
 owners and cannot be hidden. E02/E05/E08/E09 later extend these tests with new
-product UI, so completing future Chat/Drive is not a P0 prerequisite. Blocked
-environment means UNVERIFIED, not accepted. P0.5 additionally gates release.
+product UI, so completing future Chat/Drive is not a P0 prerequisite. P0.5
+additionally gates release.
 
 # P1 — Foundations & Module Activation
 
@@ -1222,23 +1291,6 @@ No accounting server-domain module exists at baseline. Start with the existing
       unverified; reviewer sign-off still pending.
 - [ ] Resolve catalogue storage scope and CERFA report/receipt terminology
       (C6/D03/D04). Financial compliance is not certified by reference code.
-# P7 — Accounting & Finance (full A2EMoney/Bilan port)
-
-**Goal.** The complete A2EMoney feature set — small business + non-profit
-accounting, budgets, books with auto-journal, fiches (templated official
-documents incl. budget à l'équilibre), org profile, GDPR, and the
-subventions marketplace. fr-first vocabulary, fr + en locales. App:
-`a2e-accounting` + server domain module `accounting`.
-Full domain reference: [`docs/plan/02-reference-analysis.md`](./docs/plan/02-reference-analysis.md) §3.
-
-**Reconciled 2026-09-12 — app source exists as `Bilan`
-(`a2e-accounting`); this is not verified installation or release readiness.**
-The server accounting domain module is not present. Historical `[x]` claims
-below need real build/install/API checks, not only manifest inspection.
-Subvention/catalogue/cache objects currently live in workspace app metadata;
-instance scope is still a design target. Encryption at rest, period-lock
-invariants, reports, invoice PDF rendering, complete fiche editors and e2e
-remain unresolved. Use D4 and audit F12 for the next correctness work.
 
 ### P7.1 Core finance model
 - [x] `client` mapping spike: reuse `company` + relation fields (no parallel
@@ -1654,8 +1706,8 @@ app ship with tests.
       explanatory patterns, not its marketing/pricing claims or mock data.
       — 2026-09-19 orchestrator: verified (US-004, phase-10-report) —
       non-modal `help` dock widget, per-user localStorage dismissal keyed by
-      `currentUser.id`, search re-surfaces dismissed topics; suites green on
-      HEAD re-run. Tier-2 browser walkthrough open.
+      `currentUser.id`, search re-surfaces dismissed topics; suites green
+      on HEAD re-run. Tier-2 browser walkthrough open.
 - [x] Optional focus/accessibility work: Pomodoro, density/easy-read and
       shortcut preferences with explicit user control (R09/R14). Music embeds
       and a native mobile client remain deferred (D07); no new player stack
@@ -1710,6 +1762,7 @@ Legacy ticks or subjective “feels complete” alone do not satisfy acceptance.
 | Scope creep | This file is the contract; deviations need a phase-report entry + plan edit |
 | i18n/catalog churn | Lingui extract locally to verify keys; never commit catalogs |
 | Editor concurrency (no OT) | Version check + conflict banner; single-writer guidance in docs; full OT explicitly out of scope |
+| Provisioning silently regressing (M1) | Milestone exit re-runs the clean-volume compose proof; docker/Helm changes that drop app manifests fail the gate, not a follow-up ticket |
 
 ## End-to-end validation matrix (required, not yet executed)
 
@@ -1743,7 +1796,7 @@ release claims. E2E must exercise host + sandbox + server/worker composition.
 ## Unresolved decisions (do not invent certainty)
 
 | ID | Decision / recommended boundary | Owner and blocking task |
-| --- | --- | --- |
+|---|---|---|
 | D01 | Retention/exports/legal holds on app uninstall, and whether a true suspend mode is needed. Current native uninstall may destroy app data; default to refusal when required preservation is unsupported | Product + platform + privacy; P0.4/P1.7 release |
 | D02 | Exact persona bundle contents and supported app/server/SDK version matrix; deliver only ready modules. Template descriptor representation must use actual SDK capabilities | Product + app/platform; P1.6a/d |
 | D03 | Workspace versus instance funding catalogue, source permissions/licensing, freshness policy and supported geographic coverage. Do not migrate solely to mimic Bilan architecture | Backend + product; P7.1f expansion |
@@ -1759,13 +1812,20 @@ release claims. E2E must exercise host + sandbox + server/worker composition.
 A complete product journey, not merely ticked isolated features: reusable
 workspace/content templates, truthful integrated onboarding, compatible ready
 apps and configuration, customization, team collaboration, later installation
-and explicitly safe removal all pass the matrix. Existing CRM stays functional.
-Each release declares accepted scope, deliberately deferred options and remaining
-limitations. Legacy ticks never substitute for new acceptance evidence.
+and explicitly safe removal all pass the matrix — **delivered through the M1
+one-command provisioning path and verified in a browser on that deployment**.
+Existing CRM stays functional. Each release declares accepted scope,
+deliberately deferred options and remaining limitations. Legacy ticks never
+substitute for new acceptance evidence.
 
 ### Validation of this planning revision
 
-Source inventory/review and documentation checks are distinct from product
-verification. Record the actual checks in the merge request. No implementation,
-reference-app runtime, migration, browser journey or deployment is certified
-by this planning-only change; all acceptance scenarios above remain pending.
+Revision 2026-09-22 (baseline `84f8be4d`): planning-only. Diagnosed the
+code-vs-visible-product gap (G1–G5) from repository evidence (git history,
+preset definitions constant, applications.md, deferred-batch7 ledger); replaced
+the D0–D5 delivery order with M0–M6 milestones whose exit evidence is
+browser-level; added the provisioning milestone (M1) and preset completion
+milestone (M2) as the first execution order; kept all P-phase content, C1–C7
+contracts, E01–E12, D01–D09 and the historical ledger verbatim. No
+implementation, reference-app runtime, migration, browser journey or deployment
+is certified by this change; all acceptance scenarios remain pending.
