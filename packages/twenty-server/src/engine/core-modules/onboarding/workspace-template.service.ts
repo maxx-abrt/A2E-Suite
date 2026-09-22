@@ -390,16 +390,11 @@ export class WorkspaceTemplateService {
       }
 
       if (step.kind === 'navigation-visibility') {
-        if (
-          !isNonEmptyArray(
-            definition.hiddenStandardNavigationMenuItemUniversalIdentifiers,
-          )
-        ) {
-          step.status = 'skipped';
-
-          continue;
-        }
-
+        // The step is driven by current row state, not the hide-list: a
+        // CRM-off template that previously deleted managed rows must be
+        // restored by a later CRM apply even when CRM hides nothing. The
+        // method no-ops (returns early) when there is nothing to delete and
+        // nothing to restore, so a complete workspace stays untouched.
         try {
           await this.applyTemplateNavigationVisibility({
             workspaceId,

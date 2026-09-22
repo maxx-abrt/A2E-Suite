@@ -1,6 +1,7 @@
 import { ModuleRef } from '@nestjs/core';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
@@ -9,6 +10,7 @@ import { ApplicationRegistrationService } from 'src/engine/core-modules/applicat
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+import { TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/onboarding/constants/workspace-template-definitions.constant';
 import { WorkspaceTemplate } from 'src/engine/core-modules/onboarding/enums/workspace-template.enum';
 import { OnboardingExceptionCode } from 'src/engine/core-modules/onboarding/onboarding.exception';
 import { type ApplyTemplateResult } from 'src/engine/core-modules/onboarding/types/apply-template-operation.types';
@@ -36,6 +38,71 @@ describe('WorkspaceTemplateService', () => {
       };
     },
   ) => ({ id, manifest }) as unknown as ApplicationRegistrationEntity;
+
+  const buildStandardFlatViewMaps = () => ({
+    byId: {},
+    byUniversalIdentifier: {
+      [STANDARD_OBJECTS.company.views.allCompanies.universalIdentifier]: {
+        id: 'view-companies',
+        universalIdentifier:
+          STANDARD_OBJECTS.company.views.allCompanies.universalIdentifier,
+        objectMetadataId: 'object-metadata-company',
+        objectMetadataUniversalIdentifier:
+          STANDARD_OBJECTS.company.universalIdentifier,
+      },
+      [STANDARD_OBJECTS.person.views.allPeople.universalIdentifier]: {
+        id: 'view-people',
+        universalIdentifier:
+          STANDARD_OBJECTS.person.views.allPeople.universalIdentifier,
+        objectMetadataId: 'object-metadata-person',
+        objectMetadataUniversalIdentifier:
+          STANDARD_OBJECTS.person.universalIdentifier,
+      },
+      [STANDARD_OBJECTS.opportunity.views.allOpportunities.universalIdentifier]:
+        {
+          id: 'view-opportunities',
+          universalIdentifier:
+            STANDARD_OBJECTS.opportunity.views.allOpportunities
+              .universalIdentifier,
+          objectMetadataId: 'object-metadata-opportunity',
+          objectMetadataUniversalIdentifier:
+            STANDARD_OBJECTS.opportunity.universalIdentifier,
+        },
+    },
+  });
+
+  // The navigation step is driven by current row state, not the hide-list: the
+  // mock answers the navigation-menu-items read with the rows the workspace
+  // still has, and the view read (only reached when restoring) with the
+  // standard views the restore builder needs.
+  const mockNavigationRowState = ({
+    presentUniversalIdentifiers,
+  }: {
+    presentUniversalIdentifiers: string[];
+  }) => {
+    const byUniversalIdentifier = Object.fromEntries(
+      presentUniversalIdentifiers.map((universalIdentifier) => [
+        universalIdentifier,
+        { id: `nav-${universalIdentifier}`, universalIdentifier },
+      ]),
+    );
+
+    getOrRecompute.mockImplementation(
+      (_workspaceId: string, cacheKeys: string[]) =>
+        Promise.resolve(
+          cacheKeys.includes('flatViewMaps')
+            ? { flatViewMaps: buildStandardFlatViewMaps() }
+            : { flatNavigationMenuItemMaps: { byUniversalIdentifier } },
+        ),
+    );
+  };
+
+  const resetNavigationRowState = () => {
+    getOrRecompute.mockReset();
+    getOrRecompute.mockResolvedValue({
+      flatNavigationMenuItemMaps: { byUniversalIdentifier: {} },
+    });
+  };
 
   const workspaceUpdate = jest.fn().mockResolvedValue(undefined);
   const findOneByUniversalIdentifierGlobal = jest.fn();
@@ -125,8 +192,10 @@ describe('WorkspaceTemplateService', () => {
   afterEach(() => {
     jest.clearAllMocks();
     // clearAllMocks keeps mockResolvedValue implementations; the persisted
-    // operation store must start empty for every test.
+    // operation store must start empty and the cached navigation rows empty
+    // for every test.
     keyValuePairGet.mockReset().mockResolvedValue([]);
+    resetNavigationRowState();
   });
 
   describe('applyWorkspaceTemplateOperation', () => {
@@ -513,6 +582,67 @@ describe('WorkspaceTemplateService', () => {
 
       expect(installApplication).not.toHaveBeenCalled();
     });
+
+    it('restores the managed CRM navigation rows a persona template hid when a later CRM setup runs', async () => {
+      mockNavigationRowState({ presentUniversalIdentifiers: [] });
+
+      const result = await service.applyWorkspaceTemplateOperation({
+        workspaceId,
+        idempotencyKey: 'op-nav-restore',
+        template: WorkspaceTemplate.CRM,
+      });
+
+      expect(
+        result.steps.find((step) => step.kind === 'navigation-visibility')
+          ?.status,
+      ).toBe('succeeded');
+      expect(validateBuildAndRunWorkspaceMigration).toHaveBeenCalledWith(
+        expect.objectContaining({
+          isSystemBuild: true,
+          workspaceId,
+          applicationUniversalIdentifier: 'standard-app-uid',
+          allFlatEntityOperationByMetadataName: {
+            navigationMenuItem: {
+              flatEntityToCreate: [
+                expect.objectContaining({
+                  universalIdentifier: '20202020-b001-4b01-8b01-c0aba11c0001',
+                }),
+                expect.objectContaining({
+                  universalIdentifier: '20202020-b005-4b05-8b05-c0aba11c0005',
+                }),
+                expect.objectContaining({
+                  universalIdentifier: '20202020-b004-4b04-8b04-c0aba11c0004',
+                }),
+              ],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+          },
+        }),
+      );
+    });
+
+    it('does not run the restore migration again once the managed rows were restored', async () => {
+      mockNavigationRowState({
+        presentUniversalIdentifiers: [
+          '20202020-b001-4b01-8b01-c0aba11c0001',
+          '20202020-b005-4b05-8b05-c0aba11c0005',
+          '20202020-b004-4b04-8b04-c0aba11c0004',
+        ],
+      });
+
+      const result = await service.applyWorkspaceTemplateOperation({
+        workspaceId,
+        idempotencyKey: 'op-nav-restore-idempotent',
+        template: WorkspaceTemplate.CRM,
+      });
+
+      expect(
+        result.steps.find((step) => step.kind === 'navigation-visibility')
+          ?.status,
+      ).toBe('succeeded');
+      expect(validateBuildAndRunWorkspaceMigration).not.toHaveBeenCalled();
+    });
   });
 
   describe('getWorkspaceTemplatePreview', () => {
@@ -738,12 +868,100 @@ describe('WorkspaceTemplateService', () => {
     });
 
     it('leaves navigation untouched for the CRM template', async () => {
+      // Complete workspace: every managed row already exists, so the step
+      // takes the no-op early return rather than the restore path. The
+      // previous setup used an empty workspace, which only looked untouched
+      // because the step was skipped outright — the defect this fixes.
+      mockNavigationRowState({
+        presentUniversalIdentifiers: [
+          ...TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
+        ],
+      });
+
       await service.applyWorkspaceTemplate({
         workspaceId,
         template: WorkspaceTemplate.CRM,
       });
 
       expect(validateBuildAndRunWorkspaceMigration).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('preview and apply navigation agreement', () => {
+    it('applies exactly the navigation changes the preview advertises for CRM, individual and student', async () => {
+      const scenarios = [
+        { template: WorkspaceTemplate.CRM, presentUniversalIdentifiers: [] },
+        {
+          template: WorkspaceTemplate.INDIVIDUAL,
+          presentUniversalIdentifiers: [
+            ...TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
+          ],
+        },
+        {
+          template: WorkspaceTemplate.STUDENT,
+          presentUniversalIdentifiers: [
+            ...TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
+          ],
+        },
+      ];
+
+      for (const scenario of scenarios) {
+        validateBuildAndRunWorkspaceMigration.mockClear();
+
+        const preview = await service.getWorkspaceTemplatePreview({
+          workspaceId,
+          template: scenario.template,
+        });
+
+        mockNavigationRowState({
+          presentUniversalIdentifiers: scenario.presentUniversalIdentifiers,
+        });
+
+        await service.applyWorkspaceTemplate({
+          workspaceId,
+          template: scenario.template,
+        });
+
+        const navigationOperations = (
+          validateBuildAndRunWorkspaceMigration.mock.calls[0]?.[0] as
+            | {
+                allFlatEntityOperationByMetadataName?: {
+                  navigationMenuItem?: {
+                    flatEntityToCreate?: {
+                      universalIdentifier: string;
+                    }[];
+                    flatEntityToDelete?: {
+                      universalIdentifier: string;
+                    }[];
+                  };
+                };
+              }
+            | undefined
+        )?.allFlatEntityOperationByMetadataName?.navigationMenuItem;
+
+        const appliedCreates = [
+          ...(navigationOperations?.flatEntityToCreate ?? []),
+        ]
+          .map((flatEntity) => flatEntity.universalIdentifier)
+          .sort();
+        const appliedDeletes = [
+          ...(navigationOperations?.flatEntityToDelete ?? []),
+        ]
+          .map((flatEntity) => flatEntity.universalIdentifier)
+          .sort();
+
+        const previewHides = preview.navigationChanges
+          .filter((navigationChange) => navigationChange.action === 'hide')
+          .map((navigationChange) => navigationChange.universalIdentifier)
+          .sort();
+        const previewRestores = preview.navigationChanges
+          .filter((navigationChange) => navigationChange.action === 'restore')
+          .map((navigationChange) => navigationChange.universalIdentifier)
+          .sort();
+
+        expect(appliedDeletes).toEqual(previewHides);
+        expect(appliedCreates).toEqual(previewRestores);
+      }
     });
   });
 });

@@ -1,0 +1,205 @@
+# Iteration 1 Log
+
+## Metadata
+
+- **Task ID**: US-074
+- **Task Title**: Fix a2e-projects install-time workspace-schema build failure — relation target has no object metadata (object-metadata-with-relations-gql-object-type.generator.ts:117)
+- **Description**: As an operator installing A2E Suite, I want a2e-projects to install cleanly on a live server so that M1a provisioning reaches 6/6 registered apps, P4.1's live validation and human-ID concurrency proof...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-22T14:43:24.088Z
+- **Ended At**: 2026-09-22T14:57:49.237Z
+- **Duration**: 14m 25s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the clean-start check per the executor contract.
+[94m[bash][0m $ git log --oneline -5
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+Dirty files are all Ralph engine state (`.ralph-tui/**`, `tasks/**`), not source. Let me check the task ledger and phase report.
+[94m[bash][0m $ ls docs/plan/phases/ | tail -20
+[94m[bash][0m $ grep -n "US-074" PLAN.md | head -20
+[94m[bash][0m $ grep -rn "US-074" docs/plan/phases/*.md | head
+[94m[bash][0m $ grep -n "dependsOn\|US-074" tasks/prd.json | head -30
+[94m[bash][0m $ grep -n "US-074\|CLAIMED\|a2e-projects install-time" docs/plan/phases/phase-04-report.md | tail -30
+Task not in PLAN.md (extracted from phase reports). `dependsOn: []`. Let me check phase-04 report for existing claims.
+[94m[bash][0m $ grep -n "US-074\|a2e-projects install-time" docs/plan/phases/phase-01-report.md | tail -20
+[94m[bash][0m $ sed -n '1280,1340p' docs/plan/phases/phase-01-report.md
+Let me read the source defect report citations in full.
+[94m[bash][0m $ grep -n "a2e-projects\|install\|Concurrency proof" docs/plan/phases/phase-04-report.md | tail -30
+[94m[bash][0m $ tail -60 docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ ps aux | grep -i ralph | grep -v grep | head
+[94m[read][0m
+[94m[read][0m
+Let me examine the defect site and call path.
+[94m[glob][0m pattern: [96m**/workspace-schema-builder/**/gql-type.generator.ts[0m
+[94m[glob][0m pattern: [96m**/workspace-schema-builder/**/*.ts[0m
+[94m[read][0m
+[94m[read][0m
+[94m[glob][0m pattern: [96m**/workspace-graphql-schema-sdl.service.ts[0m
+[94m[read][0m
+[94m[read][0m
+[94m[grep][0m pattern: [96mgetOrComputeSchemaSDL[0m
+[94m[grep][0m pattern: [96mgenerateSchema\([0m
+[94m[glob][0m pattern: [96m**/application*/**/*install*.ts[0m
+[94m[grep][0m pattern: [96mworkspaceGraphqlSchemaSDLService|WorkspaceGraphqlSchemaSDLService|workspace-graphql-schema-sdl[0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "SchemaSDL\|schemaSDL\|generateSchema\|getOrComputeSchema\|graphqlSchema" packages/twenty-s...
+[94m[bash][0m $ grep -rn "sdl\|SDL" packages/twenty-server/src/engine/core-modules/application/application-manifest/...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "schema\|Schema\|sdl\|SDL" packages/twenty-server/src/engine/core-modules/sdk-client/sdk-cl...
+[94m[bash][0m $ ls packages/twenty-server/src/engine/core-modules/sdk-client/
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/api/graphql/workspace-schema.factory.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[grep][0m pattern: [96mgetOrRecomputeManyOrAllFlatEntityMapsWithHashes[0m
+[94m[read][0m
+[94m[grep][0m [95mpackages/twenty-server/src/engine/metadata-modules/flat-entity[0m pattern: [96midByUniversalIdentifier[0m
+[94m[grep][0m [95mpackages/twenty-server/src[0m pattern: [96muniversalIdentifiersByApplicationId[0m
+[94m[bash][0m $ grep -rn "idByUniversalIdentifier" packages/twenty-server/src --include=*.ts | head -20
+[94m[bash][0m $ grep -rln "flatApplicationMaps" packages/twenty-server/src/engine/workspace-cache/ | head
+[94m[bash][0m $ grep -rn "flatApplicationMaps" packages/twenty-server/src/engine/workspace-cache/types/workspace-cac...
+[94m[bash][0m $ grep -rn "idByUniversalIdentifier" packages/twenty-server/src | head -20
+[94m[bash][0m $ ls packages/twenty-server/src/engine/workspace-manager/workspace-migration/services/
+[94m[bash][0m $ grep -rln "createGraphQLSchema\|SchemaSDL\|generateSchema\|printSchema" packages/twenty-server/src/e...
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-projects -maxdepth 2 -type d 2>/dev/null | head -40
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-projects -name "*.ts" -path "*object*" 2>/dev/null | head -40
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-projects/src -type f -name "*.ts" | grep -v __tests__ | head ...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/objects/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[bash][0m $ ls packages/twenty-server/src/engine/metadata-modules/flat-entity/utils/ | head -80
+[94m[bash][0m $ grep -rln "relationTargetObjectMetadataId" packages/twenty-server/src/engine/api/graphql/workspace-s...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ git log --oneline -8 -- packages/twenty-server/src/engine/api/graphql/workspace-graphql-schema-sdl/w...
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+Root cause candidate identified: the app-scoped SDL filter drops cross-app relation target objects. Let me claim the slice before touching code.
+[94m[bash][0m $ tail -3 docs/plan/phases/phase-04-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ tail -5 docs/plan/phases/phase-04-report.md
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-server/src/engine/api/graphql -name "*.spec.ts" | head
+[94m[bash][0m $ find packages/twenty-server/src/engine/api/graphql/workspace-schema-builder -name "*.spec.ts" | head...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/api/graphql/__tests__/workspace.factory.spec.ts
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-server/src/engine/api/graphql/workspace-schema-builder/graphql-type-g...
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-server/src/engine/api/graphql/workspace-resolver-builder/workspace-re...
+[94m[bash][0m $ grep -rln "buildFlatObjectMetadata\|flatObjectMetadataFactory\|createFlatObjectMetadata" packages/tw...
+[94m[bash][0m $ grep -rln "byUniversalIdentifier: {" packages/twenty-server/src/engine/api/graphql --include=*.spec....
+[94m[grep][0m [95mpackages/twenty-server/src[0m pattern: [96mbuildFlatObjectMetadata|createFlatObjectMetadata[0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rln "WorkspaceGraphQLSchemaGenerator" packages/twenty-server/src
+[94m[bash][0m $ find packages/twenty-apps/internal -name "document.object.ts" | head
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[write][0m "import { isDefined } from 'twenty-shared/utils';
+
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThr... (5159 chars)"
+Now I'll implement the fix. First the augmentation utility:
+Now wire it into the SDL service:
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+Now the regression test:
+[94m[write][0m "import { GraphQLObjectType } from 'graphql';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+
+import { ArgsTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/... (9282 chars)"
+[94m[bash][0m $ npx jest packages/twenty-server/src/engine/api/graphql/workspace-graphql-schema-sdl/utils/__tests__/...
+The generator's field thunk is lazy — need to materialize fields. Let me fix the test:
+[94m[edit][0m
+[94m[bash][0m $ npx jest packages/twenty-server/src/engine/api/graphql/workspace-graphql-schema-sdl/utils/__tests__/...
+Test passes with the exact pre-fix throw and post-fix build. Now typecheck and the existing suites:
+[94m[bash][0m $ echo "EXIT: $?"
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ grep -n "buildFlatEntityMaps(\[\])" packages/twenty-server/src/engine/api/graphql/workspace-graphql-...
+[94m[bash][0m $ cd packages/twenty-server && sed -i '' 's/flatIndexMaps: buildFlatEntityMaps(\[\]),/flatIndexMaps: e...
+[94m[bash][0m $ echo "TSC EXIT DONE"
+[94m[bash][0m $ npx jest packages/twenty-server/src/engine/api/graphql/workspace-graphql-schema-sdl/utils/__tests__/...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/workspace/types/flat-workspace.type.ts
+Let me add a service-level regression test to prove the wiring. First check the FlatWorkspace shape:
+[94m[bash][0m $ grep -n "universalIdentifier" packages/twenty-server/src/engine/workspace-manager/twenty-standard-ap...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/workspace-cache/utils/combine-cache-hashes.util.ts
+[94m[bash][0m $ grep -n "WorkspaceCacheResultWithHashes\|WorkspaceCacheDataMap" packages/twenty-server/src/engine/wo...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/workspace-cache/types/workspace-cache-key.type.ts
+[94m[write][0m "import { GraphQLSchema } from 'graphql';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+
+import { ScalarsExplorerService } from 'src/engine/api/graphql/services/scalars-explore... (6923 chars)"
+[94m[bash][0m $ npx jest packages/twenty-server/src/engine/api/graphql/workspace-graphql-schema-sdl/__tests__/worksp...
+Now demonstrate the failing-then-passing by temporarily disabling the fix:
+[94m[bash][0m $ cp packages/twenty-server/src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphql-sche...
+[94m[edit][0m
+[94m[bash][0m $ npx jest packages/twenty-server/src/engine/api/graphql/workspace-graphql-schema-sdl/__tests__/worksp...
+Pre-fix failure captured. Restoring the fix:
+[94m[bash][0m $ cp /var/folders/31/flrpby692pjc8k6vskbtrnn40000gn/T/opencode/sdl.service.backup.ts packages/twenty-s...
+[94m[bash][0m $ npx jest packages/twenty-server/src/engine/api/graphql/workspace-graphql-schema-sdl --config=package...
+[94m[bash][0m $ npx jest packages/twenty-server/src/engine/api/graphql/workspace-schema-builder --config=packages/tw...
+[94m[bash][0m $ npx jest packages/twenty-server/src/engine/metadata-modules/flat-entity --config=packages/twenty-ser...
+[94m[bash][0m $ npx jest packages/twenty-server/src/engine/workspace-manager/workspace-migration --config=packages/t...
+[94m[bash][0m $ cd packages/twenty-server && npx oxlint --type-aware -c .oxlintrc.json src/engine/api/graphql/worksp...
+[94m[bash][0m $ cd packages/twenty-server && npx oxfmt --check src/engine/api/graphql/workspace-graphql-schema-sdl/w...
+[94m[bash][0m $ cd packages/twenty-server && npx oxfmt src/engine/api/graphql/workspace-graphql-schema-sdl/utils/__t...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ npx jest packages/twenty-server/src/engine/api/graphql/workspace-graphql-schema-sdl --config=package...
+[94m[bash][0m $ echo "DONE"
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ echo "DONE"
+[94m[bash][0m $ cd packages/twenty-server && npx oxlint --type-aware -c .oxlintrc.json src/engine/api/graphql/worksp...
+[94m[bash][0m $ npx jest packages/twenty-server/src/engine/api/graphql/workspace-graphql-schema-sdl --config=package...
+Let me review the final diff of the source changes:
+[94m[bash][0m $ git diff packages/twenty-server/src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphq...
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-server 2>&1 | tail -8
+All gates green. Let me verify no `twenty-shared` changes and capture final status, then write the reports.
+[94m[bash][0m $ git status --porcelain packages/twenty-server
+Now append the phase report entry:
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ tail -20 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain | grep -v "ralph-tui/session\|ralph-tui/reports\|ralph.lock\|tasks/"
+US-074 complete. Summary:
+
+**Root cause (phase-01 hypothesis corrected):** The install-time failure was not generator ordering. Install → `applyManifestToWorkspace` → SDK client generation calls `createGraphQLSchema(workspace, applicationId)`, which filters flat maps to `[standard app, requested app]`. A2E Projects' `project.documents` targets A2E Documents' `document` object (a *different* application), so the filter kept the relation field but dropped its target → line-117 guard fired. The full (un-scoped) schema includes every object, which is why it "builds fine outside install"; the differing field id is just the per-attempt uuid.
+
+**Fix (generic, guard untouched):** new `augmentFlatEntityMapsWithRelationTargets` pulls missing relation-target objects + their fields (transitively) from the full workspace maps into the app-scoped generation context. Wired into the `applicationId` branch only, so the normal workspace schema is unchanged.
+
+**Changed:** `workspace-graphql-schema-sdl.service.ts`; new util + util spec; new service spec; phase-04 report; `.ralph-tui/progress.md`.
+
+**Failing-then-passing:** util spec runs the real generator on the raw scoped context → throws the exact reported error; on the augmented context → builds. Service spec with the fix disabled → `Received: undefined` (target absent); restored → present.
+
+**Checks:** new specs 5/5; `workspace-schema-builder` 22/22; `flat-entity` 66/66; `workspace-migration` 232/232; `tsgo --noEmit` exit 0; oxlint 0/0; oxfmt clean; `lint:diff-with-main` → "No changed files."; no `twenty-shared`/app-source/migration changes.
+
+**Tier-2 residual (orchestrator):** live a2e-projects install re-proof → ticks M1a install leg and makes P4.1's concurrency proof runnable.
+
+<promise>COMPLETE</promise>

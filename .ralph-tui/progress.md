@@ -21,3 +21,13 @@ after each iteration and it's included in prompts for context.
   - Tier-2 residual: orchestrator must re-run the live a2e-projects install (ticks M1a install leg) and then P4.1's concurrency proof.
 ---
 
+## [2026-09-22] - US-075
+- Fixed the CRM nav-restore defect: `runRemainingSteps` unconditionally marked the navigation-visibility step `skipped` when a template's `hiddenStandardNavigationMenuItemUniversalIdentifiers` was empty, so a CRM apply (hide-list `[]`) never restored the CRM nav rows a STUDENT/INDIVIDUAL apply had hard-deleted. Removed the hide-list gate; the step now always calls `applyTemplateNavigationVisibility`, which is driven by current row state (restore TEMPLATE_MANAGED rows missing from the workspace) and keeps its no-op early return when there is nothing to delete or restore.
+- Files changed: `packages/twenty-server/src/engine/core-modules/onboarding/workspace-template.service.ts` (skip block removed, WHY comment added); `packages/twenty-server/src/engine/core-modules/onboarding/__tests__/workspace-template.service.spec.ts` (+3 tests: restore, idempotent re-run, preview/apply agreement; + updated the CRM no-op test setup to a complete workspace); phase-01 report.
+- **Learnings:**
+  - Two earlier US-075 iterations bailed `CONFLICT` over their own uncommitted edits (no `CLAIMED` line). When resuming a stalled same-task slice on a single-writer checkout, trust the filesystem over the missing claim: one iteration's "spec edit" had actually reverted the whole spec to an older revision and deleted 5 unrelated tests — always diff against HEAD before building on partial work.
+  - The nav step's restore set is `TEMPLATE_MANAGED - definition.hideList - existingRows`, computed from row presence alone, so it cannot tell a template-hidden row from a user-hidden one. Fixing the skip therefore also re-creates user-deleted managed rows on any template whose hide-list omits them — flagged as a separate C2 slice ("restore only what it hid").
+  - Preview/apply consistency is testable without a DB: mock `getOrRecompute` per requested cache key (`flatNavigationMenuItemMaps` for the row state, `flatViewMaps` for the restore builder), then compare the migration's create/delete UIDs to `preview.navigationChanges`.
+  - Tier-2 residual: orchestrator runs the live STUDENT-apply → CRM-apply probe plus the deferred P1.3/P1.6c/E03 browser legs.
+---
+

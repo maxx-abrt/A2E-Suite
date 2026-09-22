@@ -48,13 +48,13 @@
         "Quality gate: dated entry appended to docs/plan/phases/phase-01-report.md (same file as the defect citation) stating the fix, the new regression cases, and the named Tier-2 residuals; PLAN.md not edited; nothing committed; no AI attribution"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "PRIORITY 0, defect #2 — extracted directly from the phase-report citation (not a PLAN.md bullet); same 'Next: executor' line as US-074. Starting state: NOT-STARTED defect fix at workspace-template.service.ts:392-401 (skip block), with the restore machinery at :822-906 (applyTemplateNavigationVisibility) and :908+ (buildStandardNavigationMenuItemsToRestore) already correct — verify this reading before coding; the defect was live-reproduced 2026-09-22 on the Apple workspace (STUDENT apply hard-deleted 20202020-b001/b004/b005 rows; CRM apply with a new key never recreated them; workspace restored by hand via SQL). UNLOCK-IMPACT: closes the C2 preview/apply contradiction at Tier 1 and makes the P1.3/P1.6c template-switch legs honest; the tick-able legs themselves (browser e2e incl. individual→CRM→individual restoration, M2 exit criterion (e)) stay Tier 2 with the orchestrator. Independent of US-074 (different subsystem) — may run in parallel. dependsOn: nothing.",
       "dependsOn": [],
-      "completionNotes": ""
+      "completionNotes": "Completed by agent"
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-22T14:57:49.244Z"
+    "updatedAt": "2026-09-22T15:12:32.822Z"
   }
 }
