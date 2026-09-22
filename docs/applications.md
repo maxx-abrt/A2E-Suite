@@ -20,10 +20,13 @@ App source in Git
   → verified user journey
 ```
 
-These are separate states. Building the platform Docker image does **not**
-provision the A2E apps: its production stages do not copy `twenty-apps/internal`.
-A successful private publish is not a workspace installation. A successful
-workspace installation is not proof every background job or user flow works.
+These are separate states. From **HEAD (2026-09-22+)**, building the production
+Docker image **does** provision the A2E apps: the `twenty-apps-build` Dockerfile
+stage builds each app's tarball; `entrypoint.sh` runs `app:provision-bundled`
+at every boot, which registers any unregistered bundled app and marks it
+`isPreInstalled=true`; then `install-pre-installed-apps` auto-installs it on
+all workspaces. Set `DISABLE_BUNDLED_APP_PROVISIONING=true` to opt out.
+A successful workspace installation is not proof every background job or user flow works.
 
 ## What exists at baseline `3e664c89`?
 

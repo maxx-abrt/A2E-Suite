@@ -14,6 +14,7 @@
 #   SERVER_PORT            host port for direct (non-proxied) access (default: 3000)
 #   LANDING_PAGE_URL       public landing page used after sign-out
 #   FALLBACK_ENCRYPTION_KEY, APP_SECRET, STORAGE_S3_*, EMAIL_* / SMTP vars
+#   DISABLE_BUNDLED_APP_PROVISIONING=true  set to skip auto-registration of A2E apps on boot
 name: a2e-suite
 
 services:

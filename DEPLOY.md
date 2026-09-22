@@ -11,8 +11,11 @@ this checkout publishes there or that those resources are public.
 
 [Documentation home](docs/README.md) · [Applications provisioning](docs/applications.md)
 
-- Platform deployment and Bilan/Documents/Projects provisioning are separate.
-  The production image does not bundle/install the internal A2E app sources.
+- Platform deployment now includes A2E app provisioning: the production image
+  contains built tarballs for all 5 A2E apps; the `app:provision-bundled`
+  startup command registers and auto-installs them on every workspace.
+  Set `DISABLE_BUNDLED_APP_PROVISIONING=true` to opt out (e.g. for pinned-version
+  deployments). See [Applications provisioning](docs/applications.md).
 - Supported infrastructure matrix: **PostgreSQL 16** (hard runtime floor: 14 —
   the server refuses to boot below it) and **Redis 7**. All compose files pin
   `postgres:16` / `redis:7` accordingly. Do not treat a healthy HTTP process
