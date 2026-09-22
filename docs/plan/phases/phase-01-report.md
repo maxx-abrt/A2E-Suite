@@ -1310,3 +1310,24 @@ CLAIMED — US-069/direct-tool-invocation-forced-choice — deepseek-v4.1-flash 
 
 ## 2026-09-21 20:16 CEST — orchestrator verification — US-069
 Diff audited: only the declared ai-chat/ai files, additive arg threading, no unrelated churn. Independent re-runs: both direct-tool-invocation suites 12/12 (7 util fail-closed cases + 5 service cases, incl. the mutating-tool "never forced, never loaded" assertion); `npx tsgo -p tsconfig.json --noEmit` in twenty-server → exit 0. P9.1 annotation updated in PLAN.md. Tier-2 live dispatch NOT run: the running dev server's dist predates this commit — a live-schema probe confirms `SendChatMessageInput.directToolInvocation` is absent until a server restart; leg stays open for the next stack cycle.
+
+## 2026-09-22 15:25 CEST — orchestrator — Tier-2 live pass (M1a provisioning + P1.6c setup operation)
+**Environment:** live stack (`npx nx start twenty-server`, :3000) on the dev Postgres; workspaces Apple + YCombinator.
+
+**Pre-pass DB alignment:** the instance upgrade cursor was behind HEAD — `calendarEvent` had no recurrence columns and `core."pageLayoutWidget_type_enum"` lacked `DISCUSSIONS`. `node dist/command/command upgrade` (unfiltered; workspace-filtered runs stop before instance commands) upgraded both workspaces and applied `2.39.0_AddDiscussionsWidgetTypeFastInstanceCommand_1789800000000` + the 2-39 recurrence workspace commands (Apple metadataVersion 30→31). Root cause of earlier DISCUSSIONS install failures: stale DB, not code. (Needed first: `dist/assets/twenty-client-sdk/` copied per the server project.json build script.)
+
+**M1a — live provisioning result (3/5, not tickable):**
+- documents 0.2.0, drive 0.1.0, accounting (Bilan) 0.1.0 all INSTALLED live (tarball source, verified in `core.application`).
+- a2e-projects 0.1.0 install FAILS at install-time workspace-schema build: `Field Metadata of type RELATION or MORPH_RELATION with id <ephemeral> has no relation target object metadata` from `object-metadata-with-relations-gql-object-type.generator.ts:117`. The failing field id differs every retry and never persists (clean rollback); the manifest is statically self-consistent (all relation targets resolve within the manifest or standard objects); the same schema builds fine outside install. **Genuine code defect (case a):** install-time schema build orders/collects object+field metadata such that freshly-inserted relation fields can run through the generator before their target object is visible to it. Fix direction: collect the full object+field set before running the generators (or resolve relation targets from the manifest rather than re-querying). Recorded for the executor queue.
+- a2e-chat: blocked on projects' `project` object — dependency, not a separate defect.
+- docker: not installed on this machine → the clean-volume `docker compose up` deliverable is unrunnable here.
+
+**P1.6c — setup operation, server legs verified live; DEFECT found (not ticked):**
+- Preview: CRM → restore×3, no apps; STUDENT → Documents registered/compatible, samples, hide×3. Matches `TemplatePreviewDTO`.
+- Apply STUDENT: INSTALL_APP FAILED / NAVIGATION_VISIBILITY SUCCEEDED / SET_WORKSPACE_TEMPLATE SKIPPED — partial-failure continue semantics work; `appliedTemplateKeyVersion` null.
+- Same-key retry: same operationId and stored steps — idempotent resume works.
+- New-key CRM apply: sets template CRM; templateVersion 99 rejected with a conflict error — optimistic concurrency works.
+- **DEFECT:** STUDENT apply hard-deletes CRM nav rows (`20202020-b001/b004/b005-…`); a later CRM apply NEVER restores them because the navigation-visibility step in `workspace-template.service.ts` (`runRemainingSteps`) unconditionally skips when the definition's `hiddenStandardNavigationMenuItemUniversalIdentifiers` is empty — while CRM's own preview advertises restore×3. Fix: drive the nav step from current row state (restore missing TEMPLATE_MANAGED rows even with an empty hide-list), not from the definition. Workspace state restored by hand (SQL, rows re-created from the YC template with Apple's own applicationId/metadata ids) after the probe; defect left unfixed per the Tier-2 no-fix rule.
+
+**Ticks:** none — M1a is 3/5 with docker unrunnable; P1.6c has a live-reproduced defect. PLAN.md untouched.
+**Next:** executor — the nav-restore defect above and the a2e-projects install-time schema-build ordering defect.

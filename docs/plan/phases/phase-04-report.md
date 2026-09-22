@@ -1237,3 +1237,12 @@ CLAIMED — US-068/this-vs-series-edit-delete-ui-wiring — deepseek-v4.1-flash 
 
 ## 2026-09-21 20:15 CEST — orchestrator verification — US-068
 Diff audited against the report: only the declared calendar files, no churn beyond them. Independent re-runs: `calendarSeriesScopeMutation.test.ts` 16/16; full front calendar module sweep 18 suites / 180 tests green (up from 164 — +16, no regression); `docs/scripts/check-docs.mjs` PASS. UI-wiring half of P4C.3 annotated verified in PLAN.md; `[~]` kept for the Tier-2 browser journey (scope-dialog edit/delete on live `/calendar`) and view-level occurrence expansion (separate slice, correctly not claimed). No schema/entity change → no migration owed.
+
+## 2026-09-22 15:25 CEST — orchestrator — Tier-2 live pass (P4C.3 recurrence, P4.1 blocked, P7.0 case b)
+**P4C.3 — recurrence storage semantics verified live (API-level; browser journey remains):** on the live /graphql (Apple workspace, after the 2-39 recurrence upgrade): created anchor "Tier2 Recurrence Probe" (FREQ=WEEKLY;BYDAY=MO;COUNT=6, Europe/Paris), stamped `recurrenceSeriesId` (`calendar-series#<anchorId>`), created a detached occurrence (`recurrenceOccurrenceDay` 2026-10-19), set `recurrenceSkippedOccurrenceDays` ["2026-11-02"] on the anchor, series-scoped query returns anchor+detached, whole-series title edit works, series delete by seriesId removes both rows. Test data cleaned up. This-occurrence-vs-series is exactly the anchor/detached/seriesId model from US-060..063, proven against live storage. NOT ticked: the PLAN.md ledger's remaining open leg is the Tier-2 browser journey (scope dialog on live /calendar), which this pass did not run (no browser); the API-level proof narrows that leg to browser-only.
+
+**P4.1 — BLOCKED (no tick):** the `<projectKey>-<n>` human-ID allocator (`a2e-projects` logic function, CAS on `project.taskCounter` in `task-human-id-handler.ts`) cannot be exercised live while a2e-projects fails to install (see today's phase-01 entry — install-time schema-build defect). Concurrency proof deferred until that defect is fixed; no duplicated-id claim can be honestly tested until then.
+
+**P7.0 — case (b), live install re-verified (no tick):** fresh install of accounting (Bilan) 0.1.0 against the live server today: clean, INSTALLED (tarball, verified in `core.application`). The 2026-09-16 "blockage lifted" entry is confirmed on current HEAD. Gate proofs (ledger replay, numbering race, rounding, period-close, live finance-user iban-denial run) remain open; `P7.0` stays `[~]`.
+
+**Ticks:** none. PLAN.md untouched.
