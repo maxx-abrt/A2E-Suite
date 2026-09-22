@@ -1,0 +1,10 @@
+mutation CreateSeries($input: CalendarEventCreateInput!) {
+  createCalendarEvent(input: $input) {
+    id
+    title
+    startsAt
+    recurrenceRule
+    recurrenceTimezone
+    recurrenceSeriesId
+  }
+}

@@ -1,0 +1,8 @@
+mutation {
+  generateApiKeyToken(
+    apiKeyId: "ae42b3f1-081a-4527-b619-0075e56cc2a5"
+    expiresAt: "2126-09-22T00:00:00.000Z"
+  ) {
+    token
+  }
+}

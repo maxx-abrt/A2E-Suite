@@ -1,0 +1,11 @@
+mutation CreateKey {
+  createApiKey(
+    name: "tier2-live-verify"
+    expiresAt: "2126-09-22T00:00:00.000Z"
+  ) {
+    id
+    name
+    expiresAt
+    apiKeyToken
+  }
+}

@@ -1,0 +1,10 @@
+query SmokeWorkspaceSchema {
+  task(first: 1) {
+    edges {
+      node {
+        id
+        title
+      }
+    }
+  }
+}

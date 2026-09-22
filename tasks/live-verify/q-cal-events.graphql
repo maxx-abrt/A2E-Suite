@@ -1,0 +1,17 @@
+query EventFields {
+  calendarEvents(filter: { startsAt: { gte: "2026-01-01T00:00:00.000Z" } }, orderBy: [{ startsAt: DescNullsLast }], last: 3) {
+    edges {
+      node {
+        id
+        title
+        startsAt
+        endsAt
+        recurrenceRule
+        recurrenceTimezone
+        recurrenceSeriesId
+        recurrenceOccurrenceDay
+        recurrenceSkippedOccurrenceDays
+      }
+    }
+  }
+}

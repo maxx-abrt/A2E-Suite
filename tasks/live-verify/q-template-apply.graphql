@@ -1,0 +1,15 @@
+mutation Apply($input: ApplyWorkspaceTemplateOperationInput!) {
+  applyWorkspaceTemplateOperation(input: $input) {
+    operationId
+    requestedTemplateKeyVersion { key version }
+    appliedTemplateKeyVersion { key version }
+    steps {
+      kind
+      targetUniversalIdentifier
+      status
+      createdRecordUniversalIdentifiers
+      errorCode
+      localizedMessage
+    }
+  }
+}

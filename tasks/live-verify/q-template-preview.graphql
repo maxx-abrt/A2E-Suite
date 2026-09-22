@@ -1,0 +1,19 @@
+query Preview($template: WorkspaceTemplate!) {
+  workspaceTemplatePreview(template: $template) {
+    templateKey
+    version
+    blocked
+    errorCode
+    apps {
+      universalIdentifier
+      displayName
+      registered
+      versionCompatible
+      required
+      currentlyInstalled
+    }
+    navigationChanges { universalIdentifier action }
+    samples { label locale }
+    blockedSamples { label locale blockedBy }
+  }
+}
