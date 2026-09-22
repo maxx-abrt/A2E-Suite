@@ -181,6 +181,7 @@ import { AddAppTokenSsoExchangeIndexFastInstanceCommand } from './2-25/2-25-inst
 import { AddMessageCampaignWidgetTypeFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785229950000-add-message-campaign-widget-type';
 import { AddIsHiddenToAgentMessageFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785230296000-add-is-hidden-to-agent-message';
 import { CreateNotificationWatchTableFastInstanceCommand } from './2-39/2-39-instance-command-fast-1789900000000-create-notification-watch-table';
+import { AddBundledAppSourcePathToApplicationRegistrationFastInstanceCommand } from './2-39/2-39-instance-command-fast-1789905000000-add-bundled-app-source-path';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -364,4 +365,5 @@ export const INSTANCE_COMMANDS = [
   CreateNotificationTableFastInstanceCommand,
   AddDiscussionsWidgetTypeFastInstanceCommand,
   CreateNotificationWatchTableFastInstanceCommand,
+  AddBundledAppSourcePathToApplicationRegistrationFastInstanceCommand,
 ];
