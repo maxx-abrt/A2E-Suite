@@ -1263,3 +1263,12 @@ CLAIMED — US-074/install-time-schema-build-relation-target — deepseek-v4.1-f
 **Do not redo:** the generator guard at line 117 and the app-scoped filter are correct; do not weaken the guard or special-case a2e-projects/`document`; do not add a manifest dependency to the schema builder — the persisted full maps already carry the target. No app-source change was needed (phase report's "manifest is statically self-consistent" held).
 **Remaining:** standing P4.1/P4.2/P4.3/P9 Tier-2 legs; US-075 (nav-restore defect) is the other queued executor task.
 **Next:** orchestrator — Tier-2 live a2e-projects install re-proof then tick M1a's install leg and run P4.1's concurrency proof.
+
+## 2026-09-22 20:15 CEST — orchestrator — US-074 verified live
+**Tier-1 (final tree, HEAD 223714f5):** schema-sdl suites 2/2 (5 tests) and onboarding 8/8 (81) green on my re-run; running server dist == final code (nest watch; `template-hidden-navigation` present in dist).
+
+**Tier-2 (live :3000, Apple workspace):** a2e-projects 0.1.10 INSTALLED clean (5.1s) through the exact previously-failing flow — `installApplication` on the populated workspace no longer trips the cross-app relation-target schema build (`project.documents` → Documents' `document`), and the workspace schema serves `projects` records (`findManyProjects`). US-074's corrected root-cause chain is confirmed live; the M1a a2e-projects install leg is closed (legs now 5/5, docker unrunnable — see phase-01 20:15 entry).
+
+**P4.1 unblocked:** the live human-ID concurrency proof is now runnable (a2e-projects installed); deferred to the next orchestrator pass.
+
+**Data repair (not a code defect, recorded for provenance):** Apple nav rows b001/b004/b005 still carried `targetObjectMetadataId`s pointing at YCombinator objects — residue of the 15:25 hand-restore — and broke a2e-chat's install-time flat-map FK recompute. Remapped via SQL to Apple's own objects; details in the phase-01 20:15 entry.

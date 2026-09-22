@@ -64,7 +64,7 @@ minimum product increment a user can touch. Status is one of
 | # | Milestone | Outcome (user-visible) | Exit evidence (all required) | Status |
 | --- | --- | --- | --- | --- |
 | M0 | **Live-verification baseline** | The suite runs locally end-to-end as one product | `yarn start` boots front+server+worker; the Tier-2 ledger's blocking proofs executed: (a) live seeded-workspace preset apply with rows > 0, (b) browser journeys for onboarding, documents tree, projects board, calendar recurring edit, chat two-session. A failing journey blocks its milestone, not "deferred" | partial — P0.1–P0.5 verified at Tier-1; browser journeys pending (deferred-batch7) |
-| M1 | **One-command app provisioning** (kills G1) | Deploying the suite = all A2E apps registered + catalog-visible; Settings → Applications shows the A2E section on a fresh server | (a) Image carries built app manifests: Dockerfile gains `twenty-apps` build stages (SDK `dev:build` per app in CI) + artifacts, and the server registers them on boot (reuse the existing application-sync/registration path — no invented platform); (b) `docker compose up` on a clean volume yields 6 registered apps without manual CLI, verified in the A2E section; (c) preset install works on that same deployment; (d) uninstall-preflight still refuses populated apps; (e) upgrade path 0.x → next on a populated workspace; (f) CI workflow (cd-docker-image) builds apps into the GHCR image so pulls are complete | planned |
+| M1 | **One-command app provisioning** (kills G1) | Deploying the suite = all A2E apps registered + catalog-visible; Settings → Applications shows the A2E section on a fresh server | (a) Image carries built app manifests: Dockerfile gains `twenty-apps` build stages (SDK `dev:build` per app in CI) + artifacts, and the server registers them on boot (reuse the existing application-sync/registration path — no invented platform); (b) `docker compose up` on a clean volume yields 6 registered apps without manual CLI, verified in the A2E section; (c) preset install works on that same deployment; (d) uninstall-preflight still refuses populated apps; (e) upgrade path 0.x → next on a populated workspace; (f) CI workflow (cd-docker-image) builds apps into the GHCR image so pulls are complete | partial — 2026-09-22 orchestrator: all 5 installable apps (documents/drive/bilan/projects/chat) INSTALLED live on the dev server incl. the US-074 projects fix re-proof (legs b-install/e-install level); docker absent on this machine, image-baking (a)/(f) and clean-volume compose (b) unrunnable |
 | M2 | **Presets that build a workspace** (kills G2/G4/G5) | Persona choice → apps installed AND starter content seeded → land on a useful Home with one primary action | (a) All 6 apps added to presets where personas need them (decision D-B1 executed: Bureau = documents+projects bundle entry); (b) live seeding verified rows > 0 for each persona (fix the post-install hook defect); (c) preview shows apps + content + blocked items honestly; (d) retry idempotent — no duplicate seeds; (e) individual→CRM→individual nav restoration e2e green; (f) onboarding copy reflects the real product (Bureau/Bilan wording) | partial — P1.6b/c unit-verified; live seeding + persona expansion open |
 | M3 | **Bureau complete** (Documents+Projects+Calendar) | Notion-like: tree editor with durable save/history, project boards, my-tasks, calendar with recurrence — all native surfaces | (a) Every P3/P4/P4C Tier-2 bullet in the ledger executed or explicitly descoped with reason; (b) E04/E05/E06/E07 browser journeys green on the M1 deployment; (c) doc↔task↔calendar cross-links work from record pages; (d) no new sidebar/shell — verified against the native-law §5 checklist per app | partial — engines and data layers largely verified at Tier-1; browser journeys pending |
 | M4 | **Bilan safe & complete** | Finance flows end-to-end: invoice→payment→ledger, fiches, subventions, budgets | (a) P7.0 safety gate live proofs (replay, numbering, period locks, alternate-API stamping); (b) P7.1d/2 open legs (invoice PDF+send, fiche editors, reports, grant wizard); (c) E10/E11 journeys green; (d) finance/privacy reviewer sign-off recorded | partial — app code strong, live proofs blocked behind M0 |
@@ -94,6 +94,12 @@ minimum product increment a user can touch. Status is one of
    application-sync/registration services that already exist. Deliverable: a
    clean-volume `docker compose up` where Settings → Applications lists all 6
    A2E apps.
+      — 2026-09-22 orchestrator: install legs 5/5 live (Documents 0.2.0,
+      Drive 0.1.0, Bilan 0.1.0, Projects 0.1.10 — the US-074 cross-app
+      relation-target schema-build fix re-proven live — and Chat 0.1.0; all
+      INSTALLED on the dev server, verified in `core.application`). Docker
+      leg unrunnable on this machine (no docker); image/CI legs (a)/(f)
+      untouched — the milestone itself stays open.
 2. **M0a — start the dev stack and run the five blocking browser journeys**
    (deferred-batch7 rows 2/7/9/12/14 are the highest-leverage). Record results
    in phase reports; each failure becomes the next executor slice.
@@ -669,6 +675,15 @@ persona, and the conventions every later phase relies on.
       (the running server's unauthenticated `/graphql` exposes only the
       public subset — running codegen now would clobber the generated file)
       and the browser journey stays open. Keep `[~]`.
+      — 2026-09-22 orchestrator: nav-restore defect + C2 provenance fix
+      verified live on Apple (US-075 + follow-up, phase-01-report 20:15) —
+      user-deleted managed row stays deleted across STUDENT→CRM; legacy
+      STUDENT workspace restores ×3 exactly once; preview/apply agreement
+      holds at every step. Remaining open: authenticated codegen, Settings
+      browser journey, and the NEW INSTALL_APP same-version defect found
+      during the pass (apply calls installApplication on an
+      already-installed app → APP_ALREADY_INSTALLED FAILED step; blocks
+      honest retry completion — executor queue).
 - [~] **P1.6d Starter bundles (after P1.6b and each app's safe slice):** meeting
       notes/project brief/PRD/one-on-one; project delivery/event retroplanning;
       Bilan cashflow/donation/grant/custom sheets and fiches. Add proposed
