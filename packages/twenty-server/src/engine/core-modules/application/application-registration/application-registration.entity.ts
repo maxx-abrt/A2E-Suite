@@ -138,6 +138,18 @@ export class ApplicationRegistrationEntity {
   @Column({ type: 'boolean', default: false })
   isPreInstalled: boolean;
 
+  // Filesystem path to the tarball for BUNDLED source-type apps (apps baked
+  // into the Docker image via the M1 twenty-apps-build stage). The
+  // `app:provision-bundled` startup command reads this path directly; no
+  // file-storage upload is required. Null for all other source types.
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.39.0_AddBundledAppSourcePathToApplicationRegistrationFastInstanceCommand_1789905000000',
+  })
+  bundledAppSourcePath: string | null;
+
   @Column({ type: 'jsonb', nullable: true })
   manifest: Manifest | null;
 

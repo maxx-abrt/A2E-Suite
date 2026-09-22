@@ -84,6 +84,8 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         );
       case ApplicationRegistrationSourceType.TARBALL:
         return this.resolveFromTarball(appRegistration);
+      case ApplicationRegistrationSourceType.BUNDLED:
+        return this.resolveFromBundledPath(appRegistration);
       case ApplicationRegistrationSourceType.LOCAL:
       case ApplicationRegistrationSourceType.OAUTH_ONLY:
         return null;
@@ -234,6 +236,60 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
 
       throw new ApplicationException(
         `Failed to resolve tarball for app ${appRegistration.universalIdentifier}: ${error}`,
+        ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED,
+      );
+    }
+  }
+
+  // Resolves a BUNDLED app from its filesystem path stored in the registration.
+  // This is used for apps baked into the Docker image at build time (M1).
+  private async resolveFromBundledPath(
+    appRegistration: ApplicationRegistrationEntity,
+  ): Promise<ResolvedPackage> {
+    if (!isDefined(appRegistration.bundledAppSourcePath)) {
+      throw new ApplicationException(
+        `App registration ${appRegistration.id} has sourceType=bundled but no bundledAppSourcePath`,
+        ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED,
+      );
+    }
+
+    const workDir = join(APP_FETCHER_TMPDIR, v4());
+
+    await fs.mkdir(workDir, { recursive: true });
+
+    try {
+      const tarballPath = appRegistration.bundledAppSourcePath;
+
+      // Verify the tarball still exists (could be absent if the image changed).
+      await fs.access(tarballPath);
+
+      await extractTarballSecurely(tarballPath, workDir);
+
+      const contentDir = await resolvePackageContentDir(workDir);
+      const manifest = await readJsonFileOrThrow<Manifest>(
+        contentDir,
+        'manifest.json',
+      );
+      const packageJson = await readJsonFileOrThrow<PackageJson>(
+        contentDir,
+        'package.json',
+      );
+
+      return {
+        extractedDir: contentDir,
+        cleanupDir: workDir,
+        manifest,
+        packageJson,
+      };
+    } catch (error) {
+      await this.cleanupExtractedDir(workDir);
+
+      if (error instanceof ApplicationException) {
+        throw error;
+      }
+
+      throw new ApplicationException(
+        `Failed to resolve bundled app ${appRegistration.universalIdentifier} from ${appRegistration.bundledAppSourcePath}: ${error}`,
         ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED,
       );
     }

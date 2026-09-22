@@ -1,4 +1,40 @@
 # ===========================================================================
+# A2E apps build stage (M1 one-command provisioning)
+# Builds each bundled A2E app into a tarball that the server registers and
+# auto-installs on every workspace at startup via `app:provision-bundled`.
+# Each app has its own Yarn workspace and twenty-sdk@2.31.0 from npm.
+# ===========================================================================
+
+FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491f4857e25e35a36ba7995 AS twenty-apps-build
+
+WORKDIR /apps
+
+# All five bundled apps — copied individually so layer caching kicks in when
+# only one app's source changes.
+COPY ./packages/twenty-apps/internal/a2e-documents /apps/a2e-documents
+COPY ./packages/twenty-apps/internal/a2e-accounting /apps/a2e-accounting
+COPY ./packages/twenty-apps/internal/a2e-projects   /apps/a2e-projects
+COPY ./packages/twenty-apps/internal/a2e-chat        /apps/a2e-chat
+COPY ./packages/twenty-apps/internal/a2e-drive       /apps/a2e-drive
+
+# Each app is an independent Yarn workspace; install deps and build with tarball.
+# `yarn twenty dev:build --tarball` is equivalent to the SDK CLI command that
+# the development runbook uses. The SDK (twenty-sdk@2.31.0) resolves from npm.
+RUN for app in a2e-documents a2e-accounting a2e-projects a2e-chat a2e-drive; do \
+      echo "Building $app ..."; \
+      cd /apps/$app && \
+      yarn install --immutable && \
+      yarn twenty dev:build --tarball && \
+      cd /apps; \
+    done
+
+# Collect all tarballs into a single dist directory.
+RUN mkdir -p /apps/dist && \
+    find /apps -name "*.tgz" -path "*/.twenty/output/*" -exec cp {} /apps/dist/ \; && \
+    echo "Bundled tarballs:" && ls /apps/dist/
+
+
+# ===========================================================================
 # Dependency stages
 # ===========================================================================
 
@@ -129,6 +165,12 @@ COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-emails/package
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-emails/dist /app/packages/twenty-emails/dist
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-client-sdk/dist /app/packages/twenty-client-sdk/dist
+
+# Bundled A2E app tarballs (M1 one-command provisioning).  The startup command
+# `app:provision-bundled` reads these on every boot and registers any
+# unregistered app as BUNDLED + isPreInstalled=true, without manual CLI work.
+# Set DISABLE_BUNDLED_APP_PROVISIONING=true in .env to opt out.
+COPY --chown=1000 --from=twenty-apps-build /apps/dist /app/packages/twenty-apps/dist
 
 LABEL org.opencontainers.image.source=https://github.com/maxx-abrt/A2E-Suite
 LABEL org.opencontainers.image.description="Twenty server image (no frontend)."

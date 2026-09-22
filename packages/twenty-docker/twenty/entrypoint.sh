@@ -38,6 +38,21 @@ setup_and_migrate_db() {
     echo "Successfully migrated DB!"
 }
 
+provision_bundled_apps() {
+    if [ "${DISABLE_BUNDLED_APP_PROVISIONING}" = "true" ]; then
+        echo "Bundled app provisioning is disabled, skipping..."
+        return
+    fi
+
+    echo "Provisioning bundled A2E apps..."
+    if yarn command:prod app:provision-bundled; then
+        echo "Successfully provisioned bundled apps!"
+    else
+        echo "Warning: Bundled app provisioning failed, but continuing startup..."
+        echo "  Apps can be provisioned manually with: yarn command:prod app:provision-bundled"
+    fi
+}
+
 register_background_jobs() {
     if [ "${DISABLE_CRON_JOBS_REGISTRATION}" = "true" ]; then
         echo "Cron job registration is disabled, skipping..."
@@ -53,6 +68,7 @@ register_background_jobs() {
 }
 
 setup_and_migrate_db
+provision_bundled_apps
 register_background_jobs
 
 # Continue with the original Docker command

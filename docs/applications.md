@@ -31,7 +31,9 @@ workspace installation is not proof every background job or user flow works.
 | --- | --- | --- | --- |
 | Documents | [a2e-documents](../packages/twenty-apps/internal/a2e-documents/src/application.config.ts), `A2E Documents` | `19126a9c-7cc0-4368-aaba-c7e5a87b0c48` | A2E allowlist; all non-CRM presets |
 | Bilan | [a2e-accounting](../packages/twenty-apps/internal/a2e-accounting/src/application.config.ts), `Bilan` | `b11a0000-0000-4000-8000-000000000001` | A2E allowlist; Non-profit and Small business presets |
-| Projects | [a2e-projects](../packages/twenty-apps/internal/a2e-projects/src/application.config.ts), `A2E Projects` | `4f759655-84f8-434d-9c76-ee1850e8c1a4` | Not in A2E allowlist or presets |
+| Projects | [a2e-projects](../packages/twenty-apps/internal/a2e-projects/src/application.config.ts), `A2E Projects` | `4f759655-84f8-434d-9c76-ee1850e8c1a4` | A2E allowlist (added US-077); no preset yet (D-B1 pending) |
+| Chat | [a2e-chat](../packages/twenty-apps/internal/a2e-chat/src/application.config.ts), `A2E Chat` | `e2dce399-87f1-4548-b307-5f368b4d5dd4` | A2E allowlist (added US-077); no preset yet |
+| Drive | [a2e-drive](../packages/twenty-apps/internal/a2e-drive/src/application.config.ts), `A2E Drive` | `b11cd01f-75de-4acd-8e67-0e9c484fde02` | A2E allowlist (added US-077); no preset yet |
 | Bureau | No separate application definition in `internal/` | None assigned | Product packaging decision pending; do not create duplicate domain objects |
 
 The IDs above belong to existing apps and must not be regenerated to fix
@@ -140,7 +142,7 @@ publication and installation; do not substitute one for the other.
 | --- | --- | --- |
 | No A2E section | Both hook result lists empty | Verify catalog registration/listing/cache and workspace installs; proposed visible unavailable/empty state is D1 |
 | Bilan absent after platform deployment | App packaging/provisioning separate from Docker build | Verify published package and registration on that server, then install in the intended workspace |
-| Projects absent from A2E section | Its ID is not in the allowlist | D1 must wire discovery and chosen presets after compatibility/install tests |
+| Projects absent from A2E section | Its ID was not in the allowlist | Fixed US-077: Projects, Chat, Drive IDs added to the A2E allowlist and OnboardingInstallableApps |
 | Bureau absent | No Bureau manifest or bundle contract | Confirm packaging decision, reuse Documents/Projects; not a spelling fix |
 | Preset selected but apps absent | Service logs/skips unregistered apps and catches install failures | Inspect each registration/install result; D1 needs explicit partial status and retry |
 | Individual → CRM leaves entries hidden | Caller invokes navigation helper only for nonempty hidden lists | Regression-test reverse transition before repairing the caller |
