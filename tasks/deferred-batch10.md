@@ -82,3 +82,22 @@ D04 CERFA, D07 advanced editor, D-M1 provisioning mechanism).
 code work is identifiable on the current PLAN.md + phase reports. Next steps
 require the orchestrator to run Tier-2 browser/live proofs and record new
 defects for the executor queue.
+
+---
+
+## Update (2026-09-22, HEAD 341c07d0) — US-077/US-078/US-079 completed this session
+
+**US-077**: A2E allowlist expanded — Projects, Chat, Drive added to `A2eSuiteApplicationUniversalIdentifiers.ts` and `OnboardingInstallableApps.ts`. Now 5 apps appear in Settings → Applications → A2E Suite once registered. Tier-1 complete; Tier-2 residual: live server verification.
+
+**US-078+US-079**: M1 one-command provisioning implemented:
+- Dockerfile `twenty-apps-build` stage builds all 5 app tarballs (`yarn install + dev:build --tarball`); copies to `/app/packages/twenty-apps/dist`
+- New `ApplicationRegistrationSourceType.BUNDLED` enum value
+- New `bundledAppSourcePath` column in `ApplicationRegistrationEntity` (2-39 migration `1789905000000`)
+- `ApplicationPackageFetcherService`: BUNDLED resolves from filesystem path
+- `ProvisionBundledAppsCommand` (`app:provision-bundled`): registers bundled apps at boot; idempotent
+- `entrypoint.sh`: `provision_bundled_apps()` runs after upgrade, calls provision-bundled + install-pre-installed-apps
+- `PreInstalledAppsService.installOnWorkspace`: APP_ALREADY_INSTALLED no longer error-logs
+
+**Remaining from this update (Tier 2 / orchestrator):** Docker build verification + live boot proof (Settings → Applications shows 5 A2E apps on a fresh deployment).
+
+**Honest executor queue after this update:** empty for code-level work. All remaining items are Tier-2 browser/live proofs, decision-gated (D-B1, D-M1, D02), or environment-blocked. See deferred-batch10.md main section.
