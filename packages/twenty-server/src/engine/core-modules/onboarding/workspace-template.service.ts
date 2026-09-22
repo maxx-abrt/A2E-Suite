@@ -43,8 +43,15 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
 type WorkspaceTemplateOperationKeyValueTypeMap = {
-  [key: string]: ApplyTemplateResult;
+  [key: string]: ApplyTemplateResult | string[];
 };
+
+// Workspace-scoped provenance of the standard navigation rows hidden BY THE
+// TEMPLATE FLOW (as opposed to rows the user deleted manually). Restore
+// decisions read this record so a template switch restores only what a
+// template hid, never user-removed navigation (C2).
+const TEMPLATE_HIDDEN_NAVIGATION_KEY_VALUE_PAIR_KEY =
+  'template-hidden-navigation';
 
 // ApplicationInstallModule must NOT be imported into OnboardingModule: it would
 // close an import cycle with the GraphQL query-runner modules and crash boot
@@ -390,9 +397,11 @@ export class WorkspaceTemplateService {
       }
 
       if (step.kind === 'navigation-visibility') {
-        // The step is driven by current row state, not the hide-list: a
-        // CRM-off template that previously deleted managed rows must be
-        // restored by a later CRM apply even when CRM hides nothing. The
+        // The step is driven by the template-hidden provenance record, not the
+        // hide-list alone: a CRM-off template that previously deleted managed
+        // rows must be restored by a later CRM apply even when CRM hides
+        // nothing, while a row the USER deleted manually (no provenance) is
+        // never resurrected (C2: restore only what the template hid). The
         // method no-ops (returns early) when there is nothing to delete and
         // nothing to restore, so a complete workspace stays untouched.
         try {
@@ -666,23 +675,14 @@ export class WorkspaceTemplateService {
       });
     }
 
-    const navigationChanges: TemplatePreviewNavigationChange[] = [
-      ...definition.hiddenStandardNavigationMenuItemUniversalIdentifiers.map(
-        (universalIdentifier) => ({
-          universalIdentifier,
-          action: 'hide' as const,
-        }),
-      ),
-      ...TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS.filter(
-        (universalIdentifier) =>
-          !definition.hiddenStandardNavigationMenuItemUniversalIdentifiers.includes(
-            universalIdentifier,
-          ),
-      ).map((universalIdentifier) => ({
-        universalIdentifier,
-        action: 'restore' as const,
-      })),
-    ];
+    // The preview must advertise the same diff the apply will run: hides are
+    // limited to rows still present, restores to rows a template previously
+    // hid (provenance) that this template does not keep hidden. Advertising
+    // intent instead of the resolved diff would contradict the apply.
+    const navigationChanges = await this.buildTemplateNavigationPreviewChanges({
+      workspaceId,
+      definition,
+    });
 
     // Only preview content for apps that are actually ready on this server:
     // an unregistered or incompatible app cannot seed its bundle, so its
@@ -843,9 +843,19 @@ export class WorkspaceTemplateService {
       hiddenUniversalIdentifierSet.has(navigationMenuItem.universalIdentifier),
     );
 
+    // Only rows the template flow hid are restore candidates: an absent row
+    // without provenance was removed by the user and must stay deleted.
+    const templateHiddenUniversalIdentifiers =
+      await this.resolveTemplateHiddenNavigationUniversalIdentifiers({
+        workspaceId,
+      });
+
     const universalIdentifiersToRestore =
-      TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS.filter(
+      templateHiddenUniversalIdentifiers.filter(
         (universalIdentifier) =>
+          TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS.includes(
+            universalIdentifier,
+          ) &&
           !hiddenUniversalIdentifierSet.has(universalIdentifier) &&
           !existingItemsByUniversalIdentifier.has(universalIdentifier),
       );
@@ -898,6 +908,127 @@ export class WorkspaceTemplateService {
         `Template navigation migration failed for workspace ${workspaceId}: ${JSON.stringify(result, null, 2)}`,
       );
     }
+
+    // Persist the provenance only after the migration succeeded: rows this
+    // apply hid enter the record, rows it restored leave it. Writing earlier
+    // would make a retry after a failed restore migration skip the rows it
+    // already removed from the record, losing them permanently. Only rows the
+    // builder actually created leave the record — a warn-skipped row stays so
+    // the next apply retries it.
+    const restoredUniversalIdentifierSet = new Set(
+      navigationMenuItemsToCreate.map(
+        (navigationMenuItem) => navigationMenuItem.universalIdentifier,
+      ),
+    );
+
+    const nextTemplateHiddenUniversalIdentifiers = [
+      ...new Set([
+        ...templateHiddenUniversalIdentifiers.filter(
+          (universalIdentifier) =>
+            !restoredUniversalIdentifierSet.has(universalIdentifier),
+        ),
+        ...navigationMenuItemsToDelete.map(
+          (navigationMenuItem) => navigationMenuItem.universalIdentifier,
+        ),
+      ]),
+    ];
+
+    await this.keyValuePairService.set({
+      type: KeyValuePairType.USER_VARIABLE,
+      userId: null,
+      workspaceId,
+      key: TEMPLATE_HIDDEN_NAVIGATION_KEY_VALUE_PAIR_KEY,
+      value: nextTemplateHiddenUniversalIdentifiers,
+    });
+  }
+
+  // The rows a template previously hid on this workspace. Prefer the persisted
+  // provenance record; workspaces configured before the record existed are
+  // inferred once from the persisted template row (its hide-list is the only
+  // legacy writer of managed-row deletions).
+  private async resolveTemplateHiddenNavigationUniversalIdentifiers({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<string[]> {
+    const [storedKeyValuePair] = (await this.keyValuePairService.get({
+      type: KeyValuePairType.USER_VARIABLE,
+      userId: null,
+      workspaceId,
+      key: TEMPLATE_HIDDEN_NAVIGATION_KEY_VALUE_PAIR_KEY,
+    })) as unknown as Array<{ value: string[] } | undefined>;
+
+    const managedUniversalIdentifierSet = new Set(
+      TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
+    );
+
+    if (Array.isArray(storedKeyValuePair?.value)) {
+      return storedKeyValuePair.value.filter((universalIdentifier) =>
+        managedUniversalIdentifierSet.has(universalIdentifier),
+      );
+    }
+
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+      select: { id: true, workspaceTemplate: true },
+    });
+
+    if (!isDefined(workspace?.workspaceTemplate)) {
+      return [];
+    }
+
+    return getWorkspaceTemplateDefinition(
+      workspace.workspaceTemplate,
+    ).hiddenStandardNavigationMenuItemUniversalIdentifiers.filter(
+      (universalIdentifier) =>
+        managedUniversalIdentifierSet.has(universalIdentifier),
+    );
+  }
+
+  private async buildTemplateNavigationPreviewChanges({
+    workspaceId,
+    definition,
+  }: {
+    workspaceId: string;
+    definition: WorkspaceTemplateDefinition;
+  }): Promise<TemplatePreviewNavigationChange[]> {
+    const { flatNavigationMenuItemMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatNavigationMenuItemMaps',
+      ]);
+
+    const presentUniversalIdentifiers = new Set(
+      Object.values(flatNavigationMenuItemMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .map((navigationMenuItem) => navigationMenuItem.universalIdentifier),
+    );
+
+    const templateHiddenUniversalIdentifiers =
+      await this.resolveTemplateHiddenNavigationUniversalIdentifiers({
+        workspaceId,
+      });
+
+    return [
+      ...definition.hiddenStandardNavigationMenuItemUniversalIdentifiers
+        .filter((universalIdentifier) =>
+          presentUniversalIdentifiers.has(universalIdentifier),
+        )
+        .map((universalIdentifier) => ({
+          universalIdentifier,
+          action: 'hide' as const,
+        })),
+      ...templateHiddenUniversalIdentifiers
+        .filter(
+          (universalIdentifier) =>
+            !definition.hiddenStandardNavigationMenuItemUniversalIdentifiers.includes(
+              universalIdentifier,
+            ) && !presentUniversalIdentifiers.has(universalIdentifier),
+        )
+        .map((universalIdentifier) => ({
+          universalIdentifier,
+          action: 'restore' as const,
+        })),
+    ];
   }
 
   private async buildStandardNavigationMenuItemsToRestore({

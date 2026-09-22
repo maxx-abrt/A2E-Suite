@@ -104,6 +104,24 @@ describe('WorkspaceTemplateService', () => {
     });
   };
 
+  // Key-aware stand-in for the workspace-scoped key-value store: the service
+  // persists both operation results and the template-hidden navigation
+  // provenance record under distinct keys.
+  const TEMPLATE_HIDDEN_NAVIGATION_RECORD_KEY = 'template-hidden-navigation';
+  const storedKeyValuePairs = new Map<string, unknown>();
+
+  const keyValueStoreGet = jest.fn(async ({ key }: { key: string }) =>
+    storedKeyValuePairs.has(key)
+      ? [{ value: storedKeyValuePairs.get(key) }]
+      : [],
+  );
+
+  const keyValueStoreSet = jest.fn(
+    async ({ key, value }: { key: string; value: unknown }) => {
+      storedKeyValuePairs.set(key, value);
+    },
+  );
+
   const workspaceUpdate = jest.fn().mockResolvedValue(undefined);
   const findOneByUniversalIdentifierGlobal = jest.fn();
   const installApplication = jest.fn().mockResolvedValue(true);
@@ -125,8 +143,9 @@ describe('WorkspaceTemplateService', () => {
     .fn()
     .mockResolvedValue({ compatible: true });
   const findByUniversalIdentifier = jest.fn().mockResolvedValue(null);
-  const keyValuePairGet = jest.fn().mockResolvedValue([]);
-  const keyValuePairSet = jest.fn().mockResolvedValue(undefined);
+  const keyValuePairGet = keyValueStoreGet;
+  const keyValuePairSet = keyValueStoreSet;
+  const workspaceFindOne = jest.fn().mockResolvedValue(null);
 
   const moduleRefGet = jest.fn();
 
@@ -144,7 +163,7 @@ describe('WorkspaceTemplateService', () => {
         WorkspaceTemplateService,
         {
           provide: getRepositoryToken(WorkspaceEntity),
-          useValue: { update: workspaceUpdate },
+          useValue: { update: workspaceUpdate, findOne: workspaceFindOne },
         },
         {
           provide: ApplicationRegistrationService,
@@ -192,9 +211,10 @@ describe('WorkspaceTemplateService', () => {
   afterEach(() => {
     jest.clearAllMocks();
     // clearAllMocks keeps mockResolvedValue implementations; the persisted
-    // operation store must start empty and the cached navigation rows empty
-    // for every test.
-    keyValuePairGet.mockReset().mockResolvedValue([]);
+    // operation store and the provenance record must start empty and the
+    // cached navigation rows empty for every test.
+    storedKeyValuePairs.clear();
+    workspaceFindOne.mockReset().mockResolvedValue(null);
     resetNavigationRowState();
   });
 
@@ -325,7 +345,10 @@ describe('WorkspaceTemplateService', () => {
         ],
       };
 
-      keyValuePairGet.mockResolvedValue([{ value: storedOperation }]);
+      storedKeyValuePairs.set(
+        'template-operation:op-seed-retry',
+        storedOperation,
+      );
       findOneByUniversalIdentifierGlobal.mockImplementation(
         (universalIdentifier: string) =>
           Promise.resolve(
@@ -467,7 +490,7 @@ describe('WorkspaceTemplateService', () => {
         ],
       };
 
-      keyValuePairGet.mockResolvedValue([{ value: storedOperation }]);
+      storedKeyValuePairs.set('template-operation:op-1', storedOperation);
 
       const result = await service.applyWorkspaceTemplateOperation({
         workspaceId,
@@ -500,7 +523,7 @@ describe('WorkspaceTemplateService', () => {
         ],
       };
 
-      keyValuePairGet.mockResolvedValue([{ value: storedOperation }]);
+      storedKeyValuePairs.set('template-operation:op-2', storedOperation);
       findOneByUniversalIdentifierGlobal.mockResolvedValue(
         buildRegistration('registration-1'),
       );
@@ -538,7 +561,7 @@ describe('WorkspaceTemplateService', () => {
         steps: [],
       };
 
-      keyValuePairGet.mockResolvedValue([{ value: storedOperation }]);
+      storedKeyValuePairs.set('template-operation:op-4', storedOperation);
 
       await expect(
         service.applyWorkspaceTemplateOperation({
@@ -585,6 +608,10 @@ describe('WorkspaceTemplateService', () => {
 
     it('restores the managed CRM navigation rows a persona template hid when a later CRM setup runs', async () => {
       mockNavigationRowState({ presentUniversalIdentifiers: [] });
+      storedKeyValuePairs.set(
+        TEMPLATE_HIDDEN_NAVIGATION_RECORD_KEY,
+        TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
+      );
 
       const result = await service.applyWorkspaceTemplateOperation({
         workspaceId,
@@ -620,6 +647,11 @@ describe('WorkspaceTemplateService', () => {
           },
         }),
       );
+      // The restore consumed the provenance record: a later apply must not
+      // consider the rows template-hidden anymore.
+      expect(
+        storedKeyValuePairs.get(TEMPLATE_HIDDEN_NAVIGATION_RECORD_KEY),
+      ).toEqual([]);
     });
 
     it('does not run the restore migration again once the managed rows were restored', async () => {
@@ -630,6 +662,10 @@ describe('WorkspaceTemplateService', () => {
           '20202020-b004-4b04-8b04-c0aba11c0004',
         ],
       });
+      storedKeyValuePairs.set(
+        TEMPLATE_HIDDEN_NAVIGATION_RECORD_KEY,
+        TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
+      );
 
       const result = await service.applyWorkspaceTemplateOperation({
         workspaceId,
@@ -655,6 +691,11 @@ describe('WorkspaceTemplateService', () => {
       validateWorkspaceCompatibility.mockResolvedValue({
         compatible: true,
       });
+      mockNavigationRowState({
+        presentUniversalIdentifiers: [
+          ...TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
+        ],
+      });
 
       const preview = await service.getWorkspaceTemplatePreview({
         workspaceId,
@@ -676,8 +717,8 @@ describe('WorkspaceTemplateService', () => {
           currentlyInstalled: false,
         },
       ]);
-      // The managed union is exactly the three rows this template hides, so
-      // there is nothing to restore.
+      // The managed union is exactly the three rows this template hides and
+      // all three are still present, so there is nothing to restore.
       expect(preview.navigationChanges).toHaveLength(3);
       expect(
         preview.navigationChanges.every(
@@ -865,6 +906,11 @@ describe('WorkspaceTemplateService', () => {
           },
         }),
       );
+      // The hidden row entered the provenance record: only template-hidden
+      // rows are restore candidates later.
+      expect(
+        storedKeyValuePairs.get(TEMPLATE_HIDDEN_NAVIGATION_RECORD_KEY),
+      ).toEqual(['20202020-b001-4b01-8b01-c0aba11c0001']);
     });
 
     it('leaves navigation untouched for the CRM template', async () => {
@@ -884,37 +930,122 @@ describe('WorkspaceTemplateService', () => {
       });
 
       expect(validateBuildAndRunWorkspaceMigration).not.toHaveBeenCalled();
+      // No provenance record is written when nothing changed.
+      expect(
+        storedKeyValuePairs.has(TEMPLATE_HIDDEN_NAVIGATION_RECORD_KEY),
+      ).toBe(false);
+    });
+
+    it('never restores a managed row the user deleted manually', async () => {
+      // The exact defect this slice fixes: absent rows with no template-hide
+      // provenance were resurrected by any later apply.
+      mockNavigationRowState({ presentUniversalIdentifiers: [] });
+      workspaceFindOne.mockResolvedValue({
+        id: workspaceId,
+        workspaceTemplate: WorkspaceTemplate.CRM,
+      });
+
+      const result = await service.applyWorkspaceTemplateOperation({
+        workspaceId,
+        idempotencyKey: 'op-nav-user-deleted',
+        template: WorkspaceTemplate.CRM,
+      });
+
+      expect(
+        result.steps.find((step) => step.kind === 'navigation-visibility')
+          ?.status,
+      ).toBe('succeeded');
+      expect(validateBuildAndRunWorkspaceMigration).not.toHaveBeenCalled();
+    });
+
+    it('infers the template-hidden rows once from the persisted workspace template when no provenance record exists', async () => {
+      // Workspaces configured before the provenance record existed: the
+      // persisted template row is the only legacy writer of managed-row
+      // deletions, so its hide-list is the inferred provenance.
+      mockNavigationRowState({ presentUniversalIdentifiers: [] });
+      workspaceFindOne.mockResolvedValue({
+        id: workspaceId,
+        workspaceTemplate: WorkspaceTemplate.STUDENT,
+      });
+
+      const result = await service.applyWorkspaceTemplateOperation({
+        workspaceId,
+        idempotencyKey: 'op-nav-legacy-inference',
+        template: WorkspaceTemplate.CRM,
+      });
+
+      expect(
+        result.steps.find((step) => step.kind === 'navigation-visibility')
+          ?.status,
+      ).toBe('succeeded');
+      expect(validateBuildAndRunWorkspaceMigration).toHaveBeenCalledWith(
+        expect.objectContaining({
+          allFlatEntityOperationByMetadataName: {
+            navigationMenuItem: {
+              flatEntityToCreate: [
+                expect.objectContaining({
+                  universalIdentifier: '20202020-b001-4b01-8b01-c0aba11c0001',
+                }),
+                expect.objectContaining({
+                  universalIdentifier: '20202020-b005-4b05-8b05-c0aba11c0005',
+                }),
+                expect.objectContaining({
+                  universalIdentifier: '20202020-b004-4b04-8b04-c0aba11c0004',
+                }),
+              ],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+          },
+        }),
+      );
     });
   });
 
   describe('preview and apply navigation agreement', () => {
     it('applies exactly the navigation changes the preview advertises for CRM, individual and student', async () => {
+      // CRM scenario: a persona previously hid the managed rows (provenance
+      // record present), so the CRM apply must restore them all.
       const scenarios = [
-        { template: WorkspaceTemplate.CRM, presentUniversalIdentifiers: [] },
+        {
+          template: WorkspaceTemplate.CRM,
+          presentUniversalIdentifiers: [],
+          templateHiddenUniversalIdentifiers: [
+            ...TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
+          ],
+        },
         {
           template: WorkspaceTemplate.INDIVIDUAL,
           presentUniversalIdentifiers: [
             ...TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
           ],
+          templateHiddenUniversalIdentifiers: [],
         },
         {
           template: WorkspaceTemplate.STUDENT,
           presentUniversalIdentifiers: [
             ...TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
           ],
+          templateHiddenUniversalIdentifiers: [],
         },
       ];
 
       for (const scenario of scenarios) {
         validateBuildAndRunWorkspaceMigration.mockClear();
+        storedKeyValuePairs.delete(TEMPLATE_HIDDEN_NAVIGATION_RECORD_KEY);
+        storedKeyValuePairs.set(
+          TEMPLATE_HIDDEN_NAVIGATION_RECORD_KEY,
+          scenario.templateHiddenUniversalIdentifiers,
+        );
+        // The preview resolves the diff against current row state, so the
+        // row state must be in place before it is captured.
+        mockNavigationRowState({
+          presentUniversalIdentifiers: scenario.presentUniversalIdentifiers,
+        });
 
         const preview = await service.getWorkspaceTemplatePreview({
           workspaceId,
           template: scenario.template,
-        });
-
-        mockNavigationRowState({
-          presentUniversalIdentifiers: scenario.presentUniversalIdentifiers,
         });
 
         await service.applyWorkspaceTemplate({

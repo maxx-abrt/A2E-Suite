@@ -76,7 +76,12 @@ describe('WorkspaceTemplateService partial failure and resume', () => {
         WorkspaceTemplateService,
         {
           provide: getRepositoryToken(WorkspaceEntity),
-          useValue: { update: workspaceUpdate },
+          useValue: {
+            update: workspaceUpdate,
+            // Fresh workspace: no persisted template row, so no legacy
+            // navigation provenance is inferred.
+            findOne: jest.fn().mockResolvedValue(null),
+          },
         },
         {
           provide: ApplicationRegistrationService,
