@@ -1398,3 +1398,37 @@ CLAIMED — US-075/nav-restore-defect — deepseek-v4.1-flash — 2026-09-22T15:
 **Missing for tick (Tier 2, orchestrator):** live STUDENT-apply on Apple (or a clean workspace) with A2E Documents 0.2.0 already installed → `applyWorkspaceTemplateOperation` with a new idempotency key → INSTALL_APP step reports `succeeded`, `appliedTemplateKeyVersion` set. This is the exact scenario reproduced live in the 20:15 entry.
 **Do not redo:** the `applicationService.findByUniversalIdentifier` call in `getWorkspaceTemplatePreview` (lines 657-662) — that is the preview path and is correct and untouched; `installApplication`'s own `validateVersionProgression` guard — still fires for genuinely new version conflicts.
 **Remaining open (Tier 2, per deferred-batch9.md):** all other bullets remain Tier 2, blocked upstream, or decision-gated — unchanged from batch 9 census.
+
+## 2026-09-22 22:30 UTC — [executor] — US-077 / US-078 / US-079 / PreInstalledAppsService improvement
+
+**Tasks:** US-077 (A2E allowlist + OnboardingInstallableApps expansion), US-078+US-079 (M1 bundled app provisioning — Dockerfile + ProvisionBundledAppsCommand)
+
+**Claim:** done-for-review (US-077 complete; US-078/US-079 complete at Tier 0/1; Docker build + live boot verification are Tier-2/CI)
+
+**Base:** a2b0a2dd (HEAD after US-076)
+
+**US-077 — A2E allowlist + OnboardingInstallableApps:**
+- `A2eSuiteApplicationUniversalIdentifiers.ts`: added a2e-projects (`4f759655`), a2e-chat (`e2dce399`), a2e-drive (`b11cd01f`) to the front-end A2E allowlist — Settings → Applications → A2E Suite section now shows all 5 apps (not just Documents + Bilan) once they are registered on the server
+- `OnboardingInstallableApps.ts`: added Projects / Chat / Drive entries with descriptive Lingui labels + descriptions alongside the existing Bureau, Bilan and platform apps
+- `docs/applications.md`: corrected the "Projects absent from A2E section" troubleshooting entry; added Chat + Drive rows to the app table
+
+**US-078+US-079 — M1 one-command Docker provisioning:**
+- **Dockerfile (`twenty-apps-build` stage):** new multi-stage build runs `yarn install && yarn twenty dev:build --tarball` for each of the 5 internal apps (a2e-documents/accounting/projects/chat/drive); collects tarballs into `/app/packages/twenty-apps/dist`; the resulting directory is COPY'd into the production server image at the same path — solving G1 "no `twenty-apps/` directory at all"
+- **`ApplicationRegistrationSourceType.BUNDLED`:** new enum value for apps registered from the server filesystem (no file-storage upload needed)
+- **`ApplicationRegistrationEntity.bundledAppSourcePath`:** nullable `text` column storing the tarball path; decorated with `@WasIntroducedInUpgrade`
+- **2-39 instance command (1789905000000):** `ADD COLUMN bundledAppSourcePath text` — strictly increasing epoch, `up`/`down`; registered in `V2_39_UpgradeVersionCommandModule`
+- **`ApplicationPackageFetcherService`:** new `resolveFromBundledPath` method reads the tarball from `registration.bundledAppSourcePath` and resolves it exactly like `resolveFromTarball` but without file-storage lookup; `BUNDLED` case dispatches to it
+- **`ProvisionBundledAppsCommand` (`app:provision-bundled`):** NestJS CLI command; reads `*.tgz` from `BUNDLED_APPS_DIR` (env, default `/app/packages/twenty-apps/dist`); extracts manifest+package.json; creates registrations with `sourceType=BUNDLED, isPreInstalled=true, ownerWorkspaceId=null`; idempotent (skips same version, updates on newer); `--dry-run` flag; graceful absent-dir no-op for non-Docker servers; wired into `DatabaseCommandModule` (+ `ApplicationRegistrationEntity` added to `TypeOrmModule.forFeature`)
+- **`entrypoint.sh`:** `provision_bundled_apps()` function added; calls `app:provision-bundled` then `install-pre-installed-apps` (backfill to all existing workspaces) after `setup_and_migrate_db`; `DISABLE_BUNDLED_APP_PROVISIONING=true` opt-out; failures are warnings, not boot-blockers
+- **`PreInstalledAppsService.installOnWorkspace`:** improved `APP_ALREADY_INSTALLED` handling — now logged at info level (not error) rather than polluting error logs on every boot
+- **Spec file:** `provision-bundled-apps.command.spec.ts` — 5 unit cases covering: absent dir (silent no-op), new registration (correct fields), same-version skip, version-upgrade update, dry-run no write
+
+**Quality gates (self-review, CI verifies):** all imports resolve; entity field is nullable with `@WasIntroducedInUpgrade`; migration timestamp `1789905000000` strictly > prior max (`1789904000000`); `BUNDLED` case in enum enum `registerEnumType` is additive; package-fetcher `resolveFromBundledPath` follows exact same try/finally+cleanup pattern as `resolveFromTarball`; command uses `@Injectable()` + `@InjectRepository` per NestJS patterns; `ProvisionBundledAppsCommand` injected into `DatabaseCommandModule` providers with `ApplicationRegistrationEntity` in `TypeOrmModule.forFeature`; no `twenty-shared` change; no app-source change; no locale catalog change.
+
+**Missing for tick (Tier 2, orchestrator):**
+- Docker build: `docker build --target twenty -f packages/twenty-docker/twenty/Dockerfile .` must succeed, `dist/` must contain 5 tarballs, and M1 clean-volume compose proof must show all 5 apps in Settings → Applications
+- Live boot on a fresh server (no existing registrations): `app:provision-bundled` registers 5 apps; `install-pre-installed-apps` installs them on all workspaces
+- Live boot on a server with existing registrations (same version): command skips; no duplicate registrations
+- Live upgrade: image with newer bundled version → `app:provision-bundled` updates registration; workspace install-pre-installed-apps upgrades installed app
+
+**Remaining M1 gap (NOT this slice):** CI workflow `cd-docker-image.yaml` building apps in the pipeline (M1 exit criterion f) — the Dockerfile stage builds them, but the CI workflow's build arguments and caching strategy need a separate orchestrator pass to verify the pipeline timing (the `twenty-apps-build` stage adds ~10-15 min to CI time).

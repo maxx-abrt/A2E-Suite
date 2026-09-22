@@ -59,6 +59,20 @@ export class PreInstalledAppsService {
             workspaceId,
           });
         } catch (error) {
+          // APP_ALREADY_INSTALLED is not a failure — it means the app was
+          // previously installed (e.g. from an earlier boot). Log at debug
+          // level and continue.
+          if (
+            error instanceof ApplicationException &&
+            error.code === ApplicationExceptionCode.APP_ALREADY_INSTALLED
+          ) {
+            this.logger.log(
+              `Pre-installed app "${registration.name}" already installed on workspace ${workspaceId}, skipping`,
+            );
+
+            return;
+          }
+
           this.logger.error(
             `Failed to install pre-installed app "${registration.name}" (${registration.id}) on workspace ${workspaceId}: ${
               error instanceof Error ? error.message : String(error)

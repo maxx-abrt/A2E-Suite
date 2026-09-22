@@ -51,6 +51,15 @@ provision_bundled_apps() {
         echo "Warning: Bundled app provisioning failed, but continuing startup..."
         echo "  Apps can be provisioned manually with: yarn command:prod app:provision-bundled"
     fi
+
+    # Install newly-registered pre-installed apps on all existing workspaces.
+    # This is idempotent — already-installed apps are skipped by the install service.
+    echo "Installing pre-installed apps on all workspaces..."
+    if yarn command:prod install-pre-installed-apps; then
+        echo "Successfully installed pre-installed apps!"
+    else
+        echo "Warning: Pre-installed app installation failed, but continuing startup..."
+    fi
 }
 
 register_background_jobs() {
