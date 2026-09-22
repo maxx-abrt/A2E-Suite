@@ -1,22 +1,26 @@
 [
   {
-    "content": "Read PLAN.md + prd.json + phase reports — understand current state",
+    "content": "US-076: Fix INSTALL_APP idempotency",
     "status": "completed"
   },
   {
-    "content": "US-076: Fix INSTALL_APP idempotency — skip/succeed when app already installed at compatible version",
+    "content": "US-077: Add projects/chat/drive to A2E allowlist + OnboardingInstallableApps",
     "status": "completed"
   },
   {
-    "content": "Update tasks/prd.json with US-076 and completion notes",
+    "content": "US-078+079: M1 Dockerfile build stages + ProvisionBundledAppsCommand",
     "status": "completed"
   },
   {
-    "content": "Append dated entry to docs/plan/phases/phase-01-report.md",
+    "content": "Migration registered in INSTANCE_COMMANDS",
     "status": "completed"
   },
   {
-    "content": "Commit all changes",
+    "content": "Dockerfile corepack enable + docs updated",
+    "status": "completed"
+  },
+  {
+    "content": "Spec, phase reports, deferred-batch docs updated",
     "status": "completed"
   }
 ]
