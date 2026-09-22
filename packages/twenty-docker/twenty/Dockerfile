@@ -9,6 +9,10 @@ FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491
 
 WORKDIR /apps
 
+# Enable corepack so the `packageManager` field in each app's package.json
+# resolves yarn@4.13.0 without a network fetch (Node 24 ships corepack bundled).
+RUN corepack enable yarn
+
 # All five bundled apps — copied individually so layer caching kicks in when
 # only one app's source changes.
 COPY ./packages/twenty-apps/internal/a2e-documents /apps/a2e-documents
