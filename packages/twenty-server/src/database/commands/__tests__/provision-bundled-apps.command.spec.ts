@@ -83,7 +83,6 @@ describe('ProvisionBundledAppsCommand', () => {
         },
       ],
     }).compile();
-
     command = module.get<ProvisionBundledAppsCommand>(
       ProvisionBundledAppsCommand,
     );

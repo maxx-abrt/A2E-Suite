@@ -1,4 +1,4 @@
-import { Command, Option } from 'nest-commander';
+import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { promises as fs } from 'fs';
 import { join } from 'path';
@@ -6,7 +6,7 @@ import { tmpdir } from 'os';
 import { v4 } from 'uuid';
 
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 
 import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
@@ -41,15 +41,16 @@ interface CommandOptions {
   description:
     'Register A2E apps bundled in the Docker image (M1 provisioning). Idempotent. Called by entrypoint.sh at startup.',
 })
-@Injectable()
-export class ProvisionBundledAppsCommand {
+export class ProvisionBundledAppsCommand extends CommandRunner {
   private readonly logger = new Logger(ProvisionBundledAppsCommand.name);
 
   constructor(
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly registrationRepository: Repository<ApplicationRegistrationEntity>,
-  ) {}
+  ) {
+    super();
+  }
 
   async run(
     _passedParams: string[],

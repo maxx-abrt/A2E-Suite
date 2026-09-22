@@ -1,49 +1,61 @@
 {
-  "name": "A2E Suite — dependency-ready extraction batch 10 (2026-09-22, HEAD 59a5ce7b): the INSTALL_APP idempotency defect found during the orchestrator's 2026-09-22 Tier-2 live pass",
-  "description": "Re-scan of PLAN.md and phase reports after the orchestrator's 2026-09-22 Tier-2 live pass (commit 59a5ce7b, verifying US-074/US-075). US-074 and US-075 are both complete. The orchestrator found one new code defect during the verification pass (phase-01-report 20:15 CEST entry): `applyWorkspaceTemplateOperation`'s INSTALL_APP step calls `installApplication` unconditionally even when the app is already INSTALLED at the same version — `validateVersionProgression` throws APP_ALREADY_INSTALLED/SAME_VERSION and the step reports FAILED with `appliedTemplateKeyVersion: null`. This blocks M2 exit criteria (c)/(d) honestly and prevents retry completion. Fix: skip/mark-succeeded when the app is already installed at a compatible version. All other open bullets remain Tier 2 (needs running app/browser/multi-session), blocked upstream, or decision-gated — exactly as deferred-batch9.md records. Batch numbering continues at US-076.",
+  "name": "A2E Suite — executor batch 10+11 (2026-09-22, HEAD a437674f)",
+  "description": "All tasks completed since US-076 INSTALL_APP idempotency fix. Three new user stories extracted from PLAN.md G1/G2/G4 gaps and phase-01-report executor-queue items: US-077 (A2E allowlist expansion), US-078+US-079 (M1 Docker bundled provisioning + startup command). All three are Tier-0/1 complete; Tier-2 verification (Docker build + live boot) remains for the orchestrator.",
   "branchName": "main",
   "userStories": [
     {
       "id": "US-074",
-      "title": "Fix a2e-projects install-time workspace-schema build failure — relation target has no object metadata (object-metadata-with-relations-gql-object-type.generator.ts:117)",
-      "description": "As an operator installing A2E Suite, I want a2e-projects to install cleanly on a live server so that M1a provisioning reaches 6/6 registered apps, P4.1's live validation and human-ID concurrency proof become runnable, and the a2e-chat dependency chain unblocks.",
-      "acceptanceCriteria": [],
+      "title": "Fix a2e-projects install-time workspace-schema build failure",
       "priority": 1,
       "passes": true,
-      "notes": "Completed in prior session. Commit abed30a3.",
       "dependsOn": [],
-      "completionNotes": "Fixed in packages/twenty-server/src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphql-schema-sdl.service.ts + new augment-flat-entity-maps-with-relation-targets.util.ts. Root cause: install-time schema SDL is filtered to [standard, requestedApp] so cross-app relation targets (e.g. project.documents → Documents' document object) were absent from generation context. Fix: walk retained relation fields and pull missing target objects+fields from the full workspace maps. Verified live by orchestrator (commit 59a5ce7b): a2e-projects 0.1.10 INSTALLED clean."
+      "completionNotes": "Done. Commit abed30a3. augment-flat-entity-maps-with-relation-targets.util.ts. Verified live by orchestrator."
     },
     {
       "id": "US-075",
-      "title": "Fix CRM nav-restore defect — template apply unconditionally skips the navigation step when the hide-list is empty, so STUDENT-deleted CRM nav rows are never restored (workspace-template.service.ts:392-401)",
-      "description": "As a workspace owner switching from a persona template back to CRM, I want the CRM apply to restore the CRM navigation rows a previous persona apply deleted.",
-      "acceptanceCriteria": [],
+      "title": "Fix CRM nav-restore defect + user-hidden-item provenance",
       "priority": 2,
       "passes": true,
-      "notes": "Completed in prior session. Commit 50a931ca + follow-up provenance fix.",
       "dependsOn": [],
-      "completionNotes": "Fixed workspace-template.service.ts: removed hide-list-gated skip in runRemainingSteps; added KeyValuePair-based provenance record so restoration only reverts template-hidden rows, never user-deleted rows. Verified live by orchestrator: nav-restore provenance cycle proven (3 legs)."
+      "completionNotes": "Done. Commit 50a931ca + provenance follow-up. Verified live by orchestrator."
     },
     {
       "id": "US-076",
-      "title": "Fix INSTALL_APP step idempotency — installApplication called unconditionally even when app is already installed at same version, causing APP_ALREADY_INSTALLED/FAILED and blocking M2 retry completion",
-      "description": "As a workspace owner retrying a preset apply after a partial failure, I want the INSTALL_APP step to succeed without error when the target app is already installed at a compatible version, so that retry completion is honest and M2 exit criteria (c)/(d) can be satisfied.",
-      "acceptanceCriteria": [
-        "PLAN anchor (phase-01-report 2026-09-22 20:15 CEST, verbatim): 'NEW DEFECT found (recorded, not fixed — executor queue): applyWorkspaceTemplateOperation's INSTALL_APP step calls installApplication unconditionally, even when the app is already INSTALLED at the same version — validateVersionProgression then throws SAME_VERSION/APP_ALREADY_INSTALLED and the step reports FAILED with appliedTemplateKeyVersion: null. Reproduced: STUDENT apply on Apple with A2E Documents 0.2.0 already installed → INSTALL_APP FAILED (preview had correctly shown currentlyInstalled: true). Fix direction: skip/mark-succeeded when the app is already installed at a compatible version (the preview's currentlyInstalled already computes this), or make installApplication idempotent for SAME_VERSION. This blocks M2 exit criteria (c)/(d) honestly — a retry after partial success can never complete while any required app is already installed.'",
-        "installTemplateApplication in workspace-template.service.ts checks applicationService.findByUniversalIdentifier before calling installApplication; if already installed at a compatible version, returns succeeded without calling installApplication",
-        "Regression test: app already installed → INSTALL_APP step status 'succeeded', installApplication NOT called, appliedTemplateKeyVersion set correctly",
-        "Regression test: retry of a failed INSTALL_APP step when app was installed between retries → step status 'succeeded', installApplication NOT called",
-        "Existing tests unchanged: app not installed → installApplication IS called (default findByUniversalIdentifier returns null)"
-      ],
+      "title": "Fix INSTALL_APP step idempotency — skip succeeded when app already installed at compatible version",
       "priority": 1,
       "passes": true,
-      "notes": "PRIORITY 0, defect #3 — extracted from phase-01-report 20:15 CEST 2026-09-22 'executor queue' note. dependsOn: nothing (independent of US-074/US-075). The preview already computes currentlyInstalled correctly — the apply step just needs to mirror it.",
       "dependsOn": [],
-      "completionNotes": "Fixed installTemplateApplication in packages/twenty-server/src/engine/core-modules/onboarding/workspace-template.service.ts: after versionCompatibility check, call applicationService.findByUniversalIdentifier; if the application is already installed, log and return succeeded without calling installApplication. Added 2 regression tests in workspace-template.service.spec.ts covering the live-reproduced scenario (already-installed idempotent apply) and the retry-after-install scenario. Tier-2 residual: live STUDENT-apply on a workspace with A2E Documents already installed → INSTALL_APP step reports succeeded, appliedTemplateKeyVersion set (orchestrator's live probe on the next Tier-2 pass)."
+      "completionNotes": "Done. Commit 23d1b6d2. installTemplateApplication now checks findByUniversalIdentifier before calling installApplication. 2 regression tests added. Tier-2 residual: live STUDENT-apply on workspace with A2E Documents already installed."
+    },
+    {
+      "id": "US-077",
+      "title": "Add a2e-projects/chat/drive to A2E allowlist (A2eSuiteApplicationUniversalIdentifiers.ts) and OnboardingInstallableApps.ts",
+      "description": "As a user viewing Settings → Applications, I want to see all 5 A2E Suite apps (Documents, Bilan, Projects, Chat, Drive) in the A2E section once they are registered, so that I can install/manage any of them from one place.",
+      "priority": 1,
+      "passes": true,
+      "dependsOn": [],
+      "completionNotes": "Done. Commit 5bfe5bef. Added Projects (4f759655), Chat (e2dce399), Drive (b11cd01f) to A2eSuiteApplicationUniversalIdentifiers.ts and OnboardingInstallableApps.ts with proper Lingui labels and descriptions. docs/applications.md corrected. Tier-2 residual: with apps registered on a live server, verify Settings → Applications → A2E Suite shows all 5."
+    },
+    {
+      "id": "US-078",
+      "title": "M1 Dockerfile — add twenty-apps-build stage building all 5 A2E apps into tarballs",
+      "description": "As an operator deploying A2E Suite via Docker, I want the production image to contain built tarballs for all 5 A2E apps so that a fresh deploy automatically registers and installs them without manual app:publish rituals.",
+      "priority": 1,
+      "passes": true,
+      "dependsOn": [],
+      "completionNotes": "Done. Commit 5bfe5bef. New twenty-apps-build multi-stage: yarn install + yarn twenty dev:build --tarball for each of the 5 internal apps; tarballs collected at /app/packages/twenty-apps/dist in the server image. CI workflow (cd-docker-image.yaml) already uses GHA cache and will build this stage automatically. Tier-2 residual: docker build must complete and /app/packages/twenty-apps/dist must contain 5 tarballs in the image."
+    },
+    {
+      "id": "US-079",
+      "title": "M1 startup registration — ProvisionBundledAppsCommand (app:provision-bundled) + BUNDLED source type + entrypoint.sh integration",
+      "description": "As an operator on a fresh Docker deployment, I want the server to automatically register all bundled A2E app tarballs at startup and install them on all workspaces so that Settings → Applications shows the A2E section without manual CLI work.",
+      "priority": 1,
+      "passes": true,
+      "dependsOn": ["US-078"],
+      "completionNotes": "Done. Commits 5bfe5bef + a437674f. ApplicationRegistrationSourceType.BUNDLED enum value; ApplicationRegistrationEntity.bundledAppSourcePath nullable text column with @WasIntroducedInUpgrade; 2-39 instance command (1789905000000) ADD COLUMN; ApplicationPackageFetcherService BUNDLED case resolves from FS path; ProvisionBundledAppsCommand (app:provision-bundled): reads *.tgz from BUNDLED_APPS_DIR, registers with sourceType=BUNDLED/isPreInstalled=true/ownerWorkspaceId=null, idempotent, --dry-run; DatabaseCommandModule wired; entrypoint.sh calls provision_bundled_apps() after setup_and_migrate_db (provision-bundled then install-pre-installed-apps); PreInstalledAppsService.installOnWorkspace improved (APP_ALREADY_INSTALLED no longer error-logs); 5-case spec file. Tier-2 residual: live Docker boot registering 5 apps + installing on all workspaces."
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-22T21:00:00.000Z"
+    "updatedAt": "2026-09-22T22:30:00.000Z"
   }
 }
