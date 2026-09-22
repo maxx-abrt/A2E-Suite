@@ -468,6 +468,97 @@ describe('WorkspaceTemplateService', () => {
       expect(result.appliedTemplateKeyVersion).toBeNull();
     });
 
+    it('skips install and succeeds immediately when the app is already installed at a compatible version (idempotent apply)', async () => {
+      // Reproduces the live failure: STUDENT apply on Apple with A2E Documents
+      // 0.2.0 already installed → installApplication unconditionally →
+      // APP_ALREADY_INSTALLED/SAME_VERSION → FAILED step, appliedTemplateKeyVersion null.
+      findOneByUniversalIdentifierGlobal.mockResolvedValue(
+        buildRegistration('registration-1'),
+      );
+      findByUniversalIdentifier.mockResolvedValueOnce({
+        id: 'existing-install-id',
+        universalIdentifier: A2E_DOCUMENTS_UNIVERSAL_IDENTIFIER,
+      });
+
+      const result = await service.applyWorkspaceTemplateOperation({
+        workspaceId,
+        idempotencyKey: 'op-already-installed',
+        template: WorkspaceTemplate.INDIVIDUAL,
+      });
+
+      // The step must succeed without calling installApplication — the service
+      // must not trip validateVersionProgression's SAME_VERSION guard.
+      expect(installApplication).not.toHaveBeenCalled();
+      const installStep = result.steps.find(
+        (step) => step.kind === 'install-app',
+      );
+
+      expect(installStep?.status).toBe('succeeded');
+      // The full operation completes and records the template key.
+      expect(result.appliedTemplateKeyVersion).toEqual({
+        key: WorkspaceTemplate.INDIVIDUAL,
+        version: 1,
+      });
+      expect(workspaceUpdate).toHaveBeenCalledWith(
+        { id: workspaceId },
+        { workspaceTemplate: WorkspaceTemplate.INDIVIDUAL },
+      );
+    });
+
+    it('re-runs a failed INSTALL_APP step by skipping install when the app was installed between retries', async () => {
+      // A prior attempt failed (e.g. APP_NOT_REGISTERED or transient error);
+      // by the retry the app is now installed — the step must succeed without
+      // calling installApplication (not fail with APP_ALREADY_INSTALLED).
+      const storedOperation: ApplyTemplateResult = {
+        operationId: 'op-retry-already-installed',
+        requestedTemplateKeyVersion: {
+          key: WorkspaceTemplate.INDIVIDUAL,
+          version: 1,
+        },
+        appliedTemplateKeyVersion: null,
+        steps: [
+          {
+            kind: 'install-app',
+            targetUniversalIdentifier: A2E_DOCUMENTS_UNIVERSAL_IDENTIFIER,
+            status: 'failed',
+            errorCode: 'INSTALL_FAILED',
+          },
+          { kind: 'navigation-visibility', status: 'succeeded' },
+          { kind: 'set-workspace-template', status: 'skipped' },
+        ],
+      };
+
+      storedKeyValuePairs.set(
+        'template-operation:op-retry-already-installed',
+        storedOperation,
+      );
+      findOneByUniversalIdentifierGlobal.mockResolvedValue(
+        buildRegistration('registration-retry'),
+      );
+      findByUniversalIdentifier.mockResolvedValueOnce({
+        id: 'existing-install-id',
+        universalIdentifier: A2E_DOCUMENTS_UNIVERSAL_IDENTIFIER,
+      });
+
+      const result = await service.applyWorkspaceTemplateOperation({
+        workspaceId,
+        idempotencyKey: 'op-retry-already-installed',
+        template: WorkspaceTemplate.INDIVIDUAL,
+      });
+
+      expect(installApplication).not.toHaveBeenCalled();
+      const installStep = result.steps.find(
+        (step) => step.kind === 'install-app',
+      );
+
+      expect(installStep?.status).toBe('succeeded');
+      // The complete retry records the template key.
+      expect(result.appliedTemplateKeyVersion).toEqual({
+        key: WorkspaceTemplate.INDIVIDUAL,
+        version: 1,
+      });
+    });
+
     it('returns the stored operation without reinstalling on same-key retry of a fully succeeded operation', async () => {
       const storedOperation: ApplyTemplateResult = {
         operationId: 'op-1',

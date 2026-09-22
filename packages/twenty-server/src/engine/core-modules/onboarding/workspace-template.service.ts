@@ -789,6 +789,30 @@ export class WorkspaceTemplateService {
         };
       }
 
+      // Skip the install when the app is already installed at a compatible
+      // version — calling installApplication unconditionally causes
+      // validateVersionProgression to throw APP_ALREADY_INSTALLED/SAME_VERSION,
+      // which reports FAILED and prevents honest retry completion (M2 exit
+      // criteria c/d). The preview's `currentlyInstalled` flag already exposes
+      // this state to the caller; the apply step mirrors it (C2).
+      const alreadyInstalled = isDefined(
+        await this.applicationService.findByUniversalIdentifier({
+          universalIdentifier: applicationUniversalIdentifier,
+          workspaceId,
+        }),
+      );
+
+      if (alreadyInstalled) {
+        this.logger.log(
+          `Template app ${applicationUniversalIdentifier} is already installed on workspace ${workspaceId}, skipping install`,
+        );
+
+        return {
+          ...step,
+          status: 'succeeded',
+        };
+      }
+
       await this.applicationInstallService.installApplication({
         appRegistrationId: registration.id,
         workspaceId,
