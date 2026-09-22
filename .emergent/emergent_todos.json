@@ -1,0 +1,22 @@
+[
+  {
+    "content": "Read PLAN.md + prd.json + phase reports — understand current state",
+    "status": "completed"
+  },
+  {
+    "content": "US-076: Fix INSTALL_APP idempotency — skip/succeed when app already installed at compatible version",
+    "status": "completed"
+  },
+  {
+    "content": "Update tasks/prd.json with US-076 and completion notes",
+    "status": "completed"
+  },
+  {
+    "content": "Append dated entry to docs/plan/phases/phase-01-report.md",
+    "status": "completed"
+  },
+  {
+    "content": "Commit all changes",
+    "status": "completed"
+  }
+]
