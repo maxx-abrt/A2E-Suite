@@ -71,3 +71,10 @@ screenshots/
 /.diag*.mjs
 /.compare*.mjs
 /.narrow*.mjs
+.env
+.env.*
+*.env
+credentials.json
+*.pem
+*.key
+.credentials
