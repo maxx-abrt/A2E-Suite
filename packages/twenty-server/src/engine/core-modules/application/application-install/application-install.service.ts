@@ -213,6 +213,14 @@ export class ApplicationInstallService {
 
       return result;
     } catch (error) {
+      // Re-requesting the installed version is a no-op, not a failed upgrade.
+      if (
+        error instanceof ApplicationException &&
+        error.code === ApplicationExceptionCode.APP_ALREADY_INSTALLED
+      ) {
+        throw error;
+      }
+
       this.metricsService.incrementCounterBy({
         key: isVersionUpgrade
           ? MetricsKeys.AppUpgradeFailed
@@ -301,6 +309,19 @@ export class ApplicationInstallService {
       isVersionUpgrade && application.state === ApplicationState.INSTALLING;
 
     const incomingVersion = resolvedPackage.packageJson.version;
+
+    // An installed application re-requested at a version it cannot move to
+    // (the same version on every boot's pre-installed backfill or a template
+    // re-apply) is refused before any state change: no UPGRADING flip, no
+    // rollback and no error log. Callers treat APP_ALREADY_INSTALLED as a
+    // no-op and log it at their own level.
+    if (isUpgradeOfInstalledApplication && isDefined(application.version)) {
+      this.assertInstallVersionProgressionAllowed({
+        incomingVersion: newVersion,
+        currentVersion: application.version,
+        universalIdentifier,
+      });
+    }
 
     // Rollback is scoped to the work after the application row exists: reaching
     // this catch means creation succeeded, so only an application that never
@@ -432,6 +453,39 @@ export class ApplicationInstallService {
 
       throw error;
     }
+  }
+
+  private assertInstallVersionProgressionAllowed({
+    incomingVersion,
+    currentVersion,
+    universalIdentifier,
+  }: {
+    incomingVersion: string;
+    currentVersion: string;
+    universalIdentifier: string;
+  }): void {
+    const progression =
+      this.applicationVersionValidationService.validateVersionProgression({
+        incomingVersion,
+        currentVersion,
+        universalIdentifier,
+        action: 'install',
+      });
+
+    if (progression.allowed) {
+      return;
+    }
+
+    if (progression.reason !== 'SAME_VERSION') {
+      this.logger.warn(
+        `Refused to install app ${universalIdentifier}: ${progression.message}`,
+      );
+    }
+
+    throw new ApplicationException(
+      progression.message,
+      VERSION_PROGRESSION_REASON_TO_INSTALL_EXCEPTION_CODE[progression.reason],
+    );
   }
 
   private async runPreInstallHook(params: {
