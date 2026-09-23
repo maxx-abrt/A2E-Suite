@@ -72,10 +72,9 @@ export class ProvisionBundledAppsCommand extends CommandRunner {
         .map((f) => join(bundledDir, f));
     } catch (error) {
       // Directory absent on non-Docker (dev) servers — silently skip.
-      if (
-        error instanceof Error &&
-        (error as NodeJS.ErrnoException).code === 'ENOENT'
-      ) {
+      // No `instanceof Error` guard: native fs errors are not realm-equal
+      // under Jest, and `.code` is the only contract that matters here.
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
         this.logger.log(
           `Bundled apps directory ${bundledDir} not found — skipping (expected on non-Docker servers)`,
         );

@@ -101,3 +101,32 @@ defects for the executor queue.
 **Remaining from this update (Tier 2 / orchestrator):** Docker build verification + live boot proof (Settings → Applications shows 5 A2E apps on a fresh deployment).
 
 **Honest executor queue after this update:** empty for code-level work. All remaining items are Tier-2 browser/live proofs, decision-gated (D-B1, D-M1, D02), or environment-blocked. See deferred-batch10.md main section.
+
+---
+
+## Update (2026-09-23, orchestrator pass) — two executor-queue items from the M1 verification
+
+The orchestrator verified US-076/077/078/079 live and fixed three HEAD-blocking defects
+(duplicate instance-command registration crashing `upgrade`; a Jest-realm ENOENT guard;
+`BUNDLED` unhandled in the exportability guard). Two items remain for an executor:
+
+1. **`UpgradeSequenceRunnerService.resolveStartCursor` skips an inserted instance command
+   behind an applied workspace segment** (M1(e) risk). Repro: both workspaces' cursors sit at
+   sequence index 328 (`2.39.0_AddCalendarEventRecurrenceFieldsCommand_1789904000000`); the new
+   `AddBundledAppSourcePath…` instance command is index 319, after the last instance command
+   (318) but before the 2.39.0 workspace segment (320-328). `getLastAttemptedCommandNameOrThrow`
+   returns the workspace command, and the runner resumes at the segment start (320), never
+   visiting 319. Fresh `database:init:prod` and any cursor before 2.39.0 are unaffected.
+   Suggested fix: for a workspace last-attempted cursor, resume from the first unattempted
+   instance command (`getLastAttemptedInstanceCommand` index + 1) rather than the workspace
+   segment start, then let the loop reach the workspace segment; add a spec pinning the
+   inserted-instance-command case. Do not renumber the command or touch committed 2-39 files.
+
+2. **`install-pre-installed-apps` still error-logs `APP_ALREADY_INSTALLED`.** The
+   `PreInstalledAppsService` catch is correct, but `ApplicationInstallService` logs
+   `ERROR … is already installed in this workspace` first, so every boot is noisy. Consider
+   suppressing the error at the install-service layer for the already-installed case (or
+   pre-checking) so the info-level path is what the operator sees.
+
+**Still environment-blocked:** Docker image-baking (M1 a/f) and clean-volume compose (M1 b) —
+docker is not installed on the orchestrator machine.
