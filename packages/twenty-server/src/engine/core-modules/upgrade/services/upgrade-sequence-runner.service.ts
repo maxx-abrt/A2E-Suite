@@ -152,6 +152,11 @@ export class UpgradeSequenceRunnerService {
         await this.runInstanceStep({
           instanceStep: step,
           skipDataMigration: allProvisionedWorkspaceIds.length === 0,
+          workspaceIdsPastThisStep: this.findWorkspaceIdsPastStep({
+            sequence,
+            stepCursor: cursor,
+            workspaceCursors,
+          }),
         });
 
         await this.upgradeAwareEntityMetadataAdapter.refresh();
@@ -260,11 +265,128 @@ export class UpgradeSequenceRunnerService {
           workspaceSliceBounds,
         });
 
-        return workspaceSliceBounds.startCursor;
+        return this.resolveWorkspaceSegmentResumeCursor({
+          sequence,
+          workspaceSegmentStartCursor: workspaceSliceBounds.startCursor,
+        });
       }
       default:
         assertUnreachable(lastAttemptedStep);
     }
+  }
+
+  // An instance command added to an already-shipped version can sit in the
+  // instance block right before a workspace segment the workspaces have
+  // already applied. Resuming at the segment start would never visit it, so
+  // resume at the first instance command of that block the instance cursor
+  // has not reached yet; the loop then walks into the segment as usual.
+  private async resolveWorkspaceSegmentResumeCursor({
+    sequence,
+    workspaceSegmentStartCursor,
+  }: {
+    sequence: UpgradeStep[];
+    workspaceSegmentStartCursor: number;
+  }): Promise<number> {
+    let instanceBlockStartCursor = workspaceSegmentStartCursor;
+
+    while (
+      instanceBlockStartCursor > 0 &&
+      sequence[instanceBlockStartCursor - 1].kind !== 'workspace'
+    ) {
+      instanceBlockStartCursor--;
+    }
+
+    if (instanceBlockStartCursor === workspaceSegmentStartCursor) {
+      return workspaceSegmentStartCursor;
+    }
+
+    const lastAttemptedInstanceCommand =
+      await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
+
+    if (!isDefined(lastAttemptedInstanceCommand)) {
+      return workspaceSegmentStartCursor;
+    }
+
+    const lastAttemptedInstanceCursor = sequence.findIndex(
+      (step) => step.name === lastAttemptedInstanceCommand.name,
+    );
+
+    if (
+      lastAttemptedInstanceCursor === -1 ||
+      lastAttemptedInstanceCursor >= workspaceSegmentStartCursor
+    ) {
+      return workspaceSegmentStartCursor;
+    }
+
+    if (lastAttemptedInstanceCursor < instanceBlockStartCursor) {
+      this.logInsertedInstanceCommandResume({
+        sequence,
+        resumeCursor: instanceBlockStartCursor,
+      });
+
+      return instanceBlockStartCursor;
+    }
+
+    const resumeCursor =
+      lastAttemptedInstanceCommand.status === 'completed'
+        ? lastAttemptedInstanceCursor + 1
+        : lastAttemptedInstanceCursor;
+
+    if (resumeCursor < workspaceSegmentStartCursor) {
+      this.logInsertedInstanceCommandResume({ sequence, resumeCursor });
+    }
+
+    return resumeCursor;
+  }
+
+  private logInsertedInstanceCommandResume({
+    sequence,
+    resumeCursor,
+  }: {
+    sequence: UpgradeStep[];
+    resumeCursor: number;
+  }): void {
+    const resumeStep = sequence[resumeCursor];
+
+    this.logger.log(
+      formatUpgradeLog({
+        humanMessage:
+          `Resuming at instance step "${resumeStep.name}": it was added ` +
+          'before a workspace segment the workspaces have already applied.',
+        event: 'sequence.resumed-at-inserted-instance-step',
+        logFields: {
+          step: resumeStep.name,
+        },
+      }),
+    );
+  }
+
+  // Workspaces whose cursor is already further in the sequence than an
+  // instance step (only possible when that step was inserted behind an
+  // applied workspace segment) must not get a workspace-scoped row for it:
+  // that row would become their newest cursor and re-queue the segment.
+  private findWorkspaceIdsPastStep({
+    sequence,
+    stepCursor,
+    workspaceCursors,
+  }: {
+    sequence: UpgradeStep[];
+    stepCursor: number;
+    workspaceCursors: Map<string, WorkspaceLastAttemptedCommand>;
+  }): string[] {
+    const workspaceIdsPastStep: string[] = [];
+
+    for (const [workspaceId, workspaceCursor] of workspaceCursors) {
+      const cursorPosition = sequence.findIndex(
+        (step) => step.name === workspaceCursor.name,
+      );
+
+      if (cursorPosition > stepCursor) {
+        workspaceIdsPastStep.push(workspaceId);
+      }
+    }
+
+    return workspaceIdsPastStep;
   }
 
   private async validateWorkspaceCursorsAreInWorkspaceSegment({
@@ -336,9 +458,11 @@ export class UpgradeSequenceRunnerService {
   private async runInstanceStep({
     instanceStep,
     skipDataMigration,
+    workspaceIdsPastThisStep,
   }: {
     instanceStep: InstanceUpgradeStep;
     skipDataMigration: boolean;
+    workspaceIdsPastThisStep: string[];
   }): Promise<void> {
     switch (instanceStep.kind) {
       case 'fast-instance': {
@@ -346,6 +470,7 @@ export class UpgradeSequenceRunnerService {
           await this.instanceCommandRunnerService.runFastInstanceCommand({
             command: instanceStep.command,
             name: instanceStep.name,
+            workspaceIdsPastThisStep,
           });
 
         if (result.status === 'failed') {
@@ -360,6 +485,7 @@ export class UpgradeSequenceRunnerService {
             command: instanceStep.command,
             name: instanceStep.name,
             skipDataMigration,
+            workspaceIdsPastThisStep,
           });
 
         if (result.status === 'failed') {
@@ -468,7 +594,11 @@ export class UpgradeSequenceRunnerService {
         cursorPosition === barrierCursor &&
         workspaceCursor.status === 'completed';
 
-      if (!isAtBarrierAndCompleted) {
+      // A cursor beyond the barrier (a retried instance step, or an instance
+      // step inserted behind an applied segment) has completed the segment.
+      const isPastBarrier = cursorPosition > barrierCursor;
+
+      if (!isAtBarrierAndCompleted && !isPastBarrier) {
         throw new Error(
           `Cannot run instance step: workspace ${workspaceId} ` +
             `has not completed "${previousWorkspaceStep.name}" ` +

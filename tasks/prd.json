@@ -1,6 +1,6 @@
 {
-  "name": "A2E Suite — executor batch 10+11 (2026-09-22, HEAD a437674f)",
-  "description": "All tasks completed since US-076 INSTALL_APP idempotency fix. Three new user stories extracted from PLAN.md G1/G2/G4 gaps and phase-01-report executor-queue items: US-077 (A2E allowlist expansion), US-078+US-079 (M1 Docker bundled provisioning + startup command). All three are Tier-0/1 complete; Tier-2 verification (Docker build + live boot) remains for the orchestrator.",
+  "name": "A2E Suite — executor batch 11 (2026-09-23, base 126766e7)",
+  "description": "Batch 11: orchestrator-queued M1 defects (US-080 upgrade cursor reachability, US-081 install log hygiene) plus dependency-ready Tier-0 legs extracted from PLAN.md. passes stays false until the orchestrator verifies.",
   "branchName": "main",
   "userStories": [
     {
@@ -51,11 +51,24 @@
       "description": "As an operator on a fresh Docker deployment, I want the server to automatically register all bundled A2E app tarballs at startup and install them on all workspaces so that Settings → Applications shows the A2E section without manual CLI work.",
       "priority": 1,
       "passes": true,
-      "dependsOn": ["US-078"],
+      "dependsOn": [
+        "US-078"
+      ],
       "completionNotes": "Done. Commits 5bfe5bef + a437674f. ApplicationRegistrationSourceType.BUNDLED enum value; ApplicationRegistrationEntity.bundledAppSourcePath nullable text column with @WasIntroducedInUpgrade; 2-39 instance command (1789905000000) ADD COLUMN; ApplicationPackageFetcherService BUNDLED case resolves from FS path; ProvisionBundledAppsCommand (app:provision-bundled): reads *.tgz from BUNDLED_APPS_DIR, registers with sourceType=BUNDLED/isPreInstalled=true/ownerWorkspaceId=null, idempotent, --dry-run; DatabaseCommandModule wired; entrypoint.sh calls provision_bundled_apps() after setup_and_migrate_db (provision-bundled then install-pre-installed-apps); PreInstalledAppsService.installOnWorkspace improved (APP_ALREADY_INSTALLED no longer error-logs); 5-case spec file. Tier-2 residual: live Docker boot registering 5 apps + installing on all workspaces."
+    },
+    {
+      "id": "US-080",
+      "title": "M1(e) upgrade cursor reachability — resume at an instance command inserted behind an applied workspace segment",
+      "description": "As an operator upgrading an instance already at the 2.39.0 workspace segment to an image carrying the new AddBundledAppSourcePath instance command, I want `upgrade` to run that instance command once without re-running the applied workspace segment, so that the bundled-app column exists and boot stays idempotent.",
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "US-079"
+      ],
+      "completionNotes": "Executor done (awaiting orchestrator). UpgradeSequenceRunnerService.resolveStartCursor: workspace last-attempted cursor now resumes at the first unattempted instance command of the instance block preceding the workspace segment (getLastAttemptedInstanceCommand index + 1; whole block when the instance cursor is before it) instead of the segment start. Second defect found while fixing: running such a late instance command wrote workspace-scoped rows that became each workspace's newest cursor, re-queuing the entire applied 2.39.0 workspace segment on the next boot — InstanceCommandRunnerService now skips workspace rows for workspaces whose cursor is already past the step (workspaceIdsPastThisStep). Barrier enforcement accepts cursors past the barrier (also fixes retrying a failed instance step that directly follows a workspace segment, which previously threw). Specs: unit upgrade-sequence-runner-inserted-instance-command.spec.ts (6 cases, mocked services), exclude-workspace-ids.util.spec.ts (3), integration inserted-instance-command.integration-spec.ts (4 cases incl. second-boot no-op). No committed 2-39 file touched, no renumbering. Tier-2 residual: on the dev DB with both workspaces at index 328, `upgrade` runs AddBundledAppSourcePath once (instance row only) and a second `upgrade` is a no-op."
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-22T22:30:00.000Z"
+    "updatedAt": "2026-09-23T20:30:00.000Z"
   }
 }
