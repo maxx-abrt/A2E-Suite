@@ -6,11 +6,23 @@ import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { CalendarRecurrenceFields } from '@/calendar/components/CalendarRecurrenceFields';
 import { type CalendarEventDraft } from '@/calendar/types/CalendarEventDraft';
+import { rebaseCalendarRecurrenceDraftOnStartDay } from '@/calendar/utils/rebaseCalendarRecurrenceDraftOnStartDay';
+
+// `optional`: the event may or may not repeat (create, plain edit). `series`:
+// a whole-series edit, which must keep a rule (delete the series instead).
+// `hidden`: a this-occurrence edit, where the rule belongs to the anchor.
+export type CalendarEventComposerRecurrenceMode =
+  | 'hidden'
+  | 'optional'
+  | 'series';
 
 type CalendarEventComposerProps = {
   mode: 'create' | 'edit';
   draft: CalendarEventDraft;
+  recurrenceMode?: CalendarEventComposerRecurrenceMode;
+  locale?: string;
   isSaving: boolean;
   errorMessage: string | null;
   onChange: (draft: CalendarEventDraft) => void;
@@ -141,6 +153,8 @@ const parseTimeValue = (
 export const CalendarEventComposer = ({
   mode,
   draft,
+  recurrenceMode = 'hidden',
+  locale = 'en-US',
   isSaving,
   errorMessage,
   onChange,
@@ -162,7 +176,19 @@ export const CalendarEventComposer = ({
 
   const handleStartDateChange = (value: string) => {
     try {
-      onChange({ ...draft, startDay: Temporal.PlainDate.from(value) });
+      const nextStartDay = Temporal.PlainDate.from(value);
+
+      onChange({
+        ...draft,
+        startDay: nextStartDay,
+        recurrence: isDefined(draft.recurrence)
+          ? rebaseCalendarRecurrenceDraftOnStartDay({
+              recurrence: draft.recurrence,
+              previousStartDay: draft.startDay,
+              nextStartDay,
+            })
+          : draft.recurrence,
+      });
     } catch {
       // Ignore an incomplete date while the user is typing.
     }
@@ -276,6 +302,16 @@ export const CalendarEventComposer = ({
             </StyledField>
           )}
         </StyledRow>
+
+        {recurrenceMode !== 'hidden' && (
+          <CalendarRecurrenceFields
+            recurrence={draft.recurrence ?? null}
+            startDay={draft.startDay}
+            locale={locale}
+            canDisableRecurrence={recurrenceMode === 'optional'}
+            onChange={(recurrence) => onChange({ ...draft, recurrence })}
+          />
+        )}
 
         <StyledField>
           <StyledLabel>{t`Location`}</StyledLabel>

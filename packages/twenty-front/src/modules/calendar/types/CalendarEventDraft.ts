@@ -1,5 +1,7 @@
 import { type Temporal } from 'temporal-polyfill';
 
+import { type CalendarRecurrenceDraft } from '@/calendar/types/CalendarRecurrenceDraft';
+
 // Editable form state for a local event. Times are kept as day + hour/minute so
 // a DST change between save and edit never silently shifts the wall-clock time.
 export type CalendarEventDraft = {
@@ -14,6 +16,9 @@ export type CalendarEventDraft = {
   endDay: Temporal.PlainDate;
   endHour: number;
   endMinute: number;
+  // Optional so every existing draft literal stays valid; null/absent means the
+  // event does not repeat.
+  recurrence?: CalendarRecurrenceDraft | null;
 };
 
 export type CalendarEventInput = {

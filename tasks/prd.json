@@ -86,9 +86,20 @@
       "passes": false,
       "dependsOn": [],
       "completionNotes": "Executor done (awaiting orchestrator). expandCalendarEventsForRange (single-sourced engine, series zone / UTC for all-day, skipped + detached exclusion, deterministic occurrence ids, occurrenceSourceByEventId back-map); getCalendarSeriesEvents resolves unstamped anchors to the derived series id; CalendarPage separates displayed vs stored event for the scope planners. 13 new cases; front calendar 193/193 via scratch harness. Tier-2: /calendar browser proof."
+    },
+    {
+      "id": "US-083",
+      "title": "P4C.3 recurrence rule editor in the /calendar composer (create, make-recurring, whole-series edit)",
+      "description": "As a calendar user, I want to set daily/weekly/monthly repetition with interval, weekdays, monthly position and an end condition when creating or editing an event, so that recurring events can be created without the API.",
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "US-082"
+      ],
+      "completionNotes": "Executor done (awaiting orchestrator). CalendarRecurrenceFields + CalendarRecurrenceDraft utils (rule<->draft round-trip, inclusive UNTIL in series zone, clamps, rebase on start-day change); create pre-generates the anchor id so the series id is stamped in the same write; whole-series edit writes the edited rule via planCalendarSeriesEdit. 19 new cases; front calendar 212/212 via scratch harness; tsc on pure files + stubbed components/page; repo oxlint JS rules 0/0. Tier-2: /calendar create-recurring browser proof."
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-24T06:10:00.000Z"
+    "updatedAt": "2026-09-24T07:05:00.000Z"
   }
 }

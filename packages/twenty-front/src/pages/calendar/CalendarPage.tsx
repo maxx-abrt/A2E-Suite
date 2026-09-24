@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -21,6 +22,7 @@ import {
   type CalendarEventDraft,
   type CalendarEventInput,
 } from '@/calendar/types/CalendarEventDraft';
+import { type CalendarRecurrenceDraft } from '@/calendar/types/CalendarRecurrenceDraft';
 import { type CalendarEventRecord } from '@/calendar/types/CalendarEventRecord';
 import { type CalendarEventSlot } from '@/calendar/types/CalendarEventSlot';
 import { type CalendarSeriesEditScope } from '@/calendar/types/CalendarSeriesEditScope';
@@ -28,6 +30,11 @@ import { type CalendarViewMode } from '@/calendar/types/CalendarViewMode';
 import { buildCalendarEventDraftFromEvent } from '@/calendar/utils/buildCalendarEventDraftFromEvent';
 import { buildCalendarEventDraftFromSlotRange } from '@/calendar/utils/calendarEventSlots';
 import { buildCalendarEventInputFromDraft } from '@/calendar/utils/buildCalendarEventInputFromDraft';
+import { buildCalendarRecurrenceRuleFromDraft } from '@/calendar/utils/buildCalendarRecurrenceRuleFromDraft';
+import {
+  buildCalendarSeriesAnchorInputFromDraft,
+  getCalendarSeriesTimeZone,
+} from '@/calendar/utils/buildCalendarSeriesAnchorInputFromDraft';
 import { expandCalendarEventsForRange } from '@/calendar/utils/expandCalendarEventsForRange';
 import { getCalendarEventOccurrenceDay } from '@/calendar/utils/getCalendarEventOccurrenceDay';
 import { getCalendarSeriesEvents } from '@/calendar/utils/getCalendarSeriesEvents';
@@ -392,15 +399,34 @@ export const CalendarPage = () => {
     return true;
   };
 
-  const updateSeries = async (input: CalendarEventInput): Promise<boolean> => {
+  const updateSeries = async ({
+    input,
+    recurrence,
+    startDay,
+  }: {
+    input: CalendarEventInput;
+    recurrence: CalendarRecurrenceDraft | null;
+    startDay: Temporal.PlainDate;
+  }): Promise<boolean> => {
     if (!isDefined(selectedSeriesAnchor)) {
       setStatusMessage(t`Could not update this series`);
       return false;
     }
 
-    const rule = isNonEmptyString(selectedSeriesAnchor.recurrenceRule)
-      ? parseCalendarRecurrenceRule(selectedSeriesAnchor.recurrenceRule)
-      : null;
+    // The composer's "Repeat" draft wins; without one the stored rule is kept.
+    const rule = isDefined(recurrence)
+      ? buildCalendarRecurrenceRuleFromDraft({
+          recurrence,
+          startDay,
+          seriesTimeZone: selectedSeriesAnchor.isFullDay
+            ? getCalendarSeriesTimeZone({ isFullDay: true, timeZone })
+            : isNonEmptyString(selectedSeriesAnchor.recurrenceTimezone)
+              ? selectedSeriesAnchor.recurrenceTimezone
+              : timeZone,
+        })
+      : isNonEmptyString(selectedSeriesAnchor.recurrenceRule)
+        ? parseCalendarRecurrenceRule(selectedSeriesAnchor.recurrenceRule)
+        : null;
 
     if (rule === null) {
       setStatusMessage(t`Could not update this series`);
@@ -596,7 +622,22 @@ export const CalendarPage = () => {
     });
 
     if (composer.mode === 'create') {
-      const didCreate = await createCalendarEvent(input);
+      const anchorEventId = v4();
+      const seriesAnchorInput = buildCalendarSeriesAnchorInputFromDraft({
+        draft: composer.draft,
+        timeZone,
+        seriesAnchorEventId: anchorEventId,
+      });
+      const didCreate = await createCalendarEvent(
+        isDefined(seriesAnchorInput)
+          ? {
+              ...input,
+              ...seriesAnchorInput,
+              id: anchorEventId,
+              recurrenceSkippedOccurrenceDays: null,
+            }
+          : input,
+      );
 
       if (didCreate) {
         setComposer(null);
@@ -625,7 +666,11 @@ export const CalendarPage = () => {
     }
 
     if (composer.editScope === 'whole-series') {
-      const didUpdateSeries = await updateSeries(input);
+      const didUpdateSeries = await updateSeries({
+        input,
+        recurrence: composer.draft.recurrence ?? null,
+        startDay: composer.draft.startDay,
+      });
 
       if (didUpdateSeries) {
         setComposer(null);
@@ -638,9 +683,17 @@ export const CalendarPage = () => {
       return;
     }
 
+    // A plain event given a "Repeat" choice becomes the anchor of a new series.
+    const seriesAnchorInput = buildCalendarSeriesAnchorInputFromDraft({
+      draft: composer.draft,
+      timeZone,
+      seriesAnchorEventId: composer.eventId,
+    });
     const didUpdate = await updateCalendarEvent({
       id: composer.eventId,
-      input,
+      input: isDefined(seriesAnchorInput)
+        ? { ...input, ...seriesAnchorInput }
+        : input,
     });
 
     if (didUpdate) {
@@ -805,6 +858,14 @@ export const CalendarPage = () => {
         <CalendarEventComposer
           mode={composer.mode}
           draft={composer.draft}
+          recurrenceMode={
+            composer.editScope === 'whole-series'
+              ? 'series'
+              : composer.editScope === 'this-occurrence'
+                ? 'hidden'
+                : 'optional'
+          }
+          locale={dateLocale.locale}
           isSaving={isSaving}
           errorMessage={composerErrorMessage}
           onChange={(draft) => setComposer({ ...composer, draft })}
