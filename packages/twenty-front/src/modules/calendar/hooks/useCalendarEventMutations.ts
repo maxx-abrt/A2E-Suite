@@ -67,8 +67,10 @@ export const useCalendarEventMutations = () => {
     [],
   );
 
+  // A series anchor is created with a pre-generated id so its series id (derived
+  // from the anchor id) can be written in the same create.
   const createCalendarEvent = useCallback(
-    (input: CalendarEventInput) =>
+    (input: CalendarEventInput & { id?: string }) =>
       runMutation(() => createOneRecord({ ...input })),
     [createOneRecord, runMutation],
   );

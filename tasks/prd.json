@@ -1,6 +1,6 @@
 {
-  "name": "A2E Suite — executor batch 10+11 (2026-09-22, HEAD a437674f)",
-  "description": "All tasks completed since US-076 INSTALL_APP idempotency fix. Three new user stories extracted from PLAN.md G1/G2/G4 gaps and phase-01-report executor-queue items: US-077 (A2E allowlist expansion), US-078+US-079 (M1 Docker bundled provisioning + startup command). All three are Tier-0/1 complete; Tier-2 verification (Docker build + live boot) remains for the orchestrator.",
+  "name": "A2E Suite — executor batch 11 (2026-09-24, base 72c38486)",
+  "description": "Batch 11: orchestrator-queued M1 defects (US-080 upgrade cursor reachability, US-081 install log hygiene) plus dependency-ready Tier-0 legs extracted from PLAN.md. passes stays false until the orchestrator verifies.",
   "branchName": "main",
   "userStories": [
     {
@@ -51,11 +51,55 @@
       "description": "As an operator on a fresh Docker deployment, I want the server to automatically register all bundled A2E app tarballs at startup and install them on all workspaces so that Settings → Applications shows the A2E section without manual CLI work.",
       "priority": 1,
       "passes": true,
-      "dependsOn": ["US-078"],
+      "dependsOn": [
+        "US-078"
+      ],
       "completionNotes": "Done. Commits 5bfe5bef + a437674f. ApplicationRegistrationSourceType.BUNDLED enum value; ApplicationRegistrationEntity.bundledAppSourcePath nullable text column with @WasIntroducedInUpgrade; 2-39 instance command (1789905000000) ADD COLUMN; ApplicationPackageFetcherService BUNDLED case resolves from FS path; ProvisionBundledAppsCommand (app:provision-bundled): reads *.tgz from BUNDLED_APPS_DIR, registers with sourceType=BUNDLED/isPreInstalled=true/ownerWorkspaceId=null, idempotent, --dry-run; DatabaseCommandModule wired; entrypoint.sh calls provision_bundled_apps() after setup_and_migrate_db (provision-bundled then install-pre-installed-apps); PreInstalledAppsService.installOnWorkspace improved (APP_ALREADY_INSTALLED no longer error-logs); 5-case spec file. Tier-2 residual: live Docker boot registering 5 apps + installing on all workspaces."
+    },
+    {
+      "id": "US-080",
+      "title": "M1(e) upgrade cursor reachability — resume at an instance command inserted behind an applied workspace segment",
+      "description": "As an operator upgrading an instance already at the 2.39.0 workspace segment to an image carrying the new AddBundledAppSourcePath instance command, I want `upgrade` to run that instance command once without re-running the applied workspace segment, so that the bundled-app column exists and boot stays idempotent.",
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "US-079"
+      ],
+      "completionNotes": "Executor done (awaiting orchestrator). UpgradeSequenceRunnerService.resolveStartCursor: workspace last-attempted cursor now resumes at the first unattempted instance command of the instance block preceding the workspace segment (getLastAttemptedInstanceCommand index + 1; whole block when the instance cursor is before it) instead of the segment start. Second defect found while fixing: running such a late instance command wrote workspace-scoped rows that became each workspace's newest cursor, re-queuing the entire applied 2.39.0 workspace segment on the next boot — InstanceCommandRunnerService now skips workspace rows for workspaces whose cursor is already past the step (workspaceIdsPastThisStep). Barrier enforcement accepts cursors past the barrier (also fixes retrying a failed instance step that directly follows a workspace segment, which previously threw). Specs: unit upgrade-sequence-runner-inserted-instance-command.spec.ts (6 cases, mocked services), exclude-workspace-ids.util.spec.ts (3), integration inserted-instance-command.integration-spec.ts (4 cases incl. second-boot no-op). No committed 2-39 file touched, no renumbering. Tier-2 residual: on the dev DB with both workspaces at index 328, `upgrade` runs AddBundledAppSourcePath once (instance row only) and a second `upgrade` is a no-op."
+    },
+    {
+      "id": "US-081",
+      "title": "Install log hygiene — refuse an already-installed version before any state change (no ERROR on every boot)",
+      "description": "As an operator watching boot logs, I want `install-pre-installed-apps` to report already-installed bundled apps at info level only, so that real install failures are not buried under one ERROR per app per workspace per boot.",
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "US-079"
+      ],
+      "completionNotes": "Executor done (awaiting orchestrator). ApplicationInstallService.runInstall: for an INSTALLED application the version-progression check now runs before the UPGRADING state flip and outside the rollback try/catch (new private assertInstallVersionProgressionAllowed). SAME_VERSION → APP_ALREADY_INSTALLED thrown with no log (PreInstalledAppsService/template service keep their info-level skip line); DOWNGRADE/INVALID → one warn line; no UPGRADING→INSTALLED flip-flop, no revertStateToInstalledBestEffort. runInstallWithMetrics no longer counts APP_ALREADY_INSTALLED as app-upgrade/failed. Same exception message/code → failing-application-version-progression integration snapshot unchanged. New unit spec application-install.service.already-installed.spec.ts (3 cases: same version silent refusal, downgrade warn+metric, newer version still UPGRADING→INSTALLED). Tier-2 residual: boot/`install-pre-installed-apps` on a workspace with the bundled apps already installed shows only the PreInstalledAppsService info line."
+    },
+    {
+      "id": "US-082",
+      "title": "P4C.3 view-level occurrence expansion on /calendar (anchor rows expand into occurrences for the visible range)",
+      "description": "As a calendar user, I want a recurring event to show on every day its rule produces, so that the calendar reflects the series instead of only the anchor and detached rows.",
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [],
+      "completionNotes": "Executor done (awaiting orchestrator). expandCalendarEventsForRange (single-sourced engine, series zone / UTC for all-day, skipped + detached exclusion, deterministic occurrence ids, occurrenceSourceByEventId back-map); getCalendarSeriesEvents resolves unstamped anchors to the derived series id; CalendarPage separates displayed vs stored event for the scope planners. 13 new cases; front calendar 193/193 via scratch harness. Tier-2: /calendar browser proof."
+    },
+    {
+      "id": "US-083",
+      "title": "P4C.3 recurrence rule editor in the /calendar composer (create, make-recurring, whole-series edit)",
+      "description": "As a calendar user, I want to set daily/weekly/monthly repetition with interval, weekdays, monthly position and an end condition when creating or editing an event, so that recurring events can be created without the API.",
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "US-082"
+      ],
+      "completionNotes": "Executor done (awaiting orchestrator). CalendarRecurrenceFields + CalendarRecurrenceDraft utils (rule<->draft round-trip, inclusive UNTIL in series zone, clamps, rebase on start-day change); create pre-generates the anchor id so the series id is stamped in the same write; whole-series edit writes the edited rule via planCalendarSeriesEdit. 19 new cases; front calendar 212/212 via scratch harness; tsc on pure files + stubbed components/page; repo oxlint JS rules 0/0. Tier-2: /calendar create-recurring browser proof."
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-22T22:30:00.000Z"
+    "updatedAt": "2026-09-24T07:05:00.000Z"
   }
 }

@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -21,6 +22,7 @@ import {
   type CalendarEventDraft,
   type CalendarEventInput,
 } from '@/calendar/types/CalendarEventDraft';
+import { type CalendarRecurrenceDraft } from '@/calendar/types/CalendarRecurrenceDraft';
 import { type CalendarEventRecord } from '@/calendar/types/CalendarEventRecord';
 import { type CalendarEventSlot } from '@/calendar/types/CalendarEventSlot';
 import { type CalendarSeriesEditScope } from '@/calendar/types/CalendarSeriesEditScope';
@@ -28,7 +30,14 @@ import { type CalendarViewMode } from '@/calendar/types/CalendarViewMode';
 import { buildCalendarEventDraftFromEvent } from '@/calendar/utils/buildCalendarEventDraftFromEvent';
 import { buildCalendarEventDraftFromSlotRange } from '@/calendar/utils/calendarEventSlots';
 import { buildCalendarEventInputFromDraft } from '@/calendar/utils/buildCalendarEventInputFromDraft';
+import { buildCalendarRecurrenceRuleFromDraft } from '@/calendar/utils/buildCalendarRecurrenceRuleFromDraft';
+import {
+  buildCalendarSeriesAnchorInputFromDraft,
+  getCalendarSeriesTimeZone,
+} from '@/calendar/utils/buildCalendarSeriesAnchorInputFromDraft';
+import { expandCalendarEventsForRange } from '@/calendar/utils/expandCalendarEventsForRange';
 import { getCalendarEventOccurrenceDay } from '@/calendar/utils/getCalendarEventOccurrenceDay';
+import { getCalendarSeriesEvents } from '@/calendar/utils/getCalendarSeriesEvents';
 import { getCalendarViewDays } from '@/calendar/utils/getCalendarViewDays';
 import { groupCalendarEventsByDay } from '@/calendar/utils/groupCalendarEventsByDay';
 import { isCalendarLocalEditSurface } from '@/calendar/utils/isCalendarLocalEditSurface';
@@ -129,15 +138,29 @@ export const CalendarPage = () => {
     [mode, anchorDate, calendarStartDay],
   );
 
-  const spansByDay = useMemo(
+  // Series anchors are expanded into their occurrences for the visible range;
+  // every write below still resolves back to the stored anchor/detached rows.
+  const { events: displayedEvents, occurrenceSourceByEventId } = useMemo(
     () =>
-      groupCalendarEventsByDay({
+      expandCalendarEventsForRange({
         events,
         timeZone,
         firstDay,
         lastDay,
+        weekStartsOnDayIndex: calendarStartDay,
       }),
-    [events, timeZone, firstDay, lastDay],
+    [events, timeZone, firstDay, lastDay, calendarStartDay],
+  );
+
+  const spansByDay = useMemo(
+    () =>
+      groupCalendarEventsByDay({
+        events: displayedEvents,
+        timeZone,
+        firstDay,
+        lastDay,
+      }),
+    [displayedEvents, timeZone, firstDay, lastDay],
   );
 
   const agendaDays = useMemo(() => {
@@ -158,54 +181,52 @@ export const CalendarPage = () => {
     return eventIds.size;
   }, [spansByDay]);
 
+  // The displayed event may be an expanded occurrence (view-only id); the
+  // stored event is the row writes must target — its anchor for an occurrence.
   const selectedEvent =
-    events.find((event) => event.id === selectedEventId) ?? null;
+    displayedEvents.find((event) => event.id === selectedEventId) ?? null;
+  const selectedOccurrenceSource = isDefined(selectedEventId)
+    ? (occurrenceSourceByEventId.get(selectedEventId) ?? null)
+    : null;
+  const selectedStoredEventId =
+    selectedOccurrenceSource?.anchorEventId ?? selectedEventId;
+  const selectedStoredEvent =
+    events.find((event) => event.id === selectedStoredEventId) ?? null;
   const selectedSpan = isDefined(selectedEventId)
     ? Array.from(spansByDay.values())
         .flat()
         .find((span) => span.event.id === selectedEventId)
     : undefined;
 
-  const selectedSeriesId = isDefined(selectedEvent)
-    ? selectedEvent.recurrenceSeriesId
-    : null;
-
-  // All rows belonging to the selected event's series. The anchor carries the
+  // All stored rows of the selected event's series. The anchor carries the
   // rule; detached siblings share the series id and name the day they replace.
-  const selectedSeriesEvents = useMemo(() => {
-    if (!isDefined(selectedEvent)) {
-      return [];
+  const selectedSeriesEvents = useMemo(
+    () =>
+      isDefined(selectedStoredEvent)
+        ? getCalendarSeriesEvents({ event: selectedStoredEvent, events })
+        : { anchorEvent: null, detachedEvents: [] },
+    [events, selectedStoredEvent],
+  );
+
+  const selectedSeriesAnchor = selectedSeriesEvents.anchorEvent;
+  const selectedSeriesDetachedEvents = selectedSeriesEvents.detachedEvents;
+
+  // An expanded occurrence names its day directly; a stored anchor or detached
+  // row derives it from its own columns.
+  const getSelectedOccurrenceDay = (): string | null => {
+    if (isDefined(selectedOccurrenceSource)) {
+      return selectedOccurrenceSource.occurrenceDay;
     }
 
-    if (!isNonEmptyString(selectedSeriesId)) {
-      return [selectedEvent];
-    }
-
-    return events.filter(
-      (event) => event.recurrenceSeriesId === selectedSeriesId,
-    );
-  }, [events, selectedEvent, selectedSeriesId]);
-
-  const selectedSeriesAnchor = useMemo(() => {
-    if (!isDefined(selectedEvent)) {
+    if (!isDefined(selectedStoredEvent)) {
       return null;
     }
 
-    return (
-      selectedSeriesEvents.find((event) =>
-        isNonEmptyString(event.recurrenceRule),
-      ) ??
-      (isNonEmptyString(selectedEvent.recurrenceRule) ? selectedEvent : null)
-    );
-  }, [selectedEvent, selectedSeriesEvents]);
-
-  const selectedSeriesDetachedEvents = useMemo(
-    () =>
-      selectedSeriesEvents.filter((event) =>
-        isNonEmptyString(event.recurrenceOccurrenceDay),
-      ),
-    [selectedSeriesEvents],
-  );
+    return getCalendarEventOccurrenceDay({
+      event: selectedStoredEvent,
+      timeZone,
+    });
+  };
 
   const title = useMemo(() => {
     if (mode === 'week') {
@@ -378,15 +399,34 @@ export const CalendarPage = () => {
     return true;
   };
 
-  const updateSeries = async (input: CalendarEventInput): Promise<boolean> => {
+  const updateSeries = async ({
+    input,
+    recurrence,
+    startDay,
+  }: {
+    input: CalendarEventInput;
+    recurrence: CalendarRecurrenceDraft | null;
+    startDay: Temporal.PlainDate;
+  }): Promise<boolean> => {
     if (!isDefined(selectedSeriesAnchor)) {
       setStatusMessage(t`Could not update this series`);
       return false;
     }
 
-    const rule = isNonEmptyString(selectedSeriesAnchor.recurrenceRule)
-      ? parseCalendarRecurrenceRule(selectedSeriesAnchor.recurrenceRule)
-      : null;
+    // The composer's "Repeat" draft wins; without one the stored rule is kept.
+    const rule = isDefined(recurrence)
+      ? buildCalendarRecurrenceRuleFromDraft({
+          recurrence,
+          startDay,
+          seriesTimeZone: selectedSeriesAnchor.isFullDay
+            ? getCalendarSeriesTimeZone({ isFullDay: true, timeZone })
+            : isNonEmptyString(selectedSeriesAnchor.recurrenceTimezone)
+              ? selectedSeriesAnchor.recurrenceTimezone
+              : timeZone,
+        })
+      : isNonEmptyString(selectedSeriesAnchor.recurrenceRule)
+        ? parseCalendarRecurrenceRule(selectedSeriesAnchor.recurrenceRule)
+        : null;
 
     if (rule === null) {
       setStatusMessage(t`Could not update this series`);
@@ -502,7 +542,11 @@ export const CalendarPage = () => {
       return;
     }
 
-    const didDelete = await deleteCalendarEvent(selectedEvent.id);
+    if (!isDefined(selectedStoredEvent)) {
+      return;
+    }
+
+    const didDelete = await deleteCalendarEvent(selectedStoredEvent.id);
 
     if (didDelete) {
       setSelectedEventId(null);
@@ -521,10 +565,7 @@ export const CalendarPage = () => {
 
     if (action === 'edit') {
       if (scope === 'this-occurrence') {
-        const occurrenceDay = getCalendarEventOccurrenceDay({
-          event: selectedEvent,
-          timeZone,
-        });
+        const occurrenceDay = getSelectedOccurrenceDay();
 
         if (!isDefined(occurrenceDay)) {
           setStatusMessage(t`Could not edit this occurrence`);
@@ -540,7 +581,7 @@ export const CalendarPage = () => {
       }
 
       openComposerForEvent({
-        event: selectedSeriesAnchor ?? selectedEvent,
+        event: selectedSeriesAnchor ?? selectedStoredEvent ?? selectedEvent,
         editScope: 'whole-series',
         occurrenceDay: null,
       });
@@ -548,10 +589,7 @@ export const CalendarPage = () => {
     }
 
     if (scope === 'this-occurrence') {
-      const occurrenceDay = getCalendarEventOccurrenceDay({
-        event: selectedEvent,
-        timeZone,
-      });
+      const occurrenceDay = getSelectedOccurrenceDay();
 
       if (!isDefined(occurrenceDay)) {
         setStatusMessage(t`Could not delete this occurrence`);
@@ -584,7 +622,22 @@ export const CalendarPage = () => {
     });
 
     if (composer.mode === 'create') {
-      const didCreate = await createCalendarEvent(input);
+      const anchorEventId = v4();
+      const seriesAnchorInput = buildCalendarSeriesAnchorInputFromDraft({
+        draft: composer.draft,
+        timeZone,
+        seriesAnchorEventId: anchorEventId,
+      });
+      const didCreate = await createCalendarEvent(
+        isDefined(seriesAnchorInput)
+          ? {
+              ...input,
+              ...seriesAnchorInput,
+              id: anchorEventId,
+              recurrenceSkippedOccurrenceDays: null,
+            }
+          : input,
+      );
 
       if (didCreate) {
         setComposer(null);
@@ -613,7 +666,11 @@ export const CalendarPage = () => {
     }
 
     if (composer.editScope === 'whole-series') {
-      const didUpdateSeries = await updateSeries(input);
+      const didUpdateSeries = await updateSeries({
+        input,
+        recurrence: composer.draft.recurrence ?? null,
+        startDay: composer.draft.startDay,
+      });
 
       if (didUpdateSeries) {
         setComposer(null);
@@ -626,9 +683,17 @@ export const CalendarPage = () => {
       return;
     }
 
+    // A plain event given a "Repeat" choice becomes the anchor of a new series.
+    const seriesAnchorInput = buildCalendarSeriesAnchorInputFromDraft({
+      draft: composer.draft,
+      timeZone,
+      seriesAnchorEventId: composer.eventId,
+    });
     const didUpdate = await updateCalendarEvent({
       id: composer.eventId,
-      input,
+      input: isDefined(seriesAnchorInput)
+        ? { ...input, ...seriesAnchorInput }
+        : input,
     });
 
     if (didUpdate) {
@@ -793,6 +858,14 @@ export const CalendarPage = () => {
         <CalendarEventComposer
           mode={composer.mode}
           draft={composer.draft}
+          recurrenceMode={
+            composer.editScope === 'whole-series'
+              ? 'series'
+              : composer.editScope === 'this-occurrence'
+                ? 'hidden'
+                : 'optional'
+          }
+          locale={dateLocale.locale}
           isSaving={isSaving}
           errorMessage={composerErrorMessage}
           onChange={(draft) => setComposer({ ...composer, draft })}

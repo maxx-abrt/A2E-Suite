@@ -8,6 +8,7 @@ import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
+import { excludeWorkspaceIds } from 'src/engine/core-modules/upgrade/utils/exclude-workspace-ids.util';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 type RunSingleMigrationResult =
@@ -28,12 +29,18 @@ export class InstanceCommandRunnerService {
     private readonly upgradeStatusService: UpgradeStatusService,
   ) {}
 
+  // workspaceIdsPastThisStep: workspaces whose cursor is already further in
+  // the sequence (instance step inserted behind an applied workspace
+  // segment). They get no workspace-scoped row, so their cursor does not
+  // regress to this step.
   async runFastInstanceCommand({
     command,
     name,
+    workspaceIdsPastThisStep = [],
   }: {
     command: FastInstanceCommand;
     name: string;
+    workspaceIdsPastThisStep?: string[];
   }): Promise<RunSingleMigrationResult> {
     const executedByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
@@ -58,10 +65,12 @@ export class InstanceCommandRunnerService {
 
       await command.up(queryRunner);
 
-      const workspaceIds =
+      const workspaceIds = excludeWorkspaceIds(
         await this.workspaceVersionService.getProvisionedWorkspaceIds({
           queryRunner,
-        });
+        }),
+        workspaceIdsPastThisStep,
+      );
 
       await this.upgradeMigrationService.recordUpgradeMigration({
         name,
@@ -82,8 +91,10 @@ export class InstanceCommandRunnerService {
         await queryRunner.rollbackTransaction();
       }
 
-      const workspaceIds =
-        await this.workspaceVersionService.getProvisionedWorkspaceIds();
+      const workspaceIds = excludeWorkspaceIds(
+        await this.workspaceVersionService.getProvisionedWorkspaceIds(),
+        workspaceIdsPastThisStep,
+      );
 
       await this.upgradeMigrationService.recordUpgradeMigration({
         name,
@@ -122,10 +133,12 @@ export class InstanceCommandRunnerService {
     command,
     name,
     skipDataMigration,
+    workspaceIdsPastThisStep = [],
   }: {
     command: SlowInstanceCommand;
     name: string;
     skipDataMigration?: boolean;
+    workspaceIdsPastThisStep?: string[];
   }): Promise<RunSingleMigrationResult> {
     const isAlreadyCompleted =
       await this.upgradeMigrationService.isLastAttemptCompleted({
@@ -148,8 +161,10 @@ export class InstanceCommandRunnerService {
         await command.runDataMigration(this.dataSource);
         this.logger.log(`${name} data migration completed`);
       } catch (error) {
-        const workspaceIds =
-          await this.workspaceVersionService.getProvisionedWorkspaceIds();
+        const workspaceIds = excludeWorkspaceIds(
+          await this.workspaceVersionService.getProvisionedWorkspaceIds(),
+          workspaceIdsPastThisStep,
+        );
 
         await this.upgradeMigrationService.recordUpgradeMigration({
           name,
@@ -174,6 +189,7 @@ export class InstanceCommandRunnerService {
     return this.runFastInstanceCommand({
       command,
       name,
+      workspaceIdsPastThisStep,
     });
   }
 }
