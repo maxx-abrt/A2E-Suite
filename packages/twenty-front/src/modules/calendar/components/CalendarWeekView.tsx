@@ -1,6 +1,9 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Temporal } from 'temporal-polyfill';
+import { isDefined } from 'twenty-shared/utils';
+import { IconPlus } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CalendarEventChip } from '@/calendar/components/CalendarEventChip';
@@ -17,6 +20,8 @@ type CalendarWeekViewProps = {
   locale?: string;
   onSelectEvent: (eventId: string) => void;
   onOpenTask: (taskId: string) => void;
+  // Absent when the member cannot create tasks or deadlines are hidden.
+  onAddTask?: (day: Temporal.PlainDate) => void;
 };
 
 const StyledWeek = styled.div`
@@ -43,6 +48,14 @@ const StyledDayColumn = styled.div`
   padding: ${themeCssVariables.spacing[1]};
 `;
 
+const StyledDayHeaderRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  justify-content: space-between;
+  min-height: 24px;
+`;
+
 const StyledDayHeader = styled.h3`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.xs};
@@ -65,6 +78,7 @@ export const CalendarWeekView = ({
   locale,
   onSelectEvent,
   onOpenTask,
+  onAddTask,
 }: CalendarWeekViewProps) => {
   const { t } = useLingui();
 
@@ -74,16 +88,29 @@ export const CalendarWeekView = ({
         {days.map((day) => {
           const daySpans = spansByDay.get(day.toString()) ?? [];
           const dayTaskDues = taskDuesByDay.get(day.toString()) ?? [];
+          const dayLabel = day.toLocaleString(locale, { dateStyle: 'full' });
 
           return (
             <StyledDayColumn role="listitem" key={day.toString()}>
-              <StyledDayHeader>
-                {day.toLocaleString(locale, {
-                  weekday: 'short',
-                  day: 'numeric',
-                  month: 'short',
-                })}
-              </StyledDayHeader>
+              <StyledDayHeaderRow>
+                <StyledDayHeader>
+                  {day.toLocaleString(locale, {
+                    weekday: 'short',
+                    day: 'numeric',
+                    month: 'short',
+                  })}
+                </StyledDayHeader>
+                {isDefined(onAddTask) && (
+                  <Button
+                    ariaLabel={t`Add a task due ${dayLabel}`}
+                    Icon={IconPlus}
+                    size="small"
+                    variant="tertiary"
+                    dataTestId={`calendar-week-add-task-${day.toString()}`}
+                    onClick={() => onAddTask(day)}
+                  />
+                )}
+              </StyledDayHeaderRow>
               {daySpans.length === 0 && dayTaskDues.length === 0 && (
                 <StyledEmpty>{t`No events`}</StyledEmpty>
               )}

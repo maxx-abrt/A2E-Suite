@@ -108,9 +108,20 @@
         "US-082"
       ],
       "completionNotes": "Executor done (awaiting orchestrator). useCalendarTaskDueDates reads standard `task` rows (id/title/dueAt/status) with a dueAt range filter built in the viewer zone (getCalendarTaskDueQueryRange: start of first visible day inclusive, start of the day after the last exclusive; DST-aware), skipped when the overlay is hidden or the member lacks task read permission (useFindManyRecords already gates on it). groupCalendarTaskDuesByDay buckets by the due day in the viewer zone, skips null/unreadable/out-of-range due dates, dedupes, flags overdue (open + before today) vs done, orders open by due time/title and sinks done. CalendarTaskDueChip: dashed outline + IconCheckbox + Due/Overdue/Done state (never the event accent border), opens the task via useOpenRecordInSidePanel. Wired into month/week/day/agenda (agenda lists days that only have deadlines; empty states count deadlines), toolbar toggle 'Task due dates' (aria-pressed), non-blocking load error line. No write path, no schema/server change, works without Projects (dueAt is standard). 9 new cases; front calendar 21 suites / 221 tests green (scratch harness). Tier-2: /calendar browser proof."
+    },
+    {
+      "id": "US-085",
+      "title": "P4C.5 quick-create a standard task from a calendar day (day + week views)",
+      "description": "As a calendar user, I want to add a task due on a given day straight from the calendar, so that I can capture a deadline where I am planning without opening the Tasks page — and without the calendar scheduling or inviting anyone.",
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "US-084"
+      ],
+      "completionNotes": "Executor done (awaiting orchestrator). 'Add task' on the day view header and an icon button per week-view day column open CalendarTaskQuickCreateDialog (labelled title input, autofocus, Escape cancels, 'Due <full date>' line, hint that nothing is scheduled). useCalendarTaskQuickCreate writes one standard `task` through useCreateOneRecord (native record path, pre-generated id, status TODO, dueAt = local noon of the chosen day via buildCalendarQuickTaskInput so the day holds for teammates within ±11h and round-trips through the overlay grouping); blank titles never submit. Buttons only render when the deadline overlay is shown and the member can create tasks (object permission canUpdateObjectRecords). FORBIDDEN vs generic error copy; success refetches the overlay and announces 'Task created'. No event row, no invitation, no schema/server change. 8 new cases; front calendar 22 suites / 229 tests green (scratch harness). Tier-2: /calendar browser proof."
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-24T04:30:01.000Z"
+    "updatedAt": "2026-09-24T04:34:54.000Z"
   }
 }

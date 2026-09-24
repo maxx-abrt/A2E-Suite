@@ -1,6 +1,9 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Temporal } from 'temporal-polyfill';
+import { isDefined } from 'twenty-shared/utils';
+import { IconPlus } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CalendarDayTimeGrid } from '@/calendar/components/CalendarDayTimeGrid';
@@ -19,6 +22,8 @@ type CalendarDayViewProps = {
   locale?: string;
   onSelectEvent: (eventId: string) => void;
   onOpenTask: (taskId: string) => void;
+  // Absent when the member cannot create tasks or deadlines are hidden.
+  onAddTask?: (day: Temporal.PlainDate) => void;
   onCreateEventFromSlots: (range: {
     startSlot: CalendarEventSlot;
     endSlot: CalendarEventSlot;
@@ -33,6 +38,15 @@ const StyledDay = styled.section`
   min-height: 0;
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[3]};
+`;
+
+const StyledDayHeaderRow = styled.div`
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: space-between;
+  max-width: 720px;
 `;
 
 const StyledDayHeader = styled.h3`
@@ -63,6 +77,7 @@ export const CalendarDayView = ({
   locale,
   onSelectEvent,
   onOpenTask,
+  onAddTask,
   onCreateEventFromSlots,
 }: CalendarDayViewProps) => {
   const { t } = useLingui();
@@ -73,9 +88,22 @@ export const CalendarDayView = ({
 
   return (
     <StyledDay aria-label={t`Day calendar`}>
-      <StyledDayHeader>
-        {day.toLocaleString(locale, { dateStyle: 'full' })}
-      </StyledDayHeader>
+      <StyledDayHeaderRow>
+        <StyledDayHeader>
+          {day.toLocaleString(locale, { dateStyle: 'full' })}
+        </StyledDayHeader>
+        {isDefined(onAddTask) && (
+          <Button
+            title={t`Add task`}
+            ariaLabel={t`Add a task due on this day`}
+            Icon={IconPlus}
+            size="small"
+            variant="secondary"
+            dataTestId="calendar-day-add-task"
+            onClick={() => onAddTask(day)}
+          />
+        )}
+      </StyledDayHeaderRow>
       {allDaySpans.length > 0 && (
         <StyledList>
           {allDaySpans.map((span) => (

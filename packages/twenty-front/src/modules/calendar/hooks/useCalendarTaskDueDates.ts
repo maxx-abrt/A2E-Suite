@@ -25,7 +25,7 @@ export const useCalendarTaskDueDates = ({
     timeZone,
   });
 
-  const { records, loading, error } = useFindManyRecords({
+  const { records, loading, error, refetch } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.Task,
     filter: {
       and: [{ dueAt: { gte: dueAtFrom } }, { dueAt: { lt: dueAtBefore } }],
@@ -45,5 +45,6 @@ export const useCalendarTaskDueDates = ({
     tasks: skip ? [] : (records as unknown as CalendarTaskDueRecord[]),
     loading: skip ? false : loading,
     error: skip ? undefined : error,
+    refetch,
   };
 };

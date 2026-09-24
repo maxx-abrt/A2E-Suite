@@ -15,11 +15,13 @@ import { CalendarEventComposer } from '@/calendar/components/CalendarEventCompos
 import { CalendarEventDetails } from '@/calendar/components/CalendarEventDetails';
 import { CalendarMonthView } from '@/calendar/components/CalendarMonthView';
 import { CalendarSeriesScopeDialog } from '@/calendar/components/CalendarSeriesScopeDialog';
+import { CalendarTaskQuickCreateDialog } from '@/calendar/components/CalendarTaskQuickCreateDialog';
 import { CalendarToolbar } from '@/calendar/components/CalendarToolbar';
 import { CalendarWeekView } from '@/calendar/components/CalendarWeekView';
 import { useCalendarEventMutations } from '@/calendar/hooks/useCalendarEventMutations';
 import { useCalendarEvents } from '@/calendar/hooks/useCalendarEvents';
 import { useCalendarTaskDueDates } from '@/calendar/hooks/useCalendarTaskDueDates';
+import { useCalendarTaskQuickCreate } from '@/calendar/hooks/useCalendarTaskQuickCreate';
 import {
   type CalendarEventDraft,
   type CalendarEventInput,
@@ -32,6 +34,7 @@ import { type CalendarViewMode } from '@/calendar/types/CalendarViewMode';
 import { buildCalendarEventDraftFromEvent } from '@/calendar/utils/buildCalendarEventDraftFromEvent';
 import { buildCalendarEventDraftFromSlotRange } from '@/calendar/utils/calendarEventSlots';
 import { buildCalendarEventInputFromDraft } from '@/calendar/utils/buildCalendarEventInputFromDraft';
+import { buildCalendarQuickTaskInput } from '@/calendar/utils/buildCalendarQuickTaskInput';
 import { buildCalendarRecurrenceRuleFromDraft } from '@/calendar/utils/buildCalendarRecurrenceRuleFromDraft';
 import {
   buildCalendarSeriesAnchorInputFromDraft,
@@ -128,7 +131,18 @@ export const CalendarPage = () => {
   } | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [showTaskDueDates, setShowTaskDueDates] = useState(true);
+  const [taskQuickCreate, setTaskQuickCreate] = useState<{
+    dueDay: Temporal.PlainDate;
+    title: string;
+  } | null>(null);
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+  const {
+    canCreateTasks,
+    createTask,
+    isCreating: isCreatingTask,
+    error: taskCreateError,
+    resetError: resetTaskCreateError,
+  } = useCalendarTaskQuickCreate();
 
   const {
     days: viewDays,
@@ -171,7 +185,11 @@ export const CalendarPage = () => {
 
   // Task deadlines are a read-only overlay: they come from standard `task`
   // rows, render apart from events, and open the task itself (never an event).
-  const { tasks: dueTasks, error: taskDueError } = useCalendarTaskDueDates({
+  const {
+    tasks: dueTasks,
+    error: taskDueError,
+    refetch: refetchTaskDues,
+  } = useCalendarTaskDueDates({
     firstDay,
     lastDay,
     timeZone,
@@ -302,6 +320,42 @@ export const CalendarPage = () => {
       objectNameSingular: CoreObjectNameSingular.Task,
     });
   };
+
+  const handleAddTask = (dueDay: Temporal.PlainDate) => {
+    resetTaskCreateError();
+    setStatusMessage(null);
+    setTaskQuickCreate({ dueDay, title: '' });
+  };
+
+  const handleTaskQuickCreateSubmit = async () => {
+    if (!isDefined(taskQuickCreate)) {
+      return;
+    }
+
+    const input = buildCalendarQuickTaskInput({
+      taskId: v4(),
+      title: taskQuickCreate.title,
+      dueDay: taskQuickCreate.dueDay,
+      timeZone,
+    });
+
+    if (!isDefined(input)) {
+      return;
+    }
+
+    const didCreate = await createTask(input);
+
+    if (didCreate) {
+      setTaskQuickCreate(null);
+      setStatusMessage(t`Task created`);
+      refetchTaskDues();
+    }
+  };
+
+  // Quick-create belongs to the deadline overlay: hidden with it, and never
+  // offered to a member who cannot create tasks.
+  const onAddTask =
+    showTaskDueDates && canCreateTasks ? handleAddTask : undefined;
 
   const handleModeChange = (nextMode: CalendarViewMode) => {
     setMode(nextMode);
@@ -790,6 +844,11 @@ export const CalendarPage = () => {
   const errorMessage = isGraphqlErrorOfType(error, 'FORBIDDEN')
     ? t`You do not have access to calendar events`
     : t`Could not load calendar events`;
+  const taskCreateErrorMessage = isDefined(taskCreateError)
+    ? isGraphqlErrorOfType(taskCreateError, 'FORBIDDEN')
+      ? t`You do not have permission to create tasks`
+      : t`Could not create the task. Please try again.`
+    : null;
   const composerErrorMessage = isDefined(mutationError)
     ? isGraphqlErrorOfType(mutationError, 'FORBIDDEN')
       ? t`You do not have permission to change this event`
@@ -859,6 +918,7 @@ export const CalendarPage = () => {
                 locale={dateLocale.locale}
                 onSelectEvent={handleSelectEvent}
                 onOpenTask={handleOpenTask}
+                onAddTask={onAddTask}
               />
             )}
             {mode === 'day' && (
@@ -871,6 +931,7 @@ export const CalendarPage = () => {
                 locale={dateLocale.locale}
                 onSelectEvent={handleSelectEvent}
                 onOpenTask={handleOpenTask}
+                onAddTask={onAddTask}
                 onCreateEventFromSlots={handleCreateEventFromSlots}
               />
             )}
@@ -911,6 +972,23 @@ export const CalendarPage = () => {
           onCancel={() => {
             resetError();
             setScopePrompt(null);
+          }}
+        />
+      )}
+      {isDefined(taskQuickCreate) && (
+        <CalendarTaskQuickCreateDialog
+          dueDay={taskQuickCreate.dueDay}
+          title={taskQuickCreate.title}
+          locale={dateLocale.locale}
+          isCreating={isCreatingTask}
+          errorMessage={taskCreateErrorMessage}
+          onTitleChange={(title) =>
+            setTaskQuickCreate({ ...taskQuickCreate, title })
+          }
+          onSubmit={() => void handleTaskQuickCreateSubmit()}
+          onCancel={() => {
+            resetTaskCreateError();
+            setTaskQuickCreate(null);
           }}
         />
       )}
