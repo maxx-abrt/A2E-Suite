@@ -951,7 +951,7 @@ Optional advanced authoring is not a prerequisite to this repair slice.
 **Goal.** Asana/Huly-grade projects on Twenty tasks. App: `a2e-projects`.
 
 ### P4.1 Model
-- [ ] `project` object: name, key (PRJ-style), status pipeline (planning/
+- [~] `project` object: name, key (PRJ-style), status pipeline (planning/
       active/completed/on_hold), lead, members (relation), health, start/due
       dates, color, description (RICH_TEXT), milestones (object), budget +
       spent (finance fields, fed by P7 — declare here, wire in P7.1c)
@@ -959,6 +959,13 @@ Optional advanced authoring is not a prerequisite to this repair slice.
       milestone object now exist in source, alongside the project fields.
       Validate installed relations, permissions and layouts; do not create
       duplicate objects based on the older phase report.)
+      — 2026-09-24 20:52 CEST orchestrator (phase-04-report): relations +
+      layouts validated live on the installed app — `_project` carries every
+      declared column (key/status/health/startsAt/dueAt/color/description/
+      budget/spent/leadId/companyId), the projects index renders the field +
+      relation columns (Documents/Tâches/Jalons/Membres/Temps), and the record
+      page renders its page-layout tabs/widgets. Remaining before tick:
+      installed-permission ACL proof and the reinstall no-duplicate re-walk.
 - [x] `task` extensions (app fields on standard task): project relation,
       status (custom-status object w/ color + isDone), priority, labels,
       estimate (t-shirt), subtask parent relation, blockedBy self-relation,
@@ -984,8 +991,14 @@ Optional advanced authoring is not a prerequisite to this repair slice.
       `created:1`, replays `created:0, skipped:1` (duplicate-free).
 
 ### P4.2 Views & UX
-- [ ] Board view (kanban by custom status — extend view types if needed;
+- [x] Board view (kanban by custom status — extend view types if needed;
       prefer existing kanban view on task with status grouping)
+      — 2026-09-24 20:52 CEST orchestrator (phase-04-report): live render
+      verified on the installed app — the project record `Tableau` tab draws
+      the native KANBAN view grouped by the app `Statut` pipeline
+      (À faire / En cours / Terminé) with task cards; the group-by target is
+      `task.projectStatus`, not the native `status`. Drag-write of
+      `projectStatus` not exercised (not part of the bullet's acceptance).
 - [~] Gantt/timeline view (front component; framer-motion-free, virtualized)
       — 2026-09-17 orchestrator: widget + page-layout entry installed and
       the live task query (project filter, null-variant orderBy, pagination,
@@ -1000,6 +1013,15 @@ Optional advanced authoring is not a prerequisite to this repair slice.
       265/265 on HEAD re-run. Tier-2 live-install proof open (create a
       no-`projectStatus` task → visible on calendar + En retard, DONE stays
       out).
+      — 2026-09-24 20:52 CEST orchestrator (phase-04-report): the "En retard"
+      half of the proof PASSES live (a project task with NULL `projectStatus`
+      and a past `dueAt` shows; a DONE one does not), but the **task-calendar
+      render is BLOCKED by a live defect**: the view's calendar query
+      (`GroupByTasks`) exceeds the server GraphQL complexity cap
+      (2001 > 2000) and returns `null`, so the grid renders zero records even
+      though `tasks(filter:…)` returns the matching task. Kept `[~]`; defect
+      queued for an executor (reduce the view's group-by field/relation
+      complexity).
 - [ ] Retroplanning (R04, after P4.1/C1): choose a reusable project recipe,
       set deadline and timezone, preview task/subtask dates, durations,
       dependencies, assignees and overlap/past-date warnings; confirm creation
@@ -1007,13 +1029,26 @@ Optional advanced authoring is not a prerequisite to this repair slice.
       or move deadline previews only owned changes and protects manually edited
       dates/completed work. Append versus replace affects the draft unless an
       explicit destructive record-change preview is confirmed (E06).
-- [~] My-tasks page ("assigned to me" + "created by me" + overdue smart
+- [x] My-tasks page ("assigned to me" + "created by me" + overdue smart
       lists)
       — 2026-09-20 orchestrator: same US-059 slice — overdue-tasks smart list
       carries the NULL-including OR filterGroup (unit-verified 265/265);
       live-install proof open with the calendar bullet above.
-- [ ] Project page: overview widgets (health, milestones, members, activity)
+      — 2026-09-24 20:52 CEST orchestrator (phase-04-report): live proof PASSES
+      — the sidebar renders `Mes tâches` as a folder with the three smart
+      lists; `Assignées à moi` (567 rows, app `Statut` + `Projet` columns) and
+      `Créées par moi` render; `En retard` includes the NULL-`projectStatus`
+      overdue task and excludes the DONE one.
+- [~] Project page: overview widgets (health, milestones, members, activity)
       + tabs (tasks/board/gantt/files/docs)
+      — 2026-09-24 20:52 CEST orchestrator (phase-04-report): partial live
+      proof on the installed app — the record page `/object/project/<id>`
+      renders the layout tabs (Timeline/Tâches/Tableau/Fichiers/Documents/
+      Discussions), the `Champs clés` field block, a working `Tâches` table
+      and the `Tableau` kanban; but the `Aperçu` overview front component
+      renders **empty** on the record page (no `Santé`/members chips) and the
+      `Tâches` tab is **not scoped to the current project** (it lists tasks
+      with no project). Defects queued; kept `[~]`.
 - [x] Subtasks & dependencies UI: nested list + dependency picker with
       cycle validation — 2026-09-17 orchestrator: nested list slice live
       (roots via `parentTask: {is:NULL}`, children via `parentTask {id}`,

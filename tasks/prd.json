@@ -1,6 +1,6 @@
 {
   "name": "A2E Suite — executor batch 11 (2026-09-24, base 72c38486)",
-  "description": "Batch 11: orchestrator-queued M1 defects (US-080 upgrade cursor reachability, US-081 install log hygiene) plus dependency-ready Tier-0 legs extracted from PLAN.md. passes stays false until the orchestrator verifies.",
+  "description": "Batch 11: orchestrator-queued M1 defects (US-080 upgrade cursor reachability, US-081 install log hygiene) plus dependency-ready Tier-0 legs extracted from PLAN.md. US-080..US-085 verified by orchestrator 2026-09-24 (unit/integration/tsgo + live /calendar Tier-2); passes flipped true. Live Tier-2 pass also found P4.2 defects: task-calendar GroupByTasks complexity > cap (renders empty), project Tâches tab unscoped, project Aperçu overview widget empty — see phase-04-report 20:52 CEST.",
   "branchName": "main",
   "userStories": [
     {
@@ -61,7 +61,7 @@
       "title": "M1(e) upgrade cursor reachability — resume at an instance command inserted behind an applied workspace segment",
       "description": "As an operator upgrading an instance already at the 2.39.0 workspace segment to an image carrying the new AddBundledAppSourcePath instance command, I want `upgrade` to run that instance command once without re-running the applied workspace segment, so that the bundled-app column exists and boot stays idempotent.",
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "dependsOn": [
         "US-079"
       ],
@@ -72,7 +72,7 @@
       "title": "Install log hygiene — refuse an already-installed version before any state change (no ERROR on every boot)",
       "description": "As an operator watching boot logs, I want `install-pre-installed-apps` to report already-installed bundled apps at info level only, so that real install failures are not buried under one ERROR per app per workspace per boot.",
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "dependsOn": [
         "US-079"
       ],
@@ -83,7 +83,7 @@
       "title": "P4C.3 view-level occurrence expansion on /calendar (anchor rows expand into occurrences for the visible range)",
       "description": "As a calendar user, I want a recurring event to show on every day its rule produces, so that the calendar reflects the series instead of only the anchor and detached rows.",
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "dependsOn": [],
       "completionNotes": "Executor done (awaiting orchestrator). expandCalendarEventsForRange (single-sourced engine, series zone / UTC for all-day, skipped + detached exclusion, deterministic occurrence ids, occurrenceSourceByEventId back-map); getCalendarSeriesEvents resolves unstamped anchors to the derived series id; CalendarPage separates displayed vs stored event for the scope planners. 13 new cases; front calendar 193/193 via scratch harness. Tier-2: /calendar browser proof."
     },
@@ -92,7 +92,7 @@
       "title": "P4C.3 recurrence rule editor in the /calendar composer (create, make-recurring, whole-series edit)",
       "description": "As a calendar user, I want to set daily/weekly/monthly repetition with interval, weekdays, monthly position and an end condition when creating or editing an event, so that recurring events can be created without the API.",
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "dependsOn": [
         "US-082"
       ],
@@ -103,7 +103,7 @@
       "title": "P4C.5 task due-date overlay on /calendar (read-only, opens the task in the native side panel)",
       "description": "As a calendar user, I want my tasks' due dates to show on the calendar days they fall on, visibly distinct from scheduled events, so that I can see deadlines next to my schedule and open the task in one click without the calendar ever turning a deadline into an event.",
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "dependsOn": [
         "US-082"
       ],
@@ -114,7 +114,7 @@
       "title": "P4C.5 quick-create a standard task from a calendar day (day + week views)",
       "description": "As a calendar user, I want to add a task due on a given day straight from the calendar, so that I can capture a deadline where I am planning without opening the Tasks page — and without the calendar scheduling or inviting anyone.",
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "dependsOn": [
         "US-084"
       ],
