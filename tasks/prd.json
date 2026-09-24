@@ -1,5 +1,5 @@
 {
-  "name": "A2E Suite — executor batch 11 (2026-09-23, base 126766e7)",
+  "name": "A2E Suite — executor batch 11 (2026-09-24, base 72c38486)",
   "description": "Batch 11: orchestrator-queued M1 defects (US-080 upgrade cursor reachability, US-081 install log hygiene) plus dependency-ready Tier-0 legs extracted from PLAN.md. passes stays false until the orchestrator verifies.",
   "branchName": "main",
   "userStories": [
@@ -77,9 +77,18 @@
         "US-079"
       ],
       "completionNotes": "Executor done (awaiting orchestrator). ApplicationInstallService.runInstall: for an INSTALLED application the version-progression check now runs before the UPGRADING state flip and outside the rollback try/catch (new private assertInstallVersionProgressionAllowed). SAME_VERSION → APP_ALREADY_INSTALLED thrown with no log (PreInstalledAppsService/template service keep their info-level skip line); DOWNGRADE/INVALID → one warn line; no UPGRADING→INSTALLED flip-flop, no revertStateToInstalledBestEffort. runInstallWithMetrics no longer counts APP_ALREADY_INSTALLED as app-upgrade/failed. Same exception message/code → failing-application-version-progression integration snapshot unchanged. New unit spec application-install.service.already-installed.spec.ts (3 cases: same version silent refusal, downgrade warn+metric, newer version still UPGRADING→INSTALLED). Tier-2 residual: boot/`install-pre-installed-apps` on a workspace with the bundled apps already installed shows only the PreInstalledAppsService info line."
+    },
+    {
+      "id": "US-082",
+      "title": "P4C.3 view-level occurrence expansion on /calendar (anchor rows expand into occurrences for the visible range)",
+      "description": "As a calendar user, I want a recurring event to show on every day its rule produces, so that the calendar reflects the series instead of only the anchor and detached rows.",
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [],
+      "completionNotes": "Executor done (awaiting orchestrator). expandCalendarEventsForRange (single-sourced engine, series zone / UTC for all-day, skipped + detached exclusion, deterministic occurrence ids, occurrenceSourceByEventId back-map); getCalendarSeriesEvents resolves unstamped anchors to the derived series id; CalendarPage separates displayed vs stored event for the scope planners. 13 new cases; front calendar 193/193 via scratch harness. Tier-2: /calendar browser proof."
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-23T20:45:00.000Z"
+    "updatedAt": "2026-09-24T06:10:00.000Z"
   }
 }

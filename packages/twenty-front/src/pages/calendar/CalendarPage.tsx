@@ -28,7 +28,9 @@ import { type CalendarViewMode } from '@/calendar/types/CalendarViewMode';
 import { buildCalendarEventDraftFromEvent } from '@/calendar/utils/buildCalendarEventDraftFromEvent';
 import { buildCalendarEventDraftFromSlotRange } from '@/calendar/utils/calendarEventSlots';
 import { buildCalendarEventInputFromDraft } from '@/calendar/utils/buildCalendarEventInputFromDraft';
+import { expandCalendarEventsForRange } from '@/calendar/utils/expandCalendarEventsForRange';
 import { getCalendarEventOccurrenceDay } from '@/calendar/utils/getCalendarEventOccurrenceDay';
+import { getCalendarSeriesEvents } from '@/calendar/utils/getCalendarSeriesEvents';
 import { getCalendarViewDays } from '@/calendar/utils/getCalendarViewDays';
 import { groupCalendarEventsByDay } from '@/calendar/utils/groupCalendarEventsByDay';
 import { isCalendarLocalEditSurface } from '@/calendar/utils/isCalendarLocalEditSurface';
@@ -129,15 +131,29 @@ export const CalendarPage = () => {
     [mode, anchorDate, calendarStartDay],
   );
 
-  const spansByDay = useMemo(
+  // Series anchors are expanded into their occurrences for the visible range;
+  // every write below still resolves back to the stored anchor/detached rows.
+  const { events: displayedEvents, occurrenceSourceByEventId } = useMemo(
     () =>
-      groupCalendarEventsByDay({
+      expandCalendarEventsForRange({
         events,
         timeZone,
         firstDay,
         lastDay,
+        weekStartsOnDayIndex: calendarStartDay,
       }),
-    [events, timeZone, firstDay, lastDay],
+    [events, timeZone, firstDay, lastDay, calendarStartDay],
+  );
+
+  const spansByDay = useMemo(
+    () =>
+      groupCalendarEventsByDay({
+        events: displayedEvents,
+        timeZone,
+        firstDay,
+        lastDay,
+      }),
+    [displayedEvents, timeZone, firstDay, lastDay],
   );
 
   const agendaDays = useMemo(() => {
@@ -158,54 +174,52 @@ export const CalendarPage = () => {
     return eventIds.size;
   }, [spansByDay]);
 
+  // The displayed event may be an expanded occurrence (view-only id); the
+  // stored event is the row writes must target — its anchor for an occurrence.
   const selectedEvent =
-    events.find((event) => event.id === selectedEventId) ?? null;
+    displayedEvents.find((event) => event.id === selectedEventId) ?? null;
+  const selectedOccurrenceSource = isDefined(selectedEventId)
+    ? (occurrenceSourceByEventId.get(selectedEventId) ?? null)
+    : null;
+  const selectedStoredEventId =
+    selectedOccurrenceSource?.anchorEventId ?? selectedEventId;
+  const selectedStoredEvent =
+    events.find((event) => event.id === selectedStoredEventId) ?? null;
   const selectedSpan = isDefined(selectedEventId)
     ? Array.from(spansByDay.values())
         .flat()
         .find((span) => span.event.id === selectedEventId)
     : undefined;
 
-  const selectedSeriesId = isDefined(selectedEvent)
-    ? selectedEvent.recurrenceSeriesId
-    : null;
-
-  // All rows belonging to the selected event's series. The anchor carries the
+  // All stored rows of the selected event's series. The anchor carries the
   // rule; detached siblings share the series id and name the day they replace.
-  const selectedSeriesEvents = useMemo(() => {
-    if (!isDefined(selectedEvent)) {
-      return [];
+  const selectedSeriesEvents = useMemo(
+    () =>
+      isDefined(selectedStoredEvent)
+        ? getCalendarSeriesEvents({ event: selectedStoredEvent, events })
+        : { anchorEvent: null, detachedEvents: [] },
+    [events, selectedStoredEvent],
+  );
+
+  const selectedSeriesAnchor = selectedSeriesEvents.anchorEvent;
+  const selectedSeriesDetachedEvents = selectedSeriesEvents.detachedEvents;
+
+  // An expanded occurrence names its day directly; a stored anchor or detached
+  // row derives it from its own columns.
+  const getSelectedOccurrenceDay = (): string | null => {
+    if (isDefined(selectedOccurrenceSource)) {
+      return selectedOccurrenceSource.occurrenceDay;
     }
 
-    if (!isNonEmptyString(selectedSeriesId)) {
-      return [selectedEvent];
-    }
-
-    return events.filter(
-      (event) => event.recurrenceSeriesId === selectedSeriesId,
-    );
-  }, [events, selectedEvent, selectedSeriesId]);
-
-  const selectedSeriesAnchor = useMemo(() => {
-    if (!isDefined(selectedEvent)) {
+    if (!isDefined(selectedStoredEvent)) {
       return null;
     }
 
-    return (
-      selectedSeriesEvents.find((event) =>
-        isNonEmptyString(event.recurrenceRule),
-      ) ??
-      (isNonEmptyString(selectedEvent.recurrenceRule) ? selectedEvent : null)
-    );
-  }, [selectedEvent, selectedSeriesEvents]);
-
-  const selectedSeriesDetachedEvents = useMemo(
-    () =>
-      selectedSeriesEvents.filter((event) =>
-        isNonEmptyString(event.recurrenceOccurrenceDay),
-      ),
-    [selectedSeriesEvents],
-  );
+    return getCalendarEventOccurrenceDay({
+      event: selectedStoredEvent,
+      timeZone,
+    });
+  };
 
   const title = useMemo(() => {
     if (mode === 'week') {
@@ -502,7 +516,11 @@ export const CalendarPage = () => {
       return;
     }
 
-    const didDelete = await deleteCalendarEvent(selectedEvent.id);
+    if (!isDefined(selectedStoredEvent)) {
+      return;
+    }
+
+    const didDelete = await deleteCalendarEvent(selectedStoredEvent.id);
 
     if (didDelete) {
       setSelectedEventId(null);
@@ -521,10 +539,7 @@ export const CalendarPage = () => {
 
     if (action === 'edit') {
       if (scope === 'this-occurrence') {
-        const occurrenceDay = getCalendarEventOccurrenceDay({
-          event: selectedEvent,
-          timeZone,
-        });
+        const occurrenceDay = getSelectedOccurrenceDay();
 
         if (!isDefined(occurrenceDay)) {
           setStatusMessage(t`Could not edit this occurrence`);
@@ -540,7 +555,7 @@ export const CalendarPage = () => {
       }
 
       openComposerForEvent({
-        event: selectedSeriesAnchor ?? selectedEvent,
+        event: selectedSeriesAnchor ?? selectedStoredEvent ?? selectedEvent,
         editScope: 'whole-series',
         occurrenceDay: null,
       });
@@ -548,10 +563,7 @@ export const CalendarPage = () => {
     }
 
     if (scope === 'this-occurrence') {
-      const occurrenceDay = getCalendarEventOccurrenceDay({
-        event: selectedEvent,
-        timeZone,
-      });
+      const occurrenceDay = getSelectedOccurrenceDay();
 
       if (!isDefined(occurrenceDay)) {
         setStatusMessage(t`Could not delete this occurrence`);
