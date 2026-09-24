@@ -4,16 +4,20 @@ import { type Temporal } from 'temporal-polyfill';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CalendarEventChip } from '@/calendar/components/CalendarEventChip';
+import { CalendarTaskDueChip } from '@/calendar/components/CalendarTaskDueChip';
 import { type CalendarEventSpan } from '@/calendar/types/CalendarEventSpan';
+import { type CalendarTaskDue } from '@/calendar/types/CalendarTaskDue';
 
 type CalendarMonthViewProps = {
   weeks: Temporal.PlainDate[][];
   anchorMonth: number;
   spansByDay: Map<string, CalendarEventSpan[]>;
+  taskDuesByDay: Map<string, CalendarTaskDue[]>;
   selectedEventId: string | null;
   timeZone: string;
   locale?: string;
   onSelectEvent: (eventId: string) => void;
+  onOpenTask: (taskId: string) => void;
 };
 
 const StyledScroll = styled.div`
@@ -56,10 +60,12 @@ export const CalendarMonthView = ({
   weeks,
   anchorMonth,
   spansByDay,
+  taskDuesByDay,
   selectedEventId,
   timeZone,
   locale,
   onSelectEvent,
+  onOpenTask,
 }: CalendarMonthViewProps) => {
   const { t } = useLingui();
   const weekdayLabels = (weeks[0] ?? []).map((day) =>
@@ -84,6 +90,7 @@ export const CalendarMonthView = ({
           >
             {week.map((day) => {
               const daySpans = spansByDay.get(day.toString()) ?? [];
+              const dayTaskDues = taskDuesByDay.get(day.toString()) ?? [];
 
               return (
                 <StyledCell
@@ -103,6 +110,14 @@ export const CalendarMonthView = ({
                       timeZone={timeZone}
                       locale={locale}
                       onSelect={onSelectEvent}
+                    />
+                  ))}
+                  {dayTaskDues.map((taskDue) => (
+                    <CalendarTaskDueChip
+                      key={taskDue.task.id}
+                      taskDue={taskDue}
+                      variant="compact"
+                      onOpenTask={onOpenTask}
                     />
                   ))}
                 </StyledCell>

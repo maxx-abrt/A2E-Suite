@@ -4,6 +4,7 @@ import {
   IconCalendarMonth,
   IconCalendarTime,
   IconCalendarWeek,
+  IconCheckbox,
   IconChevronLeft,
   IconChevronRight,
   IconList,
@@ -24,6 +25,8 @@ type CalendarToolbarProps = {
   onPrevious: () => void;
   onNext: () => void;
   onToday: () => void;
+  showTaskDueDates: boolean;
+  onToggleTaskDueDates: () => void;
 };
 
 const StyledToolbar = styled.div`
@@ -46,6 +49,7 @@ const StyledTitle = styled.h2`
 const StyledGroup = styled.div`
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[1]};
 `;
 
@@ -83,6 +87,8 @@ export const CalendarToolbar = ({
   onPrevious,
   onNext,
   onToday,
+  showTaskDueDates,
+  onToggleTaskDueDates,
 }: CalendarToolbarProps) => {
   const { t } = useLingui();
 
@@ -122,24 +128,36 @@ export const CalendarToolbar = ({
         />
         <StyledTitle aria-live="polite">{title}</StyledTitle>
       </StyledGroup>
-      <StyledGroup role="group" aria-label={t`Calendar view`}>
-        {CALENDAR_VIEW_MODES.map((viewMode) => {
-          const { label, Icon } = viewModeConfig[viewMode];
+      <StyledGroup>
+        <StyledModeButton
+          type="button"
+          isActive={showTaskDueDates}
+          aria-pressed={showTaskDueDates}
+          data-testid="calendar-task-due-toggle"
+          onClick={onToggleTaskDueDates}
+        >
+          <IconCheckbox size={14} />
+          {t`Task due dates`}
+        </StyledModeButton>
+        <StyledGroup role="group" aria-label={t`Calendar view`}>
+          {CALENDAR_VIEW_MODES.map((viewMode) => {
+            const { label, Icon } = viewModeConfig[viewMode];
 
-          return (
-            <StyledModeButton
-              key={viewMode}
-              type="button"
-              isActive={viewMode === mode}
-              aria-pressed={viewMode === mode}
-              data-testid={`calendar-view-mode-${viewMode}`}
-              onClick={() => onModeChange(viewMode)}
-            >
-              <Icon size={14} />
-              {label}
-            </StyledModeButton>
-          );
-        })}
+            return (
+              <StyledModeButton
+                key={viewMode}
+                type="button"
+                isActive={viewMode === mode}
+                aria-pressed={viewMode === mode}
+                data-testid={`calendar-view-mode-${viewMode}`}
+                onClick={() => onModeChange(viewMode)}
+              >
+                <Icon size={14} />
+                {label}
+              </StyledModeButton>
+            );
+          })}
+        </StyledGroup>
       </StyledGroup>
     </StyledToolbar>
   );

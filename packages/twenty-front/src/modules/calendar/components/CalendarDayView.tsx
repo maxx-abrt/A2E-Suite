@@ -5,16 +5,20 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CalendarDayTimeGrid } from '@/calendar/components/CalendarDayTimeGrid';
 import { CalendarEventChip } from '@/calendar/components/CalendarEventChip';
+import { CalendarTaskDueChip } from '@/calendar/components/CalendarTaskDueChip';
 import { type CalendarEventSlot } from '@/calendar/types/CalendarEventSlot';
 import { type CalendarEventSpan } from '@/calendar/types/CalendarEventSpan';
+import { type CalendarTaskDue } from '@/calendar/types/CalendarTaskDue';
 
 type CalendarDayViewProps = {
   day: Temporal.PlainDate;
   spansByDay: Map<string, CalendarEventSpan[]>;
+  taskDuesByDay: Map<string, CalendarTaskDue[]>;
   selectedEventId: string | null;
   timeZone: string;
   locale?: string;
   onSelectEvent: (eventId: string) => void;
+  onOpenTask: (taskId: string) => void;
   onCreateEventFromSlots: (range: {
     startSlot: CalendarEventSlot;
     endSlot: CalendarEventSlot;
@@ -53,14 +57,17 @@ const StyledEmpty = styled.p`
 export const CalendarDayView = ({
   day,
   spansByDay,
+  taskDuesByDay,
   selectedEventId,
   timeZone,
   locale,
   onSelectEvent,
+  onOpenTask,
   onCreateEventFromSlots,
 }: CalendarDayViewProps) => {
   const { t } = useLingui();
   const daySpans = spansByDay.get(day.toString()) ?? [];
+  const dayTaskDues = taskDuesByDay.get(day.toString()) ?? [];
   const allDaySpans = daySpans.filter((span) => span.isAllDay);
   const timedSpans = daySpans.filter((span) => !span.isAllDay);
 
@@ -85,7 +92,20 @@ export const CalendarDayView = ({
           ))}
         </StyledList>
       )}
-      {daySpans.length === 0 && (
+      {dayTaskDues.length > 0 && (
+        <StyledList role="list" aria-label={t`Tasks due on this day`}>
+          {dayTaskDues.map((taskDue) => (
+            <div role="listitem" key={taskDue.task.id}>
+              <CalendarTaskDueChip
+                taskDue={taskDue}
+                variant="row"
+                onOpenTask={onOpenTask}
+              />
+            </div>
+          ))}
+        </StyledList>
+      )}
+      {daySpans.length === 0 && dayTaskDues.length === 0 && (
         <StyledEmpty>{t`No events on this day`}</StyledEmpty>
       )}
       <CalendarDayTimeGrid

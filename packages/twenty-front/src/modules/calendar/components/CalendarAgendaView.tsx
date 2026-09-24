@@ -5,17 +5,21 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconCalendarEvent, IconMap } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { CalendarTaskDueChip } from '@/calendar/components/CalendarTaskDueChip';
 import { type CalendarEventSpan } from '@/calendar/types/CalendarEventSpan';
+import { type CalendarTaskDue } from '@/calendar/types/CalendarTaskDue';
 import { formatCalendarEventTime } from '@/calendar/utils/formatCalendarEventTime';
 import { getCalendarEventAccentColor } from '@/calendar/utils/getCalendarEventAccentColor';
 
 type CalendarAgendaViewProps = {
   days: Temporal.PlainDate[];
   spansByDay: Map<string, CalendarEventSpan[]>;
+  taskDuesByDay: Map<string, CalendarTaskDue[]>;
   selectedEventId: string | null;
   timeZone: string;
   locale?: string;
   onSelectEvent: (eventId: string) => void;
+  onOpenTask: (taskId: string) => void;
 };
 
 const StyledAgenda = styled.section`
@@ -101,14 +105,18 @@ const StyledEmpty = styled.p`
 export const CalendarAgendaView = ({
   days,
   spansByDay,
+  taskDuesByDay,
   selectedEventId,
   timeZone,
   locale,
   onSelectEvent,
+  onOpenTask,
 }: CalendarAgendaViewProps) => {
   const { t } = useLingui();
   const daysWithEvents = days.filter(
-    (day) => (spansByDay.get(day.toString()) ?? []).length > 0,
+    (day) =>
+      (spansByDay.get(day.toString()) ?? []).length > 0 ||
+      (taskDuesByDay.get(day.toString()) ?? []).length > 0,
   );
 
   return (
@@ -165,6 +173,14 @@ export const CalendarAgendaView = ({
                 </StyledItem>
               );
             })}
+            {(taskDuesByDay.get(day.toString()) ?? []).map((taskDue) => (
+              <CalendarTaskDueChip
+                key={taskDue.task.id}
+                taskDue={taskDue}
+                variant="row"
+                onOpenTask={onOpenTask}
+              />
+            ))}
           </StyledDayGroup>
         ))
       )}

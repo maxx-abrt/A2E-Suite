@@ -4,15 +4,19 @@ import { type Temporal } from 'temporal-polyfill';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CalendarEventChip } from '@/calendar/components/CalendarEventChip';
+import { CalendarTaskDueChip } from '@/calendar/components/CalendarTaskDueChip';
 import { type CalendarEventSpan } from '@/calendar/types/CalendarEventSpan';
+import { type CalendarTaskDue } from '@/calendar/types/CalendarTaskDue';
 
 type CalendarWeekViewProps = {
   days: Temporal.PlainDate[];
   spansByDay: Map<string, CalendarEventSpan[]>;
+  taskDuesByDay: Map<string, CalendarTaskDue[]>;
   selectedEventId: string | null;
   timeZone: string;
   locale?: string;
   onSelectEvent: (eventId: string) => void;
+  onOpenTask: (taskId: string) => void;
 };
 
 const StyledWeek = styled.div`
@@ -55,10 +59,12 @@ const StyledEmpty = styled.p`
 export const CalendarWeekView = ({
   days,
   spansByDay,
+  taskDuesByDay,
   selectedEventId,
   timeZone,
   locale,
   onSelectEvent,
+  onOpenTask,
 }: CalendarWeekViewProps) => {
   const { t } = useLingui();
 
@@ -67,6 +73,7 @@ export const CalendarWeekView = ({
       <StyledWeek role="list" aria-label={t`Week calendar`}>
         {days.map((day) => {
           const daySpans = spansByDay.get(day.toString()) ?? [];
+          const dayTaskDues = taskDuesByDay.get(day.toString()) ?? [];
 
           return (
             <StyledDayColumn role="listitem" key={day.toString()}>
@@ -77,22 +84,29 @@ export const CalendarWeekView = ({
                   month: 'short',
                 })}
               </StyledDayHeader>
-              {daySpans.length === 0 ? (
+              {daySpans.length === 0 && dayTaskDues.length === 0 && (
                 <StyledEmpty>{t`No events`}</StyledEmpty>
-              ) : (
-                daySpans.map((span) => (
-                  <CalendarEventChip
-                    key={span.event.id}
-                    span={span}
-                    day={day}
-                    isSelected={span.event.id === selectedEventId}
-                    showTime
-                    timeZone={timeZone}
-                    locale={locale}
-                    onSelect={onSelectEvent}
-                  />
-                ))
               )}
+              {daySpans.map((span) => (
+                <CalendarEventChip
+                  key={span.event.id}
+                  span={span}
+                  day={day}
+                  isSelected={span.event.id === selectedEventId}
+                  showTime
+                  timeZone={timeZone}
+                  locale={locale}
+                  onSelect={onSelectEvent}
+                />
+              ))}
+              {dayTaskDues.map((taskDue) => (
+                <CalendarTaskDueChip
+                  key={taskDue.task.id}
+                  taskDue={taskDue}
+                  variant="compact"
+                  onOpenTask={onOpenTask}
+                />
+              ))}
             </StyledDayColumn>
           );
         })}

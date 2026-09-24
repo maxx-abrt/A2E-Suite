@@ -97,9 +97,20 @@
         "US-082"
       ],
       "completionNotes": "Executor done (awaiting orchestrator). CalendarRecurrenceFields + CalendarRecurrenceDraft utils (rule<->draft round-trip, inclusive UNTIL in series zone, clamps, rebase on start-day change); create pre-generates the anchor id so the series id is stamped in the same write; whole-series edit writes the edited rule via planCalendarSeriesEdit. 19 new cases; front calendar 212/212 via scratch harness; tsc on pure files + stubbed components/page; repo oxlint JS rules 0/0. Tier-2: /calendar create-recurring browser proof."
+    },
+    {
+      "id": "US-084",
+      "title": "P4C.5 task due-date overlay on /calendar (read-only, opens the task in the native side panel)",
+      "description": "As a calendar user, I want my tasks' due dates to show on the calendar days they fall on, visibly distinct from scheduled events, so that I can see deadlines next to my schedule and open the task in one click without the calendar ever turning a deadline into an event.",
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "US-082"
+      ],
+      "completionNotes": "Executor done (awaiting orchestrator). useCalendarTaskDueDates reads standard `task` rows (id/title/dueAt/status) with a dueAt range filter built in the viewer zone (getCalendarTaskDueQueryRange: start of first visible day inclusive, start of the day after the last exclusive; DST-aware), skipped when the overlay is hidden or the member lacks task read permission (useFindManyRecords already gates on it). groupCalendarTaskDuesByDay buckets by the due day in the viewer zone, skips null/unreadable/out-of-range due dates, dedupes, flags overdue (open + before today) vs done, orders open by due time/title and sinks done. CalendarTaskDueChip: dashed outline + IconCheckbox + Due/Overdue/Done state (never the event accent border), opens the task via useOpenRecordInSidePanel. Wired into month/week/day/agenda (agenda lists days that only have deadlines; empty states count deadlines), toolbar toggle 'Task due dates' (aria-pressed), non-blocking load error line. No write path, no schema/server change, works without Projects (dueAt is standard). 9 new cases; front calendar 21 suites / 221 tests green (scratch harness). Tier-2: /calendar browser proof."
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-24T07:05:00.000Z"
+    "updatedAt": "2026-09-24T04:30:01.000Z"
   }
 }

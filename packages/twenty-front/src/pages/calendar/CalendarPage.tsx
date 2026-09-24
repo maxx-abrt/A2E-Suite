@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { Button } from 'twenty-ui/input';
@@ -18,6 +19,7 @@ import { CalendarToolbar } from '@/calendar/components/CalendarToolbar';
 import { CalendarWeekView } from '@/calendar/components/CalendarWeekView';
 import { useCalendarEventMutations } from '@/calendar/hooks/useCalendarEventMutations';
 import { useCalendarEvents } from '@/calendar/hooks/useCalendarEvents';
+import { useCalendarTaskDueDates } from '@/calendar/hooks/useCalendarTaskDueDates';
 import {
   type CalendarEventDraft,
   type CalendarEventInput,
@@ -40,6 +42,7 @@ import { getCalendarEventOccurrenceDay } from '@/calendar/utils/getCalendarEvent
 import { getCalendarSeriesEvents } from '@/calendar/utils/getCalendarSeriesEvents';
 import { getCalendarViewDays } from '@/calendar/utils/getCalendarViewDays';
 import { groupCalendarEventsByDay } from '@/calendar/utils/groupCalendarEventsByDay';
+import { groupCalendarTaskDuesByDay } from '@/calendar/utils/groupCalendarTaskDuesByDay';
 import { isCalendarLocalEditSurface } from '@/calendar/utils/isCalendarLocalEditSurface';
 import { isLocalCalendarEvent } from '@/calendar/utils/isLocalCalendarEvent';
 import { navigateCalendarAnchor } from '@/calendar/utils/navigateCalendarAnchor';
@@ -54,6 +57,7 @@ import { shouldPromptCalendarSeriesScope } from '@/calendar/utils/shouldPromptCa
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatRecordCalendarWeekRange } from '@/object-record/record-calendar/utils/formatRecordCalendarWeekRange';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
@@ -123,6 +127,8 @@ export const CalendarPage = () => {
     action: 'edit' | 'delete';
   } | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [showTaskDueDates, setShowTaskDueDates] = useState(true);
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const {
     days: viewDays,
@@ -163,6 +169,27 @@ export const CalendarPage = () => {
     [displayedEvents, timeZone, firstDay, lastDay],
   );
 
+  // Task deadlines are a read-only overlay: they come from standard `task`
+  // rows, render apart from events, and open the task itself (never an event).
+  const { tasks: dueTasks, error: taskDueError } = useCalendarTaskDueDates({
+    firstDay,
+    lastDay,
+    timeZone,
+    skip: !showTaskDueDates,
+  });
+
+  const taskDuesByDay = useMemo(
+    () =>
+      groupCalendarTaskDuesByDay({
+        tasks: dueTasks,
+        timeZone,
+        firstDay,
+        lastDay,
+        today: Temporal.Now.plainDateISO(timeZone),
+      }),
+    [dueTasks, timeZone, firstDay, lastDay],
+  );
+
   const agendaDays = useMemo(() => {
     const firstDayOfMonth = anchorDate.with({ day: 1 });
 
@@ -180,6 +207,15 @@ export const CalendarPage = () => {
 
     return eventIds.size;
   }, [spansByDay]);
+
+  const taskDuesInRangeCount = useMemo(
+    () =>
+      Array.from(taskDuesByDay.values()).reduce(
+        (count, dayTaskDues) => count + dayTaskDues.length,
+        0,
+      ),
+    [taskDuesByDay],
+  );
 
   // The displayed event may be an expanded occurrence (view-only id); the
   // stored event is the row writes must target — its anchor for an occurrence.
@@ -258,6 +294,13 @@ export const CalendarPage = () => {
 
   const handleSelectEvent = (eventId: string) => {
     setSelectedEventId(eventId);
+  };
+
+  const handleOpenTask = (taskId: string) => {
+    openRecordInSidePanel({
+      recordId: taskId,
+      objectNameSingular: CoreObjectNameSingular.Task,
+    });
   };
 
   const handleModeChange = (nextMode: CalendarViewMode) => {
@@ -762,6 +805,8 @@ export const CalendarPage = () => {
         onPrevious={handlePrevious}
         onNext={handleNext}
         onToday={handleToday}
+        showTaskDueDates={showTaskDueDates}
+        onToggleTaskDueDates={() => setShowTaskDueDates((isShown) => !isShown)}
       />
       {isDefined(selectedEvent) && (
         <CalendarEventDetails
@@ -796,30 +841,36 @@ export const CalendarPage = () => {
                 weeks={viewDays}
                 anchorMonth={anchorDate.month}
                 spansByDay={spansByDay}
+                taskDuesByDay={taskDuesByDay}
                 selectedEventId={selectedEventId}
                 timeZone={timeZone}
                 locale={dateLocale.locale}
                 onSelectEvent={handleSelectEvent}
+                onOpenTask={handleOpenTask}
               />
             )}
             {mode === 'week' && (
               <CalendarWeekView
                 days={viewDays.flat()}
                 spansByDay={spansByDay}
+                taskDuesByDay={taskDuesByDay}
                 selectedEventId={selectedEventId}
                 timeZone={timeZone}
                 locale={dateLocale.locale}
                 onSelectEvent={handleSelectEvent}
+                onOpenTask={handleOpenTask}
               />
             )}
             {mode === 'day' && (
               <CalendarDayView
                 day={anchorDate}
                 spansByDay={spansByDay}
+                taskDuesByDay={taskDuesByDay}
                 selectedEventId={selectedEventId}
                 timeZone={timeZone}
                 locale={dateLocale.locale}
                 onSelectEvent={handleSelectEvent}
+                onOpenTask={handleOpenTask}
                 onCreateEventFromSlots={handleCreateEventFromSlots}
               />
             )}
@@ -827,14 +878,23 @@ export const CalendarPage = () => {
               <CalendarAgendaView
                 days={agendaDays}
                 spansByDay={spansByDay}
+                taskDuesByDay={taskDuesByDay}
                 selectedEventId={selectedEventId}
                 timeZone={timeZone}
                 locale={dateLocale.locale}
                 onSelectEvent={handleSelectEvent}
+                onOpenTask={handleOpenTask}
               />
             )}
-            {eventsInRangeCount === 0 && mode === 'month' && (
-              <StyledStatus>{t`No events in this range`}</StyledStatus>
+            {eventsInRangeCount === 0 &&
+              taskDuesInRangeCount === 0 &&
+              mode === 'month' && (
+                <StyledStatus>{t`No events in this range`}</StyledStatus>
+              )}
+            {isDefined(taskDueError) && (
+              <StyledStatus data-testid="calendar-task-due-error">
+                {t`Could not load task due dates`}
+              </StyledStatus>
             )}
           </>
         )}
