@@ -46,6 +46,15 @@ export type ApplyRetroplanningInput = {
   assigneeRoles?: RetroplanningAssigneeRoles;
 };
 
+export type PreviewRetroplanningResult = {
+  preview: RetroplanningPreview;
+  changeSet: RetroplanningChangeSet;
+  // Stale generated rows REPLACE would delete once confirmed (0 in APPEND).
+  // Computed read-only so the screen can name the destructive change before
+  // the user confirms it.
+  pendingRemovalCount: number;
+};
+
 export type ApplyRetroplanningResult = {
   preview: RetroplanningPreview;
   changeSet: RetroplanningChangeSet;
@@ -162,11 +171,13 @@ const deleteRetroplanningTask = async (
   } as never);
 };
 
-export const applyRetroplanning = async (
+// Read-only half shared by the preview and the apply path: same recipe lookup,
+// same schedule, same reconcile against the project's current rows.
+const planRetroplanning = async (
   input: ApplyRetroplanningInput,
   now: Date,
-  client: CoreClientLike = coreClient(),
-): Promise<ApplyRetroplanningResult> => {
+  client: CoreClientLike,
+) => {
   const recipe = findRetroplanningRecipe(input.recipeKey);
 
   if (recipe === undefined) {
@@ -186,6 +197,43 @@ export const applyRetroplanning = async (
       mode: input.mode,
       confirmedDestructiveChange: input.confirmedDestructiveChange === true,
     },
+  );
+
+  return { recipe, preview, existingNodes, existingTasks, changeSet };
+};
+
+// Dry run for the rétroplanning screen: reads the project's tasks, never
+// writes. The removal count is what a confirmed REPLACE would delete.
+export const previewRetroplanning = async (
+  input: ApplyRetroplanningInput,
+  now: Date,
+  client: CoreClientLike = coreClient(),
+): Promise<PreviewRetroplanningResult> => {
+  const { recipe, preview, existingTasks, changeSet } = await planRetroplanning(
+    input,
+    now,
+    client,
+  );
+  const pendingRemovalCount =
+    input.mode === 'REPLACE'
+      ? reconcileRetroplanningDraft(recipe, preview.tasks, existingTasks, {
+          mode: 'REPLACE',
+          confirmedDestructiveChange: true,
+        }).remove.length
+      : 0;
+
+  return { preview, changeSet, pendingRemovalCount };
+};
+
+export const applyRetroplanning = async (
+  input: ApplyRetroplanningInput,
+  now: Date,
+  client: CoreClientLike = coreClient(),
+): Promise<ApplyRetroplanningResult> => {
+  const { preview, existingNodes, changeSet } = await planRetroplanning(
+    input,
+    now,
+    client,
   );
 
   const taskIdByRecipeKey = new Map<string, string>();

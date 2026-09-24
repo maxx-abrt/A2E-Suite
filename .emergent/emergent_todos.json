@@ -1,26 +1,26 @@
 [
   {
-    "content": "US-076: Fix INSTALL_APP idempotency",
+    "content": "Fix git push auth (token credential helper) + push US-082/083",
     "status": "completed"
   },
   {
-    "content": "US-077: Add projects/chat/drive to A2E allowlist + OnboardingInstallableApps",
+    "content": "US-084: P4C.5 task due-date overlay on /calendar (read-only, opens task in side panel)",
     "status": "completed"
   },
   {
-    "content": "US-078+079: M1 Dockerfile build stages + ProvisionBundledAppsCommand",
+    "content": "US-085: P4C.5 quick-create a standard task from a calendar day",
     "status": "completed"
   },
   {
-    "content": "Migration registered in INSTANCE_COMMANDS",
-    "status": "completed"
+    "content": "Scan PLAN.md P1.6e/P1.7/P4.2/P4.3 for further Tier-0 slices (retroplanning engine etc.)",
+    "status": "in_progress"
   },
   {
-    "content": "Dockerfile corepack enable + docs updated",
-    "status": "completed"
+    "content": "Process further eligible slices (one commit each, prd.json + phase report, push)",
+    "status": "pending"
   },
   {
-    "content": "Spec, phase reports, deferred-batch docs updated",
-    "status": "completed"
+    "content": "Write tasks/deferred-batch11.md + final prd.json/report update + push",
+    "status": "pending"
   }
 ]

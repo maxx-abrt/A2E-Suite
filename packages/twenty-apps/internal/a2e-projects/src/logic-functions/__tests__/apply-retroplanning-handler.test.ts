@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { applyRetroplanning } from '../handlers/apply-retroplanning-handler.ts';
+import {
+  applyRetroplanning,
+  previewRetroplanning,
+} from '../handlers/apply-retroplanning-handler.ts';
 
 // The handler is the only layer that talks to the Core API; everything
 // scheduling-related is pure. The stub below enforces the same contract the
@@ -310,4 +313,100 @@ test('an unknown recipe fails closed before touching the API', async () => {
     /inconnue/,
   );
   assert.deepEqual(created, []);
+});
+
+test('the preview reads the project but never writes', async () => {
+  const { client, tasks, created, updates, deleted } = buildStore();
+
+  const firstPreview = await previewRetroplanning(baseInput(), now, client);
+
+  assert.equal(firstPreview.changeSet.create.length, 7);
+  assert.equal(firstPreview.pendingRemovalCount, 0);
+  assert.deepEqual(created, []);
+  assert.equal(tasks.length, 0);
+
+  await applyRetroplanning(baseInput(), now, client);
+  const createdAfterApply = created.length;
+
+  const movedPreview = await previewRetroplanning(
+    {
+      ...baseInput(),
+      deadline: { date: '2026-10-08', timezone: 'Europe/Paris' },
+    },
+    now,
+    client,
+  );
+
+  assert.equal(movedPreview.changeSet.create.length, 0);
+  assert.equal(movedPreview.changeSet.update.length, 6);
+  assert.equal(created.length, createdAfterApply);
+  assert.deepEqual(updates, []);
+  assert.deepEqual(deleted, []);
+  assert.equal(
+    tasks.find((task) => task.title === 'Mise en production')?.dueAt,
+    '2026-10-01T16:00:00.000Z',
+  );
+});
+
+test('a REPLACE preview names the removals a confirmation would make', async () => {
+  const { client, tasks, deleted } = buildStore();
+
+  await applyRetroplanning(baseInput(), now, client);
+
+  tasks.push(
+    {
+      id: 'stale-owned',
+      title: 'Ancienne tâche',
+      dueAt: '2026-09-20T16:00:00.000Z',
+      projectId: 'project-1',
+      projectStatus: 'TODO',
+      retroplanningProvenance:
+        'delivery@v1:removed-slot#2026-09-20T16:00:00.000Z',
+    },
+    {
+      id: 'stale-edited',
+      title: 'Ancienne tâche déplacée',
+      dueAt: '2026-09-22T16:00:00.000Z',
+      projectId: 'project-1',
+      projectStatus: 'TODO',
+      retroplanningProvenance:
+        'delivery@v1:other-slot#2026-09-20T16:00:00.000Z',
+    },
+  );
+
+  const appendPreview = await previewRetroplanning(baseInput(), now, client);
+
+  assert.equal(appendPreview.pendingRemovalCount, 0);
+  assert.equal(appendPreview.changeSet.requiresDestructiveConfirmation, false);
+
+  const replacePreview = await previewRetroplanning(
+    { ...baseInput(), mode: 'REPLACE' },
+    now,
+    client,
+  );
+
+  // Only the untouched generated slot is removable; the hand-moved one is
+  // protected in both the preview and a confirmed apply.
+  assert.equal(replacePreview.pendingRemovalCount, 1);
+  assert.equal(replacePreview.changeSet.requiresDestructiveConfirmation, true);
+  assert.deepEqual(replacePreview.changeSet.remove, []);
+  assert.deepEqual(deleted, []);
+
+  const confirmed = await applyRetroplanning(
+    { ...baseInput(), mode: 'REPLACE', confirmedDestructiveChange: true },
+    now,
+    client,
+  );
+
+  assert.equal(confirmed.removed, replacePreview.pendingRemovalCount);
+  assert.deepEqual(deleted, ['stale-owned']);
+});
+
+test('an unknown recipe fails the preview closed too', async () => {
+  const { client } = buildStore();
+
+  await assert.rejects(
+    previewRetroplanning({ ...baseInput(), recipeKey: 'nope' }, now, client),
+    /inconnue/,
+  );
 });
