@@ -136,6 +136,7 @@ The D01–D09 ledger below stands. New/absorbed decisions:
 | --- | --- | --- |
 | D-B1 | Bureau packaging: bundle Documents+Projects under one preset entry (recommended) vs distinct registration — folded into M2, must be settled before M2 exit | Product; M2a |
 | D-M1 | App provisioning mechanism: image-baked manifests + startup registration vs provisioning script in DEPLOY.md/compose vs both — M1a investigates and records the choice | Maintainer; M1a |
+| D-Shell | **Remove the custom A2E right workbench dock** — it does not match the native shell (colour/feel) and duplicates native surfaces. Re-home only the widgets with no native equivalent into an existing surface; do not keep a permanent right rail. Product decision 2026-09-24; supersedes the P2.4 dock delivery, executed by P2.6 | Product; P2.6 |
 
 Historical D01–D09 remain in the Unresolved decisions table below, verbatim.
 
@@ -790,6 +791,12 @@ Do not add Huly-like navigation density. See blueprint §4–§6.
 - [x] Consume in side panel header (pilot surface)
 
 ### P2.4 Workbench shell (widgets dock + tabs)
+
+> **Superseded 2026-09-24 (D-Shell):** the custom right rail is removed by
+> P2.6 — it did not match the native shell and duplicated native surfaces.
+> The bullets below record the shipped-then-removed delivery, not the target
+> architecture.
+
 - [x] Right widgets dock: collapsible (MINI/EXPANDED), resizable, persisted
       widths (localStorage keys `a2e-widgets-*`), hosts pluggable widgets
       (registry: inbox preview, assistant, comments, task list, activity,
@@ -826,9 +833,42 @@ Do not add Huly-like navigation density. See blueprint §4–§6.
       10k-record workspace with stated hardware/network/query conditions.
       Historical 8ms synthetic grouping benchmark is not end-to-end latency.
 
+### P2.6 Shell cleanup — remove the A2E right dock (D-Shell)
+- [ ] **Remove the custom workbench right rail and re-home its unique
+      widgets into existing surfaces.** Unmount
+      `WorkbenchWidgetDock` from
+      `packages/twenty-front/src/modules/ui/layout/page/components/MainAppLayoutWithSidePanel.tsx`
+      and delete the `packages/twenty-front/src/modules/workbench-dock/`
+      module (component, states, utils, registry, tests) plus its
+      `RootStackingContextZIndices` entry and the
+      `registerHomeDashboardWidgets` / `registerDriveUsageWidget` /
+      `registerFirstOpenHelpWidget` side-effect imports. No permanent right
+      rail remains on any surface; existing pages render unchanged.
+      - **Home widgets** (suggestions, my tasks, upcoming events, recent
+        activity, focus/Pomodoro, contribution grid): render on the existing
+        `AppPath.Home` surface (`pages/mobile-home/MobileHomePage.tsx` today
+        redirects on desktop) as a responsive native widget grid reusing the
+        existing `home-dashboard` components; my-tasks/events/activity may
+        deep-link to their native pages (`/objects/tasks`, `/calendar`, the
+        activity feed) instead of duplicating lists.
+      - **Redundant widgets** (inbox, assistant, comments, presence): removed
+        — notifications, the AI side panel, record comments and side-panel
+        presence already exist natively.
+      - **Drive usage** → the Drive app surface; **help** → a command-menu
+        entry (searchable help); **focus** already lives in Settings →
+        Experience.
+      - Widget unit tests updated; dock-specific tests deleted; no dead
+        registry code left (keep the registry only if the Home surface
+        consumes it). `twenty-front` `tsgo` clean; touched module suites
+        green.
+      — Acceptance: the rail is gone in the browser (desktop/tablet/mobile),
+      every re-homed feature is reachable from a native surface, and no page
+      layout regresses.
+
 **Acceptance.** Two browser sessions see presence + live widget updates;
 killing the socket shows banner and queues; search feels instant; existing
-pages render unchanged (no layout regressions).
+pages render unchanged (no layout regressions); **no custom right rail
+remains (P2.6/D-Shell)**.
 
 ---
 
@@ -1773,14 +1813,18 @@ app ship with tests.
       primitive, income reopens the pinned Bilan command creating no
       row; quick-capture suite 29/29 green on HEAD rerun incl. US-025
       context-button specs). Tier-2 browser journeys (gallery
-      instantiation, capture walkthrough) open.
+      instantiation, capture walkthrough) open. **Re-home pending
+      (P2.6/D-Shell):** the contribution-grid/Pomodoro widgets must render on
+      the Home surface once the right dock is removed.
 - [x] Guided first-open help: contextual template/blank actions, dismissible
       explanations and searchable help; no forced overlay tour. Use R15's
       explanatory patterns, not its marketing/pricing claims or mock data.
       — 2026-09-19 orchestrator: verified (US-004, phase-10-report) —
       non-modal `help` dock widget, per-user localStorage dismissal keyed by
       `currentUser.id`, search re-surfaces dismissed topics; suites green
-      on HEAD re-run. Tier-2 browser walkthrough open.
+      on HEAD re-run. Tier-2 browser walkthrough open. **Re-home pending
+      (P2.6/D-Shell):** the dock is removed, so help must surface through the
+      command menu while keeping the per-user dismissal + search behavior.
 - [x] Optional focus/accessibility work: Pomodoro, density/easy-read and
       shortcut preferences with explicit user control (R09/R14). Music embeds
       and a native mobile client remain deferred (D07); no new player stack
