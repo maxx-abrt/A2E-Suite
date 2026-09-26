@@ -8,6 +8,7 @@ import {
   FRONT_COMPONENT_IDS,
   OBJECT_IDS,
   RELATION_IDS,
+  TASK_FIELD_IDS,
   VIEW_IDS,
 } from '../../constants/universal-identifiers.ts';
 import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from '../../roles/default-function.role.ts';
@@ -711,15 +712,21 @@ test('the project page exposes the overview, timeline, P4.2 and P4.3 tab set', a
   const boardWidget = tabsByTitle.get('Tableau')?.widgets?.[0];
   const filesWidget = tabsByTitle.get('Fichiers')?.widgets?.[0];
 
-  assert.equal(tasksWidget?.type, 'RECORD_TABLE');
+  // The Tâches tab uses a FIELD widget (not RECORD_TABLE) so the native
+  // record-context filter scopes it to the current project's tasks only.
+  // A RECORD_TABLE widget has no parent-record filter and would list every
+  // task in the workspace (live defect 2b fixed 2026-09-24).
+  assert.equal(tasksWidget?.type, 'FIELD');
   assert.equal(
-    tasksWidget?.configuration?.viewUniversalIdentifier,
-    VIEW_IDS.projectTasks,
+    tasksWidget?.configuration?.configurationType,
+    'FIELD',
   );
   assert.equal(
-    tasksWidget?.objectUniversalIdentifier,
-    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.universalIdentifier,
+    tasksWidget?.configuration?.fieldMetadataId,
+    TASK_FIELD_IDS.tasksOnProject,
   );
+  assert.equal(tasksWidget?.configuration?.fieldDisplayMode, 'TABLE');
+  assert.equal(tasksWidget?.configuration?.viewId, VIEW_IDS.projectTasks);
 
   assert.equal(boardWidget?.type, 'RECORD_TABLE');
   assert.equal(
@@ -910,4 +917,100 @@ test('every declared relation id is used by exactly one relation side', async ()
   );
 
   assert.deepEqual(duplicates, []);
+});
+
+
+// P4.1 executor-side reinstall no-duplicate re-walk (P4.1 acceptance leg).
+// Simulates a second install by loading the whole graph a second time and
+// asserting that no extra duplicate appears — the manifest declarations are
+// deterministic and idempotent across multiple walks.
+test('a second manifest walk produces no new duplicates (reinstall no-duplicate leg)', async () => {
+  // First walk
+  const graph1 = await loadGraph();
+  const ids1 = graph1.ownedFields.map(({ field }) => field.universalIdentifier);
+  const objects1 = graph1.objects.map((o) => o.universalIdentifier).sort();
+
+  // Second walk — re-importing the same modules reuses the cached ESM
+  // evaluation, so any extra singleton registration or shared state that
+  // would accumulate on reinstall surfaces here.
+  const graph2 = await loadGraph();
+  const ids2 = graph2.ownedFields.map(({ field }) => field.universalIdentifier);
+  const objects2 = graph2.objects.map((o) => o.universalIdentifier).sort();
+
+  // Identifier lists must be identical across both walks.
+  assert.deepEqual(ids1.sort(), ids2.sort(), 'field ids differ between walks');
+  assert.deepEqual(objects1, objects2, 'object ids differ between walks');
+
+  // No new duplicates after the second walk — same check as the
+  // "no universal identifier is declared twice" test but applied to the
+  // second walk's output.
+  const duplicates2 = ids2.filter(
+    (id, index) => ids2.indexOf(id) !== index,
+  );
+
+  assert.deepEqual(
+    duplicates2,
+    [],
+    'duplicate field identifier produced on second walk',
+  );
+
+  const objectDuplicates2 = graph2.objects
+    .map((o) => o.universalIdentifier)
+    .filter((id, index, arr) => arr.indexOf(id) !== index);
+
+  assert.deepEqual(
+    objectDuplicates2,
+    [],
+    'duplicate object identifier produced on second walk',
+  );
+});
+
+// P4.1 executor-side permission ACL spec for the default function role.
+// The A2E Projects default function role must refuse destroy (canDestroyAllObjectRecords:
+// false) while allowing read, update and soft-delete. The live role-assignment
+// proof (workspace member assigned to the role, GraphQL mutation refused)
+// remains Tier 2 / orchestrator only.
+test('default function role refuses destroy but allows read/update/soft-delete', async () => {
+  const graph = await loadGraph();
+
+  assert.equal(graph.roles.length, 1, 'expected exactly one role in the app');
+
+  const role = graph.roles[0];
+
+  assert.equal(
+    role.universalIdentifier,
+    DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+    'role universal identifier must match the declared constant',
+  );
+  assert.equal(
+    role.label,
+    'A2E Projects default function role',
+    'role label unchanged',
+  );
+
+  // Permissions that must be granted (role used by logic functions that need
+  // to read/write project/task data during workflow execution).
+  assert.equal(
+    role.canReadAllObjectRecords,
+    true,
+    'default function role must allow reads',
+  );
+  assert.equal(
+    role.canUpdateAllObjectRecords,
+    true,
+    'default function role must allow updates',
+  );
+  assert.equal(
+    role.canSoftDeleteAllObjectRecords,
+    true,
+    'default function role must allow soft-delete',
+  );
+
+  // The critical refusal — permanent destroy is out of scope for application
+  // logic functions; it must stay false to prevent accidental data loss.
+  assert.equal(
+    role.canDestroyAllObjectRecords,
+    false,
+    'default function role must REFUSE hard-destroy',
+  );
 });

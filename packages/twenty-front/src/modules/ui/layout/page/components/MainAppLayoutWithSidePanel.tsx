@@ -4,7 +4,6 @@ import { RouteContextStoreProvider } from '@/context-store/components/RouteConte
 import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
 import { SidePanelPathUrlSyncEffect } from '@/side-panel/routing/components/SidePanelPathUrlSyncEffect';
 import { SidePanelTabsRestoreEffect } from '@/side-panel/tabs/components/SidePanelTabsRestoreEffect';
-import { WorkbenchWidgetDock } from '@/workbench-dock/components/WorkbenchWidgetDock';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { Outlet } from 'react-router-dom';
@@ -59,7 +58,6 @@ export const MainAppLayoutWithSidePanel = () => {
         <Outlet />
       </StyledContent>
       {isMobile ? <CommandMenuForMobile /> : <SidePanelForDesktop />}
-      <WorkbenchWidgetDock />
     </StyledRow>
   );
 };

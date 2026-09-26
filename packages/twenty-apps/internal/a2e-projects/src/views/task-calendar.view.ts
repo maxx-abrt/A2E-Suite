@@ -58,13 +58,10 @@ export default defineView({
       isVisible: true,
       size: 150,
     },
-    {
-      universalIdentifier: fieldId(2),
-      fieldMetadataUniversalIdentifier: TASK_FIELD_IDS.project,
-      position: 2,
-      isVisible: true,
-      size: 180,
-    },
+    // The project relation column is intentionally omitted: including it
+    // raises the GroupByTasks query complexity above the 2000 cap (live
+    // defect 2b, 2026-09-24). The IS_NOT_EMPTY filter already scopes
+    // the calendar to project-backed tasks; the column is redundant.
   ],
   filters: [
     {

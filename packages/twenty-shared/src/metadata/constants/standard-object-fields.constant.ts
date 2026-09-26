@@ -346,6 +346,15 @@ export const STANDARD_OBJECT_FIELDS = {
     recurrenceSkippedOccurrenceDays: {
       universalIdentifier: '20202020-4c5f-401b-8d4e-5e6f708192a3',
     },
+    // P4C.4 reminder fields — nullable so existing events and provider-synced
+    // events are unaffected. reminderMinutes stores the lead time; D05 governs
+    // attendee timezone policy. reminderDeliveredAt is the idempotency key.
+    reminderMinutes: {
+      universalIdentifier: '20202020-3d6a-402c-9e5f-6f8192a3b4c5',
+    },
+    reminderDeliveredAt: {
+      universalIdentifier: '20202020-2e7b-403d-8f60-708192a3b4c6',
+    },
     calendarChannelEventAssociations: {
       universalIdentifier: '20202020-bdf8-4572-a2cc-ecbb6bcc3a02',
     },

@@ -415,13 +415,39 @@ const DocumentBrowser = () => {
   );
 
   // Instantiation = copy the template body into a fresh DOCUMENT record, so
-  // editing the copy never mutates the template. The body was fetched through
-  // the caller's authorized tree query; a null source fails closed.
+  // editing the copy never mutates the template. A fresh fetch (below) ensures
+  // the copy is always based on the current, authorized template body — the
+  // tree node may carry a stale or missing content field when templates haven't
+  // been expanded yet. The authorized read is the permission gate: a null fetch
+  // means "not authorized or gone" and instantiation fails closed (C1).
   const instantiateTemplate = async (
     templateDocument: DocumentNode,
   ): Promise<void> => {
     const client = new CoreApiClient();
-    const copySource = readAuthorizedTemplateCopySource(templateDocument);
+
+    // Fresh per-record fetch so the block tree is never served from a
+    // partially-loaded gallery node (P3.2 — "browser does not select template
+    // content" defect). The permission check is the read, not an extra gate.
+    const fetchResult = (await client.query({
+      document: {
+        __args: { id: templateDocument.id },
+        id: true,
+        title: true,
+        kind: true,
+        content: { blocknote: true, markdown: true },
+      },
+    } as never)) as {
+      document?: {
+        id: string;
+        title: string;
+        kind: string;
+        content?: { blocknote?: string | null; markdown?: string | null } | null;
+      } | null;
+    };
+
+    const fetchedTemplate = fetchResult?.document ?? null;
+
+    const copySource = readAuthorizedTemplateCopySource(fetchedTemplate);
 
     if (copySource === null) {
       return;

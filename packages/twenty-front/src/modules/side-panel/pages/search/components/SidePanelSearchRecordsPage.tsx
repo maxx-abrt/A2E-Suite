@@ -2,6 +2,7 @@ import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMe
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { useChatSearchResultItems } from '@/chat/hooks/useChatSearchResultItems';
 import { useDriveSearchResultItems } from '@/drive/hooks/useDriveSearchResultItems';
+import { useHelpSearchResultItems } from '@/first-open-help/hooks/useHelpSearchResultItems';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
@@ -54,6 +55,9 @@ export const SidePanelSearchRecordsPage = () => {
     searchInput: sidePanelSearch,
     skip: false,
   });
+  const { helpSearchResultItems } = useHelpSearchResultItems({
+    searchInput: sidePanelSearch,
+  });
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { closeCommandMenu } = useCloseCommandMenu();
   const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
@@ -82,6 +86,7 @@ export const SidePanelSearchRecordsPage = () => {
         ...appSearchResultItems,
         ...chatSearchResultItems,
         ...driveSearchResultItems,
+        ...helpSearchResultItems,
       ],
       frecencyRankByGroupKey,
     });
@@ -91,6 +96,7 @@ export const SidePanelSearchRecordsPage = () => {
     appSearchResultItems,
     chatSearchResultItems,
     driveSearchResultItems,
+    helpSearchResultItems,
   ]);
 
   const selectableItemIds = useMemo(

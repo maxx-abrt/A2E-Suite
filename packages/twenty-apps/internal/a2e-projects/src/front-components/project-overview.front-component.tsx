@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds } from 'twenty-sdk/front-component';
+import { useRecordId } from 'twenty-sdk/front-component';
 
 import { FRONT_COMPONENT_IDS } from '../constants/universal-identifiers.ts';
 import {
@@ -46,83 +46,96 @@ type ProjectQueryResult = {
 // query; the widget adds no view system of its own — the page layout's tabs
 // own the task/board/file lists, and the pure projection
 // (lib/project-overview.ts) owns the health label and member names.
+//
+// Uses useRecordId() (the single-record variant of useSelectedRecordIds, same
+// underlying context) to resolve the current project record. Both hooks read
+// from the SDK execution context that the host populates before the worker
+// renders, so neither can return a value until the host calls updateContext.
+// The useEffect watches projectId and reloads whenever the context updates.
 const ProjectOverview = () => {
-  const selectedRecordIds = useSelectedRecordIds();
-  const projectId =
-    selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+  // useRecordId returns null when selectedRecordIds is empty or has more than
+  // one entry — both signal "not ready yet" for a single-record widget.
+  const projectId = useRecordId();
 
   const [project, setProject] = useState<OverviewProject | null>(null);
   const [summary, setSummary] = useState<ProjectOverviewSummary | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const loadProject = useCallback(async (scopeProjectId: string) => {
-    const client = new CoreApiClient();
+    setIsLoading(true);
 
-    const result = (await client.query({
-      project: {
-        __args: { id: scopeProjectId },
-        id: true,
-        name: true,
-        key: true,
-        status: true,
-        health: true,
-        tasks: {
-          __args: { first: COUNTER_LIMIT },
-          edges: { node: { id: true } },
-        },
-        milestones: {
-          __args: { first: COUNTER_LIMIT },
-          edges: { node: { id: true } },
-        },
-        timelineActivities: {
-          __args: { first: COUNTER_LIMIT },
-          edges: { node: { id: true } },
-        },
-        documents: {
-          __args: { first: COUNTER_LIMIT },
-          edges: { node: { id: true } },
-        },
-        members: {
-          __args: { first: MEMBER_LIMIT },
-          edges: {
-            node: {
-              id: true,
-              memberRole: true,
-              workspaceMember: { name: { firstName: true, lastName: true } },
+    try {
+      const client = new CoreApiClient();
+
+      const result = (await client.query({
+        project: {
+          __args: { id: scopeProjectId },
+          id: true,
+          name: true,
+          key: true,
+          status: true,
+          health: true,
+          tasks: {
+            __args: { first: COUNTER_LIMIT },
+            edges: { node: { id: true } },
+          },
+          milestones: {
+            __args: { first: COUNTER_LIMIT },
+            edges: { node: { id: true } },
+          },
+          timelineActivities: {
+            __args: { first: COUNTER_LIMIT },
+            edges: { node: { id: true } },
+          },
+          documents: {
+            __args: { first: COUNTER_LIMIT },
+            edges: { node: { id: true } },
+          },
+          members: {
+            __args: { first: MEMBER_LIMIT },
+            edges: {
+              node: {
+                id: true,
+                memberRole: true,
+                workspaceMember: { name: { firstName: true, lastName: true } },
+              },
             },
           },
         },
-      },
-    } as never)) as ProjectQueryResult;
+      } as never)) as ProjectQueryResult;
 
-    const loadedProject = result?.project ?? null;
+      const loadedProject = result?.project ?? null;
 
-    if (loadedProject === null) {
-      setProject(null);
-      setSummary(null);
-      return;
+      if (loadedProject === null) {
+        setProject(null);
+        setSummary(null);
+        return;
+      }
+
+      const members: ProjectOverviewMember[] = (
+        loadedProject.members?.edges ?? []
+      ).map((edge) => ({
+        membershipId: edge.node.id,
+        role: edge.node.memberRole,
+        displayName: formatWorkspaceMemberName(
+          edge.node.workspaceMember?.name ?? null,
+        ),
+      }));
+
+      setProject(loadedProject);
+      setSummary(
+        buildProjectOverviewSummary({
+          health: loadedProject.health,
+          taskCount: loadedProject.tasks?.edges?.length ?? 0,
+          milestoneCount: loadedProject.milestones?.edges?.length ?? 0,
+          activityCount: loadedProject.timelineActivities?.edges?.length ?? 0,
+          documentCount: loadedProject.documents?.edges?.length ?? 0,
+          members,
+        }),
+      );
+    } finally {
+      setIsLoading(false);
     }
-
-    const members: ProjectOverviewMember[] = (
-      loadedProject.members?.edges ?? []
-    ).map((edge) => ({
-      membershipId: edge.node.id,
-      role: edge.node.memberRole,
-      displayName: formatWorkspaceMemberName(
-        edge.node.workspaceMember?.name ?? null,
-      ),
-    }));
-
-    setProject(loadedProject);
-    setSummary(
-      buildProjectOverviewSummary({
-        health: loadedProject.health,
-        taskCount: loadedProject.tasks?.edges?.length ?? 0,
-        milestoneCount: loadedProject.milestones?.edges?.length ?? 0,
-        activityCount: loadedProject.timelineActivities?.edges?.length ?? 0,
-        documentCount: loadedProject.documents?.edges?.length ?? 0,
-        members,
-      }),
-    );
   }, []);
 
   useEffect(() => {
@@ -135,7 +148,18 @@ const ProjectOverview = () => {
     void loadProject(projectId);
   }, [projectId, loadProject]);
 
-  if (projectId === null || project === null || summary === null) {
+  // Render a skeleton placeholder while waiting for the host context or data.
+  // Returning null here would create a blank widget that never shows anything
+  // if the context update races with the initial render.
+  if (projectId === null || isLoading) {
+    return (
+      <div style={{ color: 'var(--tw-color-text-tertiary, #888)', padding: 8 }}>
+        …
+      </div>
+    );
+  }
+
+  if (project === null || summary === null) {
     return null;
   }
 

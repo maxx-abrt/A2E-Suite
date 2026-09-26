@@ -626,6 +626,57 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  // P4C.4 reminder fields. Both are nullable so existing events and
+  // provider-synced events remain untouched. D05 (open) governs attendee
+  // timezone policy; the dispatch service documents its defaults inline.
+  reminderMinutes: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'reminderMinutes',
+      type: FieldMetadataType.NUMBER,
+      label: i18nLabel(
+        msg({ message: `Reminder minutes`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Minutes before the event start to send a reminder; null = no reminder`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconBell',
+      isNullable: true,
+      isUIEditable: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  reminderDeliveredAt: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'reminderDeliveredAt',
+      type: FieldMetadataType.DATE_TIME,
+      label: i18nLabel(
+        msg({ message: `Reminder delivered at`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Idempotency key: non-null means the reminder was already dispatched`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconBellCheck',
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   calendarChannelEventAssociations: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

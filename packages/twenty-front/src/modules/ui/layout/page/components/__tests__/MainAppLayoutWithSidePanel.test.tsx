@@ -46,10 +46,6 @@ jest.mock('@/command-menu/components/CommandMenuForMobile', () => ({
   CommandMenuForMobile: () => null,
 }));
 
-jest.mock('@/workbench-dock/components/WorkbenchWidgetDock', () => ({
-  WorkbenchWidgetDock: () => <div data-testid="workbench-widget-dock" />,
-}));
-
 jest.mock('@/side-panel/routing/components/SidePanelPathUrlSyncEffect', () => ({
   SidePanelPathUrlSyncEffect: () => null,
 }));

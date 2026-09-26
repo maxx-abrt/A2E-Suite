@@ -1,26 +1,10 @@
 [
   {
-    "content": "Fix git push auth (token credential helper) + push US-082/083",
+    "content": "P3.2/P3.3: Template instantiation + record integration",
     "status": "completed"
   },
   {
-    "content": "US-084: P4C.5 task due-date overlay on /calendar (read-only, opens task in side panel)",
-    "status": "completed"
-  },
-  {
-    "content": "US-085: P4C.5 quick-create a standard task from a calendar day",
-    "status": "completed"
-  },
-  {
-    "content": "Scan PLAN.md P1.6e/P1.7/P4.2/P4.3 for further Tier-0 slices (retroplanning engine etc.)",
+    "content": "Append executor reports to phase files",
     "status": "in_progress"
-  },
-  {
-    "content": "Process further eligible slices (one commit each, prd.json + phase report, push)",
-    "status": "pending"
-  },
-  {
-    "content": "Write tasks/deferred-batch11.md + final prd.json/report update + push",
-    "status": "pending"
   }
 ]

@@ -27,6 +27,13 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   recurrenceSeriesId: string | null;
   recurrenceOccurrenceDay: string | null;
   recurrenceSkippedOccurrenceDays: string | null;
+  // P4C.4 reminder fields — nullable so existing and provider-synced events are
+  // unaffected. reminderMinutes: minutes before startsAt to send the reminder.
+  // reminderDeliveredAt: set after dispatch; non-null → already delivered
+  // (idempotency key). See calendar-reminder.service.ts for the delivery loop
+  // and D05 for the open attendee / timezone policy decision.
+  reminderMinutes: number | null;
+  reminderDeliveredAt: string | null;
   // Creator actor: local (channel-less) events are owned by the workspace member
   // that created them, which the calendar visibility filter resolves by id.
   createdBy: ActorMetadata;

@@ -9,6 +9,7 @@ import {
   FRONT_COMPONENT_IDS,
   OBJECT_IDS,
   RELATION_IDS,
+  TASK_FIELD_IDS,
   VIEW_IDS,
 } from '../constants/universal-identifiers.ts';
 
@@ -130,9 +131,12 @@ export default definePageLayout({
       ],
     },
     {
-      // Task table tab: the project-tasks TABLE view, rendered through the
-      // native record-table widget (views are the reusable primitive; the
-      // widget adds no list system of its own).
+      // Task table tab: the project.tasks ONE_TO_MANY relation rendered as a
+      // scoped FIELD + TABLE widget. A RECORD_TABLE widget has no
+      // parent-record filter; switching to FIELD adds the native
+      // isCurrentRecordSelected filter so only THIS project's tasks appear.
+      // The view definition (project-tasks.view.ts) still drives which columns
+      // and sort order the table uses.
       universalIdentifier: 'c31b0200-0009-4000-8000-000000000003',
       title: 'Tâches',
       position: 30,
@@ -142,12 +146,12 @@ export default definePageLayout({
         {
           universalIdentifier: 'c31b0200-000a-4000-8000-00000000000b',
           title: 'Tâches',
-          type: 'RECORD_TABLE',
-          objectUniversalIdentifier:
-            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.universalIdentifier,
+          type: 'FIELD',
           configuration: {
-            configurationType: 'RECORD_TABLE',
-            viewUniversalIdentifier: VIEW_IDS.projectTasks,
+            configurationType: 'FIELD',
+            fieldMetadataId: TASK_FIELD_IDS.tasksOnProject,
+            fieldDisplayMode: 'TABLE',
+            viewId: VIEW_IDS.projectTasks,
           },
         },
       ],

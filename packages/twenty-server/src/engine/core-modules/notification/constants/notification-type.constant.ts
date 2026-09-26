@@ -9,6 +9,10 @@ export const NOTIFICATION_TYPES = [
   'INVOICE_OVERDUE',
   'PAYMENT_RECEIVED',
   'SYSTEM',
+  // P4C.4: a calendar event reminder is due (startsAt − reminderMinutes ≤ now).
+  // Delivery is idempotent via reminderDeliveredAt; quiet-hours follow the P8
+  // user preference; D05 open decision governs attendee timezone policy.
+  'CALENDAR_REMINDER',
 ] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
