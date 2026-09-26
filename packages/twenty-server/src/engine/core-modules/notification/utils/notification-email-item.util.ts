@@ -19,6 +19,7 @@ const NOTIFICATION_EMAIL_LABEL_BY_TYPE: Record<
   BUDGET_ALERT: msg`A budget threshold was reached`,
   INVOICE_OVERDUE: msg`An invoice is overdue`,
   PAYMENT_RECEIVED: msg`A payment was received`,
+  CALENDAR_REMINDER: msg`Calendar reminder`,
   SYSTEM: msg`System notification`,
 };
 

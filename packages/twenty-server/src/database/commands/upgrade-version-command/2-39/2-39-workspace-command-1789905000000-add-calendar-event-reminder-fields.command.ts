@@ -56,52 +56,92 @@ export class AddCalendarEventReminderFieldsCommand extends ProvisionedWorkspaceC
 
     const calendarEventObjectMetadata =
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
+        flatEntityMaps: flatObjectMetadataMaps,
         universalIdentifier: CALENDAR_EVENT.universalIdentifier,
-        flatEntityMap: flatObjectMetadataMaps.byUniversalIdentifier,
       });
 
     if (!isDefined(calendarEventObjectMetadata)) {
-      return; // workspace without calendarEvent (e.g. bare install) — skip
+      this.logger.log(
+        `calendarEvent object does not exist for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
     }
 
-    const { allFlatEntityMaps } =
-      await computeTwentyStandardApplicationAllFlatEntityMaps({
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
+      computeTwentyStandardApplicationAllFlatEntityMaps({
+        now: new Date().toISOString(),
         workspaceId,
-        applicationService: this.applicationService,
+        twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
-    const missingFields = REMINDER_FIELD_UNIVERSAL_IDENTIFIERS.filter(
+    const fieldsToCreate = REMINDER_FIELD_UNIVERSAL_IDENTIFIERS.filter(
       (universalIdentifier) =>
         !isDefined(
-          findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
-            universalIdentifier,
-            flatEntityMap: flatFieldMetadataMaps.byUniversalIdentifier,
-          }),
+          flatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier],
         ),
-    ).map((universalIdentifier) =>
-      findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
-        universalIdentifier,
-        flatEntityMap:
-          allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
-      }),
-    );
+    ).map((universalIdentifier) => {
+      const standardField =
+        findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
+          flatEntityMaps: standardAllFlatEntityMaps.flatFieldMetadataMaps,
+          universalIdentifier,
+        });
 
-    const filteredMissing = missingFields.filter(isDefined);
+      if (!isDefined(standardField)) {
+        throw new Error(
+          `Standard application is missing calendarEvent field ${universalIdentifier}`,
+        );
+      }
 
-    if (filteredMissing.length === 0) {
-      return; // both fields already present
+      return standardField;
+    });
+
+    if (isDryRun) {
+      this.logger.log(
+        `[DRY RUN] Workspace ${workspaceId}: ${fieldsToCreate.length} reminder field(s) to create`,
+      );
+
+      return;
     }
 
-    if (!isDryRun) {
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunMigrations(
+    if (fieldsToCreate.length === 0) {
+      return;
+    }
+
+    const result =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          isSystemBuild: true,
           workspaceId,
-          fields: filteredMissing,
-          options: { createTableIfNotExist: false },
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
+          allFlatEntityOperationByMetadataName: {
+            fieldMetadata: {
+              flatEntityToCreate: fieldsToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+          },
         },
       );
 
-      await this.workspaceCacheService.recomputeAndClear(workspaceId);
+    if (result.status === 'fail') {
+      throw new Error(
+        `Failed to add calendarEvent reminder fields for workspace ${workspaceId}: ${JSON.stringify(
+          result,
+          null,
+          2,
+        )}`,
+      );
     }
+
+    this.logger.log(
+      `Added ${fieldsToCreate.length} calendarEvent reminder field(s) for workspace ${workspaceId}`,
+    );
   }
 }

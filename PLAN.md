@@ -834,7 +834,7 @@ Do not add Huly-like navigation density. See blueprint §4–§6.
       Historical 8ms synthetic grouping benchmark is not end-to-end latency.
 
 ### P2.6 Shell cleanup — remove the A2E right dock (D-Shell)
-- [ ] **Remove the custom workbench right rail and re-home its unique
+- [~] **Remove the custom workbench right rail and re-home its unique
       widgets into existing surfaces.** Unmount
       `WorkbenchWidgetDock` from
       `packages/twenty-front/src/modules/ui/layout/page/components/MainAppLayoutWithSidePanel.tsx`
@@ -864,6 +864,15 @@ Do not add Huly-like navigation density. See blueprint §4–§6.
       — Acceptance: the rail is gone in the browser (desktop/tablet/mobile),
       every re-homed feature is reachable from a native surface, and no page
       layout regresses.
+      — 2026-09-26 CEST orchestrator (phase-02-report): UNREPORTED auto-commit
+      `a2a4932f` did the removal half only. Dock + `modules/workbench-dock/**`
+      + the three `register*Widget*` modules/tests + the z-index entry are gone;
+      desktop `AppPath.Home` renders the widget grid; twenty-front `tsgo` exit 0,
+      home-dashboard/first-open-help/drive 182 tests + related 48 green. But
+      **help and Drive-usage are orphaned** — `FirstOpenHelpWidget` has no
+      renderer (the new Cmd+K row only navigates to a `/home` grid that omits it)
+      and `DriveUsageWidget` is mounted nowhere (`DrivePage.tsx` has no usage
+      element). Stays `[~]`: re-home those two, then Tier-2 browser rail proof.
 
 **Acceptance.** Two browser sessions see presence + live widget updates;
 killing the socket shows banner and queues; search feels instant; existing
@@ -1006,6 +1015,12 @@ Optional advanced authoring is not a prerequisite to this repair slice.
       relation columns (Documents/Tâches/Jalons/Membres/Temps), and the record
       page renders its page-layout tabs/widgets. Remaining before tick:
       installed-permission ACL proof and the reinstall no-duplicate re-walk.
+      — 2026-09-26 CEST orchestrator (phase-04-report): UNREPORTED auto-commit
+      `a2a4932f` extended `project-object-integrity.test.ts` with a second
+      manifest-walk no-duplicate assertion and a static default-function-role
+      destroy-refusal assertion (a2e-projects typecheck/build repaired, 280/280).
+      These are static unit proofs, **not** an installed ACL or real reinstall;
+      stays `[~]` pending the Tier-2 role-assignment refusal journey.
 - [x] `task` extensions (app fields on standard task): project relation,
       status (custom-status object w/ color + isDone), priority, labels,
       estimate (t-shirt), subtask parent relation, blockedBy self-relation,
@@ -1062,6 +1077,11 @@ Optional advanced authoring is not a prerequisite to this repair slice.
       though `tasks(filter:…)` returns the matching task. Kept `[~]`; defect
       queued for an executor (reduce the view's group-by field/relation
       complexity).
+      — 2026-09-26 CEST orchestrator (phase-04-report): UNREPORTED auto-commit
+      `a2a4932f` dropped the `project` relation column from
+      `task-calendar.view.ts` (compute-side fix only); a2e-projects
+      `dev:build` green after repair. Live `GroupByTasks` render still Tier-2
+      and unproven — stays `[~]`.
 - [ ] Retroplanning (R04, after P4.1/C1): choose a reusable project recipe,
       set deadline and timezone, preview task/subtask dates, durations,
       dependencies, assignees and overlap/past-date warnings; confirm creation
@@ -1089,6 +1109,15 @@ Optional advanced authoring is not a prerequisite to this repair slice.
       renders **empty** on the record page (no `Santé`/members chips) and the
       `Tâches` tab is **not scoped to the current project** (it lists tasks
       with no project). Defects queued; kept `[~]`.
+      — 2026-09-26 CEST orchestrator (phase-04-report): UNREPORTED auto-commit
+      `a2a4932f` switched the `Tâches` tab to a native `FIELD` widget on
+      `task.project` (`fieldDisplayMode: TABLE`, `viewId: projectTasks`) so the
+      record-context filter scopes it (host `FieldConfiguration.viewId` is real);
+      the executor's test type error was repaired. Unit-only — project-scoped
+      live render still Tier-2, so stays `[~]`. The `Aperçu` empty-render defect
+      is **not fixed**: the commit swapped to deprecated `useRecordId()` (same
+      execution context, no behaviour change); record pages do populate
+      `targetRecordIdentifier`, so it needs a live re-diagnosis.
 - [x] Subtasks & dependencies UI: nested list + dependency picker with
       cycle validation — 2026-09-17 orchestrator: nested list slice live
       (roots via `parentTask: {is:NULL}`, children via `parentTask {id}`,
@@ -1223,6 +1252,17 @@ primitives; app packaging/name is decided in P4C.1, not inferred from Bureau.
       quiet-hours/timezone rules; invite/response/visibility rights where
       supported. Keep unsupported provider actions visibly read-only. Declare
       attendee behavior a proposed requirement, not verified reference UI.
+      — 2026-09-26 CEST orchestrator (phase-04-report): UNREPORTED auto-commit
+      `a2a4932f` shipped the pure scheduler
+      (`calendar-reminder.util.ts`), idempotent per-workspace dispatch
+      (`calendar-reminder.service.ts` on `WorkspaceOrmManager` +
+      `NotificationService`, repaired to compile), the 2-39 workspace command
+      `1789905000000` (up-only metadata field add; strictly increasing within
+      the workspace kind) and the `CALENDAR_REMINDER` notification type. **No
+      scheduled job calls `dispatchDueReminders`, and the service is registered
+      in no module** → idempotent delivery never runs. Stays `[ ]` (partial
+      core only); split the cron wiring into its own slice. D05 still open for
+      attendee/timezone policy.
 - [~] **P4C.5 Task/project links (after P4.1/P4C.2):** overlay task due dates,
       quick-create a standard task from a day, opt-in event/time-block link,
       open project/task from event. Agree source of truth and confirm before

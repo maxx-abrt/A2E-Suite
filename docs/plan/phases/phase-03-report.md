@@ -1169,3 +1169,11 @@ CLAIMED — US-042/summarize-translate-improve-tools — deepseek-v4.1-flash —
 ## 2026-09-20 15:50 UTC — orchestrator — US-048 accepted
 **Verified:** the report-only deliverable re-checked — `docs/plan/p3.4-advanced-authoring-feasibility.md` exists, is indexed in `docs/README.md`, registered in `check-docs.mjs`; `node docs/scripts/check-docs.mjs` → PASS (25 docs / 200 links) on HEAD. Zero product code, zero Tier-2 checks applicable.
 **PLAN.md:** the P3.4 advanced-blocks bullet stays `[ ]` with a dated annotation — the feasibility check is accepted evidence, not implementation; gated behind P3.2/P3.3 durable acceptance and D07 (`xl-*` AGPL-vs-commercial). **D07 owner:** the license position in that artifact needs ratification before any XL dependency is wired.
+
+## 2026-09-26 19:10 CEST — orchestrator — UNREPORTED auto-commit a2a4932f (P3.2/P3.3 claim)
+
+**Attribution:** same commit as the phase-02/04 entries; no executor report. Documents-side change is confined to `a2e-documents/src/front-components/document-browser.front-component.tsx` (+29/−3): `instantiateTemplate` now re-fetches the template's `content` by id before copying instead of trusting the gallery tree node (which could carry a stale/missing body).
+**Verified:** `packages/twenty-apps/internal/a2e-documents` `yarn typecheck` → exit 0; `yarn lint` → 0 warnings / 0 errors; `npx twenty dev:build .` → Build succeeded (28 files); `yarn test:unit` → 197/197.
+**Verdict (no tick):** the commit's `.emergent` todo claimed "P3.2/P3.3 completed", which is unsupported. PLAN's P3.2 "Complete template instantiation + gallery composition" (authorized body fetch **+ ID/anchor remap + copy-independence proof (C1, E04)**) and P3.3 "Record integration" (selected-note body copy with source link + permission checks) both stay `[ ]` — this is one freshness fix, not those deliverables.
+**Do not redo:** the fresh-fetch change is green — keep it; do not rebuild the gallery/save-as-template helpers.
+**Next:** executor — ID/anchor remap + copy-independence proof for P3.2; selected-note body copy for P3.3.

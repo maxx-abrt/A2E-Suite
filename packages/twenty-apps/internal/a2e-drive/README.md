@@ -25,8 +25,10 @@ and install the app on a disposable workspace.
 - Native page at route `/drive` (`AppPath.Drive`,
   [DrivePage.tsx](../../../twenty-front/src/pages/drive/DrivePage.tsx)). The
   page is a front surface that reads and writes this app's metadata.
-- A Drive usage widget is registered on the workbench dock/Home dashboard
-  ([registerDriveUsageWidget.ts](../../../twenty-front/src/modules/drive/registerDriveUsageWidget.ts)).
+- A Drive usage summary widget
+  ([DriveUsageWidget.tsx](../../../twenty-front/src/modules/drive/components/DriveUsageWidget.tsx))
+  renders the storage/quota readout. Its host surface is being re-homed from
+  the removed workbench dock to the Drive surface (PLAN P2.6 / D-Shell).
 
 ## What it does
 

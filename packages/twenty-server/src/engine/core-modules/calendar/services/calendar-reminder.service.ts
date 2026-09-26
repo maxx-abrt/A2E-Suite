@@ -1,20 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type NotificationQuietHours } from 'src/engine/core-modules/notification/types/notification-preferences.type';
 import { NotificationService } from 'src/engine/core-modules/notification/services/notification.service';
-import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
-import { normalizeNotificationPreferences } from 'src/engine/core-modules/notification/utils/normalize-notification-preferences.util';
+import { DEFAULT_NOTIFICATION_QUIET_HOURS } from 'src/engine/core-modules/notification/constants/notification-policy.constant';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import {
   buildCalendarReminderNotificationPayload,
   computeCalendarReminderSchedule,
   type CalendarReminderEvent,
 } from 'src/engine/core-modules/calendar/utils/calendar-reminder.util';
-
-type NotificationPreferenceKeyValueTypeMap = {
-  [key: string]: ReturnType<typeof normalizeNotificationPreferences>;
-};
 
 // Dispatches calendar reminders on the P8 notification contract.
 //
@@ -32,14 +28,18 @@ type NotificationPreferenceKeyValueTypeMap = {
 //   • Attendee notifications: NOT implemented — D05 must specify whether
 //     all participants or only the owner receives the reminder before this
 //     can be wired to additional userId lookups.
+//
+// NOTE: no @Cron entry point is registered yet. The pure scheduling rules and
+// the per-workspace dispatch loop exist and are unit-covered; wiring a
+// scheduled job that iterates workspaces is part of P4C.4 and is tracked as a
+// separate slice (see phase-04-report).
 @Injectable()
 export class CalendarReminderService {
   private readonly logger = new Logger(CalendarReminderService.name);
 
   constructor(
-    private readonly twentyOrmGlobalManager: TwentyORMGlobalManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly notificationService: NotificationService,
-    private readonly keyValuePairService: KeyValuePairService<NotificationPreferenceKeyValueTypeMap>,
   ) {}
 
   // Scan a single workspace for events whose reminders are now due and dispatch
@@ -51,127 +51,124 @@ export class CalendarReminderService {
     workspaceId: string;
     now: Date;
   }): Promise<{ dispatched: number; skipped: number }> {
-    const repository =
-      await this.twentyOrmGlobalManager.getRepositoryForWorkspace<CalendarEventWorkspaceEntity>(
-        workspaceId,
-        'calendarEvent',
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    // Candidate window: only events that start within the next 24 h and have a
-    // reminder set but not yet delivered. The `where` clause is intentionally
-    // broad so the pure scheduler can apply the precise quiet-hours check.
-    const windowEnd = new Date(now.getTime() + 24 * 60 * 60 * 1_000);
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const repository =
+        this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
+          'calendarEvent',
+        );
 
-    const candidates = await repository.find({
-      where: {
-        reminderDeliveredAt: null,
-        isCanceled: false,
-      },
-      select: [
-        'id',
-        'title',
-        'startsAt',
-        'isCanceled',
-        'reminderMinutes',
-        'reminderDeliveredAt',
-        'recurrenceTimezone',
-        'createdBy',
-      ],
-    });
+      // Candidate window: reminders not yet delivered on non-cancelled events.
+      // The `where` clause is intentionally broad so the pure scheduler applies
+      // the precise due / quiet-hours checks below.
+      const windowEnd = new Date(now.getTime() + 24 * 60 * 60 * 1_000);
 
-    let dispatched = 0;
-    let skipped = 0;
+      const candidates = await repository.find({
+        where: {
+          reminderDeliveredAt: null,
+          isCanceled: false,
+        },
+        select: [
+          'id',
+          'title',
+          'startsAt',
+          'isCanceled',
+          'reminderMinutes',
+          'reminderDeliveredAt',
+          'recurrenceTimezone',
+          'createdBy',
+        ],
+      });
 
-    for (const event of candidates) {
-      try {
-        // Resolve the event owner userId from createdBy actor.
-        const userId =
-          (event.createdBy as unknown as { workspaceMemberId?: string })
-            ?.workspaceMemberId ?? null;
+      let dispatched = 0;
+      let skipped = 0;
 
-        if (userId === null) {
-          skipped++;
-          continue;
-        }
-
-        // Resolve user quiet-hours (fail-open so a missing preference never
-        // blocks the reminder).
-        let quietHours: NotificationQuietHours = { enabled: false };
-
+      for (const event of candidates) {
         try {
-          const prefs = await this.keyValuePairService.get({
-            userId,
+          // Resolve the event owner userId from createdBy actor.
+          const userId =
+            (event.createdBy as unknown as { workspaceMemberId?: string })
+              ?.workspaceMemberId ?? null;
+
+          if (userId === null) {
+            skipped++;
+            continue;
+          }
+
+          // Resolve user quiet-hours (fail-open so a missing preference never
+          // blocks the reminder).
+          let quietHours: NotificationQuietHours =
+            DEFAULT_NOTIFICATION_QUIET_HOURS;
+
+          try {
+            quietHours = (await this.notificationService.getPreferences(userId))
+              .quietHours;
+          } catch {
+            // Preference lookup is best-effort — use the disabled fallback.
+          }
+
+          const reminderEvent: CalendarReminderEvent = {
+            id: event.id,
+            title: event.title,
+            startsAt: event.startsAt,
+            isCanceled: event.isCanceled,
+            reminderMinutes: event.reminderMinutes ?? null,
+            reminderDeliveredAt: event.reminderDeliveredAt ?? null,
+            recurrenceTimezone: event.recurrenceTimezone ?? null,
+          };
+
+          const result = computeCalendarReminderSchedule(
+            reminderEvent,
+            now,
+            quietHours,
+          );
+
+          if (!result.due) {
+            skipped++;
+            continue;
+          }
+
+          // Only consider events in the near-future window to avoid scanning
+          // the whole workspace history on each cron tick.
+          const startsAtMs = event.startsAt ? Date.parse(event.startsAt) : NaN;
+
+          if (isNaN(startsAtMs) || new Date(startsAtMs) > windowEnd) {
+            skipped++;
+            continue;
+          }
+
+          // Dispatch via the P8 notification contract.
+          this.notificationService.requestNotifications({
             workspaceId,
-            key: 'notification-preferences',
+            requests: [
+              {
+                userId,
+                type: 'CALENDAR_REMINDER',
+                payload: buildCalendarReminderNotificationPayload(
+                  reminderEvent,
+                  userId,
+                ),
+                createdAt: result.scheduledFor,
+              },
+            ],
           });
 
-          const normalized = normalizeNotificationPreferences(prefs);
+          // Set the idempotency key so the event is never re-dispatched.
+          await repository.update(event.id, {
+            reminderDeliveredAt: now.toISOString(),
+          });
 
-          quietHours = normalized.quietHours;
-        } catch {
-          // Preference lookup is best-effort — use the disabled fallback.
-        }
-
-        const reminderEvent: CalendarReminderEvent = {
-          id: event.id,
-          title: event.title,
-          startsAt: event.startsAt,
-          isCanceled: event.isCanceled,
-          reminderMinutes: event.reminderMinutes ?? null,
-          reminderDeliveredAt: event.reminderDeliveredAt ?? null,
-          recurrenceTimezone: event.recurrenceTimezone ?? null,
-        };
-
-        const result = computeCalendarReminderSchedule(
-          reminderEvent,
-          now,
-          quietHours,
-        );
-
-        if (!result.due) {
+          dispatched++;
+        } catch (error) {
+          this.logger.error(
+            `Failed to dispatch reminder for event ${event.id}: ${String(error)}`,
+          );
           skipped++;
-          continue;
         }
-
-        // Only consider events in the near-future window to avoid scanning the
-        // whole workspace history on each cron tick.
-        const startsAtMs = event.startsAt ? Date.parse(event.startsAt) : NaN;
-
-        if (isNaN(startsAtMs) || new Date(startsAtMs) > windowEnd) {
-          skipped++;
-          continue;
-        }
-
-        // Dispatch via the P8 notification contract.
-        this.notificationService.requestNotifications({
-          workspaceId,
-          requests: [
-            {
-              userId,
-              type: 'CALENDAR_REMINDER',
-              payload: buildCalendarReminderNotificationPayload(
-                reminderEvent,
-                userId,
-              ),
-              createdAt: result.scheduledFor,
-            },
-          ],
-        });
-
-        // Set the idempotency key so the event is never re-dispatched.
-        await repository.update(event.id, {
-          reminderDeliveredAt: now.toISOString(),
-        });
-
-        dispatched++;
-      } catch (error) {
-        this.logger.error(
-          `Failed to dispatch reminder for event ${event.id}: ${String(error)}`,
-        );
-        skipped++;
       }
-    }
 
-    return { dispatched, skipped };
+      return { dispatched, skipped };
+    }, authContext);
   }
 }

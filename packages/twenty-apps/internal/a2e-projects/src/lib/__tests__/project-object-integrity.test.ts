@@ -90,6 +90,7 @@ type PageLayoutWidgetDefinition = {
     viewUniversalIdentifier?: string | null;
     fieldMetadataId?: string;
     fieldDisplayMode?: string;
+    viewId?: string;
   };
 };
 
