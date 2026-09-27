@@ -47,6 +47,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { CodeInterpreterSessionCleanupModule } from 'src/engine/core-modules/code-interpreter/crons/code-interpreter-session-cleanup.module';
 import { TrashCleanupModule } from 'src/engine/trash-cleanup/trash-cleanup.module';
+import { CalendarReminderModule } from 'src/engine/core-modules/calendar/calendar-reminder.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-seeder.module';
@@ -87,6 +88,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     WorkspaceCleanerModule,
     WorkspaceMigrationModule,
     TrashCleanupModule,
+    CalendarReminderModule,
     BillingReminderModule,
     ApplicationRecurringChargeModule,
     CodeInterpreterSessionCleanupModule,

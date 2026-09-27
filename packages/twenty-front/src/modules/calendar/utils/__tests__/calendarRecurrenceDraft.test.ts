@@ -61,6 +61,7 @@ const buildEvent = (
   recurrenceSeriesId: null,
   recurrenceOccurrenceDay: null,
   recurrenceSkippedOccurrenceDays: null,
+  reminderMinutes: null,
   ...overrides,
 });
 

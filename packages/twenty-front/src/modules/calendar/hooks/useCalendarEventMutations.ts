@@ -22,6 +22,7 @@ const CALENDAR_EVENT_GQL_FIELDS = {
   recurrenceSeriesId: true,
   recurrenceOccurrenceDay: true,
   recurrenceSkippedOccurrenceDays: true,
+  reminderMinutes: true,
 };
 
 // Front create/update/delete over the standard `calendarEvent` record path. No

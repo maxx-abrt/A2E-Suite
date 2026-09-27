@@ -21,5 +21,6 @@ export const buildCalendarEventInputFromRecord = (
     endsAt: event.endsAt ?? event.startsAt,
     isFullDay: event.isFullDay,
     isCanceled: event.isCanceled,
+    reminderMinutes: event.reminderMinutes ?? null,
   };
 };

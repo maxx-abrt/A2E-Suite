@@ -22,4 +22,6 @@ export type CalendarEventRecord = {
   recurrenceSeriesId: string | null;
   recurrenceOccurrenceDay: string | null;
   recurrenceSkippedOccurrenceDays: string | null;
+  // P4C.4 reminder lead time in minutes; null means no reminder is scheduled.
+  reminderMinutes: number | null;
 };

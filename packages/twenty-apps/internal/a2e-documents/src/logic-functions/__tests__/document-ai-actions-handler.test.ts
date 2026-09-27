@@ -39,7 +39,9 @@ test('summarize returns the authorized body and metadata', async () => {
     options: { targetLanguage: null, tone: null, maxWords: null },
   });
   // Exactly the one caller-scoped read, by id — no write, no second query.
-  assert.deepEqual(findQuery(calls, 'document')?.args, { id: 'document-1' });
+  assert.deepEqual(findQuery(calls, 'document')?.args, {
+    filter: { id: { eq: 'document-1' } },
+  });
   assert.equal(calls.length, 1);
 });
 
@@ -119,7 +121,9 @@ test('translate trims the target language and reads once', async () => {
 
   assert.equal(result.status, 'READ');
   assert.equal(result.options.targetLanguage, 'anglais');
-  assert.deepEqual(findQuery(calls, 'document')?.args, { id: 'document-1' });
+  assert.deepEqual(findQuery(calls, 'document')?.args, {
+    filter: { id: { eq: 'document-1' } },
+  });
   assert.equal(calls.length, 1);
 });
 

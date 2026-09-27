@@ -46,7 +46,9 @@ test('a person record reports its identity fields and the empty ones', async () 
     ],
   );
   // Exactly one caller-scoped read of the native person object, by id.
-  assert.deepEqual(findQuery(calls, 'person')?.args, { id: 'person-1' });
+  assert.deepEqual(findQuery(calls, 'person')?.args, {
+    filter: { id: { eq: 'person-1' } },
+  });
   assert.equal(calls.length, 1);
 });
 
@@ -73,7 +75,9 @@ test('a company record reports its identity fields and the empty ones', async ()
     'linkedinLink.primaryLinkUrl',
     'address.addressCountry',
   ]);
-  assert.deepEqual(findQuery(calls, 'company')?.args, { id: 'company-9' });
+  assert.deepEqual(findQuery(calls, 'company')?.args, {
+    filter: { id: { eq: 'company-9' } },
+  });
   assert.equal(calls.length, 1);
 });
 
@@ -110,7 +114,9 @@ test('the record id is trimmed before the read', async () => {
   );
 
   assert.equal(result.recordId, 'person-1');
-  assert.deepEqual(findQuery(calls, 'person')?.args, { id: 'person-1' });
+  assert.deepEqual(findQuery(calls, 'person')?.args, {
+    filter: { id: { eq: 'person-1' } },
+  });
 });
 
 test('a missing or unauthorized record fails closed', async () => {

@@ -1,6 +1,7 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { DOCUMENT_KIND } from '../../constants/field-vocabulary.ts';
+import { buildFindOneByIdArgs } from '../../lib/find-one-record-args.ts';
 
 // LECTURE SEULE, SOUS L'AUTORISATION DE L'APPELANT.
 //
@@ -66,7 +67,7 @@ const readDocument = async (
 ): Promise<DocumentRecord | undefined> => {
   const result = (await client.query({
     document: {
-      __args: { id: documentId },
+      __args: buildFindOneByIdArgs(documentId),
       id: true,
       title: true,
       kind: true,

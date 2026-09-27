@@ -12,6 +12,19 @@ export type CoreClientLike = Pick<CoreApiClient, 'query'>;
 
 export const coreClient = (): CoreApiClient => new CoreApiClient();
 
+// Twenty findOne resolvers (`person`, `company`, `messageThread`) take one
+// required `filter` argument and no `id` argument (server
+// get-resolver-args.util.ts). A `person(id: …)` read makes the generated genql
+// client throw (`no typing defined for argument \`id\``) before any request,
+// so both tools failed on every call. Mutations keep `id`.
+export type FindOneByIdArgs = {
+  filter: { id: { eq: string } };
+};
+
+export const buildFindOneByIdArgs = (id: string): FindOneByIdArgs => ({
+  filter: { id: { eq: id } },
+});
+
 export const hasNonEmptyString = (value: unknown): value is string =>
   typeof value === 'string' && value.trim().length > 0;
 

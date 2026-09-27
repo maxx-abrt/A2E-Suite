@@ -1,4 +1,5 @@
 import {
+  buildFindOneByIdArgs,
   coreClient,
   hasNonEmptyString,
   type CoreClientLike,
@@ -150,7 +151,7 @@ const readPerson = async (
   personId: string,
 ): Promise<PersonNode | undefined> => {
   const result = (await client.query({
-    person: { __args: { id: personId }, ...PERSON_SELECTION },
+    person: { __args: buildFindOneByIdArgs(personId), ...PERSON_SELECTION },
   } as never)) as { person?: PersonNode | null };
 
   return result?.person ?? undefined;
@@ -161,7 +162,10 @@ const readCompany = async (
   companyId: string,
 ): Promise<CompanyNode | undefined> => {
   const result = (await client.query({
-    company: { __args: { id: companyId }, ...COMPANY_SELECTION },
+    company: {
+      __args: buildFindOneByIdArgs(companyId),
+      ...COMPANY_SELECTION,
+    },
   } as never)) as { company?: CompanyNode | null };
 
   return result?.company ?? undefined;

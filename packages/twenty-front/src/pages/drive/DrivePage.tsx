@@ -19,6 +19,7 @@ import { DriveToolbar } from '@/drive/components/DriveToolbar';
 import { DriveTrashedFolders } from '@/drive/components/DriveTrashedFolders';
 import { DriveUploadDropZone } from '@/drive/components/DriveUploadDropZone';
 import { DriveUploadQueuePanel } from '@/drive/components/DriveUploadQueuePanel';
+import { DriveUsageWidget } from '@/drive/components/DriveUsageWidget';
 import {
   DEFAULT_DRIVE_FILE_FILTERS,
   DRIVE_FOLDER_ROOT_LABEL,
@@ -116,6 +117,14 @@ const StyledTrashButton = styled.button<{ isActive: boolean }>`
   &:hover {
     background: ${themeCssVariables.background.transparent.light};
   }
+`;
+
+// Pinned to the bottom of the folder column: usage is ambient context, it
+// should never push the folder tree down.
+const StyledSidebarUsage = styled.section`
+  border-top: 1px solid ${themeCssVariables.border.color.light};
+  margin-top: auto;
+  padding-top: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledMain = styled.main`
@@ -602,6 +611,9 @@ export const DrivePage = () => {
           selectedFolderId={selectedFolderId}
           onSelectFolder={handleSelectFolder}
         />
+        <StyledSidebarUsage aria-label={t`Storage usage`}>
+          <DriveUsageWidget />
+        </StyledSidebarUsage>
       </StyledSidebar>
 
       <DriveUploadDropZone onUploadFiles={handleUploadFiles}>

@@ -18,6 +18,7 @@ const buildEvent = (
   recurrenceSeriesId: null,
   recurrenceOccurrenceDay: null,
   recurrenceSkippedOccurrenceDays: null,
+  reminderMinutes: null,
   ...overrides,
 });
 
@@ -72,5 +73,26 @@ describe('buildCalendarEventDraftFromEvent', () => {
     expect(draft.startHour).toBe(0);
     expect(draft.startMinute).toBe(0);
     expect(draft.endHour).toBe(1);
+  });
+
+  it('reads the reminder lead time back onto the draft', () => {
+    const draft = buildCalendarEventDraftFromEvent({
+      event: buildEvent({
+        startsAt: '2026-07-15T09:00:00Z',
+        reminderMinutes: 30,
+      }),
+      timeZone: 'UTC',
+    });
+
+    expect(draft.reminderMinutes).toBe(30);
+  });
+
+  it('reads a missing reminder back as null', () => {
+    const draft = buildCalendarEventDraftFromEvent({
+      event: buildEvent({ startsAt: '2026-07-15T09:00:00Z' }),
+      timeZone: 'UTC',
+    });
+
+    expect(draft.reminderMinutes).toBeNull();
   });
 });

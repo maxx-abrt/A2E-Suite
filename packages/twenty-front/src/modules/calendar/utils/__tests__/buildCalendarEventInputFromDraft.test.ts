@@ -32,6 +32,7 @@ describe('buildCalendarEventInputFromDraft', () => {
     expect(input.isFullDay).toBe(false);
     expect(input.description).toBeNull();
     expect(input.location).toBeNull();
+    expect(input.reminderMinutes).toBeNull();
   });
 
   it('keeps a one-hour duration across the spring-forward gap', () => {
@@ -81,5 +82,32 @@ describe('buildCalendarEventInputFromDraft', () => {
     expect(input.title).toBeNull();
     expect(input.description).toBeNull();
     expect(input.location).toBe('Room');
+  });
+
+  it('carries an explicit reminder lead time onto a timed input', () => {
+    const input = buildCalendarEventInputFromDraft({
+      draft: buildDraft({ reminderMinutes: 15 }),
+      timeZone: 'UTC',
+    });
+
+    expect(input.reminderMinutes).toBe(15);
+  });
+
+  it('carries a reminder lead time onto an all-day input', () => {
+    const input = buildCalendarEventInputFromDraft({
+      draft: buildDraft({ isFullDay: true, reminderMinutes: 1440 }),
+      timeZone: 'UTC',
+    });
+
+    expect(input.reminderMinutes).toBe(1440);
+  });
+
+  it('normalizes an absent reminder to null', () => {
+    const input = buildCalendarEventInputFromDraft({
+      draft: buildDraft({ reminderMinutes: undefined }),
+      timeZone: 'UTC',
+    });
+
+    expect(input.reminderMinutes).toBeNull();
   });
 });

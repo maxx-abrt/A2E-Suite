@@ -9,9 +9,8 @@ const HELP_GROUP_KEY = 'a2e-help';
 const HELP_KEYWORDS_REGEX = /\b(aide|help|démarrage|start|onboard)/i;
 const HELP_VIRTUAL_RECORD_ID = 'a2e-help-center';
 
-// Cmd+K help entry — surfaces the home page when the user searches for any of
-// the keywords above. The per-user dismissal and topic search behavior of
-// FirstOpenHelpWidget remain accessible on the /home route itself.
+// Help lives in a card on Home since the right dock was removed (D-Shell);
+// this entry is how Cmd+K reaches it from anywhere else.
 export const useHelpSearchResultItems = ({
   searchInput,
 }: {
@@ -35,14 +34,14 @@ export const useHelpSearchResultItems = ({
     return [
       {
         id: 'a2e-help-open',
-        label: t`Aide et démarrage`,
+        label: t`Help and getting started`,
         objectNameSingular: HELP_GROUP_KEY,
         recordId: HELP_VIRTUAL_RECORD_ID,
-        objectLabel: t`Aide`,
+        objectLabel: t`Help`,
         avatarType: 'rounded',
-        description: t`Conseils, raccourcis et ressources`,
+        description: t`Tips, shortcuts and resources`,
         groupKey: HELP_GROUP_KEY,
-        groupHeading: t`Aide`,
+        groupHeading: t`Help`,
         path: AppPath.Home,
       } satisfies GroupableSearchResultItem,
     ];

@@ -5,10 +5,12 @@ import { type HomeWidgetListEntry } from '@/home-dashboard/types/HomeWidgetListE
 
 export type UpcomingEventsWidgetContentProps = {
   entries: HomeWidgetListEntry[];
+  onSelectEntry?: (calendarEventId: string) => void;
 };
 
 export const UpcomingEventsWidgetContent = ({
   entries,
+  onSelectEntry,
 }: UpcomingEventsWidgetContentProps) => {
   const { t } = useLingui();
 
@@ -17,6 +19,7 @@ export const UpcomingEventsWidgetContent = ({
       testId="home-upcoming-events"
       emptyLabel={t`No upcoming events`}
       entries={entries}
+      onSelectEntry={onSelectEntry}
     />
   );
 };

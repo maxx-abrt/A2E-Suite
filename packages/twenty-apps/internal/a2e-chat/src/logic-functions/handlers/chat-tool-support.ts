@@ -1,6 +1,7 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { canReadChannel } from '../../lib/channel-membership.ts';
+import { buildFindOneByIdArgs } from '../../lib/find-one-record-args.ts';
 import {
   buildChatTranscript,
   type ChatMessageSource,
@@ -76,7 +77,10 @@ export const readChannelAccess = async (
   callerWorkspaceMemberId: string | null,
 ): Promise<ChannelAccessOutcome> => {
   const result = (await client.query({
-    chatChannel: { __args: { id: channelId }, ...CHANNEL_SELECTION },
+    chatChannel: {
+      __args: buildFindOneByIdArgs(channelId),
+      ...CHANNEL_SELECTION,
+    },
   } as never)) as { chatChannel?: ChatChannelNode | null };
 
   const channel = result?.chatChannel;

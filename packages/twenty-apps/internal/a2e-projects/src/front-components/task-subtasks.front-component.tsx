@@ -8,6 +8,7 @@ import {
 } from 'twenty-sdk/front-component';
 
 import { FRONT_COMPONENT_IDS } from '../constants/universal-identifiers.ts';
+import { buildFindOneByIdArgs } from '../lib/find-one-record-args.ts';
 import {
   buildTaskParentPayload,
   collectTaskParentCandidates,
@@ -127,7 +128,7 @@ const fetchTask = async (taskId: string): Promise<TaskNode | null> => {
 
   const result = (await client.query({
     task: {
-      __args: { id: taskId },
+      __args: buildFindOneByIdArgs(taskId),
       id: true,
       title: true,
       parentTask: { id: true },

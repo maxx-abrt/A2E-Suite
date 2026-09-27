@@ -55,6 +55,7 @@ import {
   type TreeNestedNode,
   type TreeParentPageState,
 } from '../lib/document-tree-loading.ts';
+import { buildFindOneByIdArgs } from '../lib/find-one-record-args.ts';
 import { buildAppendPosition } from '../lib/fractional-position.ts';
 import {
   buildTemplateCopyPayload,
@@ -430,7 +431,7 @@ const DocumentBrowser = () => {
     // content" defect). The permission check is the read, not an extra gate.
     const fetchResult = (await client.query({
       document: {
-        __args: { id: templateDocument.id },
+        __args: buildFindOneByIdArgs(templateDocument.id),
         id: true,
         title: true,
         kind: true,

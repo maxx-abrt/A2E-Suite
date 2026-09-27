@@ -4,6 +4,7 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 
 import { FRONT_COMPONENT_IDS } from '../constants/universal-identifiers.ts';
+import { buildFindOneByIdArgs } from '../lib/find-one-record-args.ts';
 import {
   buildProjectTimeRollup,
   formatDuration,
@@ -56,7 +57,7 @@ const ProjectTimeRollupWidget = () => {
 
     const result = (await client.query({
       project: {
-        __args: { id: scopeProjectId },
+        __args: buildFindOneByIdArgs(scopeProjectId),
         id: true,
         name: true,
         timeEntries: {

@@ -42,6 +42,7 @@ export const buildCalendarEventInputFromDraft = ({
       endsAt: toUtcMidnightInstant(draft.endDay.add({ days: 1 })),
       isFullDay: true,
       isCanceled: draft.isCanceled,
+      reminderMinutes: draft.reminderMinutes ?? null,
     };
   }
 
@@ -82,5 +83,6 @@ export const buildCalendarEventInputFromDraft = ({
     endsAt,
     isFullDay: false,
     isCanceled: draft.isCanceled,
+    reminderMinutes: draft.reminderMinutes ?? null,
   };
 };

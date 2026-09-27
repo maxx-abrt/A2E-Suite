@@ -10,8 +10,8 @@ import { FIRST_OPEN_HELP_TOPICS } from '@/first-open-help/constants/FirstOpenHel
 import { useDismissedFirstOpenHelpTopics } from '@/first-open-help/hooks/useDismissedFirstOpenHelpTopics';
 import { resolveFirstOpenHelpContext } from '@/first-open-help/utils/resolveFirstOpenHelpContext';
 
-// A dock widget, never a modal: opening it is the user's choice, and every
-// explanation inside can be dismissed without blocking the workspace.
+// A Home card, never a modal: every explanation inside can be dismissed
+// without blocking the workspace.
 export const FirstOpenHelpWidget = () => {
   const navigate = useNavigate();
   const location = useLocation();

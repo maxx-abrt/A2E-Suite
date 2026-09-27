@@ -73,6 +73,7 @@ export const buildCalendarEventDraftFromEvent = ({
       endHour: 0,
       endMinute: 0,
       recurrence: buildRecurrenceDraftFromEvent({ event, startDay, timeZone }),
+      reminderMinutes: event.reminderMinutes ?? null,
     };
   }
 
@@ -110,5 +111,6 @@ export const buildCalendarEventDraftFromEvent = ({
     endHour: endDateTime.hour,
     endMinute: endDateTime.minute,
     recurrence: buildRecurrenceDraftFromEvent({ event, startDay, timeZone }),
+    reminderMinutes: event.reminderMinutes ?? null,
   };
 };

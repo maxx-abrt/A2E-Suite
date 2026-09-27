@@ -1,4 +1,5 @@
 import {
+  buildFindOneByIdArgs,
   coreClient,
   hasNonEmptyString,
   normalizeOptionalPositiveInt,
@@ -115,7 +116,7 @@ const readMessageThread = async (
 ): Promise<MessageThreadNode | undefined> => {
   const result = (await client.query({
     messageThread: {
-      __args: { id: messageThreadId },
+      __args: buildFindOneByIdArgs(messageThreadId),
       id: true,
       subject: true,
       messages: {

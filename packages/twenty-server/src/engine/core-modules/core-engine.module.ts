@@ -79,6 +79,7 @@ import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { CodeInterpreterSessionCleanupModule } from 'src/engine/core-modules/code-interpreter/crons/code-interpreter-session-cleanup.module';
 import { TrashCleanupModule } from 'src/engine/trash-cleanup/trash-cleanup.module';
+import { CalendarReminderModule } from 'src/engine/core-modules/calendar/calendar-reminder.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/channel-sync.module';
 import { CreateCalendarEventModule } from 'src/modules/calendar/calendar-event-creation-manager/create-calendar-event.module';
@@ -185,6 +186,7 @@ import { FileModule } from './file/file.module';
     PageLayoutModule,
     ImpersonationModule,
     TrashCleanupModule,
+    CalendarReminderModule,
     CodeInterpreterSessionCleanupModule,
     DashboardModule,
     EventLogsViewerModule,

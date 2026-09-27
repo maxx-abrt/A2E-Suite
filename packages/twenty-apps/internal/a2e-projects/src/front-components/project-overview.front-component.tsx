@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useRecordId } from 'twenty-sdk/front-component';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 
 import { FRONT_COMPONENT_IDS } from '../constants/universal-identifiers.ts';
+import { buildFindOneByIdArgs } from '../lib/find-one-record-args.ts';
 import {
   buildProjectOverviewSummary,
   formatWorkspaceMemberName,
@@ -47,29 +48,32 @@ type ProjectQueryResult = {
 // own the task/board/file lists, and the pure projection
 // (lib/project-overview.ts) owns the health label and member names.
 //
-// Uses useRecordId() (the single-record variant of useSelectedRecordIds, same
-// underlying context) to resolve the current project record. Both hooks read
-// from the SDK execution context that the host populates before the worker
-// renders, so neither can return a value until the host calls updateContext.
-// The useEffect watches projectId and reloads whenever the context updates.
+// The record page passes the project id as the single selected record
+// (FrontComponentWidgetRenderer → executionContext.selectedRecordIds). The
+// empty widget (P4.2c) was the findOne query itself: it was keyed
+// `project(id: …)`, an argument the Core API does not have, so the request
+// failed validation and the widget fell through to `null`. The read now goes
+// through buildFindOneByIdArgs and a failure renders an explicit message.
 const ProjectOverview = () => {
-  // useRecordId returns null when selectedRecordIds is empty or has more than
-  // one entry — both signal "not ready yet" for a single-record widget.
-  const projectId = useRecordId();
+  const selectedRecordIds = useSelectedRecordIds();
+  const projectId =
+    selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
 
   const [project, setProject] = useState<OverviewProject | null>(null);
   const [summary, setSummary] = useState<ProjectOverviewSummary | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasLoadFailed, setHasLoadFailed] = useState(false);
 
   const loadProject = useCallback(async (scopeProjectId: string) => {
     setIsLoading(true);
+    setHasLoadFailed(false);
 
     try {
       const client = new CoreApiClient();
 
       const result = (await client.query({
         project: {
-          __args: { id: scopeProjectId },
+          __args: buildFindOneByIdArgs(scopeProjectId),
           id: true,
           name: true,
           key: true,
@@ -133,6 +137,10 @@ const ProjectOverview = () => {
           members,
         }),
       );
+    } catch {
+      setProject(null);
+      setSummary(null);
+      setHasLoadFailed(true);
     } finally {
       setIsLoading(false);
     }
@@ -155,6 +163,14 @@ const ProjectOverview = () => {
     return (
       <div style={{ color: 'var(--tw-color-text-tertiary, #888)', padding: 8 }}>
         …
+      </div>
+    );
+  }
+
+  if (hasLoadFailed) {
+    return (
+      <div style={{ color: 'var(--tw-color-text-tertiary, #888)', padding: 8 }}>
+        Aperçu du projet indisponible.
       </div>
     );
   }

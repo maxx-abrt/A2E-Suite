@@ -22,6 +22,7 @@ import { WebhookSubscriptionRenewalCronCommand } from 'src/modules/connected-acc
 import { EmailingOngoingStaleCronCommand } from 'src/modules/emailing/crons/commands/emailing-ongoing-stale.cron.command';
 import { ReconcileCampaignStatsCronCommand } from 'src/modules/emailing/crons/commands/reconcile-campaign-stats.cron.command';
 import { TrashCleanupCronCommand } from 'src/engine/trash-cleanup/commands/trash-cleanup.cron.command';
+import { CalendarReminderCronCommand } from 'src/engine/core-modules/calendar/crons/commands/calendar-reminder.cron.command';
 import { CleanOnboardingWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-onboarding-workspaces.cron.command';
 import { CleanSuspendedWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-suspended-workspaces.cron.command';
 import { CalendarEventListFetchCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-event-list-fetch.cron.command';
@@ -74,6 +75,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly cleanSuspendedWorkspacesCronCommand: CleanSuspendedWorkspacesCronCommand,
     private readonly cleanOnboardingWorkspacesCronCommand: CleanOnboardingWorkspacesCronCommand,
     private readonly trashCleanupCronCommand: TrashCleanupCronCommand,
+    private readonly calendarReminderCronCommand: CalendarReminderCronCommand,
     private readonly eventLogCleanupCronCommand: EventLogCleanupCronCommand,
     private readonly enterpriseKeyValidationCronCommand: EnterpriseKeyValidationCronCommand,
     private readonly rotateSigningKeysCronCommand: RotateSigningKeysCronCommand,
@@ -194,6 +196,10 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'TrashCleanup',
         command: this.trashCleanupCronCommand,
+      },
+      {
+        name: 'CalendarReminder',
+        command: this.calendarReminderCronCommand,
       },
       {
         name: 'EventLogCleanup',

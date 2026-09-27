@@ -85,7 +85,9 @@ test('a readable thread yields its messages oldest first', async () => {
     maxWords: null,
   });
   // Exactly one caller-scoped read, by id.
-  assert.deepEqual(findQuery(calls, 'messageThread')?.args, { id: 'thread-1' });
+  assert.deepEqual(findQuery(calls, 'messageThread')?.args, {
+    filter: { id: { eq: 'thread-1' } },
+  });
   assert.equal(calls.length, 1);
 });
 
@@ -98,7 +100,9 @@ test('the thread id is trimmed before the read', async () => {
   );
 
   assert.equal(result.messageThreadId, 'thread-1');
-  assert.deepEqual(findQuery(calls, 'messageThread')?.args, { id: 'thread-1' });
+  assert.deepEqual(findQuery(calls, 'messageThread')?.args, {
+    filter: { id: { eq: 'thread-1' } },
+  });
 });
 
 test('valid drafting options are echoed back', async () => {

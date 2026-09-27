@@ -23,6 +23,7 @@ export const useCalendarEvents = () => {
       recurrenceSeriesId: true,
       recurrenceOccurrenceDay: true,
       recurrenceSkippedOccurrenceDays: true,
+      reminderMinutes: true,
     },
     orderBy: [{ startsAt: 'AscNullsLast' }],
     limit: 500,

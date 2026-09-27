@@ -4,6 +4,7 @@ import {
   extractTaskProposals,
   type ExtractTasksFromDocumentProposedTask,
 } from '../../lib/document-task-extraction.ts';
+import { buildFindOneByIdArgs } from '../../lib/find-one-record-args.ts';
 
 export type { ExtractTasksFromDocumentProposedTask };
 
@@ -52,7 +53,7 @@ const readDocument = async (
 ): Promise<DocumentRecord | undefined> => {
   const result = (await client.query({
     document: {
-      __args: { id: documentId },
+      __args: buildFindOneByIdArgs(documentId),
       id: true,
       content: { blocknote: true },
     },

@@ -47,6 +47,7 @@ const buildEventRecord = (
   recurrenceSeriesId: seriesId,
   recurrenceOccurrenceDay: null,
   recurrenceSkippedOccurrenceDays: '[]',
+  reminderMinutes: null,
   ...overrides,
 });
 

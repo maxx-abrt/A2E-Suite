@@ -7,6 +7,7 @@ import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CalendarRecurrenceFields } from '@/calendar/components/CalendarRecurrenceFields';
+import { CALENDAR_REMINDER_MINUTE_PRESETS } from '@/calendar/constants/CalendarReminderPresets';
 import { type CalendarEventDraft } from '@/calendar/types/CalendarEventDraft';
 import { rebaseCalendarRecurrenceDraftOnStartDay } from '@/calendar/utils/rebaseCalendarRecurrenceDraftOnStartDay';
 
@@ -95,6 +96,21 @@ const StyledTextArea = styled(StyledInput)`
   resize: vertical;
 `;
 
+const StyledSelect = styled.select`
+  background: ${themeCssVariables.background.transparent.light};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.primary};
+  font-family: inherit;
+  font-size: ${themeCssVariables.font.size.sm};
+  padding: ${themeCssVariables.spacing[2]};
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: 1px;
+  }
+`;
+
 const StyledRow = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
@@ -163,6 +179,20 @@ export const CalendarEventComposer = ({
   onDelete,
 }: CalendarEventComposerProps) => {
   const { t } = useLingui();
+
+  // Fixed presets keep each option message statically analyzable for Lingui.
+  const formatReminderOptionLabel = (minutes: number): string => {
+    switch (minutes) {
+      case 0:
+        return t`At time of event`;
+      case 60:
+        return t`1 hour before`;
+      case 1440:
+        return t`1 day before`;
+      default:
+        return t`${minutes} minutes before`;
+    }
+  };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -312,6 +342,32 @@ export const CalendarEventComposer = ({
             onChange={(recurrence) => onChange({ ...draft, recurrence })}
           />
         )}
+
+        <StyledField>
+          <StyledLabel>{t`Reminder`}</StyledLabel>
+          <StyledSelect
+            data-testid="calendar-event-composer-reminder"
+            value={
+              isDefined(draft.reminderMinutes)
+                ? String(draft.reminderMinutes)
+                : ''
+            }
+            onChange={(event) =>
+              onChange({
+                ...draft,
+                reminderMinutes:
+                  event.target.value === '' ? null : Number(event.target.value),
+              })
+            }
+          >
+            <option value="">{t`No reminder`}</option>
+            {CALENDAR_REMINDER_MINUTE_PRESETS.map((minutes) => (
+              <option key={minutes} value={String(minutes)}>
+                {formatReminderOptionLabel(minutes)}
+              </option>
+            ))}
+          </StyledSelect>
+        </StyledField>
 
         <StyledField>
           <StyledLabel>{t`Location`}</StyledLabel>

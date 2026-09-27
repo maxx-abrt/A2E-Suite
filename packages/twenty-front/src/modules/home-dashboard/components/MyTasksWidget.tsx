@@ -13,6 +13,7 @@ import {
   selectMyTasks,
 } from '@/home-dashboard/utils/selectMyTasks';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const MY_TASKS_WIDGET_LIMIT = 8;
@@ -20,6 +21,7 @@ const MY_TASKS_WIDGET_LIMIT = 8;
 export const MyTasksWidget = () => {
   const { t } = useLingui();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const workspaceMemberId = currentWorkspaceMember?.id;
   const now = new Date();
 
@@ -52,5 +54,14 @@ export const MyTasksWidget = () => {
     isOverdue: isTaskOverdue(task, now),
   }));
 
-  return <MyTasksWidgetContent entries={entries} />;
+  const handleSelectTask = (taskId: string) => {
+    openRecordInSidePanel({
+      recordId: taskId,
+      objectNameSingular: CoreObjectNameSingular.Task,
+    });
+  };
+
+  return (
+    <MyTasksWidgetContent entries={entries} onSelectEntry={handleSelectTask} />
+  );
 };

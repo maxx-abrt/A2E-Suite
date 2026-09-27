@@ -32,7 +32,9 @@ test('a readable document yields its blocknote body and metadata', async () => {
     },
   });
   // The read asks for exactly the fields the tool exposes, caller-scoped by id.
-  assert.deepEqual(findQuery(calls, 'document')?.args, { id: 'document-1' });
+  assert.deepEqual(findQuery(calls, 'document')?.args, {
+    filter: { id: { eq: 'document-1' } },
+  });
   assert.equal(calls.length, 1);
 });
 
@@ -48,7 +50,9 @@ test('the document id is trimmed before the read', async () => {
 
   assert.equal(result.status, 'READ');
   assert.equal(result.documentId, 'document-1');
-  assert.deepEqual(findQuery(calls, 'document')?.args, { id: 'document-1' });
+  assert.deepEqual(findQuery(calls, 'document')?.args, {
+    filter: { id: { eq: 'document-1' } },
+  });
 });
 
 test('a template exposes kind TEMPLATE', async () => {

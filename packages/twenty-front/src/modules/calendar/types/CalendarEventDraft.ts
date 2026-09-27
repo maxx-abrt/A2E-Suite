@@ -19,6 +19,9 @@ export type CalendarEventDraft = {
   // Optional so every existing draft literal stays valid; null/absent means the
   // event does not repeat.
   recurrence?: CalendarRecurrenceDraft | null;
+  // Reminder lead time in minutes before the start. Optional so existing draft
+  // literals stay valid; null/absent means no reminder is scheduled.
+  reminderMinutes?: number | null;
 };
 
 export type CalendarEventInput = {
@@ -36,4 +39,7 @@ export type CalendarEventInput = {
   recurrenceSeriesId?: string | null;
   recurrenceOccurrenceDay?: string | null;
   recurrenceSkippedOccurrenceDays?: string | null;
+  // Reminder lead time in minutes; null clears it. Optional so the plain
+  // create/edit path stays source-compatible with existing callers.
+  reminderMinutes?: number | null;
 };

@@ -54,7 +54,10 @@ test('a readable document yields the extracted proposals', async () => {
     projectId: 'project-1',
     tasks: [{ title: 'Préparer le devis' }],
   });
-  assert.deepEqual(queries, [{ args: { id: 'doc-1' } }]);
+  // findOne takes a required filter, never a bare id (P4.2c).
+  assert.deepEqual(queries, [
+    { args: { filter: { id: { eq: 'doc-1' } } } },
+  ]);
 });
 
 test('the optional target project defaults to null', async () => {

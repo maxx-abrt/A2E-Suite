@@ -5,10 +5,12 @@ import { type HomeWidgetListEntry } from '@/home-dashboard/types/HomeWidgetListE
 
 export type MyTasksWidgetContentProps = {
   entries: HomeWidgetListEntry[];
+  onSelectEntry?: (taskId: string) => void;
 };
 
 export const MyTasksWidgetContent = ({
   entries,
+  onSelectEntry,
 }: MyTasksWidgetContentProps) => {
   const { t } = useLingui();
 
@@ -17,6 +19,7 @@ export const MyTasksWidgetContent = ({
       testId="home-my-tasks"
       emptyLabel={t`No tasks assigned to you`}
       entries={entries}
+      onSelectEntry={onSelectEntry}
     />
   );
 };

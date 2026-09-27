@@ -9,6 +9,7 @@ import {
   selectUpcomingEvents,
 } from '@/home-dashboard/utils/selectUpcomingEvents';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useOpenCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenCalendarEventInSidePanel';
 
 const UPCOMING_EVENTS_WIDGET_LIMIT = 8;
 
@@ -20,6 +21,7 @@ const formatEventTimeLabel = (date: Date): string =>
 
 export const UpcomingEventsWidget = () => {
   const { t } = useLingui();
+  const { openCalendarEventInSidePanel } = useOpenCalendarEventInSidePanel();
   const now = new Date();
 
   const { records } = useFindManyRecords({
@@ -64,5 +66,10 @@ export const UpcomingEventsWidget = () => {
     };
   });
 
-  return <UpcomingEventsWidgetContent entries={entries} />;
+  return (
+    <UpcomingEventsWidgetContent
+      entries={entries}
+      onSelectEntry={openCalendarEventInSidePanel}
+    />
+  );
 };

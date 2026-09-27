@@ -1,10 +1,26 @@
 [
   {
-    "content": "P3.2/P3.3: Template instantiation + record integration",
+    "content": "Add reminderMinutes to CalendarEventDraft, CalendarEventInput and CalendarEventRecord types",
     "status": "completed"
   },
   {
-    "content": "Append executor reports to phase files",
+    "content": "Wire reminderMinutes into GraphQL field selections (useCalendarEvents, useCalendarEventMutations)",
+    "status": "completed"
+  },
+  {
+    "content": "Map reminderMinutes in build utils (fromDraft, fromEvent, fromRecord)",
+    "status": "completed"
+  },
+  {
+    "content": "Add reminder-minutes select control to CalendarEventComposer + presets constant",
     "status": "in_progress"
+  },
+  {
+    "content": "Update tests (mapping assertions + required-field literals) and add coverage",
+    "status": "pending"
+  },
+  {
+    "content": "Verify: jest calendar tests + lint/typecheck; append phase-04 report handoff",
+    "status": "pending"
   }
 ]

@@ -10,6 +10,7 @@ import {
 } from 'twenty-sdk/front-component';
 
 import { DOCUMENT_KIND } from '../constants/field-vocabulary.ts';
+import { buildFindOneByIdArgs } from '../lib/find-one-record-args.ts';
 import { buildAppendPosition } from '../lib/fractional-position.ts';
 import { extractOutline } from '../lib/document-outline.ts';
 import {
@@ -111,7 +112,7 @@ const DocumentPage = () => {
 
     const result = await client.query({
       document: {
-        __args: { id: documentId },
+        __args: buildFindOneByIdArgs(documentId),
         id: true,
         title: true,
         kind: true,

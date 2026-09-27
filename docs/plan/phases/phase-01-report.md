@@ -1484,3 +1484,13 @@ CLAIMED — US-075/nav-restore-defect — deepseek-v4.1-flash — 2026-09-22T15:
 **US-081 (install log hygiene):** unit `application-install.service.already-installed.spec.ts` green (3 tests, asserting no `UPGRADING` flip / no `logger.error` / no `app-upgrade/failed`); the pre-existing `failing-application-version-progression.integration-spec.ts` (metadata) **3/3** + snapshots green — the `APP_ALREADY_INSTALLED` message/code and `state === INSTALLED` assertions are unaffected.
 **Still open:** the live CLI residuals (a real `upgrade` / `install-pre-installed-apps` run on the populated dev DB) were **not** re-run — the built `dist/command/command.js` predates these commits and running it would mutate the workspace used for the calendar pass. US-081's boot-log assertion is unit-verified only. Docker legs (M1 a/b/f) remain unrunnable (no docker). No milestone row ticked; M1's open cursor finding is annotated FIXED.
 **No i18n catalogs, schema or migrations in either diff.**
+
+## 2026-09-26 20:45 UTC — claude [executor] — marathon batch 1 (cont.)
+
+**Task:** P9.2 CRM: draft-email-reply / assist-record-enrichment · **Slice:** repair the caller-scoped record reads both tools depend on · **Claim:** done-for-review
+**Root cause:** the handlers read `person`/`company`/`messageThread` with `__args: { id }`. Twenty findOne takes only a required `filter` (`get-resolver-args.util.ts`); the generated client's genql runtime throws `no typing defined for argument \`id\`` (`twenty-client-sdk/src/generate/genql/runtime/generateGraphqlOperation.ts:55-62`) before any request, so both tools failed on every live call. The specs pinned the broken `{ id }` shape through the fake client.
+**Changed (`packages/twenty-apps/internal/a2e-crm/src/logic-functions/`):** `handlers/crm-tool-support.ts` + `buildFindOneByIdArgs(id) → { filter: { id: { eq } } }` (additive export); `assist-record-enrichment-handler.ts` (person + company reads) and `draft-email-reply-handler.ts` (messageThread read) use it; `__tests__/assist-record-enrichment-handler.test.ts` (3) + `draft-email-reply-handler.test.ts` (2) assertions corrected to the real `{ filter: { id: { eq } } }` contract; new `__tests__/find-one-record-args.test.ts` (2: args shape; source guard over `handlers/*.ts`).
+**Checks (Node 24.16, `yarn install --immutable` first):** `yarn typecheck` → exit 0; `yarn lint` → 0/0; `npx twenty dev:build .` → exit 0, 6 files; `yarn test:unit` → 22/22 (20 + 2).
+**Missing for tick:** unchanged from the 1118 entry — Tier-2 live dispatch incl. a restricted member's denied record failing closed.
+**Do not redo:** input normalization and the read-only (zero-mutation) contract; only the findOne args changed.
+**Next:** orchestrator — the live dispatch above.

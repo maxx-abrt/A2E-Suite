@@ -4,6 +4,7 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 
 import { FRONT_COMPONENT_IDS } from '../constants/universal-identifiers.ts';
+import { buildFindOneByIdArgs } from '../lib/find-one-record-args.ts';
 import {
   computeElapsedMinutes,
   formatDuration,
@@ -102,7 +103,7 @@ const fetchTaskScope = async (taskId: string): Promise<TaskScope | null> => {
 
   const result = (await client.query({
     task: {
-      __args: { id: taskId },
+      __args: buildFindOneByIdArgs(taskId),
       id: true,
       title: true,
       project: { id: true },
