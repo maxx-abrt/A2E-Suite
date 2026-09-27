@@ -154,9 +154,20 @@
         "US-082"
       ],
       "completionNotes": "Executor done (awaiting orchestrator). New CalendarReminderRescheduleListener (calendarEvent UPDATED) calls CalendarReminderService.rearmDeliveredReminders, a conditional system update clearing reminderDeliveredAt only where it is set, for events whose startsAt moved to another instant or whose reminderMinutes changed (pure shouldRearmCalendarReminder; same instant in another ISO form and the dispatch claim itself never re-arm). Registered in CalendarReminderModule. +13 cases (util 7, service 2, listener 4), failing at base; calendar+notification 19 suites / 116 green, server tsgo exit 0, oxlint 0 errors. Tier-2: live move of a delivered event yields one new CALENDAR_REMINDER."
+    },
+    {
+      "id": "US-089",
+      "title": "C2: onboarding install-apps step must accept the A2E apps the front offers (server allowlist parity + already-installed skip)",
+      "description": "As a new user choosing apps during onboarding, I want the A2E apps I pick (Bureau, Projects, Bilan, Chat, Drive, CRM assistant) to actually be processed, so that the setup step does what it shows instead of silently dropping my selection.",
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "US-086"
+      ],
+      "completionNotes": "Executor done (awaiting orchestrator). Server ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS now carries the 6 A2E ids (was 3 upstream only, so every A2E pick was filtered out before enqueue); InstallOnboardingAppsJob treats APP_ALREADY_INSTALLED (bundled pre-installed apps) as satisfied: info log, no reward, step history cleared. New parity spec reads the real front list + internal/a2e-* sources; service spec (3) and job spec (+3). 5 failing at base; server tsgo exit 0, oxlint 0/0. Tier-2: live onboarding with Bureau + Drive selected enqueues both and completes the step."
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-27T14:56:29.000Z"
+    "updatedAt": "2026-09-27T14:56:52.000Z"
   }
 }

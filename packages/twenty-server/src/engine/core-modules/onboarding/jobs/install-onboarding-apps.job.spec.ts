@@ -3,6 +3,10 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { InstallOnboardingAppsJob } from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 
@@ -16,6 +20,13 @@ describe('InstallOnboardingAppsJob', () => {
   const userId = 'user-id';
   const callRecorderId = 'call-recorder-uid';
   const peopleDataLabsId = 'people-data-labs-uid';
+  const a2eDocumentsId = '19126a9c-7cc0-4368-aaba-c7e5a87b0c48';
+
+  const alreadyInstalledError = () =>
+    new ApplicationException(
+      'App is already installed in this workspace',
+      ApplicationExceptionCode.APP_ALREADY_INSTALLED,
+    );
 
   const buildRegistration = (id: string) =>
     ({ id }) as ApplicationRegistrationEntity;
@@ -278,5 +289,88 @@ describe('InstallOnboardingAppsJob', () => {
     expect(applicationInstallService.installApplication).toHaveBeenCalledTimes(
       1,
     );
+  });
+  describe('when a selected app is already installed (e.g. a bundled A2E app)', () => {
+    beforeEach(() => {
+      jest
+        .spyOn(
+          applicationRegistrationService,
+          'findOneByUniversalIdentifierGlobal',
+        )
+        .mockImplementation(async (universalIdentifier) =>
+          buildRegistration(`registration-${universalIdentifier}`),
+        );
+    });
+
+    it('should complete the step without reward or error log when every selected app is already installed', async () => {
+      jest
+        .spyOn(applicationInstallService, 'installApplication')
+        .mockRejectedValue(alreadyInstalledError());
+
+      const loggerErrorSpy = jest.spyOn(
+        (job as unknown as { logger: { error: () => void } }).logger,
+        'error',
+      );
+
+      await job.handle({
+        workspaceId,
+        universalIdentifiers: [a2eDocumentsId],
+        userId,
+      });
+
+      expect(onboardingService.creditInstallAppsReward).not.toHaveBeenCalled();
+      expect(
+        onboardingService.clearReversibleOnboardingStepHistoryAfterAppsInstalled,
+      ).toHaveBeenCalledWith({ userId, workspaceId });
+      expect(loggerErrorSpy).not.toHaveBeenCalled();
+    });
+
+    it('should reward only the apps it installed when others were already there', async () => {
+      jest
+        .spyOn(applicationInstallService, 'installApplication')
+        .mockImplementation(async ({ appRegistrationId }) => {
+          if (appRegistrationId === `registration-${a2eDocumentsId}`) {
+            throw alreadyInstalledError();
+          }
+
+          return true;
+        });
+
+      await job.handle({
+        workspaceId,
+        universalIdentifiers: [a2eDocumentsId, callRecorderId],
+        userId,
+      });
+
+      expect(onboardingService.creditInstallAppsReward).toHaveBeenCalledWith({
+        workspaceId,
+        rewardAppsCount: 1,
+      });
+      expect(
+        onboardingService.clearReversibleOnboardingStepHistoryAfterAppsInstalled,
+      ).toHaveBeenCalledWith({ userId, workspaceId });
+    });
+
+    it('should still treat other install errors as failures', async () => {
+      jest
+        .spyOn(applicationInstallService, 'installApplication')
+        .mockRejectedValue(
+          new ApplicationException(
+            'Downgrade refused',
+            ApplicationExceptionCode.CANNOT_DOWNGRADE_APPLICATION,
+          ),
+        );
+
+      await job.handle({
+        workspaceId,
+        universalIdentifiers: [a2eDocumentsId],
+        userId,
+      });
+
+      expect(onboardingService.creditInstallAppsReward).not.toHaveBeenCalled();
+      expect(
+        onboardingService.clearReversibleOnboardingStepHistoryAfterAppsInstalled,
+      ).not.toHaveBeenCalled();
+    });
   });
 });

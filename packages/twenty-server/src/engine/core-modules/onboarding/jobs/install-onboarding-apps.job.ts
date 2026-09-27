@@ -4,6 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -12,6 +16,8 @@ import {
   type InstallOnboardingAppsJobData,
 } from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job-constants';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+
+type OnboardingAppInstallOutcome = 'installed' | 'already-installed' | 'failed';
 
 @Processor(MessageQueue.workspaceQueue)
 export class InstallOnboardingAppsJob {
@@ -30,26 +36,36 @@ export class InstallOnboardingAppsJob {
     userId,
   }: InstallOnboardingAppsJobData): Promise<void> {
     let installedAppsCount = 0;
+    let alreadyInstalledAppsCount = 0;
 
     for (const universalIdentifier of universalIdentifiers) {
-      const hasInstalledApp = await this.installApp({
+      const outcome = await this.installApp({
         universalIdentifier,
         workspaceId,
       });
 
-      if (hasInstalledApp) {
+      if (outcome === 'installed') {
         installedAppsCount += 1;
+      }
+
+      if (outcome === 'already-installed') {
+        alreadyInstalledAppsCount += 1;
       }
     }
 
-    if (installedAppsCount === 0) {
+    if (installedAppsCount === 0 && alreadyInstalledAppsCount === 0) {
       return;
     }
 
-    await this.onboardingService.creditInstallAppsReward({
-      workspaceId,
-      rewardAppsCount: installedAppsCount,
-    });
+    // Only apps this step actually installed earn the reward; an app that was
+    // already there (e.g. a bundled A2E app pre-installed on every workspace)
+    // still satisfies the user's selection, so the step history is cleared.
+    if (installedAppsCount > 0) {
+      await this.onboardingService.creditInstallAppsReward({
+        workspaceId,
+        rewardAppsCount: installedAppsCount,
+      });
+    }
 
     if (isDefined(userId)) {
       await this.onboardingService.clearReversibleOnboardingStepHistoryAfterAppsInstalled(
@@ -64,7 +80,7 @@ export class InstallOnboardingAppsJob {
   }: {
     universalIdentifier: string;
     workspaceId: string;
-  }): Promise<boolean> {
+  }): Promise<OnboardingAppInstallOutcome> {
     try {
       const registration =
         await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
@@ -76,7 +92,7 @@ export class InstallOnboardingAppsJob {
           `Onboarding app ${universalIdentifier} not found while installing for workspace ${workspaceId}`,
         );
 
-        return false;
+        return 'failed';
       }
 
       await this.applicationInstallService.installApplication({
@@ -84,14 +100,25 @@ export class InstallOnboardingAppsJob {
         workspaceId,
       });
 
-      return true;
+      return 'installed';
     } catch (error) {
+      if (
+        error instanceof ApplicationException &&
+        error.code === ApplicationExceptionCode.APP_ALREADY_INSTALLED
+      ) {
+        this.logger.log(
+          `Onboarding app ${universalIdentifier} already installed on workspace ${workspaceId}, skipping`,
+        );
+
+        return 'already-installed';
+      }
+
       this.logger.error(
         `Failed to install onboarding app ${universalIdentifier} for workspace ${workspaceId}`,
         error,
       );
 
-      return false;
+      return 'failed';
     }
   }
 }
