@@ -44,6 +44,20 @@ provision_bundled_apps() {
         return
     fi
 
+    # Provisioning writes registrations and installs apps on every workspace, so
+    # it must run exactly once per boot, after the schema is migrated, in the
+    # container that owns migrations. A container started with migrations
+    # disabled (the worker, or a replica) would otherwise race the migrating
+    # server: on a fresh volume it hits an unmigrated schema, and on every boot
+    # it runs a second concurrent install-pre-installed-apps pass over the same
+    # workspaces. Deployments that migrate out-of-band can still force it on
+    # the server with DISABLE_BUNDLED_APP_PROVISIONING=false.
+    if [ "${DISABLE_DB_MIGRATIONS}" = "true" ] && [ "${DISABLE_BUNDLED_APP_PROVISIONING}" != "false" ]; then
+        echo "Database migrations are disabled in this container, so bundled app provisioning is skipped too (the migrating server runs it)."
+        echo "  Set DISABLE_BUNDLED_APP_PROVISIONING=false to force it in this container."
+        return
+    fi
+
     echo "Provisioning bundled A2E apps..."
     if yarn command:prod app:provision-bundled; then
         echo "Successfully provisioned bundled apps!"

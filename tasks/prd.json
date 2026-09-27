@@ -131,9 +131,21 @@
         "US-077"
       ],
       "completionNotes": "Executor done (awaiting orchestrator). Dockerfile twenty-apps-build stage now copies and builds a2e-crm (6 apps); A2E allowlist + ONBOARDING_INSTALLABLE_APPS carry c31e0000-0000-4000-8000-000000000000; new front parity spec reads the real internal/a2e-* sources and fails when an app is missing from the allowlist, onboarding list, Dockerfile COPY or build loop (3 failing → 4 passing proof); a2e-crm README + docs rows. Front a2e-workspace/onboarding 40 suites / 226 green, front tsgo exit 0, oxlint 0/0. Tier-2: docker build lists 6 tarballs; clean-volume compose shows six apps in the A2E section."
+    },
+    {
+      "id": "US-087",
+      "title": "M1: worker containers must not run bundled app provisioning (compose/coolify/podman) + server opt-out passthrough",
+      "description": "As an operator, I want bundled A2E app provisioning to run exactly once per boot on the migrating server, so that worker containers never race it on an unmigrated schema or run a second concurrent install pass, and so that the documented DISABLE_BUNDLED_APP_PROVISIONING opt-out actually reaches the server.",
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "US-079",
+        "US-086"
+      ],
+      "completionNotes": "Executor done (awaiting orchestrator). entrypoint.sh skips provisioning when DISABLE_DB_MIGRATIONS=true unless DISABLE_BUNDLED_APP_PROVISIONING=false forces it; every shipped worker (docker-compose, both coolify copies, podman-compose, manual podman) sets DISABLE_BUNDLED_APP_PROVISIONING=true; every server passes ${DISABLE_BUNDLED_APP_PROVISIONING:-} through (the documented opt-out was a no-op before). New provision-bundled-apps.deployment.spec.ts runs the real entrypoint under /bin/sh with stubbed yarn/psql (6 environments) + manifest guards: 10 failing at base, 15/15 after. Server tsgo exit 0, oxlint 0/0. Tier-2: compose/podman boot logs show provisioning on the server only; worker restart runs nothing."
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-27T11:00:02.000Z"
+    "updatedAt": "2026-09-27T14:55:44.000Z"
   }
 }

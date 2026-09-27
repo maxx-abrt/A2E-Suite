@@ -16,7 +16,10 @@ this checkout publishes there or that those resources are public.
   Chat, Drive, CRM assistant); the `app:provision-bundled`
   startup command registers and auto-installs them on every workspace.
   Set `DISABLE_BUNDLED_APP_PROVISIONING=true` to opt out (e.g. for pinned-version
-  deployments). See [Applications provisioning](docs/applications.md).
+  deployments); every compose file passes it through to the server. Provisioning
+  runs on the server only — workers set `DISABLE_BUNDLED_APP_PROVISIONING=true`,
+  and any container with `DISABLE_DB_MIGRATIONS=true` skips it unless you set
+  `DISABLE_BUNDLED_APP_PROVISIONING=false`. See [Applications provisioning](docs/applications.md).
 - Supported infrastructure matrix: **PostgreSQL 16** (hard runtime floor: 14 —
   the server refuses to boot below it) and **Redis 7**. All compose files pin
   `postgres:16` / `redis:7` accordingly. Do not treat a healthy HTTP process

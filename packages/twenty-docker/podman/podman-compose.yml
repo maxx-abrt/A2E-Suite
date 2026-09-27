@@ -28,6 +28,7 @@ services:
       PG_DATABASE_URL: "postgresql://twenty:${PG_DATABASE_PASSWORD}@twenty-db:5432/twenty"
       REDIS_URL: "redis://twenty-redis:6379"
       APP_SECRET: ${APP_SECRET}
+      DISABLE_BUNDLED_APP_PROVISIONING: ${DISABLE_BUNDLED_APP_PROVISIONING:-}
       NODE_ENV: production
       LOG_LEVEL: info
     volumes:
@@ -45,6 +46,7 @@ services:
       REDIS_URL: "redis://twenty-redis:6379"
       APP_SECRET: ${APP_SECRET}
       DISABLE_DB_MIGRATIONS: "true"
+      DISABLE_BUNDLED_APP_PROVISIONING: "true" # it runs on the server only
       NODE_ENV: production
       LOG_LEVEL: info
     volumes:

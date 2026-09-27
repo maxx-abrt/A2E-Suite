@@ -26,6 +26,13 @@ stage builds each app's tarball; `entrypoint.sh` runs `app:provision-bundled`
 at every boot, which registers any unregistered bundled app and marks it
 `isPreInstalled=true`; then `install-pre-installed-apps` auto-installs it on
 all workspaces. Set `DISABLE_BUNDLED_APP_PROVISIONING=true` to opt out.
+Provisioning runs only in the container that owns migrations (the server):
+every shipped worker definition sets `DISABLE_BUNDLED_APP_PROVISIONING=true`,
+and a container started with `DISABLE_DB_MIGRATIONS=true` skips it unless
+`DISABLE_BUNDLED_APP_PROVISIONING=false` forces it (for deployments that
+migrate out-of-band). Before US-087 each worker boot re-ran both commands
+concurrently with the server. Helm, k8s manifests and terraform override the
+worker `command`, which bypasses `entrypoint.sh` entirely.
 A successful workspace installation is not proof every background job or user flow works.
 
 ## What exists at baseline `3e664c89`?

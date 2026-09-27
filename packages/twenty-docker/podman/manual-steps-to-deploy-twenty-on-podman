@@ -47,6 +47,7 @@ podman run -d --pod twenty-pod --name twenty-worker \
   -e REDIS_URL="redis://twenty-redis:6379" \
   -e APP_SECRET="$APP_SECRET" \
   -e DISABLE_DB_MIGRATIONS=true \
+  -e DISABLE_BUNDLED_APP_PROVISIONING=true \
   -e NODE_ENV=production \
   -e LOG_LEVEL=info \
   -v twenty-server-data:/app/docker-data:Z \

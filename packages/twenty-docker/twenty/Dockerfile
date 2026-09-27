@@ -176,7 +176,8 @@ COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-client-sdk/dis
 # Bundled A2E app tarballs (M1 one-command provisioning).  The startup command
 # `app:provision-bundled` reads these on every boot and registers any
 # unregistered app as BUNDLED + isPreInstalled=true, without manual CLI work.
-# Set DISABLE_BUNDLED_APP_PROVISIONING=true in .env to opt out.
+# Set DISABLE_BUNDLED_APP_PROVISIONING=true in .env to opt out. It runs only in
+# the container that owns migrations (never the worker): see entrypoint.sh.
 COPY --chown=1000 --from=twenty-apps-build /apps/dist /app/packages/twenty-apps/dist
 
 LABEL org.opencontainers.image.source=https://github.com/maxx-abrt/A2E-Suite

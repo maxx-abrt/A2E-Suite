@@ -85,6 +85,7 @@ the compose file):
 | `TAG`                   | `latest`                                         | optional, pin a version for upgrades      |
 | `SERVER_PORT`           | `3000`                                           | optional, only if 3000 is taken on host   |
 | `APP_SECRET`            | `openssl rand -base64 32` output                 | optional (legacy)                         |
+| `DISABLE_BUNDLED_APP_PROVISIONING` | `true`                              | optional, skip A2E app auto-provisioning on the server (the worker never runs it) |
 
 Optional integrations (same place, uncommented lines already exist in the
 compose file): `STORAGE_S3_*` (S3-compatible storage instead of local disk),
