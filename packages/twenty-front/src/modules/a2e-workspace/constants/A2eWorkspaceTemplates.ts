@@ -21,6 +21,11 @@ export type A2eWorkspaceTemplate =
   | 'NON_PROFIT'
   | 'SMALL_BUSINESS';
 
+// Descriptions state what each preset really does today, using the product
+// names of the onboarding app list (Bureau = a2e-documents, Bilan =
+// a2e-accounting): every installed app is named, no uninstalled app is
+// implied, and CRM-off presets say so. The truthfulness spec in __tests__
+// derives this from the server's WORKSPACE_TEMPLATE_DEFINITIONS (M2 f / G4).
 export type A2eWorkspaceTemplateOption = {
   value: A2eWorkspaceTemplate;
   label: MessageDescriptor;
@@ -38,31 +43,31 @@ export const A2E_WORKSPACE_TEMPLATE_OPTIONS: A2eWorkspaceTemplateOption[] = [
   {
     value: 'INDIVIDUAL',
     label: msg`Individual`,
-    description: msg`Personal workspace with Documents; CRM navigation hidden`,
+    description: msg`Personal workspace with Bureau notes and docs; CRM navigation hidden`,
     Icon: IconUser,
   },
   {
     value: 'STUDENT',
     label: msg`Student`,
-    description: msg`Notes-first workspace for courses and projects`,
+    description: msg`Bureau notes and docs for your courses; CRM navigation hidden`,
     Icon: IconBook,
   },
   {
     value: 'TEAM',
     label: msg`Team`,
-    description: msg`Collaborative workspace with Documents alongside the CRM`,
+    description: msg`Shared Bureau notes and docs alongside the CRM`,
     Icon: IconUsers,
   },
   {
     value: 'NON_PROFIT',
     label: msg`Non-profit`,
-    description: msg`Members, volunteers and grants with Documents`,
+    description: msg`CRM with Bureau docs and Bilan budgets and funding`,
     Icon: IconHeart,
   },
   {
     value: 'SMALL_BUSINESS',
     label: msg`Small business`,
-    description: msg`Clients, pipeline and Documents for small companies`,
+    description: msg`CRM pipeline with Bureau docs and Bilan invoicing and bookkeeping`,
     Icon: IconBriefcase,
   },
 ];

@@ -165,9 +165,20 @@
         "US-086"
       ],
       "completionNotes": "Executor done (awaiting orchestrator). Server ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS now carries the 6 A2E ids (was 3 upstream only, so every A2E pick was filtered out before enqueue); InstallOnboardingAppsJob treats APP_ALREADY_INSTALLED (bundled pre-installed apps) as satisfied: info log, no reward, step history cleared. New parity spec reads the real front list + internal/a2e-* sources; service spec (3) and job spec (+3). 5 failing at base; server tsgo exit 0, oxlint 0/0. Tier-2: live onboarding with Bureau + Drive selected enqueues both and completes the step."
+    },
+    {
+      "id": "US-090",
+      "title": "M2(f)/G4: workspace-template picker copy states what each preset really installs (Bureau/Bilan wording)",
+      "description": "As a new user choosing a workspace template, I want each description to name exactly the apps it installs and whether the CRM stays, so that I am not promised projects, volunteers or grants a preset does not deliver.",
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "US-089"
+      ],
+      "completionNotes": "Executor done (awaiting orchestrator). A2E_WORKSPACE_TEMPLATE_OPTIONS descriptions rewritten from the server WORKSPACE_TEMPLATE_DEFINITIONS: Bureau (a2e-documents) / Bilan (a2e-accounting) product names from the onboarding app list, CRM-hidden presets say so, CRM-kept presets mention the CRM; no uninstalled app implied. New truthfulness spec parses the real server definitions (13 cases, 8 failing at base). Lingui source strings only. Front tsgo exit 0, 41 suites / 239 green, oxlint 0/0. Tier-2: picker renders the new copy; FR catalog pass."
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-27T14:56:52.000Z"
+    "updatedAt": "2026-09-27T14:57:27.000Z"
   }
 }
