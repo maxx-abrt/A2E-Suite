@@ -12,6 +12,7 @@ import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/s
 import {
   buildCalendarReminderNotificationPayload,
   computeCalendarReminderSchedule,
+  getCalendarReminderCandidateStartsAfter,
   type CalendarReminderEvent,
 } from 'src/engine/core-modules/calendar/utils/calendar-reminder.util';
 
@@ -50,8 +51,12 @@ export type CalendarReminderDispatchResult = {
 //     only; attendee reminders need D05 before any participant lookup.
 //   • Quiet hours: the recipient's P8 preference; a reminder whose fire time
 //     falls inside quiet hours is dropped, not deferred.
-//   • Events that already started are never reminded (a late reminder for a
-//     past event is noise, e.g. after worker downtime).
+//   • Events that already started are not reminded (a late reminder for a
+//     past event is noise, e.g. after worker downtime) — except a reminder
+//     whose fire time is at or just before the start ("At time of event",
+//     reminderMinutes = 0), which a once-a-minute pass can only observe after
+//     the start: it is delivered up to CALENDAR_REMINDER_LATE_DELIVERY_GRACE_
+//     MINUTES after its fire time (getCalendarReminderDeliveryDeadline).
 //   • Recurring series: one reminder for the series start instance only;
 //     per-occurrence reminders need the occurrence model (P4C.2) + D05.
 @Injectable()
@@ -80,14 +85,17 @@ export class CalendarReminderService {
         );
 
       // Only rows that can still produce a reminder: configured, undelivered,
-      // live and not started yet. The pure scheduler applies the precise due /
-      // quiet-hours rules below.
+      // live and not started yet — or started within the late-delivery grace,
+      // so an "At time of event" reminder is still seen. The pure scheduler
+      // applies the precise due / deadline / quiet-hours rules below.
       const candidates = await repository.find({
         where: {
           reminderMinutes: Not(IsNull()),
           reminderDeliveredAt: IsNull(),
           isCanceled: false,
-          startsAt: MoreThan(now.toISOString()),
+          startsAt: MoreThan(
+            getCalendarReminderCandidateStartsAfter(now).toISOString(),
+          ),
         },
         select: [
           'id',

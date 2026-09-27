@@ -106,6 +106,54 @@ describe('CalendarReminderService', () => {
     );
   });
 
+  it('delivers an "At time of event" reminder seen just after the start', async () => {
+    const { service, updateEvent, requestNotifications } = buildService({
+      events: [
+        buildEvent({
+          reminderMinutes: 0,
+          startsAt: '2026-09-26T09:59:30.000Z',
+        }),
+      ],
+    });
+
+    const result = await service.dispatchDueReminders({
+      workspaceId: WORKSPACE_ID,
+      now: NOW,
+    });
+
+    expect(result).toEqual({ dispatched: 1, skipped: 0 });
+    expect(updateEvent).toHaveBeenCalledTimes(1);
+    expect(requestNotifications).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      requests: [
+        expect.objectContaining({
+          type: 'CALENDAR_REMINDER',
+          createdAt: new Date('2026-09-26T09:59:30.000Z'),
+        }),
+      ],
+    });
+  });
+
+  it('neither claims nor notifies a long-lead reminder once the event started', async () => {
+    const { service, updateEvent, requestNotifications } = buildService({
+      events: [
+        buildEvent({
+          reminderMinutes: 15,
+          startsAt: '2026-09-26T09:58:00.000Z',
+        }),
+      ],
+    });
+
+    const result = await service.dispatchDueReminders({
+      workspaceId: WORKSPACE_ID,
+      now: NOW,
+    });
+
+    expect(result).toEqual({ dispatched: 0, skipped: 1 });
+    expect(updateEvent).not.toHaveBeenCalled();
+    expect(requestNotifications).not.toHaveBeenCalled();
+  });
+
   it('does not notify when another pass already claimed the reminder', async () => {
     const { service, requestNotifications } = buildService({
       claimAffected: 0,
@@ -173,7 +221,9 @@ describe('CalendarReminderService', () => {
       'startsAt',
     ]);
     expect(where.isCanceled).toBe(false);
-    expect(where.startsAt.value).toBe(NOW.toISOString());
+    // Started-within-grace rows stay candidates so a 0-minute ("At time of
+    // event") reminder is seen; the scheduler applies the exact deadline.
+    expect(where.startsAt.value).toBe('2026-09-26T09:55:00.000Z');
     expect(findMembers).toHaveBeenCalledTimes(1);
   });
 

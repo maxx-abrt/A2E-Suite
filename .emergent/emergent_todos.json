@@ -1,26 +1,22 @@
 [
   {
-    "content": "Add reminderMinutes to CalendarEventDraft, CalendarEventInput and CalendarEventRecord types",
-    "status": "completed"
-  },
-  {
-    "content": "Wire reminderMinutes into GraphQL field selections (useCalendarEvents, useCalendarEventMutations)",
-    "status": "completed"
-  },
-  {
-    "content": "Map reminderMinutes in build utils (fromDraft, fromEvent, fromRecord)",
-    "status": "completed"
-  },
-  {
-    "content": "Add reminder-minutes select control to CalendarEventComposer + presets constant",
+    "content": "US-091: at-time (0 min) calendar reminders delivered (server util + candidate window + specs)",
     "status": "in_progress"
   },
   {
-    "content": "Update tests (mapping assertions + required-field literals) and add coverage",
+    "content": "US-091 gates (server tsgo, oxlint, jest calendar+notification) + prd.json + phase-04 report + commit/push",
     "status": "pending"
   },
   {
-    "content": "Verify: jest calendar tests + lint/typecheck; append phase-04 report handoff",
+    "content": "US-092: inbox CALENDAR_REMINDER label/icon/deep link (front) + tests",
+    "status": "pending"
+  },
+  {
+    "content": "US-092 gates (front tsgo, oxlint, jest inbox) + prd.json + phase-04 report + commit/push",
+    "status": "pending"
+  },
+  {
+    "content": "Write tasks/deferred-batch11.md + final push",
     "status": "pending"
   }
 ]

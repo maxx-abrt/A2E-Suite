@@ -1,6 +1,8 @@
+import { CALENDAR_REMINDER_LATE_DELIVERY_GRACE_MINUTES } from 'src/engine/core-modules/calendar/constants/calendar-reminder-late-delivery-grace.constant';
 import {
   buildCalendarReminderNotificationPayload,
   computeCalendarReminderSchedule,
+  getCalendarReminderCandidateStartsAfter,
   shouldRearmCalendarReminder,
   type CalendarReminderEvent,
 } from 'src/engine/core-modules/calendar/utils/calendar-reminder.util';
@@ -28,9 +30,9 @@ const makeEvent = (
 
 describe('computeCalendarReminderSchedule', () => {
   it('returns due when scheduledFor ≤ now and quiet hours off', () => {
-    // Reminder was 15 min before an event that starts 10 min ago → due
+    // Reminder 15 min before an event that starts in 10 min → fired 5 min ago
     const event = makeEvent({
-      startsAt: new Date(Date.now() - 10 * 60_000).toISOString(),
+      startsAt: new Date(Date.now() + 10 * 60_000).toISOString(),
       reminderMinutes: 15,
     });
     const result = computeCalendarReminderSchedule(
@@ -148,7 +150,7 @@ describe('computeCalendarReminderSchedule', () => {
   });
 
   it('includes the correct scheduledFor when due', () => {
-    const startsAt = new Date(Date.now() - 5 * 60_000); // 5 min ago
+    const startsAt = new Date(Date.now() + 5 * 60_000); // in 5 min
     const reminderMinutes = 10;
     const expectedScheduledFor = new Date(
       startsAt.getTime() - reminderMinutes * 60_000,
@@ -171,6 +173,92 @@ describe('computeCalendarReminderSchedule', () => {
         -1,
       );
     }
+  });
+});
+
+// "At time of event" is reminderMinutes = 0 in the /calendar composer; the
+// once-a-minute dispatch pass can only observe it after the event started.
+describe('computeCalendarReminderSchedule — start-time and late-delivery rules', () => {
+  const STARTS_AT = '2026-10-05T09:00:00.000Z';
+  const startsAtMs = Date.parse(STARTS_AT);
+  const at = (offsetMs: number) => new Date(startsAtMs + offsetMs);
+  const SECOND = 1_000;
+  const MINUTE = 60 * SECOND;
+
+  const schedule = (reminderMinutes: number | null, now: Date) =>
+    computeCalendarReminderSchedule(
+      makeEvent({ startsAt: STARTS_AT, reminderMinutes }),
+      now,
+      QUIET_HOURS_OFF,
+    );
+
+  it('delivers an "At time of event" reminder at the start instant', () => {
+    const result = schedule(0, at(0));
+
+    expect(result).toEqual({ due: true, scheduledFor: new Date(STARTS_AT) });
+  });
+
+  it('delivers an "At time of event" reminder seen by the next minute pass', () => {
+    expect(schedule(0, at(59 * SECOND)).due).toBe(true);
+    expect(schedule(0, at(4 * MINUTE + 59 * SECOND)).due).toBe(true);
+  });
+
+  it('does not deliver an "At time of event" reminder before the start', () => {
+    expect(schedule(0, at(-1 * SECOND))).toEqual({
+      due: false,
+      reason: 'NOT_YET_DUE',
+    });
+  });
+
+  it('drops an "At time of event" reminder once the grace has passed', () => {
+    expect(
+      schedule(0, at(CALENDAR_REMINDER_LATE_DELIVERY_GRACE_MINUTES * MINUTE)),
+    ).toEqual({ due: false, reason: 'EVENT_ALREADY_STARTED' });
+  });
+
+  it('never delivers a long-lead reminder after the event started', () => {
+    expect(schedule(15, at(-1 * SECOND)).due).toBe(true);
+    expect(schedule(15, at(0))).toEqual({
+      due: false,
+      reason: 'EVENT_ALREADY_STARTED',
+    });
+    expect(schedule(1440, at(30 * SECOND))).toEqual({
+      due: false,
+      reason: 'EVENT_ALREADY_STARTED',
+    });
+  });
+
+  it('gives a short lead the rest of the grace after its fire time', () => {
+    // 2-minute lead fires at 08:58; deliverable until 08:58 + grace = 09:03.
+    expect(schedule(2, at(2 * MINUTE + 59 * SECOND)).due).toBe(true);
+    expect(schedule(2, at(3 * MINUTE))).toEqual({
+      due: false,
+      reason: 'EVENT_ALREADY_STARTED',
+    });
+  });
+
+  it('treats a negative lead time as no reminder', () => {
+    expect(schedule(-5, at(-10 * MINUTE))).toEqual({
+      due: false,
+      reason: 'NO_REMINDER_MINUTES',
+    });
+  });
+
+  it('bounds the candidate query so every deliverable event is selected', () => {
+    const now = at(4 * MINUTE + 59 * SECOND);
+    const startsAfter = getCalendarReminderCandidateStartsAfter(now);
+
+    expect(startsAfter.getTime()).toBe(
+      now.getTime() - CALENDAR_REMINDER_LATE_DELIVERY_GRACE_MINUTES * MINUTE,
+    );
+    // The last deliverable pass for a 0-minute reminder still selects it...
+    expect(startsAtMs).toBeGreaterThan(startsAfter.getTime());
+    // ...and once the grace passed the event is no longer a candidate.
+    expect(startsAtMs).toBeLessThanOrEqual(
+      getCalendarReminderCandidateStartsAfter(
+        at(CALENDAR_REMINDER_LATE_DELIVERY_GRACE_MINUTES * MINUTE),
+      ).getTime(),
+    );
   });
 });
 

@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { CALENDAR_REMINDER_LATE_DELIVERY_GRACE_MINUTES } from 'src/engine/core-modules/calendar/constants/calendar-reminder-late-delivery-grace.constant';
 import { type NotificationQuietHours } from 'src/engine/core-modules/notification/types/notification-preferences.type';
 import { isWithinQuietHours } from 'src/engine/core-modules/notification/utils/is-within-quiet-hours.util';
 
@@ -25,38 +26,40 @@ export type CalendarReminderSkipReason =
   | 'CANCELLED'
   | 'NO_START_TIME'
   | 'NOT_YET_DUE'
+  | 'EVENT_ALREADY_STARTED'
   | 'WITHIN_QUIET_HOURS';
 
-// D05 default timezone: use the event's recurrenceTimezone when present; fall
-// back to UTC when absent. Per D05 (open decision: attendee quiet-hours policy
-// by timezone) we do NOT apply a per-attendee offset here — the host workspace
-// member's P8 quiet-hours preference uses its own utcOffsetMinutes already.
-const resolveEventTimezoneOffset = (
-  recurrenceTimezone: string | null,
-): number => {
-  if (recurrenceTimezone === null) {
-    return 0; // UTC fallback — D05 documented default
-  }
+const MS_PER_MINUTE = 60_000;
 
-  try {
-    // Node/V8 does not expose a JS API for resolving an IANA offset at a
-    // given instant; approximate with the current wall-clock offset so the
-    // reminder fires at roughly the right local time without a heavy tz lib.
-    const nowInZone = new Date().toLocaleString('en-US', {
-      timeZone: recurrenceTimezone,
-    });
-    const nowUtc = new Date().toLocaleString('en-US', { timeZone: 'UTC' });
-    const offsetMs = Date.parse(nowInZone) - Date.parse(nowUtc);
+const CALENDAR_REMINDER_LATE_DELIVERY_GRACE_MS =
+  CALENDAR_REMINDER_LATE_DELIVERY_GRACE_MINUTES * MS_PER_MINUTE;
 
-    return Math.round(offsetMs / 60_000);
-  } catch {
-    return 0;
-  }
-};
+// The last instant (exclusive) at which a reminder may still be delivered: the
+// event start, or — for a lead time shorter than the grace, e.g. "At time of
+// event" (0 minutes) — its fire time plus the grace. A late reminder for an
+// event that is well under way (e.g. after worker downtime) is noise.
+export const getCalendarReminderDeliveryDeadline = ({
+  startsAtMs,
+  scheduledForMs,
+}: {
+  startsAtMs: number;
+  scheduledForMs: number;
+}): number =>
+  Math.max(startsAtMs, scheduledForMs + CALENDAR_REMINDER_LATE_DELIVERY_GRACE_MS);
 
-// Returns the wall-clock instant at which the reminder should fire, or a skip
-// reason. The caller is responsible for checking whether that instant has
-// passed (scheduledFor ≤ now) before dispatching.
+// The dispatch candidate query's lower bound on startsAt: any event starting
+// after this instant may still have a deliverable reminder (the loosest
+// deadline is startsAt + grace, for a 0-minute lead). The pure scheduler below
+// applies the exact per-event deadline.
+export const getCalendarReminderCandidateStartsAfter = (now: Date): Date =>
+  new Date(now.getTime() - CALENDAR_REMINDER_LATE_DELIVERY_GRACE_MS);
+
+// Returns the instant at which the reminder fires when it is due now
+// (scheduledFor ≤ now < delivery deadline), or a skip reason.
+//
+// Timezone: startsAt is an absolute instant and reminderMinutes a duration, so
+// the fire time needs no zone. Quiet hours are evaluated in the recipient's
+// P8 preference offset (utcOffsetMinutes). Attendee/event-zone policy is D05.
 export const computeCalendarReminderSchedule = (
   event: CalendarReminderEvent,
   now: Date,
@@ -66,7 +69,9 @@ export const computeCalendarReminderSchedule = (
     return { due: false, reason: 'CANCELLED' };
   }
 
-  if (event.reminderMinutes === null || event.reminderMinutes <= 0) {
+  // 0 is a real preset ("At time of event"); only a missing or negative lead
+  // time means "no reminder".
+  if (event.reminderMinutes === null || event.reminderMinutes < 0) {
     return { due: false, reason: 'NO_REMINDER_MINUTES' };
   }
 
@@ -84,12 +89,18 @@ export const computeCalendarReminderSchedule = (
     return { due: false, reason: 'NO_START_TIME' };
   }
 
-  const scheduledFor = new Date(
-    startsAtMs - event.reminderMinutes * 60_000,
-  );
+  const scheduledForMs = startsAtMs - event.reminderMinutes * MS_PER_MINUTE;
+  const scheduledFor = new Date(scheduledForMs);
 
-  if (scheduledFor > now) {
+  if (scheduledForMs > now.getTime()) {
     return { due: false, reason: 'NOT_YET_DUE' };
+  }
+
+  if (
+    now.getTime() >=
+    getCalendarReminderDeliveryDeadline({ startsAtMs, scheduledForMs })
+  ) {
+    return { due: false, reason: 'EVENT_ALREADY_STARTED' };
   }
 
   // Quiet-hours check at the fire time. Uses the P8 user quiet-hours
