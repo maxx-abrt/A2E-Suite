@@ -873,6 +873,13 @@ Do not add Huly-like navigation density. See blueprint §4–§6.
       renderer (the new Cmd+K row only navigates to a `/home` grid that omits it)
       and `DriveUsageWidget` is mounted nowhere (`DrivePage.tsx` has no usage
       element). Stays `[~]`: re-home those two, then Tier-2 browser rail proof.
+      — 2026-09-27 CEST orchestrator (phase-02-report): the re-home landed
+      (auto-commit `9704802a`) — desktop `AppPath.Home` renders the new
+      `HomeDashboard` with 7 native cards incl. Help, `DrivePage` mounts
+      `DriveUsageWidget`, the Cmd+K help row targets `/home`; twenty-front
+      home-dashboard/first-open-help/drive 41 suites / 193 tests green on my
+      HEAD re-run. Stays `[~]`: the acceptance is browser-level (rail absent at
+      desktop/tablet/mobile + reachability) and no front stack was up.
 
 **Acceptance.** Two browser sessions see presence + live widget updates;
 killing the socket shows banner and queues; search feels instant; existing
@@ -915,6 +922,13 @@ App: `a2e-documents`.
 - [ ] Complete template instantiation + gallery composition: helper and LIST
       view exist, but browser does not select template content. Fetch authorized
       body, remap IDs/anchors and prove copy independence (C1, E04).
+      — 2026-09-27 CEST orchestrator (phase-03-report): the reason instantiation
+      always threw is fixed (auto-commit `9704802a`) — the template re-fetch,
+      the document-page `loadRecord` and `document-content-handler` keyed Core
+      findOne by a bare `id`, which the genql runtime rejects before any
+      request; now `{ filter: { id: { eq } } }`. a2e-documents 200/200 +
+      typecheck green on my HEAD re-run. Stays `[ ]`: E04 (live copy
+      independence + record-page render) not reproduced this session.
 - [ ] Persist revision history; current `EditorVersionHistoryStore` is an
       in-memory ring buffer. Retention, block diff and restore-as-new-revision
       must survive reload and respect permissions (E05).
@@ -1118,6 +1132,12 @@ Optional advanced authoring is not a prerequisite to this repair slice.
       is **not fixed**: the commit swapped to deprecated `useRecordId()` (same
       execution context, no behaviour change); record pages do populate
       `targetRecordIdentifier`, so it needs a live re-diagnosis.
+      — 2026-09-27 CEST orchestrator (phase-04-report): the `Aperçu`/`Temps`
+      empty render is root-caused and repaired (auto-commit `9704802a`) — 5
+      a2e-projects findOne reads sent a bare `id` the genql runtime rejects
+      before any request (now `{ filter: { id: { eq } } }`, mutations untouched);
+      a2e-projects 283/283 + tsgo green on my HEAD re-run. Stays `[~]`: only
+      code-level proof — the project-scoped live render is still Tier-2.
 - [x] Subtasks & dependencies UI: nested list + dependency picker with
       cycle validation — 2026-09-17 orchestrator: nested list slice live
       (roots via `parentTask: {is:NULL}`, children via `parentTask {id}`,
@@ -1263,6 +1283,16 @@ primitives; app packaging/name is decided in P4C.1, not inferred from Bureau.
       in no module** → idempotent delivery never runs. Stays `[ ]` (partial
       core only); split the cron wiring into its own slice. D05 still open for
       attendee/timezone policy.
+      — 2026-09-27 CEST orchestrator (phase-04-report): the wiring slice landed
+      (auto-commit `9704802a`) — `CalendarReminderModule` imported additively in
+      `core-engine.module.ts` + `database-command.module.ts`, `CalendarReminder`
+      registered in `cron:register:all`, cron/job fan-out out to one job per
+      ACTIVE workspace; twenty-server calendar+notification+upgrade 27 suites /
+      164 tests + `tsgo` exit 0 on my HEAD re-run. **Repair:** the new workspace
+      command re-used timestamp `1789905000000` (already the bundled-instance
+      command's slot); re-slotted to `1790502600000` (real epoch, idempotent
+      `up()`) to satisfy the strictly-increasing rule. Stays `[ ]`: live
+      idempotent delivery is Tier-2 (workers stale, no front stack).
 - [~] **P4C.5 Task/project links (after P4.1/P4C.2):** overlay task due dates,
       quick-create a standard task from a day, opt-in event/time-block link,
       open project/task from event. Agree source of truth and confirm before
@@ -1774,6 +1804,11 @@ mention→inbox→open.
       enrichment stays a separate human-confirmed action. 20/20 unit
       tests, typecheck and app build green on HEAD re-run. Tier-2 live
       dispatch + restricted-member denial proof open.
+      — 2026-09-27 CEST orchestrator (phase-01-report): read path repaired
+      (auto-commit `9704802a`) — person/company/messageThread reads sent a bare
+      `id` the genql runtime rejects before any request; now
+      `{ filter: { id: { eq } } }`, mutations untouched; a2e-crm 22/22 +
+      typecheck green on my HEAD re-run. The live dispatch above still open.
 
 ### P9.2b AI cost discipline (from A2EMoney)
 - [~] Permission/workspace-scoped private-result cache; only public-only

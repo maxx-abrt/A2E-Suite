@@ -1494,3 +1494,9 @@ CLAIMED — US-075/nav-restore-defect — deepseek-v4.1-flash — 2026-09-22T15:
 **Missing for tick:** unchanged from the 1118 entry — Tier-2 live dispatch incl. a restricted member's denied record failing closed.
 **Do not redo:** input normalization and the read-only (zero-mutation) contract; only the findOne args changed.
 **Next:** orchestrator — the live dispatch above.
+
+## 2026-09-27 11:52 CEST — orchestrator verification — findOne read repair (a2e-crm)
+
+**Verified on HEAD (`9704802a`, Node 24.20):** a2e-crm `yarn test:unit` → **22/22**; `yarn typecheck` → exit 0. Diff is the declared surface only (`handlers/crm-tool-support.ts` + `assist-record-enrichment-handler.ts` + `draft-email-reply-handler.ts` + 3 specs); a tree-wide grep confirms the only remaining bare-`id` `__args` are mutations. No i18n catalogs, no secrets, no schema/migrations.
+**Verdict:** the caller-scoped read repair is real and unit-proven; P9.2 CRM core stays `[x]` (already ticked 2026-09-20).
+**Still open (unchanged):** Tier-2 live dispatch incl. a restricted member's denied record failing closed — executor never ran it, and no running front/app stack in this session.

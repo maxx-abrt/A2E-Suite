@@ -732,3 +732,9 @@ Adjudication: PLAN P2.1 bullet 5 moved to `[~]` with dated annotation — the in
 **Missing for tick:** Tier-2 browser proof: no right rail at desktop/tablet/mobile; `/home` shows the 7 cards (help card dismiss/restore/search), task/event rows open the side panel, see-all links land on `/objects/tasks` and `/calendar`; Drive page shows usage under the folder tree; Cmd+K "help" → `/home`. fr catalog entries for the new English msgids come from the i18n pipeline (not committed by executors).
 **Do not redo:** dock deletion (a2a4932f), the Home cards, the Drive usage mount, the help Cmd+K row. Never re-create `modules/workbench-dock` or a right rail.
 **Next:** orchestrator Tier-2 pass above; then tick P2.6.
+
+## 2026-09-27 11:52 CEST — orchestrator verification — P2.6 re-home (help + Drive usage)
+
+**Verified on HEAD (`9704802a`):** `npx jest src/modules/home-dashboard src/modules/first-open-help src/modules/drive` (twenty-front) → **41 suites / 193 tests** green. Static re-walk: `HomeDashboard.tsx` renders 7 native cards (Needs attention, My tasks, Upcoming events, Recent activity, Focus, Contributions, Help and getting started) and Focus is no longer AI-gated; `AppPath.Home` → `MobileHomePage` → `HomeDashboard` (`createWorkspaceRouteObjects.tsx:187`); `DrivePage.tsx` mounts `DriveUsageWidget` in the folder column; Cmd+K help row is English + `AppPath.Home`. Diff has no i18n catalogs, no secrets, no unrelated deletions.
+**P2.6 stays `[~]`** — the acceptance is browser-level and no front stack is up this session.
+**Tier-2 gate (orchestrator):** rail absent desktop/tablet/mobile; `/home` shows the 7 cards (help dismiss/restore/search); task/event rows open the side panel; see-all lands on `/objects/tasks` and `/calendar`; Drive page shows usage; Cmd+K "help" → `/home`.

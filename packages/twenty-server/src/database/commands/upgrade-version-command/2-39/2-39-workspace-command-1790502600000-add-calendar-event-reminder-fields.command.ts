@@ -26,7 +26,7 @@ const REMINDER_FIELD_UNIVERSAL_IDENTIFIERS = [
   CALENDAR_EVENT.fields.reminderDeliveredAt.universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.39.0', 1789905000000)
+@RegisteredWorkspaceCommand('2.39.0', 1790502600000)
 @Command({
   name: 'upgrade:2-39:add-calendar-event-reminder-fields',
   description:

@@ -185,3 +185,8 @@ Diff audited: a2e-chat only, three declared files. Both blocker claims independe
 **Missing for tick:** Tier-2 live dispatch — installed a2e-chat, invoke `summarize-channel`/`catch-me-up` on a readable channel (→ transcript), a private channel the caller is not in (→ `CHANNEL_FORBIDDEN`), a foreign id (→ `CHANNEL_NOT_FOUND`).
 **Do not redo:** `canReadChannel` and the transcript shaping; only the findOne args changed.
 **Next:** orchestrator — the live dispatch above.
+
+## 2026-09-27 11:52 CEST — orchestrator verification — findOne read repair (a2e-chat)
+
+**Verified on HEAD (`9704802a`):** a2e-chat `yarn test:unit` → **60/60**; `yarn typecheck` → exit 0. `chat-tool-support.ts` channel read now sends `{ filter: { id: { eq } } }`; `canReadChannel` unchanged; no catalogs/secrets/schema. P9.2 Chat stays `[x]` (already ticked 2026-09-19).
+**Still open (unchanged):** Tier-2 live dispatch — readable channel → transcript; private non-member channel → `CHANNEL_FORBIDDEN`; foreign id → `CHANNEL_NOT_FOUND`.

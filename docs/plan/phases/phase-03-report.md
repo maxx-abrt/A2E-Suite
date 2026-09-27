@@ -1187,3 +1187,9 @@ CLAIMED — US-042/summarize-translate-improve-tools — deepseek-v4.1-flash —
 **Missing for tick:** Tier-2 E04 — republish a2e-documents; "Modèles" → "utiliser" creates a copy with the template body + fresh anchors and editing the copy leaves the template intact; a document record page shows cover/outline/sub-pages; the assistant's summarize/translate/improve on a readable doc returns `READ`, on an unreadable one the typed not-found. P3.3 record-note copy already used `filter` and is unaffected.
 **Do not redo:** `buildTemplateCopyPayload`/`readAuthorizedTemplateCopySource`/`remapTemplateBlockIds` (2026-09-17 17:47) and the fresh re-fetch itself — only its args were wrong. Never key a Core findOne by `id`.
 **Next:** executor — same fix in a2e-chat `chat-tool-support` and a2e-crm `assist-record-enrichment`/`draft-email-reply` handlers; orchestrator — the E04 legs above.
+
+## 2026-09-27 11:52 CEST — orchestrator verification — findOne read repair (a2e-documents)
+
+**Verified on HEAD (`9704802a`):** a2e-documents `yarn test:unit` → **200/200** (incl. the new `lib/__tests__/find-one-record-args.test.ts`); `yarn typecheck` → exit 0. Grep confirms the three findOne reads (`document-browser` instantiate re-fetch, `document-page` loadRecord, `document-content-handler.readDocument`) now send `{ filter: { id: { eq } } }`; the `deleteDocument`/favorite mutations correctly keep `id`. No catalogs/secrets/schema.
+**P3.2 template-instantiation bullet stays `[ ]`** — the repair is unit-proven, but E04 (live republish + copy independence + record-page render) is not reproduced this session.
+**Tier-2 gate (orchestrator):** republish a2e-documents; "Modèles → utiliser" copies the template body with fresh anchors and editing the copy leaves the template intact; record page shows cover/outline/sub-pages; summarize/translate/improve `READ` on a readable doc.
