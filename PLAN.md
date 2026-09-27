@@ -1309,6 +1309,16 @@ primitives; app packaging/name is decided in P4C.1, not inferred from Bureau.
       command's slot); re-slotted to `1790502600000` (real epoch, idempotent
       `up()`) to satisfy the strictly-increasing rule. Stays `[ ]`: live
       idempotent delivery is Tier-2 (workers stale, no front stack).
+      — 2026-09-27 CEST orchestrator (phase-04-report): UNREPORTED auto-commit
+      `034936ad` shipped the "At time of event" leg — `reminderMinutes = 0` is
+      now a real preset (only null/negative skips), a 5-minute late-delivery
+      grace + `getCalendarReminderDeliveryDeadline` let the once-a-minute pass
+      observe an at-start reminder after the start, a widened candidate window
+      (`getCalendarReminderCandidateStartsAfter`) selects it, and the dead
+      `resolveEventTimezoneOffset` is gone. My HEAD re-run: calendar jest 4
+      suites / 43 tests green, `tsgo` exit 0, oxlint 0/0. Stays `[ ]`: the
+      acceptance is Tier-2 live delivery (brief `p4c.4-reminder-live.md`), and
+      the sibling US-092 inbox label/icon/deep-link leg is not started.
 - [~] **P4C.5 Task/project links (after P4.1/P4C.2):** overlay task due dates,
       quick-create a standard task from a day, opt-in event/time-block link,
       open project/task from event. Agree source of truth and confirm before
