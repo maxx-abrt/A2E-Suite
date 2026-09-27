@@ -1,6 +1,6 @@
 {
-  "name": "A2E Suite — executor batch 11 (2026-09-24, base 72c38486)",
-  "description": "Batch 11: orchestrator-queued M1 defects (US-080 upgrade cursor reachability, US-081 install log hygiene) plus dependency-ready Tier-0 legs extracted from PLAN.md. US-080..US-085 verified by orchestrator 2026-09-24 (unit/integration/tsgo + live /calendar Tier-2); passes flipped true. Live Tier-2 pass also found P4.2 defects: task-calendar GroupByTasks complexity > cap (renders empty), project Tâches tab unscoped, project Aperçu overview widget empty — see phase-04-report 20:52 CEST.",
+  "name": "A2E Suite — executor batch 12 (2026-09-27, base 07d4cea0)",
+  "description": "Batch 12: dependency-ready Tier-0 legs extracted from PLAN.md milestones (M1 six-app provisioning, M2/C2 onboarding truthfulness) and P4C.4 reschedule, plus code-level defects found in the repository. Batch 11 (US-074..US-085) verified by orchestrator; passes for batch 12 stay false until the orchestrator verifies. Exclusions recorded in tasks/deferred-batch11.md.",
   "branchName": "main",
   "userStories": [
     {
@@ -119,9 +119,21 @@
         "US-084"
       ],
       "completionNotes": "Executor done (awaiting orchestrator). 'Add task' on the day view header and an icon button per week-view day column open CalendarTaskQuickCreateDialog (labelled title input, autofocus, Escape cancels, 'Due <full date>' line, hint that nothing is scheduled). useCalendarTaskQuickCreate writes one standard `task` through useCreateOneRecord (native record path, pre-generated id, status TODO, dueAt = local noon of the chosen day via buildCalendarQuickTaskInput so the day holds for teammates within ±11h and round-trips through the overlay grouping); blank titles never submit. Buttons only render when the deadline overlay is shown and the member can create tasks (object permission canUpdateObjectRecords). FORBIDDEN vs generic error copy; success refetches the overlay and announces 'Task created'. No event row, no invitation, no schema/server change. 8 new cases; front calendar 22 suites / 229 tests green (scratch harness). Tier-2: /calendar browser proof."
+    },
+    {
+      "id": "US-086",
+      "title": "M1: bundle, allowlist and offer the sixth A2E app (a2e-crm)",
+      "description": "As an operator deploying the suite, I want all six first-party A2E apps (including the CRM assistant) built into the image, listed in Settings → Applications → A2E Suite and offered at onboarding, so that a stock deployment exposes every A2E app without manual publishing.",
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "US-078",
+        "US-077"
+      ],
+      "completionNotes": "Executor done (awaiting orchestrator). Dockerfile twenty-apps-build stage now copies and builds a2e-crm (6 apps); A2E allowlist + ONBOARDING_INSTALLABLE_APPS carry c31e0000-0000-4000-8000-000000000000; new front parity spec reads the real internal/a2e-* sources and fails when an app is missing from the allowlist, onboarding list, Dockerfile COPY or build loop (3 failing → 4 passing proof); a2e-crm README + docs rows. Front a2e-workspace/onboarding 40 suites / 226 green, front tsgo exit 0, oxlint 0/0. Tier-2: docker build lists 6 tarballs; clean-volume compose shows six apps in the A2E section."
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-24T04:34:54.000Z"
+    "updatedAt": "2026-09-27T11:00:02.000Z"
   }
 }

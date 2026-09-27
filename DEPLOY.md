@@ -12,7 +12,8 @@ this checkout publishes there or that those resources are public.
 [Documentation home](docs/README.md) · [Applications provisioning](docs/applications.md)
 
 - Platform deployment now includes A2E app provisioning: the production image
-  contains built tarballs for all 5 A2E apps; the `app:provision-bundled`
+  contains built tarballs for all 6 A2E apps (Documents, Bilan, Projects,
+  Chat, Drive, CRM assistant); the `app:provision-bundled`
   startup command registers and auto-installs them on every workspace.
   Set `DISABLE_BUNDLED_APP_PROVISIONING=true` to opt out (e.g. for pinned-version
   deployments). See [Applications provisioning](docs/applications.md).

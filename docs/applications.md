@@ -37,6 +37,7 @@ A successful workspace installation is not proof every background job or user fl
 | Projects | [a2e-projects](../packages/twenty-apps/internal/a2e-projects/src/application.config.ts), `A2E Projects` | `4f759655-84f8-434d-9c76-ee1850e8c1a4` | A2E allowlist (added US-077); no preset yet (D-B1 pending) |
 | Chat | [a2e-chat](../packages/twenty-apps/internal/a2e-chat/src/application.config.ts), `A2E Chat` | `e2dce399-87f1-4548-b307-5f368b4d5dd4` | A2E allowlist (added US-077); no preset yet |
 | Drive | [a2e-drive](../packages/twenty-apps/internal/a2e-drive/src/application.config.ts), `A2E Drive` | `b11cd01f-75de-4acd-8e67-0e9c484fde02` | A2E allowlist (added US-077); no preset yet |
+| CRM assistant | [a2e-crm](../packages/twenty-apps/internal/a2e-crm/src/application.config.ts), `A2E CRM` | `c31e0000-0000-4000-8000-000000000000` | A2E allowlist, bundled image and onboarding app list (added US-086); no preset |
 | Bureau | No separate application definition in `internal/` | None assigned | Product packaging decision pending; do not create duplicate domain objects |
 
 The IDs above belong to existing apps and must not be regenerated to fix

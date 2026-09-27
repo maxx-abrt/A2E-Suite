@@ -13,8 +13,9 @@ live updates depend on.
 **Status: source present, not release-certified.** The metadata, the
 Discussions page and the realtime topics described below exist in this
 repository; installation and every collaborative journey are not proven by
-their presence. Chat is not currently listed in the A2E section allowlist or
-the workspace presets.
+their presence. Chat is listed in the A2E section allowlist (Settings →
+Applications → A2E Suite) and ships in the bundled image, but it is not part
+of any workspace preset.
 
 Follow the [applications runbook](../../../../docs/applications.md) to
 register, publish and install the app on a disposable workspace.

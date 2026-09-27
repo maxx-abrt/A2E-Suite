@@ -28,6 +28,7 @@ The suite has two kinds of surface:
 | Projects | `a2e-projects` | A2E Projects | No | [README](../packages/twenty-apps/internal/a2e-projects/README.md) |
 | Drive | `a2e-drive` | A2E Drive | No | [README](../packages/twenty-apps/internal/a2e-drive/README.md) |
 | Chat | `a2e-chat` | A2E Chat | No | [README](../packages/twenty-apps/internal/a2e-chat/README.md) |
+| CRM assistant | `a2e-crm` | A2E CRM | Allowlist only (no preset) | [README](../packages/twenty-apps/internal/a2e-crm/README.md) |
 
 **Bureau** is not a separate app: it is the intended work/knowledge experience
 composed from Documents, Projects, Drive and Chat. There is no Bureau manifest

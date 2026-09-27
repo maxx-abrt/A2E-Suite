@@ -13,4 +13,6 @@ export const A2E_SUITE_APPLICATION_UNIVERSAL_IDENTIFIERS: string[] = [
   'e2dce399-87f1-4548-b307-5f368b4d5dd4',
   // a2e-drive
   'b11cd01f-75de-4acd-8e67-0e9c484fde02',
+  // a2e-crm
+  'c31e0000-0000-4000-8000-000000000000',
 ];
