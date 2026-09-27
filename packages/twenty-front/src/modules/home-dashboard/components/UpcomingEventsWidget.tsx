@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { useMemo } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { UpcomingEventsWidgetContent } from '@/home-dashboard/components/UpcomingEventsWidgetContent';
@@ -22,7 +23,10 @@ const formatEventTimeLabel = (date: Date): string =>
 export const UpcomingEventsWidget = () => {
   const { t } = useLingui();
   const { openCalendarEventInSidePanel } = useOpenCalendarEventInSidePanel();
-  const now = new Date();
+  // Frozen at mount: the `gte` bound feeds the query variables, so a fresh
+  // `Date` each render changed the filter every pass and looped the fetch. The
+  // dashboard remounts on navigation, which is fresh enough for an upcoming list.
+  const now = useMemo(() => new Date(), []);
 
   const { records } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,

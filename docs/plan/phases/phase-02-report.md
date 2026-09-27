@@ -738,3 +738,19 @@ Adjudication: PLAN P2.1 bullet 5 moved to `[~]` with dated annotation — the in
 **Verified on HEAD (`9704802a`):** `npx jest src/modules/home-dashboard src/modules/first-open-help src/modules/drive` (twenty-front) → **41 suites / 193 tests** green. Static re-walk: `HomeDashboard.tsx` renders 7 native cards (Needs attention, My tasks, Upcoming events, Recent activity, Focus, Contributions, Help and getting started) and Focus is no longer AI-gated; `AppPath.Home` → `MobileHomePage` → `HomeDashboard` (`createWorkspaceRouteObjects.tsx:187`); `DrivePage.tsx` mounts `DriveUsageWidget` in the folder column; Cmd+K help row is English + `AppPath.Home`. Diff has no i18n catalogs, no secrets, no unrelated deletions.
 **P2.6 stays `[~]`** — the acceptance is browser-level and no front stack is up this session.
 **Tier-2 gate (orchestrator):** rail absent desktop/tablet/mobile; `/home` shows the 7 cards (help dismiss/restore/search); task/event rows open the side panel; see-all lands on `/objects/tasks` and `/calendar`; Drive page shows usage; Cmd+K "help" → `/home`.
+
+## 2026-09-27 12:35 CEST — orchestrator Tier-2 — P2.6 TICKED (+ 2 repairs)
+
+**Ran** the front from HEAD on :3001 (server + Apple workspace already up) and drove the real UI with `tasks/live-verify/p2.6-verify.mjs` → **17/17**:
+- no workbench/dock rail on `/home`, `/calendar`, `/objects/tasks` (desktop) and `/home` (tablet 900px, mobile 390px);
+- `/home` renders exactly the 7 native cards; Help card mounts `FirstOpenHelpWidget`; help search/dismiss/restore round-trips (`first-open-help-topic-keyboard-basics`);
+- my-tasks and upcoming-events rows open the side panel (`?panel=/object/task|calendarEvent/<id>`); the created event was also exercised with a 15-min reminder preset;
+- see-all links → `/objects/tasks` and `/calendar`; `/drive` mounts `drive-usage-widget`; the search entry routes to `/home` (Cmd+K also opened the panel).
+
+**Two defects found by the browser pass and repaired (not re-ticked by the executor):**
+1. **Global search crashed from every non-home page.** The Help command entry sets `objectNameSingular: 'a2e-help'` (a synthetic group key). When the records-search page opened, the first item was auto-selected and `SidePanelSearchRecordPreviewCard` called `useObjectMetadataItem({ objectNameSingular })` → `ObjectMetadataItemNotFoundError`, caught by the error boundary → "Sorry, something went wrong". Fix: new tested pure helper `isSearchResultItemPreviewable(item, installedNames)` gates `shouldDisplayPreview` in `SidePanelSearchRecordsPage` (only items backed by an installed object preview).
+2. **Upcoming events rendered empty and flooded the server.** `UpcomingEventsWidget` put `new Date().toISOString()` in the `startsAt gte` query variable, so every render produced a new filter/timestamp and re-issued `FindManyCalendarEvents` in a tight loop (observed ~10ms apart) while the card showed "No upcoming events" even though the query returned upcoming rows. Fix: `now` is `useMemo`-settled at mount.
+
+**Checks after the fixes:** twenty-front `tsgo` exit 0; `npx jest src/modules/home-dashboard src/modules/first-open-help src/modules/drive src/modules/side-panel/pages/search` → **46 suites / 207 tests** (incl. the new `isSearchResultItemPreviewable` test).
+**Do not redo:** the dock deletion, `HomeDashboard`, the Drive usage mount, the help Cmd+K row. Keep the preview guard and the settled `now`.
+**P2.6 → `[x]`** in PLAN.md (phase-02-report + `tasks/live-verify/p2.6-verify.mjs`).

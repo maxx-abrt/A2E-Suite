@@ -834,7 +834,7 @@ Do not add Huly-like navigation density. See blueprint §4–§6.
       Historical 8ms synthetic grouping benchmark is not end-to-end latency.
 
 ### P2.6 Shell cleanup — remove the A2E right dock (D-Shell)
-- [~] **Remove the custom workbench right rail and re-home its unique
+- [x] **Remove the custom workbench right rail and re-home its unique
       widgets into existing surfaces.** Unmount
       `WorkbenchWidgetDock` from
       `packages/twenty-front/src/modules/ui/layout/page/components/MainAppLayoutWithSidePanel.tsx`
@@ -880,6 +880,22 @@ Do not add Huly-like navigation density. See blueprint §4–§6.
       home-dashboard/first-open-help/drive 41 suites / 193 tests green on my
       HEAD re-run. Stays `[~]`: the acceptance is browser-level (rail absent at
       desktop/tablet/mobile + reachability) and no front stack was up.
+      — 2026-09-27 CEST orchestrator (phase-02-report): **TICKED** — started the
+      front from HEAD and drove the real UI (Apple workspace) with
+      `tasks/live-verify/p2.6-verify.mjs` → **17/17**: no workbench/dock rail on
+      `/home`, `/calendar`, `/objects/tasks` at desktop, and `/home` at tablet +
+      mobile; `/home` renders exactly the 7 native cards; Help card mounts
+      `FirstOpenHelpWidget`; task and event rows open the side panel
+      (`?panel=/object/...`); see-all links land on `/objects/tasks` and
+      `/calendar`; Drive mounts the usage widget; the search entry routes to
+      `/home`. **Two defects found and repaired in the browser pass:** (1) the
+      Help command entry's synthetic object `a2e-help` made the search preview
+      throw `ObjectMetadataItemNotFoundError`, crashing the whole Cmd+K search
+      on every non-home page — guarded by the new tested
+      `isSearchResultItemPreviewable`; (2) `UpcomingEventsWidget` froze the
+      seconds-precision `now` in its query filter, looping identical fetches and
+      rendering empty — `now` is now `useMemo`-settled. twenty-front `tsgo` exit
+      0; home/first-open-help/drive/search 46 suites / 207 tests green.
 
 **Acceptance.** Two browser sessions see presence + live widget updates;
 killing the socket shows banner and queues; search feels instant; existing

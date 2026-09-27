@@ -3,6 +3,7 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { useChatSearchResultItems } from '@/chat/hooks/useChatSearchResultItems';
 import { useDriveSearchResultItems } from '@/drive/hooks/useDriveSearchResultItems';
 import { useHelpSearchResultItems } from '@/first-open-help/hooks/useHelpSearchResultItems';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
@@ -16,6 +17,7 @@ import { searchRecordsFrecencyByObjectState } from '@/side-panel/pages/search/st
 import { computeSearchRecordObjectFrecencyRank } from '@/side-panel/pages/search/utils/computeSearchRecordObjectFrecencyRank';
 import { getSidePanelSearchResultAnchorId } from '@/side-panel/pages/search/utils/getSidePanelSearchResultAnchorId';
 import { groupSearchResultItems } from '@/side-panel/pages/search/utils/groupSearchResultItems';
+import { isSearchResultItemPreviewable } from '@/side-panel/pages/search/utils/isSearchResultItemPreviewable';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -59,6 +61,7 @@ export const SidePanelSearchRecordsPage = () => {
     searchInput: sidePanelSearch,
   });
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+  const { objectMetadataItems } = useObjectMetadataItems();
   const { closeCommandMenu } = useCloseCommandMenu();
   const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
   const { recordSearchObjectUsage } = useRecordSearchObjectUsage();
@@ -106,7 +109,26 @@ export const SidePanelSearchRecordsPage = () => {
 
   const previewedItem = useSidePanelSearchRecordPreviewItem(orderedItems);
 
-  const shouldDisplayPreview = !isMobile && isDefined(previewedItem);
+  const objectMetadataItemNameSingulars = useMemo(
+    () =>
+      new Set(
+        objectMetadataItems.map(
+          (objectMetadataItem) => objectMetadataItem.nameSingular,
+        ),
+      ),
+    [objectMetadataItems],
+  );
+
+  // Virtual navigation entries (e.g. the "Help and getting started" row) carry
+  // a synthetic object name with no installed metadata; rendering the record
+  // preview for them throws and takes the whole search surface down. Only
+  // preview items backed by a real object.
+  const shouldDisplayPreview =
+    !isMobile &&
+    isSearchResultItemPreviewable(
+      previewedItem,
+      objectMetadataItemNameSingulars,
+    );
 
   return (
     <>
