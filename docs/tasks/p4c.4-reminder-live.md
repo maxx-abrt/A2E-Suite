@@ -33,10 +33,13 @@ orchestrator ticks P4C.4 after verifying your evidence; never tick PLAN.md.
 
 ## Do
 
-1. From repo root, run the workspace upgrade so the command applies:
-   `npx nx run twenty-server:command -- upgrade --workspace-id=<Apple id>` (or
-   the repo's documented upgrade invocation). Confirm it does not re-run other
-   2-39 commands destructively.
+1. From repo root, dry-run then run the workspace upgrade for the Apple
+   workspace only:
+   `npx nx run twenty-server:command -- upgrade --dry-run --workspace-id 20202020-1c25-4d02-bf25-6aeccf7ea419`
+   then the same without `--dry-run`. The `upgrade` command takes
+   `-w, --workspace-id` and `-d, --dry-run` (`upgrade.command.ts`); it runs every
+   pending step, so confirm the log only adds the reminder fields for this
+   workspace and does not destructively re-run other 2-39 commands.
 2. Confirm the field metadata rows and the `_calendarEvent.reminderMinutes` /
    `reminderDeliveredAt` columns now exist (query `core."fieldMetadata"` +
    `information_schema.columns` for the Apple workspace schema).
