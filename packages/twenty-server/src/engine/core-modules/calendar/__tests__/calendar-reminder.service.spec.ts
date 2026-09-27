@@ -1,3 +1,5 @@
+import { In, IsNull, Not } from 'typeorm';
+
 import { type NotificationService } from 'src/engine/core-modules/notification/services/notification.service';
 import { CalendarReminderService } from 'src/engine/core-modules/calendar/services/calendar-reminder.service';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -200,5 +202,39 @@ describe('CalendarReminderService', () => {
 
     expect(result).toEqual({ dispatched: 0, skipped: 0 });
     expect(findMembers).not.toHaveBeenCalled();
+  });
+
+  describe('rearmDeliveredReminders', () => {
+    it('clears only delivered markers of the given events, as a system write', async () => {
+      const { service, updateEvent } = buildService({ claimAffected: 2 });
+
+      const rearmed = await service.rearmDeliveredReminders({
+        workspaceId: WORKSPACE_ID,
+        calendarEventIds: ['event-1', 'event-2', 'event-1'],
+      });
+
+      expect(rearmed).toBe(2);
+      expect(updateEvent).toHaveBeenCalledTimes(1);
+
+      const [criteria, patch] = updateEvent.mock.calls[0];
+
+      expect(patch).toEqual({ reminderDeliveredAt: null });
+      expect(criteria.id).toEqual(In(['event-1', 'event-2']));
+      // Conditional on the marker being set: an undelivered event's pending
+      // claim is never touched.
+      expect(criteria.reminderDeliveredAt).toEqual(Not(IsNull()));
+    });
+
+    it('does nothing without events to re-arm', async () => {
+      const { service, updateEvent } = buildService();
+
+      const rearmed = await service.rearmDeliveredReminders({
+        workspaceId: WORKSPACE_ID,
+        calendarEventIds: [],
+      });
+
+      expect(rearmed).toBe(0);
+      expect(updateEvent).not.toHaveBeenCalled();
+    });
   });
 });

@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type NotificationQuietHours } from 'src/engine/core-modules/notification/types/notification-preferences.type';
 import { isWithinQuietHours } from 'src/engine/core-modules/notification/utils/is-within-quiet-hours.util';
 
@@ -114,3 +116,50 @@ export const buildCalendarReminderNotificationPayload = (
   // not used for delivery gating).
   timezone: event.recurrenceTimezone ?? 'UTC',
 });
+
+// The fields of a calendarEvent row that decide when its reminder fires.
+export type CalendarReminderScheduleFields = {
+  startsAt?: string | null;
+  reminderMinutes?: number | null;
+  reminderDeliveredAt?: string | null;
+};
+
+const isSameInstant = (
+  left: string | null | undefined,
+  right: string | null | undefined,
+): boolean => {
+  if ((left ?? null) === (right ?? null)) {
+    return true;
+  }
+
+  if (!isDefined(left) || !isDefined(right)) {
+    return false;
+  }
+
+  const leftMs = Date.parse(left);
+  const rightMs = Date.parse(right);
+
+  return !isNaN(leftMs) && !isNaN(rightMs) && leftMs === rightMs;
+};
+
+// Reschedule contract (P4C.4): reminderDeliveredAt is the idempotency marker
+// for ONE schedule. Once the event moves (startsAt) or its lead time changes
+// (reminderMinutes), a delivered marker belongs to the old schedule and must
+// be cleared so the next dispatch pass reminds for the new one. Re-saving the
+// same instant (e.g. `…00Z` vs `…00.000Z`) is not a reschedule, and an update
+// that only touches reminderDeliveredAt (the dispatch claim itself) never
+// re-arms, so the listener cannot loop on its own writes.
+export const shouldRearmCalendarReminder = (
+  before: CalendarReminderScheduleFields,
+  after: CalendarReminderScheduleFields,
+): boolean => {
+  if (!isDefined(after.reminderDeliveredAt)) {
+    return false;
+  }
+
+  const hasStartMoved = !isSameInstant(before.startsAt, after.startsAt);
+  const hasLeadTimeChanged =
+    (before.reminderMinutes ?? null) !== (after.reminderMinutes ?? null);
+
+  return hasStartMoved || hasLeadTimeChanged;
+};

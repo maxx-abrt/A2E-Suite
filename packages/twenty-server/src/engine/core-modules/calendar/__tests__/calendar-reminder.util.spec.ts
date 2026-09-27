@@ -1,6 +1,7 @@
 import {
   buildCalendarReminderNotificationPayload,
   computeCalendarReminderSchedule,
+  shouldRearmCalendarReminder,
   type CalendarReminderEvent,
 } from 'src/engine/core-modules/calendar/utils/calendar-reminder.util';
 import { type NotificationQuietHours } from 'src/engine/core-modules/notification/types/notification-preferences.type';
@@ -201,5 +202,77 @@ describe('buildCalendarReminderNotificationPayload', () => {
     const payload = buildCalendarReminderNotificationPayload(event, 'user-1');
 
     expect(payload.timezone).toBe('Europe/Paris');
+  });
+});
+
+describe('shouldRearmCalendarReminder', () => {
+  const delivered = {
+    startsAt: '2026-09-27T10:00:00.000Z',
+    reminderMinutes: 15,
+    reminderDeliveredAt: '2026-09-27T09:45:00.000Z',
+  };
+
+  it('re-arms a delivered reminder when the event moves', () => {
+    expect(
+      shouldRearmCalendarReminder(delivered, {
+        ...delivered,
+        startsAt: '2026-09-27T11:00:00.000Z',
+      }),
+    ).toBe(true);
+  });
+
+  it('re-arms a delivered reminder when the lead time changes', () => {
+    expect(
+      shouldRearmCalendarReminder(delivered, {
+        ...delivered,
+        reminderMinutes: 30,
+      }),
+    ).toBe(true);
+  });
+
+  it('does not re-arm when the same instant is re-saved in another ISO form', () => {
+    expect(
+      shouldRearmCalendarReminder(delivered, {
+        ...delivered,
+        startsAt: '2026-09-27T10:00:00Z',
+      }),
+    ).toBe(false);
+  });
+
+  it('does not re-arm a reminder that was never delivered', () => {
+    expect(
+      shouldRearmCalendarReminder(
+        { ...delivered, reminderDeliveredAt: null },
+        {
+          ...delivered,
+          reminderDeliveredAt: null,
+          startsAt: '2026-09-27T11:00:00.000Z',
+        },
+      ),
+    ).toBe(false);
+  });
+
+  it('does not re-arm on the dispatch claim itself (only reminderDeliveredAt changes)', () => {
+    expect(
+      shouldRearmCalendarReminder(
+        { ...delivered, reminderDeliveredAt: null },
+        delivered,
+      ),
+    ).toBe(false);
+  });
+
+  it('does not re-arm on unrelated edits such as the title', () => {
+    expect(shouldRearmCalendarReminder(delivered, { ...delivered })).toBe(
+      false,
+    );
+  });
+
+  it('re-arms when the start time is cleared or first set', () => {
+    expect(
+      shouldRearmCalendarReminder(delivered, { ...delivered, startsAt: null }),
+    ).toBe(true);
+    expect(
+      shouldRearmCalendarReminder({ ...delivered, startsAt: null }, delivered),
+    ).toBe(true);
   });
 });

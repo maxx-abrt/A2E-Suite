@@ -40,8 +40,10 @@ export type CalendarReminderDispatchResult = {
 // requested, so two overlapping passes can never both notify, and a failed
 // notify is not retried into a duplicate.
 //
-// Reschedule: update reminderMinutes/startsAt and clear reminderDeliveredAt →
-// the next pass picks the event up again. Cancel: isCanceled = true.
+// Reschedule: moving startsAt or changing reminderMinutes after delivery
+// re-arms the reminder — CalendarReminderRescheduleListener clears
+// reminderDeliveredAt through rearmDeliveredReminders and the next pass picks
+// the event up again. Cancel: isCanceled = true.
 //
 // D05 documented defaults (open decision; do not change without resolving D05):
 //   • Recipient: the event creator (createdBy.workspaceMemberId → userId)
@@ -187,6 +189,44 @@ export class CalendarReminderService {
       }
 
       return { dispatched, skipped };
+    }, authContext);
+  }
+
+  // Clears the delivered marker of events whose schedule changed after their
+  // reminder fired. Conditional on the marker being set, so a concurrent
+  // dispatch claim for an undelivered event is never undone; the update only
+  // touches reminderDeliveredAt, which never re-triggers the listener.
+  async rearmDeliveredReminders({
+    workspaceId,
+    calendarEventIds,
+  }: {
+    workspaceId: string;
+    calendarEventIds: string[];
+  }): Promise<number> {
+    const uniqueCalendarEventIds = [...new Set(calendarEventIds)];
+
+    if (uniqueCalendarEventIds.length === 0) {
+      return 0;
+    }
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const repository =
+        this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
+          'calendarEvent',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const result = await repository.update(
+        {
+          id: In(uniqueCalendarEventIds),
+          reminderDeliveredAt: Not(IsNull()),
+        },
+        { reminderDeliveredAt: null },
+      );
+
+      return result.affected ?? 0;
     }, authContext);
   }
 

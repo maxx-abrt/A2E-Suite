@@ -143,9 +143,20 @@
         "US-086"
       ],
       "completionNotes": "Executor done (awaiting orchestrator). entrypoint.sh skips provisioning when DISABLE_DB_MIGRATIONS=true unless DISABLE_BUNDLED_APP_PROVISIONING=false forces it; every shipped worker (docker-compose, both coolify copies, podman-compose, manual podman) sets DISABLE_BUNDLED_APP_PROVISIONING=true; every server passes ${DISABLE_BUNDLED_APP_PROVISIONING:-} through (the documented opt-out was a no-op before). New provision-bundled-apps.deployment.spec.ts runs the real entrypoint under /bin/sh with stubbed yarn/psql (6 environments) + manifest guards: 10 failing at base, 15/15 after. Server tsgo exit 0, oxlint 0/0. Tier-2: compose/podman boot logs show provisioning on the server only; worker restart runs nothing."
+    },
+    {
+      "id": "US-088",
+      "title": "P4C.4 reschedule: moving an event (or changing its lead time) re-arms an already-delivered reminder",
+      "description": "As a calendar user, I want a reminder to fire again for the new time when I move an event whose reminder was already sent, so that rescheduling never silently leaves me without a reminder.",
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "US-082"
+      ],
+      "completionNotes": "Executor done (awaiting orchestrator). New CalendarReminderRescheduleListener (calendarEvent UPDATED) calls CalendarReminderService.rearmDeliveredReminders, a conditional system update clearing reminderDeliveredAt only where it is set, for events whose startsAt moved to another instant or whose reminderMinutes changed (pure shouldRearmCalendarReminder; same instant in another ISO form and the dispatch claim itself never re-arm). Registered in CalendarReminderModule. +13 cases (util 7, service 2, listener 4), failing at base; calendar+notification 19 suites / 116 green, server tsgo exit 0, oxlint 0 errors. Tier-2: live move of a delivered event yields one new CALENDAR_REMINDER."
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-27T14:55:44.000Z"
+    "updatedAt": "2026-09-27T14:56:29.000Z"
   }
 }
