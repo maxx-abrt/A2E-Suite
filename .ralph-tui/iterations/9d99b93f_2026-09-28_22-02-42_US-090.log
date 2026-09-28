@@ -1,0 +1,47 @@
+# Iteration 5 Log
+
+## Metadata
+
+- **Task ID**: US-090
+- **Task Title**: M2(f)/G4: workspace-template picker copy states what each preset really installs (Bureau/Bilan wording)
+- **Description**: As a new user choosing a workspace template, I want each description to name exactly the apps it installs and whether the CRM stays, so that I am not promised projects, volunteers or grants a preset d...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-28T20:02:42.550Z
+- **Ended At**: 2026-09-28T20:04:12.076Z
+- **Duration**: 1m 29s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git rev-parse HEAD
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ grep -n "US-090" PLAN.md
+[94m[bash][0m $ ls docs/plan/phases/
+[94m[bash][0m $ ls tasks/ 2>/dev/null
+[94m[bash][0m $ grep -rn "US-090" --include="*.md" --include="*.json" . 2>/dev/null | grep -v node_modules | head -5...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
+[94m[bash][0m $ ls "packages/twenty-front/src/modules/a2e-workspace/constants/__tests__/"
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/a2e-workspace/constants/__tests__/A2eWorkspaceTemplates.t...
+[94m[bash][0m $ git log --oneline -3 -- packages/twenty-front/src/modules/a2e-workspace/constants/A2eWorkspaceTempla...
+[94m[bash][0m $ echo "EXIT: $?"
+[94m[bash][0m $ grep -n "US-090" .ralph-tui/progress.md | tail -5
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ tail -40 .ralph-tui/progress.md
+[94m[bash][0m $ grep -n "CLAIMED" docs/plan/phases/phase-01-report.md | tail -10
+[94m[bash][0m $ date -u "+%Y-%m-%d %H:%M UTC"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain
+US-090 already implemented and committed (`0540620b`, ancestor of HEAD). Re-verified:
+- `A2eWorkspaceTemplates.test.ts` → 13/13 passed
+- front `tsgo --noEmit` → exit 0
+- No stray source changes; report entries only
+
+Reported `done-for-review` (Ready-to-tick: yes) in `phase-01-report.md` and `.ralph-tui/progress.md`. Only Tier-2 orchestrator evidence (picker render + FR catalog) remains.
+
+<promise>COMPLETE</promise>
