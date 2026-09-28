@@ -1576,3 +1576,15 @@ CLAIMED — US-075/nav-restore-defect — deepseek-v4.1-flash — 2026-09-22T15:
 **Do not redo:** the parity spec is the drift guard for the two lists — extend the front list, never copy it into the server spec. The already-installed branch is intentionally non-fatal (info, no reward) and clears the step history.
 **Remaining:** US-088, US-090 await orchestrator tick (US-089 own work complete pending tick)
 **Next:** orchestrator — run the Tier-2 live-onboarding evidence and tick US-089
+
+## 2026-09-28 20:03 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-090 M2(f)/G4: workspace-template picker copy states what each preset really installs (Bureau/Bilan wording) · **Slice:** the copy leg — `A2E_WORKSPACE_TEMPLATE_OPTIONS` descriptions + truthfulness spec
+**Claim:** done-for-review
+**Ready-to-tick:** yes — slice already implemented and committed (`0540620b`, ancestor of HEAD `409df2c3`); only Tier-2 orchestrator evidence remains (unchanged from the 2026-09-27 15:10 UTC entry)
+**Base:** 409df2c37485f92191cd5e94f9eb4656053d0901
+**Changed:** none — zero new work; report entries only (`docs/plan/phases/phase-01-report.md`, `.ralph-tui/progress.md`)
+**Checks:** `npx jest packages/twenty-front/src/modules/a2e-workspace/constants/__tests__/A2eWorkspaceTemplates.test.ts --config=packages/twenty-front/jest.config.mjs` → 1 suite / 13 tests passed; `packages/twenty-front` `npx tsgo -p tsconfig.json --noEmit` → exit 0. Confirmed in HEAD: `A2eWorkspaceTemplates.ts:46-70` names Bureau/Bilan per preset, CRM-hidden presets say "CRM navigation hidden", CRM-kept presets mention the CRM.
+**Missing for tick:** Tier-2 — onboarding + Settings template picker render the new descriptions (EN); FR strings need the next catalog extraction/translation pass
+**Do not redo:** the truthfulness spec parses the real server `WORKSPACE_TEMPLATE_DEFINITIONS` and the onboarding app labels — when D-B1 lands (Bureau = Documents + Projects) the spec will demand "Projects" wording automatically; update the copy, never the spec
+**Remaining:** US-090 own work complete pending orchestrator tick; no other unmet bullet in the copy leg
+**Next:** orchestrator — run the Tier-2 picker-render evidence + FR catalog pass and tick US-090

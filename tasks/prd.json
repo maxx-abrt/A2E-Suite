@@ -171,14 +171,14 @@
       "title": "M2(f)/G4: workspace-template picker copy states what each preset really installs (Bureau/Bilan wording)",
       "description": "As a new user choosing a workspace template, I want each description to name exactly the apps it installs and whether the CRM stays, so that I am not promised projects, volunteers or grants a preset does not deliver.",
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "dependsOn": [
         "US-089"
       ],
-      "completionNotes": "Executor done (awaiting orchestrator). A2E_WORKSPACE_TEMPLATE_OPTIONS descriptions rewritten from the server WORKSPACE_TEMPLATE_DEFINITIONS: Bureau (a2e-documents) / Bilan (a2e-accounting) product names from the onboarding app list, CRM-hidden presets say so, CRM-kept presets mention the CRM; no uninstalled app implied. New truthfulness spec parses the real server definitions (13 cases, 8 failing at base). Lingui source strings only. Front tsgo exit 0, 41 suites / 239 green, oxlint 0/0. Tier-2: picker renders the new copy; FR catalog pass."
+      "completionNotes": "Completed by agent"
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-28T20:02:37.046Z"
+    "updatedAt": "2026-09-28T20:04:12.077Z"
   }
 }

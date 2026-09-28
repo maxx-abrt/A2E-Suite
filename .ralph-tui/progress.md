@@ -43,3 +43,11 @@ after each iteration and it's included in prompts for context.
   - US-088 (reschedule re-arm) and US-091 (at-time / late-delivery grace) share `calendar-reminder.util.ts`; US-091's edits preserved `shouldRearmCalendarReminder`, and the combined calendar+notification gate is green at 19 suites / 126 tests.
   - `rearmDeliveredReminders` must stay conditional on `reminderDeliveredAt IS NOT NULL` so it never undoes an in-flight dispatch claim.
 ---
+
+## 2026-09-28 - US-090
+- What was implemented: nothing new — the slice was already implemented and committed at `0540620b` (ancestor of HEAD `409df2c3`); re-verified and reported `done-for-review`.
+- Files changed: none (report entries only: `docs/plan/phases/phase-01-report.md`, `.ralph-tui/progress.md`).
+- **Learnings:**
+  - `A2eWorkspaceTemplates.test.ts` is the copy truthfulness guard: it parses the real server `workspace-template-definitions.constant.ts` + the onboarding app labels and asserts each picker description names exactly the installed A2E products (word-boundary, case-insensitive) and states "CRM navigation hidden" iff the preset hides CRM rows. Change the copy, not the spec.
+  - Product naming convention: `a2e-documents` → "Bureau", `a2e-accounting` → "Bilan", matching `ONBOARDING_INSTALLABLE_APPS` labels. Verified green 13/13 + front `tsgo` exit 0.
+---
