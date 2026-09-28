@@ -1396,3 +1396,15 @@ CLAIMED — US-074/install-time-schema-build-relation-target — deepseek-v4.1-f
 **Repo-safety cleanup (this session):** removed the erroneous index entry for `plan.md` (`git rm --cached plan.md`); the on-disk physical file is the canonical `PLAN.md` (case-insensitive FS), so no content was lost. `PLAN.md` is again the single tracked plan file — prevents a `git checkout`/`stash` from overwriting the real plan with the 152-line scaffold.
 **Verdict — P4C.4 stays `[ ]` (partial core):** US-091 is a correct, unit-proven slice of "configurable reminders with idempotent delivery", but the bullet's acceptance is Tier-2 live delivery (pending brief `docs/tasks/p4c.4-reminder-live.md`: applied workspace command, running worker, one `CALENDAR_REMINDER` per due event with `reminderDeliveredAt` set, no duplicate on the next tick). The sibling **US-092** (front inbox `CALENDAR_REMINDER` label/icon/deep-link) from the same batch is **not started** — no `CALENDAR_REMINDER` reference exists under `twenty-front/src/modules/inbox/`.
 **Do not redo:** `calendar-reminder-late-delivery-grace.constant.ts`, the 0-minute/grace/deadline logic in the util, and the candidate-window change in the service — all green as-is. Never re-add a tracked `plan.md`; edit `PLAN.md`.
+
+## 2026-09-28 20:02 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-088 P4C.4 reschedule: moving an event (or changing its lead time) re-arms an already-delivered reminder · **Slice:** the whole task (single bullet, already handled)
+**Claim:** done-for-review — zero new changes; the 2026-09-27 15:00 UTC entry already implemented and reported this slice, committed at `12d6f314` (ancestor of HEAD).
+**Ready-to-tick:** yes (Tier-0) — no; Tier-2 live delivery below is the orchestrator's, as recorded.
+**Base:** 451b7519
+**Changed:** none (report entries only: `docs/plan/phases/phase-04-report.md`, `.ralph-tui/progress.md`).
+**Checks:** `npx jest src/engine/core-modules/calendar src/engine/core-modules/notification --config=packages/twenty-server/jest.config.mjs` → 19 suites / 126 tests green (US-091 added 10 cases to the 116 recorded at US-088 time); `cd packages/twenty-server && npx tsgo -p tsconfig.json --noEmit` → exit 0. Implementation re-read: `shouldRearmCalendarReminder` present in `utils/calendar-reminder.util.ts:163`, `rearmDeliveredReminders` in `services/calendar-reminder.service.ts:207`, `CalendarReminderRescheduleListener` registered in `calendar-reminder.module.ts:7,22`.
+**Missing for tick:** Tier-2 only — on a running worker, move a delivered event's `startsAt` +1h in `/calendar` → `reminderDeliveredAt` nulls → exactly one new `CALENDAR_REMINDER` at the new fire time; retitling does not re-arm. No front/schema change.
+**Do not redo:** the reschedule listener, `rearmDeliveredReminders` conditional claim, and `shouldRearmCalendarReminder` — all green on current HEAD after US-091's util changes.
+**Remaining:** US-088 is the last open item in this execution order; US-089/US-091 tracked separately.
+**Next:** orchestrator — run the Tier-2 live-move check and tick P4C.4.

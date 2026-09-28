@@ -1,0 +1,49 @@
+# Iteration 3 Log
+
+## Metadata
+
+- **Task ID**: US-089
+- **Task Title**: C2: onboarding install-apps step must accept the A2E apps the front offers (server allowlist parity + already-installed skip)
+- **Description**: As a new user choosing apps during onboarding, I want the A2E apps I pick (Bureau, Projects, Bilan, Chat, Drive, CRM assistant) to actually be processed, so that the setup step does what it shows inst...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-28T19:59:47.179Z
+- **Ended At**: 2026-09-28T20:01:11.045Z
+- **Duration**: 1m 23s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "US-089" PLAN.md
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -rn "US-089\|C2: onboarding" PLAN.md docs/plan/ tasks/prd.json 2>/dev/null | head -50
+[94m[glob][0m pattern: [96mdocs/plan/phases/phase-*-report.md[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ git log --oneline -3 12d6f314 2>/dev/null
+[94m[bash][0m $ ls -la packages/twenty-server/src/engine/core-modules/onboarding/constants/ packages/twenty-server/s...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ git diff HEAD --stat -- packages/twenty-server/src/engine/core-modules/onboarding/ && echo "=== no d...
+[94m[bash][0m $ git log --oneline -5
+[94m[bash][0m $ npx jest src/engine/core-modules/onboarding/constants/__tests__/onboarding-installable-app-universal...
+[94m[bash][0m $ grep -n "universalIdentifier\|label:" packages/twenty-front/src/modules/onboarding/constants/Onboard...
+[94m[bash][0m $ echo "TSGO_EXIT=${PIPESTATUS[0]}"
+[94m[bash][0m $ echo "TSGO_EXIT=$?"
+[94m[read][0m
+[94m[bash][0m $ ls -la .ralph-tui/progress.md 2>&1
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain
+US-089 was already implemented and committed (`6a6a482c`, ancestor of HEAD). Verified, zero new code changes.
+
+- 3 onboarding specs (parity, service, job) → 3 suites / 18 tests passed
+- `packages/twenty-server` `tsgo --noEmit` → exit 0
+- Server allowlist carries all 6 A2E ids matching the front's 9-entry list; `APP_ALREADY_INSTALLED` handled as satisfied (info log, no reward, history cleared)
+
+Reported `done-for-review` to `docs/plan/phases/phase-01-report.md` and appended the US-089 entry to `.ralph-tui/progress.md`. Only Tier-2 (live onboarding) evidence remains for the orchestrator.
+
+<promise>COMPLETE</promise>

@@ -149,11 +149,11 @@
       "title": "P4C.4 reschedule: moving an event (or changing its lead time) re-arms an already-delivered reminder",
       "description": "As a calendar user, I want a reminder to fire again for the new time when I move an event whose reminder was already sent, so that rescheduling never silently leaves me without a reminder.",
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "dependsOn": [
         "US-082"
       ],
-      "completionNotes": "Executor done (awaiting orchestrator). New CalendarReminderRescheduleListener (calendarEvent UPDATED) calls CalendarReminderService.rearmDeliveredReminders, a conditional system update clearing reminderDeliveredAt only where it is set, for events whose startsAt moved to another instant or whose reminderMinutes changed (pure shouldRearmCalendarReminder; same instant in another ISO form and the dispatch claim itself never re-arm). Registered in CalendarReminderModule. +13 cases (util 7, service 2, listener 4), failing at base; calendar+notification 19 suites / 116 green, server tsgo exit 0, oxlint 0 errors. Tier-2: live move of a delivered event yields one new CALENDAR_REMINDER."
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-089",
@@ -179,6 +179,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-28T20:01:11.045Z"
+    "updatedAt": "2026-09-28T20:02:37.046Z"
   }
 }

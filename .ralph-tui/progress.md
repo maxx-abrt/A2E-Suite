@@ -35,3 +35,11 @@ after each iteration and it's included in prompts for context.
   - `InstallOnboardingAppsJob` treats `ApplicationException` `APP_ALREADY_INSTALLED` (bundled pre-installed apps) as satisfied: info log, no reward, but the reversible step history is still cleared. Verified green: onboarding 3 suites / 18 tests, server `tsgo` exit 0.
 ---
 
+
+## 2026-09-28 - US-088
+- What was implemented: nothing new — the slice was already implemented and committed at `12d6f314` (ancestor of HEAD `451b7519`); re-verified against the post-US-091 util and reported `done-for-review`.
+- Files changed: none (report entries only: `docs/plan/phases/phase-04-report.md`, `.ralph-tui/progress.md`).
+- **Learnings:**
+  - US-088 (reschedule re-arm) and US-091 (at-time / late-delivery grace) share `calendar-reminder.util.ts`; US-091's edits preserved `shouldRearmCalendarReminder`, and the combined calendar+notification gate is green at 19 suites / 126 tests.
+  - `rearmDeliveredReminders` must stay conditional on `reminderDeliveredAt IS NOT NULL` so it never undoes an in-flight dispatch claim.
+---
