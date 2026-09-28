@@ -1564,3 +1564,15 @@ CLAIMED — US-075/nav-restore-defect — deepseek-v4.1-flash — 2026-09-22T15:
 **Do not redo:** the entrypoint tri-state guard (`true` skip / `false` force / unset follows migrations ownership) is intentional; all 4 compose workers + manual podman set `true`, all servers pass through
 **Remaining:** US-088, US-089, US-090 await orchestrator tick
 **Next:** orchestrator — run the Tier-2 compose/podman boot-log evidence and tick US-087
+
+## 2026-09-28 20:00 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-089 C2: onboarding install-apps step must accept the A2E apps the front offers (server allowlist parity + already-installed skip) · **Slice:** already implemented + committed (`6a6a482c`, ancestor of HEAD); stop-condition path
+**Claim:** done-for-review
+**Ready-to-tick:** yes — slice is green on HEAD; only Tier-2 orchestrator evidence remains (unchanged from the 2026-09-27 15:05 UTC entry)
+**Base:** 0b9da6e2b431d0945b86d7e0d4b44056dba0f0f3
+**Changed:** none — zero new work; report entries only (`docs/plan/phases/phase-01-report.md`, `.ralph-tui/progress.md`)
+**Checks:** `npx jest src/engine/core-modules/onboarding/constants/__tests__/onboarding-installable-app-universal-identifiers.spec.ts src/engine/core-modules/onboarding/__tests__/onboarding.service.install-apps-step.spec.ts src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job.spec.ts --config=packages/twenty-server/jest.config.mjs` → 3 suites / 18 tests passed; `packages/twenty-server` `npx tsgo -p tsconfig.json --noEmit` → exit 0. Confirmed in HEAD: server list carries the 6 A2E ids (`onboarding-installable-app-universal-identifiers.ts:5-24`, equal to the front's 9-entry `OnboardingInstallableApps.ts`), `APP_ALREADY_INSTALLED` → info log + no reward + history cleared (`install-onboarding-apps.job.ts:104-114`).
+**Missing for tick (Tier 2, orchestrator):** fresh sign-up on a stock image → onboarding "install apps" with Bureau + Drive selected → one `install-onboarding-apps` job carrying both ids; worker log shows `already installed … skipping` (info) for bundled apps; user lands past the step with no reversible history left.
+**Do not redo:** the parity spec is the drift guard for the two lists — extend the front list, never copy it into the server spec. The already-installed branch is intentionally non-fatal (info, no reward) and clears the step history.
+**Remaining:** US-088, US-090 await orchestrator tick (US-089 own work complete pending tick)
+**Next:** orchestrator — run the Tier-2 live-onboarding evidence and tick US-089

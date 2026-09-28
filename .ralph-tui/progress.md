@@ -27,3 +27,11 @@ after each iteration and it's included in prompts for context.
   - The deployment contract is pinned by `packages/twenty-server/src/database/commands/__tests__/provision-bundled-apps.deployment.spec.ts` (runs the real entrypoint under `/bin/sh` with stubbed `yarn`/`psql` + manifest guards) — green 15/15.
 ---
 
+## 2026-09-28 - US-089
+- What was implemented: nothing new — the slice was already implemented and committed at `6a6a482c` (ancestor of HEAD `0b9da6e2`); re-verified and reported `done-for-review`.
+- Files changed: none (report entries only: `docs/plan/phases/phase-01-report.md`, `.ralph-tui/progress.md`).
+- **Learnings:**
+  - The server onboarding allowlist `ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS` must stay byte-equal in ids to the front's `OnboardingInstallableApps.ts`; the parity spec reads the real front + `internal/a2e-*` sources — extend the front list, never copy it into the server spec.
+  - `InstallOnboardingAppsJob` treats `ApplicationException` `APP_ALREADY_INSTALLED` (bundled pre-installed apps) as satisfied: info log, no reward, but the reversible step history is still cleared. Verified green: onboarding 3 suites / 18 tests, server `tsgo` exit 0.
+---
+
