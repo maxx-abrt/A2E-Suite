@@ -7,27 +7,15 @@ after each iteration and it's included in prompts for context.
 
 *Add reusable patterns discovered during development here.*
 
-- **App-scoped GraphQL schema generation** (`WorkspaceGraphqlSchemaSDLService.getOrComputeSchemaSDL` with an `applicationId`) filters flat object/field maps to `[standard app, requested app]`. A cross-app relation field (a pinned field targeting another app's object) leaves the field but drops the target → `object-metadata-with-relations-gql-object-type.generator.ts:117` throws. Fix pattern: augment the scoped maps with the missing relation targets from the full maps (`augmentFlatEntityMapsWithRelationTargets`) rather than weakening the guard. The un-scoped workspace schema (no `applicationId`) is unaffected.
-- **`ObjectMetadataWithRelationsGqlObjectTypeGenerator.buildAndStore` stores fields as a lazy thunk** — the line-117 guard only fires when the type's fields are materialized (`getFields()`/schema construction), not at `buildAndStore` call time. Tests must call `getFields()` to exercise it.
+- A2E app registration is guarded by a single front parity spec: `packages/twenty-front/src/modules/a2e-workspace/constants/__tests__/A2eSuiteApplicationUniversalIdentifiers.test.ts` reads the real `packages/twenty-apps/internal/a2e-*` sources and asserts each app is in the allowlist, onboarding list, Dockerfile COPY and build loop. Add a new `a2e-*` app → this spec fails until all four lists include it. Extend discovery, never copy the list.
 
 ---
 
-## [2026-09-22] - US-074
-- Fixed the a2e-projects install-time schema-build failure: the application-scoped SDL filter dropped the cross-app relation target (`project.documents` → A2E Documents' `document`), making the line-117 guard fire on a valid field. Added `augmentFlatEntityMapsWithRelationTargets` (pulls missing relation targets + their fields transitively from the full maps) and wired it into `getOrComputeSchemaSDL`'s `applicationId` branch only.
-- Files changed: `packages/twenty-server/src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphql-schema-sdl.service.ts`; NEW `.../workspace-graphql-schema-sdl/utils/augment-flat-entity-maps-with-relation-targets.util.ts` + its spec; NEW `.../workspace-graphql-schema-sdl/__tests__/workspace-graphql-schema-sdl.service.spec.ts`; phase-04 report.
+## 2026-09-28 - US-086
+- What was implemented: nothing new — the slice was already implemented and committed at `fe3623a1` (ancestor of HEAD `875671a4`); re-verified and reported `done-for-review`.
+- Files changed: none (report entries only: `docs/plan/phases/phase-01-report.md`, `.ralph-tui/progress.md`).
 - **Learnings:**
-  - The phase-report hypothesis (install-time ordering / ephemeral field before persist) was wrong; the target was persisted but filtered out by application scope.
-  - `FlatEntityMaps` lookups go through `universalIdentifierById[id]` → `byUniversalIdentifier[uid]`; use `addFlatEntityToFlatEntityMapsOrThrow` to keep both indexes in sync when augmenting.
-  - Tier-2 residual: orchestrator must re-run the live a2e-projects install (ticks M1a install leg) and then P4.1's concurrency proof.
----
-
-## [2026-09-22] - US-075
-- Fixed the CRM nav-restore defect: `runRemainingSteps` unconditionally marked the navigation-visibility step `skipped` when a template's `hiddenStandardNavigationMenuItemUniversalIdentifiers` was empty, so a CRM apply (hide-list `[]`) never restored the CRM nav rows a STUDENT/INDIVIDUAL apply had hard-deleted. Removed the hide-list gate; the step now always calls `applyTemplateNavigationVisibility`, which is driven by current row state (restore TEMPLATE_MANAGED rows missing from the workspace) and keeps its no-op early return when there is nothing to delete or restore.
-- Files changed: `packages/twenty-server/src/engine/core-modules/onboarding/workspace-template.service.ts` (skip block removed, WHY comment added); `packages/twenty-server/src/engine/core-modules/onboarding/__tests__/workspace-template.service.spec.ts` (+3 tests: restore, idempotent re-run, preview/apply agreement; + updated the CRM no-op test setup to a complete workspace); phase-01 report.
-- **Learnings:**
-  - Two earlier US-075 iterations bailed `CONFLICT` over their own uncommitted edits (no `CLAIMED` line). When resuming a stalled same-task slice on a single-writer checkout, trust the filesystem over the missing claim: one iteration's "spec edit" had actually reverted the whole spec to an older revision and deleted 5 unrelated tests — always diff against HEAD before building on partial work.
-  - The nav step's restore set is `TEMPLATE_MANAGED - definition.hideList - existingRows`, computed from row presence alone, so it cannot tell a template-hidden row from a user-hidden one. Fixing the skip therefore also re-creates user-deleted managed rows on any template whose hide-list omits them — flagged as a separate C2 slice ("restore only what it hid").
-  - Preview/apply consistency is testable without a DB: mock `getOrRecompute` per requested cache key (`flatNavigationMenuItemMaps` for the row state, `flatViewMaps` for the restore builder), then compare the migration's create/delete UIDs to `preview.navigationChanges`.
-  - Tier-2 residual: orchestrator runs the live STUDENT-apply → CRM-apply probe plus the deferred P1.3/P1.6c/E03 browser legs.
+  - Before starting, grep `docs/plan/phases/phase-<NN>-report.md` for the task id — a prior `done-for-review` entry means the slice is handled; do not redo.
+  - The A2E app drift guard is a single parity spec reading real sources; verified green 4/4 via `npx jest ... --config=packages/twenty-front/jest.config.mjs`.
 ---
 

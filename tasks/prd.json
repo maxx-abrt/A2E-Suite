@@ -125,12 +125,12 @@
       "title": "M1: bundle, allowlist and offer the sixth A2E app (a2e-crm)",
       "description": "As an operator deploying the suite, I want all six first-party A2E apps (including the CRM assistant) built into the image, listed in Settings → Applications → A2E Suite and offered at onboarding, so that a stock deployment exposes every A2E app without manual publishing.",
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "dependsOn": [
         "US-078",
         "US-077"
       ],
-      "completionNotes": "Executor done (awaiting orchestrator). Dockerfile twenty-apps-build stage now copies and builds a2e-crm (6 apps); A2E allowlist + ONBOARDING_INSTALLABLE_APPS carry c31e0000-0000-4000-8000-000000000000; new front parity spec reads the real internal/a2e-* sources and fails when an app is missing from the allowlist, onboarding list, Dockerfile COPY or build loop (3 failing → 4 passing proof); a2e-crm README + docs rows. Front a2e-workspace/onboarding 40 suites / 226 green, front tsgo exit 0, oxlint 0/0. Tier-2: docker build lists 6 tarballs; clean-volume compose shows six apps in the A2E section."
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-087",
@@ -179,6 +179,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-27T14:57:27.000Z"
+    "updatedAt": "2026-09-28T19:58:45.641Z"
   }
 }

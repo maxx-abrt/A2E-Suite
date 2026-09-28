@@ -1540,3 +1540,15 @@ CLAIMED — US-075/nav-restore-defect — deepseek-v4.1-flash — 2026-09-22T15:
 **Tier-0 checks (Node 24.11):** `packages/twenty-front` `tsgo -p tsconfig.json --noEmit` → exit 0; front `a2e-workspace` + `pages/onboarding` + `modules/onboarding` → 41 suites / 239 tests green (scratch config = `packages/twenty-front/jest.config.mjs` minus the root `@nx/jest` preset, which the focused install does not carry; testMatch per the nx preset); `oxlint --type-aware` on both files → 0/0; `oxfmt --check` clean.
 **Missing for tick (Tier 2, orchestrator):** onboarding + Settings template picker render the new descriptions (EN); FR strings need the next catalog extraction/translation pass.
 **Do not redo:** when D-B1 lands (Bureau = Documents + Projects) the spec will demand "Projects" wording automatically once the server definitions install it — update the copy, not the spec.
+
+## 2026-09-28 19:58 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-086 M1: bundle, allowlist and offer the sixth A2E app (a2e-crm) · **Slice:** already implemented + committed (`fe3623a1`, ancestor of HEAD)
+**Claim:** done-for-review
+**Ready-to-tick:** yes — slice already green; only Tier-2 orchestrator evidence remains (unchanged from the 11:30 entry)
+**Base:** 875671a4
+**Changed:** none — zero new work; this is the stop-condition path (existing `done-for-review` at 2026-09-27 11:30 UTC)
+**Checks:** `npx jest packages/twenty-front/src/modules/a2e-workspace/constants/__tests__/A2eSuiteApplicationUniversalIdentifiers.test.ts --config=packages/twenty-front/jest.config.mjs` → 1 suite / 4 tests passed; confirmed in HEAD: `A2eSuiteApplicationUniversalIdentifiers.ts:17`, `OnboardingInstallableApps.ts:31`, `Dockerfile:25` COPY + `Dockerfile:30` build loop, `internal/a2e-crm/README.md`, docs rows (`docs/applications.md`, `docs/features.md`)
+**Missing for tick:** Tier-2 — `docker build` lists 6 tarballs; clean-volume `docker compose up` shows six apps in Settings → A2E Suite + "CRM assistant" at onboarding
+**Do not redo:** all three lists + parity spec + README/docs are committed and the parity spec is green; the parity spec extends `a2e-*` discovery, never a copied list
+**Remaining:** US-086 has no other unmet bullets — its own work is complete pending orchestrator tick
+**Next:** orchestrator — run the Tier-2 docker/build evidence and tick US-086
