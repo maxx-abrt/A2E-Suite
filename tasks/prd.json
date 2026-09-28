@@ -137,12 +137,12 @@
       "title": "M1: worker containers must not run bundled app provisioning (compose/coolify/podman) + server opt-out passthrough",
       "description": "As an operator, I want bundled A2E app provisioning to run exactly once per boot on the migrating server, so that worker containers never race it on an unmigrated schema or run a second concurrent install pass, and so that the documented DISABLE_BUNDLED_APP_PROVISIONING opt-out actually reaches the server.",
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "dependsOn": [
         "US-079",
         "US-086"
       ],
-      "completionNotes": "Executor done (awaiting orchestrator). entrypoint.sh skips provisioning when DISABLE_DB_MIGRATIONS=true unless DISABLE_BUNDLED_APP_PROVISIONING=false forces it; every shipped worker (docker-compose, both coolify copies, podman-compose, manual podman) sets DISABLE_BUNDLED_APP_PROVISIONING=true; every server passes ${DISABLE_BUNDLED_APP_PROVISIONING:-} through (the documented opt-out was a no-op before). New provision-bundled-apps.deployment.spec.ts runs the real entrypoint under /bin/sh with stubbed yarn/psql (6 environments) + manifest guards: 10 failing at base, 15/15 after. Server tsgo exit 0, oxlint 0/0. Tier-2: compose/podman boot logs show provisioning on the server only; worker restart runs nothing."
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-088",
@@ -179,6 +179,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-28T19:58:45.641Z"
+    "updatedAt": "2026-09-28T19:59:41.675Z"
   }
 }

@@ -1,0 +1,39 @@
+# Iteration 1 Log
+
+## Metadata
+
+- **Task ID**: US-086
+- **Task Title**: M1: bundle, allowlist and offer the sixth A2E app (a2e-crm)
+- **Description**: As an operator deploying the suite, I want all six first-party A2E apps (including the CRM assistant) built into the image, listed in Settings → Applications → A2E Suite and offered at onboarding, so ...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-28T19:57:27.223Z
+- **Ended At**: 2026-09-28T19:58:45.639Z
+- **Duration**: 1m 18s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-086" PLAN.md
+[94m[bash][0m $ grep -rn "US-086" --include="*.md" . 2>/dev/null | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[bash][0m $ git log --oneline -15
+[94m[bash][0m $ git show --stat fe3623a1 | head -40
+[94m[bash][0m $ grep -n "c31e0000\|a2e-crm" packages/twenty-front/src/modules/a2e-workspace/constants/A2eSuiteApplic...
+[94m[bash][0m $ ls node_modules/.bin/jest 2>&1 | head -2
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/a2e-workspace/constants/__tests__/A2eSuiteApplicationUniv...
+[94m[bash][0m $ head -30 .ralph-tui/progress.md
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-01-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain
+US-086 was already implemented and committed at `fe3623a1` (an ancestor of HEAD `875671a4`), with an existing `done-for-review` entry at 2026-09-27 11:30 UTC. Per the contract's stop condition, I made zero code changes, verified the parity spec is green (`4/4`), and confirmed all three lists + Dockerfile + README/docs are present in HEAD.
+
+- Phase report entry appended: `docs/plan/phases/phase-01-report.md`
+- Ralph bridge entry appended: `.ralph-tui/progress.md`
+- `Ready-to-tick: yes` — only Tier-2 docker/compose orchestrator evidence remains.
+
+<promise>COMPLETE</promise>

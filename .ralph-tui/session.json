@@ -3,10 +3,10 @@
   "sessionId": "9d99b93f-16e2-4446-b9ca-f95422aa14b5",
   "status": "running",
   "startedAt": "2026-09-28T19:57:20.913Z",
-  "updatedAt": "2026-09-28T19:58:45.642Z",
-  "currentIteration": 0,
+  "updatedAt": "2026-09-28T19:59:41.675Z",
+  "currentIteration": 1,
   "maxIterations": 20,
-  "tasksCompleted": 0,
+  "tasksCompleted": 1,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -16,7 +16,18 @@
     "totalTasks": 0,
     "tasks": []
   },
-  "iterations": [],
+  "iterations": [
+    {
+      "iteration": 1,
+      "status": "completed",
+      "taskId": "US-086",
+      "taskTitle": "M1: bundle, allowlist and offer the sixth A2E app (a2e-crm)",
+      "taskCompleted": true,
+      "durationMs": 78416,
+      "startedAt": "2026-09-28T19:57:27.223Z",
+      "endedAt": "2026-09-28T19:58:45.639Z"
+    }
+  ],
   "skippedTaskIds": [],
   "cwd": "/Users/maxaubert/Projets/A2E Suite",
   "activeTaskIds": [],

@@ -1552,3 +1552,15 @@ CLAIMED — US-075/nav-restore-defect — deepseek-v4.1-flash — 2026-09-22T15:
 **Do not redo:** all three lists + parity spec + README/docs are committed and the parity spec is green; the parity spec extends `a2e-*` discovery, never a copied list
 **Remaining:** US-086 has no other unmet bullets — its own work is complete pending orchestrator tick
 **Next:** orchestrator — run the Tier-2 docker/build evidence and tick US-086
+
+## 2026-09-28 19:59 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-087 M1: worker containers must not run bundled app provisioning (compose/coolify/podman) + server opt-out passthrough · **Slice:** already implemented + committed (ancestor of HEAD)
+**Claim:** done-for-review
+**Ready-to-tick:** yes — slice already green; only Tier-2 orchestrator evidence remains (unchanged from the 14:55 entry)
+**Base:** 3f3d2e74e0a8c343f83288240d426bb398b9efc6
+**Changed:** none — zero new work; stop-condition path (existing `done-for-review` at 2026-09-27 14:55 UTC)
+**Checks:** `npx jest src/database/commands/__tests__/provision-bundled-apps.deployment.spec.ts --config=packages/twenty-server/jest.config.mjs` → 1 suite / 15 tests passed; confirmed in HEAD: `entrypoint.sh:42,55` tri-state guard, `docker-compose.yml:18,74` server passthrough + worker true, `podman/podman-compose.yml:31,49`
+**Missing for tick:** Tier-2 — clean-volume `docker compose up` shows provisioning on the server only; worker restart runs nothing; `.env` opt-out reaches the server; podman split
+**Do not redo:** the entrypoint tri-state guard (`true` skip / `false` force / unset follows migrations ownership) is intentional; all 4 compose workers + manual podman set `true`, all servers pass through
+**Remaining:** US-088, US-089, US-090 await orchestrator tick
+**Next:** orchestrator — run the Tier-2 compose/podman boot-log evidence and tick US-087
