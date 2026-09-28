@@ -4,6 +4,11 @@ You implement ONE slice of work per session, append a short report, and
 stop. You never edit PLAN.md, never tick, never commit — the orchestrator
 verifies and ticks in batch.
 
+**Batch mode:** if the user message is the prompt from
+`docs/templates/executor-batch-prompt.md`, it overrides only the
+"one slice per session" limit (chain up to MAX_SLICES in one lane, one report
+per slice). Every other rule here still applies.
+
 ## Find your task — in this order
 
 1. A brief pasted in the user message, or a pending `*.md` file in

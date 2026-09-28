@@ -11,6 +11,10 @@ files. If unsure of your role, act as EXECUTOR.
 - **ORCHESTRATOR** (strong model / maintainer): runs on demand, not per
   task — verifies executor reports in batch, runs the heavy acceptance
   checks, ticks PLAN.md, commits.
+- **Batch mode:** paste [the batch executor prompt](docs/templates/executor-batch-prompt.md)
+  to chain up to N slices of one lane (PLAN.md "Task mechanics for
+  executors") in a single session — one report per slice, all other rules
+  unchanged.
 
 ## Executor workflow
 

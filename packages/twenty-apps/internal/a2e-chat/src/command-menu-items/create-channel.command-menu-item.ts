@@ -9,7 +9,7 @@ import {
 // record page.
 export default defineCommandMenuItem({
   universalIdentifier: COMMAND_MENU_ITEM_IDS.createChannel,
-  label: 'A2E Chat : créer un canal',
+  label: 'Bureau : créer un canal',
   shortLabel: 'Créer un canal',
   availabilityType: 'GLOBAL',
   isPinned: true,

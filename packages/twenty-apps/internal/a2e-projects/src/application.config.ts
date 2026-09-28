@@ -5,7 +5,7 @@ export const APPLICATION_UNIVERSAL_IDENTIFIER =
 
 export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-  displayName: 'A2E Projects',
+  displayName: 'Bureau Projets',
   description:
-    'Projets & tâches 2.0 : projets, statuts, gantt et suivi du temps sur le moteur de tâches natif',
+    'Bureau — projets et tâches : tableaux, statuts, gantt et suivi du temps sur le moteur de tâches natif',
 });

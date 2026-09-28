@@ -12,7 +12,7 @@ import { FRONT_COMPONENT_IDS } from '../constants/universal-identifiers.ts';
 // read the company but not its notes must not see the action.
 export default defineCommandMenuItem({
   universalIdentifier: 'c31a0000-0011-4000-8000-000000000004',
-  label: 'A2E Documents : enregistrer comme document',
+  label: 'Bureau : enregistrer comme document',
   shortLabel: 'Enregistrer comme document',
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier:

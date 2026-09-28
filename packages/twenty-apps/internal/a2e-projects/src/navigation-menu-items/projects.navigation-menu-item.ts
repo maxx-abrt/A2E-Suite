@@ -10,7 +10,7 @@ import {
 
 export default defineNavigationMenuItem({
   universalIdentifier: NAVIGATION_MENU_ITEM_IDS.projects,
-  name: 'Projects',
+  name: 'Projets',
   icon: 'IconKanban',
   position: 110,
   type: NavigationMenuItemType.VIEW,

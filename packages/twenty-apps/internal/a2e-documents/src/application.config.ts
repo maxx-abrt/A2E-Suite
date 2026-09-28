@@ -5,7 +5,7 @@ export const APPLICATION_UNIVERSAL_IDENTIFIER =
 
 export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-  displayName: 'A2E Documents',
+  displayName: 'Bureau',
   description:
-    'Workspace documents: hierarchical doc tree with rich-text editing, templates and sharing',
+    'Bureau — pages et notes : arborescence de documents, éditeur riche, modèles et partage',
 });

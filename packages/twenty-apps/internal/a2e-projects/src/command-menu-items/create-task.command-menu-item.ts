@@ -10,7 +10,7 @@ import {
 // selected record, unlike the task-scoped timer/subtask commands.
 export default defineCommandMenuItem({
   universalIdentifier: COMMAND_MENU_ITEM_IDS.createTask,
-  label: 'A2E Projects : créer une tâche',
+  label: 'Bureau : créer une tâche',
   shortLabel: 'Créer une tâche',
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: FRONT_COMPONENT_IDS.createTaskCommand,

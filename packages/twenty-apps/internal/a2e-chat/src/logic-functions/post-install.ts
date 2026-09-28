@@ -20,7 +20,7 @@ const handler = async () => {
 export default definePostInstallLogicFunction({
   universalIdentifier: LOGIC_FUNCTION_IDS.postInstall,
   name: 'post-install',
-  description: 'Prépare A2E Chat : canaux de démarrage (Général, Annonces).',
+  description: 'Prépare Bureau Discussions : canaux de démarrage (Général, Annonces).',
   timeoutSeconds: 120,
   shouldRunSynchronously: false,
   handler,

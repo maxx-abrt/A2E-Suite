@@ -10,6 +10,13 @@ hardened milestones (M0–M6); the historical P1–P10 scope is retained below f
 traceability, unchanged. Old checkmarks remain historical evidence, not
 release-readiness.
 
+**Revision 2026-09-27 — suite identity & experience.** Adds the five-app
+naming contract (Bureau · Agenda · Bilan · Syna · Archive), the G6–G14
+experience diagnosis and milestones M7–M11 (see
+[§ Suite experience program](#suite-experience-program--m7m11-revision-2026-09-27)).
+M0–M2 stay first in execution order; M7a (naming) and M7b (internal-route nav)
+may run in parallel with M0–M2 because they are small and unblock copy/QA.
+
 ## Product definition (what "done" looks like)
 
 One install of A2E Suite, no separate products:
@@ -70,6 +77,13 @@ minimum product increment a user can touch. Status is one of
 | M4 | **Bilan safe & complete** | Finance flows end-to-end: invoice→payment→ledger, fiches, subventions, budgets | (a) P7.0 safety gate live proofs (replay, numbering, period locks, alternate-API stamping); (b) P7.1d/2 open legs (invoice PDF+send, fiche editors, reports, grant wizard); (c) E10/E11 journeys green; (d) finance/privacy reviewer sign-off recorded | partial — app code strong, live proofs blocked behind M0 |
 | M5 | **Collaboration & smart layer** | Chat/Inbox/Drive/AI feel built-in, calm, and permission-safe | (a) Chat two-session live proof (P5 Tier-2); (b) inbox mention→deep-link journey; (c) drive upload/preview journey; (d) AI direct-tool live dispatch incl. server restart with the `directToolInvocation` arg; (e) every AI mutation shows confirm-first; (f) solo-mode degradation re-verified | partial — all built at Tier-1; live journeys pending |
 | M6 | **Release polish** | "Best app possible": fast, graceful, fr/en, accessible | (a) Performance budgets measured (p95 search < 150ms @10k records; 1k-task Gantt); (b) E12 usability pass with recorded sessions; (c) full e2e regression green; (d) upgrade-from-clean-2.39 + uninstall-everything→CRM-works rehearsals; (e) release notes declare accepted/deferred scope | planned |
+| M7 | **Suite identity & navigation** (G6/G7/G8) | Sidebar shows five named apps — Bureau, Agenda, Bilan, Syna, Archive — each a grouped, reorderable native section with one landing page; CRM is one optional section among them | E13 green; see M7 below | planned |
+| M8 | **Notion-grade Bureau** (G9/G10) | Slash menu, rich blocks, inline databases, page icons/covers, backlinks, quick capture — calm and discoverable | E14 green; see M8 below | planned |
+| M9 | **Template gallery** (G11) | One searchable gallery across apps with ≥ 60 curated templates, previews, "use"/"save as template" | E15 green; see M9 below | planned |
+| M10 | **Syna — AI with BYOK** (G12) | Workspace admins bring their own provider key; Syna is available everywhere in context, confirm-before-write, zero-AI mode intact | E16 green; see M10 below | planned |
+| M11 | **Interconnected suite** (G13/G14) | Any record links to any other app's record; Today view, universal quick-create, cross-app automations recipes | E17 green; see M11 below | planned |
+| M12 | **Product documentation** | Detailed user guide per app written from the real UI, linked from in-app help | M12 acceptance; see M12 below | planned |
+| M13 | **Guided-or-in-control UX** | Every "New" offers blank / suggested templates / gallery; contextual empty states; customize-in-place with reset | E12 + E15 re-run; see M13 below | planned |
 
 ### Milestone discipline
 
@@ -138,7 +152,376 @@ The D01–D09 ledger below stands. New/absorbed decisions:
 | D-M1 | App provisioning mechanism: image-baked manifests + startup registration vs provisioning script in DEPLOY.md/compose vs both — M1a investigates and records the choice | Maintainer; M1a |
 | D-Shell | **Remove the custom A2E right workbench dock** — it does not match the native shell (colour/feel) and duplicates native surfaces. Re-home only the widgets with no native equivalent into an existing surface; do not keep a permanent right rail. Product decision 2026-09-24; supersedes the P2.4 dock delivery, executed by P2.6 | Product; P2.6 |
 
+| D-N1 | **Five-app naming (product decision 2026-09-27):** Bureau = notes/docs/projects/tasks (+ discussions), Agenda = calendar, Bilan = finance, Syna = AI, Archive = drive/files. Display names + nav only; package dirs, npm names and universal IDs never change | Product; M7a |
+| D-N2 | Where Chat lives: recommended **inside Bureau** as "Discussions" (no sixth app name was given). Alternative: separate optional collaboration app. Executor must not invent a sixth brand | Product; M7a |
+| D-N3 | "Archive" collides with the verb *archive* (FR *archiver*) used for soft-delete/retire states in Twenty and Bilan (subvention retirement). Recommended: brand **Archive** in nav/app name only; keep action verbs as "Supprimer/Delete", "Retirer/Retire" in copy; audit collisions in M7a | Product + UX; M7a |
+| D-N4 | BYOK scope: workspace-level keys (recommended) vs per-user keys. Instance `AI_PROVIDERS` remains the fallback; billing entitlement bypass for BYOK workspaces must be explicit | Product + security; M10a |
+
 Historical D01–D09 remain in the Unresolved decisions table below, verbatim.
+
+## Suite experience program — M7–M11 (revision 2026-09-27)
+
+Planning-only revision from a repository review at HEAD `884035e4`. Every
+"observed" cell below was checked in source this session; nothing here is a
+completion claim.
+
+### What exists vs the five-app target
+
+| App (target) | Backed by today | Observed state | Gap |
+| --- | --- | --- | --- |
+| **Bureau** (notes, docs, projects, tasks) | `a2e-documents` (displayName `A2E Documents`), `a2e-projects` (`A2E Projects`), `a2e-chat` (`A2E Chat`) | Three separate apps, three unrelated nav rows (`Documents` pos 100, `Projects` + `Mes tâches`/`Assignées à moi`/`En retard`/`Créées par moi` pos 110–120, `Discussions` pos 130); mixed FR/EN hard-coded nav names | G6, G7, G9 |
+| **Agenda** (calendar) | Host page `AppPath.Calendar` (`/calendar`, `packages/twenty-front/src/pages/calendar/`, `modules/calendar/`) | Reachable only from Home cards / Cmd+K; **no sidebar entry** because app nav `LINK` items are external-only (D09) | G7, G8 |
+| **Bilan** (money) | `a2e-accounting` (displayName `Bilan`) | 8 nav rows flat in the sidebar (Tableau de bord, Dépenses et recettes, Factures, Devis, Budgets, Catégories, Trouver des aides, Bilan) — not grouped | G6 |
+| **Syna** (AI) | Host AI chat `AppPath.AiChat` (`/chat/:threadId?`), `packages/twenty-front/src/modules/ai/`, server `metadata-modules/ai/*` | Not branded; provider keys are **instance-only** (`AI_PROVIDERS` config var read in `ai-models/services/provider-config.service.ts`) — no workspace BYOK | G12 |
+| **Archive** (drive) | `a2e-drive` (`A2E Drive`, one `driveFolder` object) + host `AppPath.Drive` page | Nav row "Drive" → folder VIEW, not the `/drive` explorer page (D09 again) | G6, G8 |
+
+### Diagnosis G6–G14
+
+| # | Gap | Evidence | Fixed by |
+| --- | --- | --- | --- |
+| G6 | **No suite identity.** Users see `A2E Documents/Projects/Chat/Drive`, not Bureau/Agenda/Syna/Archive; nav names hard-coded FR (`'Mes tâches'`) next to EN (`'Projects'`, `'Drive'`) | `packages/twenty-apps/internal/a2e-*/src/application.config.ts`, `src/navigation-menu-items/*.ts` | M7a |
+| G7 | **Flat sidebar.** ~15 A2E rows at top level; no per-app folder/section; CRM rows mixed in | same nav files; positions 100–140 | M7c |
+| G8 | **App nav cannot target host pages** (`/calendar`, `/drive`, `/discussions`, `/inbox`, `/chat`) — D09 | `getLinkNavigationMenuItemComputedLink`, `createWorkspaceRouteObjects.tsx` lines ~155–180 | M7b |
+| G9 | **Editor is thin vs Notion.** Custom blocks = `CalloutBlock`, `FileBlock`, `MentionInlineContent` only; no toggle, columns, to-do→task, inline database/view, embed, equation, synced block, TOC; no page icon/cover/backlinks | `packages/twenty-front/src/modules/blocknote-editor/blocks/`, BlockNote `^0.51.4` | M8 |
+| G10 | **No quick capture / Today.** No global "new page" shortcut, no daily note, no unified "Today" (tasks due + events + recent docs) beyond Home cards | `modules/home-dashboard/components/` | M8e, M11b |
+| G11 | **Few templates, siloed.** Docs: 5 (`a2e-documents/src/lib/starter-templates.ts`), projects: 2 (`a2e-projects/src/lib/starter-projects.ts`), workflow recipes: 2 (`a2e-projects/src/workflow-templates/`), fiches: 8 (`a2e-accounting/src/lib/fiche-templates.ts`); no gallery, no preview, no "save as template" | files listed | M9 |
+| G12 | **AI not BYOK, not branded, not ambient.** Only instance keys; per-app actions exist (P9.2) but are scattered buttons | `provider-config.service.ts`; P9.2 ticks | M10 |
+| G13 | **Cross-app linking is per-pair.** Links exist only where a relation field was hand-declared (doc↔task, task↔project); no generic "link any record" / backlink panel | app `fields/` dirs | M11a |
+| G14 | **Presets never offer Agenda/Archive/Syna or Projects**; picker copy still says "Bureau notes and docs" | `workspace-template-definitions.constant.ts`, `a2e-workspace/constants/A2eWorkspaceTemplates.ts` | M2 + M7d |
+
+### Binding UX principles for M7–M11 (on top of native-first rules)
+
+1. **Twenty's shell, Notion's calm.** Same sidebar, side panel, record page,
+   views, Cmd+K. No new chrome. Notion-likeness comes from content surfaces
+   (editor, gallery, empty states), not a new layout.
+2. **One landing page per app** with one primary action, recent items and
+   2–4 templates; advanced views one click away, never on first screen.
+3. **Progressive disclosure:** defaults work with zero configuration;
+   every default is editable via native views/fields/layouts (that is where we
+   beat Notion: real relations, permissions, workflows, CRM data).
+4. **Everything is linkable, searchable, templatable** — every object any app
+   adds must clear native-law §5 *and* appear in the gallery (M9) and link
+   picker (M11a).
+5. **AI is optional and consented.** Every Syna write shows a draft/diff and
+   needs a click; the product is complete with AI off.
+6. **fr + en for every string** — no hard-coded FR in app nav/JSX (SDK
+   localization path must be verified; if missing, file the SDK gap instead of
+   hard-coding).
+
+### M7 — Suite identity & navigation
+
+- [~] **M7a — Rename display surfaces (D-N1/N2/N3).** Change only
+      `displayName`/`description` in `application.config.ts` and nav `name`s:
+      `a2e-documents` + `a2e-projects` + `a2e-chat` → shown under **Bureau**
+      (app displayNames `Bureau — Pages`, `Bureau — Projets`, `Bureau —
+      Discussions` until M7e decides single registration); `a2e-drive` →
+      **Archive**; `a2e-accounting` stays **Bilan**. Host: calendar page title
+      and Cmd+K entries → **Agenda**; AI chat page/side panel title → **Syna**
+      (Lingui `msg`/`t`). Update onboarding copy in `A2eWorkspaceTemplates.ts`,
+      `docs/product-experience.md` names table, `docs/applications.md`,
+      README. Universal IDs, package names, object API names untouched.
+      — Acceptance: grep shows no user-facing `A2E Documents|A2E Drive|A2E
+      Chat|A2E Projects`; fr+en strings; app tests + front `tsgo` green; app
+      versions bumped and re-published per applications.md.
+      — 2026-09-27 maintainer session (phase-11-report): **app side done** —
+      `application.config.ts` displayNames: documents → `Bureau`, projects →
+      `Bureau Projets`, chat → `Bureau Discussions`, drive → `Archive`, crm →
+      `Syna CRM` (accounting already `Bilan`); descriptions prefixed; all
+      command-menu labels `A2E X : …` → `Bureau : …`; nav `Projects` →
+      `Projets`, `Drive` → `Archive`; post-install welcome doc/descriptions;
+      versions bumped (documents 0.2.1, projects 0.1.11, chat/drive/crm
+      0.1.1). Front onboarding labels (`OnboardingInstallableApps.ts`):
+      `Bureau Projects`, `Bureau Discussions`, `Archive`, `Syna for CRM`.
+      Checks: 5 apps `typecheck`+`lint`+`test:unit` green (640 tests);
+      twenty-front a2e-workspace/onboarding 41 suites/239 tests green.
+      **Remaining (next slice M7a-2):** host strings → Agenda (calendar page
+      header/Cmd+K/Home card titles in `modules/calendar/`, `pages/calendar/`,
+      `home-dashboard/`) and Syna (`AiChatPageHeader.tsx` "Ask AI",
+      `SidePanelAskAiInfo.tsx`, `useOpenAskAiPageInSidePanel.ts`,
+      `EngineComponentKeyHeadlessComponentMap.tsx`, nav drawer mode label in
+      `useNavigationDrawerModes.ts`, Settings → AI title in
+      `SettingsAI.tsx`/`useSettingsNavigationItems.tsx`) keeping generic
+      "AI" where it names the permission/technology (roles, workflow action
+      type, usage labels); `DriveToolbar.tsx`/`DriveBreadcrumb` "Drive" →
+      "Archive" (update `DriveBreadcrumb.test.tsx`,
+      `mapDriveSearchRecordsToResultItems.test.ts`); Cmd+K search group
+      heading for projects provider; `docs/applications.md`, app READMEs.
+      Tier-2: re-publish the 5 bumped apps and see new names in Settings →
+      Applications + sidebar (installed rows keep old names until upgrade).
+- [ ] **M7b — Internal-route nav items (resolves D09, unblocks Agenda/Archive/
+      Syna nav).** Allow app-defined `LINK` nav items whose target is a known
+      host route (`AppPath.Calendar|Drive|Discussions|Inbox|AiChat|Home`):
+      server validation accepts a relative path from an allow-list; front
+      `getLinkNavigationMenuItemComputedLink` passes it through as an
+      in-app `<Link>` (no `https://` prefixing, no new tab). Publish the SDK
+      version carrying it and repin apps. Do not create a new nav item type
+      if extending `LINK` validation suffices — record the choice.
+      — Acceptance: unit tests for allow-list (reject `//evil`, `javascript:`,
+      unknown paths); Archive → `/drive`, Bureau Discussions → `/discussions`
+      sidebar rows navigate in-app; reorder/hide still works.
+- [ ] **M7c — Grouped app sections.** Each app's nav items live under one
+      native **folder** nav item (existing `NavigationMenuItemType` folder,
+      as used by `navigation-menu-item/edit/folder/`): Bureau (Accueil,
+      Pages, Projets, Mes tâches, Discussions), Agenda, Bilan (Tableau de bord,
+      Transactions, Factures & devis, Budgets, Aides, Réglages→Catégories),
+      Syna, Archive. Collapse state per user. Reduce Bilan to ≤ 6 visible rows;
+      rest reachable from its landing page. CRM rows grouped under a **CRM**
+      folder only when the preset hides nothing (never move user-created rows).
+      — Acceptance: fresh workspace sidebar ≤ 7 top-level rows; user
+      customisations survive app upgrade (managed-provenance, see P1.7).
+- [ ] **M7d — Agenda host entry without an app.** Agenda is a host page; add
+      a host-seeded (standard) nav item for `/calendar` in new workspaces and
+      a preset flag `agendaEnabled`; existing workspaces get it via an upgrade
+      command under the current version dir (`2-39/`, strictly increasing
+      timestamp, `up`/`down`) that only inserts if absent.
+      — Acceptance: fresh + upgraded workspace show Agenda once; hiding it
+      persists; integration test for idempotency.
+- [ ] **M7e — Bureau packaging decision executed (D-B1).** Either (a) keep 3
+      apps + preset bundle "Bureau" (install all three, one folder), or (b) a
+      thin `a2e-bureau` app that declares the others as dependencies and owns
+      the Bureau landing page. Recommendation: (a) now, (b) only if SDK
+      supports app dependencies. Record in phase report.
+- [ ] **M7f — Per-app landing pages.** Bureau home, Agenda (calendar week),
+      Bilan dashboard (exists), Syna (chat + recent runs + actions library),
+      Archive (`/drive` explorer + usage). Built with `definePageLayout`
+      widgets or existing host pages; each has an empty state with 1 primary
+      action + 3 templates from M9.
+
+### M8 — Notion-grade Bureau
+
+- [ ] **M8a — Slash menu & block set.** Extend `blocknote-editor/blocks/Schema.ts`
+      and the slash menu (`components/CustomAddBlockItem.tsx`, `BlockEditor.tsx`)
+      with: toggle list, toggle heading, columns (2–4), divider, quote,
+      to-do (with "convert to task" → native `task`, provenance kept), code
+      with language, table (BlockNote table), image/video/audio/PDF embed via
+      `FileBlock` (attachments storage), web bookmark card, math/equation
+      (only if license-compatible — else defer, see D07), table of contents,
+      page link / sub-page block (creates child `document`), record mention for
+      any object (extend `MentionInlineContent`), date/reminder mention (creates
+      Agenda reminder). Slash menu grouped (Basic / Media / Bureau / Links /
+      Syna), searchable in fr+en, keyboard-only usable.
+      — Acceptance: each block round-trips save→reload→export (markdown/PDF),
+      unit tests per block serializer; storybook stories light/dark.
+- [ ] **M8b — Inline views ("databases") in pages.** A block embedding a
+      native view (table/kanban/calendar/gallery) of any object with its own
+      filters (reuse record-table/board components read-only first, then
+      editable). This is the flagship "better than Notion": the database is a
+      real Twenty object with permissions and relations.
+      — Acceptance: embed Tasks board filtered by project in a doc; edits in
+      block reflect on `/objects/tasks`; permission-denied renders a safe stub.
+- [ ] **M8c — Page chrome.** Page icon (emoji/icon dictionary) + cover image,
+      full-width toggle, small-text toggle, "last edited by", breadcrumbs from
+      tree, word count, favourites (existing `document-favorite`), lock page.
+      Fields added via app `fields/` + generated migration path.
+- [ ] **M8d — Backlinks & mentions panel.** "Mentioned in" section on
+      document and on every record page (page-layout tab/widget) computed
+      from mention nodes stored at save; no full-text scan at read.
+- [ ] **M8e — Quick capture & daily note.** Global shortcut (Cmd+Shift+N) and
+      Cmd+K "New page" creating an untitled doc in Inbox/personal root; opt-in
+      daily note (template from M9) opened from Agenda day header.
+- [ ] **M8f — Drag & drop tree polish.** Drag pages in sidebar tree and in
+      page, move-to dialog with search, duplicate page, copy link, open in
+      side panel; keyboard alternatives (C7).
+- [ ] **M8g — Markdown & Notion import.** Import `.md` / Notion export zip
+      (pages + nested pages + images) into Bureau via existing `import/` module;
+      export page subtree as zip. No Notion API integration in this slice.
+
+### M9 — Template gallery (one gallery, all apps)
+
+- [ ] **M9a — Gallery surface.** One host surface (modal from Cmd+K "Templates",
+      from every "New" button and each app landing page) listing content
+      templates across installed apps, with categories, search, preview pane,
+      "Use template" and "Blank". Data source: each app exposes its templates
+      through its existing lib constants + a logic function returning
+      descriptors (C1 contract: key, version, labels fr/en, category, preview,
+      required apps, inputs). No new engine/table for built-ins.
+- [ ] **M9b — Workspace templates ("Save as template").** Any document/project
+      (and its tasks), board view, Bilan fiche can be saved as a workspace
+      template (an `isTemplate` flag + provenance on the existing object, as
+      the documents template-copy helper does). Editing a copy never mutates
+      the template (C1).
+- [ ] **M9c — Content: ≥ 60 curated templates, fr+en, no fake real data.**
+      Minimum set (each a separate small executor slice, grouped by app):
+      - Bureau pages (20): meeting notes ✔, 1:1 ✔, project brief ✔, PRD ✔,
+        journal ✔, weekly review, daily note, OKRs, team wiki home, onboarding
+        guide, meeting agenda recurring, decision log (ADR), retrospective,
+        brainstorm, reading list, course notes (Cornell), thesis planner,
+        recipe book, travel plan, personal CRM-lite.
+      - Bureau projects (12): product launch ✔, event ✔, sprint board, content
+        calendar, hiring pipeline, client onboarding, website redesign, student
+        semester, association annual general meeting, grant application
+        project (links Bilan), bug tracker, personal goals/habits.
+      - Agenda (6): weekly time-block, team rituals (standup/retro recurring
+        series), editorial calendar, exam revision schedule, event run-sheet,
+        shift roster.
+      - Bilan (10): 8 fiches ✔ + personal monthly budget, freelancer
+        invoicing kit (quote→invoice→payment reminders).
+      - Archive (4): folder structures — client, association, student, company
+        admin (creates `driveFolder` trees only).
+      - Syna (8+): prompt/action recipes — summarize page, meeting→tasks,
+        weekly digest, draft invoice from time entries, grant eligibility
+        check, email reply, translate page, clean up notes.
+      - Cross-app recipes (≥ 6, workflow engine, opt-in, previewed): deal won
+        ✔ → project; recurring tasks ✔; meeting event → notes page;
+        invoice paid → task done + ledger; file uploaded to project → task
+        "review"; task due → Agenda reminder.
+      — Acceptance per template: preview renders, apply creates fresh IDs,
+      re-apply same operation idempotent, fr+en, unit test on the descriptor.
+- [ ] **M9d — Persona presets use the gallery.** Rewrite the six preset
+      `starterBundleContents` to reference gallery keys; add Agenda, Archive,
+      Projects, Syna where relevant (fixes G14 together with M2).
+
+### M10 — Syna (AI, BYOK)
+
+- [ ] **M10a — Workspace BYOK (D-N4).** Settings → Syna → Providers: admin
+      adds OpenAI / Anthropic / Mistral / Google / OpenAI-compatible base URL
+      (the `AI_SDK_PACKAGES` already supported by `aiProviderConfigSchema`),
+      tests the key, picks default + fast model. Keys stored encrypted with the
+      existing `core-modules/secret-encryption` utils (never returned to the
+      client — keep the Audit tab masking); resolution order in
+      `provider-config.service.ts`: workspace provider → instance
+      `AI_PROVIDERS` → catalog. Keep the "never template-resolve custom
+      provider values" rule. Needs entity + generated migration.
+      — Acceptance: integration tests: key encrypted at rest, cross-workspace
+      isolation, invalid key → safe error, removing key falls back; billing
+      gating documented for BYOK.
+- [ ] **M10b — Syna everywhere.** One entry per context: Cmd+K "Ask Syna",
+      editor slash `/syna` + selection toolbar (improve, summarize,
+      translate, continue), record page "Ask about this record", Bilan
+      categorization suggestions (P9.2 accounting bullet), Agenda "find a
+      slot"/"prepare meeting". All reuse the existing tool registry
+      (`toolTriggerSettings`) and the confirm-first pattern.
+- [ ] **M10c — Syna context & memory, scoped.** Context = current record/page
+      + explicit @mentions only; no silent workspace-wide retrieval.
+      Workspace-level instructions ("house style") editable by admins.
+- [ ] **M10d — Zero-AI & cost guardrails.** With no key configured, every
+      Syna entry is hidden or shows a one-line "Connect a provider" link for
+      admins only; per-workspace monthly token cap and usage view (reuse
+      event-logs usage from P9.1).
+
+### M11 — Interconnected suite
+
+- [ ] **M11a — Universal link picker & "Related" panel.** From any record or
+      page: "Link…" searches all objects (reuse search federation, P2.5)
+      and creates a link via a generic junction (evaluate native
+      `attachment`-like polymorphic pattern vs a new app-owned `a2eLink`
+      junction with morph targets — decide in a spike, record it). Record
+      pages show a "Related" widget listing links + backlinks (M8d).
+- [ ] **M11b — Today view.** Home becomes "Today": tasks due/overdue, today's
+      Agenda events, recent pages, pending Bilan items (unpaid invoices,
+      grant deadlines), Syna digest (optional). Reuses `home-dashboard`
+      widgets; each card deep-links to the native page.
+- [ ] **M11c — Universal quick-create.** Cmd+K "Create…" lists page, task,
+      project, event, invoice, expense, file upload, with the current record
+      pre-linked.
+- [ ] **M11d — Cross-app events contract (C5) implemented once.** Event
+      payload conventions for doc/task/event/invoice/file lifecycle so M9c
+      recipes and Inbox notifications consume the same events.
+- [ ] **M11e — Unified activity & inbox.** Mentions from pages, chat, tasks,
+      Bilan approvals flow into the native Inbox (P8) with deep links.
+
+### Validation journeys (extend E01–E12)
+
+| ID | Journey | Required observable result |
+| --- | --- | --- |
+| E13 | Fresh workspace, each persona → sidebar | Five app sections named Bureau/Agenda/Bilan/Syna/Archive (only installed ones), ≤ 7 top rows, fr+en, Agenda/Archive open host pages in-app |
+| E14 | Bureau: `/` menu → every M8a block → inline Tasks board → reload → export → backlink visible on task | No data loss; embedded view respects permissions |
+| E15 | Gallery: search "réunion" → preview → use → save a modified copy as template → reuse | Fresh IDs, provenance, template untouched |
+| E16 | Syna: admin adds BYOK key → member asks on a page → draft → confirm → remove key | Key never in any response/DOM; fallback/zero-AI state correct; second workspace unaffected |
+| E17 | Cross-app: meeting event → notes page → extract tasks → invoice from time → file attached → all visible in "Related" and Today | Same IDs everywhere, links survive reload and optional-app removal degrades safely |
+
+### M12 — Product documentation (user-facing, from the real UI)
+
+Written only against surfaces that exist and were opened in a browser (or,
+for Tier-0 executors, against the component source + stories); every page
+states the version it documents. Lives in `packages/twenty-docs/user-guide/`
+(Mintlify, `docs.json` navigation) under a new **A2E Suite** group; fr + en.
+
+- [ ] **M12a — Information architecture.** Add `user-guide/a2e-suite/` with
+      `docs.json` nav: Overview · Getting started · Bureau · Agenda · Bilan ·
+      Syna · Archive · Templates · Working across apps · Admin & self-host ·
+      FAQ/Troubleshooting. Stub pages list the exact screens they will cover.
+- [ ] **M12b — Getting started.** Create workspace → pick a starting point
+      (each persona: what gets installed, what content is seeded, first
+      action) or "Start from scratch"; sidebar tour (sections, reorder, hide);
+      Cmd+K; side panel vs full page; Home/Today. Screenshots from the E13
+      run (`tasks/live-verify/*.mjs` can capture them).
+- [ ] **M12c — One page per app, per real screen.** For each app: landing
+      page, every nav entry, every view (table/kanban/calendar/gantt), record
+      page tabs, every command-menu action (exact labels from the
+      `command-menu-items/*.ts`), empty states, settings, keyboard shortcuts,
+      limits (e.g. Bureau co-editing = stale-write detection, not live OT;
+      Bilan not a certified accounting product). Bilan: invoice→payment→
+      ledger walkthrough, fiches (all 8 named), subventions search/save.
+      Archive: folders, upload, preview, usage. Agenda: views, recurrence
+      edit scopes, reminders, task deadlines vs events. Syna: BYOK setup,
+      actions per app, confirm-first, zero-AI mode.
+- [ ] **M12d — Templates catalogue page** generated from the M9 descriptors
+      (script in `packages/twenty-docs/scripts/`, no hand-maintained list):
+      name, app, what it creates, inputs, screenshot.
+- [ ] **M12e — Cross-app recipes & linking** (M11): "meeting → notes →
+      tasks → invoice" walkthrough; link picker; Related panel.
+- [ ] **M12f — Admin & self-host:** provisioning (M1), app install/upgrade/
+      uninstall data policy (C3), roles (C4), BYOK keys, backups; link
+      `DEPLOY.md`, `docs/applications.md`.
+- [ ] **M12g — In-app help wiring:** `FirstOpenHelpWidget` and each app's
+      empty state link to the matching doc page; Cmd+K "Help: <topic>".
+      — Acceptance for M12: `docs.json` builds (`npx nx build twenty-docs`
+      or the package's documented command), every page names real UI labels
+      that grep-match source, fr+en present, no screenshot older than the
+      documented version.
+
+### M13 — Easiest UX: guided *or* in control
+
+The product must be usable two ways on every surface: **pick a template /
+wizard and be done**, or **build it yourself with full native flexibility**.
+
+- [ ] **M13a — Dual entry on every "New".** Each create action opens a small
+      chooser: Blank · 3 suggested templates (context-aware: current app,
+      persona) · "Browse all" (M9 gallery). Keyboard: Enter = blank.
+- [ ] **M13b — Onboarding "Start from scratch" path** is first-class next to
+      personas: installs nothing, shows the app catalogue with one-line
+      descriptions (Bureau, Agenda, Bilan, Syna, Archive), each installable
+      later from the landing page's empty state.
+- [ ] **M13c — Contextual empty states** for every A2E view/page: one
+      sentence, one primary button, one "Use a template" link, one "Learn
+      more" (M12g). Reuse the host empty-state components.
+- [ ] **M13d — Customize in place.** From any app landing page: "Customize"
+      opens native layout edit (page-layout edit mode), views, fields — with
+      a "Reset to template default" per managed item (P1.7 provenance).
+- [ ] **M13e — Consistency pass.** Same verbs everywhere (Créer/Create,
+      Ouvrir/Open, Partager/Share), same icon per concept (icon dictionary),
+      no mixed-language labels, app-name prefix only where ambiguous.
+      Grep-based test that app `command-menu-items` labels follow
+      `<App> : <verb> …`.
+- [ ] **M13f — Undo & safety.** Destructive actions from A2E surfaces use the
+      native undo snackbar/soft delete; template apply shows "Undo" (removes
+      only what that operation created).
+
+### Task mechanics for executors (M7–M13)
+
+| Milestone | Phase report file | Lane (files it owns — parallel lanes don't collide) | Depends on |
+| --- | --- | --- | --- |
+| M7 | `docs/plan/phases/phase-11-report.md` | L-NAV: `twenty-apps/internal/*/src/{application.config,navigation-menu-items,command-menu-items}`, front `navigation*`, `onboarding/constants` | M7a → M7c/M7f; M7b → M7c/M7d |
+| M8 | `phase-12-report.md` | L-EDITOR: `twenty-front/src/modules/blocknote-editor/**`, `a2e-documents/src/{fields,front-components}` | M3 P3 durable save (existing) |
+| M9 | `phase-13-report.md` | L-TPL: `a2e-*/src/lib/*template*`, `starter-*`, `workflow-templates/`, new gallery module `twenty-front/src/modules/template-gallery/` | M9a → M9b/M9d; M9c slices independent (one family each) |
+| M10 | `phase-14-report.md` | L-AI: `twenty-server/src/engine/metadata-modules/ai/**`, `twenty-front/src/modules/ai/**`, `pages/settings/ai/**` | M10a → M10b–d |
+| M11 | `phase-15-report.md` | L-LINK: `home-dashboard/**`, `command-menu*`, new link junction app files | M11a spike first; M11b independent |
+| M12 | `phase-16-report.md` | L-DOCS: `packages/twenty-docs/user-guide/a2e-suite/**` | M12a first; others after the documented surface's milestone |
+| M13 | `phase-17-report.md` | L-UX: empty states + create choosers per app | M9a for M13a |
+
+Rules: a slice touching an app bumps its `package.json` patch version once
+per session; host strings via Lingui; never commit catalogs; lanes may run
+in parallel sessions only when their "owns" columns don't overlap.
+
+### Ordering and slicing guidance
+
+M0→M1→M2 stay first. Safe parallel slices now: **M7a-2, M7b** (small, unblock
+naming/QA), **M10a** (server-only), **M9c** content families, **M12a**. Then M7c–f → M9a (content slices are
+ideal executor tasks: one template family per slice) → M8a–c → M11a/b →
+M8d–g, M10b–d, M11c–e. Each bullet = one executor slice unless noted; a slice
+touching an app bumps that app's version and follows the publish/install path
+in [applications.md](docs/applications.md).
 
 ## House acceptance gates (apply to EVERY task)
 

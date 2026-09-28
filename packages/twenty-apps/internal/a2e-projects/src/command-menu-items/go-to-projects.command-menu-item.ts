@@ -4,7 +4,7 @@ import { FRONT_COMPONENT_IDS } from '../constants/universal-identifiers.ts';
 
 export default defineCommandMenuItem({
   universalIdentifier: 'c31b0000-0011-4000-8000-000000000005',
-  label: 'A2E Projects : aller aux projets',
+  label: 'Bureau : aller aux projets',
   shortLabel: 'Projets',
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: FRONT_COMPONENT_IDS.goToProjects,

@@ -9,7 +9,7 @@ import { FRONT_COMPONENT_IDS } from '../constants/universal-identifiers.ts';
 // fails to bundle.
 export default defineCommandMenuItem({
   universalIdentifier: 'c31a0000-0011-4000-8000-000000000003',
-  label: 'A2E Documents : créer un document',
+  label: 'Bureau : créer un document',
   shortLabel: 'Créer et ouvrir un document',
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: FRONT_COMPONENT_IDS.createDocumentCommand,

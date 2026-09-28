@@ -14,7 +14,7 @@ import {
 // owning a presence system.
 export default defineCommandMenuItem({
   universalIdentifier: COMMAND_MENU_ITEM_IDS.openTimeTracker,
-  label: 'A2E Projects : chronomètre',
+  label: 'Bureau : chronomètre',
   shortLabel: 'Chronomètre',
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier:

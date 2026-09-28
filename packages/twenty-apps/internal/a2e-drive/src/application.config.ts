@@ -5,7 +5,7 @@ export const APPLICATION_UNIVERSAL_IDENTIFIER =
 
 export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-  displayName: 'A2E Drive',
+  displayName: 'Archive',
   description:
-    'Fichiers de l’espace de travail : dossiers arborescents et organisation additive des pièces jointes existantes',
+    'Archive — fichiers de l’espace de travail : dossiers arborescents et organisation additive des pièces jointes existantes',
 });

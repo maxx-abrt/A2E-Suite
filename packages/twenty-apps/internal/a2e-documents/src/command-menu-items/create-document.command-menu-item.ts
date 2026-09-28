@@ -4,7 +4,7 @@ import { DOCUMENT_BROWSER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-
 
 export default defineCommandMenuItem({
   universalIdentifier: 'c31a0000-0011-4000-8000-000000000001',
-  label: 'A2E Documents : créer un document',
+  label: 'Bureau : créer un document',
   shortLabel: 'Créer un document',
   availabilityType: 'GLOBAL',
   isPinned: true,

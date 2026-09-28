@@ -4,7 +4,7 @@ import { APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/universal-identifi
 
 export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-  displayName: 'A2E CRM',
+  displayName: 'Syna CRM',
   description:
-    'Actions IA du CRM natif : brouillons de réponse e-mail et assistance d’enrichissement de fiche, en lecture seule et sous revue humaine',
+    'Syna pour le CRM — actions IA : brouillons de réponse e-mail et assistance d’enrichissement de fiche, en lecture seule et sous revue humaine',
 });

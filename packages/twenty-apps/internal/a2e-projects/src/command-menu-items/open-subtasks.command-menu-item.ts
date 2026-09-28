@@ -10,7 +10,7 @@ import {
 // when there is exactly one, and otherwise browses the whole forest.
 export default defineCommandMenuItem({
   universalIdentifier: COMMAND_MENU_ITEM_IDS.openSubtasks,
-  label: 'A2E Projects : sous-tâches',
+  label: 'Bureau : sous-tâches',
   shortLabel: 'Sous-tâches',
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: FRONT_COMPONENT_IDS.taskSubtasks,

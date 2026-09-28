@@ -9,7 +9,7 @@ export const ONBOARDING_INSTALLABLE_APPS: OnboardingInstallableApp[] = [
   },
   {
     universalIdentifier: '4f759655-84f8-434d-9c76-ee1850e8c1a4',
-    label: msg`Projects`,
+    label: msg`Bureau Projects`,
     description: msg`Project boards, tasks, subtasks and time tracking`,
   },
   {
@@ -19,17 +19,17 @@ export const ONBOARDING_INSTALLABLE_APPS: OnboardingInstallableApp[] = [
   },
   {
     universalIdentifier: 'e2dce399-87f1-4548-b307-5f368b4d5dd4',
-    label: msg`Chat`,
+    label: msg`Bureau Discussions`,
     description: msg`Workspace channels, threads, reactions and read cursors`,
   },
   {
     universalIdentifier: 'b11cd01f-75de-4acd-8e67-0e9c484fde02',
-    label: msg`Drive`,
+    label: msg`Archive`,
     description: msg`File browser with folders, preview and bulk actions`,
   },
   {
     universalIdentifier: 'c31e0000-0000-4000-8000-000000000000',
-    label: msg`CRM assistant`,
+    label: msg`Syna for CRM`,
     description: msg`Review-first AI reply drafts and record enrichment`,
   },
   {

@@ -5,7 +5,7 @@ export const APPLICATION_UNIVERSAL_IDENTIFIER =
 
 export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-  displayName: 'A2E Chat',
+  displayName: 'Bureau Discussions',
   description:
-    'Chat natif de l’espace de travail : canaux workspace/projet/à la demande, fils, réactions et compteurs de lecture',
+    'Bureau — discussions de l’espace de travail : canaux workspace/projet/à la demande, fils, réactions et compteurs de lecture',
 });

@@ -22,6 +22,9 @@ another backend, or fork the design system.
 | **A2E Suite** | The platform, workspace and shared shell | Twenty fork; internal package names remain `twenty-*` |
 | **Bureau** | Intended installable work/knowledge experience: documents, projects and tasks; later collaboration and Drive | No Bureau app definition today. `a2e-documents` and `a2e-projects` supply parts of this experience |
 | **Bilan** | Intended installable finance experience: quotes, invoices, cash movements, books, budgets, fiches and funding | Existing `a2e-accounting` app, display name `Bilan`; not release-certified |
+| **Agenda** | Calendar: events, recurrence, reminders, task deadlines | Host page `/calendar`; no sidebar entry yet (PLAN M7b/M7d) |
+| **Syna** | AI assistant with bring-your-own-key, in context everywhere | Host AI chat + tool registry; instance-only keys today (PLAN M10) |
+| **Archive** | Drive: folders, files, previews, usage | `a2e-drive` app (displayed `A2E Drive`) + host `/drive` page (PLAN M7a) |
 | **CRM** | Optional user journey for client/contact/opportunity management | Existing standard objects; hiding navigation does not delete records or revoke access |
 | **Texxel / A2EMoney** | Old inspiration applications | Reference-only trees under `Inspiration apps (bureaubilan)` |
 

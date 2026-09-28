@@ -205,7 +205,7 @@ export const buildDealWonWorkflow = (
   return {
     name: DEAL_WON_WORKFLOW_NAME,
     description:
-      'Crée un projet (et, si A2E Chat est installé, un canal lié) quand une opportunité passe à l’étape gagnée, sur le moteur de workflow natif de Twenty.',
+      'Crée un projet (et, si Bureau Discussions est installé, un canal lié) quand une opportunité passe à l’étape gagnée, sur le moteur de workflow natif de Twenty.',
     trigger: {
       name: 'Opportunité gagnée',
       type: 'DATABASE_EVENT',

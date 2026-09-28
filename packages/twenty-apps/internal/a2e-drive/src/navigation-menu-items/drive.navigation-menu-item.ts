@@ -13,7 +13,7 @@ import {
 // native item.
 export default defineNavigationMenuItem({
   universalIdentifier: NAVIGATION_MENU_ITEM_IDS.drive,
-  name: 'Drive',
+  name: 'Archive',
   icon: 'IconFolder',
   position: 140,
   type: NavigationMenuItemType.VIEW,

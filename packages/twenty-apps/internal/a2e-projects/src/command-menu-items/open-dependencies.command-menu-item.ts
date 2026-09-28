@@ -10,7 +10,7 @@ import {
 // single selection before offering the blocker choices.
 export default defineCommandMenuItem({
   universalIdentifier: COMMAND_MENU_ITEM_IDS.openDependencies,
-  label: 'A2E Projects : dépendances',
+  label: 'Bureau : dépendances',
   shortLabel: 'Dépendances',
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: FRONT_COMPONENT_IDS.taskDependencies,

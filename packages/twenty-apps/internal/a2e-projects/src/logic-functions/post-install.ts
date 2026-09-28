@@ -129,7 +129,7 @@ export default definePostInstallLogicFunction({
   universalIdentifier: LOGIC_FUNCTION_IDS.postInstall,
   name: 'post-install',
   description:
-    'Prépare A2E Projects : projets de démarrage (livraison, rétroplanning d’événement) avec leurs tâches et jalons.',
+    'Prépare Bureau Projets : projets de démarrage (livraison, rétroplanning d’événement) avec leurs tâches et jalons.',
   timeoutSeconds: 120,
   shouldRunSynchronously: false,
   handler,

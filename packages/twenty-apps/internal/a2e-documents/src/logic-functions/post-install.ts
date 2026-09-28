@@ -61,14 +61,14 @@ const seedGettingStartedDocument = async (
       __args: {
         data: [
           {
-            title: 'Bienvenue dans A2E Documents',
+            title: 'Bienvenue dans Bureau',
             kind: 'DOCUMENT',
             isFavorite: true,
             position: 'V',
             content: {
               blocknote: null,
               markdown:
-                '# Bienvenue dans A2E Documents\n\n' +
+                '# Bienvenue dans Bureau\n\n' +
                 'Voici votre premier document. Depuis l’arborescence vous pouvez :\n\n' +
                 '- créer des sous-documents et les glisser pour les réorganiser ;\n' +
                 '- épingler vos favoris ;\n' +
@@ -139,7 +139,7 @@ export default definePostInstallLogicFunction({
   universalIdentifier: LOGIC_FUNCTION_IDS.postInstall,
   name: 'post-install',
   description:
-    'Prépare A2E Documents : document de bienvenue et bundle de modèles de démarrage (réunion, brief, PRD, entretien).',
+    'Prépare Bureau : document de bienvenue et bundle de modèles de démarrage (réunion, brief, PRD, entretien).',
   timeoutSeconds: 120,
   shouldRunSynchronously: false,
   handler,

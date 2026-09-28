@@ -28,7 +28,7 @@ export default defineLogicFunction({
   universalIdentifier: LOGIC_FUNCTION_IDS.dealWonCreateChannel,
   name: 'deal-won-create-channel',
   description:
-    'Crée le canal A2E Chat relié au projet d’une affaire gagnée ; ignore l’étape avec une raison explicite si A2E Chat n’est pas installé.',
+    'Crée le canal Bureau Discussions relié au projet d’une affaire gagnée ; ignore l’étape avec une raison explicite si Bureau Discussions n’est pas installé.',
   timeoutSeconds: 60,
   workflowActionTriggerSettings: {
     label: 'Créer le canal du projet',

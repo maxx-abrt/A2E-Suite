@@ -22,6 +22,7 @@ export const MAINTAINED_DOCUMENTS = [
   'docs/plan/p3.4-advanced-authoring-feasibility.md',
   'docs/templates/task.md',
   'docs/templates/handoff.md',
+  'docs/templates/executor-batch-prompt.md',
   'packages/twenty-apps/README-A2E.md',
   'packages/twenty-apps/internal/a2e-accounting/README.md',
   'packages/twenty-apps/internal/a2e-chat/README.md',

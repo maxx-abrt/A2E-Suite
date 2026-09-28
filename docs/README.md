@@ -21,6 +21,7 @@ explains the fork; upstream product documentation lives in
 | Run checks or set up development | [Verification](verification.md) | Package manifest and Nx targets |
 | Understand a known risk | [Architecture audit](repository-architecture-audit.md) | Source evidence and the matching plan work package |
 | Scope work or leave a handoff | [Task template](templates/task.md) | [Handoff template](templates/handoff.md) |
+| Run several executor slices in one session | [Batch executor prompt](templates/executor-batch-prompt.md) | [Execution contract](../PROMPT.md) |
 | Deploy the platform | [Deployment guide](../DEPLOY.md) | [App provisioning](applications.md) is separate |
 
 ## Document ownership and precedence
