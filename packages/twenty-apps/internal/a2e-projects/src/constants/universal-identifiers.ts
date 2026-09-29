@@ -87,6 +87,13 @@ export const PROJECT_FIELD_IDS = {
   recipeCorrelationKey: 'c31b0200-0001-4000-8000-00000000000c',
 } as const;
 
+// The cross-app recipe family (US-107) mints one such provenance field per
+// write target it does not own: a replayed trigger finds the row it already
+// created instead of duplicating it. One generic TEXT slot each, additive.
+export const DOCUMENT_FIELD_IDS = {
+  recipeCorrelationKey: 'c31b0200-0001-4000-8000-00000000000d',
+} as const;
+
 export const LABEL_IDENTIFIER_IDS = {
   projectName: 'c31b0200-0001-4000-8000-000000000001',
   milestoneName: 'c31b0300-0001-4000-8000-000000000001',
@@ -111,6 +118,11 @@ export const LOGIC_FUNCTION_IDS = {
   // `workflowActionTriggerSettings` (P4.1 prebuilt-recipe pattern).
   dealWonCreateProject: 'c31b0000-0012-4000-8000-000000000010',
   dealWonCreateChannel: 'c31b0000-0012-4000-8000-000000000011',
+  // M9c cross-app recipes (US-107): meeting → notes page, file → review task,
+  // task due → Agenda reminder. Same P4.1 action-step pattern.
+  meetingNotesPage: 'c31b0000-0012-4000-8000-000000000012',
+  fileReviewTask: 'c31b0000-0012-4000-8000-000000000013',
+  taskDueReminder: 'c31b0000-0012-4000-8000-000000000014',
 } as const;
 
 // Task-extension fields live on the standard task object (app fields,
@@ -136,6 +148,10 @@ export const TASK_FIELD_IDS = {
   // Dependency edge (US-049 decision): task.blockedBy ➜ task, a real
   // task-to-task precedence link. Additive — blockIssue (task ➜ note) stays.
   blockedBy: 'c31b0201-0001-4000-8000-00000000000b',
+  // C5 provenance for tasks minted by a cross-app recipe (US-107): file-upload
+  // review tasks. Mirrors project.recipeCorrelationKey; distinct slot so a
+  // replay of one recipe never re-uses another recipe's row.
+  recipeCorrelationKey: 'c31b0201-0001-4000-8000-00000000000c',
 } as const;
 
 export const COMMAND_MENU_ITEM_IDS = {

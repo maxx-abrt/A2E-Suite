@@ -64,6 +64,18 @@ after each iteration and it's included in prompts for context.
   on `filter: { templateKey: { is: 'NOT_NULL' } }`; the root folder's `name` is
   user-editable, so never delta on names. Child folders are created after their
   parent and reference the fresh parent id via the `parentId` write scalar.
+- A `twenty-apps/internal/*` workflow recipe is four files: a pure `lib/*.ts`
+  (deterministic C5 correlation key + preview writes plan), a
+  `workflow-templates/*.workflow.ts` (DATABASE_EVENT/CRON trigger + LOGIC_FUNCTION
+  step + validator), a `logic-functions/*.logic-function.ts` whose inline-typed
+  handler (first/only function in the file) is what `dev:build` parses into the
+  workflow-action `inputSchema`, and an injectable `logic-functions/handlers/*.ts`.
+  Idempotency lives on the target row: query the persisted provenance
+  (`project/task/document.recipeCorrelationKey`, or `calendarEvent.iCalUid`) before
+  creating. App-owned fields pinned on standard/external objects are standalone
+  `defineField` manifests (no server migration). Core API generic writes are
+  `create<Plural>(data: [...])` (`createTasks`, `createDocuments`), while the
+  internal workspace GraphQL factory names `create<Singular>(data)`.
 
 ---
 
@@ -167,4 +179,17 @@ after each iteration and it's included in prompts for context.
   - a2e-drive had no post-install hook despite the brief saying one existed; adding `definePostInstallLogicFunction` under `src/logic-functions/post-install.ts` is enough (auto-discovered, no app-config wiring).
   - The AC's descriptor contract (`key/version/labels fr+en/category/requiredApps`) is implemented here per US-106's explicit AC, unlike US-103/104/105 which deferred it to US-117. `requiredApps` is `[]`: a folder tree only uses Archive's own object.
   - `npx twenty dev:build .` regenerated `.twenty/output` (gitignored) and confirms the field + post-install in the manifest (12 files, was 10).
+---
+
+## 2026-09-29 - US-107 (M9c family: cross-app workflow recipes ≥6)
+- Added `src/lib/workflow-recipes.ts`: the C1 family registry (6 entries — 2 existing, 3 new, 1 P7-deferred) with `key/version/labels fr+en/category/requiredApps/preview` writes and `validateWorkflowRecipeDescriptors` (≥6, bilingual labels, ready recipes have previews, no invoice/accounting write while P7 blocked, deferred has reason + no preview).
+- Added the three non-P7 recipes end to end: pure `meeting-notes-recipe.ts` / `file-review-recipe.ts` / `task-due-reminder-recipe.ts` (+ shared `recipe-correlation.ts`), builders/validators `workflow-templates/{meeting-notes,file-review,task-due-reminder}.workflow.ts`, logic functions + idempotent handlers `logic-functions/{...}.logic-function.ts` + `handlers/*.ts`.
+- Meeting event → notes page (`calendarEvent.created` → `createDocuments`), file in project → review task (`document.created` → `createTasks`, `SKIPPED` when no project), task due → Agenda reminder (`task.updated` → `createCalendarEvents` with native `reminderMinutes`).
+- Idempotency: new nullable `recipeCorrelationKey` TEXT on task + document (mirrors `project.recipeCorrelationKey`); calendar reminder uses `iCalUid`. Invoice-paid recipe recorded `DEFERRED` gatedBy P7, never built.
+- Tests: 27 new (lib recipe/descriptor/workflow + handler stubs) → 335 pass total. Bumped `a2e-projects` 0.1.12→0.1.13. Appended to `docs/plan/phases/phase-13-report.md`.
+- Files changed: 5 new lib files + 1 lib edit, 3 new workflow templates, 3 new logic functions + 3 handlers, 2 new fields, 1 constants edit, 10 new specs, `package.json`, `phase-13-report.md`.
+- **Learnings:**
+  - The workflow-action `inputSchema` is inferred by parsing the inline-typed handler in the `.logic-function.ts`; keep it the first and only function in the file (no exported helpers) or the manifest builder can't see it.
+  - `npx twenty dev:build .` is the authoritative check that the inline schema + new fields + workflow actions all register (46 files this run).
+  - `createCalendarEvents` (generic plural core-API create for the standard `calendarEvent`) is unit-tested against a stub only — Tier-2 must confirm the running core API accepts a local channel-less calendar event.
 ---

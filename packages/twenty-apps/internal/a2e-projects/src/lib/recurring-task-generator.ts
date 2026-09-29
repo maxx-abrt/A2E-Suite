@@ -13,6 +13,11 @@
 // Kept pure and clock-injectable: node:test pins the calendar math and the
 // manifest builder never has to import a live client.
 
+// Identité de la recette, portée par ce module pur : le registre de la famille
+// M9c (workflow-recipes.ts) la lit sans dépendre du descripteur de workflow.
+export const RECURRING_TASK_GENERATOR_RECIPE_KEY = 'recurring-task-generator';
+export const RECURRING_TASK_GENERATOR_RECIPE_VERSION = 1;
+
 export type RecurrenceFrequency = 'DAILY' | 'WEEKLY' | 'MONTHLY';
 
 export type RecurringTaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';

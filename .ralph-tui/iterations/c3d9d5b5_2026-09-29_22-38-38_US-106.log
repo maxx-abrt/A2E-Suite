@@ -1,0 +1,151 @@
+# Iteration 7 Log
+
+## Metadata
+
+- **Task ID**: US-106
+- **Task Title**: M9c family: Archive folder-structure templates ×4 (a2e-drive)
+- **Description**: As an Archive user, I want ready-made folder structures (client, association, student, company admin) so that I can organize files per persona in one click. Starting state: not started — a2e-drive has...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-29T20:38:38.339Z
+- **Ended At**: 2026-09-29T20:46:57.992Z
+- **Duration**: 8m 19s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the mandatory clean-start check and task confirmation.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-106" PLAN.md
+Dirty files are Ralph's own tracking files — not task content. Let me confirm the task and check for existing claims.
+[94m[bash][0m $ ls docs/plan/phases/
+[94m[bash][0m $ grep -rn "US-106\|M9c" PLAN.md docs/plan/ 2>/dev/null | head -50
+[94m[bash][0m $ grep -rn "US-106" docs/ tasks/ 2>/dev/null | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-drive -type f -not -path '*/node_modules/*' | sort
+No existing US-106 claim in phase-13. Let me explore the a2e-drive app structure.
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-drive/package.json
+[94m[bash][0m $ grep -rn "post-install\|postInstall\|post_install\|starter\|Starter\|template\|Template" packages/tw...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/application.config.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/objects/drive-folder.object.ts
+[94m[bash][0m $ grep -rn "postInstall\|post-install\|onInstall\|seeder\|Starter" packages/twenty-apps/internal/a2e-d...
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-projects/src -type f -not -path '*/node_modules/*' | sort
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/template-gallery.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/starter-templates.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/logic-functions/post-install.ts
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-drive/README.md
+[94m[bash][0m $ grep -rn "C1\b\|C1 contract\|provenance" docs/plan/*.md PLAN.md 2>/dev/null | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/fiche-templates.ts
+Let me study the C1 contract and sibling descriptor patterns.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/starter-projects.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/logic-functions/post-install.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/constants/field-vocabulary.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/application.config.ts
+[94m[bash][0m $ grep -rn "a2e-drive\|driveFolder\|Archive\|/drive" docs/plan/phases/*.md | head -40
+[94m[read][0m
+[94m[bash][0m $ grep -n "postInstall\|POST_INSTALL" packages/twenty-apps/internal/a2e-projects/src/constants/univers...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/logic-functions/post-install.ts
+[94m[bash][0m $ grep -rn "findMissingStarterFiches" packages/twenty-apps/internal/a2e-accounting/src/lib/starter-boo...
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-apps/internal/a2e-accounting/src/lib/install-steps.ts
+[94m[bash][0m $ sed -n '90,150p' packages/twenty-apps/internal/a2e-accounting/src/lib/starter-books.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/views/all-drive-folders.view.ts
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-apps/internal/a2e-accounting/src/logic-functions/utils/records.ts 2>...
+[94m[bash][0m $ grep -rn "is: 'NULL'\|is: 'NOT_NULL'" packages/twenty-apps/internal packages/twenty-front/src --incl...
+[94m[bash][0m $ sed -n '20,60p' packages/twenty-apps/internal/a2e-accounting/src/objects/fiche.object.ts
+[94m[bash][0m $ grep -rn "definePostInstallLogicFunction" packages/twenty-sdk/src 2>/dev/null | head
+[94m[bash][0m $ grep -n "parentFolder\|joinColumn" packages/twenty-apps/internal/a2e-drive/.twenty/output/manifest.j...
+[94m[read][0m
+[94m[todowrite][0m
+I have enough context. Let me set up the task list and implement.
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+Before touching code, I'll claim the slice per the contract.
+[94m[bash][0m $ date && date -u && tail -5 docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ cat >> docs/plan/phases/phase-13-report.md << 'EOF'  CLAIMED — US-106/folder-structures — deepseek-v...
+Claimed. Now implementing. First, the identifiers:
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/constants/universal-identifiers.ts
+Now the provenance field on the folder object:
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/objects/drive-folder.object.ts
+Now the folder-structure template descriptors:
+[94m[write][0m "// FOLDER STRUCTURES — ready-made driveFolder trees, one per persona.
+//
+// A template is DATA: a stable key, a version, fr+en labels, a category and the
+// folder tree it creates. It creates `driveFo... (7049 chars)"
+[94m[write][0m "import type { CoreApiClient } from 'twenty-client-sdk/core';
+
+import {
+  findMissingFolderStructureTemplates,
+  flattenFolderStructureTemplate,
+  type FolderStructureFolderDraft,
+  type FolderStructur... (3861 chars)"
+Now the idempotent seeder handler:
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+import { definePostInstallLogicFunction } from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';... (1367 chars)"
+Now the post-install logic function:
+[94m[read][0m
+[94m[read][0m
+Now the tests — per-descriptor and handler idempotency:
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  FOLDER_STRUCTURE_CATEGORY,
+  FOLDER_STRUCTURE_TEMPLATE_KEYS,
+  FOLDER_STRUCTURE_TEMPLATES,
+  findMissingFolderStr... (2777 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  FOLDER_STRUCTURE_TEMPLATES,
+  flattenFolderStructureTemplate,
+} from '../../lib/folder-structure-templates.ts';
+i... (4192 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/package.json
+Now bump the version and update the README:
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/README.md
+Now run the quality gates from the app directory:
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -30
+[94m[bash][0m $ yarn lint 2>&1 | tail -40
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -40
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -30
+Build passed. Let me verify the generated manifest captured the post-install and the new field:
+[94m[bash][0m $ find .twenty/output/src -type f -name '*.ts' | sort
+[94m[bash][0m $ sed -n '285,300p' .twenty/output/manifest.json
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/README.md
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -5
+[94m[bash][0m $ git status --porcelain
+Let me verify the icon names exist in the twenty-ui icon dictionary:
+[94m[bash][0m $ grep -o "IconUser\b\|IconUsers\b\|IconSchool\b\|IconBuilding\b\|IconTemplate\b" packages/twenty-ui/s...
+[94m[bash][0m $ sed -n '1,30p' packages/twenty-ui/src/icon/icon-dictionary.md
+Let me check whether the features guide has an Archive row that should reflect the new templates:
+[94m[bash][0m $ grep -n "Archive\|a2e-drive\|driveFolder\|dossiers" docs/features.md | head -20
+Re-running the full gate set on the final state:
+[94m[bash][0m $ yarn typecheck && echo "TYPECHECK_OK" && yarn lint 2>&1 | tail -2 && yarn test:unit 2>&1 | grep -E "...
+[94m[bash][0m $ git status --porcelain && echo "---" && git diff --stat -- packages/twenty-apps/internal/a2e-drive
+[94m[bash][0m $ sed -n '1,40p' .ralph-tui/progress.md
+All green. Now the phase report and progress entries:
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -20 .ralph-tui/progress.md
+Now append the US-106 iteration entry:
+[94m[bash][0m $ adding `definePostInstallLogicFunction` under `src/logic-functions/post-install.ts` is enough (auto-...
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ it did not, so the auto-discovered `post-install` hook now performs the apply. The seeder writes `dr...
+[94m[todowrite][0m
+US-106 implemented and green.
+
+- `folder-structure-templates.ts`: four `FolderStructureTemplate` descriptors (`CLIENT`, `ASSOCIATION`, `ETUDIANT`, `ADMINISTRATION_ENTREPRISE`) with `key`, `version`, `labels` fr+en, `category`, `requiredApps`, `tree`; `findMissingFolderStructureTemplates` delta helper.
+- `driveFolder.templateKey` provenance field; `seed-folder-structures-handler.ts` creates folder trees only and deltas on that key (no duplicate subtrees on re-apply); `post-install.ts` auto-discovered hook.
+- Tests: 8 descriptor + 4 handler → `tests 87 / pass 87 / fail 0` (was 75). Gates: `yarn typecheck` clean, `yarn lint` 0/0, `npx twenty dev:build .` → Build succeeded (12 files). Patch bumped 0.1.1→0.1.2. No catalog churn.
+- Tier 2 live-install browser proof is the only item left for the orchestrator. Report + progress entries appended.
+
+<promise>COMPLETE</promise>
