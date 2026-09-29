@@ -89,3 +89,35 @@ The AC asks for the two templates "as template descriptors reusing the `withTemp
 
 ### fr+en note (content-slice convention, not a defect)
 Same as US-103/US-104: `packages/twenty-apps/internal/*` has no i18n layer, every content family (this app's 10 templates, a2e-documents, a2e-projects) is French, and the `key/version/labels fr+en/category` contract named in the AC is US-117's deliverable. Inventing it here would pre-empt US-117 and add an unconsumed parallel shape. No catalogs touched.
+
+CLAIMED — US-106/folder-structures — deepseek-v4.1-flash — 2026-09-29T20:42:15Z — base 173f6bb0353f5c0bae6d41b8d63df7091adce2db
+
+## 2026-09-29 20:46 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-106 M9c family: Archive folder-structure templates ×4 (a2e-drive) · **Slice:** the four Archive folder-structure descriptors + idempotent install apply + per-descriptor/handler tests + patch bump
+**Claim:** done-for-review
+**Ready-to-tick:** yes — all Tier-0 gates green; only the Tier-2 live-install leg is absent.
+**Base:** 173f6bb0353f5c0bae6d41b8d63df7091adce2db
+**Changed:**
+- `packages/twenty-apps/internal/a2e-drive/src/lib/folder-structure-templates.ts` (NEW: `FolderStructureTemplate` descriptors `CLIENT`/`ASSOCIATION`/`ETUDIANT`/`ADMINISTRATION_ENTREPRISE` — `key`, `version`, `labels` fr+en, `category`, `requiredApps`, `tree`; `findMissingFolderStructureTemplates` delta by key; `flattenFolderStructureTemplate` parent-before-child drafts)
+- `.../src/lib/__tests__/folder-structure-templates.test.ts` (NEW: family + one test per descriptor + ordering + delta + unknown key)
+- `.../src/logic-functions/handlers/seed-folder-structures-handler.ts` (NEW: injectable client; folders only; `templateKey` provenance delta)
+- `.../src/logic-functions/__tests__/seed-folder-structures-handler.test.ts` (NEW: fresh / child parenting / re-apply no-op / partial delta)
+- `.../src/logic-functions/post-install.ts` (NEW: auto-discovered `definePostInstallLogicFunction`)
+- `.../src/objects/drive-folder.object.ts` (+nullable `templateKey` TEXT provenance field)
+- `.../src/constants/universal-identifiers.ts` (+`FOLDER_FIELD_IDS.templateKey`, +`LOGIC_FUNCTION_IDS.postInstall`)
+- `.../package.json` (0.1.1→0.1.2)
+- `.../README.md` (folders section + folder-structure templates subsection, truthful)
+- this report
+**Checks:**
+- `yarn typecheck` (a2e-drive) → clean (exit 0, no output)
+- `yarn lint` → `Found 0 warnings and 0 errors` (41 files)
+- `yarn test:unit` → `tests 87 / pass 87 / fail 0` (was 75; +8 descriptor, +4 handler)
+- `npx twenty dev:build .` → `Build succeeded (12 files)`; manifest carries the `templateKey` field and the `post-install` hook
+- `node docs/scripts/check-docs.mjs` → `PASS: 26 maintained documents, 217 local inline links`
+**Missing for tick:** Tier 2 (orchestrator): install/reinstall `a2e-drive` in a browser and observe the four folder trees (Client, Association, Étudiant, Administration) created once, with no duplicate on reinstall.
+**Do not redo:** the `FolderStructureTemplate` descriptor contract and the `flattenFolderStructureTemplate` pre-order; the `driveFolder.templateKey` provenance field + `{ templateKey: { is: 'NOT_NULL' } }` delta; the handler's folders-only write path (no attachment/file mutation). Extending the family is constant-only; the seeder needs no change.
+**Remaining:** US-107 (recipes), then US-117/US-118/US-119/US-120.
+**Next:** US-107 per Ralph's queue; the descriptor contract's richer `preview`/`inputs` fields (if any) remain US-117's scope.
+
+### Scope note (why a field + an install seed, and why not descriptor-only)
+US-106's AC (unlike US-103/104/105) explicitly requires `key/version/labels fr+en/category/required apps` and an idempotent apply "delta by a stable key/provenance on the descriptor", so the fr+en labels ARE implemented here, not deferred to US-117. A `driveFolder` had no stable marker to delta on — its `name` is user-editable — so a nullable `templateKey` provenance field (the same app-side provenance shape as fiches' `templateKey`/bookSheets' `systemKey`, C1 §5.1) was added and every seeded folder is tagged with its descriptor key. The brief said a2e-drive already had a post-install path; it did not, so the auto-discovered `post-install` hook now performs the apply. The seeder writes `driveFolder` rows only — never an attachment or file record.

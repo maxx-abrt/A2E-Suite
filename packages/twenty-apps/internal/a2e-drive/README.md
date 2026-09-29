@@ -36,11 +36,27 @@ and install the app on a disposable workspace.
 ### Folders
 
 The `driveFolder` object ([drive-folder.object.ts](./src/objects/drive-folder.object.ts))
-has `name`, `icon`, `color`, `archivedAt` and a self-relation
-(`parent` / `children`, cascade) so folders form a tree. A parent-cycle guard
-repairs invalid moves, and a daily cron purges folders and attachments archived
-beyond the 7-day retention
+has `name`, `icon`, `color`, `archivedAt`, a `templateKey` provenance marker and
+a self-relation (`parent` / `children`, cascade) so folders form a tree. A
+parent-cycle guard repairs invalid moves, and a daily cron purges folders and
+attachments archived beyond the 7-day retention
 ([purge-drive-trash.ts](./src/logic-functions/purge-drive-trash.ts)).
+
+On install, `post-install` seeds four idempotent persona folder structures —
+
+**Client**, **Association**, **Étudiant** and **Administration** — as folder
+trees only, never a file record. Each seeded folder carries its descriptor key
+in `templateKey`, so a reinstall deltas to the missing structures and never
+duplicates a subtree ([folder-structure-templates.ts](./src/lib/folder-structure-templates.ts)).
+
+### Folder-structure templates
+
+The four structures are `FolderStructureTemplate` descriptors
+(`key`, `version`, `labels` fr+en, `category`, `requiredApps`, `tree`) in
+[folder-structure-templates.ts](./src/lib/folder-structure-templates.ts). They
+require no sibling app: a structure only creates this app's own `driveFolder`
+rows. The `post-install` hook applies the missing ones through
+[seed-folder-structures-handler.ts](./src/logic-functions/handlers/seed-folder-structures-handler.ts).
 
 ### Files
 
@@ -87,6 +103,6 @@ yarn test:unit
 yarn twenty dev:build .
 ```
 
-The unit tests cover the cycle and retention helpers; they do not prove an
-installed workspace or a browser file journey. Record real results with the
-[verification guide](../../../../docs/verification.md).
+The unit tests cover the cycle, retention and folder-structure helpers; they do
+not prove an installed workspace or a browser file journey. Record real results
+with the [verification guide](../../../../docs/verification.md).

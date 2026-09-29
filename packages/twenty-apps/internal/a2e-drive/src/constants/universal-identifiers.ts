@@ -34,6 +34,10 @@ export const FOLDER_FIELD_IDS = {
   icon: 'c31d0100-0001-4000-8000-000000000002',
   color: 'c31d0100-0001-4000-8000-000000000003',
   archivedAt: 'c31d0100-0001-4000-8000-000000000004',
+  // C1 provenance marker: the folder-structure descriptor key that created the
+  // folder, null for a user folder. The seeder deltas on it, so re-applying a
+  // template never duplicates a subtree.
+  templateKey: 'c31d0100-0001-4000-8000-000000000005',
 } as const;
 
 // Fields pinned on the standard `attachment` object. The relation field is
@@ -61,6 +65,7 @@ export const LOGIC_FUNCTION_IDS = {
   // `toolTriggerSettings` (P1.5) — no `registerAiTools`, no new table.
   findFile: 'c31d0000-0012-4000-8000-000000000003',
   dedupeHints: 'c31d0000-0012-4000-8000-000000000004',
+  postInstall: 'c31d0000-0012-4000-8000-000000000005',
 } as const;
 
 export const NAVIGATION_MENU_ITEM_IDS = {

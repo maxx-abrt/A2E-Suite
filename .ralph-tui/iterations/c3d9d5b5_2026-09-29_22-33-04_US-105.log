@@ -1,0 +1,100 @@
+# Iteration 6 Log
+
+## Metadata
+
+- **Task ID**: US-105
+- **Task Title**: M9c family: Bilan templates — personal monthly budget + freelancer invoicing kit (a2e-accounting)
+- **Description**: As a Bilan user, I want a personal monthly budget template and a freelancer invoicing kit (quote→invoice→payment reminders) alongside the 8 existing fiches so the Bilan gallery family is complete. Sta...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-29T20:33:04.190Z
+- **Ended At**: 2026-09-29T20:38:32.853Z
+- **Duration**: 5m 28s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "US-105" PLAN.md | head -50
+I'll follow the executor contract. Starting with the clean-start check.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ ls docs/plan/phases/ 2>/dev/null
+[94m[bash][0m $ grep -rn "M9c" PLAN.md | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ ls -la packages/twenty-apps/internal/a2e-accounting/ && echo "---SRC---" && find packages/twenty-app...
+[94m[bash][0m $ grep -n "US-105\|a2e-accounting\|M9c" docs/plan/phases/phase-13-report.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/fiche-templates.ts
+No claim for US-105 exists. Reading the relevant files.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/budget-equilibre.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/starter-books.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/objects/budget.object.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/logic-functions/post-install.ts
+[94m[bash][0m $ grep -rln "FICHE_TEMPLATE\|fiche-templates\|withTemplateDefaults\|getFicheTemplate" packages/twenty-...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-accounting/src/lib/__tests__/ && echo "---fiche object---" && c...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/__tests__/fiches.test.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/__tests__/starter-books.test.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/README.md
+[94m[bash][0m $ ls -R packages/twenty-apps/internal/a2e-accounting/.twenty
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-accounting/src -name "*.test.ts" -path "*objects*"
+[94m[bash][0m $ grep -rn "templateKey\|FICHE" packages/twenty-apps/internal/a2e-accounting/src/front-components/ pac...
+[94m[bash][0m $ grep -rn "templateKey\|ASSO_FR\|FicheTemplateKey\|FICHE_TEMPLATE" packages/twenty-apps/internal/a2e-...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-accounting/src/lib/install-steps.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/views/fiches.view.ts
+[94m[bash][0m $ grep -n "US-117\|US-120" tasks/prd.json | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/.oxlintrc.json
+[94m[bash][0m $ git log --oneline -8
+[94m[bash][0m $ printf '\nCLAIMED — US-105/bilan-templates — deepseek-v4.1-flash — 2026-09-29T22:40:00Z — base 259cf...
+Claiming the slice before touching code.
+[94m[glob][0m pattern: [96m**/a2e-accounting/docs/features.md[0m
+[94m[bash][0m $ git show --stat 47137f6d | head -27
+[94m[bash][0m $ git show 259cfcdf -- docs/features.md | head -60
+[94m[bash][0m $ grep -n "Bilan\|accounting\|fiche" docs/features.md | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/features.md
+Now implementing. First, the template keys and union:
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/fiche-templates.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/fiche-templates.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/fiche-templates.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/fiche-templates.ts
+[94m[bash][0m $ grep -rhoE "color: '[a-z]+'" packages/twenty-apps/internal/a2e-accounting/src | sort -u
+[94m[bash][0m $ grep -rn "LABEL_COLOR\|ColorOption" packages/twenty-front/src/modules/ui/field/display 2>/dev/null |...
+[94m[bash][0m $ grep -rn "'sky'\|'turquoise'\|'pink'" packages/twenty-front/src/modules/ui/theme/constants/*.ts 2>/d...
+[94m[bash][0m $ grep -rn "COLOR.*=.*\['\|Color =" packages/twenty-shared/src/types/*.ts 2>/dev/null | grep -i color ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/FieldMetadataOptions.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/objects/fiche.object.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/__tests__/fiches.test.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/package.json
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/README.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/features.md
+[94m[bash][0m $ echo "TEST_EXIT=${PIPESTATUS[0]}"
+[94m[bash][0m $ echo "TYPECHECK_EXIT=$?"
+[94m[bash][0m $ echo "LINT_DONE"
+[94m[bash][0m $ echo "BUILD_DONE"
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -8
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ git diff packages/twenty-apps/internal/a2e-accounting/src/lib/fiche-templates.ts | head -120
+[94m[bash][0m $ tail -40 .ralph-tui/progress.md
+All gates green. Appending the phase report and Ralph progress entry.
+[94m[bash][0m $ tail -4 docs/plan/phases/phase-13-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -6 .ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain | grep -i "locales\|\.po\|generated" || echo "no catalog churn"
+US-105 slice complete. Summary:
+
+- Added two Bilan template descriptors to `packages/twenty-apps/internal/a2e-accounting/src/lib/fiche-templates.ts:11`: `BUDGET_MENSUEL_PERSONNEL` (reuses the existing charges/produits budget shape via `budgetGridSection`, all amounts 0) and `KIT_FACTURATION_INDEPENDANT` (issuer → client → devis → facture → relances).
+- Extended the fiche object's `templateKey` select (`objects/fiche.object.ts:33`) with the two additive options, so the descriptors are usable in the editor.
+- Added per-descriptor tests and updated the shape test 8→10 (`src/lib/__tests__/fiches.test.ts:11`); bumped `package.json` 0.1.0→0.1.1; updated README + `docs/features.md`.
+- Checks: `yarn typecheck` clean; `yarn lint` 0 warnings/0 errors (106 files); `yarn test:unit` 108/108 pass; `npx twenty dev:build .` succeeded; `check-docs.mjs` PASS.
+- Reported `done-for-review` (Ready-to-tick: yes) in `docs/plan/phases/phase-13-report.md` and appended to `.ralph-tui/progress.md`. No catalogs touched; no commits made.
+
+Missing for tick: Tier-2 browser install/reinstall observing all 10 Bilan templates and non-duplication.
+
+<promise>COMPLETE</promise>

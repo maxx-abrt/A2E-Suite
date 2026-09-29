@@ -67,6 +67,19 @@ export default defineObject({
       isNullable: true,
     },
     {
+      // C1 provenance: set on folders a folder-structure template created, so
+      // the seeder can tell a seeded subtree from a user folder and re-apply
+      // without duplicating. Null on user folders.
+      universalIdentifier: FOLDER_FIELD_IDS.templateKey,
+      type: FieldType.TEXT,
+      name: 'templateKey',
+      label: 'Modèle d’origine',
+      description:
+        'Clé du modèle de dossiers qui a créé ce dossier (vide = dossier manuel)',
+      icon: 'IconTemplate',
+      isNullable: true,
+    },
+    {
       universalIdentifier: RELATION_IDS.folderParent,
       type: FieldType.RELATION,
       name: 'parent',

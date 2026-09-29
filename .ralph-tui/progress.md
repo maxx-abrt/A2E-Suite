@@ -52,6 +52,18 @@ after each iteration and it's included in prompts for context.
   editor contract is the fiche object's `templateKey` SELECT, so a new descriptor
   key must also land as a select option in `objects/fiche.object.ts` (append at
   the next position — never renumber the existing options).
+- An app's `post-install` hook is auto-discovered from
+  `src/logic-functions/post-install.ts` (default export of
+  `definePostInstallLogicFunction`) — no `application.config.ts` wiring and no
+  manifest reference is needed; `npx twenty dev:build .` picks it up. Keep the
+  seeding write-path in a separate `logic-functions/handlers/*.ts` with an
+  injectable `Pick<CoreApiClient,'query'|'mutation'>` so the node test runner can
+  exercise it without importing `twenty-sdk/define`.
+- a2e-drive folder-structure templates tag every seeded folder with its
+  descriptor key in the driveFolder `templateKey` TEXT provenance field and delta
+  on `filter: { templateKey: { is: 'NOT_NULL' } }`; the root folder's `name` is
+  user-editable, so never delta on names. Child folders are created after their
+  parent and reference the fresh parent id via the `parentId` write scalar.
 
 ---
 
@@ -142,4 +154,17 @@ after each iteration and it's included in prompts for context.
   - A descriptor key that is absent from the fiche `templateKey` SELECT is unusable in the editor, so descriptor additions in this app pair with an additive select option in `objects/fiche.object.ts`.
   - `Turquoise`/`pink` are valid `TagColor`s (`packages/twenty-shared/src/types/FieldMetadataOptions.ts`), usable for new select options.
   - `yarn test:unit` (node --test) is the app test entry; `yarn lint` is oxlint-only (106 files, 0 warnings).
+---
+
+## 2026-09-29 - US-106 (M9c family: Archive folder-structure templates ×4 — a2e-drive)
+- Added `src/lib/folder-structure-templates.ts`: `FolderStructureTemplate` descriptors (`key`, `version`, `labels` fr+en, `category`, `requiredApps`, `tree`) for `CLIENT`, `ASSOCIATION`, `ETUDIANT`, `ADMINISTRATION_ENTREPRISE`, plus `findMissingFolderStructureTemplates` (delta by key) and `flattenFolderStructureTemplate` (parent-before-child drafts).
+- Added a nullable `templateKey` TEXT provenance field to the `driveFolder` object + its id in `universal-identifiers.ts`; every seeded folder carries its descriptor key, so re-apply deltas on `templateKey` and never duplicates a subtree.
+- Added `src/logic-functions/handlers/seed-folder-structures-handler.ts` (injectable client, creates folders only — roots then children via `parentId`, fresh DB ids) and `src/logic-functions/post-install.ts` (auto-discovered hook).
+- Tests: 8 in `folder-structure-templates.test.ts` (family + one per descriptor + ordering + delta + unknown key) and 4 in `seed-folder-structures-handler.test.ts` (fresh seed / child parenting / re-apply no-op / partial delta) → 87 pass (was 75).
+- Bumped `a2e-drive` 0.1.1→0.1.2; updated README; appended to `docs/plan/phases/phase-13-report.md`.
+- Files changed: `folder-structure-templates.ts`, `folder-structure-templates.test.ts`, `seed-folder-structures-handler.ts`, `seed-folder-structures-handler.test.ts`, `post-install.ts`, `objects/drive-folder.object.ts`, `constants/universal-identifiers.ts`, `package.json`, `README.md`, `phase-13-report.md`.
+- **Learnings:**
+  - a2e-drive had no post-install hook despite the brief saying one existed; adding `definePostInstallLogicFunction` under `src/logic-functions/post-install.ts` is enough (auto-discovered, no app-config wiring).
+  - The AC's descriptor contract (`key/version/labels fr+en/category/requiredApps`) is implemented here per US-106's explicit AC, unlike US-103/104/105 which deferred it to US-117. `requiredApps` is `[]`: a folder tree only uses Archive's own object.
+  - `npx twenty dev:build .` regenerated `.twenty/output` (gitignored) and confirms the field + post-install in the manifest (12 files, was 10).
 ---
