@@ -10,6 +10,7 @@ import {
 } from '../retroplanning.ts';
 import {
   buildDefaultRetroplanningDeadlineDate,
+  buildRetroplanningDestructiveSubtitle,
   buildRetroplanningInputKey,
   buildRetroplanningPreviewRows,
   collectRetroplanningAssigneeRoles,
@@ -148,6 +149,23 @@ test('the summary counts the removals a REPLACE preview withholds', () => {
     summarizeRetroplanningChangeSet({ ...changeSet, remove: ['a'] }, 0).remove,
     1,
   );
+});
+
+test('the destructive confirmation names the owned rows it would delete', () => {
+  assert.equal(
+    buildRetroplanningDestructiveSubtitle([]),
+    'Aucune tâche générée ne sera supprimée.',
+  );
+
+  const subtitle = buildRetroplanningDestructiveSubtitle([
+    { id: 'stale-1', title: 'Ancienne tâche' },
+    { id: 'stale-2', title: 'Reliquat' },
+  ]);
+
+  assert.match(subtitle, /2 tâche\(s\)/);
+  assert.match(subtitle, /« Ancienne tâche »/);
+  assert.match(subtitle, /« Reliquat »/);
+  assert.match(subtitle, /seules les tâches générées par cette recette/i);
 });
 
 test('assignee roles follow first use and get readable labels', () => {

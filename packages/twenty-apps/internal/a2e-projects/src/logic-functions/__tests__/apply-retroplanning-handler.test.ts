@@ -377,6 +377,7 @@ test('a REPLACE preview names the removals a confirmation would make', async () 
   const appendPreview = await previewRetroplanning(baseInput(), now, client);
 
   assert.equal(appendPreview.pendingRemovalCount, 0);
+  assert.deepEqual(appendPreview.pendingRemovals, []);
   assert.equal(appendPreview.changeSet.requiresDestructiveConfirmation, false);
 
   const replacePreview = await previewRetroplanning(
@@ -388,6 +389,9 @@ test('a REPLACE preview names the removals a confirmation would make', async () 
   // Only the untouched generated slot is removable; the hand-moved one is
   // protected in both the preview and a confirmed apply.
   assert.equal(replacePreview.pendingRemovalCount, 1);
+  assert.deepEqual(replacePreview.pendingRemovals, [
+    { id: 'stale-owned', title: 'Ancienne tâche' },
+  ]);
   assert.equal(replacePreview.changeSet.requiresDestructiveConfirmation, true);
   assert.deepEqual(replacePreview.changeSet.remove, []);
   assert.deepEqual(deleted, []);

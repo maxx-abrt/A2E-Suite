@@ -207,9 +207,10 @@
         "Quality gates: in packages/twenty-apps/internal/a2e-projects: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; no i18n catalog churn; no AI attribution"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "User-facing completion of P4.2's last unshipped bullet; the plan's '(R04, after P4.1/C1)' dependencies are satisfied (P4.1 task extensions ticked; C1 contract done). Lane L-EDITOR-adjacent (a2e-projects front-components lane).",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-111",
@@ -600,6 +601,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-29T21:29:55.847Z"
+    "updatedAt": "2026-09-29T21:42:16.102Z"
   }
 }

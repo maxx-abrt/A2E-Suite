@@ -53,6 +53,9 @@ export type PreviewRetroplanningResult = {
   // Computed read-only so the screen can name the destructive change before
   // the user confirms it.
   pendingRemovalCount: number;
+  // The same owned deletions, with the titles the confirmation names, so the
+  // destructive record-change preview lists records instead of a bare count.
+  pendingRemovals: { id: string; title: string }[];
 };
 
 export type ApplyRetroplanningResult = {
@@ -214,15 +217,23 @@ export const previewRetroplanning = async (
     now,
     client,
   );
-  const pendingRemovalCount =
+  const titleById = new Map(
+    existingTasks.map((task): [string, string] => [task.id, task.title]),
+  );
+  const pendingRemovals =
     input.mode === 'REPLACE'
       ? reconcileRetroplanningDraft(recipe, preview.tasks, existingTasks, {
           mode: 'REPLACE',
           confirmedDestructiveChange: true,
-        }).remove.length
-      : 0;
+        }).remove.map((id) => ({ id, title: titleById.get(id) ?? id }))
+      : [];
 
-  return { preview, changeSet, pendingRemovalCount };
+  return {
+    preview,
+    changeSet,
+    pendingRemovalCount: pendingRemovals.length,
+    pendingRemovals,
+  };
 };
 
 export const applyRetroplanning = async (

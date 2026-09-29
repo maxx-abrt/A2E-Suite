@@ -26,8 +26,8 @@ installation. Projects is not listed in the current workspace presets.
 - Command menu (Cmd+K): **Créer un projet**, **Créer une tâche**,
   **Aller aux projets**, **Sous-tâches**, **Chronomètre**.
 - The project record page has tabs **Accueil**, **Timeline** (tasks,
-  milestones, labels, notes, Gantt), **Tâches**, **Tableau**, **Fichiers**,
-  **Documents** and **Discussions**
+  milestones, labels, notes, Gantt), **Tâches**, **Tableau**, **Rétroplanning**,
+  **Fichiers**, **Documents** and **Discussions**
   ([project.page-layout.ts](./src/page-layouts/project.page-layout.ts)).
 
 ## What it does
@@ -95,7 +95,9 @@ monthly calendar on `dueAt`, project-scoped task lists, and the three
   context an assistant needs to propose a breakdown. It proposes nothing
   itself and never creates a task.
 - Front components provide the project overview, time rollup, Gantt
-  (virtualized bars with dependency arrows) and the subtask forest.
+  (virtualized bars with dependency arrows), the subtask forest and the
+  retroplanning screen (recipe picker, deadline/timezone form, previewed plan
+  and explicit destructive-replace confirmation).
 
 ## Development
 

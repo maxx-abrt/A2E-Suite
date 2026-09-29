@@ -98,6 +98,17 @@ after each iteration and it's included in prompts for context.
   `@lingui/swc-plugin` is already in the jest transform. Tabler icons emit a
   `tabler-icon-<kebab-name>` class, so icon mapping is asserted with
   `container.querySelector('.tabler-icon-calendar-event')`.
+- `twenty-apps/internal/*` front components and logic-function handlers share the
+  one generated `CoreApiClient`, and twenty-sdk 2.31 has no front→logic-function
+  execution API (`executeOneLogicFunction` is a WORKFLOWS-permission settings
+  mutation). So a front screen that must run the same work as a logic function
+  imports the function's **handler** (`logic-functions/handlers/*.ts`, already
+  injectable/testable) directly — never the `twenty-sdk/define`
+  `*.logic-function.ts` file — and passes it `new CoreApiClient()`. That keeps a
+  single preview/write path instead of forking a second one in the screen.
+- An internal app's page-layout tab icon is a string name resolved by the host
+  from `twenty-ui/icon` (tabler); pick an existing export (e.g.
+  `IconCalendarRepeat`) rather than adding a package.
 
 ---
 
@@ -235,4 +246,16 @@ after each iteration and it's included in prompts for context.
   - `icon-dictionary.md` has no Calendar/Event row — rule 5 says reuse an existing `twenty-ui/icon` icon; `IconCalendarEvent` is the sibling-surface choice.
   - The inbox row preview already returned `title` (it is in `PREVIEW_PAYLOAD_KEYS`), so the calendar leg only had to add the start/lead lines.
   - All Tier-0 gates green (inbox 44, server calendar+notification 126, tsgo both packages, oxlint 0/0); Tier-2 live click-through is the orchestrator's.
+---
+
+## 2026-09-29 - US-110 (P4.2 retroplanning screen)
+- Built the missing user-facing P4.2 retroplanning screen in `a2e-projects` and registered it on the project record page.
+- Files changed: NEW `packages/twenty-apps/internal/a2e-projects/src/front-components/project-retroplanning.front-component.tsx`; `src/lib/retroplanning-screen.ts` (+`buildRetroplanningDestructiveSubtitle`); `src/logic-functions/handlers/apply-retroplanning-handler.ts` (`previewRetroplanning` +additive `pendingRemovals: {id,title}[]`); `src/constants/universal-identifiers.ts` (+`projectRetroplanning c31b0000-0013-…000d`); `src/page-layouts/project.page-layout.ts` (+tab `c31b0200-0009-…0008`, +widget `c31b0200-000a-…0010`); tests `retroplanning-screen.test.ts`, `apply-retroplanning-handler.test.ts`; `package.json` 0.1.13→0.1.14; `README.md`.
+- Screen: recipe `<select>` (delivery/event v1), deadline date+time+IANA timezone form, per-role assignee mapping (project `members.workspaceMember`, read via `buildFindOneByIdArgs`), preview table (dates/durations/dependencies/assignees/warnings) from `previewRetroplanning` + `buildRetroplanningPreviewRows`, stale-preview guard on `buildRetroplanningInputKey`, APPEND/REPLACE draft, and an explicit `openCommandConfirmationModal` destructive confirmation naming the recipe-owned rows REPLACE would delete.
+- **Learnings:**
+  - No front→logic-function execution API in twenty-sdk 2.31: reuse the handler as the single preview/write path (see Codebase Patterns).
+  - `npx twenty dev:build .` bundles a front component's imported handler + `CoreApiClient` fine; manifest picked up the new widget id.
+  - `yarn test:unit` now 336/336; `yarn typecheck`/`yarn lint` clean; oxfmt check clean on non-lib touched files.
+  - The retroplanning provenance/idempotency + manual-edit/DONE protection live entirely in the engine/handler and were reused untouched.
+- Missing (Tier 2 orchestrator): live install + E06 journey proof.
 ---

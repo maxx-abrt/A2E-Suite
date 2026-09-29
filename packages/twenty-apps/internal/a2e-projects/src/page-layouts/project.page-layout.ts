@@ -221,6 +221,28 @@ export default definePageLayout({
       ],
     },
     {
+      // Rétroplanning tab (P4.2): the user-facing surface of the retroplanning
+      // engine. The widget picks a recipe, sets the deadline/timezone and
+      // previews the generated plan before confirming creation.
+      universalIdentifier: 'c31b0200-0009-4000-8000-000000000008',
+      title: 'Rétroplanning',
+      position: 45,
+      icon: 'IconCalendarRepeat',
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      widgets: [
+        {
+          universalIdentifier: 'c31b0200-000a-4000-8000-000000000010',
+          title: 'Rétroplanning',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              FRONT_COMPONENT_IDS.projectRetroplanning,
+          },
+        },
+      ],
+    },
+    {
       // Discussions tab (P5.2): reads the `discussions` relation a2e-chat adds
       // to this project object. The widget auto-hides when a2e-chat is not
       // installed (no relation), so the tab never dangles.

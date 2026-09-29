@@ -1,0 +1,180 @@
+# Iteration 10 Log
+
+## Metadata
+
+- **Task ID**: US-109
+- **Task Title**: US-092: inbox CALENDAR_REMINDER label/icon/deep-link (P4C.4 front leg)
+- **Description**: As a user receiving a calendar reminder, I want the notification in my inbox to show a readable label, a canonical icon and a deep link to the event so that reminders are actionable. Starting state: n...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-29T21:19:11.732Z
+- **Ended At**: 2026-09-29T21:29:55.845Z
+- **Duration**: 10m 44s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-109" PLAN.md | head -20
+[94m[bash][0m $ ls docs/plan/phases/ | head -50
+[94m[bash][0m $ grep -rn "US-109\|US-092\|CALENDAR_REMINDER" PLAN.md docs/tasks/ 2>/dev/null | head -40
+[94m[bash][0m $ grep -rln "US-109\|US-092" . --include=*.md --include=*.json 2>/dev/null | grep -v node_modules | he...
+[94m[bash][0m $ grep -rn "US-092\|US-109" docs/ | head -30
+[94m[bash][0m $ sed -n '1650,1730p' PLAN.md
+[94m[bash][0m $ tail -80 docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ grep -n "CLAIMED\|US-092\|US-109\|CALENDAR_REMINDER" docs/plan/phases/phase-04-report.md | tail -40
+[94m[bash][0m $ ls packages/twenty-front/src/modules/inbox/
+[94m[bash][0m $ grep -rln "NotificationType" packages/twenty-front/src/ | head -40
+[94m[bash][0m $ find packages/twenty-front/src/modules/inbox -type f | head -100
+[94m[bash][0m $ grep -rln "notification" packages/twenty-front/src/modules/ --include=*.ts --include=*.tsx -i | head...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/inbox/types/InboxNotification.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/inbox/utils/getInboxNotificationPreview.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/inbox/utils/resolveNotificationDeepLink.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/inbox/components/InboxNotificationItem.tsx
+[94m[bash][0m $ grep -rn "CALENDAR_REMINDER\|calendarEventId\|reminderMinutes\|requestNotifications" packages/twenty...
+[94m[bash][0m $ grep -rln "CALENDAR_REMINDER" packages/twenty-server/src packages/twenty-shared/src packages/twenty-...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/constants/CalendarReminderPresets.ts
+[94m[bash][0m $ grep -rn "CalendarReminderNotificationPayload\|calendarEventId\|eventId" packages/twenty-server/src/...
+[94m[bash][0m $ grep -rn "buildCalendarReminderNotificationPayload" packages/twenty-server/src/
+[94m[read][0m
+[94m[bash][0m $ grep -n "IconCalendar\|IconBell\|IconAlarm\|IconClock\|Reminder\|Calendar" packages/twenty-ui/src/ic...
+[94m[bash][0m $ grep -n "Calendar" packages/twenty-shared/src/types/AppPath.ts 2>/dev/null || grep -rn "Calendar" pa...
+[94m[bash][0m $ grep -niE "calendar|event|remind|clock|alarm|schedule|time" packages/twenty-ui/src/icon/icon-diction...
+[94m[bash][0m $ grep -rn "IconCalendar\|IconCalendarEvent\|IconCalendarTime\|IconAlarm" packages/twenty-ui/src/icon/...
+[94m[bash][0m $ grep -niE "IconCalendar|IconAlarm|IconClock|IconBellRing|IconCalendarEvent" packages/twenty-ui/src/i...
+[94m[bash][0m $ sed -n '1,40p' packages/twenty-ui/src/icon/icon-dictionary.md
+[94m[bash][0m $ grep -niE "calendar|calendarEvent|reminder|event" packages/twenty-ui/src/icon/constants/TwentyIconDi...
+[94m[bash][0m $ grep -rn "IconCalendarEvent\|IconCalendar" packages/twenty-front/src/modules/calendar/ | grep import...
+[94m[bash][0m $ grep -rln "calendarEvent" packages/twenty-shared/src/constants/ 2>/dev/null | head
+[94m[bash][0m $ grep -rn "RecordShowPage\|Calendar" packages/twenty-shared/src/types/AppPath.ts
+[94m[bash][0m $ grep -rn "useSearchParams\|searchParams\|getAppPath(AppPath.Calendar\|AppPath.Calendar" packages/twe...
+[94m[bash][0m $ grep -rn "calendarEventId" packages/twenty-front/src/ | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/side-panel/hooks/useOpenCalendarEventInSidePanel.ts
+[94m[bash][0m $ grep -rn "onOpenNotification\|resolveNotificationDeepLink\|openRecordInSidePanel\|useOpenRecordInSid...
+[94m[bash][0m $ grep -rn "CoreObjectNameSingular" packages/twenty-shared/src/types/index.ts | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/inbox/InboxPage.tsx
+[94m[read][0m
+[94m[bash][0m $ grep -rln "getInboxNotificationPreview" packages/twenty-front/src/
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-front/src -name "renderWith*" -o -name "*TestProvider*" | head
+[94m[bash][0m $ find packages/twenty-front/src/modules -name "*.spec.tsx" | head
+[94m[read][0m
+[94m[bash][0m $ ls node_modules/@tabler/icons-react/dist 2>/dev/null
+[94m[bash][0m $ sed -n '110,130p' packages/twenty-ui/src/icon/index.ts
+[94m[bash][0m $ grep -rn "export.*IconCalendarEvent" packages/twenty-ui/src/icon/index.ts
+[94m[bash][0m $ grep -n "export {" packages/twenty-ui/src/icon/index.ts | head
+[94m[bash][0m $ tail -20 packages/twenty-ui/src/icon/index.ts
+[94m[bash][0m $ grep -rln "US-092\|inbox CALENDAR_REMINDER\|CALENDAR_REMINDER" docs/tasks/ docs/plan/ 2>/dev/null | ...
+[94m[bash][0m $ grep -n "US-109\|US-092" tasks/prd.json | head
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) for s in d['userStories']:     if s.get...
+[94m[bash][0m $ find packages/twenty-front/src/pages -iname "*calendar*"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[bash][0m $ grep -rn "AppPath.Calendar" packages/twenty-front/src | head
+[94m[bash][0m $ grep -n "payload\|calendarEventId\|title\|startsAt\|reminderMinutes" packages/twenty-server/src/engi...
+[94m[bash][0m $ grep -rn "toLocaleTimeString\|toLocaleString\|formatTime\|formatDateTime" packages/twenty-front/src/...
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-front/src/modules/localization/hooks/useDateTimeFormat.ts 2>/dev/null
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ wc -l docs/plan/phases/phase-04-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ tail -3 docs/plan/phases/phase-04-report.md
+[94m[read][0m
+[94m[edit][0m
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-server/src/engine/core-modules/calendar/__tests__/calendar-reminder.u...
+[94m[edit][0m
+[94m[write][0m "import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type InboxNotificationPayload } from '@/inbox/types/InboxNotification';
+
+export type Calen... (1392 chars)"
+[94m[bash][0m $ grep -rn "isNonEmptyString" packages/twenty-shared/src/utils/index.ts 2>/dev/null | head
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/inbox/utils/resolveNotificationDeepLink.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/inbox/utils/resolveNotificationDeepLink.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/inbox/components/InboxNotificationItem.tsx
+[94m[write][0m "import { isNonEmptyString } from '@sniptt/guards';
+
+// A reminder's startsAt is an ISO instant. An older producer or a corrupt
+// payload may carry a non-date, so an unparseable value degrades to null... (631 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/inbox/components/InboxNotificationItem.tsx
+Now update the label/icon switches and render:
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/inbox/components/InboxNotificationItem.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/inbox/components/InboxNotificationItem.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/inbox/components/InboxNotificationItem.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/inbox/components/InboxNotificationItem.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/inbox/components/InboxNotificationItem.tsx
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-front/jest.config.mjs 2>/dev/null
+[94m[write][0m "import { parseCalendarReminderNotificationPayload } from '@/inbox/utils/parseCalendarReminderNotificationPayload';
+
+describe('parseCalendarReminderNotificationPayload', () => {
+  it('maps the full pro... (2080 chars)"
+[94m[write][0m "import { formatCalendarReminderStart } from '@/inbox/utils/formatCalendarReminderStart';
+
+describe('formatCalendarReminderStart', () => {
+  it('formats an ISO instant', () => {
+    expect(
+      forma... (730 chars)"
+Now extend the deep link test:
+[94m[edit][0m
+[94m[bash][0m $ sed -n '1,45p' packages/twenty-front/src/modules/ui/layout/table/components/__tests__/SortableTableH...
+[94m[bash][0m $ grep -rn "userEvent" packages/twenty-front/src/modules/activities/emails/components/__tests__/EmailT...
+[94m[write][0m "import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+import { InboxNotificationItem } from '@/inbox/components/InboxNotificationItem';
+import ... (4102 chars)"
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/inbox --config=packages/twenty-front/jest.config.mjs 2>&1...
+[94m[bash][0m $ grep -rn "i18n\|I18n" packages/twenty-front/setupTests.ts | head
+[94m[bash][0m $ grep -rln "I18nProvider" packages/twenty-front/src | head -20
+[94m[bash][0m $ sed -n '1,50p' packages/twenty-front/src/modules/home-dashboard/components/__tests__/HomeDashboard.t...
+[94m[bash][0m $ sed -n '1,40p' packages/twenty-front/src/modules/chat/components/__tests__/ChatSidebar.test.tsx
+[94m[edit][0m
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import ... (3685 chars)"
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/inbox --config=packages/twenty-front/jest.config.mjs 2>&1...
+[94m[bash][0m $ npx jest src/engine/core-modules/calendar/__tests__/calendar-reminder.util.spec.ts --config=packages...
+[94m[bash][0m $ npx jest src/engine/core-modules/calendar src/engine/core-modules/notification --config=packages/twe...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -30
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -30
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/engine/core-modules/calendar/utils/calendar-reminder.u...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/inbox/components/InboxNotificationItem.tsx src...
+[94m[bash][0m $ npx oxfmt --check src/modules/inbox/components/InboxNotificationItem.tsx src/modules/inbox/component...
+[94m[bash][0m $ npx oxfmt --check src/engine/core-modules/calendar/utils/calendar-reminder.util.ts src/engine/core-m...
+[94m[bash][0m $ npx oxfmt src/modules/inbox/components/__tests__/InboxNotificationItem.test.tsx src/modules/inbox/ut...
+[94m[bash][0m $ mkdir -p /var/folders/31/flrpby692pjc8k6vskbtrnn40000gn/T/opencode/oxfmt-check && git show HEAD:pack...
+[94m[bash][0m $ npx oxfmt --check src/modules/inbox/components/InboxNotificationItem.tsx src/modules/inbox/component...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ npx jest packages/twenty-front/src/modules/inbox --config=packages/twenty-front/jest.config.mjs 2>&1...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/inbox 2>&1 | tail -10
+[94m[bash][0m $ grep -niE "calendar|event|reminder" packages/twenty-ui/src/icon/constants/TwentyIconDictionary.ts
+[94m[bash][0m $ git diff -- packages/twenty-front/src/modules/inbox packages/twenty-server/src/engine/core-modules/c...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ wc -l .ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -3 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ grep -n "CLAIMED" docs/plan/phases/phase-04-report.md | tail -5
+[94m[bash][0m $ git status --porcelain
+Slice complete. Implemented the P4C.4 front leg for inbox `CALENDAR_REMINDER`.
+
+**Changed**
+- `InboxNotificationItem.tsx` — Lingui label + `IconCalendarEvent` + event title / "Starts …" / lead-time row lines.
+- New `parseCalendarReminderNotificationPayload.ts` (defensive payload read) and `formatCalendarReminderStart.ts` (invalid date → null, never "Invalid Date").
+- `resolveNotificationDeepLink.ts` — CALENDAR_REMINDER → `/object/calendarEvent/:id`.
+- One additive server payload key `reminderMinutes` in `buildCalendarReminderNotificationPayload` (+ spec), since the acceptance names it and the payload only had title/startsAt.
+- New/extended specs: item component (label/icon/link/row text/safe states), payload parser, formatter, deep link.
+
+**Checks** — inbox jest 8 suites/44 green; server calendar+notification 19/126 green; `tsgo` clean in both packages; oxlint 0/0; oxfmt clean on all front touched files (server files already failed oxfmt at HEAD — pre-existing drift, left untouched); no catalog churn.
+
+Report appended to `docs/plan/phases/phase-04-report.md` (`done-for-review`, Tier-0 green) and `.ralph-tui/progress.md`. Tier-2 live click-through / delivery remains the orchestrator's.
+
+<promise>COMPLETE</promise>

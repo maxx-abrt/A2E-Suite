@@ -181,6 +181,7 @@ export const FRONT_COMPONENT_IDS = {
   projectTimeRollup: 'c31b0000-0013-4000-8000-00000000000a',
   createTaskCommand: 'c31b0000-0013-4000-8000-00000000000b',
   taskDependencies: 'c31b0000-0013-4000-8000-00000000000c',
+  projectRetroplanning: 'c31b0000-0013-4000-8000-00000000000d',
 } as const;
 
 export const VIEW_IDS = {

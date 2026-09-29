@@ -197,6 +197,29 @@ export const summarizeRetroplanningChangeSet = (
   remove: Math.max(changeSet.remove.length, pendingRemovalCount),
 });
 
+export type RetroplanningRemovalPreviewEntry = {
+  id: string;
+  title: string;
+};
+
+// The destructive confirmation is a record-change preview, not a bare count:
+// it names the owned deletions. Only rows this recipe generated and a human
+// never moved are ever candidates, so the wording states that scope instead of
+// implying the whole project is wiped.
+export const buildRetroplanningDestructiveSubtitle = (
+  pendingRemovals: RetroplanningRemovalPreviewEntry[],
+): string => {
+  if (pendingRemovals.length === 0) {
+    return 'Aucune tâche générée ne sera supprimée.';
+  }
+
+  const names = pendingRemovals
+    .map((removal) => `« ${removal.title} »`)
+    .join(', ');
+
+  return `${pendingRemovals.length} tâche(s) générée(s) par la recette ne sont plus planifiées : ${names}. Seules les tâches générées par cette recette sont supprimées ; vos modifications manuelles et le travail terminé restent protégés.`;
+};
+
 // Apply is only offered for the exact inputs that were previewed; any edit
 // after the preview makes it stale and asks for a new preview first.
 export const buildRetroplanningInputKey = (input: {
