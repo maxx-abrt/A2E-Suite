@@ -131,6 +131,8 @@ export const LOGIC_FUNCTION_IDS = {
   meetingNotesPage: 'c31b0000-0012-4000-8000-000000000012',
   fileReviewTask: 'c31b0000-0012-4000-8000-000000000013',
   taskDueReminder: 'c31b0000-0012-4000-8000-000000000014',
+  // C1 read-only descriptor source consumed by the M9a-2 gallery (US-117).
+  listTemplateDescriptors: 'c31b0000-0012-4000-8000-000000000015',
 } as const;
 
 // Task-extension fields live on the standard task object (app fields,

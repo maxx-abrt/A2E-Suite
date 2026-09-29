@@ -183,6 +183,21 @@ export type { SettingsFrontComponentApplicationManifest } from './settingsFrontC
 export type { SkillManifest } from './skillManifestType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
+export {
+  isTemplateDescriptorLabels,
+  isTemplateDescriptorInput,
+  isTemplateDescriptorPreviewWrite,
+  isTemplateDescriptor,
+  validateTemplateDescriptors,
+} from './templateDescriptorGuards';
+export type {
+  TemplateDescriptorLabels,
+  TemplateDescriptorCategory,
+  TemplateDescriptorInput,
+  TemplateDescriptorPreviewWrite,
+  TemplateDescriptor,
+  TemplateDescriptorValidation,
+} from './templateDescriptorType';
 export type {
   TimelineActivityTypeEmitThroughManifest,
   TimelineActivityTypeEmitManifest,

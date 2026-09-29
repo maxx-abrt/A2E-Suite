@@ -66,6 +66,8 @@ export const LOGIC_FUNCTION_IDS = {
   findFile: 'c31d0000-0012-4000-8000-000000000003',
   dedupeHints: 'c31d0000-0012-4000-8000-000000000004',
   postInstall: 'c31d0000-0012-4000-8000-000000000005',
+  // C1 read-only descriptor source consumed by the M9a-2 gallery (US-117).
+  listTemplateDescriptors: 'c31d0000-0012-4000-8000-000000000006',
 } as const;
 
 export const NAVIGATION_MENU_ITEM_IDS = {

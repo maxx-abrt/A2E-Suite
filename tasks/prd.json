@@ -344,14 +344,15 @@
         "Quality gates: per touched app: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; twenty-shared build if touched (npx nx build twenty-shared --skip-nx-cache); targeted jest green; no i18n catalog churn; no AI attribution"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": "Depends on the four family slices (US-103…106 — recipes US-107 add their descriptors in their own slice). Gate-unlocker for US-118 (gallery) → US-119 (M9b) → US-120 (M9d) and later M13a. Lane L-TPL.",
       "dependsOn": [
         "US-103",
         "US-104",
         "US-105",
         "US-106"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-118",
@@ -607,6 +608,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-29T22:31:43.408Z"
+    "updatedAt": "2026-09-29T22:57:23.800Z"
   }
 }

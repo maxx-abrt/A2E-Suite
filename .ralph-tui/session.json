@@ -3,10 +3,10 @@
   "sessionId": "c3d9d5b5-131c-4bed-9971-37e80fe99ea9",
   "status": "running",
   "startedAt": "2026-09-29T18:49:46.574Z",
-  "updatedAt": "2026-09-29T22:31:43.409Z",
-  "currentIteration": 16,
+  "updatedAt": "2026-09-29T22:57:23.801Z",
+  "currentIteration": 19,
   "maxIterations": 20,
-  "tasksCompleted": 16,
+  "tasksCompleted": 17,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -176,6 +176,36 @@
       "durationMs": 440249,
       "startedAt": "2026-09-29T21:57:01.992Z",
       "endedAt": "2026-09-29T22:04:22.241Z"
+    },
+    {
+      "iteration": 17,
+      "status": "completed",
+      "taskId": "US-116",
+      "taskTitle": "M7d: Agenda host entry without an app — host-seeded /calendar nav item + preset flag + upgrade command",
+      "taskCompleted": true,
+      "durationMs": 1635655,
+      "startedAt": "2026-09-29T22:04:27.746Z",
+      "endedAt": "2026-09-29T22:31:43.401Z"
+    },
+    {
+      "iteration": 18,
+      "status": "completed",
+      "taskId": "US-117",
+      "taskTitle": "M9a-1: template descriptor contract (C1) + per-app descriptor logic functions",
+      "taskCompleted": false,
+      "durationMs": 230199,
+      "startedAt": "2026-09-29T22:31:48.982Z",
+      "endedAt": "2026-09-29T22:35:39.181Z"
+    },
+    {
+      "iteration": 19,
+      "status": "completed",
+      "taskId": "US-117",
+      "taskTitle": "M9a-1: template descriptor contract (C1) + per-app descriptor logic functions",
+      "taskCompleted": false,
+      "durationMs": 618447,
+      "startedAt": "2026-09-29T22:35:44.194Z",
+      "endedAt": "2026-09-29T22:46:02.641Z"
     }
   ],
   "skippedTaskIds": [],

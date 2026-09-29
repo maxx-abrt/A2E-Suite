@@ -50,6 +50,8 @@ export const LOGIC_FUNCTION_IDS = {
   summarizeDocument: 'c31a0000-0012-4000-8000-000000000006',
   translateDocument: 'c31a0000-0012-4000-8000-000000000007',
   improveDocumentWriting: 'c31a0000-0012-4000-8000-000000000008',
+  // C1 read-only descriptor source consumed by the M9a-2 gallery (US-117).
+  listTemplateDescriptors: 'c31a0000-0012-4000-8000-000000000009',
 } as const;
 
 export const COMMAND_MENU_ITEM_IDS = {

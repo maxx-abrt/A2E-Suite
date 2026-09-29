@@ -149,6 +149,20 @@ after each iteration and it's included in prompts for context.
   `runOnWorkspace` (registered by `@RegisteredWorkspaceCommand(version, ts)`).
   A "down" acceptance line cannot be satisfied literally at the workspace level —
   make the command additive + idempotent and say so, rather than adding dead code.
+- The A2E content-template descriptor contract (C1) lives once in
+  `packages/twenty-shared/src/application/templateDescriptorType.ts` (+
+  `templateDescriptorGuards.ts`, exported via the generated `application/index.ts`
+  barrel). Apps import it as a **type-only** `twenty-shared/application`; keep that
+  import in `src/lib/`, NOT under `src/logic-functions/` — the app `.oxlintrc.json`
+  override forbids `twenty-shared` imports there. The type import is erased, so the
+  built `.twenty/output/*.mjs` inlines no twenty-shared runtime, but `tsc` and
+  `node --test` resolve `twenty-shared/dist` (untracked) → run
+  `npx nx build twenty-shared --skip-nx-cache` before any app typecheck/test.
+  Per-app projection goes in `lib/*descriptors.ts` (over the existing family
+  constant) with a thin read-only `logic-functions/list-template-descriptors.ts`
+  returning `{ templates }` and no `toolTriggerSettings` (a data source, not an
+  AI tool). The contract's `preview` is `{ object, summary fr+en, count }[]`; the
+  guard rejects `count: 0`, so only push a write the family actually creates.
 
 ---
 
@@ -365,3 +379,17 @@ after each iteration and it's included in prompts for context.
   - Gates: tsgo clean; oxlint 0/0 + oxfmt clean on 13 files; onboarding 13 suites/102 + 2-39 7 suites/39 green; integration idempotency spec 1/1 pass (delete → run → 1 row → rerun → still 1).
 - Missing (Tier 2 orchestrator): fresh + upgraded browser proof that Agenda shows once and hiding persists.
 ---
+
+## 2026-09-29 - US-117 (M9a-1: C1 template descriptor contract + per-app descriptor logic functions)
+- Defined the C1 content-template descriptor contract once in `twenty-shared/src/application/` (`TemplateDescriptor` = key, version, labels fr+en, category, preview writes, requiredApps, inputs; pure types + structural guards + `validateTemplateDescriptors` cross-descriptor checks), exported through the generated `application/index.ts` barrel.
+- Shipped a read-only `list-template-descriptors` logic function in each of the four content apps, projecting the existing lib constants onto C1: documents (20 pages, slug keys), projects (12 templates, existing short keys, preview counts = real task/milestone counts), accounting (10 fiches, editor keys), drive (4 folder structures, preview count = flattened tree length). No new engine/table/field; no `toolTriggerSettings`.
+- Files changed: `twenty-shared` (`templateDescriptorType.ts`, `templateDescriptorGuards.ts`, `__tests__/template-descriptor.spec.ts`, generated `application/index.ts`); each app (`lib/*descriptors.ts`, `logic-functions/list-template-descriptors.ts`, `constants/universal-identifiers.ts`, `lib/__tests__/*descriptors.test.ts`, `package.json` patch bump 0.2.6→0.2.7 / 0.1.15→0.1.16 / 0.1.1→0.1.2 / 0.1.2→0.1.3); deleted the dead-run `__twenty-shared-probe.ts`; `phase-13-report.md`.
+- **Learnings:**
+  - Resumed two dead Ralph iterations (00:31/00:35) that left this task's partials uncommitted with no `CLAIMED` line: they are this task's own artifacts (per §0), so resume + clean the probe; the prior `description` field was dropped so the contract matches the AC's seven fields exactly.
+  - App `.oxlintrc.json` blocks direct `twenty-shared` imports under `logic-functions/**`; keep the type-only import in `lib/` (the logic function imports the local projection). Built bundles carry no twenty-shared runtime.
+  - App `tsc`/`node --test` resolve `twenty-shared/dist` (untracked) — build twenty-shared first, or app tests/typecheck fail even though the import is type-only.
+  - `preview` guard rejects `count: 0`, so previews list only writes the family actually performs.
+  - Gates all Tier-0 green: twenty-shared build+tsgo+spec 7/7; documents 227/227, projects 342/342, accounting 113/113, drive 91/91; dev:build all succeed; each manifest has the descriptor fn without `toolTriggerSettings`; lint 0/0 (projects keeps its pre-existing task-labels warning); check-docs PASS.
+- Missing (Tier 2 orchestrator): invoke each descriptor function on an installed workspace (documents 20 / projects 12 / accounting 10 / drive 4).
+---
+

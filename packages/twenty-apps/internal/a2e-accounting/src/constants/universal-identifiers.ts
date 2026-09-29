@@ -108,6 +108,8 @@ export const LOGIC_FUNCTION_IDS = {
   scoreSubventions: 'b11a0000-0012-4000-8000-00000000000a',
   renderFiche: 'b11a0000-0012-4000-8000-00000000000b',
   stampInvoiceNumber: 'b11a0000-0012-4000-8000-00000000000c',
+  // C1 read-only descriptor source consumed by the M9a-2 gallery (US-117).
+  listTemplateDescriptors: 'b11a0000-0012-4000-8000-00000000000d',
 } as const;
 
 export const FRONT_COMPONENT_IDS = {

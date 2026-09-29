@@ -1,0 +1,77 @@
+# Iteration 18 Log
+
+## Metadata
+
+- **Task ID**: US-117
+- **Task Title**: M9a-1: template descriptor contract (C1) + per-app descriptor logic functions
+- **Description**: As an app author, I want each A2E app to expose its content templates through one C1 descriptor contract so that the gallery (M9a-2) and presets (M9d) consume a single data source. Starting state: tem...
+- **Status**: completed
+- **Task Completed**: No
+- **Promise Detected**: No
+- **Started At**: 2026-09-29T22:31:48.982Z
+- **Ended At**: 2026-09-29T22:35:39.181Z
+- **Duration**: 3m 50s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the clean-start check and confirm my task.
+[94m[bash][0m $ ls docs/plan/ 2>/dev/null
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-117" PLAN.md | head -50
+[94m[bash][0m $ grep -rln "US-117" docs/ .ralph-tui/ tasks/ 2>/dev/null
+[94m[bash][0m $ grep -n "US-117" docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ grep -n "US-11[0-9]\|US-10[0-9]\|M9a\|M9b\|M9d" PLAN.md | head -80
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ grep -n "US-117" -A 40 tasks/prd.json | head -80
+[94m[bash][0m $ grep -n "US-103\|US-104\|US-105\|US-106" tasks/prd.json | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+Dependencies US-103…106 are all `passes: true`. No existing US-117 claim in the phase-13 report. The dirty files are Ralph's own session state, not code. Let me read the C1 contract doc and inspect the apps.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/05-template-contracts.md
+[94m[bash][0m $ done
+Let me examine the SDK's logic-function API and an existing read-only example.
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-drive/src/lib/folder-structure-templates.ts
+[94m[bash][0m $ find packages/twenty-sdk -type d -name "define*" -o -type f -name "*.ts" | grep -i "logic-function" ...
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-apps/internal/a2e-projects/src/lib/starter-projects.ts
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/src/lib/template-gallery.ts
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/src/lib/workflow-recipes.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-drive/package.json
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-drive/src/logic-functions/dedupe-hints.ts
+[94m[bash][0m $ cat packages/twenty-sdk/src/sdk/define/logic-functions/define-logic-function.ts 2>/dev/null | head -...
+[94m[bash][0m $ cat packages/twenty-sdk/src/sdk/define/logic-functions/logic-function-config.ts
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-accounting/src/lib/fiche-templates.ts | head -120
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/workflow-recipes.test.ts | head -80
+[94m[bash][0m $ find . -maxdepth 4 -name "twenty-sdk" -type l 2>/dev/null | head
+[94m[bash][0m $ grep -rn "Descriptor" packages/twenty-apps/internal/*/src --include=*.ts -l | head
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-sdk/package.json
+[94m[bash][0m $ tail -60 .ralph-tui/progress.md
+[94m[bash][0m $ ls -la node_modules/ | grep twenty-
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-drive/src/constants/universal-identifiers.ts
+[94m[bash][0m $ sed -n '1,50p' packages/twenty-apps/internal/a2e-drive/src/logic-functions/__tests__/seed-folder-str...
+[94m[bash][0m $ ls packages/twenty-sdk/src/cli/utilities/build/
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/src/application.config.ts | head -60
+[94m[bash][0m $ grep -rln "logic-functions\|logicFunction" packages/twenty-sdk/src/cli/utilities/build/ | head
+[94m[bash][0m $ grep -n "logic-functions\|logicFunction\|post-install\|postInstall\|ENTITY_DIRECTORIES\|directory\|r...
+[94m[bash][0m $ sed -n '1,140p' packages/twenty-sdk/src/cli/utilities/build/manifest/manifest-extract-config.ts
+[94m[bash][0m $ grep -rn "readdir\|src/\|logic-functions\|entityFilePaths\|EntityFilePaths" packages/twenty-sdk/src/...
+[94m[bash][0m $ grep -rn "logic-functions\|logicFunctions" packages/twenty-sdk/src/cli/utilities/build/common/build-...
+[94m[bash][0m $ grep -rn "logic-functions\|logicFunctions\|directoryName\|readdir\|walk\|collectEntity" packages/twe...
+[94m[bash][0m $ grep -rn "'logic-functions'\|logic-functions\|\"objects\"\|'objects'" packages/twenty-sdk/src/cli/ |...
+[94m[bash][0m $ grep -rn "logic-functions\|entityDirectory\|ENTITY_DIRECTORY\|src/objects" packages/twenty-sdk/src -...
+[94m[bash][0m $ ls packages/twenty-shared/src/application 2>/dev/null | head
+[94m[bash][0m $ grep -n "application\|utils\|entry" packages/twenty-shared/vite.config.ts 2>/dev/null | head
+[94m[bash][0m $ grep -rn "generateBarrels\|generate-barrels\|entries" packages/twenty-shared/*.ts packages/twenty-sh...
+[94m[bash][0m $ console.log(Object.keys(p.exports||{}).join('\n'))"
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-sdk/src/cli/utilities/build/manifest/utils/validate-package-json-depe...
+[94m[bash][0m $ find . -path ./node_modules -prune -o -name "*barrel*" -print 2>/dev/null | grep -v node_modules | h...
+[94m[bash][0m $ sed -n '1,70p' packages/twenty-shared/scripts/generateBarrels.ts
+[94m[bash][0m $ sed -n '230,300p' packages/twenty-shared/scripts/generateBarrels.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/project.json
+Let me test whether an app can resolve a `twenty-shared` type-only import before committing to that design.
+[94m[bash][0m $ echo "EXIT:$?"
+
+--- STDERR ---
+[93m[1m! [0mpermission requested: external_directory (/tmp/*); auto-rejecting
