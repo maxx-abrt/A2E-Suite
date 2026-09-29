@@ -36,7 +36,10 @@ const findExistingTemplateTitles = async (
     documents: {
       __args: {
         filter: { kind: { equals: 'TEMPLATE' } },
-        first: 30,
+        // The page must cover every shipped template with headroom: a page
+        // shorter than the bundle would hide titles from the missing-titles
+        // delta and re-seed duplicates on reinstall.
+        first: 200,
       },
       edges: { node: { title: true } },
     },

@@ -38,8 +38,11 @@ to install yet.
 
 A hierarchical tree of documents with rich-text bodies, favorites,
 drag-and-drop reparenting, a trash with 7-day retention, company/person links,
-and a template gallery seeded with five starter templates (meeting notes,
-project brief, PRD, one-on-one, journal). Share links snapshot the current body. See
+and a template gallery seeded with twenty curated page templates (meeting
+notes, project brief, PRD, one-on-one, journal, weekly review, daily note, OKRs,
+team wiki home, onboarding guide, recurring agenda, decision log, retrospective,
+brainstorm, reading list, Cornell course notes, thesis planner, recipe book,
+travel plan, personal CRM). Share links snapshot the current body. See
 the [Documents README](../packages/twenty-apps/internal/a2e-documents/README.md).
 
 ## Projects

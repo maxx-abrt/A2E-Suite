@@ -38,6 +38,15 @@ after each iteration and it's included in prompts for context.
 - Entity changes need a generated instance command, but a **brand-new table**
   needs no `@WasIntroducedInUpgrade` (that decorator is only for columns added
   to existing entities).
+- Internal A2E app content (starter templates, fiches, projects) is
+  code-data in the app's own `src/lib/*template*` constant and seeded by the
+  app's post-install logic function through a data-driven delta
+  (`findMissingStarterTemplates` by title / `findMissingStarterProjects` by key).
+  Extending a family = extending the constant only — no seeder logic change. The
+  content is French-only (no i18n layer in `twenty-apps/internal/*`); the
+  `key/version/labels fr+en/category` descriptor contract is US-117's scope. The
+  seeder's read page size must exceed the shipped bundle with headroom or a
+  reinstall can re-seed a duplicate.
 
 ---
 
@@ -90,4 +99,16 @@ after each iteration and it's included in prompts for context.
   - `global.app.get(ServiceClass)` in an integration spec fails with "does not exist in the current context" because the spec's module graph is a distinct copy of the app's; `strict: false` only rescues repository tokens (see `getCoreRepository`). Look the provider up from the module container by name instead — new util `test/integration/utils/get-app-provider-by-name.util.ts`.
   - `database:migrate:generate` diffs the whole schema, so a dev DB with stale FK names produces unrelated statements; always diff and prune to the intended table before committing the generated command.
   - New core tables are created by instance commands (legacy TypeORM migrations are frozen); a brand-new entity needs no `@WasIntroducedInUpgrade` (that decorator is only for added columns on existing entities).
+---
+
+## 2026-09-29 - US-103 (M9c family: 20 curated Bureau page templates)
+- Added the 15 missing page templates to `a2e-documents/src/lib/starter-templates.ts` (weekly review, daily note, OKR, team wiki home, onboarding guide, recurring agenda, decision log/ADR, retrospective, brainstorm, reading list, Cornell course notes, thesis planner, recipe book, travel plan, personal CRM) — 20 total in the existing `{title, markdown}` shape.
+- Extended `starter-templates.test.ts`: 20-title bundle assertion, uniqueness test, one `descriptor « … » is shaped and instantiable` test per descriptor (loop) → 221 unit tests pass.
+- Raised the post-install template read `first: 30`→`200` so the missing-titles delta stays exhaustive at 20 shipped titles (otherwise a workspace with >10 user templates could re-seed a duplicate).
+- Bumped `a2e-documents` 0.2.1→0.2.2; updated README + `docs/features.md` five→twenty; created `docs/plan/phases/phase-13-report.md`.
+- Files changed: `starter-templates.ts`, `starter-templates.test.ts`, `post-install.ts`, `package.json`, `README.md`, `docs/features.md`, `phase-13-report.md`.
+- **Learnings:**
+  - US-103's AC names a descriptor shape `(key, version, labels fr/en, category, content)` that does not exist; the real shape is `{title, markdown}` and every A2E app content family is French-only. The richer contract is US-117's deliverable — do not invent it in a content slice. Report the deviation explicitly.
+  - Extending a content family needs no seeder logic change: `findMissingStarterTemplates` is data-driven. Only the seeder's read page size needs headroom over the bundle size.
+  - `docs/plan/phases/phase-13-report.md` is the M9 report file (per PLAN's milestone→report table) and did not exist before this slice — create it on first M9 slice.
 ---

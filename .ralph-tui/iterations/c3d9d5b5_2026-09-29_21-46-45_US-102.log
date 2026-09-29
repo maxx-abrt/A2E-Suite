@@ -1,0 +1,331 @@
+# Iteration 3 Log
+
+## Metadata
+
+- **Task ID**: US-102
+- **Task Title**: M10a-1: workspace BYOK server core — entity, migration, encrypted keys, resolution order (D-N4)
+- **Description**: As a workspace admin, I want to bring my own AI provider key at workspace level so that Syna works with my provider without instance-wide AI_PROVIDERS. Starting state: not started — provider-config.se...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-29T19:46:45.440Z
+- **Ended At**: 2026-09-29T20:20:18.757Z
+- **Duration**: 33m 33s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-102" PLAN.md
+[94m[bash][0m $ ls docs/tasks/ 2>/dev/null
+[94m[bash][0m $ grep -rn "US-102\|M10a\|BYOK" PLAN.md docs/ 2>/dev/null | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ ls -la .ralph-tui/ 2>/dev/null
+[94m[bash][0m $ grep -rn "US-10[0-9]" docs/plan/phases/ | tail -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ cat .ralph-tui/session.json
+[94m[bash][0m $ find packages/twenty-server/src/engine/metadata-modules/ai -type f | head -100
+[94m[bash][0m $ find packages/twenty-server/src/engine/core-modules/secret-encryption -type f
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ done
+[94m[bash][0m $ cd packages/twenty-server && cat src/engine/metadata-modules/ai/ai-agent-monitor/entities/agent-turn...
+[94m[bash][0m $ cd packages/twenty-server && grep -rln "ProviderConfigService\|getResolvedProviders" src | head -30
+[94m[read][0m
+[94m[bash][0m $ cd packages/twenty-server && ls src/database/commands/upgrade-version-command/ && echo "---2-39---" ...
+[94m[bash][0m $ grep -rn "TWENTY_CURRENT_VERSION =" src -r | head
+[94m[bash][0m $ cat src/database/commands/upgrade-version-command/2-39/2-39-upgrade-version-command.module.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/docs/UPGRADE_COMMANDS.md
+[94m[bash][0m $ head -40 src/database/commands/upgrade-version-command/instance-commands.constant.ts
+[94m[bash][0m $ cd packages/twenty-server && grep -n "migrate:generate\|database:migrate" project.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/project.json
+[94m[bash][0m $ ls src/database/typeorm/core/migrations 2>/dev/null | head
+[94m[bash][0m $ redis-cli ping 2>&1
+[94m[bash][0m $ cd packages/twenty-server && grep -rln "generate:instance-command\|GenerateInstanceCommand\|generate...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/database/commands/instance-command-generation.service.ts
+[94m[bash][0m $ cd packages/twenty-server && grep -rn "AgentTurnEvaluationEntity" src --include=*.ts -l
+[94m[bash][0m $ cd packages/twenty-server && grep -rn "entities:" src/database/typeorm/typeorm.module.ts src/databas...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96mAgentTurnEvaluationEntity[0m
+[94m[glob][0m pattern: [96mpackages/twenty-server/src/database/typeorm/**/*.ts[0m
+[94m[bash][0m $ cd packages/twenty-server && ls src/engine/workspace-manager/types/ && echo "=== all-non-workspace =...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/workspace-manager/types/workspace-related-entity.ts
+[94m[bash][0m $ sed -n '1,80p' src/database/typeorm/core/core.datasource.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/ai/ai-models/ai-models.module.ts
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules[0m pattern: [96mextends WorkspaceRelatedEntity[0m
+[94m[read][0m
+[94m[read][0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96mencryptVersioned|decryptVersionedOrThrow[0m
+[94m[bash][0m $ 
+[94m[bash][0m $ cd packages/twenty-server && grep -rn "resolveModelForAgent\|AiModelRegistryService" src --include=*...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96mAiModelRegistryService[0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && python3 -c " import json d=json.load(open('tasks/prd.json...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && python3 -c " import json d=json.load(open('tasks/prd.json...
+[94m[bash][0m $ cat src/engine/core-modules/admin-panel/services/admin-panel-ai-provider.service.ts
+[94m[bash][0m $ find src/engine/twenty-orm/workspace-scoped-repository -type f
+[94m[bash][0m $ cat src/engine/metadata-modules/ai/ai.exception.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/database/commands/generate-instance-command.command.ts
+[94m[bash][0m $ grep -h "PG_DATABASE_URL" .env .env.test 2>/dev/null
+[94m[bash][0m $ cd packages/twenty-server && grep -n "\"build\"\|ts-node\|command-no-deps\|tsgo" project.json | head...
+[94m[bash][0m $ grep -rn "SecretEncryptionModule" src/engine/core-modules/secret-encryption/secret-encryption.module...
+[94m[bash][0m $ cd packages/twenty-server && sed -n '1,90p' project.json
+[94m[bash][0m $ cat src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator.t...
+[94m[bash][0m $ ls test/integration/graphql/suites | head -40
+[94m[bash][0m $ ls test/integration/utils | head -40
+[94m[bash][0m $ cd packages/twenty-server && ls test/integration/ai/suites && echo "=== secret-encryption spec head ...
+[94m[bash][0m $ cd packages/twenty-server && sed -n '1,120p' test/integration/ai/suites/workflow-agent-role-assignme...
+[94m[bash][0m $ cat test/integration/upgrade/utils/build-secret-encryption-service.util.ts
+[94m[bash][0m $ find test -maxdepth 2 -name "*setup*" -o -maxdepth 2 -name "global*" | head
+[94m[bash][0m $ cd packages/twenty-server && sed -n '1,120p' test/integration/utils/setup-test.ts
+[94m[bash][0m $ python3 -c " import json d=json.load(open('src/engine/metadata-modules/ai/ai-models/ai-providers.jso...
+[94m[read][0m
+[94m[bash][0m $ cd packages/twenty-server && cat src/engine/core-modules/secret-encryption/branded-strings/encrypted...
+[94m[bash][0m $ console.log(typeof u.isNonEmptyString, typeof u.isDefined)" 2>&1 | tail -2
+[94m[todowrite][0m
+[94m[bash][0m $ date +%s%3N
+[94m[bash][0m $ print(int(time.time()*1000))"
+[94m[write][0m "# Phase 14 report — M10 Syna (AI, BYOK)
+
+CLAIMED — US-102/M10a-1 — deepseek-v4.1-flash — 2026-09-29T19:52:00Z — base 396bdddbe3bd1028452e9f8d5164e896fdc17520
+"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-14-report.md
+[94m[write][0m "import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  Unique,
+  UpdateDateColumn,
+} from 'typeorm';
+
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/w... (1335 chars)"
+[94m[bash][0m $ cd packages/twenty-server && grep -n "  [a-zA-Z]*(" src/engine/twenty-orm/workspace-scoped-repositor...
+ 
+
+[94m[read][0m
+ 
+
+[94m[read][0m
+ 
+
+[94m[bash][0m $ cd packages/twenty-server && sed -n '1,60p' src/engine/core-modules/secret-encryption/utils/decrypt-...
+[94m[write][0m "import { Injectable } from '@nestjs/common';
+
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type EncryptedString } from 'src/engine/core... (6056 chars)"
+[94m[bash][0m $ "
+[94m[write][0m "import { Injectable } from '@nestjs/common';
+
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import ... (5927 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/ai/ai-models/ai-models.module.ts
+ 
+
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96mnew ProviderConfigService\([0m
+ 
+
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/test[0m pattern: [96mProviderConfigService[0m
+
+
+[94m[bash][0m $ cd packages/twenty-server && npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -30
+
+
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx nx run twenty-server:database:migrate:generate --name...
+[94m[read][0m
+[94m[write][0m "import { QueryRunner } from 'typeorm';
+
+import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { FastInstanceCommand } fro... (1994 chars)"
+
+
+[94m[bash][0m $ cd packages/twenty-server && grep -n "CreateWorkspaceAiProviderFastInstanceCommand" src/database/com...
+[94m[bash][0m $ cd packages/twenty-server/src/database/commands/upgrade-version-command/2-39 && ls | grep -oE '[0-9]...
+[94m[bash][0m $ grep -n "testRegex\|testMatch\|roots" jest.config.mjs 2>/dev/null | head
+[94m[write][0m "import { ProviderConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-config.service';
+import { type WorkspaceAiProviderService } from 'src/engine/metadata-modules/ai/ai-mo... (6676 chars)"
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest packages/twenty-server/src/engine/metadata-modul...
+[94m[edit][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest packages/twenty-server/src/engine/metadata-modul...
+[94m[write][0m "import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai... (5007 chars)"
+ 
+
+[94m[bash][0m $ cd packages/twenty-server && cat src/utils/custom-exception.ts
+ 
+
+ 
+
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest packages/twenty-server/src/engine/metadata-modul...
+[94m[write][0m "import { type QueryRunner } from 'typeorm';
+
+import { CreateWorkspaceAiProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1790711712877-c... (5977 chars)"
+[94m[bash][0m $ cd packages/twenty-server && NODE_ENV=test npx jest --config jest-integration.config.ts test/integra...
+[94m[bash][0m $ cd packages/twenty-server && sed -n '1,80p' test/integration/utils/create-app.ts
+[94m[bash][0m $ grep -rn "AiModelsModule" src/app.module.ts src/engine/engine.module.ts 2>/dev/null
+ 
+
+ 
+
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96mAiModelsModule[0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/ai/ai-models/ai-models.module.ts
+[94m[bash][0m $ cd packages/twenty-server && NODE_ENV=test npx jest --config jest-integration.config.ts test/integra...
+[94m[bash][0m $ grep -n "CoreEngineModule" src/app.module.ts src/engine/core-modules/core-engine.module.ts | head
+ 
+
+[94m[bash][0m $ cd packages/twenty-server && sed -n '30,50p' src/engine/metadata-modules/ai/ai-models/ai-models.modu...
+[94m[bash][0m $ cd packages/twenty-server && npx jest --clearCache 2>&1 | tail -2 && NODE_ENV=test npx jest --config...
+[94m[bash][0m $ grep -n "AiModelsModule\|condition" src/engine/core-modules/core-engine.module.ts | head
+ 
+
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/test/integration[0m pattern: [96mglobal\.app\.get\([0m
+[94m[edit][0m
+ 
+
+[94m[edit][0m
+[94m[bash][0m $ cd packages/twenty-server && NODE_ENV=test npx jest --config jest-integration.config.ts test/integra...
+[94m[bash][0m $ cd packages/twenty-server && NODE_ENV=test npx jest --config jest-integration.config.ts test/integra...
+[94m[bash][0m $ cd packages/twenty-server && NODE_ENV=test npx jest --config jest-integration.config.ts test/integra...
+[94m[bash][0m $ cd packages/twenty-server && NODE_ENV=test npx jest --config jest-integration.config.ts test/integra...
+[94m[bash][0m $ cd packages/twenty-server && NODE_ENV=test npx jest --config jest-integration.config.ts test/integra...
+[94m[bash][0m $ cd packages/twenty-server && NODE_ENV=test npx jest --config jest-integration.config.ts test/integra...
+[94m[bash][0m $ cd packages/twenty-server && NODE_ENV=test npx jest --config jest-integration.config.ts test/integra...
+[94m[bash][0m $ cd packages/twenty-server && NODE_ENV=test npx jest --config jest-integration.config.ts test/integra...
+[94m[write][0m "import { inspect } from 'util';
+
+import { type NestExpressApplication } from '@nestjs/platform-express';
+
+console.log(
+  'APP_MODULES',
+  inspect(
+    (global.app as NestExpressApplication)
+      .get... (299 chars)"
+[94m[bash][0m $ grep -n "imports" test/integration/utils/create-app.ts
+[94m[bash][0m $ cd packages/twenty-server && grep -rn "workspaceAiProvider\|AiModelsModule\|ProviderConfigService" t...
+[94m[bash][0m $ ls test/integration/ai/suites/
+[94m[bash][0m $ EOF NODE_ENV=test npx jest --config jest-integration.config.ts test/integration/ai/suites/_debug-app...
+[94m[bash][0m $ cd packages/twenty-server && NODE_ENV=test npx jest --config jest-integration.config.ts test/integra...
+[94m[bash][0m $ cd packages/twenty-server && mv test/integration/ai/suites/_debug-app.spec.ts test/integration/ai/su...
+[94m[bash][0m $ EOF NODE_ENV=test npx jest --config jest-integration.config.ts test/integration/ai/suites/_debug-app...
+[94m[bash][0m $ EOF NODE_ENV=test npx jest --config jest-integration.config.ts test/integration/ai/suites/_debug-app...
+[94m[bash][0m $ EOF NODE_ENV=test npx jest --config jest-integration.config.ts test/integration/ai/suites/_debug-app...
+[94m[bash][0m $ EOF NODE_ENV=test npx jest --config jest-integration.config.ts test/integration/ai/suites/_debug-app...
+The provider is there. The failure must be in the resolver. Let me check if `global.app.get` recompiles something.
+
+[94m[bash][0m $ EOF NODE_ENV=test npx jest --config jest-integration.config.ts test/integration/ai/suites/_debug-app...
+[94m[bash][0m $ EOF NODE_ENV=test npx jest --config jest-integration.config.ts test/integration/ai/suites/_debug-app...
+Confirmed: the test file loads a duplicate module instance, so its `ProviderConfigService` import is a different class than the one in the running app. I'll use token-based lookup via the module container.
+
+[94m[bash][0m $ cd packages/twenty-server && rm test/integration/ai/suites/_debug-app.integration-spec.ts && grep -r...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/test/integration[0m pattern: [96mapp\.container|getCoreRepository|global\.app\.get[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/test/integration/utils/get-core-repository.util.ts
+`strict: false` is the key. I'll use that option and inject the registry path via the workspace service's own resolution.
+
+[94m[read][0m
+[94m[write][0m "import { type QueryRunner } from 'typeorm';
+
+import { CreateWorkspaceAiProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1790711712877-c... (6305 chars)"
+[94m[bash][0m $ cd packages/twenty-server && NODE_ENV=test npx jest --config jest-integration.config.ts test/integra...
+[94m[bash][0m $ EOF NODE_ENV=test npx jest --config jest-integration.config.ts test/integration/ai/suites/_debug2.in...
+[94m[bash][0m $ EOF NODE_ENV=test npx jest --config jest-integration.config.ts test/integration/ai/suites/_debug2.in...
+The token is the class; `global.app.get` needs the token from the app's own module graph. I'll retrieve the provider instance directly from the module container instead.
+
+[94m[bash][0m $ EOF NODE_ENV=test npx jest --config jest-integration.config.ts test/integration/ai/suites/_debug2.in...
+[94m[write][0m "import { type NestExpressApplication } from '@nestjs/platform-express';
+
+// The spec's module graph is a distinct copy of the app's, so a class import in
+// this file never matches the running contain... (1002 chars)"
+[94m[bash][0m $ cd packages/twenty-server && rm test/integration/ai/suites/_debug2.integration-spec.ts && grep -n "c...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && ls node_modules/@nestjs/core/ | grep -i "nest-application...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "container" node_modules/@nestjs/core/nest-applic...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "getModules\|class NestContainer" node_modules/@n...
+[94m[write][0m "import { type ModulesContainer } from '@nestjs/core';
+
+import { type NestExpressApplication } from '@nestjs/platform-express';
+
+type AppWithContainer = NestExpressApplication & {
+  container: ModulesC... (1186 chars)"
+`protected readonly container` means tests can't access it via the typed public API. Let me check how the previous debug worked — it accessed `(global as any).app.container`, which worked at runtime. I'll keep the util but access it via a cast properly.
+
+[94m[edit][0m
+[94m[bash][0m $ cd packages/twenty-server && NODE_ENV=test npx jest --config jest-integration.config.ts test/integra...
+[94m[todowrite][0m
+All 5 integration tests pass. Now let me run the quality gates.
+
+[94m[bash][0m $ cd packages/twenty-server && npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -30
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "class ModulesContainer" -A6 node_modules/@nestjs...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/test/integration/utils/get-app-provider-by-name.util.ts
+`ModulesContainer` extends `Map` directly, so I should use `.values()` not `.getModules()`.
+
+[94m[bash][0m $ cd packages/twenty-server && npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -30
+Typecheck clean. Now lint and format.
+
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx oxlint --type-aware -c packages/twenty-server/.oxlint...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx oxfmt --check packages/twenty-server/src/engine/metad...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx oxfmt packages/twenty-server/src/engine/metadata-modu...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx oxfmt --check packages/twenty-server/src/engine/metad...
+Now let me verify the generated migration file is not in changed state from oxfmt (it wasn't listed, so already formatted). Let me re-run tests after formatting and check git status.
+
+
+
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git status --porcelain
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest packages/twenty-server/src/engine/metadata-modul...
+[94m[bash][0m $ grep -rn "CreateNotificationCoreTable\|notification" src/database/commands/upgrade-version-command/2...
+All my files are accounted for. The `.ralph-tui/*`, `tasks/prd.json`, and the US-101 log are pre-existing Ralph state, not mine. Let me verify the migration down/up works and that `WasIntroducedInUpgrade` conventions don't need a decorator for a brand-new table (new entities generally don't need one since the table is created by the command, but let me confirm the pattern with a recent new-table entity).
+
+Good — no `WasIntroducedInUpgrade` needed for a brand-new table (that decorator is only for columns added to existing entities). Let me verify `NotificationEntity` has no decorator to confirm.
+
+[94m[bash][0m $ echo "exit=$?"
+Confirmed. Now let me run the related unit tests for modules I touched to make sure nothing regressed, plus check the migration registers correctly by running the upgrade registry.
+
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest packages/twenty-server/src/engine/metadata-modul...
+Now let me check whether the workspace entity-union types need the new entity added. I saw `AllNonWorkspaceRelatedEntity`; since my entity extends `WorkspaceRelatedEntity`, it's handled by that union. Let me verify there isn't a required registry of workspace entities that metadata generation relies on.
+
+
+
+[94m[bash][0m $ grep -rln "extends WorkspaceRelatedEntity" src/engine/metadata-modules | wc -l
+Good — entities extending `WorkspaceRelatedEntity` don't need to be listed. Now let me run the upgrade registry boot to confirm the command registers (the earlier build succeeded, which means it did). Let me also confirm the migration `down` is valid by checking the table creation syntax matched the entity columns. The integration test already applied `up`/`down` successfully, so it's verified.
+
+Let me now also verify that the `includeCustomProviders: false` semantics don't break the existing `admin-panel` masked providers behavior — the existing `getResolvedProviders` is unchanged. Let me run the admin-panel tests.
+
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx jest packages/twenty-server/src/engine/core-modules/a...
+Now let me check the integration `get-app-provider-by-name.util.ts` doesn't need to be added somewhere and there's no lint in test dirs. Let me also confirm no `locales` churn and no other stray files.
+
+[94m[bash][0m $ echo "---clean check done---"
+No catalog churn. Now let me write the final report. First let me get the exact timestamp and list the changed files.
+
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git status --porcelain | grep -v "^ M \.ralph\|^ M tasks/...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-14-report.md
+Now let me append the phase report and progress entries.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-14-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+Now let me do the final self-verify: confirm all five checks hold.
+
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && echo "=== git status (mine + ralph preexisting) ===" && g...
+[94m[todowrite][0m
+All checks hold. My claim is still the only one for US-102/M10a-1. Let me mark todos complete.
+
+US-102 M10a-1 implemented and verified.
+
+**What shipped**
+- `WorkspaceAiProviderEntity` (`core."workspaceAiProvider"`, unique `(workspaceId, provider)`, `encryptedApiKey` text) and `WorkspaceAiProviderService` — encrypt-on-write with `SecretEncryptionService.encryptVersioned`, decrypt-on-read, safe `AiException(API_KEY_NOT_CONFIGURED)` on failure, `upsertProvider`/`removeProvider`/`resolveProviders`.
+- `ProviderConfigService.getResolvedProvidersForWorkspace` — workspace BYOK → instance `AI_PROVIDERS` → catalog, workspace values never template-resolved, workspace entries kept even when instance custom providers are disabled (explicit D-N4 bypass).
+- Generated fast instance command under 2-39 (`1790711712877`), auto-registered; unrelated generator drift stripped.
+- 12 unit tests + 5 integration tests (ciphertext at rest, cross-workspace isolation, invalid key → safe error, removal fallback) all green.
+
+**Checks:** `tsgo --noEmit` clean; oxlint 0/0; oxfmt clean; module unit suite 38 passed; regression guards 15 passed; integration suite 5 passed on the test DB. No i18n churn, no AI attribution.
+
+**Reported:** `done-for-review`, `Ready-to-tick: yes` — appended to `docs/plan/phases/phase-14-report.md` and `.ralph-tui/progress.md` (with billing-gating open item and two new codebase patterns). No commit made.
+
+<promise>COMPLETE</promise>
