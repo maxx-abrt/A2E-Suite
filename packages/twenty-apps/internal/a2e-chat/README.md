@@ -23,7 +23,8 @@ register, publish and install the app on a disposable workspace.
 
 ## Where users find it
 
-- Sidebar entry **Discussions** → `allChannels`
+- Sidebar entry **Discussions** → the native `/discussions` page (the nav item
+  is an in-app LINK target, US-101)
   ([channels.navigation-menu-item.ts](./src/navigation-menu-items/channels.navigation-menu-item.ts)).
 - Native page at route `/discussions` (`AppPath.Discussions`,
   [ChatPage.tsx](../../../twenty-front/src/pages/chat/ChatPage.tsx)).

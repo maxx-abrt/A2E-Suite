@@ -38,9 +38,10 @@
         "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-server, packages/twenty-front and packages/twenty-sdk (if touched) clean; targeted jest for the server validation + front computed-link util green; if twenty-shared touched, npx nx build twenty-shared --skip-nx-cache first; no i18n catalog churn; no AI attribution"
       ],
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "notes": "Highest fan-out in this batch: unblocks US-115 (M7c), US-116 (M7d), the Agenda/Archive/Syna sidebar rows (G8), and closes D09. Lane L-NAV (front navigation*, server nav validation, SDK).",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-102",
@@ -591,6 +592,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-29T19:11:17.881Z"
+    "updatedAt": "2026-09-29T19:46:39.840Z"
   }
 }

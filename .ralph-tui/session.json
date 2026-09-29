@@ -3,10 +3,10 @@
   "sessionId": "c3d9d5b5-131c-4bed-9971-37e80fe99ea9",
   "status": "running",
   "startedAt": "2026-09-29T18:49:46.574Z",
-  "updatedAt": "2026-09-29T19:11:17.883Z",
-  "currentIteration": 0,
+  "updatedAt": "2026-09-29T19:46:39.840Z",
+  "currentIteration": 1,
   "maxIterations": 20,
-  "tasksCompleted": 0,
+  "tasksCompleted": 1,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -16,7 +16,18 @@
     "totalTasks": 0,
     "tasks": []
   },
-  "iterations": [],
+  "iterations": [
+    {
+      "iteration": 1,
+      "status": "completed",
+      "taskId": "US-100",
+      "taskTitle": "M7a-2: host strings → Agenda / Syna / Archive (rename display surfaces, remaining half)",
+      "taskCompleted": true,
+      "durationMs": 1285124,
+      "startedAt": "2026-09-29T18:49:52.749Z",
+      "endedAt": "2026-09-29T19:11:17.873Z"
+    }
+  ],
   "skippedTaskIds": [],
   "cwd": "/Users/maxaubert/Projets/A2E Suite",
   "activeTaskIds": [],

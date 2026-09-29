@@ -4,7 +4,11 @@ import {
   type AssertUnreachable,
   NavigationMenuItemType,
 } from 'twenty-shared/types';
-import { isDefined, isValidUrl, isValidUuid } from 'twenty-shared/utils';
+import {
+  isAllowedNavigationMenuItemLink,
+  isDefined,
+  isValidUuid,
+} from 'twenty-shared/utils';
 
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { type UniversalFlatNavigationMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-navigation-menu-item.type';
@@ -99,7 +103,7 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
       ];
     }
     case NavigationMenuItemType.LINK: {
-      return isDefined(link) && isValidUrl(link)
+      return isDefined(link) && isAllowedNavigationMenuItemLink(link)
         ? []
         : [
             buildInvalidInputError(

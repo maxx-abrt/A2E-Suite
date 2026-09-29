@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { type CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/create-navigation-menu-item.input';
+import { navigationMenuItemLinkSchema } from 'src/engine/metadata-modules/navigation-menu-item/tools/schemas/navigation-menu-item-link.schema';
 import { navigationMenuItemScopeSchema } from 'src/engine/metadata-modules/navigation-menu-item/tools/schemas/navigation-menu-item-scope.schema';
 import { type NavigationMenuItemToolContext } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-context.type';
 import { type NavigationMenuItemToolDependencies } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-dependencies.type';
@@ -49,7 +50,7 @@ const createNavigationMenuItemSchema = z.discriminatedUnion('type', [
     type: z.literal(NavigationMenuItemType.LINK),
     scope: navigationMenuItemScopeSchema,
     name: requiredNameField,
-    link: z.string().url().describe('Target URL'),
+    link: navigationMenuItemLinkSchema,
     ...commonOptionalFields,
   }),
   z.object({
@@ -146,7 +147,7 @@ export const createCreateNavigationMenuItemTool = (
 
 Type chooses the variant:
 - FOLDER: a group to nest other items into (name required).
-- LINK: an external URL pinned in the sidebar (name + link required).
+- LINK: an external URL or an allow-listed internal host route (e.g. /drive) pinned in the sidebar (name + link required).
 - OBJECT: pins an object's standard view (label auto-derived from the object's plural name; only pass 'name' if the user wants a custom label).
 - VIEW: pins a saved view (label auto-derived from the view's name; only pass 'name' for a custom label).
 - RECORD: pins a single record (label auto-derived from the record's identifier; only pass 'name' for a custom label).

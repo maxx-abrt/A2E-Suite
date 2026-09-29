@@ -111,6 +111,14 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
       overrides: { link: 'https://twenty.com' },
     },
     {
+      type: NavigationMenuItemType.LINK,
+      overrides: { link: '/drive' },
+    },
+    {
+      type: NavigationMenuItemType.LINK,
+      overrides: { link: '/discussions' },
+    },
+    {
       type: NavigationMenuItemType.PAGE_LAYOUT,
       overrides: { pageLayoutUniversalIdentifier: VALID_UUID },
     },
@@ -161,6 +169,26 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
       flatNavigationMenuItem: buildFlatNavigationMenuItem({
         type: NavigationMenuItemType.LINK,
         link: 'not a link',
+      }),
+    });
+
+    expect(errors.map(({ message }) => message)).toEqual([
+      'A valid link is required for LINK type',
+    ]);
+  });
+
+  it.each([
+    '//evil',
+    '//evil.com',
+    'javascript:alert(1)',
+    '/settings',
+    '/driveevil',
+    '/drive/../evil',
+  ])('should report an error when the link %s is not allow-listed', (link) => {
+    const errors = validateNavigationMenuItemTypeRequiredProperties({
+      flatNavigationMenuItem: buildFlatNavigationMenuItem({
+        type: NavigationMenuItemType.LINK,
+        link,
       }),
     });
 

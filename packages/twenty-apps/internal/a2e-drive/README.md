@@ -20,7 +20,8 @@ and install the app on a disposable workspace.
 
 ## Where users find it
 
-- Sidebar entry **Drive** → `allDriveFolders`
+- Sidebar entry **Archive** → the native `/drive` page (the nav item is an
+  in-app LINK target, US-101)
   ([drive.navigation-menu-item.ts](./src/navigation-menu-items/drive.navigation-menu-item.ts)).
 - Native page at route `/drive` (`AppPath.Drive`,
   [DrivePage.tsx](../../../twenty-front/src/pages/drive/DrivePage.tsx)). The

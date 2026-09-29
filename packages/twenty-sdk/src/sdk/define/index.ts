@@ -124,6 +124,9 @@ export type { InputJsonSchema } from 'twenty-shared/logic-function';
 export { defineConnectionProvider } from '@/sdk/define/connection-providers/define-connection-provider';
 
 export { defineNavigationMenuItem } from '@/sdk/define/navigation-menu-items/define-navigation-menu-item';
+export { AppPath } from 'twenty-shared/types';
+export { INTERNAL_NAVIGATION_MENU_ITEM_ROUTE_PATHS } from 'twenty-shared/utils';
+export type { InternalNavigationMenuItemRoutePath } from 'twenty-shared/utils';
 
 export { defineObject } from '@/sdk/define/objects/define-object';
 export {

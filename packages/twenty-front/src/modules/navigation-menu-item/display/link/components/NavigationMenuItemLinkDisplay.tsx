@@ -26,13 +26,19 @@ export const NavigationMenuItemLinkDisplay = ({
   const label = getLinkNavigationMenuItemLabel(item);
   const computedLink = getLinkNavigationMenuItemComputedLink(item);
 
-  const defaultRightOptions = !isLayoutCustomizationModeEnabled && (
-    <IconArrowUpRight
-      size={theme.icon.size.sm}
-      stroke={theme.icon.stroke.md}
-      color={themeCssVariables.font.color.light}
-    />
-  );
+  // The arrow signals an off-app target; an allow-listed host route opens
+  // in-app like a native section, so it is not shown there.
+  const isExternalLink =
+    computedLink.startsWith('http://') || computedLink.startsWith('https://');
+
+  const defaultRightOptions = !isLayoutCustomizationModeEnabled &&
+    isExternalLink && (
+      <IconArrowUpRight
+        size={theme.icon.size.sm}
+        stroke={theme.icon.stroke.md}
+        color={themeCssVariables.font.color.light}
+      />
+    );
 
   return (
     <NavigationDrawerItem

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { type UpdateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
+import { navigationMenuItemLinkSchema } from 'src/engine/metadata-modules/navigation-menu-item/tools/schemas/navigation-menu-item-link.schema';
 import { type NavigationMenuItemToolContext } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-context.type';
 import { type NavigationMenuItemToolDependencies } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-dependencies.type';
 
@@ -24,11 +25,11 @@ const updateNavigationMenuItemSchema = z.object({
     .describe(
       'Move into a different folder. Pass null to move to the top level.',
     ),
-  link: z
-    .string()
-    .url()
+  link: navigationMenuItemLinkSchema
     .optional()
-    .describe('New URL (only meaningful for LINK items)'),
+    .describe(
+      'New URL or internal host route (only meaningful for LINK items)',
+    ),
   pageLayoutId: z
     .string()
     .optional()
