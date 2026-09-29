@@ -367,6 +367,24 @@
               "pages": ["user-guide/legal/how-tos/legal-faq"]
             }
           ]
+        },
+        {
+          "key": "a2eSuite",
+          "label": "A2E Suite",
+          "icon": "rocket",
+          "pages": [
+            "user-guide/a2e-suite/overview",
+            "user-guide/a2e-suite/getting-started",
+            "user-guide/a2e-suite/bureau",
+            "user-guide/a2e-suite/agenda",
+            "user-guide/a2e-suite/bilan",
+            "user-guide/a2e-suite/syna",
+            "user-guide/a2e-suite/archive",
+            "user-guide/a2e-suite/templates",
+            "user-guide/a2e-suite/working-across-apps",
+            "user-guide/a2e-suite/admin-and-self-host",
+            "user-guide/a2e-suite/faq-troubleshooting"
+          ]
         }
       ]
     },

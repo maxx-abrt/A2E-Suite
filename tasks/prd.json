@@ -169,9 +169,10 @@
         "Quality gates: node docs/scripts/check-docs.mjs PASS (or the package's documented build command); docs-only change — lint/tsgo N/A by design, reported as such (US-048 precedent); no i18n catalog churn; no AI attribution"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "Named safe parallel slice in the Execution-order guidance ('M12a'). Unblocks M12b–g sequencing. Lane L-DOCS.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-109",
@@ -598,6 +599,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-29T21:02:59.739Z"
+    "updatedAt": "2026-09-29T21:19:06.178Z"
   }
 }

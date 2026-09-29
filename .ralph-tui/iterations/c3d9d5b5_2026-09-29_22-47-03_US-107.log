@@ -1,0 +1,298 @@
+# Iteration 8 Log
+
+## Metadata
+
+- **Task ID**: US-107
+- **Task Title**: M9c family: cross-app workflow recipes ≥6 (workflow engine, opt-in, previewed)
+- **Description**: As a user, I want prebuilt cross-app automation recipes I can opt into with a preview so that routine chains (meeting → notes, upload → review task, deadline → reminder) run on the native workflow eng...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-29T20:47:03.486Z
+- **Ended At**: 2026-09-29T21:02:59.738Z
+- **Duration**: 15m 56s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-107" PLAN.md
+[94m[bash][0m $ ls docs/plan/phases/ | tail -40
+[94m[bash][0m $ ls *.md
+[94m[bash][0m $ grep -n "M9c" PLAN.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "US-10[0-9]\|US-11[0-9]\|CLAIMED" docs/plan/phases/phase-13-report.md | tail -60
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-projects -type f | head -80
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-projects -type f -not -path '*/node_modules/*' -not -path '*/...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/deal-won-recipe.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/recurring-task-generator.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/application.config.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/deal-won-recipe.test.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/package.json
+[94m[bash][0m $ grep -rln "recipe\|Recipe" packages/twenty-apps/internal --include=*.ts --include=*.tsx | grep -v no...
+[94m[bash][0m $ grep -rln "descriptor\|Descriptor\|preview\|Preview" packages/twenty-apps/internal --include=*.ts | ...
+[94m[grep][0m [95mpackages/twenty-apps/internal[0m pattern: [96mrecipe|Recipe[0m
+[94m[bash][0m $ grep -rln "workflow-templates\|cross-app recipe\|recette" docs .cursor 2>/dev/null | head -30
+[94m[bash][0m $ grep -rn "C1\b\|contrat de prévisualisation\|preview contract\|prévisualis" docs/plan/*.md docs/*.md...
+[94m[bash][0m $ grep -n "preview\|Preview\|descriptor\|Descriptor\|recipe\|workflow" docs/plan/05-template-contracts...
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-drive/src -type f -not -path '*/node_modules/*' | sort
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/lib/folder-structure-templates.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/
+[94m[bash][0m $ grep -rn "meeting\|Meeting\|reminder\|Reminder\|calendar\|Calendar\|notification\|Notification" pack...
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents/src -type f -not -path '*/node_modules/*' | sort | ...
+[94m[bash][0m $ ls packages/twenty-server/src/modules/ | head -50
+[94m[grep][0m pattern: [96mWorkflowRecipe|workflowRecipe|workflow-templates|workflowTemplates|WorkflowTemplate|workflowTemplate[0m
+[94m[bash][0m $ ls -lt .ralph-tui/iterations/ | head -30
+[94m[bash][0m $ ls .ralph-tui/iterations/ | grep -i "107\|US-10"
+[94m[bash][0m $ grep -rn "WorkflowTriggerType\|enum.*TriggerType\|'DATABASE_EVENT'\|'CRON'\|'MANUAL'\|'WEBHOOK'" pac...
+[94m[bash][0m $ ls packages/twenty-server/src/modules/attachment/standard-objects/ 2>/dev/null
+[94m[bash][0m $ cat packages/twenty-server/src/modules/workflow/workflow-trigger/types/workflow-trigger.type.ts
+[94m[bash][0m $ grep -rln "calendarEvent\|CalendarEvent" packages/twenty-server/src --include="*.ts" | head -20
+[94m[bash][0m $ grep -n "Agenda\|agenda" PLAN.md | head -40
+[94m[bash][0m $ grep -n "M9a\|US-100\|US-101\|US-102\|US-103\|US-104\|US-105\|US-106\|US-117\|US-120" tasks/prd.json...
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-server/src/modules/note/standard-objects/note.workspace-entity.ts
+[94m[bash][0m $ grep -rn "workflowActionTriggerSettings" packages/twenty-apps/internal --include="*.ts" -l | grep -v...
+[94m[bash][0m $ grep -n "^\s*[a-zA-Z]*:" packages/twenty-server/src/modules/calendar/common/standard-objects/calenda...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/objects/document.object.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "createDocuments\|createCalendarEvents\|createTasks\|createNote" packages/twenty-apps/inter...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "createCalendarEvent\|calendarEvents\|createCalendarEvents" packages/twenty-front/src packa...
+[94m[bash][0m $ find packages/twenty-server/src -iname "*notification*" -not -path "*/node_modules/*" | head
+[94m[bash][0m $ grep -rn "class NotificationWorkspaceEntity\|createNotification" packages/twenty-server/src --includ...
+[94m[bash][0m $ grep -rn "createNotes\|createAttachments\|createCompanies" packages/twenty-apps/internal --include="...
+[94m[read][0m
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-server/src/modules/calendar/common/standard-objects/calendar-event.wo...
+[94m[bash][0m $ grep -rn "createCalendarEvent\|CreateCalendarEvent" packages/twenty-server/src/modules/calendar --in...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/document-project.field.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/task-block-issue.field.ts
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-server/src/modules/attachment/standard-objects/attachment.workspace-e...
+[94m[bash][0m $ ls docs/tasks/ 2>/dev/null | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/.oxlintrc.json
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-projects/node_modules/twenty-sdk -maxdepth 2 -type d 2>/dev/n...
+[94m[todowrite][0m
+Now I have enough context. Let me set up a todo list and start implementing.
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ tail -20 docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ printf '\nCLAIMED — US-107/workflow-recipes-family — deepseek-v4.1-flash — 2026-09-29T20:53:00Z — ba...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import { TASK_FIELD_IDS } from '../constants/universal-identifiers.ts';
+
+// C5 provenance for... (1065 chars)"
+[94m[write][0m "import { defineField, FieldType } from 'twenty-sdk/define';
+
+import {
+  DOCUMENT_FIELD_IDS,
+  EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from '../constants/universal-identifiers.ts';
+
+// C5 provenance p... (976 chars)"
+[94m[write][0m "// Corrélation des recettes inter-apps (US-107, contrat C5).
+//
+// Chaque recette dérive une clé déterministe à partir de sa propre identité
+// (`<recipeKey>@v<version>`), de l'espace de travail, de l... (997 chars)"
+[94m[write][0m "// Recette « réunion → page de notes » (US-107, famille M9c).
+//
+// Partie pure : à partir d'un événement de calendrier, elle dérive la clé de
+// corrélation C5 puis le plan d'écritures (une page Bure... (3059 chars)"
+[94m[write][0m "// Recette « fichier déposé dans un projet → tâche de relecture » (US-107).
+//
+// Partie pure : à partir d'un document rattaché à un projet (le dépôt d'un
+// fichier y crée ou met à jour un document),... (3350 chars)"
+[94m[write][0m "// Recette « tâche due → rappel Agenda » (US-107).
+//
+// Partie pure : à partir d'une tâche dont l'échéance approche, elle dérive la
+// clé de corrélation C5 puis le plan d'écritures (un événement de ... (3893 chars)"
+[94m[write][0m "// LA FAMILLE DES RECETTES INTER-APPS M9c (US-107).
+//
+// Chaque recette est une automatisation opt-in exprimée dans le vocabulaire du
+// moteur de workflow natif ; ce module est le registre de la fam... (8872 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/workflow-recipes.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/recurring-task-generator.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/workflow-recipes.ts
+[94m[write][0m "import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+
+// LA RECETTE « RÉUNION → PAGE DE NOTES » (US-107, M9c).
+//
+// Une recette de workflow est une automatisation éditable expr... (5038 chars)"
+[94m[write][0m "import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+
+// LA RECETTE « FICHIER DÉPOSÉ → TÂCHE DE RELECTURE » (US-107, M9c).
+//
+// Vocabulaire du moteur natif : déclencheur DATABA... (4768 chars)"
+[94m[write][0m "import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+
+// LA RECETTE « TÂCHE À ÉCHÉANCE → RAPPEL AGENDA » (US-107, M9c).
+//
+// Vocabulaire du moteur natif : déclencheur DATABASE_... (4997 chars)"
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-apps/internal/a2e-documents/src/lib/fractional-position.ts
+[94m[bash][0m $ grep -rn "buildAppendPosition" packages/twenty-apps/internal/a2e-documents/src | head
+[94m[bash][0m $ grep -rn "name: 'position'\|'position'" packages/twenty-apps/internal/a2e-documents/src --include="*...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/logic-functions/post-install.ts
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+
+import {
+  deriveMeetingNotesCorrelationKey,
+  deriveMeetingNotesDocumentTitle,
+  MEETING_NOTES_DOCUMENT_KIND,
+} from '../../lib/meeting-notes-... (3153 chars)"
+[94m[write][0m "import { defineLogicFunction } from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+import {
+  coreClient,
+  createMeetingNotesPage,
+  type MeetingNot... (1373 chars)"
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+
+import {
+  deriveFileReviewCorrelationKey,
+  deriveFileReviewTaskTitle,
+} from '../../lib/file-review-recipe.ts';
+
+// L'ÉTAPE « CRÉER LA TÂCHE ... (3165 chars)"
+[94m[write][0m "import { defineLogicFunction } from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+import {
+  coreClient,
+  createFileReviewTask,
+  type FileReviewTa... (1405 chars)"
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+
+import {
+  buildTaskDueReminderRecipePlan,
+  deriveTaskDueReminderCorrelationKey,
+} from '../../lib/task-due-reminder-recipe.ts';
+
+// L'ÉTAPE «... (3548 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[write][0m "import { defineLogicFunction } from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
+import {
+  coreClient,
+  createTaskDueReminder,
+  type TaskDueRemi... (1480 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/package.json
+[94m[bash][0m $ yarn typecheck
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  MEETING_NOTES_RECIPE_KEY,
+  MEETING_NOTES_RECIPE_VERSION,
+  buildMeetingNotesRecipePlan,
+  deriveMeetingNotesCorr... (2493 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  FILE_REVIEW_RECIPE_KEY,
+  FILE_REVIEW_RECIPE_VERSION,
+  buildFileReviewRecipePlan,
+  deriveFileReviewCorrelationK... (2330 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  TASK_DUE_REMINDER_EVENT_MINUTES,
+  TASK_DUE_REMINDER_MINUTES,
+  TASK_DUE_REMINDER_RECIPE_KEY,
+  TASK_DUE_REMINDER... (2597 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  INVOICE_PAID_LEDGER_RECIPE_KEY,
+  WORKFLOW_RECIPE_DESCRIPTORS,
+  getWorkflowRecipeDescriptor,
+  listWorkflowRecip... (3198 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/workflow-recipes.test.ts
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { LOGIC_FUNCTION_IDS } from '../../constants/universal-identifiers.ts';
+import logicFunctionDefinition from '../../lo... (3306 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { LOGIC_FUNCTION_IDS } from '../../constants/universal-identifiers.ts';
+import logicFunctionDefinition from '../../lo... (2878 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { LOGIC_FUNCTION_IDS } from '../../constants/universal-identifiers.ts';
+import logicFunctionDefinition from '../../lo... (2924 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { createMeetingNotesPage } from '../handlers/meeting-notes-page-handler.ts';
+
+// Le handler est exercé contre un stub... (3270 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { createFileReviewTask } from '../handlers/file-review-task-handler.ts';
+
+// Le handler est exercé contre un stub Cor... (3415 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { createTaskDueReminder } from '../handlers/task-due-reminder-handler.ts';
+
+// Le handler est exercé contre un stub C... (3597 chars)"
+[94m[bash][0m $ yarn typecheck && yarn test:unit 2>&1 | tail -40
+[94m[bash][0m $ yarn lint 2>&1 | tail -20
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -40
+[94m[bash][0m $ grep -o "meeting-notes-page\|file-review-task\|task-due-reminder\|recipeCorrelationKey" .twenty/outp...
+[94m[bash][0m $ python3 -c " import json m=json.load(open('.twenty/output/manifest.json')) def walk(o,p=''):     if ...
+[94m[bash][0m $ python3 -c " import json m=json.load(open('.twenty/output/manifest.json')) for f in m['logicFunction...
+[94m[bash][0m $ python3 -c " import json m=json.load(open('.twenty/output/manifest.json')) for f in m['logicFunction...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ grep -rn "const createTimelineRecord\|function createTimelineRecord" packages/twenty-server/test/int...
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-server/test/integration/graphql/utils/create-one-operation-factory.ut...
+[94m[bash][0m $ grep -rn "createTasks\|createCalendarEvents\|createTask\b" packages/twenty-front/src/generated-metad...
+[94m[bash][0m $ date -u +"%Y-%m-%d"
+[94m[todowrite][0m
+[94m[bash][0m $ it is recorded, never built. EOF echo done
+[94m[bash][0m $ tail -25 .ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ keep it the first and only function in the file (no exported helpers) or the manifest builder can't ...
+[94m[bash][0m $ git status --porcelain | grep -v '^??'
+[94m[bash][0m $ echo "exit:$?"
+Implemented US-107 (M9c cross-app workflow recipe family) in `a2e-projects`. Summary:
+
+- **Family registry** `src/lib/workflow-recipes.ts`: all 6 recipes (deal-won, recurring, meeting→notes, file→review, task→reminder, invoice-paid deferred/P7) with key/version/fr+en labels/category/requiredApps/preview writes + validator.
+- **3 new recipes end-to-end**: pure plan + correlation key (`meeting-notes-recipe.ts`, `file-review-recipe.ts`, `task-due-reminder-recipe.ts`, shared `recipe-correlation.ts`), workflow templates/validators, inline-typed logic-function actions + idempotent handlers.
+- **Opt-in/previewed**, invoice-paid recorded `DEFERRED` gatedBy P7 and never built; validators reject invoice/accounting steps.
+- **Idempotency**: new nullable `recipeCorrelationKey` on task + document, `iCalUid` for calendar reminders; file without project → `SKIPPED`.
+- **27 new tests**; patch bump `0.1.12→0.1.13`.
+
+Gates: `yarn typecheck` clean, `yarn lint` 0 errors (1 pre-existing warning), `yarn test:unit` 335/335, `npx twenty dev:build .` succeeded (46 files, 3 actions with inferred inputSchema). `node docs/scripts/check-docs.mjs` PASS.
+
+Report appended to `docs/plan/phases/phase-13-report.md` and progress to `.ralph-tui/progress.md`. Tier-2 live materialization/firing/replay proof (and the unverified `createCalendarEvents` core path) left for the orchestrator.
+
+<promise>COMPLETE</promise>

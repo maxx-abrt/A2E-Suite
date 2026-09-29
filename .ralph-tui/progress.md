@@ -76,6 +76,17 @@ after each iteration and it's included in prompts for context.
   `defineField` manifests (no server migration). Core API generic writes are
   `create<Plural>(data: [...])` (`createTasks`, `createDocuments`), while the
   internal workspace GraphQL factory names `create<Singular>(data)`.
+- `packages/twenty-docs/docs.json` is GENERATED. Never hand-edit it: add the
+  tab/group/page to `navigation/base-structure.json`, add the locale label to
+  `l/<lang>/navigation.json`, then run `yarn docs:generate` (and
+  `yarn docs:generate-navigation-template` to keep the Crowdin template in
+  sync). A non-default-language page only appears in `docs.json` if its
+  `l/<lang>/<slug>.mdx` exists (`formatPageSlug` returns null otherwise). Docs
+  pages are `user-guide/a2e-suite/*.mdx` (en) + `l/fr/user-guide/a2e-suite/*.mdx`
+  (fr). Relevant gate: `node docs/scripts/check-docs.mjs` plus
+  `npx tsx scripts/lint-mdx.ts`; path-based `prettier --check` flags some
+  committed JSON (`docs.json`, `base-structure.json`) at HEAD too, so judge
+  formatting churn against the base, not the current tree.
 
 ---
 
@@ -192,4 +203,14 @@ after each iteration and it's included in prompts for context.
   - The workflow-action `inputSchema` is inferred by parsing the inline-typed handler in the `.logic-function.ts`; keep it the first and only function in the file (no exported helpers) or the manifest builder can't see it.
   - `npx twenty dev:build .` is the authoritative check that the inline schema + new fields + workflow actions all register (46 files this run).
   - `createCalendarEvents` (generic plural core-API create for the standard `calendarEvent`) is unit-tested against a stub only — Tier-2 must confirm the running core API accepts a local channel-less calendar event.
+---
+
+## 2026-09-29 - US-108 (M12a: docs info architecture — user-guide/a2e-suite + docs.json nav)
+- Added the 11-page A2E Suite guide skeleton (Overview · Getting started · Bureau · Agenda · Bilan · Syna · Archive · Templates · Working across apps · Admin & self-host · FAQ/Troubleshooting) in en (`packages/twenty-docs/user-guide/a2e-suite/*.mdx`) and fr (`l/fr/user-guide/a2e-suite/*.mdx`); every page states `Suite A2E 0.2.1 · Twenty 2.39.0` and lists the exact real screens with their source labels.
+- Registered the group in `navigation/base-structure.json` (`a2eSuite`, icon `rocket`), the fr label in `l/fr/navigation.json`, then regenerated `docs.json` + `navigation/navigation.template.json`.
+- No TS/entity/schema touched; no app version bump.
+- **Learnings:**
+  - `docs.json` is generated from `base-structure.json` + `l/<lang>/navigation.json` via `yarn docs:generate`; non-default-language pages are only emitted when the localized `.mdx` exists.
+  - `mintlify validate` fails repo-wide on a pre-existing parse warning in `l/ar/.../implementation-services.mdx` (untouched) — the docs AC gate `node docs/scripts/check-docs.mjs` passes.
+  - `prettier --check` flags `docs.json`/`base-structure.json` at HEAD too (path-based config), so those warnings are not introduced here.
 ---

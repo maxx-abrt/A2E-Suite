@@ -372,6 +372,23 @@
                     ]
                   }
                 ]
+              },
+              {
+                "group": "A2E Suite",
+                "icon": "rocket",
+                "pages": [
+                  "user-guide/a2e-suite/overview",
+                  "user-guide/a2e-suite/getting-started",
+                  "user-guide/a2e-suite/bureau",
+                  "user-guide/a2e-suite/agenda",
+                  "user-guide/a2e-suite/bilan",
+                  "user-guide/a2e-suite/syna",
+                  "user-guide/a2e-suite/archive",
+                  "user-guide/a2e-suite/templates",
+                  "user-guide/a2e-suite/working-across-apps",
+                  "user-guide/a2e-suite/admin-and-self-host",
+                  "user-guide/a2e-suite/faq-troubleshooting"
+                ]
               }
             ]
           },
@@ -840,6 +857,23 @@
                       "l/fr/user-guide/legal/how-tos/legal-faq"
                     ]
                   }
+                ]
+              },
+              {
+                "group": "Suite A2E",
+                "icon": "rocket",
+                "pages": [
+                  "l/fr/user-guide/a2e-suite/overview",
+                  "l/fr/user-guide/a2e-suite/getting-started",
+                  "l/fr/user-guide/a2e-suite/bureau",
+                  "l/fr/user-guide/a2e-suite/agenda",
+                  "l/fr/user-guide/a2e-suite/bilan",
+                  "l/fr/user-guide/a2e-suite/syna",
+                  "l/fr/user-guide/a2e-suite/archive",
+                  "l/fr/user-guide/a2e-suite/templates",
+                  "l/fr/user-guide/a2e-suite/working-across-apps",
+                  "l/fr/user-guide/a2e-suite/admin-and-self-host",
+                  "l/fr/user-guide/a2e-suite/faq-troubleshooting"
                 ]
               }
             ]
