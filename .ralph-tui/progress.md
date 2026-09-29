@@ -109,6 +109,12 @@ after each iteration and it's included in prompts for context.
 - An internal app's page-layout tab icon is a string name resolved by the host
   from `twenty-ui/icon` (tabler); pick an existing export (e.g.
   `IconCalendarRepeat`) rather than adding a package.
+- Ralph's prd queue can regenerate a task for work already committed under the
+  older `US-0xx` tracking scheme, with a stale "starting state: partial"
+  description. Before implementing an assigned task, `git log --oneline -- <the
+  feature paths>` (and grep the phase report for the task's own id); if the
+  feature is already on HEAD, report `done-for-review` and only close the one
+  unmet non-Tier-2 bullet (usually the patch version bump).
 
 ---
 
@@ -269,4 +275,15 @@ after each iteration and it's included in prompts for context.
   - The app `yarn.lock` uses `workspace:.` resolution, so a patch `version` bump needs no lockfile edit; `.twenty/output` is gitignored.
   - Gates: a2e-documents typecheck/test:unit (221/221)/lint/dev:build all green; twenty-front version-history jest 29/29 + tsgo exit 0.
 - Missing (Tier 2 orchestrator): E05 reload + second-session + restricted-role browser proof.
+---
+
+## 2026-09-29 - US-112 (P3.2 atomic expected-revision save + conflict banner)
+- Verified the atomic expected-revision save already shipped on HEAD (prior US-032 cycle, committed `e5824205`): app `document-revision-cas.ts` (`resolveDocumentSaveCas` repairs a stale committed write, never rejects — SDK has no pre-write hook) + `guard-document-revision-save.ts` (`document.updated` trigger, `updatedFields:['content']`, `repair-` sentinel for loop termination) + additive `contentRevision`/`contentBaseRevision` fields; front token helper, `classifyDocumentSaveConflict` (single caller of the pre-existing pure `resolveOptimisticDocumentUpdate`), `useDocumentSaveConflictGuard` (typed `DocumentSaveConflict`, draft preserved), `BlockEditorSaveConflictBanner`, `RichTextFieldEditor` wiring.
+- Closed the one unmet non-Tier-2 acceptance bullet: bumped `a2e-documents` 0.2.3 → 0.2.4.
+- Files changed: `packages/twenty-apps/internal/a2e-documents/package.json`; `docs/plan/phases/phase-03-report.md`; this file.
+- **Learnings:**
+  - Duplicate-task class confirmed again (US-112 == US-032): grep `git log` for the feature paths before implementing.
+  - `resolveOptimisticDocumentUpdate` has exactly one definition and one caller — the "reuse, not fork" AC is structural; keep it that way.
+  - Tier-0 gates: a2e-documents typecheck/lint/test:unit (221/221)/dev:build all green; twenty-front co-editing 4 suites/28, related 16 suites/135, tsgo exit 0, oxlint 0/0.
+- Missing (Tier 2 orchestrator): reinstall a2e-documents (fields + guard register; until then CAS is inert) then the two-session E05 stale-save banner proof.
 ---

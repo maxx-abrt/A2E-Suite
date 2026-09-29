@@ -1,0 +1,87 @@
+# Iteration 12 Log
+
+## Metadata
+
+- **Task ID**: US-111
+- **Task Title**: P3.2: persist revision history (durable storage, retention, block diff, restore-as-new-revision)
+- **Description**: As a document author, I want my page history to survive reload so that I can diff and restore earlier versions. Starting state: partial — EditorVersionHistoryStore is an in-memory ring buffer (package...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-29T21:42:21.599Z
+- **Ended At**: 2026-09-29T21:46:48.251Z
+- **Duration**: 4m 26s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "US-111" PLAN.md
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ ls tasks/ 2>/dev/null
+[94m[bash][0m $ ls docs/plan/phases/ 2>/dev/null
+[94m[bash][0m $ grep -n "US-111" tasks/prd.json | head
+[94m[bash][0m $ grep -n "P3\." PLAN.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ tail -60 docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ ls packages/twenty-apps/internal/ 2>/dev/null
+[94m[bash][0m $ ls -lt .ralph-tui/iterations/ 2>/dev/null | head -10
+[94m[bash][0m $ tail -40 .ralph-tui/progress.md 2>/dev/null
+[94m[bash][0m $ find packages/twenty-front/src/modules/blocknote-editor/version-history -type f | sort
+[94m[bash][0m $ ls -R packages/twenty-apps/internal/a2e-documents/src | head -120
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/objects/document-revision.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/document-revision-cas.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "useDocumentRevisionPersistence\|EditorVersionHistoryPersistence\|loadFromPersistence\|new ...
+[94m[bash][0m $ sed -n '1040,1075p' docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ git log --oneline -20
+[94m[bash][0m $ git show --stat a605200d 2>/dev/null | head -40
+[94m[bash][0m $ grep -n '"passes"' tasks/prd.json | wc -l
+[94m[read][0m
+[94m[bash][0m $ git show --stat 54711a5c | head -50
+[94m[bash][0m $ git log --oneline -5 -- packages/twenty-apps/internal/a2e-documents/src/logic-functions/guard-docume...
+[94m[bash][0m $ git log --oneline -8 -- packages/twenty-apps/internal/a2e-documents/package.json
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/application.config.ts
+[94m[bash][0m $ grep -rn "documentRevision\|documentRevisions" packages/twenty-apps/internal/a2e-documents/src/ | gr...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/BlockEditor.tsx
+[94m[read][0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor.tsx[0m pattern: [96mversionHistoryPersistence|documentRevisionPersistence[0m
+[94m[bash][0m $ grep -rn "versionHistoryPersistence" packages/twenty-front/src/modules/blocknote-editor/components/B...
+[94m[bash][0m $ grep -n '"id": "US-0' tasks/prd.json | head -50
+[94m[bash][0m $ grep -n "EditorVersionHistoryStore\|documentRevision\|revision" .ralph-tui/progress.md | head -30
+[94m[bash][0m $ grep -n '"id":' tasks/prd.json | head -60
+[94m[bash][0m $ wc -l .ralph-tui/progress.md
+[94m[bash][0m $ printf '\nCLAIMED — US-111/revision-history-durable — deepseek-v4.1-flash — 2026-09-29T23:45:00Z — b...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/package.json
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -20
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -25
+[94m[bash][0m $ yarn lint 2>&1 | tail -15
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -20
+[94m[bash][0m $ npx jest src/modules/blocknote-editor/version-history --config=packages/twenty-front/jest.config.mjs...
+[94m[bash][0m $ echo "EXIT:$?"
+[94m[bash][0m $ git log -p --follow -- packages/twenty-apps/internal/a2e-documents/package.json 2>/dev/null | grep -...
+[94m[bash][0m $ grep -n "revision\|Revision\|version history\|Version" packages/twenty-apps/internal/a2e-documents/R...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/package.json
+[94m[bash][0m $ git ls-files packages/twenty-apps/internal/a2e-documents/.twenty/ | head
+[94m[bash][0m $ grep -rn "0.2.2" packages/twenty-apps/internal/a2e-documents/README.md 2>/dev/null | head
+[94m[bash][0m $ grep -o '"version":"[^"]*"' .twenty/output/manifest.json 2>/dev/null | head
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ executor — US-113 (P3.3 record→document note-body copy) next in the queue. EOF tail -5 docs/plan/pha...
+[94m[bash][0m $ twenty-front version-history jest 29/29 + tsgo exit 0. - Missing (Tier 2 orchestrator): E05 reload +...
+[94m[bash][0m $ git diff --stat -- packages/twenty-apps/internal/a2e-documents/package.json
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+Done. Verified US-111 was already implemented and committed on HEAD under the earlier US-031 cycle; the only unmet executor acceptance bullet was the app patch bump, which I applied.
+
+**Changed:** `a2e-documents/package.json` (0.2.2 → 0.2.3), `docs/plan/phases/phase-03-report.md`, `.ralph-tui/progress.md`.
+
+**Checks (all green):** a2e-documents `yarn typecheck` → 0, `yarn test:unit` → 221/221, `yarn lint` → 0/0, `npx twenty dev:build .` → Build succeeded (28 files); twenty-front version-history `jest` → 29/29 and `npx tsgo -p tsconfig.json --noEmit` → 0.
+
+**Report:** `done-for-review`, `Ready-to-tick: yes`. Only `Missing for tick` is the Tier-2 E05 reload + second-session + restricted-role browser proof, which the task assigns to the orchestrator.
+
+<promise>COMPLETE</promise>

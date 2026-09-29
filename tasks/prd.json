@@ -246,9 +246,10 @@
         "Quality gates: in packages/twenty-apps/internal/a2e-documents: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; packages/twenty-front tsgo clean; targeted jest green; no i18n catalog churn; no AI attribution"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "Second half of the P3.4 gate (durable save). Lane L-EDITOR.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-113",
@@ -602,6 +603,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-29T21:46:48.251Z"
+    "updatedAt": "2026-09-29T21:51:28.988Z"
   }
 }
