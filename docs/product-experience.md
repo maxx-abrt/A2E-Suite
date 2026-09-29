@@ -24,7 +24,7 @@ another backend, or fork the design system.
 | **Bilan** | Intended installable finance experience: quotes, invoices, cash movements, books, budgets, fiches and funding | Existing `a2e-accounting` app, display name `Bilan`; not release-certified |
 | **Agenda** | Calendar: events, recurrence, reminders, task deadlines | Host page `/calendar`; no sidebar entry yet (PLAN M7b/M7d) |
 | **Syna** | AI assistant with bring-your-own-key, in context everywhere | Host AI chat + tool registry; instance-only keys today (PLAN M10) |
-| **Archive** | Drive: folders, files, previews, usage | `a2e-drive` app (displayed `A2E Drive`) + host `/drive` page (PLAN M7a) |
+| **Archive** | Drive: folders, files, previews, usage | `a2e-drive` app (displayed `Archive`) + host `/drive` page |
 | **CRM** | Optional user journey for client/contact/opportunity management | Existing standard objects; hiding navigation does not delete records or revoke access |
 | **Texxel / A2EMoney** | Old inspiration applications | Reference-only trees under `Inspiration apps (bureaubilan)` |
 

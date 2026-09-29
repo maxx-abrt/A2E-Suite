@@ -96,7 +96,7 @@ export const SettingsAiPrompts = () => {
           children: t`Workspace`,
           href: getSettingsPath(SettingsPath.General),
         },
-        { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
+        { children: t`Syna`, href: getSettingsPath(SettingsPath.AI) },
         { children: t`System Prompt` },
       ]}
     >

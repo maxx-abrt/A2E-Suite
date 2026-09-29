@@ -168,7 +168,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !permissionMap[PermissionFlagType.APPLICATIONS],
         },
         {
-          label: t`AI`,
+          label: t`Syna`,
           path: SettingsPath.AI,
           Icon: IconSparkles,
           isHidden: !permissionMap[PermissionFlagType.AI_SETTINGS],

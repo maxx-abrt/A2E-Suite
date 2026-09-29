@@ -1,184 +1,596 @@
 {
-  "name": "A2E Suite — executor batch 12 (2026-09-27, base 07d4cea0)",
-  "description": "Batch 12: dependency-ready Tier-0 legs extracted from PLAN.md milestones (M1 six-app provisioning, M2/C2 onboarding truthfulness) and P4C.4 reschedule, plus code-level defects found in the repository. Batch 11 (US-074..US-085) verified by orchestrator; passes for batch 12 stay false until the orchestrator verifies. Exclusions recorded in tasks/deferred-batch11.md.",
+  "name": "A2E Suite — executor batch 13 (2026-09-29, base 0f25aced): M7–M12 experience program + remaining executor-ready P-phase legs",
+  "description": "Fresh re-scan of PLAN.md (M0–M13 milestones + historical P1–P10) at HEAD 0f25aced.\n\nPRIORITY 0 FINDING (both defects from the 2026-09-22 live Tier-2 pass are ALREADY FIXED at HEAD — verified in source this session; no stories created, per the no-padding discipline):\n1. a2e-projects install-time schema build failure (object-metadata-with-relations-gql-object-type.generator.ts:117) — fixed by US-074 (commit abed30a3): new pure util augment-flat-entity-maps-with-relation-targets.util.ts pulls cross-app relation targets into the app-scoped generation context; failing-then-passing specs at packages/twenty-server/src/engine/api/graphql/workspace-graphql-schema-sdl/utils/__tests__/augment-flat-entity-maps-with-relation-targets.util.spec.ts. P4.1's concurrency proof and M1a's install legs were unblocked and verified live 2026-09-22/23 (phase-01-report 21:40 entry: 5/5 install legs).\n2. CRM nav-restore defect (workspace-template.service.ts:392-401) — fixed by US-075 + the provenance follow-up (commits 50a931ca/223714f5): the hide-list-gated skip is gone and restore candidates derive from the persisted template-hidden-navigation provenance record; verified live 2026-09-22 20:15 (STUDENT→CRM restores ×3 exactly once; user-deleted rows stay deleted).\n\nSCAN RESULT: 31 executor-completable stories (Tier 0/1 only — no running app, no browser, no multi-session, matching a DeepSeek V4.1 Flash headless session). Prioritized by unlock fan-out (M7b→M7c/M7d/D09; M10a→M10b–d; M9 families→M9a→M9b/M9d), then user-facing impact, then Execution-order position (M7a-2/M7b/M10a/M9c/M12a are the PLAN's named safe parallel slices). IDs start at US-100 to avoid collision with US-074…US-092 used by batches 9–12.\n\nEXCLUDED (each excluded item is listed with its blocking reason):\n— Deferred — needs orchestrator (Tier-2: running app / browser / multi-session / live proof): M0a five browser journeys; P1.1 live uninstall proof; P1.3 e2e + individual→CRM→individual restore; P1.6c authenticated graphql:generate + Settings browser journey; P1.7a readiness/dependency-display/export legs; P1.7c E01–E04/E12; P2.1 real handshake + multi-instance fan-out + live revocation journey; P2.4 side-panel-tabs browser e2e; P2.5 p95<150ms live @10k records + live searchAppRecords re-proof; P3.2 comment reload/second-session + two-session conflict banner + nonempty export; P3.3 deep-tree journey + live purge-cron; P3.2 template E04 copy-independence; P4.1 installed-permission ACL proof + reinstall no-duplicate re-walk; P4.2 install+render proofs (board drag, task-calendar GroupByTasks render after the complexity trim, Gantt DOM + 1k benchmark, timer heartbeat, CSV import); P4.3 live doc-relation install-order proof; P4C.4 live idempotent reminder delivery (brief docs/tasks/p4c.4-reminder-live.md — workspace command not yet applied, stale workers); P5 chat two-session + integration-spec with-db; P6 live upload→folder→preview→share journey; P8 live socket push/badge + email delivery; P9 live direct-tool dispatch (dist predates the arg); P10 performance profiling + final regression; M1 docker build + clean-volume compose (no docker on this machine); M2a live seeding rows>0 probes.\n— Deferred — blocked upstream: ALL of P7 (21 bullets) while P7.0's gate proofs remain open (fresh+populated install proofs, ledger replay, numbering, period-close races, alternate-API stamping, live finance-user iban denial + reviewer sign-off — install passing is not gate-closed); P7.1b/c/d/e/f executor legs; P9.2 accounting + P9.2b aiCacheEntry wiring (P7-gated); P4C.5 remaining legs (opt-in event↔task link, open project/task from event — needs the source-of-truth decision + a relation on standard calendarEvent); P4.3 calendar links (P4C.5 owns); P1.6e/P1.7a/P1.7b (gated on P1.6c's Tier-2 codegen/browser legs); P3.4 advanced authoring implementation (gated behind durable save/share acceptance + D07); M7f per-app landing pages (needs M9a); M13a–f (needs M9a/M9c).\n— Deferred — decision-gated: D02 persona bundle contents (M9d contents stay proposals until settled — US-120 executes the gallery wiring, not D02); D-B1 Bureau packaging (M7e); D03 catalogue storage scope + D04 CERFA terminology (P7.0 bullet 3, P7.1d/d PDF, grant-report wizard); D05 calendar attendee/quiet-hours policy (P4C.4 team legs); D07 advanced editor licensing (math/equation block in US-122 defers unless license-compatible); D-M1 provisioning mechanism (M1a docker legs); D06 release pipeline.\n\nGATE-UNLOCKING FAN-OUT NOTES: US-101 (M7b) resolves D09 and unblocks US-115 (M7c), US-116 (M7d) and the Agenda/Archive/Syna nav rows (2 downstream PLAN bullets + E13). US-102 (M10a-1) unblocks US-127/128/129/130 (4 downstream bullets). US-117+US-118 (M9a) unblock US-119 (M9b) and US-120 (M9d) and later M13a. US-115+US-116 close the M7 milestone's nav legs feeding E13.\n\nTIER 0/1 QUALITY-GATE BLOCK (appended to every story; per-package gates in each story's criteria): npx nx lint:diff-with-main <pkg> clean (when it reports 'No changed files', substitute direct npx oxlint --type-aware -c .oxlintrc.json + npx oxfmt --check on the touched files — recorded precedent); npx tsgo -p tsconfig.json --noEmit in each touched package; targeted jest suites for new/changed behavior (a2e-* apps: yarn typecheck && yarn lint && yarn test:unit && npx twenty dev:build . — apps are not Nx projects, package gates substitute); if twenty-shared touched: npx nx build twenty-shared --skip-nx-cache BEFORE dependent typecheck/test; no i18n catalog churn (never commit packages/twenty-server/src/engine/core-modules/i18n/locales/*.po or locales/generated/*); no AI attribution in commits; additive only — no renames/removals of existing tables/fields/GraphQL fields/routes; executors append phase reports and never tick PLAN.md or commit.",
   "branchName": "main",
   "userStories": [
     {
-      "id": "US-074",
-      "title": "Fix a2e-projects install-time workspace-schema build failure",
+      "id": "US-100",
+      "title": "M7a-2: host strings → Agenda / Syna / Archive (rename display surfaces, remaining half)",
+      "description": "As a user of A2E Suite, I want the host surfaces (calendar, AI chat, drive, settings) to carry the five-app naming Bureau/Agenda/Bilan/Syna/Archive so that the suite reads as one coherent product. Starting state: app-side renames are DONE (phase-11-report 2026-09-27: displayNames Bureau/Bureau Projets/Bureau Discussions/Archive/Syna CRM, command labels, nav Projets/Archive, versions bumped); only the host strings remain, exactly as enumerated in PLAN.md M7a's 'Remaining (next slice M7a-2)' note.",
+      "acceptanceCriteria": [
+        "Calendar host strings → Agenda: page title and Cmd+K entries in packages/twenty-front/src/modules/calendar/ and packages/twenty-front/src/pages/calendar/, plus Home card titles in home-dashboard/ that name the calendar, renamed via Lingui msg/t — keeping generic 'AI' where it names the permission/technology (roles, workflow action type, usage labels) untouched",
+        "Syna host strings: AiChatPageHeader.tsx 'Ask AI' → Syna-branded, SidePanelAskAiInfo.tsx, useOpenAskAiPageInSidePanel.ts, EngineComponentKeyHeadlessComponentMap.tsx, nav drawer mode label in useNavigationDrawerModes.ts, and Settings → AI title in SettingsAI.tsx / useSettingsNavigationItems.tsx renamed to Syna while keeping generic 'AI' where it names the permission/technology",
+        "Archive host strings: DriveToolbar.tsx / DriveBreadcrumb 'Drive' → 'Archive', updating DriveBreadcrumb.test.tsx and mapDriveSearchRecordsToResultItems.test.ts to the new names",
+        "Cmd+K search group heading for the a2e-projects provider reads Bureau (group heading resolution, not the provider path constant)",
+        "docs/applications.md and the touched app READMEs updated to the five-app naming (Bureau · Agenda · Bilan · Syna · Archive)",
+        "M7a acceptance holds for the host half: grep shows no user-facing 'A2E Documents|A2E Drive|A2E Chat|A2E Projects' in the touched host surfaces; fr+en strings via Lingui; universal IDs, package names and object API names untouched",
+        "Missing for tick (Tier 2, orchestrator): re-publish the 5 bumped apps and see new names in Settings → Applications + sidebar (installed rows keep old names until upgrade)",
+        "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-front clean; npx oxlint --type-aware -c .oxlintrc.json + npx oxfmt --check on touched files clean (or npx nx lint:diff-with-main twenty-front); targeted jest suites for calendar/ai/drive/search touched modules green; node docs/scripts/check-docs.mjs PASS; no i18n catalog churn; no AI attribution"
+      ],
       "priority": 1,
       "passes": true,
+      "notes": "Gate-unlocking: closes the M7a copy/QA blocker cited by the Execution-order note ('M7a (naming) and M7b … may run in parallel with M0–M2 because they are small and unblock copy/QA'). Lane L-NAV.",
       "dependsOn": [],
-      "completionNotes": "Done. Commit abed30a3. augment-flat-entity-maps-with-relation-targets.util.ts. Verified live by orchestrator."
-    },
-    {
-      "id": "US-075",
-      "title": "Fix CRM nav-restore defect + user-hidden-item provenance",
-      "priority": 2,
-      "passes": true,
-      "dependsOn": [],
-      "completionNotes": "Done. Commit 50a931ca + provenance follow-up. Verified live by orchestrator."
-    },
-    {
-      "id": "US-076",
-      "title": "Fix INSTALL_APP step idempotency — skip succeeded when app already installed at compatible version",
-      "priority": 1,
-      "passes": true,
-      "dependsOn": [],
-      "completionNotes": "Done. Commit 23d1b6d2. installTemplateApplication now checks findByUniversalIdentifier before calling installApplication. 2 regression tests added. Tier-2 residual: live STUDENT-apply on workspace with A2E Documents already installed."
-    },
-    {
-      "id": "US-077",
-      "title": "Add a2e-projects/chat/drive to A2E allowlist (A2eSuiteApplicationUniversalIdentifiers.ts) and OnboardingInstallableApps.ts",
-      "description": "As a user viewing Settings → Applications, I want to see all 5 A2E Suite apps (Documents, Bilan, Projects, Chat, Drive) in the A2E section once they are registered, so that I can install/manage any of them from one place.",
-      "priority": 1,
-      "passes": true,
-      "dependsOn": [],
-      "completionNotes": "Done. Commit 5bfe5bef. Added Projects (4f759655), Chat (e2dce399), Drive (b11cd01f) to A2eSuiteApplicationUniversalIdentifiers.ts and OnboardingInstallableApps.ts with proper Lingui labels and descriptions. docs/applications.md corrected. Tier-2 residual: with apps registered on a live server, verify Settings → Applications → A2E Suite shows all 5."
-    },
-    {
-      "id": "US-078",
-      "title": "M1 Dockerfile — add twenty-apps-build stage building all 5 A2E apps into tarballs",
-      "description": "As an operator deploying A2E Suite via Docker, I want the production image to contain built tarballs for all 5 A2E apps so that a fresh deploy automatically registers and installs them without manual app:publish rituals.",
-      "priority": 1,
-      "passes": true,
-      "dependsOn": [],
-      "completionNotes": "Done. Commit 5bfe5bef. New twenty-apps-build multi-stage: yarn install + yarn twenty dev:build --tarball for each of the 5 internal apps; tarballs collected at /app/packages/twenty-apps/dist in the server image. CI workflow (cd-docker-image.yaml) already uses GHA cache and will build this stage automatically. Tier-2 residual: docker build must complete and /app/packages/twenty-apps/dist must contain 5 tarballs in the image."
-    },
-    {
-      "id": "US-079",
-      "title": "M1 startup registration — ProvisionBundledAppsCommand (app:provision-bundled) + BUNDLED source type + entrypoint.sh integration",
-      "description": "As an operator on a fresh Docker deployment, I want the server to automatically register all bundled A2E app tarballs at startup and install them on all workspaces so that Settings → Applications shows the A2E section without manual CLI work.",
-      "priority": 1,
-      "passes": true,
-      "dependsOn": [
-        "US-078"
-      ],
-      "completionNotes": "Done. Commits 5bfe5bef + a437674f. ApplicationRegistrationSourceType.BUNDLED enum value; ApplicationRegistrationEntity.bundledAppSourcePath nullable text column with @WasIntroducedInUpgrade; 2-39 instance command (1789905000000) ADD COLUMN; ApplicationPackageFetcherService BUNDLED case resolves from FS path; ProvisionBundledAppsCommand (app:provision-bundled): reads *.tgz from BUNDLED_APPS_DIR, registers with sourceType=BUNDLED/isPreInstalled=true/ownerWorkspaceId=null, idempotent, --dry-run; DatabaseCommandModule wired; entrypoint.sh calls provision_bundled_apps() after setup_and_migrate_db (provision-bundled then install-pre-installed-apps); PreInstalledAppsService.installOnWorkspace improved (APP_ALREADY_INSTALLED no longer error-logs); 5-case spec file. Tier-2 residual: live Docker boot registering 5 apps + installing on all workspaces."
-    },
-    {
-      "id": "US-080",
-      "title": "M1(e) upgrade cursor reachability — resume at an instance command inserted behind an applied workspace segment",
-      "description": "As an operator upgrading an instance already at the 2.39.0 workspace segment to an image carrying the new AddBundledAppSourcePath instance command, I want `upgrade` to run that instance command once without re-running the applied workspace segment, so that the bundled-app column exists and boot stays idempotent.",
-      "priority": 1,
-      "passes": true,
-      "dependsOn": [
-        "US-079"
-      ],
-      "completionNotes": "Executor done (awaiting orchestrator). UpgradeSequenceRunnerService.resolveStartCursor: workspace last-attempted cursor now resumes at the first unattempted instance command of the instance block preceding the workspace segment (getLastAttemptedInstanceCommand index + 1; whole block when the instance cursor is before it) instead of the segment start. Second defect found while fixing: running such a late instance command wrote workspace-scoped rows that became each workspace's newest cursor, re-queuing the entire applied 2.39.0 workspace segment on the next boot — InstanceCommandRunnerService now skips workspace rows for workspaces whose cursor is already past the step (workspaceIdsPastThisStep). Barrier enforcement accepts cursors past the barrier (also fixes retrying a failed instance step that directly follows a workspace segment, which previously threw). Specs: unit upgrade-sequence-runner-inserted-instance-command.spec.ts (6 cases, mocked services), exclude-workspace-ids.util.spec.ts (3), integration inserted-instance-command.integration-spec.ts (4 cases incl. second-boot no-op). No committed 2-39 file touched, no renumbering. Tier-2 residual: on the dev DB with both workspaces at index 328, `upgrade` runs AddBundledAppSourcePath once (instance row only) and a second `upgrade` is a no-op."
-    },
-    {
-      "id": "US-081",
-      "title": "Install log hygiene — refuse an already-installed version before any state change (no ERROR on every boot)",
-      "description": "As an operator watching boot logs, I want `install-pre-installed-apps` to report already-installed bundled apps at info level only, so that real install failures are not buried under one ERROR per app per workspace per boot.",
-      "priority": 2,
-      "passes": true,
-      "dependsOn": [
-        "US-079"
-      ],
-      "completionNotes": "Executor done (awaiting orchestrator). ApplicationInstallService.runInstall: for an INSTALLED application the version-progression check now runs before the UPGRADING state flip and outside the rollback try/catch (new private assertInstallVersionProgressionAllowed). SAME_VERSION → APP_ALREADY_INSTALLED thrown with no log (PreInstalledAppsService/template service keep their info-level skip line); DOWNGRADE/INVALID → one warn line; no UPGRADING→INSTALLED flip-flop, no revertStateToInstalledBestEffort. runInstallWithMetrics no longer counts APP_ALREADY_INSTALLED as app-upgrade/failed. Same exception message/code → failing-application-version-progression integration snapshot unchanged. New unit spec application-install.service.already-installed.spec.ts (3 cases: same version silent refusal, downgrade warn+metric, newer version still UPGRADING→INSTALLED). Tier-2 residual: boot/`install-pre-installed-apps` on a workspace with the bundled apps already installed shows only the PreInstalledAppsService info line."
-    },
-    {
-      "id": "US-082",
-      "title": "P4C.3 view-level occurrence expansion on /calendar (anchor rows expand into occurrences for the visible range)",
-      "description": "As a calendar user, I want a recurring event to show on every day its rule produces, so that the calendar reflects the series instead of only the anchor and detached rows.",
-      "priority": 1,
-      "passes": true,
-      "dependsOn": [],
-      "completionNotes": "Executor done (awaiting orchestrator). expandCalendarEventsForRange (single-sourced engine, series zone / UTC for all-day, skipped + detached exclusion, deterministic occurrence ids, occurrenceSourceByEventId back-map); getCalendarSeriesEvents resolves unstamped anchors to the derived series id; CalendarPage separates displayed vs stored event for the scope planners. 13 new cases; front calendar 193/193 via scratch harness. Tier-2: /calendar browser proof."
-    },
-    {
-      "id": "US-083",
-      "title": "P4C.3 recurrence rule editor in the /calendar composer (create, make-recurring, whole-series edit)",
-      "description": "As a calendar user, I want to set daily/weekly/monthly repetition with interval, weekdays, monthly position and an end condition when creating or editing an event, so that recurring events can be created without the API.",
-      "priority": 1,
-      "passes": true,
-      "dependsOn": [
-        "US-082"
-      ],
-      "completionNotes": "Executor done (awaiting orchestrator). CalendarRecurrenceFields + CalendarRecurrenceDraft utils (rule<->draft round-trip, inclusive UNTIL in series zone, clamps, rebase on start-day change); create pre-generates the anchor id so the series id is stamped in the same write; whole-series edit writes the edited rule via planCalendarSeriesEdit. 19 new cases; front calendar 212/212 via scratch harness; tsc on pure files + stubbed components/page; repo oxlint JS rules 0/0. Tier-2: /calendar create-recurring browser proof."
-    },
-    {
-      "id": "US-084",
-      "title": "P4C.5 task due-date overlay on /calendar (read-only, opens the task in the native side panel)",
-      "description": "As a calendar user, I want my tasks' due dates to show on the calendar days they fall on, visibly distinct from scheduled events, so that I can see deadlines next to my schedule and open the task in one click without the calendar ever turning a deadline into an event.",
-      "priority": 1,
-      "passes": true,
-      "dependsOn": [
-        "US-082"
-      ],
-      "completionNotes": "Executor done (awaiting orchestrator). useCalendarTaskDueDates reads standard `task` rows (id/title/dueAt/status) with a dueAt range filter built in the viewer zone (getCalendarTaskDueQueryRange: start of first visible day inclusive, start of the day after the last exclusive; DST-aware), skipped when the overlay is hidden or the member lacks task read permission (useFindManyRecords already gates on it). groupCalendarTaskDuesByDay buckets by the due day in the viewer zone, skips null/unreadable/out-of-range due dates, dedupes, flags overdue (open + before today) vs done, orders open by due time/title and sinks done. CalendarTaskDueChip: dashed outline + IconCheckbox + Due/Overdue/Done state (never the event accent border), opens the task via useOpenRecordInSidePanel. Wired into month/week/day/agenda (agenda lists days that only have deadlines; empty states count deadlines), toolbar toggle 'Task due dates' (aria-pressed), non-blocking load error line. No write path, no schema/server change, works without Projects (dueAt is standard). 9 new cases; front calendar 21 suites / 221 tests green (scratch harness). Tier-2: /calendar browser proof."
-    },
-    {
-      "id": "US-085",
-      "title": "P4C.5 quick-create a standard task from a calendar day (day + week views)",
-      "description": "As a calendar user, I want to add a task due on a given day straight from the calendar, so that I can capture a deadline where I am planning without opening the Tasks page — and without the calendar scheduling or inviting anyone.",
-      "priority": 2,
-      "passes": true,
-      "dependsOn": [
-        "US-084"
-      ],
-      "completionNotes": "Executor done (awaiting orchestrator). 'Add task' on the day view header and an icon button per week-view day column open CalendarTaskQuickCreateDialog (labelled title input, autofocus, Escape cancels, 'Due <full date>' line, hint that nothing is scheduled). useCalendarTaskQuickCreate writes one standard `task` through useCreateOneRecord (native record path, pre-generated id, status TODO, dueAt = local noon of the chosen day via buildCalendarQuickTaskInput so the day holds for teammates within ±11h and round-trips through the overlay grouping); blank titles never submit. Buttons only render when the deadline overlay is shown and the member can create tasks (object permission canUpdateObjectRecords). FORBIDDEN vs generic error copy; success refetches the overlay and announces 'Task created'. No event row, no invitation, no schema/server change. 8 new cases; front calendar 22 suites / 229 tests green (scratch harness). Tier-2: /calendar browser proof."
-    },
-    {
-      "id": "US-086",
-      "title": "M1: bundle, allowlist and offer the sixth A2E app (a2e-crm)",
-      "description": "As an operator deploying the suite, I want all six first-party A2E apps (including the CRM assistant) built into the image, listed in Settings → Applications → A2E Suite and offered at onboarding, so that a stock deployment exposes every A2E app without manual publishing.",
-      "priority": 1,
-      "passes": true,
-      "dependsOn": [
-        "US-078",
-        "US-077"
-      ],
       "completionNotes": "Completed by agent"
     },
     {
-      "id": "US-087",
-      "title": "M1: worker containers must not run bundled app provisioning (compose/coolify/podman) + server opt-out passthrough",
-      "description": "As an operator, I want bundled A2E app provisioning to run exactly once per boot on the migrating server, so that worker containers never race it on an unmigrated schema or run a second concurrent install pass, and so that the documented DISABLE_BUNDLED_APP_PROVISIONING opt-out actually reaches the server.",
+      "id": "US-101",
+      "title": "M7b: internal-route nav items — server allow-list validation + front pass-through (resolves D09)",
+      "description": "As a user, I want app-defined sidebar rows that open host pages (/calendar, /drive, /discussions, /inbox, /chat) in-app so that Agenda/Archive/Syna are reachable from the sidebar like native sections. Starting state: not started. Today getLinkNavigationMenuItemComputedLink prefixes anything non-http with https:// (external-only), which is D09's blocker.",
+      "acceptanceCriteria": [
+        "PLAN M7b verbatim scope: allow app-defined LINK nav items whose target is a known host route (AppPath.Calendar|Drive|Discussions|Inbox|AiChat|Home): server validation accepts a relative path from an allow-list; front getLinkNavigationMenuItemComputedLink passes it through as an in-app <Link> (no https:// prefixing, no new tab)",
+        "Server: LINK nav-item validation accepts a relative path only from the allow-list of known host routes; unit tests reject '//evil', 'javascript:', unknown paths, and keep absolute external URLs working as today",
+        "Front: getLinkNavigationMenuItemComputedLink returns an allow-listed relative path unchanged and NavigationMenuItemLinkDisplay renders it as an in-app link (no new tab); absolute/external links keep the existing https:// behavior; unit tests pin both branches",
+        "Do not create a new nav item type if extending LINK validation suffices — record the choice in the phase report",
+        "Extend the SDK's defineNavigationMenuItem LINK config/typing to accept the allow-listed relative targets, bump the SDK version carrying it, and repin the affected apps (a2e-drive, a2e-chat) per applications.md — or record concretely why the repin defers",
+        "Missing for tick (Tier 2, orchestrator): Archive → /drive and Bureau Discussions → /discussions sidebar rows navigate in-app in a browser; reorder/hide still works",
+        "Resolves D09 in PLAN's Unresolved-decisions table — annotate the row in the phase report; never tick PLAN.md",
+        "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-server, packages/twenty-front and packages/twenty-sdk (if touched) clean; targeted jest for the server validation + front computed-link util green; if twenty-shared touched, npx nx build twenty-shared --skip-nx-cache first; no i18n catalog churn; no AI attribution"
+      ],
       "priority": 1,
-      "passes": true,
-      "dependsOn": [
-        "US-079",
-        "US-086"
-      ],
-      "completionNotes": "Completed by agent"
+      "passes": false,
+      "notes": "Highest fan-out in this batch: unblocks US-115 (M7c), US-116 (M7d), the Agenda/Archive/Syna sidebar rows (G8), and closes D09. Lane L-NAV (front navigation*, server nav validation, SDK).",
+      "dependsOn": []
     },
     {
-      "id": "US-088",
-      "title": "P4C.4 reschedule: moving an event (or changing its lead time) re-arms an already-delivered reminder",
-      "description": "As a calendar user, I want a reminder to fire again for the new time when I move an event whose reminder was already sent, so that rescheduling never silently leaves me without a reminder.",
-      "priority": 2,
-      "passes": true,
-      "dependsOn": [
-        "US-082"
+      "id": "US-102",
+      "title": "M10a-1: workspace BYOK server core — entity, migration, encrypted keys, resolution order (D-N4)",
+      "description": "As a workspace admin, I want to bring my own AI provider key at workspace level so that Syna works with my provider without instance-wide AI_PROVIDERS. Starting state: not started — provider-config.service.ts reads only the instance AI_PROVIDERS config var; no workspace provider entity exists.",
+      "acceptanceCriteria": [
+        "PLAN M10a verbatim scope: keys stored encrypted with the existing core-modules/secret-encryption utils (never returned to the client — keep the Audit tab masking); resolution order in provider-config.service.ts: workspace provider → instance AI_PROVIDERS → catalog. Keep the 'never template-resolve custom provider values' rule. Needs entity + generated migration",
+        "New workspace-scoped AI provider entity supporting the providers AI_SDK_PACKAGES/aiProviderConfigSchema already support (OpenAI / Anthropic / Mistral / Google / OpenAI-compatible base URL) with apiKey + optional baseUrl, default model + fast model fields",
+        "Generated migration: npx nx run twenty-server:database:migrate:generate --name <name> --type fast, plus an upgrade command under the current TWENTY_CURRENT_VERSION directory (2-39/) with a real epoch-ms timestamp strictly greater than every existing one in that directory, up + down, registered per the upgrade-command rules",
+        "provider-config.service.ts resolves in the order workspace provider → instance AI_PROVIDERS → catalog, decrypting via secret-encryption; API keys are never included in any GraphQL response",
+        "Integration tests on the test DB: key encrypted at rest (ciphertext in the column), cross-workspace isolation, invalid key → safe error, removing the workspace key falls back to instance AI_PROVIDERS then catalog",
+        "Billing gating for BYOK workspaces documented in the phase report (entitlement bypass explicit, per D-N4)",
+        "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-server clean; oxlint --type-aware + oxfmt --check on touched files; targeted jest for the resolution order + encryption; integration suite green on the test DB (NODE_ENV=test, --runInBand); no i18n catalog churn; no AI attribution"
       ],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-089",
-      "title": "C2: onboarding install-apps step must accept the A2E apps the front offers (server allowlist parity + already-installed skip)",
-      "description": "As a new user choosing apps during onboarding, I want the A2E apps I pick (Bureau, Projects, Bilan, Chat, Drive, CRM assistant) to actually be processed, so that the setup step does what it shows instead of silently dropping my selection.",
       "priority": 1,
-      "passes": true,
-      "dependsOn": [
-        "US-086"
-      ],
-      "completionNotes": "Completed by agent"
+      "passes": false,
+      "notes": "Server-only slice named in the Execution-order guidance ('M10a (server-only)'). Unblocks 4 downstream bullets: US-127 (M10a-2 Settings UI), US-128 (M10b), US-129 (M10c), US-130 (M10d). Lane L-AI.",
+      "dependsOn": []
     },
     {
-      "id": "US-090",
-      "title": "M2(f)/G4: workspace-template picker copy states what each preset really installs (Bureau/Bilan wording)",
-      "description": "As a new user choosing a workspace template, I want each description to name exactly the apps it installs and whether the CRM stays, so that I am not promised projects, volunteers or grants a preset does not deliver.",
-      "priority": 2,
-      "passes": true,
-      "dependsOn": [
-        "US-089"
+      "id": "US-103",
+      "title": "M9c family: 20 curated Bureau page templates (a2e-documents)",
+      "description": "As a user picking a starting point, I want ≥20 curated Bureau page templates in fr+en so that I can start from real content instead of a blank page. Starting state: 5 exist (meeting notes, 1:1, project brief, PRD, journal) in a2e-documents/src/lib/starter-templates.ts with the missing-titles-only post-install delta; 15 remain.",
+      "acceptanceCriteria": [
+        "PLAN M9c verbatim list — add the 15 missing page templates: weekly review, daily note, OKRs, team wiki home, onboarding guide, meeting agenda recurring, decision log (ADR), retrospective, brainstorm, reading list, course notes (Cornell), thesis planner, recipe book, travel plan, personal CRM-lite",
+        "Each template follows the existing starter-templates.ts descriptor shape (key, version, labels fr/en, category, content) and the M9 acceptance contract: apply creates fresh IDs, re-apply of the same operation is idempotent, no fake real data",
+        "Extend the post-install seeder delta (missing-titles-only) so reinstall/retry never duplicates seeds; do not extend the post-install to write anything beyond the _document tree (recorded seeder contract)",
+        "One unit test per descriptor + the suite green; fr+en labels for every user-facing string",
+        "Bump the a2e-documents package.json patch version once",
+        "Missing for tick (Tier 2, orchestrator): preview renders and apply observed in a browser",
+        "Quality gates: in packages/twenty-apps/internal/a2e-documents: yarn typecheck && yarn lint (0 errors) && yarn test:unit green && npx twenty dev:build . succeeds (manifest carries the new descriptors); npx nx lint:diff-with-main is N/A (app not an Nx project — package gates substitute, phase-report precedent); no i18n catalog churn; no AI attribution"
       ],
-      "completionNotes": "Completed by agent"
+      "priority": 2,
+      "passes": false,
+      "notes": "Content slice of M9c ('content slices are ideal executor tasks: one template family per slice'). Feeds US-117 (descriptor contract) and US-120 (M9d). Lane L-TPL.",
+      "dependsOn": []
+    },
+    {
+      "id": "US-104",
+      "title": "M9c family: 12 curated Bureau project templates (a2e-projects)",
+      "description": "As a user picking a starting point, I want ≥12 curated project templates so that project-oriented personas get a useful starter plan. Starting state: 2 exist (Livraison LIV, Rétroplanning d'événement EVT) in a2e-projects/src/lib/starter-projects.ts with the findMissingStarterProjects delta by project key; 10 remain.",
+      "acceptanceCriteria": [
+        "PLAN M9c verbatim list — add the 10 missing project templates: sprint board, content calendar, hiring pipeline, client onboarding, website redesign, student semester, association annual general meeting, grant application project (links Bilan), bug tracker, personal goals/habits",
+        "Each template follows the existing starter-projects.ts shape (title/key fr+en, 5-ish tasks with dueInDays offsets, milestones where relevant) and resolveMilestoneDueAt day-offset mapping; delta contract stays by project key (never name)",
+        "The grant-application template notes its Bilan link in its description without installing or requiring Bilan",
+        "Extend the post-install seeder delta by project key; post-install writes only project/task/milestone rows (recorded seeder contract — no labels, no time entries)",
+        "One unit test per descriptor + the suite green; fr+en labels; bump the a2e-projects patch version once",
+        "Missing for tick (Tier 2, orchestrator): live install observing seeded rows > 0 and non-duplication on reinstall",
+        "Quality gates: in packages/twenty-apps/internal/a2e-projects: yarn typecheck && yarn lint (0 errors, the 1 pre-existing task-labels.field.ts warning excepted) && yarn test:unit green && npx twenty dev:build . succeeds; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "Content slice of M9c. Feeds US-117 and US-120. Lane L-TPL.",
+      "dependsOn": []
+    },
+    {
+      "id": "US-105",
+      "title": "M9c family: Bilan templates — personal monthly budget + freelancer invoicing kit (a2e-accounting)",
+      "description": "As a Bilan user, I want a personal monthly budget template and a freelancer invoicing kit (quote→invoice→payment reminders) alongside the 8 existing fiches so the Bilan gallery family is complete. Starting state: the 8 fiches exist (fiche-templates.ts) with starter-books seeds; the 2 remaining M9c Bilan templates do not exist.",
+      "acceptanceCriteria": [
+        "PLAN M9c verbatim list — Bilan (10): the 8 fiches ✔ + personal monthly budget + freelancer invoicing kit (quote→invoice→payment reminders)",
+        "Add the personal monthly budget template (budget object payload following the existing budget shape) and the freelancer invoicing kit as template descriptors reusing the withTemplateDefaults contract so seeds match the editor contract",
+        "Verify each of the 8 fiches already has a descriptor entry + unit test; add descriptors only where missing",
+        "fr+en labels; no fake real data — demo content never becomes a financial transaction (C6: do not extend seeds to pre-fill finance entries)",
+        "One unit test per new descriptor + the suite green; bump the a2e-accounting patch version once",
+        "Missing for tick (Tier 2, orchestrator): live install/reinstall observing the seeded templates and non-duplication",
+        "Quality gates: in packages/twenty-apps/internal/a2e-accounting: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "Content slice of M9c; the invoice side of the freelancer kit is descriptor/seed only — invoice builder legs stay P7-gated and must not be built here. Feeds US-117 and US-120. Lane L-TPL.",
+      "dependsOn": []
+    },
+    {
+      "id": "US-106",
+      "title": "M9c family: Archive folder-structure templates ×4 (a2e-drive)",
+      "description": "As an Archive user, I want ready-made folder structures (client, association, student, company admin) so that I can organize files per persona in one click. Starting state: not started — a2e-drive has the driveFolder object and a post-install path but no folder-structure templates.",
+      "acceptanceCriteria": [
+        "PLAN M9c verbatim list — Archive (4): folder structures — client, association, student, company admin (creates driveFolder trees only)",
+        "Each template is a descriptor (key, version, labels fr/en, category, required apps) that creates driveFolder trees only — no attachment/file records in the seed",
+        "Idempotent apply per the C1 contract: re-apply of the same operation creates no duplicate folder subtrees (delta by a stable key/provenance on the descriptor); apply creates fresh IDs",
+        "One unit test per descriptor + the suite green; fr+en labels; bump the a2e-drive patch version once",
+        "Missing for tick (Tier 2, orchestrator): live apply creating the folder tree in a browser",
+        "Quality gates: in packages/twenty-apps/internal/a2e-drive: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "Content slice of M9c. Feeds US-117 and US-120. Lane L-TPL.",
+      "dependsOn": []
+    },
+    {
+      "id": "US-107",
+      "title": "M9c family: cross-app workflow recipes ≥6 (workflow engine, opt-in, previewed)",
+      "description": "As a user, I want prebuilt cross-app automation recipes I can opt into with a preview so that routine chains (meeting → notes, upload → review task, deadline → reminder) run on the native workflow engine. Starting state: 2 recipes exist (deal-won → project; recurring tasks) in a2e-projects/src/workflow-templates/; 4 remain on the M9c list, one of which is P7-gated.",
+      "acceptanceCriteria": [
+        "PLAN M9c verbatim list — cross-app recipes (≥ 6): deal won ✔ → project; recurring tasks ✔; meeting event → notes page; invoice paid → task done + ledger; file uploaded to project → task 'review'; task due → Agenda reminder",
+        "Ship the non-P7-gated recipes as workflow templates following the recurring-task-generator/deal-won precedent (recipe in the engine's own vocabulary, validator, logic-function action with inline-typed handler input schema, idempotent materialization): meeting event → notes page; file uploaded to project → task 'review'; task due → Agenda reminder (uses existing calendar reminder / notification primitives — no new engine)",
+        "Add descriptor entries for the 2 existing recipes so the family lists ≥6 with the new ones",
+        "The invoice paid → task done + ledger recipe stays deferred with P7 — the existing recipe validator asserts no invoice/accounting step while P7 is blocked; record the deferral, do not build it",
+        "Opt-in + previewed: each recipe declares its writes per the C1 preview contract; unit tests per recipe + validator",
+        "Bump the a2e-projects patch version once",
+        "Missing for tick (Tier 2, orchestrator): live materialization + firing + replay-idempotency proof (US-014 precedent)",
+        "Quality gates: in packages/twenty-apps/internal/a2e-projects: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "Content slice of M9c. Feeds US-117 and US-120. Lane L-TPL.",
+      "dependsOn": []
+    },
+    {
+      "id": "US-108",
+      "title": "M12a: product documentation information architecture (user-guide/a2e-suite + docs.json nav)",
+      "description": "As a user or admin, I want an in-app-linked user guide skeleton for A2E Suite so that every documented surface has a home. Starting state: not started — packages/twenty-docs/user-guide/ has no a2e-suite group.",
+      "acceptanceCriteria": [
+        "PLAN M12a verbatim scope: add user-guide/a2e-suite/ with docs.json nav: Overview · Getting started · Bureau · Agenda · Bilan · Syna · Archive · Templates · Working across apps · Admin & self-host · FAQ/Troubleshooting. Stub pages list the exact screens they will cover",
+        "Create the 11 stub pages under packages/twenty-docs/user-guide/a2e-suite/ and register the A2E Suite group in the twenty-docs docs.json navigation",
+        "Every page states the version it documents and lists the exact real screens it will cover (screen names must grep-match source labels where the surface exists)",
+        "fr + en present per page skeleton",
+        "Quality gates: node docs/scripts/check-docs.mjs PASS (or the package's documented build command); docs-only change — lint/tsgo N/A by design, reported as such (US-048 precedent); no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "Named safe parallel slice in the Execution-order guidance ('M12a'). Unblocks M12b–g sequencing. Lane L-DOCS.",
+      "dependsOn": []
+    },
+    {
+      "id": "US-109",
+      "title": "US-092: inbox CALENDAR_REMINDER label/icon/deep-link (P4C.4 front leg)",
+      "description": "As a user receiving a calendar reminder, I want the notification in my inbox to show a readable label, a canonical icon and a deep link to the event so that reminders are actionable. Starting state: not started — no CALENDAR_REMINDER reference exists under twenty-front/src/modules/inbox/ (orchestrator finding 2026-09-27 17:45, phase-04-report).",
+      "acceptanceCriteria": [
+        "Render the CALENDAR_REMINDER notification type in the inbox with a user-facing Lingui label, a canonical icon from packages/twenty-ui/src/icon/icon-dictionary.md (status/action icon semantics), and a deep link that opens the calendar event surface (side panel or /calendar day view per existing inbox deep-link patterns)",
+        "Map the notification payload (event title, startsAt, reminderMinutes) into the inbox row text; missing/deleted event renders a safe state, never a crash",
+        "fr+en strings via Lingui; no catalog committed",
+        "Unit tests for the label/icon/link mapping; the P8 inbox module suites stay green",
+        "Missing for tick (Tier 2, orchestrator): live socket push/badge proof (standing P8 Tier-2 ledger) and the P4C.4 live delivery brief (docs/tasks/p4c.4-reminder-live.md)",
+        "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-front clean; oxlint --type-aware + oxfmt --check on touched files; targeted jest for inbox + calendar touched modules green; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "Closes the last code-level P4C.4 leg; P4C.4's tick itself stays gated on the Tier-2 live delivery brief. Lane L-UX/inbox.",
+      "dependsOn": []
+    },
+    {
+      "id": "US-110",
+      "title": "P4.2 retroplanning screen: recipe picker + deadline preview + destructive-REPLACE confirmation",
+      "description": "As a project planner, I want a retroplanning screen that picks a reusable recipe, sets deadline/timezone, previews the generated plan and confirms creation into standard tasks so that E06 works end-to-end. Starting state: engine + handler + provenance field are DONE (phase-04 2026-09-18: retroplanning.ts, apply-retroplanning-handler.ts, task-retroplanning-provenance.field.ts); groundwork helpers retroplanning-screen.ts exist but are imported by no screen yet (orchestrator 2026-09-24: 'groundwork only'); the front component is missing.",
+      "acceptanceCriteria": [
+        "PLAN P4.2 Retroplanning verbatim scope: choose a reusable project recipe, set deadline and timezone, preview task/subtask dates, durations, dependencies, assignees and overlap/past-date warnings; confirm creation into standard tasks. Persist generation provenance/idempotency. Reapply or move deadline previews only owned changes and protects manually edited dates/completed work. Append versus replace affects the draft unless an explicit destructive record-change preview is confirmed (E06)",
+        "Build the front component in a2e-projects: recipe picker (the 2 versioned recipes delivery/event), deadline + timezone form, preview table from buildRetroplanningPreview / the retroplanning-screen.ts helpers (reuse them — do not fork a second preview implementation)",
+        "Destructive REPLACE requires an explicit confirmation showing the destructive record-change preview (owned deletions only); APPEND vs REPLACE selection affects the draft as the engine defines",
+        "Wire creation through the existing retroplanning logic function with the accepted Core API shapes — never key a Core findOne by a bare id (use buildFindOneByIdArgs); register a command-menu item and/or project-page widget with committed c31b universal IDs and 'Bureau : <verb>' label anatomy",
+        "The engine's provenance/idempotency and manual-edit/DONE protection are prior work — reuse, never rewrite; unit tests for any new pure helper + the existing suites stay green",
+        "Bump the a2e-projects patch version once",
+        "Missing for tick (Tier 2, orchestrator): live install + the E06 retroplanning journey proof",
+        "Quality gates: in packages/twenty-apps/internal/a2e-projects: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "User-facing completion of P4.2's last unshipped bullet; the plan's '(R04, after P4.1/C1)' dependencies are satisfied (P4.1 task extensions ticked; C1 contract done). Lane L-EDITOR-adjacent (a2e-projects front-components lane).",
+      "dependsOn": []
+    },
+    {
+      "id": "US-111",
+      "title": "P3.2: persist revision history (durable storage, retention, block diff, restore-as-new-revision)",
+      "description": "As a document author, I want my page history to survive reload so that I can diff and restore earlier versions. Starting state: partial — EditorVersionHistoryStore is an in-memory ring buffer (packages/twenty-front/src/modules/blocknote-editor/version-history/); nothing durable exists.",
+      "acceptanceCriteria": [
+        "PLAN P3.2 verbatim scope: Persist revision history; current EditorVersionHistoryStore is an in-memory ring buffer. Retention, block diff and restore-as-new-revision must survive reload and respect permissions (E05)",
+        "Persist revisions through the app's metadata path (a documentRevision app object in a2e-documents or the app's existing persistence primitive — document the choice; app metadata uses the native manifest/migration path, not hand-created workspace tables)",
+        "Retention policy applied on write; restore writes a new revision rather than mutating history; block diff computed from stored revisions",
+        "History read/restore respects document permissions (viewer cannot read/restore revisions of unreadable documents)",
+        "Unit tests for the persistence/retention/restore contract; front store swaps to the durable backend behind the same hook surface (useEditorVersionHistory unchanged shape)",
+        "Bump the a2e-documents patch version once",
+        "Missing for tick (Tier 2, orchestrator): E05 reload + second-session proof",
+        "Quality gates: in packages/twenty-apps/internal/a2e-documents: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; npx tsgo -p tsconfig.json --noEmit in packages/twenty-front clean; targeted jest green; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": "Unblocks P3.4's advanced-authoring implementation bullet (gated behind durable save/share acceptance — share is P0.2-done; this + US-112 complete the save side). Lane L-EDITOR.",
+      "dependsOn": []
+    },
+    {
+      "id": "US-112",
+      "title": "P3.2: atomic expected-revision save with conflict feedback and preserved draft",
+      "description": "As a document author, I want stale saves to be refused with a conflict banner and my draft preserved so that two sessions never silently overwrite each other. Starting state: partial — presence and the pure optimistic classification helper exist; no server save/merge protocol.",
+      "acceptanceCriteria": [
+        "PLAN P3.2 verbatim scope: Atomic expected-revision save with conflict feedback and preserved draft; presence and pure optimistic classification helper exist, but do not implement a server save/merge protocol. No OT/CRDT promise in v1",
+        "Implement the save path with an atomic expected-revision check (compare-and-save on the document's revision marker), a typed conflict error, and a front conflict banner; on conflict the draft is preserved client-side",
+        "No OT/CRDT and no server merge protocol beyond the version check (cross-cutting risk table contract: 'Version check + conflict banner; single-writer guidance in docs'); document the single-writer guidance",
+        "Unit/integration tests: a stale save is refused with the typed conflict and preserves the draft; a fresh save succeeds atomically; the optimistic classification helper is reused, not forked",
+        "Bump the a2e-documents patch version once",
+        "Missing for tick (Tier 2, orchestrator): two-session stale-save browser proof (E05)",
+        "Quality gates: in packages/twenty-apps/internal/a2e-documents: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; packages/twenty-front tsgo clean; targeted jest green; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": "Second half of the P3.4 gate (durable save). Lane L-EDITOR.",
+      "dependsOn": []
+    },
+    {
+      "id": "US-113",
+      "title": "P3.3: record→document integration — actual note-body copy with source link and permission checks",
+      "description": "As a CRM user, I want to copy a selected note's actual body into a Bureau document with a source link so that record context becomes a real page. Starting state: not started — the existing record command does a title snapshot, not note-body copying (PLAN P3.3).",
+      "acceptanceCriteria": [
+        "PLAN P3.3 verbatim scope: Record integration: preserve existing company/person relation fields; implement actual selected-note body copy with source link and permission checks. Existing record command/title snapshot is not note-body copying. Test both record types and open from search/relation/side-panel",
+        "The record→doc command fetches the authorized note body, copies the actual content (block IDs/anchors remapped per C1 so the copy is independent), records source provenance + a source link, and preserves the document's company/person relation fields",
+        "Permission checks fail closed: an unauthorized/unreadable source yields a typed refusal with no partial content",
+        "Unit tests for the copy/remap/fail-closed contract for both record types (company, person); the a2e-documents suites stay green",
+        "Bump the a2e-documents patch version once",
+        "Missing for tick (Tier 2, orchestrator): open from search/relation/side-panel browser legs",
+        "Quality gates: in packages/twenty-apps/internal/a2e-documents: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; packages/twenty-front tsgo clean if front files touched; targeted jest green; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": "Closes a PLAN 'not note-body copying' honesty gap. Lane L-EDITOR (a2e-documents).",
+      "dependsOn": []
+    },
+    {
+      "id": "US-114",
+      "title": "P2.1: enforce channel ACLs at subscribe for chat topics (unblocked half of bullet 3)",
+      "description": "As a workspace member, I want private chat channels to be invisible to non-members at the realtime layer so that the gateway honors the collaboration model. Starting state: not started — the P0.3 scope decision deferred record/channel ACLs until the chat: publishers and their access model exist; the P5 chat publisher (workspace:<id>:chat:<channelId>) and the public/private channel model now exist, so the channel half is unblocked.",
+      "acceptanceCriteria": [
+        "PLAN P2.1 bullet 3 verbatim scope: Enforce workspace, member, record and channel ACLs at subscribe and on revocation. Current workspace/inbox checks are insufficient for private document/chat topics (P0.3) — this slice implements the CHANNEL half for chat: topics; the record (object:) half stays deferred until an object publisher exists (note it in the report)",
+        "Extend assertTopicAuthorized in realtime-topic-authorization.service.ts to enforce chat-channel ACLs at subscribe: public channels allow workspace members; private channels allow channel members only; non-member subscription is rejected with the existing error envelope",
+        "Reuse the single authorization seam (assertTopicAuthorized) — never add a second authorization path (recorded P2.1 contract); heartbeat membership revalidation stays as-is",
+        "Unit tests for public/private/foreign-workspace/unknown-channel cases + an isolated real-Redis integration spec (the isolated-harness precedent while the shared integration globalSetup TDZ persists)",
+        "Missing for tick (Tier 2, orchestrator): live revoked-member socket journey (socket closes 4403, no further events) and the multi-session handshake legs",
+        "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-server clean; oxlint --type-aware + oxfmt --check on touched files; realtime unit suite + the isolated integration spec green; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": "Closes the in-harness half of P2.1 bullet 3 exactly as US-072/073 did for bullet 5; the live revocation journey stays on the Tier-2 ledger. Lane L-REALTIME.",
+      "dependsOn": []
+    },
+    {
+      "id": "US-115",
+      "title": "M7c: grouped app sections — one folder nav item per app",
+      "description": "As a user, I want each app's nav rows grouped under one collapsible native folder so that the sidebar shows ≤7 top-level rows with clear app identity. Starting state: not started; the folder nav-item primitive exists (a2e-projects Mes tâches folder, a2e-accounting Bilan folder precedent) and A2E rows sit flat at positions 100–140 (G7).",
+      "acceptanceCriteria": [
+        "PLAN M7c verbatim scope: Each app's nav items live under one native folder nav item (existing NavigationMenuItemType folder, as used by navigation-menu-item/edit/folder/): Bureau (Accueil, Pages, Projets, Mes tâches, Discussions), Agenda, Bilan (Tableau de bord, Transactions, Factures & devis, Budgets, Aides, Réglages→Catégories), Syna, Archive. Collapse state per user. Reduce Bilan to ≤ 6 visible rows; rest reachable from its landing page. CRM rows grouped under a CRM folder only when the preset hides nothing (never move user-created rows)",
+        "App-side: regroup each app's navigation-menu-items under one folder per app (a2e-documents + a2e-projects + a2e-chat under Bureau; a2e-accounting under Bilan; a2e-drive under Archive) using the existing folder type and managed child items; Agenda/Syna host folders follow US-116/host surfaces — record any host leg not expressible app-side",
+        "Bilan reduced to ≤ 6 visible rows; the rest reachable from its landing page",
+        "Collapse state per user; CRM rows grouped under a CRM folder only when the preset hides nothing — never move user-created rows; managed-provenance contract respected so user customisations survive app upgrade (P1.7)",
+        "Bump each touched app's patch version once",
+        "Missing for tick (Tier 2, orchestrator): fresh workspace sidebar ≤ 7 top-level rows in a browser (E13 leg)",
+        "Quality gates: per touched a2e-* app: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; packages/twenty-front tsgo clean if front navigation files touched; targeted jest green; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": "Depends on US-100 (names finalized) and US-101 (host-route rows). Gate-unlocker for E13. Lane L-NAV.",
+      "dependsOn": [
+        "US-100",
+        "US-101"
+      ]
+    },
+    {
+      "id": "US-116",
+      "title": "M7d: Agenda host entry without an app — host-seeded /calendar nav item + preset flag + upgrade command",
+      "description": "As a user of a fresh or existing workspace, I want an Agenda entry in the sidebar without installing an app, so that the calendar is reachable natively. Starting state: not started — /calendar has no sidebar entry because app nav LINK items are external-only (D09; resolved by US-101).",
+      "acceptanceCriteria": [
+        "PLAN M7d verbatim scope: Agenda is a host page; add a host-seeded (standard) nav item for /calendar in new workspaces and a preset flag agendaEnabled; existing workspaces get it via an upgrade command under the current version dir (2-39/, strictly increasing timestamp, up/down) that only inserts if absent",
+        "Host-seeded standard nav item targeting /calendar (via the US-101 internal-route mechanism) in new workspaces; agendaEnabled flag added to the workspace-template definitions and honored by the template flow",
+        "2-39 workspace upgrade command with a real epoch-ms timestamp strictly greater than every existing one in the 2-39 directory (mind the 1790502600000 calendar-reminder slot and later), up + down, registered per the upgrade-command rules, inserting the Agenda row only if absent",
+        "Integration test for idempotency on the test DB (second run is a no-op; the row is not duplicated)",
+        "Missing for tick (Tier 2, orchestrator): fresh + upgraded workspace show Agenda once and hiding it persists, in a browser",
+        "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-server clean; oxlint --type-aware + oxfmt --check on touched files; onboarding/navigation unit suites + the integration spec green on the test DB; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": "Depends on US-101. Unblocks the Agenda leg of E13 and M7f's Agenda landing page. Lane L-NAV.",
+      "dependsOn": [
+        "US-101"
+      ]
+    },
+    {
+      "id": "US-117",
+      "title": "M9a-1: template descriptor contract (C1) + per-app descriptor logic functions",
+      "description": "As an app author, I want each A2E app to expose its content templates through one C1 descriptor contract so that the gallery (M9a-2) and presets (M9d) consume a single data source. Starting state: template content exists per app in lib constants (US-103…107 ship the missing families); no cross-app descriptor contract or descriptor logic functions exist.",
+      "acceptanceCriteria": [
+        "PLAN M9a data-source verbatim scope: each app exposes its templates through its existing lib constants + a logic function returning descriptors (C1 contract: key, version, labels fr/en, category, preview, required apps, inputs). No new engine/table for built-ins",
+        "Define the descriptor shape once (twenty-shared or the location docs/plan/05-template-contracts.md prescribes) with key, version, labels fr/en, category, preview, required apps, inputs; pure types + validation guards",
+        "Each installed app (a2e-documents, a2e-projects, a2e-accounting, a2e-drive) ships a read-only logic function returning its descriptors from its existing lib constants — no new engine/table, no toolTriggerSettings (not an AI tool)",
+        "Unit tests per app descriptor function (shape validity, fr+en presence, required-apps correctness); the family suites from US-103…107 stay green",
+        "Bump each touched app's patch version once; if twenty-shared is touched, rebuild it before dependent checks",
+        "Missing for tick (Tier 2, orchestrator): descriptor functions executing live on an installed workspace",
+        "Quality gates: per touched app: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; twenty-shared build if touched (npx nx build twenty-shared --skip-nx-cache); targeted jest green; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": "Depends on the four family slices (US-103…106 — recipes US-107 add their descriptors in their own slice). Gate-unlocker for US-118 (gallery) → US-119 (M9b) → US-120 (M9d) and later M13a. Lane L-TPL.",
+      "dependsOn": [
+        "US-103",
+        "US-104",
+        "US-105",
+        "US-106"
+      ]
+    },
+    {
+      "id": "US-118",
+      "title": "M9a-2: gallery surface — one host surface with categories, search, preview, Use template / Blank",
+      "description": "As a user, I want one searchable template gallery across installed apps, openable from Cmd+K 'Templates' and every 'New' button, so that templates are discoverable in one place. Starting state: not started — no gallery module exists (G11: templates are siloed per app).",
+      "acceptanceCriteria": [
+        "PLAN M9a verbatim scope: One host surface (modal from Cmd+K 'Templates', from every 'New' button and each app landing page) listing content templates across installed apps, with categories, search, preview pane, 'Use template' and 'Blank'",
+        "New front module packages/twenty-front/src/modules/template-gallery/ per the M9 lane; consumes the US-117 descriptor logic functions; install-gated — only installed apps' templates are listed; a template whose required app is unavailable renders a safe state",
+        "Openable from Cmd+K 'Templates', from the existing 'New' create surfaces, and from app landing pages that exist today",
+        "Preview pane renders the descriptor's preview; 'Use template' instantiates through the app's existing template path (fresh IDs, provenance); 'Blank' keeps the existing blank-creation flow",
+        "fr+en via Lingui; Linaria + theme tokens; canonical icons from the icon dictionary; component unit tests",
+        "Missing for tick (Tier 2, orchestrator): E15 gallery browser journey (search → preview → use → save as template → reuse)",
+        "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-front clean; oxlint --type-aware + oxfmt --check on touched files; targeted jest for the new module green; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": "Depends on US-117. Gate-unlocker for US-119 (M9b), US-120 (M9d) and M13a. Lane L-TPL.",
+      "dependsOn": [
+        "US-117"
+      ]
+    },
+    {
+      "id": "US-119",
+      "title": "M9b: workspace templates — 'Save as template' for project (+tasks), board view, Bilan fiche",
+      "description": "As a user, I want to save any document, project (and its tasks), board view or Bilan fiche as a workspace template so that my own layouts become reusable starting points. Starting state: partial — documents save-as-template/duplicate shipped in P1.6e (save-document-as-template.ts); project/board/fiche legs missing.",
+      "acceptanceCriteria": [
+        "PLAN M9b verbatim scope: Any document/project (and its tasks), board view, Bilan fiche can be saved as a workspace template (an isTemplate flag + provenance on the existing object, as the documents template-copy helper does). Editing a copy never mutates the template (C1)",
+        "Add save-as-template payload builders for project (+ its tasks), the task-board view, and Bilan fiche following the existing save-document-as-template.ts pattern (prefix-once title, provenance, fresh IDs on instantiate) — one implementation pattern, no second one",
+        "Editing a copy never mutates the template; template deletion never deletes existing instances (C1); instantiate remaps relations/IDs per C1",
+        "Unit tests per new payload builder; the documents contract tests stay green",
+        "Bump a2e-projects and a2e-accounting patch versions once",
+        "Missing for tick (Tier 2, orchestrator): save→instantiate round-trip and non-aliasing proof in a browser",
+        "Quality gates: per touched app: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; targeted jest green; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": "Depends on US-118 (gallery lists workspace templates; the save action mounts from the gallery/record surfaces). Lane L-TPL.",
+      "dependsOn": [
+        "US-118"
+      ]
+    },
+    {
+      "id": "US-120",
+      "title": "M9d: persona presets reference gallery template keys (fixes G14 together with M2)",
+      "description": "As a persona-preset user, I want the six presets' starter bundles to reference the gallery's curated templates (and offer Agenda/Archive/Projects/Syna where relevant) so that presets seed real content. Starting state: not started — starterBundleContents do not reference gallery keys; adding apps to presets is D02-gated so this slice wires gallery keys for already-installed apps only.",
+      "acceptanceCriteria": [
+        "PLAN M9d verbatim scope: Rewrite the six preset starterBundleContents to reference gallery keys; add Agenda, Archive, Projects, Syna where relevant (fixes G14 together with M2)",
+        "Rewrite the six preset starterBundleContents to reference the US-117 gallery keys for the apps each preset already installs (documents always; accounting for non-profit/small-business) — D02-gated app-set expansion stays out of scope and is recorded, not pre-empted",
+        "Keep the version-1 template data contract: same-key retries create no duplicates; unavailable optional apps are excluded honestly (preview contract)",
+        "The US-090 copy-truthfulness spec (A2eWorkspaceTemplates.test.ts) stays green — update the copy where the seeded content changes, never the spec",
+        "Unit tests for the referenced keys resolving against the shipped descriptors (missing key fails the test)",
+        "Missing for tick (Tier 2, orchestrator): persona apply observing seeded content rows > 0 in a browser (M2b leg, orchestrator)",
+        "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-front clean; packages/twenty-server onboarding suites green (tsgo clean); oxlint/oxfmt on touched files; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": "Depends on US-118 + the family slices. D02 (exact persona bundle contents + version matrix) remains the product gate for app-set changes. Lane L-TPL.",
+      "dependsOn": [
+        "US-118",
+        "US-103",
+        "US-104",
+        "US-105",
+        "US-106",
+        "US-107"
+      ]
+    },
+    {
+      "id": "US-121",
+      "title": "M8a-1: slash menu core/structural blocks (toggle, columns, divider, quote, code+language, table, ToC)",
+      "description": "As a Bureau writer, I want Notion-grade structural blocks in the editor so that pages read like real documents. Starting state: not started for these blocks — custom blocks today are CalloutBlock, FileBlock, MentionInlineContent only (G9).",
+      "acceptanceCriteria": [
+        "PLAN M8a verbatim subset: Extend blocknote-editor/blocks/Schema.ts and the slash menu (components/CustomAddBlockItem.tsx, BlockEditor.tsx) with: toggle list, toggle heading, columns (2–4), divider, quote, code with language, table (BlockNote table), table of contents",
+        "Slash menu grouped (Basic / Media / Bureau / Links / Syna), searchable in fr+en, keyboard-only usable",
+        "Each implemented block round-trips save→reload→export (markdown; PDF via the existing export path); unit tests per block serializer",
+        "Storybook stories light/dark for the new blocks; Linaria + theme tokens only",
+        "Missing for tick (Tier 2, orchestrator): E14 block round-trip legs in a browser",
+        "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-front clean; oxlint --type-aware + oxfmt --check on touched files; targeted jest for blocknote-editor touched modules green; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": "Split of M8a into two one-session slices; US-122 carries the interactive/linking half. Lane L-EDITOR.",
+      "dependsOn": []
+    },
+    {
+      "id": "US-122",
+      "title": "M8a-2: slash menu interactive/linking blocks (to-do→task, embeds, bookmark, page link, record mention, date/reminder)",
+      "description": "As a Bureau writer, I want blocks that connect pages to the suite's records and agenda so that documents are working surfaces, not text. Starting state: not started — depends on US-121's slash-menu grouping.",
+      "acceptanceCriteria": [
+        "PLAN M8a verbatim subset: to-do (with 'convert to task' → native task, provenance kept), image/video/audio/PDF embed via FileBlock (attachments storage), web bookmark card, page link / sub-page block (creates child document), record mention for any object (extend MentionInlineContent), date/reminder mention (creates Agenda reminder)",
+        "Math/equation block only if license-compatible — else defer per D07 and record the verdict against docs/plan/p3.4-advanced-authoring-feasibility.md (never import reference packages)",
+        "'Convert to task' creates a native task keeping provenance; page link/sub-page creates a child document in the tree; record mention extends MentionInlineContent to any readable object with the existing RecordChip rendering; date/reminder mention creates an Agenda reminder via the calendar reminder primitives",
+        "Slash-menu groups Media/Bureau/Links/Syna populated by this slice; searchable fr+en; keyboard-only usable",
+        "Each implemented block round-trips save→reload→export; unit tests per block serializer; storybook stories light/dark",
+        "Missing for tick (Tier 2, orchestrator): E14 interactive-block browser legs",
+        "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-front clean; oxlint --type-aware + oxfmt --check on touched files; targeted jest green; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": "Depends on US-121 (shared slash-menu grouping infrastructure). Lane L-EDITOR.",
+      "dependsOn": [
+        "US-121"
+      ]
+    },
+    {
+      "id": "US-123",
+      "title": "M8b: inline views ('databases') in pages — embed a native view block (read-only first)",
+      "description": "As a Bureau writer, I want to embed a live Tasks board (or any object view) inside a page so that the database is a real Twenty object with permissions and relations — the flagship 'better than Notion'. Starting state: not started; depends on the M8a block infrastructure.",
+      "acceptanceCriteria": [
+        "PLAN M8b verbatim scope: A block embedding a native view (table/kanban/calendar/gallery) of any object with its own filters (reuse record-table/board components read-only first, then editable)",
+        "Embed Tasks board filtered by project in a doc; edits in the block reflect on /objects/tasks (the embedded surface reads live data, not a snapshot)",
+        "Permission-denied renders a safe stub (never raw error, never leaked data)",
+        "Reuse record-table/board components (read-only first) — do not fork a second table engine; unit tests for the block serializer + the embedding host",
+        "Missing for tick (Tier 2, orchestrator): E14 embedded-view browser proof incl. permission stub",
+        "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-front clean; oxlint --type-aware + oxfmt --check on touched files; targeted jest green; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": "Depends on US-122 (block registration surface). Lane L-EDITOR.",
+      "dependsOn": [
+        "US-122"
+      ]
+    },
+    {
+      "id": "US-124",
+      "title": "M8c: page chrome — icon, cover, full-width/small-text toggles, breadcrumbs, word count, lock page",
+      "description": "As a Bureau writer, I want page icon/cover and reading controls so that pages feel like polished Notion pages. Starting state: not started — document object has icon/coverColor columns but no page-chrome surface; the new fields need the app fields/ + generated migration path.",
+      "acceptanceCriteria": [
+        "PLAN M8c verbatim scope: Page icon (emoji/icon dictionary) + cover image, full-width toggle, small-text toggle, 'last edited by', breadcrumbs from tree, word count, favourites (existing document-favorite), lock page",
+        "Fields added via the app fields/ path (a2e-documents src/fields on the document object) following the app-standalone-field pattern; any server-side column need follows the generated migration path (app metadata uses the native manifest path)",
+        "Breadcrumbs derive from the tree; word count from content; 'last edited by' from the existing updatedBy surface; lock page uses a managed/provenance-respecting mechanism",
+        "fr+en via Lingui; light+dark themes; canonical icons; unit tests for the chrome components + field payloads",
+        "Bump the a2e-documents patch version once",
+        "Missing for tick (Tier 2, orchestrator): browser rendering pass on real pages",
+        "Quality gates: in packages/twenty-apps/internal/a2e-documents: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; packages/twenty-front tsgo clean; targeted jest green; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": "Independent of the slash-menu slices (fields + chrome surface). Lane L-EDITOR.",
+      "dependsOn": []
+    },
+    {
+      "id": "US-125",
+      "title": "M11a-spike: universal link picker & 'Related' panel — pattern decision (report-only)",
+      "description": "As a maintainer, I need the cross-app linking pattern decided before any link picker is built so that M11a does not fork a parallel linking system. Starting state: not started; cross-app links today exist only where a relation field was hand-declared (G13).",
+      "acceptanceCriteria": [
+        "PLAN M11a verbatim scope: From any record or page: 'Link…' searches all objects (reuse search federation, P2.5) and creates a link via a generic junction (evaluate native attachment-like polymorphic pattern vs a new app-owned a2eLink junction with morph targets — decide in a spike, record it). Record pages show a 'Related' widget listing links + backlinks (M8d) — this slice delivers the SPIKE + decision only",
+        "Report-only deliverable in docs/plan/phases/phase-15-report.md: inspect the native polymorphic/morph primitives and an app-owned junction with morph targets; record the ownership, install-order, uninstall-preflight and backlink-computation consequences (the P4.3-project-doc-relation-spike precedent is the model)",
+        "Decide the search-federation reuse point (P2.5 searchAppRecords + core search) and the 'Related' widget surface (page-layout widget vs front component)",
+        "No metadata created, no product code changed; docs integrity gate passes",
+        "Quality gates: node docs/scripts/check-docs.mjs PASS; docs-only change — lint/tsgo N/A by design, reported as such (US-048 precedent); no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": "M11a's implementation stories are next-batch once this spike records the pattern. Lane L-LINK.",
+      "dependsOn": []
+    },
+    {
+      "id": "US-126",
+      "title": "M11b: Today view — Home becomes 'Today' (due/overdue tasks, today's events, recent pages, pending Bilan)",
+      "description": "As a user opening the app, I want a Today view that shows what needs attention today so that Home is useful immediately. Starting state: partial — the P2.6 re-home shipped a 7-card native HomeDashboard on /home (suggestions, my tasks, upcoming events, recent activity, focus, contribution grid, help); the Bilan-pending and recent-pages cards and the 'Today' framing are missing (G10).",
+      "acceptanceCriteria": [
+        "PLAN M11b verbatim scope: Home becomes 'Today': tasks due/overdue, today's Agenda events, recent pages, pending Bilan items (unpaid invoices, grant deadlines), Syna digest (optional). Reuses home-dashboard widgets; each card deep-links to the native page",
+        "Add/extend the home-dashboard cards for recent pages and pending Bilan items (unpaid invoices, grant deadlines read through the installed Bilan app's objects — install-gated, safe empty state when Bilan is absent); Syna digest card is optional and hidden with AI off",
+        "Every card deep-links to its native page (/objects/tasks, /calendar, document paths, Bilan pages) per the P2.6 deep-link pattern",
+        "Reuses the existing home-dashboard widget components — no second dashboard framework; solo-mode degradation respected (P10 isSoloWorkspace); fr+en via Lingui",
+        "Unit tests for the new cards' data shaping (install-gating, empty states); the home-dashboard suites stay green",
+        "Missing for tick (Tier 2, orchestrator): browser proof of the Today view on a populated workspace",
+        "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-front clean; oxlint --type-aware + oxfmt --check on touched files; targeted jest for home-dashboard touched modules green; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": "Independent per the M11 lane table ('M11a spike first; M11b independent'). Lane L-LINK.",
+      "dependsOn": []
+    },
+    {
+      "id": "US-127",
+      "title": "M10a-2: Settings → Syna → Providers UI (add/test key, default + fast model, Audit masking preserved)",
+      "description": "As a workspace admin, I want a Settings page to add and test my BYOK provider key and pick default/fast models so that US-102's server core is usable. Starting state: depends on US-102 (entity + resolution shipped).",
+      "acceptanceCriteria": [
+        "PLAN M10a verbatim scope (UI half): Settings → Syna → Providers: admin adds OpenAI / Anthropic / Mistral / Google / OpenAI-compatible base URL, tests the key, picks default + fast model",
+        "Keys are never returned to the client — the page shows a masked placeholder and keeps the Audit tab masking intact; 'test key' performs a safe server-side validation with a typed success/failure",
+        "Removing the key falls back to instance AI_PROVIDERS → catalog (reflection of the US-102 resolution order, surfaced in the UI)",
+        "Billing gating for BYOK documented for the admin in the page copy (per D-N4)",
+        "fr+en via Lingui; Linaria + theme tokens; canonical icons; component unit tests (masked rendering, test-key states)",
+        "Missing for tick (Tier 2, orchestrator): browser journey — admin adds key → member asks on a page → draft → confirm → remove key (E16)",
+        "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-front clean; oxlint --type-aware + oxfmt --check on touched files; targeted jest for settings/ai touched modules green; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": "Depends on US-102. Lane L-AI.",
+      "dependsOn": [
+        "US-102"
+      ]
+    },
+    {
+      "id": "US-128",
+      "title": "M10b: Syna everywhere — one entry per context (Cmd+K, editor slash, record page, Bilan, Agenda)",
+      "description": "As a user, I want Syna available in context everywhere (each entry reusing the tool registry and confirm-first pattern) so that AI help is ambient but consented. Starting state: partial — per-app context buttons + direct read-only execution exist (US-053/066/067); the M10b entry points list is not wired.",
+      "acceptanceCriteria": [
+        "PLAN M10b verbatim scope: One entry per context: Cmd+K 'Ask Syna', editor slash /syna + selection toolbar (improve, summarize, translate, continue), record page 'Ask about this record', Bilan categorization suggestions (P9.2 accounting bullet), Agenda 'find a slot'/'prepare meeting'. All reuse the existing tool registry (toolTriggerSettings) and the confirm-first pattern",
+        "Implement the entry points that have ready backing tools: Cmd+K 'Ask Syna' global command; editor slash /syna + selection toolbar actions mapping to the existing read-only document tools (summarize/translate/improve-writing shipped in P9.2); record page 'Ask about this record' via the existing context-tool buttons",
+        "Bilan categorization suggestions stay P7-gated (record the deferral — do not build accounting tools); Agenda entries map to the calendar reminder/scheduling primitives where they exist, else record the gap",
+        "Every entry is confirm-first: mutating categories never offered/directly executed (preserve the PREFILL staging contract); entries hidden or degraded in zero-AI mode per US-130 once it lands",
+        "fr+en via Lingui; unit tests for entry gating (tool availability, read-only enforcement)",
+        "Missing for tick (Tier 2, orchestrator): live dispatch journeys per context",
+        "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-front clean; oxlint --type-aware + oxfmt --check on touched files; targeted jest for ai/touched modules green; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": "Depends on US-102 (BYOK availability makes entries meaningful) but wires only existing tools. Lane L-AI.",
+      "dependsOn": [
+        "US-102"
+      ]
+    },
+    {
+      "id": "US-129",
+      "title": "M10c: Syna context & memory, scoped — record/page + explicit @mentions only, admin house-style",
+      "description": "As a workspace admin, I want Syna's context strictly scoped to the current record/page plus explicit @mentions, and a workspace-level house-style instruction editable by admins, so that no silent workspace-wide retrieval happens. Starting state: partial — browsing context carries record/listView/channel today; no @mention-context mechanism and no house-style storage.",
+      "acceptanceCriteria": [
+        "PLAN M10c verbatim scope: Context = current record/page + explicit @mentions only; no silent workspace-wide retrieval. Workspace-level instructions ('house style') editable by admins",
+        "The browsing-context injection stays limited to the current record/page/channel (existing US-066 contract) — assert no workspace-wide retrieval path is added; @mentions inside the prompt are passed through as text context only",
+        "Workspace-level instructions ('house style'): admin-editable storage (existing workspace metadata/settings primitive — document the choice; new entity only if insufficient, with a generated migration + 2-39 upgrade command per the rules) injected into the chat system context",
+        "fr+en via Lingui for the admin surface; unit tests for the house-style read/write + context injection boundaries",
+        "Missing for tick (Tier 2, orchestrator): live context-scoping journey",
+        "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-server (+ twenty-front if touched) clean; oxlint --type-aware + oxfmt --check on touched files; targeted jest green; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": "Depends on US-102 for the Syna framing; the scoping contract is enforceable independently. Lane L-AI.",
+      "dependsOn": [
+        "US-102"
+      ]
+    },
+    {
+      "id": "US-130",
+      "title": "M10d: zero-AI & cost guardrails — hidden entries without keys, monthly token cap, usage view",
+      "description": "As a workspace admin without an AI key, I want every Syna entry hidden (or a one-line 'Connect a provider' link for admins) and a per-workspace monthly token cap with a usage view so that the product is complete with AI off. Starting state: partial — Audit tab + event-logs usage exist (US-045); no zero-AI entry gating and no per-workspace cap.",
+      "acceptanceCriteria": [
+        "PLAN M10d verbatim scope: With no key configured, every Syna entry is hidden or shows a one-line 'Connect a provider' link for admins only; per-workspace monthly token cap and usage view (reuse event-logs usage from P9.1)",
+        "Gate every M10b/M10c entry (and the assistant surfaces) on provider availability resolved through the US-102 order; admins see the one-line 'Connect a provider' link, members see nothing",
+        "Per-workspace monthly token cap: server-enforced consumption check against the event-logs usage (AI_CHAT_TOKEN / WEB_SEARCH rows per the US-041 billing proof); cap exceeded → typed refusal, ordinary (non-AI) work unaffected",
+        "Usage view in Settings → Syna (reuse the Audit tab's event-logs surface; no new billing backend)",
+        "fr+en via Lingui; unit tests for the gating predicate and the cap enforcement (count-0 no-op preserved)",
+        "Missing for tick (Tier 2, orchestrator): zero-AI + cap browser journeys (E16 fallback/zero-AI state)",
+        "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-server (+ twenty-front if touched) clean; oxlint --type-aware + oxfmt --check on touched files; targeted jest green; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": "Depends on US-102. Completes the M10 milestone's guardrail leg. Lane L-AI.",
+      "dependsOn": [
+        "US-102"
+      ]
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-28T20:04:12.077Z"
+    "updatedAt": "2026-09-29T19:11:17.881Z"
   }
 }

@@ -699,7 +699,7 @@ export const DrivePage = () => {
           )}
 
           {isDefined(actionError) && <StyledStatus>{actionError}</StyledStatus>}
-          {hasError && <StyledStatus>{t`Could not load Drive`}</StyledStatus>}
+          {hasError && <StyledStatus>{t`Could not load Archive`}</StyledStatus>}
 
           <DriveUploadQueuePanel
             tasks={uploadTasks}

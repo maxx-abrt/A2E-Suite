@@ -12,5 +12,5 @@ export const SidePanelAskAiInfo = () => {
     { threadId: currentAiChatThread },
   );
 
-  return <HeaderIdentifier title={currentAiChatThreadTitle ?? t`Ask AI`} />;
+  return <HeaderIdentifier title={currentAiChatThreadTitle ?? t`Syna`} />;
 };

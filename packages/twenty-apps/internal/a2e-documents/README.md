@@ -1,13 +1,13 @@
-# A2E Documents — notes, knowledge base and templates
+# Bureau — notes, knowledge base and templates
 
-A2E Documents is the knowledge part of the suite: a hierarchical tree of
-workspace documents with rich-text content, reusable templates and read-only
-sharing. Comment threads and document revisions are persisted in app-owned
-metadata objects and surfaced from the blocknote editor in `twenty-front`
-(see below). It is one of the parts that compose the
+Bureau (`a2e-documents`) is the knowledge part of the suite: a hierarchical
+tree of workspace documents with rich-text content, reusable templates and
+read-only sharing. Comment threads and document revisions are persisted in
+app-owned metadata objects and surfaced from the blocknote editor in
+`twenty-front` (see below). It is one of the parts that compose the
 intended **Bureau** work experience; Bureau itself has no separate
 application definition. See the [feature guide](../../../../docs/features.md)
-for how Documents fits next to Projects, Bilan, Drive and Discussions.
+for how Bureau fits next to Projets, Bilan, Archive and Discussions.
 
 ## Status and installation
 

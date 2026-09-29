@@ -1,11 +1,11 @@
-# A2E Projects — projects, tasks, milestones and time
+# Bureau Projets — projects, tasks, milestones and time
 
-A2E Projects turns Twenty's native task engine into a project workspace:
-projects with health and budget, milestones, a Kanban board, a calendar, a
-Gantt view, time tracking, labels and human-readable task IDs. It is one of
-the parts that compose the intended **Bureau** work experience. See the
-[feature guide](../../../../docs/features.md) for how Projects sits next to
-Documents, Bilan, Drive and Discussions.
+Bureau Projets (`a2e-projects`) turns Twenty's native task engine into a
+project workspace: projects with health and budget, milestones, a Kanban
+board, a calendar, a Gantt view, time tracking, labels and human-readable
+task IDs. It is one of the parts that compose the intended **Bureau** work
+experience. See the [feature guide](../../../../docs/features.md) for how
+Projets sits next to Bureau, Bilan, Archive and Discussions.
 
 ## Status and installation
 
@@ -39,7 +39,7 @@ carries `name`, a task-ID prefix `key`, a task `taskCounter`, `status`
 (`PLANNING` / `ACTIVE` / `ON_HOLD` / `COMPLETED`), `health` (`ON_TRACK` /
 `AT_RISK` / `OFF_TRACK`), `startsAt` / `dueAt`, `color`, rich-text
 `description`, `budget` / `spent`, and `archivedAt`. It relates to a lead
-(workspace member), a company and — when A2E Documents is installed — its
+(workspace member), a company and — when Bureau is installed — its
 documents.
 
 ### Tasks on the native engine

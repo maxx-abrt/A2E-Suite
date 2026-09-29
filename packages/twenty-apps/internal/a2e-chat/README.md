@@ -1,10 +1,11 @@
-# A2E Chat — workspace discussions
+# Bureau Discussions — workspace discussions
 
-A2E Chat adds native workspace discussions on top of the realtime gateway:
-workspace, project and on-demand channels, threaded replies, reactions,
-mentions, typing presence and read cursors. It is the collaboration part of
-the intended **Bureau** experience. See the [feature guide](../../../../docs/features.md)
-for how Discussions sits next to Documents, Projects, Bilan and Drive, and
+Bureau Discussions (`a2e-chat`) adds native workspace discussions on top of
+the realtime gateway: workspace, project and on-demand channels, threaded
+replies, reactions, mentions, typing presence and read cursors. It is the
+collaboration part of the intended **Bureau** experience. See the
+[feature guide](../../../../docs/features.md) for how Discussions sits next to
+Bureau, Projets, Bilan and Archive, and
 [DEPLOY.md](../../../../DEPLOY.md) for the WebSocket/Redis requirements the
 live updates depend on.
 

@@ -50,8 +50,11 @@ an empty shell; do not clone its IDs or domain objects for a new app.
 - App package name: `a2e-<domain>` (`a2e-documents`, `a2e-projects`, …).
   Internal apps live under `internal/`, examples under `examples/`.
 - `displayName` carries the product name, not necessarily the package name:
-  `Bilan` for `a2e-accounting`, currently `A2E Documents` / `A2E Projects`
-  for their apps. Confirm Bureau packaging before changing names/identities.
+  `Bilan` for `a2e-accounting`, `Bureau` / `Bureau Projets` / `Bureau
+  Discussions` for `a2e-documents` / `a2e-projects` / `a2e-chat`, `Archive`
+  for `a2e-drive` and `Syna CRM` for `a2e-crm`. The five suite names are
+  Bureau · Agenda · Bilan · Syna · Archive (Agenda is a host calendar page).
+  Universal identifiers, package names and object API names never change.
 - Object metadata names (`nameSingular`/`namePlural`) get **no** `a2e_`
   prefix — metadata is already workspace-scoped (`project`/`projects`,
   `invoice`/`invoices`).

@@ -15,7 +15,7 @@ describe('buildDriveFileSearchPath', () => {
 });
 
 describe('mapDriveSearchRecordsToResultItems', () => {
-  it('should emit a file item under the Drive group key', () => {
+  it('should emit a file item under the Archive group key', () => {
     const items = mapDriveSearchRecordsToResultItems({
       files: [
         {
@@ -58,6 +58,6 @@ describe('mapDriveSearchRecordsToResultItems', () => {
       frecencyRankByGroupKey: {},
     });
 
-    expect(groups.map((group) => group.heading)).toEqual(['Drive']);
+    expect(groups.map((group) => group.heading)).toEqual(['Archive']);
   });
 });

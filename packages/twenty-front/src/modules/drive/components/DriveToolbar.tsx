@@ -175,7 +175,7 @@ export const DriveToolbar = ({
         <option value="crm">{t`CRM`}</option>
         <option value="documents">{t`Documents`}</option>
         <option value="chat">{t`Chat`}</option>
-        <option value="drive">{t`Drive`}</option>
+        <option value="drive">{t`Archive`}</option>
         <option value={DRIVE_SOURCE_APP_UNKNOWN}>{t`Unknown`}</option>
       </StyledSelect>
 

@@ -15,8 +15,8 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 
 // APPLICATION_UNIVERSAL_IDENTIFIER of the a2e-documents app
 // (packages/twenty-apps/internal/a2e-documents/src/application.config.ts).
-// Keying the provider to that id makes the results group under "A2E
-// Documents" in Cmd+K and gates the provider on the app's install state.
+// Keying the provider to that id makes the results group under "Bureau" in
+// Cmd+K and gates the provider on the app's install state.
 const A2E_DOCUMENTS_APP_UNIVERSAL_IDENTIFIER =
   '19126a9c-7cc0-4368-aaba-c7e5a87b0c48';
 

@@ -58,7 +58,7 @@ export const AiChatPageHeader = ({ isOnboarding }: AiChatPageHeaderProps) => {
       )}
       <StyledHeaderTitle>
         <IconSparkles size={theme.icon.size.md} />
-        {isOnboarding ? t`Onboarding` : t`Ask AI`}
+        {isOnboarding ? t`Onboarding` : t`Syna`}
       </StyledHeaderTitle>
       {/* The onboarding conversation is single-threaded: switching or
           starting threads would abandon the workspace setup. */}

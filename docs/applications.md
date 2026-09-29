@@ -1,6 +1,12 @@
-# Applications: finding, provisioning and verifying Bilan / Bureau
+# Applications: finding, provisioning and verifying Bureau · Agenda · Bilan · Syna · Archive
 
 [Documentation home](README.md) · [Product names and template contracts](product-experience.md)
+
+The suite reads as five apps. **Bureau** is the work/knowledge experience
+(documents, projects, discussions), **Agenda** is the calendar host page,
+**Bilan** is finance, **Syna** is the AI assistant, and **Archive** is files.
+The names are display surfaces only: package directories, npm names and
+universal identifiers never change.
 
 ## Where is the installation system?
 
@@ -39,13 +45,14 @@ A successful workspace installation is not proof every background job or user fl
 
 | Product | Source and current display name | Universal identifier | Discovery/preset wiring |
 | --- | --- | --- | --- |
-| Documents | [a2e-documents](../packages/twenty-apps/internal/a2e-documents/src/application.config.ts), `A2E Documents` | `19126a9c-7cc0-4368-aaba-c7e5a87b0c48` | A2E allowlist; all non-CRM presets |
+| Bureau (Pages) | [a2e-documents](../packages/twenty-apps/internal/a2e-documents/src/application.config.ts), `Bureau` | `19126a9c-7cc0-4368-aaba-c7e5a87b0c48` | A2E allowlist; all non-CRM presets |
 | Bilan | [a2e-accounting](../packages/twenty-apps/internal/a2e-accounting/src/application.config.ts), `Bilan` | `b11a0000-0000-4000-8000-000000000001` | A2E allowlist; Non-profit and Small business presets |
-| Projects | [a2e-projects](../packages/twenty-apps/internal/a2e-projects/src/application.config.ts), `A2E Projects` | `4f759655-84f8-434d-9c76-ee1850e8c1a4` | A2E allowlist (added US-077); no preset yet (D-B1 pending) |
-| Chat | [a2e-chat](../packages/twenty-apps/internal/a2e-chat/src/application.config.ts), `A2E Chat` | `e2dce399-87f1-4548-b307-5f368b4d5dd4` | A2E allowlist (added US-077); no preset yet |
-| Drive | [a2e-drive](../packages/twenty-apps/internal/a2e-drive/src/application.config.ts), `A2E Drive` | `b11cd01f-75de-4acd-8e67-0e9c484fde02` | A2E allowlist (added US-077); no preset yet |
-| CRM assistant | [a2e-crm](../packages/twenty-apps/internal/a2e-crm/src/application.config.ts), `A2E CRM` | `c31e0000-0000-4000-8000-000000000000` | A2E allowlist, bundled image and onboarding app list (added US-086); no preset |
-| Bureau | No separate application definition in `internal/` | None assigned | Product packaging decision pending; do not create duplicate domain objects |
+| Bureau Projets | [a2e-projects](../packages/twenty-apps/internal/a2e-projects/src/application.config.ts), `Bureau Projets` | `4f759655-84f8-434d-9c76-ee1850e8c1a4` | A2E allowlist (added US-077); no preset yet (D-B1 pending) |
+| Bureau Discussions | [a2e-chat](../packages/twenty-apps/internal/a2e-chat/src/application.config.ts), `Bureau Discussions` | `e2dce399-87f1-4548-b307-5f368b4d5dd4` | A2E allowlist (added US-077); no preset yet |
+| Archive | [a2e-drive](../packages/twenty-apps/internal/a2e-drive/src/application.config.ts), `Archive` | `b11cd01f-75de-4acd-8e67-0e9c484fde02` | A2E allowlist (added US-077); no preset yet |
+| Syna CRM | [a2e-crm](../packages/twenty-apps/internal/a2e-crm/src/application.config.ts), `Syna CRM` | `c31e0000-0000-4000-8000-000000000000` | A2E allowlist, bundled image and onboarding app list (added US-086); no preset |
+| Agenda | Host page `/calendar`; no separate application definition | None assigned | Host-seeded nav entry pending (PLAN M7d) |
+| Bureau | Composed from the Bureau apps above; no separate application definition in `internal/` | See the Bureau rows | Product packaging decision pending; do not create duplicate domain objects |
 
 The IDs above belong to existing apps and must not be regenerated to fix
 installation. The old Texxel and A2EMoney directories are inspiration, not

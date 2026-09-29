@@ -213,7 +213,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.ASK_AI]: (
     <HeadlessOpenSidePanelPageEngineCommand
       page={SidePanelPages.AskAI}
-      pageTitle={msg`Ask AI`}
+      pageTitle={msg`Syna`}
       pageIcon={IconSparkles}
     />
   ),

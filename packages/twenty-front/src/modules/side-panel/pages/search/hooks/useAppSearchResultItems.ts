@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
 
+import { A2E_SUITE_APPLICATION_GROUP_HEADINGS } from '@/a2e-workspace/constants/A2eSuiteApplicationGroupHeadings';
 import {
   FindManyApplicationsDocument,
   type FindManyApplicationsQuery,
@@ -72,6 +73,7 @@ export const useAppSearchResultItems = ({
         description: record.description ?? undefined,
         groupKey: `app:${group.appUniversalIdentifier}`,
         groupHeading:
+          A2E_SUITE_APPLICATION_GROUP_HEADINGS[group.appUniversalIdentifier] ??
           appNameByUniversalIdentifier.get(group.appUniversalIdentifier) ??
           group.appUniversalIdentifier,
         avatarType: 'rounded' as const,

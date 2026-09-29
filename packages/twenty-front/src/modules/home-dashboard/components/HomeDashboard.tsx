@@ -126,7 +126,7 @@ export const HomeDashboard = () => {
           title={t`Upcoming events`}
           Icon={IconCalendarEvent}
           testId="home-card-upcoming-events"
-          seeAllLink={{ label: t`Open the calendar`, to: AppPath.Calendar }}
+          seeAllLink={{ label: t`Open Agenda`, to: AppPath.Calendar }}
         >
           <UpcomingEventsWidget />
         </HomeDashboardCard>

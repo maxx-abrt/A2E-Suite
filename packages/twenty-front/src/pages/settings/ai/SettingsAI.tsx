@@ -84,7 +84,7 @@ export const SettingsAI = () => {
 
   return (
     <SettingsPageLayout
-      title={t`AI`}
+      title={t`Syna`}
       secondaryBar={
         <SettingsTabBar
           tabs={tabs}
@@ -117,7 +117,7 @@ export const SettingsAI = () => {
           children: t`Workspace`,
           href: getSettingsPath(SettingsPath.General),
         },
-        { children: t`AI` },
+        { children: t`Syna` },
       ]}
     >
       <SettingsPageContainer>

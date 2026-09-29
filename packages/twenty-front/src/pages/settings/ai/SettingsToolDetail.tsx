@@ -197,7 +197,7 @@ export const SettingsToolDetail = () => {
           href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: t`AI`,
+          children: t`Syna`,
           href: getSettingsPath(SettingsPath.AI, undefined, undefined, 'tools'),
         },
         { children: editedName ?? displayName ?? '' },

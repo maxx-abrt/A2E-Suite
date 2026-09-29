@@ -29,7 +29,7 @@ export const DRIVE_TARGET_OBJECTS: readonly DriveTargetObject[] = [
   'workflow',
 ];
 
-export const DRIVE_FOLDER_ROOT_LABEL = 'Drive';
+export const DRIVE_FOLDER_ROOT_LABEL = 'Archive';
 
 export const DEFAULT_DRIVE_FILE_FILTERS: DriveFileFilters = {
   fileCategory: DRIVE_FILTER_ALL,

@@ -82,7 +82,7 @@ export const SettingsAgentTurnDetail = () => {
             children: t`Workspace`,
             href: getSettingsPath(SettingsPath.General),
           },
-          { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
+          { children: t`Syna`, href: getSettingsPath(SettingsPath.AI) },
           {
             children: t`Agent`,
             href: getSettingsPath(SettingsPath.AiAgentDetail).replace(
@@ -109,7 +109,7 @@ export const SettingsAgentTurnDetail = () => {
             children: t`Workspace`,
             href: getSettingsPath(SettingsPath.General),
           },
-          { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
+          { children: t`Syna`, href: getSettingsPath(SettingsPath.AI) },
           { children: t`Turn` },
         ]}
       >
@@ -128,7 +128,7 @@ export const SettingsAgentTurnDetail = () => {
           children: t`Workspace`,
           href: getSettingsPath(SettingsPath.General),
         },
-        { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
+        { children: t`Syna`, href: getSettingsPath(SettingsPath.AI) },
         {
           children: t`Agent`,
           href: getSettingsPath(SettingsPath.AiAgentDetail).replace(

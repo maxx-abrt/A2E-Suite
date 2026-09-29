@@ -139,7 +139,7 @@ export const CalendarToolbar = ({
           <IconCheckbox size={14} />
           {t`Task due dates`}
         </StyledModeButton>
-        <StyledGroup role="group" aria-label={t`Calendar view`}>
+        <StyledGroup role="group" aria-label={t`Agenda view`}>
           {CALENDAR_VIEW_MODES.map((viewMode) => {
             const { label, Icon } = viewModeConfig[viewMode];
 

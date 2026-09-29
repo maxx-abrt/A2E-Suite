@@ -33,10 +33,10 @@ export const mapDriveSearchRecordsToResultItems = ({
       label: file.label,
       objectNameSingular: DRIVE_FILE_OBJECT_NAME_SINGULAR,
       recordId: file.recordId,
-      objectLabel: 'Drive',
+      objectLabel: 'Archive',
       avatarType: 'rounded' as const,
       description: 'File',
       groupKey: DRIVE_FILE_SEARCH_GROUP_KEY,
-      groupHeading: 'Drive',
+      groupHeading: 'Archive',
       path: buildDriveFileSearchPath(),
     }));

@@ -1,12 +1,12 @@
-# A2E CRM — review-first AI actions for the native CRM
+# Syna CRM — review-first AI actions for the native CRM
 
-A2E CRM adds two read-only assistant actions on top of Twenty's native CRM
-records: an **email reply draft** for a message thread and a **record
-enrichment assist** for a company or person. It owns no object, view or
-sidebar entry — it only registers tools on the native AI registry
+Syna CRM (`a2e-crm`) adds two read-only assistant actions on top of Twenty's
+native CRM records: an **email reply draft** for a message thread and a
+**record enrichment assist** for a company or person. It owns no object, view
+or sidebar entry — it only registers tools on the native AI registry
 (`toolTriggerSettings`, P1.5), so the assistant can offer them in context.
 See the [feature guide](../../../../docs/features.md) for how it sits next to
-Documents, Projects, Bilan, Chat and Drive.
+Bureau, Projets, Bilan, Discussions and Archive.
 
 ## Status and installation
 
@@ -15,7 +15,7 @@ read-only role and unit specs exist in this repository; the live assistant
 dispatch (including a restricted member's denied record failing closed) is
 not proven by their presence.
 
-A2E CRM is one of the six bundled A2E apps: the production image builds its
+Syna CRM is one of the six bundled A2E apps: the production image builds its
 tarball and `app:provision-bundled` registers it at boot, it appears in
 **Settings → Applications → A2E Suite**, and it can be selected in the
 onboarding app list. It is not part of any workspace preset. To install it

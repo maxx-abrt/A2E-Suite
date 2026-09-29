@@ -107,8 +107,9 @@ describe('HomeDashboard', () => {
       'href',
       '/objects/tasks',
     );
-    expect(
-      screen.getByRole('link', { name: 'Open the calendar' }),
-    ).toHaveAttribute('href', '/calendar');
+    expect(screen.getByRole('link', { name: 'Open Agenda' })).toHaveAttribute(
+      'href',
+      '/calendar',
+    );
   });
 });

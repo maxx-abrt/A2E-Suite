@@ -30,14 +30,14 @@ describe('DriveBreadcrumb', () => {
     render(
       <DriveBreadcrumb
         breadcrumb={[buildFolder('a', 'Alpha'), buildFolder('b', 'Beta')]}
-        rootLabel="Drive"
+        rootLabel="Archive"
         onSelectFolder={jest.fn()}
       />,
       { wrapper: Wrapper },
     );
 
     expect(screen.getByTestId('drive-breadcrumb-root')).toHaveTextContent(
-      'Drive',
+      'Archive',
     );
     expect(screen.getByTestId('drive-breadcrumb-a')).toHaveTextContent('Alpha');
     expect(screen.getByTestId('drive-breadcrumb-b')).toHaveTextContent('Beta');
@@ -49,7 +49,7 @@ describe('DriveBreadcrumb', () => {
     render(
       <DriveBreadcrumb
         breadcrumb={[buildFolder('a', 'Alpha')]}
-        rootLabel="Drive"
+        rootLabel="Archive"
         onSelectFolder={onSelectFolder}
       />,
       { wrapper: Wrapper },
@@ -66,7 +66,7 @@ describe('DriveBreadcrumb', () => {
     render(
       <DriveBreadcrumb
         breadcrumb={[buildFolder('a', 'Alpha')]}
-        rootLabel="Drive"
+        rootLabel="Archive"
         onSelectFolder={onSelectFolder}
       />,
       { wrapper: Wrapper },

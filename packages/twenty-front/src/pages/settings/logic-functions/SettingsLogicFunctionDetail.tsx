@@ -125,7 +125,7 @@ export const SettingsLogicFunctionDetail = () => {
           href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: t`AI`,
+          children: t`Syna`,
           href: getSettingsPath(SettingsPath.AI),
         },
         { children: t`Logic functions` },

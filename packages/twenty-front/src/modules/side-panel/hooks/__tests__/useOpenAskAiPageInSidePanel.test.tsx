@@ -42,7 +42,7 @@ describe('useOpenAskAiPageInSidePanel', () => {
     expect(navigateSidePanelMenuMock).toHaveBeenCalledWith(
       expect.objectContaining({
         page: SidePanelPages.AskAI,
-        pageTitle: 'Ask AI',
+        pageTitle: 'Syna',
         pageIcon: IconSparkles,
       }),
     );

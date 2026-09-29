@@ -422,7 +422,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
             children: t`Workspace`,
             href: getSettingsPath(SettingsPath.General),
           },
-          { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
+          { children: t`Syna`, href: getSettingsPath(SettingsPath.AI) },
           { children: breadcrumbText },
         ]}
         secondaryBar={

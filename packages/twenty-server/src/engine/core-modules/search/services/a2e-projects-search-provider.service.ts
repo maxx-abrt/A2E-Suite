@@ -16,8 +16,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 // APPLICATION_UNIVERSAL_IDENTIFIER of the a2e-projects app
 // (packages/twenty-apps/internal/a2e-projects/src/application.config.ts).
 // Keying the provider to that id makes tasks and projects group together
-// under "A2E Projects" in Cmd+K and gates the provider on the app's install
-// state.
+// under "Bureau" in Cmd+K and gates the provider on the app's install state.
 const A2E_PROJECTS_APP_UNIVERSAL_IDENTIFIER =
   '4f759655-84f8-434d-9c76-ee1850e8c1a4';
 

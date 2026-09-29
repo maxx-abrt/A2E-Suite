@@ -1,10 +1,10 @@
-# A2E Drive — workspace files and folders
+# Archive — workspace files and folders
 
-A2E Drive is the file-management surface of the suite: an arborescent folder
-tree over Twenty's existing attachments, so a workspace can organise the files
-that Documents, Projects and Bilan already produce. It is part of the intended
-**Bureau** experience. See the [feature guide](../../../../docs/features.md)
-for how Drive sits next to the other apps and surfaces.
+Archive (`a2e-drive`) is the file-management surface of the suite: an
+arborescent folder tree over Twenty's existing attachments, so a workspace can
+organise the files that Bureau, Projets and Bilan already produce. See the
+[feature guide](../../../../docs/features.md) for how Archive sits next to the
+other apps and surfaces.
 
 ## Status and installation
 
@@ -43,7 +43,7 @@ beyond the 7-day retention
 
 ### Files
 
-Files remain standard Twenty `attachment` records. A2E Drive extends them with
+Files remain standard Twenty `attachment` records. Archive extends them with
 `folder` (set null on delete), `archivedAt`, `description`, `sourceApp` and a
 `starred` flag. The **Tous les fichiers** view lists them with folder,
 source app, starred state and description
