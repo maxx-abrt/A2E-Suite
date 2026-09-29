@@ -123,6 +123,19 @@ after each iteration and it's included in prompts for context.
   feature paths>` (and grep the phase report for the task's own id); if the
   feature is already on HEAD, report `done-for-review` and only close the one
   unmet non-Tier-2 bullet (usually the patch version bump).
+- `NavigationMenuItemType.FOLDER` nav nesting is capped at two levels
+  (`NAVIGATION_MENU_ITEM_MAX_DEPTH = 2` in `flat-navigation-menu-item-validator.service.ts`):
+  a root folder → leaf child is fine, but a folder cannot contain another folder
+  that has children. So "Mes tâches" (a folder of 3 smart-list views) cannot move
+  under a suite folder. Cross-app nesting works like cross-app object relations
+  (`all-many-to-one-metadata-relations.constant.ts` maps `folderUniversalIdentifier`):
+  the parent folder resolves from the *installed* app's metadata, so a child app
+  may point at a sibling app's folder **only if that app is a hard install
+  prerequisite** (a2e-projects → a2e-documents via the `document` relation is safe;
+  a2e-chat, optionally installed alone, is not). Duplicate the parent folder UUID
+  as a constant in the child app — apps import neither `twenty-shared` nor each
+  other (`twenty-sdk` 2.31 pinned). The app-local integrity test that checks
+  folder refs must add the external folder id to its `folderIds` set.
 
 ---
 
@@ -314,4 +327,15 @@ after each iteration and it's included in prompts for context.
   - The record (`object:`) half stays deferred because no `object:` publisher exists yet (only chat/workspace/inbox/presence); `assertCanAccessObjectRecord` is latent but unexercised. Note it, don't delete it.
   - Gates: realtime unit 6 suites/60 green; isolated real-Redis integration 2 suites/12 green exit 0; tsgo exit 0; oxlint 0/0 and oxfmt clean on the 5 touched services/specs.
 - Missing (Tier 2 orchestrator): live revoked-member socket journey (topic dropped / socket 4403 / no further events) + multi-session handshake on an installed a2e-chat workspace.
+---
+
+## 2026-09-29 - US-115 (M7c: grouped app sections — one folder nav item per app)
+- Slice: app-side **Bureau** folder. `a2e-documents` owns a `Bureau` FOLDER nav item (`c31a0000-0010-4000-8000-000000000002`) per docs/applications.md ("Bureau (Pages) → a2e-documents"); its own row nests under it (renamed `Documents`→`Pages`, position 100→0). `a2e-projects` nests `Projets` under the same folder via a duplicated external UUID constant (`EXTERNAL_NAVIGATION_FOLDER_UNIVERSAL_IDENTIFIERS.bureau`), safe because `document` makes a2e-documents a hard prerequisite; keep `Mes tâches` top-level (depth limit).
+- Files changed: `a2e-documents` (`src/constants/universal-identifiers.ts`, new `src/navigation-menu-items/bureau-folder.navigation-menu-item.ts`, `src/navigation-menu-items/documents.navigation-menu-item.ts`, new `src/lib/__tests__/bureau-navigation.test.ts`, `package.json` 0.2.5→0.2.6`); `a2e-projects` (`src/constants/universal-identifiers.ts`, `src/navigation-menu-items/projects.navigation-menu-item.ts`, `src/lib/__tests__/project-object-integrity.test.ts`, new `src/lib/__tests__/project-navigation.test.ts`, `package.json` 0.1.14→0.1.15`); `docs/plan/phases/phase-11-report.md`; this file.
+- **Learnings:**
+  - Nav folder nesting is max 2 levels (`NAVIGATION_MENU_ITEM_MAX_DEPTH`) — a folder of views cannot nest under a suite folder; `Mes tâches` therefore stays top-level and M7c's "Mes tâches under Bureau" is not app-side expressible without flattening/deleting.
+  - Cross-app folder refs resolve against installed metadata (same path as cross-app object relations) but only when the owner app is a hard prerequisite; `a2e-chat` is optional, so its Bureau nesting is blocked on the M7e bundle decision (or a host-seeded standard folder).
+  - `a2e-drive`'s only row is already named `Archive` (app displayName `Archive`), so wrapping it in an `Archive` folder is a redundant one-child folder until M7f adds Archive landing-page rows.
+  - Gates: a2e-documents typecheck/lint clean + test:unit 222/222 + `npx twenty dev:build .` success (28 files); a2e-projects typecheck clean, lint 0 errors (1 pre-existing warning in `src/fields/task-labels.field.ts`), test:unit 337/337 + dev:build success (48 files). `.twenty/output` regenerated but gitignored.
+- Missing (Tier 2 orchestrator): fresh/upgraded browser sidebar shows one collapsible `Bureau` folder (Pages + Projets) and ≤7 top-level rows once the remaining legs land.
 ---

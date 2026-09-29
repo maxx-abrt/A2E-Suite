@@ -4,6 +4,7 @@ import { test } from 'node:test';
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
 import {
+  EXTERNAL_NAVIGATION_FOLDER_UNIVERSAL_IDENTIFIERS,
   EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIERS,
   FRONT_COMPONENT_IDS,
   OBJECT_IDS,
@@ -803,6 +804,10 @@ test('every VIEW navigation item and registered view identifier resolves', async
       .filter((item) => item.type === 'FOLDER')
       .map((item) => item.universalIdentifier),
   );
+
+  // The Bureau folder is declared by A2E Documents, a hard install prerequisite
+  // (the `document` relation), so a nested row resolves at install time.
+  folderIds.add(EXTERNAL_NAVIGATION_FOLDER_UNIVERSAL_IDENTIFIERS.bureau);
   const unresolved: string[] = [];
 
   for (const item of graph.navigationMenuItems) {

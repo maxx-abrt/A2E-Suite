@@ -302,12 +302,13 @@
         "Quality gates: per touched a2e-* app: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; packages/twenty-front tsgo clean if front navigation files touched; targeted jest green; no i18n catalog churn; no AI attribution"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": "Depends on US-100 (names finalized) and US-101 (host-route rows). Gate-unlocker for E13. Lane L-NAV.",
       "dependsOn": [
         "US-100",
         "US-101"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-116",
@@ -605,6 +606,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-29T21:56:56.510Z"
+    "updatedAt": "2026-09-29T22:04:22.242Z"
   }
 }

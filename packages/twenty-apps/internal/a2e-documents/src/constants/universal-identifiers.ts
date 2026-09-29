@@ -62,6 +62,11 @@ export const COMMAND_MENU_ITEM_IDS = {
 
 export const NAVIGATION_MENU_ITEM_IDS = {
   documents: 'c31a0000-0010-4000-8000-000000000001',
+  // One collapsible folder for the whole Bureau suite (M7c). a2e-documents is
+  // the Bureau root (docs/applications.md), so it owns the folder; the sibling
+  // Bureau apps (a2e-projects, a2e-chat) point their managed rows at this
+  // committed identifier instead of declaring a second top-level row.
+  bureauFolder: 'c31a0000-0010-4000-8000-000000000002',
 } as const;
 
 export const FRONT_COMPONENT_IDS = {

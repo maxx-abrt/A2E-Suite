@@ -39,6 +39,14 @@ export const EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIERS = {
   chat: 'e2dce399-87f1-4548-b307-5f368b4d5dd4',
 } as const;
 
+// Bureau suite folder owned by A2E Documents (M7c). This app already hard-
+// requires `document` (see EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIERS above), so
+// Documents is always installed first and its folder is present when Projects
+// nests its managed rows under it — no standalone-install orphan.
+export const EXTERNAL_NAVIGATION_FOLDER_UNIVERSAL_IDENTIFIERS = {
+  bureau: 'c31a0000-0010-4000-8000-000000000002',
+} as const;
+
 // Standard CRM metadata this app only references (never owns). The opportunity
 // `stage` field is a stock metadata field with a committed universal
 // identifier; the deal-won recipe's database-event filter pins it so no runtime
