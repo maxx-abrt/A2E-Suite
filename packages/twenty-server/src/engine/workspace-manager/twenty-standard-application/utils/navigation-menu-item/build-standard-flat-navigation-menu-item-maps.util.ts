@@ -5,12 +5,16 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { addFlatNavigationMenuItemToMapsAndUpdateIndex } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/add-flat-navigation-menu-item-to-maps-and-update-index.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
-import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
+import {
+  STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS,
+  STANDARD_NAVIGATION_MENU_ITEMS,
+} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { createStandardNavigationMenuItemFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-flat-metadata.util';
 import {
   createStandardNavigationMenuItemFolderFlatMetadata,
   createStandardNavigationMenuItemFolderItemFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-folder-flat-metadata.util';
+import { createStandardNavigationMenuItemLinkFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-link-flat-metadata.util';
 
 const FLAT_NAVIGATION_MENU_ITEM_NAMES = [
   'allCompanies',
@@ -26,6 +30,8 @@ const WORKFLOWS_FOLDER_ITEM_NAMES = [
   'workflowsFolderAllWorkflowRuns',
   'workflowsFolderAllWorkflowVersions',
 ] as const;
+
+const LINK_NAVIGATION_MENU_ITEM_NAMES = ['agenda'] as const;
 
 export const buildStandardFlatNavigationMenuItemMaps = ({
   now,
@@ -64,6 +70,32 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
         now,
       },
     );
+
+    addFlatNavigationMenuItemToMapsAndUpdateIndex({
+      flatNavigationMenuItem,
+      flatNavigationMenuItemMaps,
+    });
+  }
+
+  for (const navigationMenuItemName of LINK_NAVIGATION_MENU_ITEM_NAMES) {
+    const definition = STANDARD_NAVIGATION_MENU_ITEMS[navigationMenuItemName];
+
+    const flatNavigationMenuItem =
+      createStandardNavigationMenuItemLinkFlatMetadata({
+        universalIdentifier: definition.universalIdentifier,
+        name: definition.name,
+        link: definition.link,
+        icon: definition.icon,
+        color:
+          STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS[
+            navigationMenuItemName
+          ] ?? null,
+        position: definition.position,
+        navigationMenuItemId: v4(),
+        workspaceId,
+        twentyStandardApplicationId,
+        now,
+      });
 
     addFlatNavigationMenuItemToMapsAndUpdateIndex({
       flatNavigationMenuItem,

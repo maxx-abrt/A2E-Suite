@@ -1,5 +1,6 @@
 import { WorkspaceTemplate } from 'src/engine/core-modules/onboarding/enums/workspace-template.enum';
 import { type TemplatePreviewSample } from 'src/engine/core-modules/onboarding/types/apply-template-operation.types';
+import { AGENDA_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 
 // a2e-documents application (packages/twenty-apps/internal/a2e-documents).
 const A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER =
@@ -114,6 +115,11 @@ export type WorkspaceTemplateDefinition = {
   // Standard navigation rows hidden for CRM-off presets; templates hide by
   // deleting the workspace-wide row (navigation menu items are DB rows).
   hiddenStandardNavigationMenuItemUniversalIdentifiers: string[];
+  // Whether the preset keeps the host Agenda (/calendar) standard row. When
+  // false the template flow hides it through the same managed-row delete as the
+  // CRM hide-list, and a later preset that enables it restores the row — a row
+  // the user deleted manually (no provenance) is never resurrected.
+  agendaEnabled: boolean;
   sampleContentEnabled: boolean;
   // Preview-only proposal list (never the seeding source). The preview filters
   // it to apps that are registered and version-compatible on the server.
@@ -132,6 +138,7 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
     applicationUniversalIdentifiers: [],
     optionalApplicationUniversalIdentifiers: [],
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [],
+    agendaEnabled: true,
     sampleContentEnabled: false,
     starterBundleContents: [],
     blockedStarterBundleContents: [],
@@ -147,6 +154,7 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
       '20202020-b005-4b05-8b05-c0aba11c0005',
       '20202020-b004-4b04-8b04-c0aba11c0004',
     ],
+    agendaEnabled: true,
     sampleContentEnabled: false,
     starterBundleContents: [
       DOCUMENT_BUNDLE_ITEM.meetingNotes,
@@ -165,6 +173,7 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
       '20202020-b005-4b05-8b05-c0aba11c0005',
       '20202020-b004-4b04-8b04-c0aba11c0004',
     ],
+    agendaEnabled: true,
     sampleContentEnabled: false,
     starterBundleContents: [
       DOCUMENT_BUNDLE_ITEM.meetingNotes,
@@ -180,6 +189,7 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
     ],
     optionalApplicationUniversalIdentifiers: [],
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [],
+    agendaEnabled: true,
     sampleContentEnabled: false,
     starterBundleContents: [
       DOCUMENT_BUNDLE_ITEM.meetingNotes,
@@ -197,6 +207,7 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
     ],
     optionalApplicationUniversalIdentifiers: [],
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [],
+    agendaEnabled: true,
     sampleContentEnabled: false,
     starterBundleContents: [DOCUMENT_BUNDLE_ITEM.meetingNotes],
     blockedStarterBundleContents: [
@@ -214,6 +225,7 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
     ],
     optionalApplicationUniversalIdentifiers: [],
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [],
+    agendaEnabled: true,
     sampleContentEnabled: false,
     starterBundleContents: [
       DOCUMENT_BUNDLE_ITEM.projectBrief,
@@ -226,6 +238,19 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
   },
 };
 
+// Effective hide-list of a template: its CRM rows plus the Agenda standard row
+// when the preset opts out of Agenda. Single source so the apply, the preview
+// and the legacy provenance inference all agree on what a template hides.
+export const getHiddenStandardNavigationMenuItemUniversalIdentifiers = (
+  definition: WorkspaceTemplateDefinition,
+): string[] =>
+  definition.agendaEnabled
+    ? [...definition.hiddenStandardNavigationMenuItemUniversalIdentifiers]
+    : [
+        ...definition.hiddenStandardNavigationMenuItemUniversalIdentifiers,
+        AGENDA_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER,
+      ];
+
 // Union of every standard navigation row any template can hide — templates
 // may only toggle visibility for rows in this set, everything else is
 // user-owned and never touched.
@@ -233,8 +258,7 @@ export const TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER
   [
     ...new Set(
       Object.values(WORKSPACE_TEMPLATE_DEFINITIONS).flatMap(
-        (definition) =>
-          definition.hiddenStandardNavigationMenuItemUniversalIdentifiers,
+        getHiddenStandardNavigationMenuItemUniversalIdentifiers,
       ),
     ),
   ];

@@ -55,6 +55,19 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
         .universalIdentifier,
     position: 7,
   },
+  // Agenda is a host page, not an app: the sidebar row is a standard LINK item
+  // pointing at the allow-listed /calendar route (US-101 mechanism), seeded for
+  // every new workspace and gated per preset by `agendaEnabled`.
+  agenda: {
+    universalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
+    type: NavigationMenuItemType.LINK,
+    link: '/calendar',
+    name: i18nLabel(
+      msg({ message: `Agenda`, context: 'navigationMenuItem.name' }),
+    ),
+    icon: 'IconCalendarEvent',
+    position: 8,
+  },
   workflowsFolder: {
     universalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
     type: NavigationMenuItemType.FOLDER,
@@ -91,9 +104,15 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
   },
 } as const;
 
+// The one standard row the workspace-template flow toggles through the
+// `agendaEnabled` preset flag (hide on opt-out, restore on opt-in).
+export const AGENDA_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER =
+  STANDARD_NAVIGATION_MENU_ITEMS.agenda.universalIdentifier;
+
 export const STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS: Partial<
   Record<keyof typeof STANDARD_NAVIGATION_MENU_ITEMS, string>
 > = {
+  agenda: 'turquoise',
   allCompanies: 'blue',
   allPeople: 'blue',
   allTasks: 'turquoise',

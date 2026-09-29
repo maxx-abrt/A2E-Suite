@@ -57,6 +57,7 @@ describe('WorkspaceTemplateService partial failure and resume', () => {
       OPTIONAL_APP_UNIVERSAL_IDENTIFIER,
     ],
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [],
+    agendaEnabled: true,
     sampleContentEnabled: false,
     starterBundleContents: [],
     blockedStarterBundleContents: [],

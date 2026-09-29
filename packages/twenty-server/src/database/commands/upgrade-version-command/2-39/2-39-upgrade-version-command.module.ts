@@ -12,6 +12,7 @@ import { AddDuplicateMessageListCommandMenuItemCommand } from 'src/database/comm
 import { EnableStandardCalendarEventUiCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1789903000000-enable-standard-calendar-event-ui.command';
 import { AddCalendarEventRecurrenceFieldsCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1789904000000-add-calendar-event-recurrence-fields.command';
 import { AddCalendarEventReminderFieldsCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1790502600000-add-calendar-event-reminder-fields.command';
+import { AddAgendaNavigationMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1790720500000-add-agenda-navigation-menu-item.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -46,6 +47,7 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     EnableStandardCalendarEventUiCommand,
     AddCalendarEventRecurrenceFieldsCommand,
     AddCalendarEventReminderFieldsCommand,
+    AddAgendaNavigationMenuItemCommand,
   ],
 })
 export class V2_39_UpgradeVersionCommandModule {}

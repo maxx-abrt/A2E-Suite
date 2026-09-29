@@ -1,0 +1,189 @@
+# Iteration 16 Log
+
+## Metadata
+
+- **Task ID**: US-115
+- **Task Title**: M7c: grouped app sections — one folder nav item per app
+- **Description**: As a user, I want each app's nav rows grouped under one collapsible native folder so that the sidebar shows ≤7 top-level rows with clear app identity. Starting state: not started; the folder nav-item ...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-29T21:57:01.992Z
+- **Ended At**: 2026-09-29T22:04:22.241Z
+- **Duration**: 7m 20s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the clean-start check and gather context.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ ls docs/plan/ 2>/dev/null
+Dirty files are Ralph engine state, not code. Let me find the relevant plan and phase report.
+[94m[grep][0m [95mPLAN.md[0m pattern: [96mUS-115[0m
+[94m[bash][0m $ grep -n "US-115\|M7c" PLAN.md | head -50
+[94m[bash][0m $ sed -n '280,340p' tasks/prd.json
+[94m[bash][0m $ sed -n '255,300p' PLAN.md
+[94m[bash][0m $ sed -n '175,200p' PLAN.md
+[94m[bash][0m $ grep -n "US-100\|US-101\|US-115\|M7c\|M7a\|M7b" docs/plan/phases/phase-11-report.md | head -60
+[94m[bash][0m $ sed -n '1,120p' tasks/prd.json | grep -n "\"id\"\|\"passes\""
+Dependencies US-100/US-101 are done. Let me read the full phase-11 report and check for existing US-115 claims.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-11-report.md
+[94m[bash][0m $ ls -d packages/twenty-apps/internal/*/
+No US-115 claim exists. Now let me study the nav-item structures and the folder precedent.
+[94m[bash][0m $ ls -R "packages/twenty-apps/internal" | grep -i "navigation\|application.config\|package.json" | hea...
+[94m[bash][0m $ done
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ done
+[94m[bash][0m $ done
+[94m[bash][0m $ done
+[94m[bash][0m $ grep -n "P1.7\|managed-provenance\|managed provenance\|provenance" PLAN.md | head -40
+[94m[bash][0m $ grep -rn "folderUniversalIdentifier" packages/twenty-sdk/src packages/twenty-server/src --include=*....
+Let me examine the managed-provenance contract (P1.7) and the SDK folder/nav item API.
+[94m[bash][0m $ sed -n '1095,1135p' PLAN.md
+[94m[bash][0m $ rg -l "folderUniversalIdentifier" packages --glob '!**/node_modules/**' 2>/dev/null | head -30
+[94m[grep][0m [95mpackages[0m pattern: [96mfolderUniversalIdentifier[0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/navigationMenuItemManifestType.ts
+[94m[read][0m
+[94m[bash][0m $ find packages -name "workspace-template-definitions.constant.ts" -not -path "*/node_modules/*"
+[94m[bash][0m $ grep -n "A2E\|a2e\|Bureau\|documents\|projects\|chat\|drive\|accounting\|navigation\|folder\|hide" p...
+[94m[bash][0m $ grep -rn "PARTNER_WORKSPACE_FOLDER_UNIVERSAL_IDENTIFIER =" packages/twenty-apps/internal/twenty-part...
+[94m[bash][0m $ grep -rln "NavigationMenuItemType.FOLDER\|type: 'FOLDER'\|PARTNER_WORKSPACE_FOLDER_UNIVERSAL_IDENTIF...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/lib/__tests__/ packages/twenty-apps/internal/a2e-...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/src/lib/__tests__/chat-navigation.test.ts
+[94m[bash][0m $ grep -rn "Bureau" docs/plan/ docs/product-experience.md docs/applications.md 2>/dev/null | grep -i "...
+[94m[bash][0m $ grep -rn "Bureau" packages/twenty-shared/src packages/twenty-front/src/modules/navigation packages/t...
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-front/src/modules/a2e-workspace/constants/__tests__/A2eSuiteApplicationGroupHead...
+[94m[bash][0m $ cat packages/twenty-front/src/modules/a2e-workspace/constants/A2eSuiteApplicationUniversalIdentifier...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/src/application.config.ts
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/src/application.config.ts
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-accounting/src/front-components/ 2>/dev/null
+[94m[read][0m
+[94m[bash][0m $ grep -rn "dependencies" packages/twenty-sdk/src/sdk/define 2>/dev/null | head
+[94m[bash][0m $ grep -rln "a2e-documents\|install order\|INSTALL_ORDER\|dependency" packages/twenty-server/src/engin...
+[94m[bash][0m $ grep -n "Documents\|Projects\|Chat\|Drive\|order\|Bureau\|install" docs/applications.md | head -40
+[94m[read][0m
+[94m[bash][0m $ grep -rln "managed\|provenance" packages/twenty-front/src/modules/navigation* 2>/dev/null | head
+[94m[read][0m
+[94m[bash][0m $ grep -rn "Bureau\|Archive folder\|bureauFolder\|archiveFolder" packages/twenty-apps/internal/a2e-doc...
+[94m[read][0m
+[94m[bash][0m $ grep -n "NAVIGATION_MENU_MODULE_PATHS\|folderIds\|folderUniversalIdentifier\|navigation-menu-items" ...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-chat/package.json | grep version
+[94m[bash][0m $ grep -rn "110\|120\|140\|position" packages/twenty-apps/internal/a2e-*/src/lib/__tests__/*.test.ts 2...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/my-tasks.test.ts
+[94m[bash][0m $ grep -rn "IconArchive\b" packages/twenty-ui/src/icon/components/TablerIcons.ts 2>/dev/null | head
+[94m[bash][0m $ grep -ni "archive\|folder" packages/twenty-ui/src/icon/icon-dictionary.md | head
+[94m[bash][0m $ grep -rn "IconFolder\|IconArchive" packages/twenty-front/src --include=*.ts --include=*.tsx 2>/dev/n...
+[94m[bash][0m $ grep -rn "navigationMenuItems\|navigation" packages/twenty-apps/internal/a2e-documents/src/lib/__tes...
+[94m[bash][0m $ grep -n "Archive" docs/product-experience.md | head -20
+I have enough context. Let me claim the slice first per the contract.
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-11-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-11-report.md
+[94m[bash][0m $ grep -n "CLAIMED — US-115" docs/plan/phases/phase-11-report.md
+Now implementing. Starting with a2e-documents (Bureau folder owner).
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts
+[94m[write][0m "import {
+  defineNavigationMenuItem,
+  NavigationMenuItemType,
+} from 'twenty-sdk/define';
+
+import { NAVIGATION_MENU_ITEM_IDS } from '../constants/universal-identifiers.ts';
+
+// One folder holds the B... (673 chars)"
+[94m[write][0m "import {
+  defineNavigationMenuItem,
+  NavigationMenuItemType,
+} from 'twenty-sdk/define';
+
+import {
+  NAVIGATION_MENU_ITEM_IDS,
+  VIEW_IDS,
+} from '../constants/universal-identifiers.ts';
+
+// Bureau'... (709 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/package.json
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+Now a2e-projects: reference the Bureau folder.
+[94m[write][0m "import {
+  defineNavigationMenuItem,
+  NavigationMenuItemType,
+} from 'twenty-sdk/define';
+
+import {
+  EXTERNAL_NAVIGATION_FOLDER_UNIVERSAL_IDENTIFIERS,
+  NAVIGATION_MENU_ITEM_IDS,
+  VIEW_IDS,
+} from ... (993 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/package.json
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/my-tasks.test.ts
+Now add a focused test for the Bureau folder in a2e-documents.
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { NavigationMenuItemType } from 'twenty-sdk/define';
+
+import {
+  NAVIGATION_MENU_ITEM_IDS,
+  VIEW_IDS,
+} from '../../... (2137 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { NavigationMenuItemType } from 'twenty-sdk/define';
+
+import {
+  EXTERNAL_NAVIGATION_FOLDER_UNIVERSAL_IDENTIFIERS,
+  ... (1648 chars)"
+Now run the app gates for the two touched apps.
+[94m[bash][0m $ yarn typecheck && yarn lint && yarn test:unit
+a2e-documents green. Now a2e-projects.
+[94m[bash][0m $ yarn typecheck && yarn lint && yarn test:unit 2>&1 | tail -30
+Both app unit suites green. Now verify `dev:build` (manifest build) for each.
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -20
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -20
+[94m[bash][0m $ grep -n "navigationMenuItems" -A 40 packages/twenty-apps/internal/a2e-documents/.twenty/output/manif...
+[94m[bash][0m $ grep -n "navigationMenuItems" -A 45 packages/twenty-apps/internal/a2e-projects/.twenty/output/manife...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ git check-ignore packages/twenty-apps/internal/a2e-documents/.twenty/output/manifest.json && echo IG...
+Let me verify no server/front tests depend on the old nav names or positions I changed.
+[94m[bash][0m $ grep -rn "Documents\|Bureau" packages/twenty-front/src/modules/onboarding packages/twenty-front/src/...
+[94m[grep][0m [95mpackages[0m pattern: [96mbureauFolder|c31a0000-0010-4000-8000-000000000002|name: 'Documents'[0m
+[94m[bash][0m $ grep -rn "IconFileText\b\|IconFolders\b\|IconStack2\b" packages/twenty-ui/src/icon/components/Tabler...
+Let me refine the icons to differentiate the Bureau folder from its Pages child.
+[94m[edit][0m
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -5 && npx twenty dev:build . 2>&1 | tail -3
+Let me review the final diff.
+[94m[bash][0m $ git diff -- packages/twenty-apps/internal/a2e-documents packages/twenty-apps/internal/a2e-projects
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-11-report.md
+Now writing the phase report. Let me check the exact tail first.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-11-report.md
+[94m[bash][0m $ ls -la .ralph-tui/progress.md 2>/dev/null && tail -30 .ralph-tui/progress.md
+[94m[bash][0m $ sed -n '1,15p' .ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ grep -n "^## " .ralph-tui/progress.md | head -5
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -3 .ralph-tui/progress.md
+[94m[bash][0m $ a2e-projects typecheck clean, lint 0 errors (1 pre-existing warning in `src/fields/task-labels.field...
+[94m[bash][0m $ grep -n "CLAIMED — US-115" docs/plan/phases/phase-11-report.md
+Done. Summary of this executor session (US-115 / M7c):
+
+**Slice completed (app-side Bureau folder):**
+- `a2e-documents` now owns a native `Bureau` FOLDER nav item (`c31a0000-0010-4000-8000-000000000002`, per `docs/applications.md` "Bureau (Pages) → a2e-documents"); its row was nested and renamed `Documents`→`Pages`.
+- `a2e-projects` nests `Projets` under the same folder via a duplicated external UUID constant — safe because the `document` relation makes `a2e-documents` a hard install prerequisite.
+- Patch bumps: documents `0.2.5→0.2.6`, projects `0.1.14→0.1.15`.
+
+**Checks (Tier 0):** both apps `yarn typecheck && yarn lint && yarn test:unit` green (222/222, 337/337) and `npx twenty dev:build .` succeeds with the expected manifest nesting.
+
+**Claim:** `partial`, `Ready-to-tick: no`. Remaining legs recorded in `phase-11-report.md`: a2e-chat nesting (blocked on the M7e bundle dependency), a2e-drive Archive folder (redundant one-child folder until M7f), `Mes tâches` under Bureau (blocked by the 2-level nav depth cap), Bilan ≤6 rows (needs M7f landing links), and the CRM folder/host Agenda/Syna legs; plus the orchestrator's Tier-2 browser proof. Reports appended to `docs/plan/phases/phase-11-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

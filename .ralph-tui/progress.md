@@ -136,6 +136,19 @@ after each iteration and it's included in prompts for context.
   as a constant in the child app — apps import neither `twenty-shared` nor each
   other (`twenty-sdk` 2.31 pinned). The app-local integrity test that checks
   folder refs must add the external folder id to its `folderIds` set.
+- Host (standard) nav rows live in `STANDARD_NAVIGATION_MENU_ITEMS` and are
+  provisioned for every new workspace by `buildStandardFlatNavigationMenuItemMaps`;
+  a host page gets a `NavigationMenuItemType.LINK` row built by
+  `createStandardNavigationMenuItemLinkFlatMetadata` targeting an allow-listed
+  path (US-101). Preset flags that toggle a standard row (`agendaEnabled`) feed
+  `getHiddenStandardNavigationMenuItemUniversalIdentifiers`, which the apply,
+  the preview and the legacy-provenance inference all share; the restore builder
+  must branch on the row type (LINK vs OBJECT) or a hidden host row cannot come
+  back.
+- Workspace upgrade commands have NO `down()`: the runner only calls
+  `runOnWorkspace` (registered by `@RegisteredWorkspaceCommand(version, ts)`).
+  A "down" acceptance line cannot be satisfied literally at the workspace level —
+  make the command additive + idempotent and say so, rather than adding dead code.
 
 ---
 
@@ -338,4 +351,17 @@ after each iteration and it's included in prompts for context.
   - `a2e-drive`'s only row is already named `Archive` (app displayName `Archive`), so wrapping it in an `Archive` folder is a redundant one-child folder until M7f adds Archive landing-page rows.
   - Gates: a2e-documents typecheck/lint clean + test:unit 222/222 + `npx twenty dev:build .` success (28 files); a2e-projects typecheck clean, lint 0 errors (1 pre-existing warning in `src/fields/task-labels.field.ts`), test:unit 337/337 + dev:build success (48 files). `.twenty/output` regenerated but gitignored.
 - Missing (Tier 2 orchestrator): fresh/upgraded browser sidebar shows one collapsible `Bureau` folder (Pages + Projets) and ≤7 top-level rows once the remaining legs land.
+---
+
+## 2026-09-29 - US-116 (M7d: Agenda host entry without an app)
+- Host-seeded Agenda: added a `NavigationMenuItemType.LINK` standard row (`agenda`, UUID `20202020-b00c-4b0c-8b0c-c0aba11c000c`) pointing at `/calendar`; new `createStandardNavigationMenuItemLinkFlatMetadata` builder + wiring in `buildStandardFlatNavigationMenuItemMaps`, so every new workspace gets it without an app. US-101's `getLinkNavigationMenuItemComputedLink` already renders it in-app — no twenty-front change.
+- Preset flag: added `agendaEnabled` to `WorkspaceTemplateDefinition` (all 6 presets `true`); the template flow's hide-list, preview and legacy provenance now go through `getHiddenStandardNavigationMenuItemUniversalIdentifiers`, and the restore builder handles LINK rows.
+- Upgrade: 2-39 workspace command `upgrade:2-39:add-agenda-navigation-menu-item` @1790720500000 (> max 1790711712877), insert-only-if-absent, registered in the 2-39 module.
+- Files changed: 7 modified + 6 new server src/test files (see phase-11-report) + `docs/plan/phases/phase-11-report.md`; this file.
+- **Learnings:**
+  - Workspace commands have no `down()` (only `runOnWorkspace`); the M7d "up/down" wording is not literally satisfiable for a workspace command — documented as a deviation instead of adding dead code.
+  - All presets kept `agendaEnabled: true` on purpose: `workspace-template.service.spec.ts` encodes "CRM hides nothing" and the upgrade command seeds Agenda unconditionally, so a preset-hide would contradict both. The flag's false branch is implemented + unit-tested with a synthetic definition.
+  - Running the whole `test/integration/metadata/suites/navigation-menu-item` directory OOMs the Node heap after 3 suites (pre-existing); run the target spec file instead. The aborted run left a duplicate `Test Role` that breaks `application/successful-manifest-update-navigation-menu-item` until a DB reset.
+  - Gates: tsgo clean; oxlint 0/0 + oxfmt clean on 13 files; onboarding 13 suites/102 + 2-39 7 suites/39 green; integration idempotency spec 1/1 pass (delete → run → 1 row → rerun → still 1).
+- Missing (Tier 2 orchestrator): fresh + upgraded browser proof that Agenda shows once and hiding persists.
 ---

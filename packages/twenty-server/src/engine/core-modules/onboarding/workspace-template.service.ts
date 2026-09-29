@@ -16,6 +16,7 @@ import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-val
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import {
   TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
+  getHiddenStandardNavigationMenuItemUniversalIdentifiers,
   type WorkspaceTemplateDefinition,
 } from 'src/engine/core-modules/onboarding/constants/workspace-template-definitions.constant';
 import { WorkspaceTemplate } from 'src/engine/core-modules/onboarding/enums/workspace-template.enum';
@@ -37,8 +38,12 @@ import {
 import { getWorkspaceTemplateDefinition } from 'src/engine/core-modules/onboarding/utils/get-workspace-template-definition.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
+import {
+  STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS,
+  STANDARD_NAVIGATION_MENU_ITEMS,
+} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { createStandardNavigationMenuItemFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-flat-metadata.util';
+import { createStandardNavigationMenuItemLinkFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-link-flat-metadata.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
@@ -408,7 +413,9 @@ export class WorkspaceTemplateService {
           await this.applyTemplateNavigationVisibility({
             workspaceId,
             hiddenUniversalIdentifiers:
-              definition.hiddenStandardNavigationMenuItemUniversalIdentifiers,
+              getHiddenStandardNavigationMenuItemUniversalIdentifiers(
+                definition,
+              ),
           });
 
           step.status = 'succeeded';
@@ -1001,11 +1008,10 @@ export class WorkspaceTemplateService {
       return [];
     }
 
-    return getWorkspaceTemplateDefinition(
-      workspace.workspaceTemplate,
-    ).hiddenStandardNavigationMenuItemUniversalIdentifiers.filter(
-      (universalIdentifier) =>
-        managedUniversalIdentifierSet.has(universalIdentifier),
+    return getHiddenStandardNavigationMenuItemUniversalIdentifiers(
+      getWorkspaceTemplateDefinition(workspace.workspaceTemplate),
+    ).filter((universalIdentifier) =>
+      managedUniversalIdentifierSet.has(universalIdentifier),
     );
   }
 
@@ -1032,8 +1038,11 @@ export class WorkspaceTemplateService {
         workspaceId,
       });
 
+    const hiddenUniversalIdentifiers =
+      getHiddenStandardNavigationMenuItemUniversalIdentifiers(definition);
+
     return [
-      ...definition.hiddenStandardNavigationMenuItemUniversalIdentifiers
+      ...hiddenUniversalIdentifiers
         .filter((universalIdentifier) =>
           presentUniversalIdentifiers.has(universalIdentifier),
         )
@@ -1044,9 +1053,8 @@ export class WorkspaceTemplateService {
       ...templateHiddenUniversalIdentifiers
         .filter(
           (universalIdentifier) =>
-            !definition.hiddenStandardNavigationMenuItemUniversalIdentifiers.includes(
-              universalIdentifier,
-            ) && !presentUniversalIdentifiers.has(universalIdentifier),
+            !hiddenUniversalIdentifiers.includes(universalIdentifier) &&
+            !presentUniversalIdentifiers.has(universalIdentifier),
         )
         .map((universalIdentifier) => ({
           universalIdentifier,
@@ -1096,20 +1104,42 @@ export class WorkspaceTemplateService {
       }
       const definition = STANDARD_NAVIGATION_MENU_ITEMS[navigationMenuItemName];
 
-      if (definition.type !== NavigationMenuItemType.OBJECT) {
-        this.logger.warn(
-          `Standard navigation menu item ${universalIdentifier} is not an OBJECT row, skipping restore`,
-        );
-
-        continue;
-      }
-
-      const objectDefinition =
-        definition as (typeof STANDARD_NAVIGATION_MENU_ITEMS)[typeof navigationMenuItemName] & {
-          viewUniversalIdentifier: string;
-        };
-
       try {
+        if (definition.type === NavigationMenuItemType.LINK) {
+          navigationMenuItemsToCreate.push(
+            createStandardNavigationMenuItemLinkFlatMetadata({
+              universalIdentifier,
+              name: definition.name,
+              link: definition.link,
+              icon: definition.icon,
+              color:
+                STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS[
+                  navigationMenuItemName
+                ] ?? null,
+              position: definition.position,
+              navigationMenuItemId: randomUUID(),
+              workspaceId,
+              twentyStandardApplicationId,
+              now,
+            }),
+          );
+
+          continue;
+        }
+
+        if (definition.type !== NavigationMenuItemType.OBJECT) {
+          this.logger.warn(
+            `Standard navigation menu item ${universalIdentifier} is not an OBJECT or LINK row, skipping restore`,
+          );
+
+          continue;
+        }
+
+        const objectDefinition =
+          definition as (typeof STANDARD_NAVIGATION_MENU_ITEMS)[typeof navigationMenuItemName] & {
+            viewUniversalIdentifier: string;
+          };
+
         navigationMenuItemsToCreate.push(
           createStandardNavigationMenuItemFlatMetadata({
             workspaceId,
