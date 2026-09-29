@@ -1,0 +1,79 @@
+# Iteration 14 Log
+
+## Metadata
+
+- **Task ID**: US-113
+- **Task Title**: P3.3: record→document integration — actual note-body copy with source link and permission checks
+- **Description**: As a CRM user, I want to copy a selected note's actual body into a Bureau document with a source link so that record context becomes a real page. Starting state: not started — the existing record comm...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-29T21:51:34.472Z
+- **Ended At**: 2026-09-29T21:54:13.627Z
+- **Duration**: 2m 39s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the mandatory clean-start check and task confirmation.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-113" PLAN.md
+Ralph's own session files are dirty (expected, not mine). Now let me confirm the task in PLAN.md and find the phase report.
+[94m[bash][0m $ ls docs/plan/ 2>/dev/null
+[94m[bash][0m $ grep -n "P3.3\|record→document\|record->document\|note-body" PLAN.md
+[94m[bash][0m $ grep -rn "US-113" docs/ tasks/ .ralph-tui/ 2>/dev/null | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -n "US-113\|CLAIMED.*113\|P3.3" docs/plan/phases/phase-03-report.md
+[94m[bash][0m $ tail -80 docs/plan/phases/phase-03-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-03-report.md
+Let me read the previous US-033 (same P3.3 scope) entries and the record-note-copy entries.
+[94m[bash][0m $ git log --oneline -8 -- packages/twenty-apps/internal/a2e-documents/src/lib/record-note-copy.ts
+The P3.3 record-note-copy work appears already done in prior cycles (US-033). Let me verify the current HEAD state of the relevant files.
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/front-components/ | grep -i "document\|record"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/record-note-copy.ts
+[94m[read][0m
+Feature is on HEAD. Let me read the implementation and tests to verify every acceptance bullet.
+[94m[read][0m
+[94m[bash][0m $ grep -rn "saveCompanyAsDocument\|savePersonAsDocument\|saveRecordAsDocument" packages/twenty-apps/in...
+[94m[read][0m
+[94m[bash][0m $ grep -n "companyId\|personId\|company\b\|person\b\|provenance\|source" packages/twenty-apps/internal...
+[94m[bash][0m $ grep -rni "provenance\|templateKey\|sourceDocument\|sourceRecord" packages/twenty-apps/internal/a2e-...
+[94m[bash][0m $ grep -rn "source" packages/twenty-apps/internal/a2e-documents/README.md | head -30
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src[0m pattern: [96mprovenance|sourceDocument|sourceRecord|Source :[0m
+[94m[bash][0m $ grep -n "CLAIMED" docs/plan/phases/phase-03-report.md | tail -5
+Feature is on HEAD from prior US-033 cycles. No existing US-113 claim. Let me check the time for the claim and look for recent overlapping claims.
+[94m[bash][0m $ tail -30 .ralph-tui/progress.md 2>/dev/null
+Slice is free. Claiming now.
+[94m[bash][0m $ cat >> docs/plan/phases/phase-03-report.md <<'EOF'  CLAIMED — US-113/verify-record-note-copy-and-ver...
+[94m[bash][0m $ node --version
+Only my claim. Now running the a2e-documents gates.
+[94m[bash][0m $ grep -n '"scripts"' -A 12 package.json
+[94m[bash][0m $ echo "=== LINT EXIT: $? ==="
+[94m[bash][0m $ echo "=== TYPECHECK EXIT: $? ==="
+[94m[bash][0m $ echo "=== TEST EXIT: $? ==="
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/record-note-copy.test.ts" 2>&1 | tail -12
+Typecheck/lint/test all green. Confirming the record-note-copy suite count and dev:build.
+[94m[bash][0m $ echo "=== BUILD EXIT: $? ==="
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/package.json
+All gates green. Now closing the one unmet non-Tier-2 bullet: the patch version bump.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/package.json
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ echo "=== BUILD EXIT: $? ==="
+All green and scope is clean. Appending the phase report and Ralph bridge.
+[94m[bash][0m $ executor — US-114 (P2.1 chat-channel ACL at subscribe) next in the queue. EOF tail -4 docs/plan/phas...
+[94m[bash][0m $ head -15 .ralph-tui/progress.md
+[94m[bash][0m $ grep -n "Ralph's prd queue can regenerate" .ralph-tui/progress.md
+[94m[bash][0m $ only the E04 browser legs are Tier 2.   - Gates: a2e-documents typecheck exit 0 / lint 0-0 on 77 fil...
+[94m[bash][0m $ git status --porcelain | grep -i "locales/" || echo "no locale churn"
+US-113 verified done-for-review.
+
+- The note-body copy path already shipped on HEAD (prior US-033, commits `992d6c03`/`1e71b258`): authorized `noteTargets` read, linked source block, per-note linked headings, anchor re-key via `remapTemplateBlockIds`, `companyId`/`personId` preserved, `null` fail-closed on unreadable record. No source changes needed.
+- Closed the one unmet non-Tier-2 bullet: bumped `a2e-documents` 0.2.4 → 0.2.5.
+- Gates: typecheck exit 0, lint 0/0 (77 files), test:unit 221/221, `record-note-copy.test.ts` 18/18, `npx twenty dev:build .` succeeded before and after the bump. No locale/i18n churn, no AI attribution.
+- Tier-2 (orchestrator): open-from-search/relation/side-panel browser legs for both record types.
+- Phase report and `.ralph-tui/progress.md` appended; no commit made.
+
+<promise>COMPLETE</promise>

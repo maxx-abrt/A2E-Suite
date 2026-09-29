@@ -5,6 +5,14 @@ after each iteration and it's included in prompts for context.
 
 ## Codebase Patterns (Study These First)
 
+- Realtime topic ACLs live in ONE seam: `realtime-topic-authorization.service.ts`
+  `assertTopicAuthorized` → `RealtimeTopicAccessService` (`assertCanAccessObjectRecord`
+  / `assertCanAccessChatChannel`). Channel rule: `chatChannel.visibility === 'PUBLIC'`
+  ⇒ any workspace member; otherwise a `chatChannelMember` row keyed
+  `{ membershipChannelId, membershipWorkspaceMemberId }`; unknown/uninstalled ⇒ deny.
+  The publisher names it `workspace:<id>:chat:<channelId>` (`buildChatChannelTopic`).
+  Heartbeat revocation is the one `revalidateSocketAuthorizations` path — never add a
+  second ACL path. The `object:` half is implemented but latent (no `object:` publisher).
 - twenty-front enforces a custom oxlint rule `twenty(max-consts-per-file)` (max 1
   top-level `const` per file). Put a new exported constant in its own file, not
   appended to an existing constants module. Run `npx oxlint --type-aware -c
@@ -296,4 +304,14 @@ after each iteration and it's included in prompts for context.
   - The whole record-note-copy feature is a pure lib + front-component payload path, so Tier 0/1 cover it fully; only the E04 browser legs are Tier 2.
   - Gates: a2e-documents typecheck exit 0 / lint 0-0 on 77 files / test:unit 221/221 / record-note-copy 18/18 / `npx twenty dev:build .` Build succeeded (28 files) before and after the bump.
 - Missing (Tier 2 orchestrator): open-from-search/relation/side-panel browser legs for both record types.
+---
+## 2026-09-29 - US-114 (P2.1 channel ACLs at subscribe for chat topics)
+- Verified the channel half of P2.1 bullet 3 already shipped on HEAD (3c8d6b35): `assertTopicAuthorized` delegates `chat:` topics to the single `RealtimeTopicAccessService.assertCanAccessChatChannel` seam; PUBLIC ⇒ any workspace member, otherwise a `chatChannelMember` row keyed `{ membershipChannelId, membershipWorkspaceMemberId }`; unknown/uninstalled ⇒ deny.
+- Closed the 2026-09-18 "runtime resolution not verified" caveat: checked the where-keys/object names against the now-real P5 model in `a2e-chat` (`chatChannel.visibility` PUBLIC/PRIVATE; `chatChannelMember` relations → `membershipChannelId`/`membershipWorkspaceMemberId`; publisher topic `workspace:<id>:chat:<channelId>`).
+- Files changed: `docs/plan/phases/phase-02-report.md`; this file. No source/test touched.
+- **Learnings:**
+  - Duplicate-task class again (US-114 == old P2.1-acl-enforcement/subscribe-record-channel-acl, 2026-09-18): a previous executor implemented record+channel ACL, but the phase report flagged the app-owned object names as unverified until P5 landed. When the model lands, the task is verification-only — do not rebuild.
+  - The record (`object:`) half stays deferred because no `object:` publisher exists yet (only chat/workspace/inbox/presence); `assertCanAccessObjectRecord` is latent but unexercised. Note it, don't delete it.
+  - Gates: realtime unit 6 suites/60 green; isolated real-Redis integration 2 suites/12 green exit 0; tsgo exit 0; oxlint 0/0 and oxfmt clean on the 5 touched services/specs.
+- Missing (Tier 2 orchestrator): live revoked-member socket journey (topic dropped / socket 4403 / no further events) + multi-session handshake on an installed a2e-chat workspace.
 ---

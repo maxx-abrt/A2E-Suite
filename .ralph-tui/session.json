@@ -3,10 +3,10 @@
   "sessionId": "c3d9d5b5-131c-4bed-9971-37e80fe99ea9",
   "status": "running",
   "startedAt": "2026-09-29T18:49:46.574Z",
-  "updatedAt": "2026-09-29T21:54:13.627Z",
-  "currentIteration": 13,
+  "updatedAt": "2026-09-29T21:56:56.511Z",
+  "currentIteration": 14,
   "maxIterations": 20,
-  "tasksCompleted": 13,
+  "tasksCompleted": 14,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -146,6 +146,16 @@
       "durationMs": 275254,
       "startedAt": "2026-09-29T21:46:53.733Z",
       "endedAt": "2026-09-29T21:51:28.987Z"
+    },
+    {
+      "iteration": 14,
+      "status": "completed",
+      "taskId": "US-113",
+      "taskTitle": "P3.3: record→document integration — actual note-body copy with source link and permission checks",
+      "taskCompleted": true,
+      "durationMs": 159155,
+      "startedAt": "2026-09-29T21:51:34.472Z",
+      "endedAt": "2026-09-29T21:54:13.627Z"
     }
   ],
   "skippedTaskIds": [],
