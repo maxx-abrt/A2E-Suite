@@ -287,3 +287,13 @@ after each iteration and it's included in prompts for context.
   - Tier-0 gates: a2e-documents typecheck/lint/test:unit (221/221)/dev:build all green; twenty-front co-editing 4 suites/28, related 16 suites/135, tsgo exit 0, oxlint 0/0.
 - Missing (Tier 2 orchestrator): reinstall a2e-documents (fields + guard register; until then CAS is inert) then the two-session E05 stale-save banner proof.
 ---
+## 2026-09-29 - US-113 (P3.3 record→document note-body copy + source link + permission checks)
+- Verified the real note-body copy already shipped on HEAD (prior US-033 cycles, committed `992d6c03`/`1e71b258`): `lib/record-note-copy.ts` (authorized `noteTargets` read → linked "Source :" block + per-note linked heading + `remapTemplateBlockIds` anchor re-key; `buildRecordNoteCopyPayload` fails closed with `null` on an unreadable record and sets `companyId`/`personId`), `save-record-as-document-command.factory.tsx` (findOne `filter` read + `createDocuments`), and the two `save-company/person-as-document` command-menu items gated on record/note/document read permissions.
+- Closed the one unmet non-Tier-2 acceptance bullet: bumped `a2e-documents` 0.2.4 → 0.2.5.
+- Files changed: `packages/twenty-apps/internal/a2e-documents/package.json`; `docs/plan/phases/phase-03-report.md`; this file.
+- **Learnings:**
+  - Duplicate-task class confirmed a third time (US-113 == US-033): grep `git log --oneline -- <feature paths>` before implementing; the prd "starting state: not started" description is stale.
+  - The whole record-note-copy feature is a pure lib + front-component payload path, so Tier 0/1 cover it fully; only the E04 browser legs are Tier 2.
+  - Gates: a2e-documents typecheck exit 0 / lint 0-0 on 77 files / test:unit 221/221 / record-note-copy 18/18 / `npx twenty dev:build .` Build succeeded (28 files) before and after the bump.
+- Missing (Tier 2 orchestrator): open-from-search/relation/side-panel browser legs for both record types.
+---

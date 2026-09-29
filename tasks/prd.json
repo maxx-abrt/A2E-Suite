@@ -265,9 +265,10 @@
         "Quality gates: in packages/twenty-apps/internal/a2e-documents: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; packages/twenty-front tsgo clean if front files touched; targeted jest green; no i18n catalog churn; no AI attribution"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "Closes a PLAN 'not note-body copying' honesty gap. Lane L-EDITOR (a2e-documents).",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-114",
@@ -603,6 +604,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-29T21:51:28.988Z"
+    "updatedAt": "2026-09-29T21:54:13.627Z"
   }
 }
