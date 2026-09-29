@@ -112,3 +112,16 @@ after each iteration and it's included in prompts for context.
   - Extending a content family needs no seeder logic change: `findMissingStarterTemplates` is data-driven. Only the seeder's read page size needs headroom over the bundle size.
   - `docs/plan/phases/phase-13-report.md` is the M9 report file (per PLAN's milestone→report table) and did not exist before this slice — create it on first M9 slice.
 ---
+
+## 2026-09-29 - US-104 (M9c family: 12 curated Bureau project templates)
+- Added the 10 missing project templates to `a2e-projects/src/lib/starter-projects.ts` (sprint board SPR, content calendar CNT, hiring pipeline REC, client onboarding ONB, website redesign WEB, student semester SEM, association AG AGA, grant application SUB, bug tracker BUG, personal goals/habits OBJ) — 12 total in the existing `{name, key, status, health, description, tasks, milestones}` shape, 5 tasks + 3 milestones each.
+- The `SUB` grant-application description notes its Bilan link as text only ("le volet financier … se prépare dans Bilan ; ce projet ne l'installe ni ne le requiert") — no install, no required app.
+- Extended `starter-projects.test.ts`: 12-key list assertion, Bilan-link assertion, one `descriptor « … » is shaped and instantiable` test per descriptor (loop), a delta-keys-on-key-not-name test, delta expectation updated → 297 unit tests pass.
+- Raised the post-install project read `first: 30`→`200` so the missing-keys delta stays exhaustive at 12 shipped keys.
+- Bumped `a2e-projects` 0.1.11→0.1.12; updated README + `docs/features.md` two→twelve. Appended to `docs/plan/phases/phase-13-report.md`.
+- Files changed: `starter-projects.ts`, `starter-projects.test.ts`, `post-install.ts`, `package.json`, `README.md`, `docs/features.md`, `phase-13-report.md`.
+- **Learnings:**
+  - The Projects seeder delta is by project `key` (the short human-id prefix), unlike Documents' by title. Extending the family is constant-only; the only seeder edit needed is the read page size.
+  - The existing descriptor field is `name`, not `title`; the AC's `(title/key fr+en)` matches US-103's phantom descriptor contract — match the real shape and report the fr+en deviation, don't invent a parallel one.
+  - `oxfmt` excludes `packages/twenty-apps/internal/**` (reports "all matched files may have been excluded by ignore rules"), so formatting is not gated there; `yarn lint` + `dev:build` typecheck are the real gates.
+---

@@ -1,0 +1,134 @@
+# Iteration 4 Log
+
+## Metadata
+
+- **Task ID**: US-103
+- **Task Title**: M9c family: 20 curated Bureau page templates (a2e-documents)
+- **Description**: As a user picking a starting point, I want ≥20 curated Bureau page templates in fr+en so that I can start from real content instead of a blank page. Starting state: 5 exist (meeting notes, 1:1, projec...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-29T20:20:24.423Z
+- **Ended At**: 2026-09-29T20:28:30.345Z
+- **Duration**: 8m 5s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git rev-parse HEAD
+I'll start with the mandatory clean-start check and understand the current state.
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ ls docs/plan/phases/
+[94m[grep][0m [95mPLAN.md[0m pattern: [96mUS-103[0m
+[94m[bash][0m $ grep -n "US-103" PLAN.md | head -50
+[94m[bash][0m $ grep -rn "US-103" docs/plan/phases/ | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -n "M9c" PLAN.md | head -30
+[94m[bash][0m $ grep -n "US-103\|M9c\|page template\|Bureau page" PLAN.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -rln "US-103\|M9c\|a2e-documents\|starter-templates" docs/plan/phases/ 2>/dev/null
+[94m[bash][0m $ grep -rn "phase-13" PLAN.md | head
+[94m[bash][0m $ grep -rn "M9c\|a2e-documents\|starter-templates" docs/plan/phases/*.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/starter-templates.ts
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents/src -type f | sort
+[94m[bash][0m $ grep -rn "category\|labels\|version" packages/twenty-apps/internal/a2e-documents/src/lib/ 2>/dev/nul...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/logic-functions/post-install.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/instantiate-template.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/starter-projects.ts
+[94m[bash][0m $ git log --oneline -15 -- packages/twenty-apps/internal/a2e-documents/src/lib/starter-templates.ts
+[94m[bash][0m $ git log --oneline -10
+[94m[bash][0m $ grep -rn "category" packages/twenty-apps/internal/a2e-projects/src packages/twenty-apps/internal/a2e...
+[94m[bash][0m $ grep -rn "labels" packages/twenty-apps/internal/*/src 2>/dev/null | grep -iv "location\|relabel" | h...
+[94m[bash][0m $ ls docs/plan/ | head -40
+[94m[bash][0m $ find packages/twenty-apps/internal -type d -iname "*template*" 2>/dev/null | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-drive/src -type f | sort | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/fiche-templates.ts
+[94m[bash][0m $ grep -rn "US-023\|journal doc template\|starter-templates" docs/plan/phases/*.md | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/package.json
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents -iname "*locale*" -o -iname "*.po" 2>/dev/null | he...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/session.json
+[94m[bash][0m $ grep -rln "US-100\|US-101\|US-102" docs/plan/phases/
+[94m[bash][0m $ grep -rn "CLAIMED — US-\|executor\] — contract v4\|contract v4" docs/plan/phases/*.md | tail -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -rn "Modèle —\|cinq modèles\|five starter\|starter template\|starter-templates\|Revue hebdo" pa...
+[94m[bash][0m $ grep -rn "starter-templates\|STARTER_DOCUMENT_TEMPLATES\|findMissingStarterTemplates" packages --inc...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/README.md
+[94m[bash][0m $ grep -rn "starter-templates\|STARTER_DOCUMENT_TEMPLATES\|findMissingStarterTemplates" packages --inc...
+[94m[bash][0m $ grep -n "STARTER_DOCUMENT_TEMPLATES\|findMissingStarterTemplates\|Modèle" packages/twenty-server/src...
+[94m[bash][0m $ grep -rln "A2eWorkspaceTemplates\|starterBundleContents\|starter-templates" packages/twenty-server/s...
+[94m[bash][0m $ grep -n "template\|Template\|starter\|Starter\|document" packages/twenty-server/src/engine/core-modu...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-14-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-11-report.md
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/features.md
+Clean-start check: the dirty files are Ralph's own tracker files (`.ralph-tui/*`, `tasks/prd.json`), not code — expected between iterations. No existing claim for US-103. Let me confirm the phase-13 report doesn't exist and check the docs that reference the count.
+[94m[write][0m "# Phase 13 report — M9 curated templates (L-TPL)
+
+CLAIMED — US-103/bureau-page-templates — deepseek-v4.1-flash — 2026-09-29T20:23:46Z — base 5224ba9c46986750c9b899d3baed2a408b2dcdd7
+"
+Claiming the slice in the phase-13 report (M9 → `phase-13-report.md`, which doesn't exist yet).
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/starter-templates.ts
+Claim is the only entry in the new file (no lost race, no overlapping claim). Now implementing the 15 templates.
+[94m[edit][0m
+Now updating the unit tests: the 20-title list, the delta expectation, and one test per descriptor.
+[94m[edit][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/package.json
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/README.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/features.md
+Now running the package gates.
+[94m[bash][0m $ node --version && yarn typecheck
+[94m[bash][0m $ yarn lint
+[94m[bash][0m $ yarn test:unit
+All green: 221 tests pass, lint 0/0, typecheck clean. Now the build gate.
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -20
+[94m[bash][0m $ grep -o "Modèle — [^']*" .twenty/output/src/logic-functions/post-install.ts | head -25
+[94m[bash][0m $ grep -rln "Modèle —" .twenty/output | head
+[94m[bash][0m $ grep -c "Modèle —" .twenty/output/src/logic-functions/post-install.mjs
+[94m[bash][0m $ head -c 2500 .twenty/output/src/logic-functions/post-install.mjs
+[94m[bash][0m $ grep -o 'title: "Mod\\xE8le[^"]*"' .twenty/output/src/logic-functions/post-install.mjs | wc -l
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ grep -rn "first: 30\|findMissingStarterTemplates\|starterTemplatesCreated\|post-install" packages/tw...
+The seeder delta is title-driven and only writes `_document` rows, so no code change is needed for the new content — but scaling 5→20 templates shrinks the margin on the `first: 30` template fetch. Let me check the seeder tests before deciding.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/logic-functions/post-install.ts
+The seeder delta is title-driven; no logic change is needed, but the `first: 30` template fetch no longer leaves enough margin at 20 shipped templates to guarantee the missing-titles delta stays exhaustive. Raising it protects the non-duplication guarantee.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/logic-functions/post-install.ts
+[94m[bash][0m $ yarn typecheck && yarn lint
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -6 && grep -c 'title: "Mod\\xE8le' .twenty/output/src/logic-funct...
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -8
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -5
+All gates pass. Verifying the working tree contains only intended changes before reporting.
+[94m[bash][0m $ git diff --stat -- docs/features.md packages/twenty-apps/internal/a2e-documents
+Self-verify complete. Appending the executor report.
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git diff -- .ralph-tui/progress.md | head -40
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+I accidentally altered a pre-existing pattern line. Restoring it.
+[94m[bash][0m $ git diff -- .ralph-tui/progress.md | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+Done. Summary of the US-103 slice:
+
+**Delivered** — added the 15 missing Bureau page templates to `a2e-documents/src/lib/starter-templates.ts` (weekly review, daily note, OKR, team wiki home, onboarding guide, recurring agenda, decision log/ADR, retrospective, brainstorm, reading list, Cornell course notes, thesis planner, recipe book, travel plan, personal CRM) — 20 total in the existing `{title, markdown}` shape.
+
+**Seeder** — left data-driven `findMissingStarterTemplates` (missing-titles-only, `_document` tree only); raised the template read `first: 30→200` so the delta stays exhaustive at 20 shipped titles.
+
+**Tests/docs/version** — one test per descriptor + bundle/uniqueness/delta tests (221 pass), README + `docs/features.md` five→twenty, `package.json` 0.2.1→0.2.2. Created `docs/plan/phases/phase-13-report.md` (M9 report file).
+
+**Gates (literal):** `yarn typecheck` clean · `yarn lint` 0/0 (77 files) · `yarn test:unit` 221/221 · `npx twenty dev:build .` → Build succeeded (28 files), 20 descriptors in the built `post-install.mjs` · `node docs/scripts/check-docs.mjs` PASS.
+
+**Documented deviation:** the AC's `key/version/labels fr+en/category` descriptor is US-117's contract; this app's content is French-only like all sibling families, so no fr+en label layer was invented here. Tier-2 browser install/apply remains for the orchestrator.
+
+Reports appended to `phase-13-report.md` and `.ralph-tui/progress.md`. No commit made.
+
+<promise>COMPLETE</promise>

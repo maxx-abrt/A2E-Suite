@@ -10,10 +10,11 @@ import {
 
 // INSTALL = READY TO USE.
 //
-// Installing A2E Projects must leave a workspace with two immediately usable
-// projects (livraison + rétroplanning d'événement), their tasks on the board
-// and milestones on the calendar. Every step is idempotent, because an app
-// can be reinstalled.
+// Installing A2E Projects must leave a workspace with twelve immediately
+// usable projects (livraison, rétroplanning d'événement, sprint, contenu,
+// recrutement, onboarding, refonte, semestre, AG, subvention, bugs,
+// objectifs), their tasks on the board and milestones on the calendar. Every
+// step is idempotent, because an app can be reinstalled.
 
 const coreClient = (): CoreApiClient => new CoreApiClient();
 
@@ -22,9 +23,12 @@ const coreClient = (): CoreApiClient => new CoreApiClient();
 const findExistingProjectKeys = async (
   client: CoreApiClient,
 ): Promise<string[]> => {
+  // Page size must exceed the shipped bundle with headroom: a workspace with
+  // many user projects could otherwise push a shipped key off the first page
+  // under a newest-first ordering and the delta would re-seed a duplicate.
   const result = (await client.query({
     projects: {
-      __args: { first: 30 },
+      __args: { first: 200 },
       edges: { node: { key: true } },
     },
   } as never)) as {
@@ -129,7 +133,7 @@ export default definePostInstallLogicFunction({
   universalIdentifier: LOGIC_FUNCTION_IDS.postInstall,
   name: 'post-install',
   description:
-    'Prépare Bureau Projets : projets de démarrage (livraison, rétroplanning d’événement) avec leurs tâches et jalons.',
+    'Prépare Bureau Projets : douze projets de démarrage (livraison, rétroplanning, sprint, contenu, recrutement, onboarding, refonte, semestre, AG, subvention, bugs, objectifs) avec leurs tâches et jalons.',
   timeoutSeconds: 120,
   shouldRunSynchronously: false,
   handler,

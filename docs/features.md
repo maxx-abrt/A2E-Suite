@@ -50,7 +50,7 @@ the [Documents README](../packages/twenty-apps/internal/a2e-documents/README.md)
 Projects, milestones, labels, project members and time entries on top of
 Twenty's native task engine, with a Kanban board, a monthly calendar, a Gantt
 view, time tracking, human-readable task IDs (`KEY-n`), retroplanning and a
-recurring-task workflow recipe. Two starter projects seed on install. See the
+recurring-task workflow recipe. Twelve starter projects seed on install. See the
 [Projects README](../packages/twenty-apps/internal/a2e-projects/README.md).
 The "extract tasks from a document" AI tool is a deliberate stub.
 

@@ -63,9 +63,16 @@ monthly calendar on `dueAt`, project-scoped task lists, and the three
 
 ### Automation and views
 
-- `post-install` seeds two idempotent starter projects with tasks and
-  milestones: **Livraison de projet** (`LIV`) and **Rétroplanning
-  d'événement** (`EVT`) ([starter-projects.ts](./src/lib/starter-projects.ts)).
+- `post-install` seeds twelve idempotent starter projects with tasks and
+  milestones, by project `key`: **Livraison de projet** (`LIV`), **Rétroplanning
+  d'événement** (`EVT`), **Tableau de sprint** (`SPR`), **Calendrier de
+  contenu** (`CNT`), **Pipeline de recrutement** (`REC`), **Intégration
+  client** (`ONB`), **Refonte du site web** (`WEB`), **Semestre étudiant**
+  (`SEM`), **Assemblée générale annuelle** (`AGA`), **Dossier de subvention**
+  (`SUB`), **Suivi des bugs** (`BUG`) and **Objectifs personnels** (`OBJ`)
+  ([starter-projects.ts](./src/lib/starter-projects.ts)). The grant-application
+  template only *mentions* Bilan in its description; it neither installs nor
+  requires the finance app.
 - `recurring-task-generator` is a workflow recipe (native CRON trigger +
   logic-function step) shipped as app source; a builder materializes it in the
   workflow engine.
