@@ -1,0 +1,80 @@
+# Iteration 5 Log
+
+## Metadata
+
+- **Task ID**: US-104
+- **Task Title**: M9c family: 12 curated Bureau project templates (a2e-projects)
+- **Description**: As a user picking a starting point, I want ≥12 curated project templates so that project-oriented personas get a useful starter plan. Starting state: 2 exist (Livraison LIV, Rétroplanning d'événement ...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-29T20:28:35.836Z
+- **Ended At**: 2026-09-29T20:32:58.705Z
+- **Duration**: 4m 22s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-104" PLAN.md
+[94m[bash][0m $ grep -rn "US-104" --include="*.md" . | grep -v node_modules | head -50
+[94m[bash][0m $ grep -n "M9c" PLAN.md | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) print(type(d)) def walk(o):     if isin...
+[94m[bash][0m $ ls -R packages/twenty-apps/internal/a2e-projects/src | head -80
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/starter-projects.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/logic-functions packages/twenty-apps/internal/a2e-...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/logic-functions/post-install.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/starter-projects.test.ts
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ tail -60 .ralph-tui/progress.md
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/objects && sed -n '1,120p' packages/twenty-apps/in...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/package.json && echo "---" && ls packages/twenty-apps...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/README.md
+[94m[bash][0m $ grep -rn "starter project\|starter-projects\|Livraison\|Rétroplanning\|starter-projects.ts\|deux pro...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/features.md
+[94m[bash][0m $ cat >> docs/plan/phases/phase-13-report.md <<'EOF'  CLAIMED — US-104/project-templates — deepseek-v4...
+[94m[bash][0m $ grep -n "CLAIMED" docs/plan/phases/phase-13-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/starter-projects.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/starter-projects.ts
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  STARTER_PROJECT_TEMPLATES,
+  findMissingStarterProjects,
+  resolveMilestoneDueAt,
+} from '../starter-projects.ts'... (3485 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/logic-functions/post-install.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/logic-functions/post-install.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/logic-functions/post-install.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/README.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/features.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/package.json
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -20
+[94m[bash][0m $ yarn lint 2>&1 | tail -25
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -30
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -20
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -10
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ grep -rn "key: '" packages/twenty-apps/internal/a2e-projects/src --include="*.ts" | grep -v starter-...
+[94m[bash][0m $ ls node_modules/.bin/oxfmt 2>/dev/null && echo "oxfmt present"
+[94m[bash][0m $ npx oxfmt --check "packages/twenty-apps/internal/a2e-projects/src/lib/starter-projects.ts" "packages...
+[94m[bash][0m $ node --test --experimental-strip-types src/lib/__tests__/starter-projects.test.ts 2>&1 | grep -E "✔|...
+[94m[bash][0m $ git diff --stat && echo "---" && git diff packages/twenty-apps/internal/a2e-projects/src/logic-funct...
+[94m[bash][0m $ the slice matches the real shape and keeps names curated French. No catalogs touched. EOF echo done
+[94m[bash][0m $ sed -n '1,40p' .ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ `yarn lint` + `dev:build` typecheck are the real gates. --- EOF echo done
+[94m[bash][0m $ git status --porcelain
+Done. US-104 implemented and verified.
+
+**Changed:** `a2e-projects` `starter-projects.ts` (+10 templates, 12 total), `starter-projects.test.ts` (per-descriptor tests), `post-install.ts` (read `first` 30→200, docs), `package.json` (0.1.11→0.1.12), `README.md`, `docs/features.md`, plus phase report + progress log.
+
+**Checks:** typecheck clean · lint 0 errors (1 pre-existing warning) · test:unit 297/297 · `twenty dev:build .` succeeded · check-docs PASS.
+
+**Missing for tick (Tier 2):** live install observing 12 seeded projects and no reinstall duplication. Reports appended.
+
+<promise>COMPLETE</promise>

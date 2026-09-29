@@ -47,6 +47,11 @@ after each iteration and it's included in prompts for context.
   `key/version/labels fr+en/category` descriptor contract is US-117's scope. The
   seeder's read page size must exceed the shipped bundle with headroom or a
   reinstall can re-seed a duplicate.
+- a2e-accounting Bilan templates are `FICHE_TEMPLATES` descriptors keyed by
+  `FicheTemplateKey` and backfilled through `withTemplateDefaults`; the paired
+  editor contract is the fiche object's `templateKey` SELECT, so a new descriptor
+  key must also land as a select option in `objects/fiche.object.ts` (append at
+  the next position — never renumber the existing options).
 
 ---
 
@@ -124,4 +129,17 @@ after each iteration and it's included in prompts for context.
   - The Projects seeder delta is by project `key` (the short human-id prefix), unlike Documents' by title. Extending the family is constant-only; the only seeder edit needed is the read page size.
   - The existing descriptor field is `name`, not `title`; the AC's `(title/key fr+en)` matches US-103's phantom descriptor contract — match the real shape and report the fr+en deviation, don't invent a parallel one.
   - `oxfmt` excludes `packages/twenty-apps/internal/**` (reports "all matched files may have been excluded by ignore rules"), so formatting is not gated there; `yarn lint` + `dev:build` typecheck are the real gates.
+---
+
+## 2026-09-29 - US-105 (M9c family: Bilan templates — personal monthly budget + freelancer invoicing kit)
+- Added two `FICHE_TEMPLATES` descriptors to `a2e-accounting/src/lib/fiche-templates.ts`: `BUDGET_MENSUEL_PERSONNEL` (personal monthly budget, reuses the existing `budgetGridSection` charges/produits shape with new `PERSONAL_BUDGET_CHARGES`/`PERSONAL_BUDGET_PRODUITS`, every amount 0) and `KIT_FACTURATION_INDEPENDANT` (issuer → client → devis → facture → relances → notes, all amounts/unit prices 0; no invoice-builder logic — P7-gated).
+- Extended the fiche object's `templateKey` SELECT with the two new options (positions 8/9, additive) so the editor accepts the keys.
+- Extended `fiches.test.ts`: shape test 8→10 + one test per new descriptor (zeroed budget posts; quote→invoice→reminders section order) → 108 tests pass.
+- Bumped `a2e-accounting` 0.1.0→0.1.1; updated README Fiches row + `docs/features.md` Bilan paragraph; appended to `docs/plan/phases/phase-13-report.md`.
+- Files changed: `fiche-templates.ts`, `objects/fiche.object.ts`, `fiches.test.ts`, `package.json`, `README.md`, `docs/features.md`, `phase-13-report.md`.
+- **Learnings:**
+  - Bilan's "gallery family" is the `FICHE_TEMPLATES` descriptor record; the install seeds (`STARTER_FICHES`) are a separate, smaller set (2 draft fiches). US-105 ships descriptors only — do not extend `STARTER_FICHES` (C6 keeps install from pre-filling finance content).
+  - A descriptor key that is absent from the fiche `templateKey` SELECT is unusable in the editor, so descriptor additions in this app pair with an additive select option in `objects/fiche.object.ts`.
+  - `Turquoise`/`pink` are valid `TagColor`s (`packages/twenty-shared/src/types/FieldMetadataOptions.ts`), usable for new select options.
+  - `yarn test:unit` (node --test) is the app test entry; `yarn lint` is oxlint-only (106 files, 0 warnings).
 ---

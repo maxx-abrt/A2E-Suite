@@ -8,8 +8,8 @@ import {
 } from '../budget-equilibre.ts';
 import { FICHE_TEMPLATES, withTemplateDefaults, getFicheTemplate, FICHE_TEMPLATE_KEYS } from '../fiche-templates.ts';
 
-test('the eight official templates are all registered with a payload', () => {
-  assert.equal(FICHE_TEMPLATE_KEYS.length, 8);
+test('every registered template is shaped and carries a payload', () => {
+  assert.equal(FICHE_TEMPLATE_KEYS.length, 10);
 
   for (const key of FICHE_TEMPLATE_KEYS) {
     const template = FICHE_TEMPLATES[key];
@@ -19,6 +19,48 @@ test('the eight official templates are all registered with a payload', () => {
     assert.ok(template.sections.length > 0);
     assert.ok(typeof template.defaultData === 'object');
   }
+});
+
+test('the personal monthly budget descriptor ships zeroed household posts', () => {
+  const template = FICHE_TEMPLATES.BUDGET_MENSUEL_PERSONNEL;
+
+  assert.equal(template.key, 'BUDGET_MENSUEL_PERSONNEL');
+  assert.ok(template.sections.some((section) => section.key === 'budget'));
+
+  const data = withTemplateDefaults('BUDGET_MENSUEL_PERSONNEL', undefined) as {
+    charges: { label: string; amount: number }[];
+    produits: { label: string; amount: number }[];
+  };
+
+  assert.ok(data.charges.length > 0);
+  assert.ok(data.produits.length > 0);
+  assert.ok(data.charges.every((line) => line.amount === 0));
+  assert.ok(data.produits.every((line) => line.amount === 0));
+});
+
+test('the freelancer invoicing kit walks quote → invoice → reminders with no real amounts', () => {
+  const template = FICHE_TEMPLATES.KIT_FACTURATION_INDEPENDANT;
+
+  assert.equal(template.key, 'KIT_FACTURATION_INDEPENDANT');
+  assert.deepEqual(
+    template.sections.map((section) => section.key),
+    ['issuer', 'client', 'quote', 'invoice', 'reminders', 'notes'],
+  );
+
+  const data = withTemplateDefaults(
+    'KIT_FACTURATION_INDEPENDANT',
+    undefined,
+  ) as {
+    amountDue: number;
+    quoteLines: { unitPrice: number }[];
+    invoiceLines: { unitPrice: number }[];
+    reminders: unknown[];
+  };
+
+  assert.equal(data.amountDue, 0);
+  assert.ok(data.quoteLines.every((line) => line.unitPrice === 0));
+  assert.ok(data.invoiceLines.every((line) => line.unitPrice === 0));
+  assert.equal(data.reminders.length, 1);
 });
 
 test('an unknown template key resolves to undefined instead of throwing', () => {

@@ -57,8 +57,9 @@ The "extract tasks from a document" AI tool is a deliberate stub.
 ## Bilan
 
 The finance app: dashboard, quotes/invoices, expenses and income, an automatic
-ledger, budgets, official fiches and a public funding catalogue. See the
-[Bilan README](../packages/twenty-apps/internal/a2e-accounting/README.md).
+ledger, budgets, official fiches (plus a personal monthly budget and a
+freelancer quote → invoice → reminders kit) and a public funding catalogue. See
+the [Bilan README](../packages/twenty-apps/internal/a2e-accounting/README.md).
 
 ## Drive
 

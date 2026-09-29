@@ -114,9 +114,10 @@
         "Quality gates: in packages/twenty-apps/internal/a2e-accounting: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; no i18n catalog churn; no AI attribution"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "Content slice of M9c; the invoice side of the freelancer kit is descriptor/seed only — invoice builder legs stay P7-gated and must not be built here. Feeds US-117 and US-120. Lane L-TPL.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-106",
@@ -595,6 +596,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-29T20:32:58.706Z"
+    "updatedAt": "2026-09-29T20:38:32.853Z"
   }
 }

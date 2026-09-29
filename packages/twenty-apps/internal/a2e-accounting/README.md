@@ -32,7 +32,7 @@ Le manifeste déclare un dossier **Bilan** dans la navigation, avec :
 | Dépenses et recettes | La trésorerie au quotidien, justificatifs joints |
 | Livre | Le journal alimenté automatiquement, avec la provenance de chaque ligne |
 | Budgets | Enveloppes par catégorie et par période, alertes à 80 %, atteint, dépassé |
-| Fiches | Documents officiels français : reçu de don, budget à l'équilibre, CERFA 12156… |
+| Fiches | Documents officiels français (reçu de don, budget à l'équilibre, CERFA 12156…) et modèles personnels : budget mensuel, kit de facturation indépendant (devis → facture → relances). |
 | Trouver des aides | Le catalogue de subventions, avec classement expliqué |
 | Subventions / Mes dossiers | Le catalogue en table, et les dossiers que vous suivez |
 | Catégories / Ma structure | Plan comptable et identité de la structure (prérempli les fiches) |

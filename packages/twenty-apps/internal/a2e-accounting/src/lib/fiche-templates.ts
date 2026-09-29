@@ -11,10 +11,12 @@ export type FicheTemplateKey =
   | 'BLANK'
   | 'RECU_DON'
   | 'BUDGET_EQUILIBRE'
+  | 'BUDGET_MENSUEL_PERSONNEL'
   | 'DEMANDE_SUBVENTION'
   | 'CONVENTION_SUBVENTION'
   | 'RAPPORT_ACTIVITE'
-  | 'ATTESTATION_HONNEUR';
+  | 'ATTESTATION_HONNEUR'
+  | 'KIT_FACTURATION_INDEPENDANT';
 
 export type FicheFieldKind =
   | 'text'
@@ -67,6 +69,28 @@ export const PCG_PRODUITS = [
   { label: "74 — Subventions d'exploitation", amount: 0 },
   { label: '75 — Cotisations, dons et legs', amount: 0 },
   { label: '76 — Produits financiers', amount: 0 },
+];
+
+// A private household has no PCG account. The lines are the usual budget posts,
+// all at zero: the template shows the structure and the household fills its own
+// figures, so no demonstration amount ever becomes a real movement.
+export const PERSONAL_BUDGET_CHARGES = [
+  { label: 'Logement', amount: 0 },
+  { label: 'Alimentation', amount: 0 },
+  { label: 'Transport', amount: 0 },
+  { label: 'Santé', amount: 0 },
+  { label: 'Assurances', amount: 0 },
+  { label: 'Abonnements', amount: 0 },
+  { label: 'Loisirs', amount: 0 },
+  { label: 'Épargne', amount: 0 },
+  { label: 'Divers', amount: 0 },
+];
+
+export const PERSONAL_BUDGET_PRODUITS = [
+  { label: 'Salaire', amount: 0 },
+  { label: 'Aides et prestations', amount: 0 },
+  { label: 'Revenus complémentaires', amount: 0 },
+  { label: 'Autres revenus', amount: 0 },
 ];
 
 const currentYear = (): string => String(new Date().getUTCFullYear());
@@ -404,6 +428,38 @@ export const FICHE_TEMPLATES: Record<FicheTemplateKey, FicheTemplate> = {
       notes: '',
     },
   },
+  BUDGET_MENSUEL_PERSONNEL: {
+    key: 'BUDGET_MENSUEL_PERSONNEL',
+    label: 'Budget mensuel personnel',
+    defaultTitle: 'Budget mensuel personnel',
+    description:
+      "Le budget d'un particulier sur un mois : recettes et dépenses par poste, totaux et solde. Les postes sont préremplis mais les montants restent à zéro — rien de ce modèle ne devient une écriture réelle.",
+    sections: [
+      {
+        key: 'header',
+        title: 'En-tête',
+        fields: [
+          { key: 'owner', label: 'Titulaire', kind: 'text' },
+          { key: 'month', label: 'Mois', kind: 'text' },
+          { key: 'year', label: 'Année', kind: 'text' },
+        ],
+      },
+      budgetGridSection('Recettes et dépenses'),
+      {
+        key: 'notes',
+        title: 'Notes',
+        fields: [{ key: 'notes', label: 'Notes', kind: 'longText' }],
+      },
+    ],
+    defaultData: {
+      owner: '',
+      month: '',
+      year: currentYear(),
+      charges: PERSONAL_BUDGET_CHARGES,
+      produits: PERSONAL_BUDGET_PRODUITS,
+      notes: '',
+    },
+  },
   DEMANDE_SUBVENTION: {
     key: 'DEMANDE_SUBVENTION',
     label: 'Demande de subvention (CERFA 12156)',
@@ -716,6 +772,147 @@ export const FICHE_TEMPLATES: Record<FicheTemplateKey, FicheTemplate> = {
       signatureDate: '',
       signatoryName: '',
       signatoryRole: 'Président(e)',
+    },
+  },
+  KIT_FACTURATION_INDEPENDANT: {
+    key: 'KIT_FACTURATION_INDEPENDANT',
+    label: 'Kit de facturation indépendant',
+    defaultTitle: 'Kit de facturation indépendant',
+    legalReference: 'Mentions obligatoires — art. L441-9 du code de commerce',
+    description:
+      "Le parcours complet d'un indépendant : devis, facture puis relances de paiement. Chaque étape est décrite avec ses mentions obligatoires ; les montants restent à zéro, aucune facture réelle n'est émise par ce modèle.",
+    sections: [
+      {
+        key: 'issuer',
+        title: 'Émetteur',
+        fields: [
+          { key: 'issuerName', label: 'Nom ou raison sociale', kind: 'text' },
+          { key: 'issuerStatus', label: 'Statut juridique', kind: 'text' },
+          { key: 'issuerSiret', label: 'SIRET', kind: 'text' },
+          { key: 'issuerAddress', label: 'Adresse', kind: 'text' },
+          { key: 'issuerVatNumber', label: 'Numéro de TVA', kind: 'text' },
+          {
+            key: 'paymentTerms',
+            label: 'Conditions de règlement',
+            kind: 'text',
+          },
+        ],
+      },
+      {
+        key: 'client',
+        title: 'Client',
+        fields: [
+          { key: 'clientName', label: 'Nom ou raison sociale', kind: 'text' },
+          { key: 'clientAddress', label: 'Adresse', kind: 'text' },
+          { key: 'clientVatNumber', label: 'Numéro de TVA', kind: 'text' },
+        ],
+      },
+      {
+        key: 'quote',
+        title: 'Devis',
+        fields: [
+          { key: 'quoteNumber', label: 'Numéro du devis', kind: 'text' },
+          { key: 'quoteDate', label: 'Date', kind: 'date' },
+          { key: 'quoteValidUntil', label: 'Valable jusqu’au', kind: 'date' },
+          {
+            key: 'quoteStatus',
+            label: 'Statut du devis',
+            kind: 'select',
+            options: [
+              { value: 'DRAFT', label: 'Brouillon' },
+              { value: 'SENT', label: 'Envoyé' },
+              { value: 'ACCEPTED', label: 'Accepté' },
+              { value: 'REFUSED', label: 'Refusé' },
+            ],
+          },
+          {
+            key: 'quoteLines',
+            label: 'Prestations',
+            kind: 'lineGrid',
+            columns: [
+              { key: 'description', label: 'Description', kind: 'text' },
+              { key: 'quantity', label: 'Quantité', kind: 'number' },
+              { key: 'unitPrice', label: 'Prix unitaire', kind: 'money' },
+            ],
+          },
+        ],
+      },
+      {
+        key: 'invoice',
+        title: 'Facture',
+        fields: [
+          { key: 'invoiceNumber', label: 'Numéro de facture', kind: 'text' },
+          { key: 'invoiceDate', label: 'Date', kind: 'date' },
+          { key: 'dueDate', label: 'Échéance', kind: 'date' },
+          {
+            key: 'invoiceStatus',
+            label: 'Statut de la facture',
+            kind: 'select',
+            options: [
+              { value: 'DRAFT', label: 'Brouillon' },
+              { value: 'SENT', label: 'Envoyée' },
+              { value: 'PAID', label: 'Payée' },
+              { value: 'OVERDUE', label: 'En retard' },
+            ],
+          },
+          { key: 'amountDue', label: 'Montant dû', kind: 'money' },
+          {
+            key: 'invoiceLines',
+            label: 'Lignes',
+            kind: 'lineGrid',
+            columns: [
+              { key: 'description', label: 'Description', kind: 'text' },
+              { key: 'quantity', label: 'Quantité', kind: 'number' },
+              { key: 'unitPrice', label: 'Prix unitaire', kind: 'money' },
+            ],
+          },
+        ],
+      },
+      {
+        key: 'reminders',
+        title: 'Relances de paiement',
+        fields: [
+          {
+            key: 'reminders',
+            label: 'Relances',
+            kind: 'lineGrid',
+            columns: [
+              { key: 'date', label: 'Date', kind: 'text' },
+              { key: 'channel', label: 'Canal', kind: 'text' },
+              { key: 'note', label: 'Note', kind: 'text' },
+            ],
+          },
+        ],
+      },
+      {
+        key: 'notes',
+        title: 'Notes',
+        fields: [{ key: 'notes', label: 'Notes', kind: 'longText' }],
+      },
+    ],
+    defaultData: {
+      issuerName: '',
+      issuerStatus: '',
+      issuerSiret: '',
+      issuerAddress: '',
+      issuerVatNumber: '',
+      paymentTerms: 'Paiement à 30 jours date de facture.',
+      clientName: '',
+      clientAddress: '',
+      clientVatNumber: '',
+      quoteNumber: '',
+      quoteDate: '',
+      quoteValidUntil: '',
+      quoteStatus: 'DRAFT',
+      quoteLines: [{ description: '', quantity: 1, unitPrice: 0 }],
+      invoiceNumber: '',
+      invoiceDate: '',
+      dueDate: '',
+      invoiceStatus: 'DRAFT',
+      amountDue: 0,
+      invoiceLines: [{ description: '', quantity: 1, unitPrice: 0 }],
+      reminders: [{ date: '', channel: '', note: '' }],
+      notes: '',
     },
   },
 };

@@ -91,6 +91,20 @@ export default defineObject({
           position: 7,
           color: 'red',
         },
+        {
+          id: 'b11a0900-0005-4000-8000-000000000009',
+          value: 'BUDGET_MENSUEL_PERSONNEL',
+          label: 'Budget mensuel personnel',
+          position: 8,
+          color: 'turquoise',
+        },
+        {
+          id: 'b11a0900-0005-4000-8000-00000000000a',
+          value: 'KIT_FACTURATION_INDEPENDANT',
+          label: 'Kit de facturation indépendant',
+          position: 9,
+          color: 'pink',
+        },
       ],
     },
     {

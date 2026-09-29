@@ -58,3 +58,34 @@ CLAIMED — US-104/project-templates — deepseek-v4.1-flash — 2026-09-29T20:3
 
 ### fr+en / title note (content-slice convention, not a defect)
 Same as US-103: `packages/twenty-apps/internal/*` has no i18n layer, every content family (this app's 2 originals, a2e-documents, a2e-accounting) is French-only, and the AC's `(title/key fr+en)` contract names US-117's not-yet-built `key/version/labels fr+en/category` descriptor. The existing `StarterProjectTemplate` field is `name` (not `title`); the slice matches the real shape and keeps names curated French. No catalogs touched.
+
+CLAIMED — US-105/bilan-templates — deepseek-v4.1-flash — 2026-09-29T22:40:00Z — base 259cfcdf58bb70ccb4d53a598c93cd2527fe9314
+
+## 2026-09-29 22:52 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-105 M9c family: Bilan templates — personal monthly budget + freelancer invoicing kit (a2e-accounting) · **Slice:** the two missing Bilan descriptors — personal monthly budget (existing charges/produits budget shape) + freelancer quote→invoice→payment-reminders kit — as `withTemplateDefaults` descriptors, plus the fiche `templateKey` select options, per-descriptor tests and one patch bump
+**Claim:** done-for-review
+**Ready-to-tick:** yes — all Tier-0 gates green; only the Tier-2 live-install leg is absent. Two documented content-slice conventions: the fr+en `labels` surface is US-117's contract, and the invoice builder stays P7-gated (descriptor only).
+**Base:** 259cfcdf58bb70ccb4d53a598c93cd2527fe9314
+**Changed:**
+- `packages/twenty-apps/internal/a2e-accounting/src/lib/fiche-templates.ts` (+2 keys: `BUDGET_MENSUEL_PERSONNEL`, `KIT_FACTURATION_INDEPENDANT`; +2 `FICHE_TEMPLATES` descriptors; + `PERSONAL_BUDGET_CHARGES`/`PERSONAL_BUDGET_PRODUITS`, all amounts 0)
+- `.../src/objects/fiche.object.ts` (+2 `templateKey` select options, positions 8/9, additive — no renumbering of the existing 8)
+- `.../src/lib/__tests__/fiches.test.ts` (length 8→10 + renamed shape test; +2 per-descriptor tests)
+- `.../package.json` (0.1.0→0.1.1)
+- `.../README.md` + `docs/features.md` (Fiches/Bilan rows mention the two new templates, truthful)
+- this report
+**Checks:**
+- `yarn typecheck` (a2e-accounting) → clean (exit 0, no output)
+- `yarn lint` → `Found 0 warnings and 0 errors` (106 files)
+- `yarn test:unit` → `tests 108 / pass 108 / fail 0` (was 106; +2 per-descriptor)
+- `npx twenty dev:build .` → `Build succeeded (28 files)`
+- `node docs/scripts/check-docs.mjs` → `PASS: 26 maintained documents, 214 local inline links`
+**Missing for tick:** Tier 2 (orchestrator): install/reinstall `a2e-accounting` in a browser and observe the 10 Bilan templates listed in the gallery (8 fiches + budget mensuel + kit de facturation) with no duplicate on reinstall.
+**Do not redo:** the fiche descriptor contract (`{key,label,defaultTitle,description,sections,defaultData}` + `withTemplateDefaults`) — the two new templates are appended to it; the fiche `templateKey` select is now the 10-value editor contract. The 8 existing fiche descriptors and tests already covered their keys (the loop test was extended, not rewritten).
+**Remaining:** US-106…107 (sibling M9c families), then US-117/US-118/US-119/US-120.
+**Next:** US-106 (a2e-drive folder structures) or US-107 (recipes) per Ralph's queue; the descriptor contract (key/version/labels fr/en/category) remains US-117's scope.
+
+### Scope note (why not seeded / why the object select changed)
+The AC asks for the two templates "as template descriptors reusing the `withTemplateDefaults` contract": both are now `FICHE_TEMPLATES` entries whose `defaultData` backfills through `withTemplateDefaults`. They are **gallery descriptors**, not extra install-time `STARTER_FICHES`: the AC's bullet 3 scopes this slice to descriptor coverage, and C6 forbids extending seeds toward financial content, so the install output (`STARTER_FICHES` = 2 draft fiches) is deliberately unchanged. The fiche object's `templateKey` select was extended because a fiche cannot carry a key the editor's select rejects — that select is the other half of "the editor contract". No invoice-builder logic was built (P7-gated); the freelancer kit is descriptor/data only, all amounts zero.
+
+### fr+en note (content-slice convention, not a defect)
+Same as US-103/US-104: `packages/twenty-apps/internal/*` has no i18n layer, every content family (this app's 10 templates, a2e-documents, a2e-projects) is French, and the `key/version/labels fr+en/category` contract named in the AC is US-117's deliverable. Inventing it here would pre-empt US-117 and add an unconsumed parallel shape. No catalogs touched.
