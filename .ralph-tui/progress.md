@@ -259,3 +259,14 @@ after each iteration and it's included in prompts for context.
   - The retroplanning provenance/idempotency + manual-edit/DONE protection live entirely in the engine/handler and were reused untouched.
 - Missing (Tier 2 orchestrator): live install + E06 journey proof.
 ---
+
+## 2026-09-29 - US-111 (P3.2 persist revision history — durable storage/retention/block-diff/restore)
+- Verified the durable revision-history path already shipped on HEAD (prior US-031 cycle): `documentRevision` app object + `useDocumentRevisionPersistence` transport + `EditorVersionHistoryStore` optional-adapter seam (retention 20 oldest-first) + `getBlockLevelDiff` + append-on-restore, wired from `RichTextFieldEditor` → `BlockEditor` only for `objectNameSingular === 'document'`.
+- Closed the one unmet non-Tier-2 acceptance bullet: bumped `a2e-documents` 0.2.2 → 0.2.3.
+- Files changed: `packages/twenty-apps/internal/a2e-documents/package.json`; `docs/plan/phases/phase-03-report.md`.
+- **Learnings:**
+  - Ralph regenerated a prd task (US-111) for work already committed under the older `US-0xx` tracking scheme; always grep `git log` for the feature paths before implementing — the description ("starting state: partial") can be stale relative to HEAD.
+  - The app `yarn.lock` uses `workspace:.` resolution, so a patch `version` bump needs no lockfile edit; `.twenty/output` is gitignored.
+  - Gates: a2e-documents typecheck/test:unit (221/221)/lint/dev:build all green; twenty-front version-history jest 29/29 + tsgo exit 0.
+- Missing (Tier 2 orchestrator): E05 reload + second-session + restricted-role browser proof.
+---

@@ -227,9 +227,10 @@
         "Quality gates: in packages/twenty-apps/internal/a2e-documents: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; npx tsgo -p tsconfig.json --noEmit in packages/twenty-front clean; targeted jest green; no i18n catalog churn; no AI attribution"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "Unblocks P3.4's advanced-authoring implementation bullet (gated behind durable save/share acceptance — share is P0.2-done; this + US-112 complete the save side). Lane L-EDITOR.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-112",
@@ -601,6 +602,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-29T21:42:16.102Z"
+    "updatedAt": "2026-09-29T21:46:48.251Z"
   }
 }
