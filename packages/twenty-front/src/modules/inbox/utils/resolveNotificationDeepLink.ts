@@ -1,4 +1,4 @@
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { type InboxNotification } from '@/inbox/types/InboxNotification';
@@ -25,6 +25,20 @@ export const resolveNotificationDeepLink = (
 
   if (payload === null) {
     return null;
+  }
+
+  // A calendar reminder names its event by `calendarEventId` (not the record
+  // `{ objectNameSingular, recordId }` convention), and the event is a native
+  // record, so it opens on the calendarEvent record page.
+  if (notification.type === 'CALENDAR_REMINDER') {
+    const calendarEventId = getPayloadString(payload, 'calendarEventId');
+
+    return isDefined(calendarEventId)
+      ? getAppPath(AppPath.RecordShowPage, {
+          objectNameSingular: CoreObjectNameSingular.CalendarEvent,
+          objectRecordId: calendarEventId,
+        })
+      : null;
   }
 
   const kind = getPayloadString(payload, 'kind');

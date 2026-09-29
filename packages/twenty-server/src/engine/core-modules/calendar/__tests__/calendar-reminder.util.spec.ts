@@ -268,6 +268,7 @@ describe('buildCalendarReminderNotificationPayload', () => {
       id: 'evt-42',
       title: 'My Meeting',
       startsAt: '2026-10-01T09:00:00Z',
+      reminderMinutes: 15,
     });
 
     const payload = buildCalendarReminderNotificationPayload(event, 'user-1');
@@ -275,6 +276,7 @@ describe('buildCalendarReminderNotificationPayload', () => {
     expect(payload.calendarEventId).toBe('evt-42');
     expect(payload.title).toBe('My Meeting');
     expect(payload.startsAt).toBe('2026-10-01T09:00:00Z');
+    expect(payload.reminderMinutes).toBe(15);
     expect(payload.userId).toBe('user-1');
   });
 

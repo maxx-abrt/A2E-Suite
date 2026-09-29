@@ -187,9 +187,10 @@
         "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-front clean; oxlint --type-aware + oxfmt --check on touched files; targeted jest for inbox + calendar touched modules green; no i18n catalog churn; no AI attribution"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "Closes the last code-level P4C.4 leg; P4C.4's tick itself stays gated on the Tier-2 live delivery brief. Lane L-UX/inbox.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-110",
@@ -599,6 +600,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-29T21:19:06.178Z"
+    "updatedAt": "2026-09-29T21:29:55.847Z"
   }
 }

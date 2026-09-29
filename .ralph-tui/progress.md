@@ -86,7 +86,18 @@ after each iteration and it's included in prompts for context.
   (fr). Relevant gate: `node docs/scripts/check-docs.mjs` plus
   `npx tsx scripts/lint-mdx.ts`; path-based `prettier --check` flags some
   committed JSON (`docs.json`, `base-structure.json`) at HEAD too, so judge
-  formatting churn against the base, not the current tree.
+   formatting churn against the base, not the current tree.
+- The inbox (`packages/twenty-front/src/modules/inbox`) deep-links by returning a
+  URL string that `InboxPage` `navigate()`s — a store-driven side-panel open is
+  not URL-expressible, so native records use `AppPath.RecordShowPage` with
+  `CoreObjectNameSingular`. The server `CALENDAR_REMINDER` payload shape is
+  `{ calendarEventId, title, startsAt, reminderMinutes, userId, timezone }`.
+- twenty-front component tests of anything using `useLingui` must wrap the render
+  in `I18nProvider` with `i18n.load({ [SOURCE_LOCALE]: messages })` /
+  `i18n.activate(SOURCE_LOCALE)` (pattern: `chat/components/__tests__/ChatSidebar.test.tsx`);
+  `@lingui/swc-plugin` is already in the jest transform. Tabler icons emit a
+  `tabler-icon-<kebab-name>` class, so icon mapping is asserted with
+  `container.querySelector('.tabler-icon-calendar-event')`.
 
 ---
 
@@ -213,4 +224,15 @@ after each iteration and it's included in prompts for context.
   - `docs.json` is generated from `base-structure.json` + `l/<lang>/navigation.json` via `yarn docs:generate`; non-default-language pages are only emitted when the localized `.mdx` exists.
   - `mintlify validate` fails repo-wide on a pre-existing parse warning in `l/ar/.../implementation-services.mdx` (untouched) — the docs AC gate `node docs/scripts/check-docs.mjs` passes.
   - `prettier --check` flags `docs.json`/`base-structure.json` at HEAD too (path-based config), so those warnings are not introduced here.
+---
+
+## 2026-09-29 - US-109 (US-092: inbox CALENDAR_REMINDER label/icon/deep-link — P4C.4 front leg)
+- Inbox now renders `CALENDAR_REMINDER`: Lingui label "Calendar event reminder", `IconCalendarEvent` (no Calendar concept exists in the icon dictionary → selection rule 5, and it is already the event icon across the P4C surfaces), and a deep link to the native `calendarEvent` record page.
+- Added `parseCalendarReminderNotificationPayload.ts` (defensive title/startsAt/reminderMinutes/calendarEventId read; nulls on missing keys) and `formatCalendarReminderStart.ts` (ISO→local, invalid→null). The item shows the event title, "Starts …" and "N min before" / "At the time of the event".
+- Added one additive server payload key: `reminderMinutes` in `buildCalendarReminderNotificationPayload` (the acceptance names it; only title/startsAt existed).
+- Files changed: `InboxNotificationItem.tsx`, `resolveNotificationDeepLink.ts`, 2 new utils, 3 new/extended spec files, server `calendar-reminder.util.ts` + spec, phase-04-report.
+- **Learnings:**
+  - `icon-dictionary.md` has no Calendar/Event row — rule 5 says reuse an existing `twenty-ui/icon` icon; `IconCalendarEvent` is the sibling-surface choice.
+  - The inbox row preview already returned `title` (it is in `PREVIEW_PAYLOAD_KEYS`), so the calendar leg only had to add the start/lead lines.
+  - All Tier-0 gates green (inbox 44, server calendar+notification 126, tsgo both packages, oxlint 0/0); Tier-2 live click-through is the orchestrator's.
 ---

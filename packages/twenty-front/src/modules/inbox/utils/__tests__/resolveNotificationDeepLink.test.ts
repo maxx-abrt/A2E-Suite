@@ -56,6 +56,25 @@ describe('resolveNotificationDeepLink', () => {
     ).toBe('/object/document/document-1');
   });
 
+  it('deep-links a calendar reminder to the calendar event record page', () => {
+    expect(
+      resolveNotificationDeepLink(
+        buildNotification(
+          { calendarEventId: 'event-1', title: 'Weekly review' },
+          'CALENDAR_REMINDER',
+        ),
+      ),
+    ).toBe('/object/calendarEvent/event-1');
+  });
+
+  it('returns null for a calendar reminder without an event id', () => {
+    expect(
+      resolveNotificationDeepLink(
+        buildNotification({ title: 'Weekly review' }, 'CALENDAR_REMINDER'),
+      ),
+    ).toBeNull();
+  });
+
   it('returns null for an unknown target so the inbox stays graceful', () => {
     expect(
       resolveNotificationDeepLink(buildNotification({ foo: 'bar' }, 'SYSTEM')),

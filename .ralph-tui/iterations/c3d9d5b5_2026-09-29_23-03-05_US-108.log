@@ -1,0 +1,339 @@
+# Iteration 9 Log
+
+## Metadata
+
+- **Task ID**: US-108
+- **Task Title**: M12a: product documentation information architecture (user-guide/a2e-suite + docs.json nav)
+- **Description**: As a user or admin, I want an in-app-linked user guide skeleton for A2E Suite so that every documented surface has a home. Starting state: not started — packages/twenty-docs/user-guide/ has no a2e-sui...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-29T21:03:05.237Z
+- **Ended At**: 2026-09-29T21:19:06.178Z
+- **Duration**: 16m 0s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ ls packages/twenty-docs/user-guide/ 2>/dev/null
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-108" PLAN.md
+[94m[bash][0m $ grep -rn "US-108" docs/plan/phases/ 2>/dev/null | tail -20
+[94m[bash][0m $ grep -rn "US-108\|M12a" PLAN.md tasks/prd.json 2>/dev/null | head -30
+[94m[bash][0m $ grep -rln "US-108\|M12a" docs/ 2>/dev/null | head -20
+[94m[bash][0m $ sed -n '430,530p' PLAN.md
+[94m[bash][0m $ ls docs/plan/phases/
+[94m[bash][0m $ sed -n '155,180p' tasks/prd.json
+[94m[bash][0m $ cat packages/twenty-docs/docs.json 2>/dev/null | head -120
+[94m[bash][0m $ cat packages/twenty-docs/package.json 2>/dev/null
+[94m[bash][0m $ ls packages/twenty-docs/user-guide/ai 2>/dev/null
+[94m[bash][0m $ sed -n '80,260p' docs/scripts/check-docs.mjs
+[94m[bash][0m $ grep -n "\"language\"\|user-guide/a2e\|A2E" packages/twenty-docs/docs.json | head -40
+[94m[bash][0m $ sed -n '505,540p' packages/twenty-docs/docs.json
+[94m[bash][0m $ ls packages/twenty-docs/user-guide/getting-started/how-tos/
+[94m[bash][0m $ find packages/twenty-docs/l/fr/user-guide/getting-started -type f 2>/dev/null | head
+[94m[bash][0m $ head -40 packages/twenty-docs/l/fr/user-guide/ai/overview.mdx 2>/dev/null
+[94m[bash][0m $ cat packages/twenty-docs/vitest.config.mts
+[94m[bash][0m $ grep -rn "US-048\|check-docs\|twenty-docs\|docs-only" docs/plan/phases/*.md | tail -30
+[94m[bash][0m $ head -80 packages/twenty-docs/scripts/generate-docs-json.ts
+[94m[bash][0m $ head -60 packages/twenty-docs/scripts/generate-navigation-template.ts
+[94m[bash][0m $ grep -n "user-guide\|\"key\"" packages/twenty-docs/navigation/base-structure.json | head -60
+[94m[bash][0m $ ls packages/twenty-docs/navigation/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docs/navigation/base-structure.json
+[94m[bash][0m $ sed -n '80,220p' packages/twenty-docs/scripts/generate-docs-json.ts
+[94m[bash][0m $ grep -n "userGuide\|dataModel\|overview" packages/twenty-docs/l/fr/navigation.json | head -30
+[94m[bash][0m $ grep -rn "generate-docs-json\|generate-navigation\|base-structure" packages/twenty-docs/README.md pa...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docs/README.md
+[94m[bash][0m $ ls packages/twenty-apps/internal/*/src/navigation-menu-items/ 2>/dev/null
+[94m[bash][0m $ grep -rn "label:" packages/twenty-apps/internal/*/src/navigation-menu-items/*.ts 2>/dev/null | head ...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/src/navigation-menu-items/projects.navigation-menu-it...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-accounting/src/navigation-menu-items/dashboard.navigation-menu...
+[94m[bash][0m $ grep -n "Bureau\|Agenda\|Bilan\|Syna\|Archive\|Template\|app name\|landing" docs/product-experience....
+[94m[bash][0m $ grep -rn "name: '" packages/twenty-apps/internal/*/src/navigation-menu-items/*.ts 2>/dev/null
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/views/ packages/twenty-apps/internal/a2e-document...
+[94m[bash][0m $ grep -rn "name: '" packages/twenty-apps/internal/a2e-projects/src/views/*.ts packages/twenty-apps/in...
+[94m[bash][0m $ grep -rn "name: '" packages/twenty-apps/internal/a2e-accounting/src/views/*.ts packages/twenty-apps/...
+[94m[bash][0m $ grep -rln "FICHE_TEMPLATES" packages/twenty-apps/internal/a2e-accounting/src/
+[94m[bash][0m $ grep -n "key:\|title:\|label:\s*'[A-ZÀ-ÿ]" packages/twenty-apps/internal/a2e-accounting/src/lib/fich...
+[94m[bash][0m $ sed -n '1,55p' packages/twenty-apps/internal/a2e-accounting/src/lib/fiche-templates.ts
+[94m[bash][0m $ grep -n "    key: '\|    label: '" packages/twenty-apps/internal/a2e-accounting/src/lib/fiche-templa...
+[94m[bash][0m $ grep -n "^    key: '\|^    label: '" packages/twenty-apps/internal/a2e-accounting/src/lib/fiche-temp...
+[94m[bash][0m $ ls packages/twenty-apps/internal/*/src/command-menu-items/ 2>/dev/null
+[94m[bash][0m $ grep -rn "label: '" packages/twenty-apps/internal/a2e-drive/src/command-menu-items/*.ts 2>/dev/null
+[94m[bash][0m $ grep -rn "\"version\"" packages/twenty-front/package.json packages/twenty-server/package.json packag...
+[94m[bash][0m $ grep -h "\"version\"" packages/twenty-apps/internal/*/package.json | sort | uniq -c
+[94m[bash][0m $ ls packages/twenty-front/src/modules/template-gallery/ 2>/dev/null
+[94m[bash][0m $ ls packages/twenty-front/src/pages/ | grep -i "drive\|calendar\|template\|ai"
+[94m[bash][0m $ sed -n '1,15p' docs/plan/phases/phase-14-report.md
+[94m[bash][0m $ ls packages/twenty-front/src/pages/drive 2>/dev/null
+[94m[bash][0m $ ls packages/twenty-front/src/modules/command-menu/ 2>/dev/null | head -30
+[94m[bash][0m $ grep -rln "Calendar\|Event\|Drive\|Help" packages/twenty-front/src/modules/command-menu/ 2>/dev/null...
+[94m[bash][0m $ grep -rln "Agenda" packages/twenty-front/src/ 2>/dev/null | head
+[94m[bash][0m $ grep -n "M11a\|M11b\|related\|link picker\|Related" PLAN.md | head
+[94m[bash][0m $ sed -n '360,400p' PLAN.md
+[94m[bash][0m $ grep -o '"icon": "[^"]*"' packages/twenty-docs/navigation/base-structure.json | sort -u
+[94m[bash][0m $ grep -n "supported-languages" -A15 packages/twenty-docs/navigation/supported-languages.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docs/navigation/base-structure.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docs/navigation/base-structure.json
+[94m[write][0m "# Phase 16 report — M12 Product documentation (user-facing, from the real UI)
+
+CLAIMED — US-108/M12a — deepseek-v4.1-flash — 2026-09-29T23:05:00Z — base f43b8a7555100b249e556dfbd1791763d383f130
+"
+Now I'll claim the slice by creating the phase-16 report.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-16-report.md
+[94m[bash][0m $ grep -rn "t\`\|title" packages/twenty-front/src/pages/drive/DrivePage.tsx 2>/dev/null | head
+[94m[bash][0m $ grep -rn "t\`" packages/twenty-front/src/modules/calendar/components/CalendarAgendaView.tsx 2>/dev/n...
+[94m[bash][0m $ grep -rn "title=\|label=\|t\`" packages/twenty-front/src/modules/ai/components/*.tsx 2>/dev/null | h...
+[94m[bash][0m $ grep -rn "Ask Syna\|Syna" packages/twenty-front/src/modules/ai/constants/*.ts 2>/dev/null | head
+[94m[bash][0m $ grep -rn "t\`\|title=\|label=" packages/twenty-front/src/pages/settings/ai/SettingsAI.tsx packages/t...
+[94m[bash][0m $ sed -n '25,40p' packages/twenty-apps/internal/a2e-documents/src/views/templates.view.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/fields/ packages/twenty-apps/internal/a2e-project...
+[94m[bash][0m $ ls packages/twenty-docs/l/fr/user-guide/ai/ packages/twenty-docs/l/fr/user-guide/settings/ 2>/dev/nu...
+[94m[bash][0m $ 707,713p' packages/twenty-apps/internal/a2e-accounting/src/lib/fiche-templates.ts
+[94m[write][0m "---
+title: A2E Suite
+description: Map of the A2E Suite user guide and the surfaces every page will document.
+---
+
+> **Version documented:** A2E Suite 0.2.1 · Twenty 2.39.0.
+>
+> This is the M12a inform... (1649 chars)"
+[94m[write][0m "---
+title: Getting started
+description: Create a workspace, pick a starting point and learn the shell.
+---
+
+> **Version documented:** A2E Suite 0.2.1 · Twenty 2.39.0.
+>
+> This is the M12a skeleton. Th... (1250 chars)"
+[94m[write][0m "---
+title: Bureau
+description: The work and knowledge experience — documents, projects, tasks and discussions.
+---
+
+> **Version documented:** A2E Suite 0.2.1 · Twenty 2.39.0.
+>
+> This is the M12a skel... (1632 chars)"
+[94m[write][0m "---
+title: Agenda
+description: Calendar events, recurrence, reminders and task deadlines.
+---
+
+> **Version documented:** A2E Suite 0.2.1 · Twenty 2.39.0.
+>
+> This is the M12a skeleton. The walkthrough... (1110 chars)"
+[94m[write][0m "---
+title: Bilan
+description: Quotes, invoices, ledger, fiches and funding for associations and small businesses.
+---
+
+> **Version documented:** A2E Suite 0.2.1 · Twenty 2.39.0.
+>
+> This is the M12a s... (1674 chars)"
+[94m[write][0m "---
+title: Syna
+description: The AI assistant — bring-your-own-key, chat, tools and zero-AI mode.
+---
+
+> **Version documented:** A2E Suite 0.2.1 · Twenty 2.39.0.
+>
+> This is the M12a skeleton. The wal... (1180 chars)"
+[94m[write][0m "---
+title: Archive
+description: Drive folders, file upload, previews, sharing and storage usage.
+---
+
+> **Version documented:** A2E Suite 0.2.1 · Twenty 2.39.0.
+>
+> This is the M12a skeleton. The walk... (902 chars)"
+[94m[write][0m "---
+title: Templates
+description: The shared template catalogue and how to apply a template.
+---
+
+> **Version documented:** A2E Suite 0.2.1 · Twenty 2.39.0.
+>
+> This is the M12a skeleton. This page is... (1226 chars)"
+[94m[write][0m "---
+title: Working across apps
+description: Link records across apps and read the Related panel.
+---
+
+> **Version documented:** A2E Suite 0.2.1 · Twenty 2.39.0.
+>
+> This is the M12a skeleton. The walk... (1026 chars)"
+[94m[write][0m "---
+title: Admin & self-host
+description: Provisioning, app install/upgrade/uninstall, roles, keys and backups.
+---
+
+> **Version documented:** A2E Suite 0.2.1 · Twenty 2.39.0.
+>
+> This is the M12a ske... (1075 chars)"
+Now I'll create the 11 English stub pages.
+[94m[write][0m "---
+title: FAQ / Troubleshooting
+description: Recurring questions and fixes for each A2E Suite surface.
+---
+
+> **Version documented:** A2E Suite 0.2.1 · Twenty 2.39.0.
+>
+> This is the M12a skeleton. T... (1230 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docs/user-guide/a2e-suite/admin-and-self-host.mdx
+[94m[write][0m "---
+title: Suite A2E
+description: Plan du guide utilisateur de la Suite A2E et des surfaces documentées.
+---
+
+> **Version documentée :** Suite A2E 0.2.1 · Twenty 2.39.0.
+>
+> Ceci est la charpente d'ar... (1754 chars)"
+[94m[write][0m "---
+title: Prise en main
+description: Créer un espace, choisir un point de départ et apprendre l'interface.
+---
+
+> **Version documentée :** Suite A2E 0.2.1 · Twenty 2.39.0.
+>
+> Ceci est l'ébauche M12a... (1246 chars)"
+[94m[write][0m "---
+title: Bureau
+description: L'expérience travail et connaissance — documents, projets, tâches et discussions.
+---
+
+> **Version documentée :** Suite A2E 0.2.1 · Twenty 2.39.0.
+>
+> Ceci est l'ébauche... (1691 chars)"
+[94m[write][0m "---
+title: Agenda
+description: Événements de calendrier, récurrence, rappels et échéances de tâches.
+---
+
+> **Version documentée :** Suite A2E 0.2.1 · Twenty 2.39.0.
+>
+> Ceci est l'ébauche M12a. Le pa... (1208 chars)"
+[94m[write][0m "---
+title: Bilan
+description: Devis, factures, livre, fiches et subventions pour associations et petites structures.
+---
+
+> **Version documentée :** Suite A2E 0.2.1 · Twenty 2.39.0.
+>
+> Ceci est l'éba... (1698 chars)"
+[94m[write][0m "---
+title: Syna
+description: L'assistant IA — clé personnelle, chat, outils et mode sans IA.
+---
+
+> **Version documentée :** Suite A2E 0.2.1 · Twenty 2.39.0.
+>
+> Ceci est l'ébauche M12a. Le parcours e... (1318 chars)"
+[94m[write][0m "---
+title: Archive
+description: Dossiers Drive, envoi de fichiers, aperçus, partage et usage de stockage.
+---
+
+> **Version documentée :** Suite A2E 0.2.1 · Twenty 2.39.0.
+>
+> Ceci est l'ébauche M12a. ... (986 chars)"
+[94m[write][0m "---
+title: Modèles
+description: Le catalogue de modèles partagé et comment appliquer un modèle.
+---
+
+> **Version documentée :** Suite A2E 0.2.1 · Twenty 2.39.0.
+>
+> Ceci est l'ébauche M12a. Cette page... (1318 chars)"
+[94m[write][0m "---
+title: Travail entre apps
+description: Lier des enregistrements entre apps et lire le panneau Liés.
+---
+
+> **Version documentée :** Suite A2E 0.2.1 · Twenty 2.39.0.
+>
+> Ceci est l'ébauche M12a. Le... (1161 chars)"
+[94m[write][0m "---
+title: Admin et auto-hébergement
+description: Provisionnement, installation/mise à niveau/désinstallation, rôles, clés et sauvegardes.
+---
+
+> **Version documentée :** Suite A2E 0.2.1 · Twenty 2.39... (1190 chars)"
+[94m[write][0m "---
+title: FAQ / Dépannage
+description: Questions récurrentes et correctifs pour chaque surface de la Suite A2E.
+---
+
+> **Version documentée :** Suite A2E 0.2.1 · Twenty 2.39.0.
+>
+> Ceci est l'ébauche... (1347 chars)"
+Now the 11 French pages.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docs/navigation/base-structure.json
+Now register the group in the base structure and French labels.
+[94m[bash][0m $ grep -n "legal\|userGuide\|\"tabs\"" packages/twenty-docs/l/fr/navigation.json | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docs/l/fr/navigation.json
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docs/l/fr/navigation.json
+[94m[bash][0m $ yarn docs:generate && yarn docs:generate-navigation-template 2>&1 | tail -20
+[94m[bash][0m $ git diff --stat -- packages/twenty-docs/docs.json packages/twenty-docs/navigation/navigation.templat...
+[94m[bash][0m $ git diff -- packages/twenty-docs/docs.json | head -80
+[94m[bash][0m $ echo "exit=$?"
+[94m[bash][0m $ echo "exit=$?"
+[94m[bash][0m $ echo "exit=${PIPESTATUS[0]:-$?}"
+[94m[bash][0m $ grep -in "warn\|error\|a2e" /tmp/mint-validate.log | head -40
+[94m[bash][0m $ npx prettier --check packages/twenty-docs/navigation/base-structure.json packages/twenty-docs/naviga...
+[94m[bash][0m $ git show HEAD:packages/twenty-docs/navigation/base-structure.json | npx prettier --check --stdin-fil...
+[94m[bash][0m $ diff packages/twenty-docs/navigation/base-structure.json /tmp/base.pretty.json | head -20
+[94m[bash][0m $ cat .prettierrc 2>/dev/null | head -20
+[94m[bash][0m $ grep -n "prettier" package.json | head
+[94m[bash][0m $ npx prettier --check --parser json < /tmp/base-head.json 2>&1 | tail -2
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/package.json
+[94m[bash][0m $ npx prettier --check --parser json < packages/twenty-docs/navigation/base-structure.json 2>&1 | tail...
+[94m[bash][0m $ ls -a packages | grep -i prett
+[94m[bash][0m $ rm packages/twenty-docs/__tmp_docs.json
+[94m[bash][0m $ npx prettier --write "packages/twenty-docs/user-guide/a2e-suite/*.mdx" "packages/twenty-docs/l/fr/us...
+[94m[bash][0m $ grep -n "Guide map\|Plan du guide" -A14 packages/twenty-docs/user-guide/a2e-suite/overview.mdx
+[94m[bash][0m $ node docs/scripts/check-docs.mjs && npx prettier --check "packages/twenty-docs/user-guide/a2e-suite/...
+[94m[bash][0m $ npx tsx scripts/lint-mdx.ts 2>&1 | tail -3
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/objects/ packages/twenty-apps/internal/a2e-projec...
+[94m[bash][0m $ grep -rn "Connect a provider\|Ask Syna\|Browse all\|Get more credits" packages/twenty-front/src pack...
+[94m[bash][0m $ rg -l "New folder" packages/twenty-front/src/pages/drive 2>/dev/null
+[94m[bash][0m $ rg -n "Get more credits" packages/twenty-front/src/modules/ai/components/AIChatNoMoreBillingCreditsB...
+[94m[bash][0m $ grep -rn "New folder" packages/twenty-front/src/pages/drive/DrivePage.tsx | head -2
+[94m[bash][0m $ grep -rln "SettingsPath.Workspace\|Workspace:" packages/twenty-front/src/modules/settings/ 2>/dev/nu...
+[94m[bash][0m $ grep -n "label: t\`\|t\`Workspace\|t\`Members\|t\`Profile\|t\`Experience\|t\`Domains\|t\`Community" ...
+[94m[bash][0m $ grep -rn "Roles =\|Roles:" packages/twenty-front/src/modules/settings/types/SettingsPath.ts 2>/dev/n...
+[94m[bash][0m $ find packages/twenty-front/src/modules/settings -name "SettingsPath*" | head
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docs/user-guide/a2e-suite/getting-started.mdx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docs/l/fr/user-guide/a2e-suite/getting-started.mdx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docs/user-guide/a2e-suite/admin-and-self-host.mdx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docs/l/fr/user-guide/a2e-suite/admin-and-self-host.mdx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docs/user-guide/a2e-suite/syna.mdx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docs/l/fr/user-guide/a2e-suite/syna.mdx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docs/user-guide/a2e-suite/templates.mdx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docs/l/fr/user-guide/a2e-suite/templates.mdx
+[94m[bash][0m $ ls packages/twenty-docs/l/fr/user-guide/a2e-suite/ | wc -l
+[94m[bash][0m $ cd packages/twenty-docs && npx tsx scripts/lint-mdx.ts 2>&1 | tail -2
+[94m[bash][0m $ yarn docs:generate >/dev/null 2>&1 && yarn docs:generate-navigation-template >/dev/null 2>&1 && git ...
+[94m[bash][0m $ echo "checked=$total miss=$miss"
+[94m[bash][0m $ wc -l /tmp/a2e-labels.txt
+[94m[bash][0m $ done < /tmp/a2e-labels.txt
+[94m[bash][0m $ comm -23 /tmp/a2e-labels.txt /tmp/a2e-found.txt
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ grep -n "^## 2026\|^---" .ralph-tui/progress.md | head -5
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -8 .ralph-tui/progress.md
+[94m[bash][0m $ non-default-language pages are only emitted when the localized `.mdx` exists.   - `mintlify validate...
+[94m[bash][0m $ executor may then start M12b (Getting started) once its cited screens are confirmed, or M12d's descr...
+[94m[bash][0m $ ls packages/twenty-docs/l/fr/user-guide/a2e-suite/
+[94m[bash][0m $ node docs/scripts/check-docs.mjs && (cd packages/twenty-docs && npx tsx scripts/lint-mdx.ts) && npx ...
+US-108 (M12a) complete — `done-for-review`, ready to tick.
+
+- Added 11 en stub pages (`packages/twenty-docs/user-guide/a2e-suite/*.mdx`) + 11 fr pages (`l/fr/user-guide/a2e-suite/*.mdx`); each states `Suite A2E 0.2.1 · Twenty 2.39.0` and lists the exact real screens (source-grep-verified labels); unshipped labels are marked Planned.
+- Registered the `a2eSuite` group in `navigation/base-structure.json` + fr label in `l/fr/navigation.json`, regenerated `docs.json` and `navigation.template.json`.
+- Gates: `check-docs.mjs` PASS, `lint-mdx.ts` PASS, new mdx prettier-clean; lint/tsgo N/A (docs-only). `twenty-docs:validate` fails only on a pre-existing ar-locale parse warning, unrelated to this change.
+- Reports appended to `docs/plan/phases/phase-16-report.md` and `.ralph-tui/progress.md` (plus a reusable docs-nav pattern).
+
+<promise>COMPLETE</promise>

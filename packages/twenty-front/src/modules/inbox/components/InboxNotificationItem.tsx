@@ -1,10 +1,12 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconAlertTriangle,
   IconArchive,
   IconAt,
   IconBell,
+  IconCalendarEvent,
   IconCheckbox,
   IconEye,
   IconMessage,
@@ -13,7 +15,9 @@ import { Checkbox } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type InboxNotification } from '@/inbox/types/InboxNotification';
+import { formatCalendarReminderStart } from '@/inbox/utils/formatCalendarReminderStart';
 import { getInboxNotificationPreview } from '@/inbox/utils/getInboxNotificationPreview';
+import { parseCalendarReminderNotificationPayload } from '@/inbox/utils/parseCalendarReminderNotificationPayload';
 import { resolveNotificationDeepLink } from '@/inbox/utils/resolveNotificationDeepLink';
 
 const StyledRow = styled.div<{ isSelected: boolean }>`
@@ -122,6 +126,8 @@ export const InboxNotificationItem = ({
         return t`Assigned to you`;
       case 'WATCHED_RECORD_CHANGED':
         return t`A watched record changed`;
+      case 'CALENDAR_REMINDER':
+        return t`Calendar event reminder`;
       case 'INVOICE_OVERDUE':
         return t`An invoice is overdue`;
       case 'PAYMENT_RECEIVED':
@@ -145,6 +151,8 @@ export const InboxNotificationItem = ({
         return <IconCheckbox size={16} />;
       case 'WATCHED_RECORD_CHANGED':
         return <IconEye size={16} />;
+      case 'CALENDAR_REMINDER':
+        return <IconCalendarEvent size={16} />;
       case 'INVOICE_OVERDUE':
       case 'PAYMENT_RECEIVED':
       case 'BUDGET_ALERT':
@@ -157,6 +165,22 @@ export const InboxNotificationItem = ({
   };
 
   const preview = getInboxNotificationPreview(notification);
+
+  const calendarReminder =
+    notification.type === 'CALENDAR_REMINDER'
+      ? parseCalendarReminderNotificationPayload(notification.payload)
+      : null;
+
+  const calendarReminderStartLabel = isDefined(calendarReminder)
+    ? formatCalendarReminderStart(calendarReminder.startsAt)
+    : null;
+
+  const calendarReminderLeadLabel =
+    isDefined(calendarReminder) && calendarReminder.reminderMinutes !== null
+      ? calendarReminder.reminderMinutes === 0
+        ? t`At the time of the event`
+        : t`${calendarReminder.reminderMinutes} min before`
+      : null;
 
   return (
     <StyledRow
@@ -189,6 +213,14 @@ export const InboxNotificationItem = ({
             <StyledPreview>
               {t`This notification has no destination`}
             </StyledPreview>
+          )}
+          {isActionable && calendarReminderStartLabel !== null && (
+            <StyledPreview>
+              {t`Starts ${calendarReminderStartLabel}`}
+            </StyledPreview>
+          )}
+          {isActionable && calendarReminderLeadLabel !== null && (
+            <StyledPreview>{calendarReminderLeadLabel}</StyledPreview>
           )}
         </StyledBody>
         <StyledTime>

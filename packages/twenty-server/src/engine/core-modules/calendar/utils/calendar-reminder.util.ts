@@ -122,6 +122,9 @@ export const buildCalendarReminderNotificationPayload = (
   calendarEventId: event.id,
   title: event.title ?? '',
   startsAt: event.startsAt ?? '',
+  // The lead time the reminder was scheduled with, so the inbox can render
+  // "15 min before" without re-reading the event.
+  reminderMinutes: event.reminderMinutes,
   userId,
   // Include the timezone for the notification template (D05: display only,
   // not used for delivery gating).
