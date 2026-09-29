@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DefaultAiCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/default-ai-catalog.service';
+import { WorkspaceAiProviderService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-provider.service';
 
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
+import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
 
@@ -13,6 +17,7 @@ export class ProviderConfigService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly defaultAiCatalogService: DefaultAiCatalogService,
+    private readonly workspaceAiProviderService: WorkspaceAiProviderService,
   ) {}
 
   getCatalogProviderNames(): Set<string> {
@@ -38,6 +43,76 @@ export class ProviderConfigService {
     const custom = this.twentyConfigService.get('AI_PROVIDERS');
 
     return { ...catalog, ...custom };
+  }
+
+  // Resolution order: workspace BYOK provider → instance AI_PROVIDERS →
+  // committed catalog. Workspace entries are merged last and never run through
+  // resolveTemplates, matching the rule that custom provider values are not
+  // template-resolved. They are also merged even when includeCustomProviders is
+  // false: a workspace's own key carries its own provider cost, so the
+  // instance-level custom-provider entitlement does not gate it (D-N4).
+  async getResolvedProvidersForWorkspace({
+    workspaceId,
+    includeCustomProviders = true,
+  }: {
+    workspaceId: string;
+    includeCustomProviders?: boolean;
+  }): Promise<AiProvidersConfig> {
+    const resolvedProviders = this.getResolvedProviders({
+      includeCustomProviders,
+    });
+    const workspaceProviders =
+      await this.workspaceAiProviderService.resolveProviders(workspaceId);
+
+    return workspaceProviders.reduce<AiProvidersConfig>(
+      (providers, workspaceProvider) => {
+        const baseProvider = providers[workspaceProvider.providerName];
+
+        return {
+          ...providers,
+          [workspaceProvider.providerName]: {
+            ...baseProvider,
+            ...workspaceProvider.providerConfig,
+            ...this.buildWorkspaceModelsForProvider({
+              baseProvider,
+              workspaceProviderModels: [
+                workspaceProvider.defaultModel,
+                workspaceProvider.fastModel,
+              ],
+            }),
+          },
+        };
+      },
+      resolvedProviders,
+    );
+  }
+
+  // A provider that only exists in the workspace entry (an OpenAI-compatible
+  // base URL, typically) has no catalog models to inherit, so the models the
+  // admin selected are registered as the provider's model list. Catalog
+  // providers keep their full committed list instead.
+  private buildWorkspaceModelsForProvider({
+    baseProvider,
+    workspaceProviderModels,
+  }: {
+    baseProvider?: AiProviderConfig;
+    workspaceProviderModels: Array<string | null>;
+  }): { models?: AiProviderModelConfig[] } {
+    if (baseProvider?.models?.length) {
+      return {};
+    }
+
+    const modelNames = [
+      ...new Set(workspaceProviderModels.filter(isNonEmptyString)),
+    ];
+
+    if (modelNames.length === 0) {
+      return {};
+    }
+
+    return {
+      models: modelNames.map((name) => ({ name, label: name })),
+    };
   }
 
   private resolveTemplates(providers: AiProvidersConfig): AiProvidersConfig {

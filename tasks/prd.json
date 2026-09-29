@@ -57,9 +57,10 @@
         "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-server clean; oxlint --type-aware + oxfmt --check on touched files; targeted jest for the resolution order + encryption; integration suite green on the test DB (NODE_ENV=test, --runInBand); no i18n catalog churn; no AI attribution"
       ],
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "notes": "Server-only slice named in the Execution-order guidance ('M10a (server-only)'). Unblocks 4 downstream bullets: US-127 (M10a-2 Settings UI), US-128 (M10b), US-129 (M10c), US-130 (M10d). Lane L-AI.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-103",
@@ -592,6 +593,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-29T19:46:39.840Z"
+    "updatedAt": "2026-09-29T20:20:18.763Z"
   }
 }

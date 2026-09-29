@@ -1,0 +1,270 @@
+# Iteration 2 Log
+
+## Metadata
+
+- **Task ID**: US-101
+- **Task Title**: M7b: internal-route nav items — server allow-list validation + front pass-through (resolves D09)
+- **Description**: As a user, I want app-defined sidebar rows that open host pages (/calendar, /drive, /discussions, /inbox, /chat) in-app so that Agenda/Archive/Syna are reachable from the sidebar like native sections....
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-29T19:11:23.488Z
+- **Ended At**: 2026-09-29T19:46:39.832Z
+- **Duration**: 35m 16s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-101" PLAN.md | head -50
+[94m[bash][0m $ ls docs/plan/phases/ | tail -30
+[94m[bash][0m $ grep -n "US-101\|M7b" tasks/prd.json | head -20
+[94m[bash][0m $ grep -n "M7b\|M7c\|M7d\|D09\|internal-route\|allow-list" PLAN.md | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[bash][0m $ grep -n "US-101\|CLAIMED\|M7b" docs/plan/phases/phase-11-report.md | tail -60
+[94m[bash][0m $ wc -l docs/plan/phases/phase-11-report.md && tail -40 docs/plan/phases/phase-11-report.md
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-11-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-11-report.md
+[94m[grep][0m pattern: [96mdefineNavigationMenuItem[0m
+[94m[grep][0m pattern: [96menum AppPath[0m
+[94m[grep][0m pattern: [96mgetLinkNavigationMenuItemComputedLink[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/AppPath.ts
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rln "create-navigation-menu-item\|link.*z.string().url()\|\.url()" packages/twenty-server/src ...
+[94m[bash][0m $ grep -rln "navigation-menu-item" packages/twenty-server/src --include=*.ts | head -60
+[94m[grep][0m [95mpackages/twenty-server/src[0m pattern: [96mcreate-navigation-menu-item[0m
+[94m[grep][0m [95mpackages/twenty-server/src[0m pattern: [96mz\.string\(\)\.url\(\)[0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-sdk/src/sdk/define/navigation-menu-items/
+[94m[grep][0m [95mpackages/twenty-shared/src[0m pattern: [96mNavigationMenuItemManifest[0m
+[94m[grep][0m [95mpackages/twenty-sdk/src[0m pattern: [96mNavigationMenuItemManifest|navigationMenuItem[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/navigationMenuItemManifestType.ts
+[94m[bash][0m $ ls -R packages/twenty-server/src/engine/metadata-modules/flat-navigation-menu-item/ 2>/dev/null | he...
+[94m[bash][0m $ ls -R packages/twenty-server/src/engine/metadata-modules/navigation-menu-item/ 2>/dev/null | head -8...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rln "export const isValidUrl\|isValidUrl =" packages/twenty-shared/src
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/url/isValidUrl.ts
+[94m[bash][0m $ ls packages/twenty-shared/src/utils/url/ && ls packages/twenty-shared/src/utils/ | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/url/absoluteUrlSchema.ts
+[94m[bash][0m $ ls -R packages/twenty-shared/src/utils/navigation/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/navigation/getAppPath.ts
+[94m[bash][0m $ grep -rn "getAppPath" packages/twenty-shared/src/utils/index.ts packages/twenty-shared/src/index.ts ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/applications.md
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-drive/package.json
+[94m[bash][0m $ grep -n '"version"\|"name"' packages/twenty-client-sdk/package.json 2>/dev/null | head
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/url/ensureAbsoluteUrl.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/navigation/__tests__/getAppPath.test.ts
+[94m[read][0m
+[94m[bash][0m $ grep -rn "NAVIGATION_MENU_ITEM_IDS\|VIEW_IDS" packages/twenty-apps/internal/a2e-chat/src/constants/u...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-chat/src/lib/__tests__/ packages/twenty-apps/internal/a2e-drive...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/src/lib/__tests__/chat-navigation.test.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/src/lib/chat-navigation.ts
+[94m[bash][0m $ grep -rn "chat-navigation\|CHAT_DISCUSSIONS_PATH" packages/twenty-apps/internal/a2e-chat/src
+[94m[bash][0m $ ls packages/twenty-sdk/src/sdk/define/common/
+[94m[bash][0m $ grep -rn "NavigationMenuItemManifest" packages/twenty-apps/internal/a2e-chat/node_modules/twenty-sdk...
+[94m[bash][0m $ sed -n '1095,1115p' packages/twenty-apps/internal/a2e-chat/node_modules/twenty-sdk/dist/define/index...
+[94m[bash][0m $ find packages/twenty-front/src/modules/navigation-menu-item -name "*.spec.ts" -o -name "*.test.ts" -...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-front/src/modules/navigation-menu-item -path "*edit*" -name "*.tsx" -o -path "*...
+[94m[bash][0m $ grep -rln "isNavigationMenuItemLink\|navigation-menu-item/edit\|linkValue\|z.string().url()" package...
+[94m[bash][0m $ find packages/twenty-shared -maxdepth 2 -name "jest.config*" -o -maxdepth 2 -name "vitest.config*" 2...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/index.ts
+[94m[bash][0m $ grep -rn "NavigationMenuItemType.LINK\|type: NavigationMenuItemType" packages/twenty-apps packages/t...
+[94m[bash][0m $ grep -rn "AppPath" packages/twenty-sdk/src/ | grep -v node_modules | head -30
+[94m[bash][0m $ grep -rln "twenty-shared/utils" packages/twenty-sdk/src | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/common/utils/create-validation-result.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/common/types/define-entity.type.ts
+[94m[todowrite][0m
+[94m[write][0m "// Base paths of the host routes an app-defined LINK navigation menu item may
+// open in-app. A LINK row is otherwise external-only; these mirror the
+// workspace router entries (AppPath.Calendar, .Dr... (559 chars)"
+[94m[write][0m "import { INTERNAL_NAVIGATION_MENU_ITEM_ROUTE_PATHS } from '@/utils/navigation/internalNavigationMenuItemRoutePaths';
+
+// Accepts only a host-relative path whose base matches an allow-listed native
+// ... (908 chars)"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/index.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/index.ts
+[94m[write][0m "import { isInternalNavigationMenuItemRoute } from '@/utils/navigation/isInternalNavigationMenuItemRoute';
+
+describe('isInternalNavigationMenuItemRoute', () => {
+  it.each([
+    '/calendar',
+    '/chat... (1420 chars)"
+[94m[bash][0m $ npx jest packages/twenty-shared/src/utils/navigation/__tests__/isInternalNavigationMenuItemRoute.tes...
+[94m[bash][0m $ npx nx build twenty-shared --skip-nx-cache 2>&1 | tail -20
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[write][0m "import { z } from 'zod';
+
+import {
+  isInternalNavigationMenuItemRoute,
+  isValidUrl,
+} from 'twenty-shared/utils';
+
+export const navigationMenuItemLinkSchema = z
+  .string()
+  .describe(
+    'Externa... (586 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/__tests__/validate-n...
+[94m[bash][0m $ } }"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/url/isValidHostname.ts
+[94m[write][0m "import { isInternalNavigationMenuItemRoute } from '@/utils/navigation/isInternalNavigationMenuItemRoute';
+import { isValidUrl } from '@/utils/url/isValidUrl';
+
+// A LINK nav item may target an absolut... (704 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/index.ts
+[94m[bash][0m $ grep -n "navigation/" packages/twenty-shared/src/utils/index.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/index.ts
+[94m[bash][0m $ npx nx build twenty-shared --skip-nx-cache 2>&1 | tail -8 && grep -n "navigation/" packages/twenty-s...
+[94m[edit][0m
+[94m[edit][0m
+[94m[write][0m "import { z } from 'zod';
+
+import { isAllowedNavigationMenuItemLink } from 'twenty-shared/utils';
+
+export const navigationMenuItemLinkSchema = z
+  .string()
+  .describe(
+    'External URL, or an allow-... (510 chars)"
+[94m[write][0m "import { isAllowedNavigationMenuItemLink } from '@/utils/navigation/isAllowedNavigationMenuItemLink';
+
+describe('isAllowedNavigationMenuItemLink', () => {
+  it.each([
+    'https://twenty.com',
+    'ht... (723 chars)"
+[94m[bash][0m $ npx jest src/utils/navigation --config=packages/twenty-shared/jest.config.mjs 2>&1 | tail -20
+[94m[bash][0m $ npx nx build twenty-shared --skip-nx-cache 2>&1 | tail -3 && npx jest src/engine/metadata-modules/fl...
+[94m[bash][0m $ grep -rln "create_navigation_menu_item\|createCreateNavigationMenuItemTool\|update_navigation_menu_i...
+[94m[bash][0m $ grep -rln "navigation-menu-item-link\|navigationMenuItemLinkSchema" packages/twenty-server/src 2>/de...
+[94m[grep][0m [95mpackages/twenty-server/src[0m pattern: [96mcreate_navigation_menu_item|createCreateNavigationMenuItemTool|updateCreateNavigationMenuItemTool|createUpdateNavigationMenuItemTool[0m
+[94m[write][0m "import { isInternalNavigationMenuItemRoute } from 'twenty-shared/utils';
+
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+
+export const getLinkNavigationMenuItemComputedLink = ... (673 chars)"
+[94m[edit][0m
+[94m[read][0m
+[94m[read][0m
+[94m[write][0m "import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemComputedLink';
+
+describe('getLinkNavigationMenuItemComputedLink', () => {
+  it... (1743 chars)"
+[94m[bash][0m $ grep -n "link" packages/twenty-front/src/generated-metadata/graphql.ts | grep -i "link?" | head
+[94m[bash][0m $ npx jest src/modules/navigation-menu-item/display/link/utils/__tests__/getLinkNavigationMenuItemComp...
+[94m[bash][0m $ ls packages/twenty-sdk/jest.config* 2>/dev/null
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-sdk -maxdepth 1 -name "*.mjs" -o -maxdepth 1 -name "*.js" -o -maxdepth 1 -name ...
+[94m[bash][0m $ find packages/twenty-sdk -maxdepth 2 -name "jest*" -o -maxdepth 2 -name "*.config.*" | grep -v node_...
+[94m[write][0m "import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
+import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
+import { NavigationMenuIt... (1311 chars)"
+[94m[write][0m "import { defineNavigationMenuItem } from '@/sdk/define';
+import { NavigationMenuItemType } from 'twenty-shared/types';
+
+const baseConfig = {
+  universalIdentifier: 'c31c0000-0010-4000-8000-00000000000... (1600 chars)"
+[94m[bash][0m $ grep -n "twenty-shared/types\|AppPath" packages/twenty-sdk/src/sdk/define/index.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/index.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/index.ts
+[94m[bash][0m $ npx vitest run src/sdk/define/navigation-menu-items/__tests__/define-navigation-menu-item.spec.ts --...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -30
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -30
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -30
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/navigation-menu-item/display/link/utils/getLin...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/sdk/define/navigation-menu-items/define-navigation-men...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/utils/navigation/internalNavigationMenuItemRoutePaths....
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/engine/metadata-modules/flat-navigation-menu-item/vali...
+[94m[bash][0m $ npx oxfmt --check src/utils/navigation/internalNavigationMenuItemRoutePaths.ts src/utils/navigation/...
+[94m[bash][0m $ npx oxfmt --check src/modules/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemCompu...
+[94m[bash][0m $ npx oxfmt src/utils/navigation/__tests__/isInternalNavigationMenuItemRoute.test.ts 2>&1 | tail -3
+[94m[bash][0m $ npx oxfmt --check src/sdk/define/navigation-menu-items/define-navigation-menu-item.ts src/sdk/define...
+[94m[bash][0m $ npx oxfmt --check src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-na...
+[94m[bash][0m $ npx oxfmt src/modules/navigation-menu-item/display/link/utils/__tests__/getLinkNavigationMenuItemCom...
+[94m[bash][0m $ npx oxfmt src/sdk/define/navigation-menu-items/define-navigation-menu-item.ts 2>&1 | tail -3
+[94m[bash][0m $ npx oxfmt src/engine/metadata-modules/navigation-menu-item/tools/update-navigation-menu-item.tool.ts...
+[94m[bash][0m $ grep -rn "navigation-menu-item\|NavigationMenuItemType\|NAVIGATION_MENU_ITEM_IDS" packages/twenty-ap...
+[94m[read][0m
+[94m[bash][0m $ grep -n "NAVIGATION_MENU\|navigationMenu\|viewUniversalIdentifier\|link" packages/twenty-apps/intern...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-drive/src -name "*integrity*" -o -name "*manifest*"
+[94m[write][0m "import {
+  defineNavigationMenuItem,
+  NavigationMenuItemType,
+} from 'twenty-sdk/define';
+
+import { NAVIGATION_MENU_ITEM_IDS } from '../constants/universal-identifiers.ts';
+import { CHAT_DISCUSSIONS_... (815 chars)"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/lib/drive-file-search.ts
+[94m[bash][0m $ grep -n "^import\|^const.*require" packages/twenty-apps/internal/a2e-drive/src/lib/drive-file-search...
+[94m[write][0m "import {
+  defineNavigationMenuItem,
+  NavigationMenuItemType,
+} from 'twenty-sdk/define';
+
+import { NAVIGATION_MENU_ITEM_IDS } from '../constants/universal-identifiers.ts';
+import { DRIVE_APP_PATH } ... (814 chars)"
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -15 && yarn lint 2>&1 | tail -15
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -15 && yarn lint 2>&1 | tail -15 && yarn test:unit 2>&1 | tail -20
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -25
+[94m[bash][0m $ grep -n "link\|Discussions\|navigationMenuItems" packages/twenty-apps/internal/a2e-chat/.twenty/outp...
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -12
+[94m[bash][0m $ grep -n "navigationMenuItems" -A 10 packages/twenty-apps/internal/a2e-drive/.twenty/output/manifest....
+[94m[bash][0m $ grep -rn "allChannels\|allDriveFolders\|navigation-menu-item\|Sidebar entry\|sidebar entry\|Sidebar"...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/README.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/README.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/README.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/README.md
+[94m[bash][0m $ grep -n '"version"' package.json packages/twenty-sdk/package.json packages/twenty-server/package.jso...
+[94m[bash][0m $ grep -rn "2.39.0" packages/twenty-sdk/src packages/twenty-shared/src 2>/dev/null | head
+[94m[bash][0m $ npx jest src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/__tests__/validate-n...
+[94m[bash][0m $ npx jest src/modules/navigation-menu-item/display/link --config=jest.config.mjs 2>&1 | tail -12
+[94m[bash][0m $ npx jest src/utils/navigation --config=packages/twenty-shared/jest.config.mjs 2>&1 | tail -8
+[94m[bash][0m $ npx jest --findRelatedTests src/modules/navigation-menu-item/display/link/utils/getLinkNavigationMen...
+[94m[bash][0m $ npx jest --findRelatedTests src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/v...
+[94m[bash][0m $ npx jest src/modules/side-panel/routing/components/__tests__/SidePanelPathRestore.test.tsx --config=...
+[94m[bash][0m $ git status --porcelain
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -15
+[94m[bash][0m $ grep -rn "requiredServerVersionRange\|version:bump" packages/twenty-sdk/src packages/twenty-server/s...
+[94m[grep][0m [95mpackages/twenty-sdk/src[0m pattern: [96mrequiredServerVersionRange[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-11-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-11-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain | grep -v ".ralph-tui\|tasks/prd.json"
+US-101 (M7b) implemented. Summary:
+
+- **Shared**: new allow-list (`INTERNAL_NAVIGATION_MENU_ITEM_ROUTE_PATHS`), `isInternalNavigationMenuItemRoute`, `isAllowedNavigationMenuItemLink` + tests; barrel regenerated.
+- **Server**: manifest LINK validator + AI create/update tool schema now accept an allow-listed host route (rejecting `//evil`, `//evil.com`, `javascript:`, unknown paths) while external URLs keep working.
+- **Front**: `getLinkNavigationMenuItemComputedLink` passes allow-listed relative paths through unchanged (in-app `<Link>`, no new tab, no external arrow); external `https://` behaviour preserved.
+- **SDK**: `defineNavigationMenuItem` validates LINK targets; `twenty-sdk/define` exports `AppPath` + the route-path const/type (repin deferred — needs coordinated `nx version:bump` + npm publish).
+- **Apps**: `a2e-chat` Discussions and `a2e-drive` Archive nav rows repointed VIEW→LINK (`/discussions`, `/drive`).
+
+All plan-mandated checks green; browser/publish leg remains for the orchestrator. Reports appended to `docs/plan/phases/phase-11-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

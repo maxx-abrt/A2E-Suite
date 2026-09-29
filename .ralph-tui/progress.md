@@ -26,6 +26,18 @@ after each iteration and it's included in prompts for context.
   `NavigationMenuItemManifest.link` is a plain `string`. App source can adopt an
   allow-listed relative `link` with no repin — only the host needs the server
   allow-list + front pass-through to open it in-app.
+- Integration specs run in their own module graph: `global.app.get(ControllerOrServiceClass)`
+  throws "not found in the current context" even for a live provider, and
+  `{ strict: false }` only fixes repository tokens resolved by the app's own
+  classes (see `getCoreRepository`). To reach an app singleton from a spec, read
+  it out of the module container by name (`test/integration/utils/get-app-provider-by-name.util.ts`).
+- `npx nx run twenty-server:database:migrate:generate` diffs the *whole* schema
+  against the dev DB, so stale constraint names produce unrelated DDL
+  (FK renames, NOT NULL drops). Always diff the generated command and keep only
+  the statements for the entity being added.
+- Entity changes need a generated instance command, but a **brand-new table**
+  needs no `@WasIntroducedInUpgrade` (that decorator is only for columns added
+  to existing entities).
 
 ---
 
@@ -67,4 +79,15 @@ after each iteration and it's included in prompts for context.
   - The published app SDK (2.31.0) already types `link?: string`, so repointing app nav items to relative targets needs no SDK repin to compile; the SDK-source typing/validation only matters to future app builds.
   - Repinning requires a coordinated `nx version:bump` (server `TWENTY_CURRENT_VERSION` must match the SDK version) plus an npm publish — recorded as deferred, not attempted.
   - `npx jest --findRelatedTests` runs a large, partly flaky front batch (`SidePanelPathRestore` passed in isolation); prefer the narrow path-scoped jest run for the touched module.
+---
+
+## 2026-09-29 - US-102 (M10a-1: workspace BYOK server core)
+- Added `WorkspaceAiProviderEntity` (`core."workspaceAiProvider"`, unique on `(workspaceId, provider)`, `encryptedApiKey` text) and `WorkspaceAiProviderService` (encrypt-on-write via `SecretEncryptionService.encryptVersioned`, decrypt-on-read with a safe `AiException(API_KEY_NOT_CONFIGURED)` on failure; `upsertProvider`/`removeProvider`/`resolveProviders`).
+- `ProviderConfigService.getResolvedProvidersForWorkspace` merges workspace rows last (never template-resolved) over instance `AI_PROVIDERS` over catalog; workspace entries are kept even when `includeCustomProviders` is false (explicit D-N4 entitlement bypass).
+- Generated fast instance command `2-39-instance-command-fast-1790711712877-create-workspace-ai-provider.ts` (auto-registered); the generator emitted unrelated drift that was stripped.
+- Files: 1 new entity, 1 new service, 1 edited service, 1 edited module, 1 migration, 1 constant file, 2 unit specs (12 tests), 1 integration spec (5 tests), 1 test util.
+- **Learnings:**
+  - `global.app.get(ServiceClass)` in an integration spec fails with "does not exist in the current context" because the spec's module graph is a distinct copy of the app's; `strict: false` only rescues repository tokens (see `getCoreRepository`). Look the provider up from the module container by name instead — new util `test/integration/utils/get-app-provider-by-name.util.ts`.
+  - `database:migrate:generate` diffs the whole schema, so a dev DB with stale FK names produces unrelated statements; always diff and prune to the intended table before committing the generated command.
+  - New core tables are created by instance commands (legacy TypeORM migrations are frozen); a brand-new entity needs no `@WasIntroducedInUpgrade` (that decorator is only for added columns on existing entities).
 ---
