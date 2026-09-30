@@ -88,10 +88,14 @@ export const RELATION_IDS = {
   milestoneTasks: 'c31b0300-0002-4000-8000-000000000003',
 } as const;
 
-// App-owned project fields beyond the label identifier. `recipeCorrelationKey`
-// persists the deal-won recipe's provenance key so a replayed trigger can find
-// the project it already created and skip it (C5 idempotency contract).
+// App-owned project fields beyond the label identifier. `isTemplate` is the
+// M9b workspace-template marker: a project carrying it is a reusable layout the
+// user saved, never a live project (the save-as-template copy keeps
+// `isTemplate: false`). `recipeCorrelationKey` persists the deal-won recipe's
+// provenance key so a replayed trigger can find the project it already created
+// and skip it (C5 idempotency contract).
 export const PROJECT_FIELD_IDS = {
+  isTemplate: 'c31b0200-0001-4000-8000-00000000000e',
   recipeCorrelationKey: 'c31b0200-0001-4000-8000-00000000000c',
 } as const;
 

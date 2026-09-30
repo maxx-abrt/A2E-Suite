@@ -134,6 +134,7 @@ export const FIELD_IDS = {
     exports: 'b11a0900-0001-4000-8000-000000000009',
     submittedAt: 'b11a0900-0001-4000-8000-00000000000a',
     approvedAt: 'b11a0900-0001-4000-8000-00000000000b',
+    isTemplate: 'b11a0900-0001-4000-8000-00000000000c',
     name: '1c19cc33-95c5-568f-82cc-fa43af35064f',
   },
   orgProfile: {

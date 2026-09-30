@@ -131,6 +131,20 @@ export default defineObject({
       isNullable: true,
     },
     {
+      // M9b workspace-template marker: a project carrying it is a reusable
+      // layout the user promoted, not a live project. Instantiating a template
+      // creates a fresh project with `isTemplate: false`, so editing the copy
+      // and deleting the template stay independent (C1 no aliasing).
+      universalIdentifier: PROJECT_FIELD_IDS.isTemplate,
+      type: FieldType.BOOLEAN,
+      name: 'isTemplate',
+      label: 'Modèle réutilisable',
+      description:
+        'Marqueur de modèle : ce projet sert de départ, ce n’est pas un projet vivant.',
+      icon: 'IconCopy',
+      defaultValue: false,
+    },
+    {
       // Deal-won recipe provenance (P9.3): the C5 correlation/idempotency key
       // of the trigger that created this project, so a replayed workflow run
       // finds it and skips instead of duplicating. Null on human-made projects.

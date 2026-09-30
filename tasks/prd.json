@@ -389,11 +389,12 @@
         "Quality gates: per touched app: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; targeted jest green; no i18n catalog churn; no AI attribution"
       ],
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "notes": "Depends on US-118 (gallery lists workspace templates; the save action mounts from the gallery/record surfaces). Lane L-TPL.",
       "dependsOn": [
         "US-118"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-120",
@@ -609,6 +610,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-30T03:52:11.167Z"
+    "updatedAt": "2026-09-30T04:22:15.252Z"
   }
 }

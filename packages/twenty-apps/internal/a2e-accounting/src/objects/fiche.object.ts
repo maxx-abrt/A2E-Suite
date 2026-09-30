@@ -229,6 +229,20 @@ export default defineObject({
       isNullable: true,
     },
     {
+      // M9b workspace-template marker: a fiche carrying it is a reusable
+      // starting layout the user promoted, not a live document. Instantiating
+      // the template creates a fresh fiche with `isTemplate: false`, so editing
+      // the copy and deleting the template stay independent (C1 no aliasing).
+      universalIdentifier: 'b11a0900-0001-4000-8000-00000000000c',
+      type: FieldType.BOOLEAN,
+      name: 'isTemplate',
+      label: 'Modèle réutilisable',
+      description:
+        'Marqueur de modèle : cette fiche sert de départ, ce n’est pas une fiche vivante.',
+      icon: 'IconCopy',
+      defaultValue: false,
+    },
+    {
       universalIdentifier: RELATION_IDS.ficheSavedSubvention,
       type: FieldType.RELATION,
       name: 'savedSubvention',

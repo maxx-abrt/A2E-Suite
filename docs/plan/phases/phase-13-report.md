@@ -213,3 +213,36 @@ CLAIMED — US-118/gallery-surface — deepseek-v4.1-flash — 2026-09-30T03:44:
 
 ### Scope note (why a data-layer+surface slice, not the full AC)
 US-118's AC spans three separable pieces: the gallery module (this slice), the per-app callable apply functions, and the shell entry-points. Per the executor contract the slice is the task's first unmet bullet; this session built the module and the surface it renders, leaving entry-points and the write-path for the next slice rather than half-wiring an untestable shell. Two honest deviations: (a) "Use template" is a host callback, not yet bound to an apply logic function, because no app exposes one keyed by descriptor key — inventing a consumer-side copy would fork the template-copy path the C1 note warns against; (b) entry-points are deliberately deferred so the next session lands them together with their command tests.
+
+CLAIMED — US-119/save-as-template-builders — deepseek-v4.1-flash — 2026-09-30T04:12:00Z — base e7d33444b8286f615fcb3a258a93c8e23a44314a
+
+## 2026-09-30 04:32 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-119 M9b: workspace templates — 'Save as template' for project (+tasks), board view, Bilan fiche · **Slice:** the save-as-template payload builders (AC2) + the persisted `isTemplate` marker on project/fiche (AC1) + per-builder unit tests (AC4) + one patch bump each (AC5)
+**Claim:** done-for-review
+**Ready-to-tick:** no — the builders and markers are green, but the AC's own mount ("the save action mounts from the gallery/record surfaces") is unwired: it inherits US-118's still-open entry-points slice, and the save→instantiate round-trip is the Tier-2 browser leg. All Tier-0 gates are green.
+**Base:** e7d33444b8286f615fcb3a258a93c8e23a44314a
+**Changed:**
+- `a2e-projects/src/lib/save-project-as-template.ts` (NEW: `PROJECT_TEMPLATE_TITLE_PREFIX`, prefix-once title + copy-title strip, `buildSaveProjectAsTemplatePayload` snapshotting project + tasks with `sourceId`-keyed relations, `buildProjectFromTemplatePayload` minting fresh task ids and remapping parent/blocked-by to the copy, project link to the fresh `projectId`)
+- `a2e-projects/src/lib/save-board-view-as-template.ts` (NEW: board-view manifest template — prefix-once name, `isTemplate` payload marker, instantiate re-mints every view/field/filterGroup/filter/group/sort universal identifier and rewrites group refs, dangling refs dropped)
+- `a2e-projects/src/lib/__tests__/save-project-as-template.test.ts` + `save-board-view-as-template.test.ts` (NEW: 15 tests incl. non-aliasing on save and two independent instantiations)
+- `a2e-projects/src/objects/project.object.ts` (+ BOOLEAN `isTemplate`, default false) + `constants/universal-identifiers.ts` (+`PROJECT_FIELD_IDS.isTemplate` `…0000e`)
+- `a2e-accounting/src/lib/save-fiche-as-template.ts` (NEW: prefix-once title, layout-only payload — status/dates/exports/amount/savedSubvention excluded, deep-cloned `data`, `buildFicheFromTemplatePayload` marker off + prefix stripped)
+- `a2e-accounting/src/lib/__tests__/save-fiche-as-template.test.ts` (NEW: 8 tests incl. deep-clone non-aliasing both directions)
+- `a2e-accounting/src/objects/fiche.object.ts` (+ BOOLEAN `isTemplate`, default false) + `constants/field-identifiers.ts` (+`FIELD_IDS.fiche.isTemplate` `…000c`)
+- both `package.json` (projects 0.1.16→0.1.17; accounting 0.1.2→0.1.3); this report
+**Checks:**
+- `npx nx build twenty-shared --skip-nx-cache` → `Successfully ran target build`
+- a2e-projects: `yarn typecheck` exit 0 · `yarn lint` 0 errors / 1 pre-existing warning (`task-labels.field.ts` unused `OnDeleteAction`, not mine) · `yarn test:unit` 357/357 (was 342; +15) · `npx twenty dev:build .` `Build succeeded (50 files)`; manifest carries project `isTemplate` BOOLEAN
+- a2e-accounting: `yarn typecheck` exit 0 · `yarn lint` 0/0 (111 files) · `yarn test:unit` 121/121 (was 113; +8) · `npx twenty dev:build .` `Build succeeded (30 files)`; manifest carries fiche `isTemplate` BOOLEAN
+- documents contract suites (unchanged): `save-document-as-template` + `instantiate-template` + `document-template-descriptors` → 31/31 pass
+- no `locales/**` touched
+**Missing for tick:** (1) AC mount — the save action has no gallery/record surface entry-point; that is US-118's open entry-point slice (its gallery module is not mounted either). (2) AC Tier-2 — save→instantiate round-trip + non-aliasing proof in a browser. (3) AC3's live deletion/editing independence proof (payload-level non-aliasing is unit-tested).
+**Do not redo:** the three builder modules and their tests; the project/fiche `isTemplate` fields (additive, defaults false). The documents `save-document-as-template.ts`/`instantiate-template.ts` path is the pattern source, untouched and green. Board-view marker is payload-side (see note) — do not add a core `view` column.
+**Remaining:** US-119 mount leg, then US-120 (M9d), then US-121…US-130.
+**Next:** mount the save action (record surfaces + gallery) and the US-118 gallery entry-points together; then the orchestrator Tier-2 round-trip.
+
+### Provenance interpretation + board-view deviation (recorded, not silent)
+AC1 says "an `isTemplate` flag + provenance on the existing object, as the documents template-copy helper does". The documents helper and the pre-existing Bilan `bookSheet.isTemplate` both use a single marker on the record (the discriminator), not a separate provenance table; this slice mirrors that exactly — `project.isTemplate` / `fiche.isTemplate` are the marker, and C1's no-aliasing rule is enforced in the payloads (fresh ids on instantiate, deep clones, no source ids). The core `view` object has no app-owned column and apps cannot pin a field on it (`view` is absent from `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`), so the board-view template marker lives in the payload contract plus the prefix-once name; the persistence slice maps it. Adding a core-view column would need a server migration and is out of this app slice.
+
+### Dependency note (US-118 partial → this is its first buildable successor bullet)
+US-118's own report is `partial` (gallery module + surface exist; Cmd+K/New-surface entry-points and the app-side apply path do not), yet Ralph's engine committed it and advanced the queue to US-119. Per the executor contract this slice takes US-119's first unmet bullet (the payload builders, AC2) which is self-contained and does not need the gallery mounted; the AC's mount leg is left to the slice that lands US-118's entry-points, so the two compose rather than fork.

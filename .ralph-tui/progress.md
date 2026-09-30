@@ -163,6 +163,17 @@ after each iteration and it's included in prompts for context.
   returning `{ templates }` and no `toolTriggerSettings` (a data source, not an
   AI tool). The contract's `preview` is `{ object, summary fr+en, count }[]`; the
   guard rejects `count: 0`, so only push a write the family actually creates.
+- Workspace save-as-template (M9b) mirrors a2e-documents'
+  `save-document-as-template.ts` in every app: a prefix-once title helper +
+  ONE persisted marker on the app object (documents' `kind=TEMPLATE`; the new
+  `project.isTemplate`/`fiche.isTemplate` BOOLEANs — `bookSheet.isTemplate`
+  already existed), and an instantiate direction that deep-clones and mints
+  fresh nested ids (tasks, view fields/filters/groups) and drops unknown
+  references, so edits/deletes never alias the template (C1). The core `view`
+  object has NO app-owned column and is absent from
+  `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`, so a board-view template's marker
+  lives in the payload + name prefix — never add a core `view` column from an
+  app slice.
 
 ---
 
@@ -409,4 +420,17 @@ after each iteration and it's included in prompts for context.
   - **PITFALL:** `Write` overwrites files — appending to the shared phase report with `Write` clobbered all prior entries; recovered with `git checkout --` then `cat >>`. Always append phase reports with a shell append, never `Write`.
 - Missing (Tier 2 orchestrator): E15 gallery browser journey; live execution of each app's `list-template-descriptors`.
 - Next: (1) four app-side `applyTemplateByKey` logic functions (additive, app patch bump); (2) mount the surface (`SidePanelPages.TemplatesGallery` + side-panel page + Cmd+K `TemplatesCommand` + `New`-surface openers).
+---
+
+## 2026-09-30 - US-119 (M9b: workspace templates — save-as-template payload builders)
+- Built the three missing save-as-template payload builders following a2e-documents' `save-document-as-template.ts` pattern, and added the persisted `isTemplate` marker to the app-owned objects.
+- a2e-projects: NEW `src/lib/save-project-as-template.ts` (prefix-once title, project+tasks snapshot keyed by `sourceId`, instantiate mints fresh task ids and remaps parent/blocked-by to the copy, links tasks to the fresh `projectId`, deep-copies arrays) + NEW `src/lib/save-board-view-as-template.ts` (view-manifest template; instantiate re-mints view/field/filterGroup/filter/group/sort universal identifiers, rewrites group refs, drops dangling refs) + 15 tests; `project.object.ts` + `PROJECT_FIELD_IDS.isTemplate`; 0.1.16→0.1.17.
+- a2e-accounting: NEW `src/lib/save-fiche-as-template.ts` (layout-only payload, deep-cloned `data`, instantiate marker off + prefix stripped) + 8 tests; `fiche.object.ts` + `FIELD_IDS.fiche.isTemplate`; 0.1.2→0.1.3.
+- Files changed: 6 new + 4 modified app files (above) + both `package.json` + `docs/plan/phases/phase-13-report.md` + this file.
+- **Learnings:**
+  - The dependency US-118 is `partial` in its own report (gallery module built, entry-points/apply path not) yet Ralph committed it and advanced the queue; US-119's first buildable bullet (pure payload builders) does not need the gallery mounted, so I built it and left the mount leg to the US-118 entry-point slice.
+  - Core `view` cannot carry an app-pinned field (absent from `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`), so the board-view template marker is payload-side (`isTemplate: true` + name prefix) — do not attempt a `view` column.
+  - App node tests use `node --test --experimental-strip-types`; enum-typed manifest literals must be imported from `twenty-sdk/define` (string literals are not assignable to the string enums), and optional-chain assignment (`x?.[0].y =`) is rejected — guard first.
+  - Gates all green: projects typecheck/lint(0 err, 1 pre-existing task-labels warning)/test:unit 357/357/dev:build 50 files; accounting typecheck/lint 0-0/test:unit 121/121/dev:build 30 files; documents contract suites 31/31; manifests carry project+fiche `isTemplate` BOOLEAN; no locales churn.
+  - Missing (Tier 2 orchestrator): gallery/record mount + save→instantiate round-trip and non-aliasing proof in a browser.
 ---
