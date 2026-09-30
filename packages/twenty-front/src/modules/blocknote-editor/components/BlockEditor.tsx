@@ -11,6 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { getSlashMenu } from '@/blocknote-editor/utils/getSlashMenu';
 import { CustomMentionMenu } from '@/blocknote-editor/components/CustomMentionMenu';
+import { BlockEditorDocumentContext } from '@/blocknote-editor/contexts/BlockEditorDocumentContext';
 import { CustomSideMenu } from '@/blocknote-editor/components/CustomSideMenu';
 import {
   CustomSlashMenu,
@@ -301,58 +302,60 @@ export const BlockEditor = ({
 
   return (
     <StyledEditor>
-      <BlockNoteView
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        onPaste={handlePaste}
-        onChange={handleChange}
-        editor={editor}
-        theme={blockNoteTheme}
-        slashMenu={false}
-        sideMenu={false}
-        editable={!readonly}
-      >
-        <CustomSideMenu editor={editor} />
-        <LinkToRecordSlashMenuItem>
-          {(linkToRecordItem) => {
-            const slashMenuWithLinkToRecord = () => [
-              ...getSlashMenu(editor),
-              linkToRecordItem,
-            ];
+      <BlockEditorDocumentContext.Provider value={documentRecordId ?? null}>
+        <BlockNoteView
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onPaste={handlePaste}
+          onChange={handleChange}
+          editor={editor}
+          theme={blockNoteTheme}
+          slashMenu={false}
+          sideMenu={false}
+          editable={!readonly}
+        >
+          <CustomSideMenu editor={editor} />
+          <LinkToRecordSlashMenuItem>
+            {(linkToRecordItem) => {
+              const slashMenuWithLinkToRecord = () => [
+                ...getSlashMenu(editor),
+                linkToRecordItem,
+              ];
 
-            return (
-              <SuggestionMenuController
-                triggerCharacter="/"
-                getItems={async (query: string) => {
-                  const filtered = filterSuggestionItems<SuggestionItem>(
-                    slashMenuWithLinkToRecord(),
-                    query,
-                  );
+              return (
+                <SuggestionMenuController
+                  triggerCharacter="/"
+                  getItems={async (query: string) => {
+                    const filtered = filterSuggestionItems<SuggestionItem>(
+                      slashMenuWithLinkToRecord(),
+                      query,
+                    );
 
-                  if (filtered.length > 0) {
-                    return filtered;
-                  }
+                    if (filtered.length > 0) {
+                      return filtered;
+                    }
 
-                  return [
-                    {
-                      title: t`Close menu`,
-                      Icon: IconX,
-                      onItemClick: () =>
-                        editor.getExtension(SuggestionMenu)?.closeMenu(),
-                    },
-                  ];
-                }}
-                suggestionMenuComponent={CustomSlashMenu}
-              />
-            );
-          }}
-        </LinkToRecordSlashMenuItem>
-        <SuggestionMenuController
-          triggerCharacter="@"
-          getItems={async (query) => getMentionItems(query)}
-          suggestionMenuComponent={CustomMentionMenu}
-        />
-      </BlockNoteView>
+                    return [
+                      {
+                        title: t`Close menu`,
+                        Icon: IconX,
+                        onItemClick: () =>
+                          editor.getExtension(SuggestionMenu)?.closeMenu(),
+                      },
+                    ];
+                  }}
+                  suggestionMenuComponent={CustomSlashMenu}
+                />
+              );
+            }}
+          </LinkToRecordSlashMenuItem>
+          <SuggestionMenuController
+            triggerCharacter="@"
+            getItems={async (query) => getMentionItems(query)}
+            suggestionMenuComponent={CustomMentionMenu}
+          />
+        </BlockNoteView>
+      </BlockEditorDocumentContext.Provider>
       <BlockEditorStatusBar
         editor={editor}
         onTypewriterCaretMove={handleTypewriterCaretMove}

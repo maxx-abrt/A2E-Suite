@@ -42,6 +42,11 @@ describe('isDocumentEmptyForExport', () => {
     expect(isDocumentEmptyForExport([{ type: 'file' }])).toBe(false);
   });
 
+  it('counts linking blocks (bookmark/pageLink) as content', () => {
+    expect(isDocumentEmptyForExport([{ type: 'bookmark' }])).toBe(false);
+    expect(isDocumentEmptyForExport([{ type: 'pageLink' }])).toBe(false);
+  });
+
   it('counts non-array content (e.g. table payload) as content', () => {
     expect(
       isDocumentEmptyForExport([{ type: 'table', content: { rows: [['a']] } }]),
@@ -107,6 +112,19 @@ describe('collectExportFidelityWarnings', () => {
 
     expect(collectExportFidelityWarnings(nested, 'docx')).toEqual([
       'callout-degrades',
+    ]);
+  });
+
+  it('flags linking blocks for markdown and docx only', () => {
+    const linkingDocument = [
+      { type: 'bookmark', content: [] },
+      { type: 'pageLink', content: [] },
+    ];
+
+    expect(collectExportFidelityWarnings(linkingDocument, 'pdf')).toEqual([]);
+    expect(collectExportFidelityWarnings(linkingDocument, 'markdown')).toEqual([
+      'bookmark-degrades',
+      'page-link-degrades',
     ]);
   });
 

@@ -99,6 +99,36 @@ describe('getSlashMenu', () => {
     expect(typeof file?.onItemClick).toBe('function');
   });
 
+  it('appends the interactive/linking items and their groups', () => {
+    const items = getSlashMenu(fakeEditor);
+
+    const todo = items.find((item) => item.title === 'To-do');
+    const bookmark = items.find((item) => item.title === 'Web bookmark');
+    const subPage = items.find((item) => item.title === 'Sub-page');
+    const imageEmbed = items.find((item) => item.title === 'Image embed');
+
+    expect(todo?.groupKey).toBe('bureau');
+    expect(bookmark?.groupKey).toBe('links');
+    expect(subPage?.groupKey).toBe('links');
+    expect(imageEmbed?.groupKey).toBe('media');
+
+    for (const item of [todo, bookmark, subPage, imageEmbed]) {
+      expect(typeof item?.onItemClick).toBe('function');
+    }
+
+    // French aliases keep the new items searchable in fr.
+    expect(todo?.aliases).toContain('tâche');
+    expect(bookmark?.aliases).toContain('signet');
+    expect(subPage?.aliases).toContain('sous-page');
+  });
+
+  it('replaces the default Image/Video/Audio items with FileBlock-backed ones', () => {
+    const items = getSlashMenu(fakeEditor);
+
+    expect(items.find((item) => item.title === 'Image')).toBeUndefined();
+    expect(items.find((item) => item.title === 'Image embed')).toBeDefined();
+  });
+
   it('preserves unknown default items in the basic group', () => {
     const items = getSlashMenu(fakeEditor);
 

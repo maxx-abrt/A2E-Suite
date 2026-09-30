@@ -11,7 +11,9 @@ export type ExportFormat = 'pdf' | 'docx' | 'markdown';
 export type ExportFidelityWarning =
   | 'callout-degrades'
   | 'file-omitted'
-  | 'mention-degrades';
+  | 'mention-degrades'
+  | 'bookmark-degrades'
+  | 'page-link-degrades';
 
 type ExportBlockInput = {
   type?: unknown;
@@ -27,6 +29,8 @@ const ALWAYS_EXPORTED_BLOCK_TYPES = new Set([
   'file',
   'video',
   'audio',
+  'bookmark',
+  'pageLink',
 ]);
 
 // The canonical warning order, also the format allow-list: PDF prints the live
@@ -37,8 +41,20 @@ const WARNINGS_BY_FORMAT: Record<
   readonly ExportFidelityWarning[]
 > = {
   pdf: [],
-  docx: ['callout-degrades', 'file-omitted', 'mention-degrades'],
-  markdown: ['callout-degrades', 'file-omitted', 'mention-degrades'],
+  docx: [
+    'callout-degrades',
+    'file-omitted',
+    'mention-degrades',
+    'bookmark-degrades',
+    'page-link-degrades',
+  ],
+  markdown: [
+    'callout-degrades',
+    'file-omitted',
+    'mention-degrades',
+    'bookmark-degrades',
+    'page-link-degrades',
+  ],
 };
 
 const hasNonEmptyInlineContent = (content: unknown): boolean => {
@@ -124,6 +140,14 @@ export const collectExportFidelityWarnings = (
 
     if (blockType === 'file') {
       foundWarnings.add('file-omitted');
+    }
+
+    if (blockType === 'bookmark') {
+      foundWarnings.add('bookmark-degrades');
+    }
+
+    if (blockType === 'pageLink') {
+      foundWarnings.add('page-link-degrades');
     }
 
     if (Array.isArray(block.content)) {

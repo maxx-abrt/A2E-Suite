@@ -37,6 +37,14 @@ after each iteration and it's included in prompts for context.
   array, so group headers are non-selectable siblings). Jest specs touching this
   tree must mock `@blocknote/react` and `@blocknote/core/extensions` (the core
   dist cannot be loaded under Jest).
+- _Update (US-122):_ a `createReactBlockSpec` render callback's `editor` is
+  narrowed to that block's schema and is NOT assignable to
+  `typeof BLOCK_SCHEMA.BlockNoteEditor`; cast when passing it to a separately
+  typed child (`editor as unknown as typeof BLOCK_SCHEMA.BlockNoteEditor`).
+  Hooks work inside the render component. The testable seam for a custom block
+  is a pure `unknown`-input util under `utils/` (tests can't load the blocknote
+  dist). Record mention for any object already ships via `MentionInlineContent`
+  + `useMentionMenu` + `LinkToRecordPicker` — do not rebuild it.
 - `packages/twenty-shared/src/utils/index.ts` is an auto-generated barrel:
   `npx nx build twenty-shared` runs `generateBarrels` and rewrites it. After
   adding a new util under `src/utils/`, build and let the barrel pick it up —
@@ -484,4 +492,18 @@ after each iteration and it's included in prompts for context.
   - `twenty(max-consts-per-file)` only applies to `**/constants/*.ts` and `**/*.constants.ts`, so grouping/definition maps can live together in `utils/`.
 - Missing (Tier 2 orchestrator): E14 browser round-trip of ToC/columns save→reload→export; AC4 storybook light/dark stories not written.
 - Next: storybook stories for the new blocks, then the E14 browser legs.
+---
+
+## 2026-09-30 - US-122 (M8a-2: slash menu interactive/linking blocks)
+- Implemented 4 of the 6 interactive/linking block families + their slash-menu registration, export serializers and unit tests.
+- Files changed: NEW `blocks/TodoTaskBlock.tsx` (checkbox + inline content + "Convert to task" → native `task` via `useCreateOneRecord`, stores the id in block props for provenance; converted state renders `MentionRecordChip`), NEW `blocks/BookmarkBlock.tsx`, NEW `blocks/PageLinkBlock.tsx` (creates a child `document` under `BlockEditorDocumentContext`), NEW `contexts/BlockEditorDocumentContext.ts`; `blocks/FileBlock.tsx` (category-aware inline image/video/audio vs download link); `blocks/Schema.ts`; `components/BlockEditor.tsx` (provider); `utils/getSlashMenu.ts` + `utils/slashMenuItemDefinitions.ts`; `export/utils/exportFidelity.ts` + `export/components/BlockEditorExportMenu.tsx`; NEW pure utils `buildTaskFromTodoBlockInput`, `buildChildDocumentInput`, `buildBookmarkCardFromUrl`, `getFileEmbedKind`, `getInlineContentPlainText` + 5 tests; updated `getSlashMenu.test.ts` + `exportFidelity.test.ts`.
+- **Learnings:**
+  - **Record mention for any object already ships** (`MentionInlineContent` + `useMentionMenu` over readable/searchable objects + `LinkToRecordPicker`; existing `RecordChip`/`MentionRecordChip`). Do not rebuild it.
+  - A `createReactBlockSpec` render callback's `editor` is **narrowed to that block's schema** and is NOT assignable to `typeof BLOCK_SCHEMA.BlockNoteEditor`; pass it to a separately-typed child with `editor as unknown as typeof BLOCK_SCHEMA.BlockNoteEditor` (casts are the established precedent — see `TableOfContentsBlock`). Hooks (`useState`, `useCreateOneRecord`) work fine inside the render component.
+  - The testable seam for custom blocks is a **pure `unknown`-input structural util** (the `getBlockOutline`/`getBlockWordCount` pattern): the blocknote dist can't load under Jest, so serializers/builders live in `utils/*.ts` and get the unit tests.
+  - Media embeds all insert the single `file` block; FileBlock picks the renderer from the attachment category. Slash defaults for Image/Video/Audio/File are dropped via a `DEFAULT_ITEM_TITLES_REPLACED_BY_CUSTOM` set (the default block specs stay registered so existing documents still render).
+  - "Creates an Agenda reminder" is not a chip: `CreateCalendarEventInput` requires a `connectedAccountId` and the composer owns account resolution — a real sub-slice, deferred.
+  - `npx oxlint` (not `nx lint:diff-with-main`) is the only way to lint uncommitted work; `no-script-url` rejects a literal `javascript:` string in a test fixture.
+- Missing (Tier 2 orchestrator): date/reminder mention + live reminder creation; storybook light/dark stories (blocks need app providers); E14 interactive-block browser legs; Syna group has no M8a member.
+- Next: date/reminder inline content + calendar-event creation slice, then provider-free presentational views for stories.
 ---

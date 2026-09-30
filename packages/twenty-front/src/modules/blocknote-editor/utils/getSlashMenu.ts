@@ -53,9 +53,46 @@ export const sortSlashMenuItemsByGroup = (
       (groupIndexByKey.get(right.groupKey ?? 'basic') ?? 0),
   );
 
+// Media embeds all insert the same `file` block: FileBlock picks its renderer
+// from the uploaded file category (image/video/audio inline, PDF/document as a
+// download link) and uploads through the attachments storage. BlockNote's own
+// per-type image/video/audio items are dropped by
+// DEFAULT_ITEM_TITLES_REPLACED_BY_CUSTOM so there is a single upload path.
+const CUSTOM_MEDIA_ITEM_DEFINITION_KEYS = [
+  'Image embed',
+  'Video embed',
+  'Audio embed',
+  'PDF embed',
+  'File',
+];
+
+const DEFAULT_ITEM_TITLES_REPLACED_BY_CUSTOM = new Set([
+  'File',
+  'Image',
+  'Video',
+  'Audio',
+]);
+
+const insertFileBlock = (editor: BlockEditorInstance) => {
+  const currentBlock = editor.getTextCursorPosition().block;
+
+  editor.insertBlocks(
+    [
+      {
+        type: 'file',
+        props: {
+          url: '',
+        },
+      },
+    ],
+    currentBlock,
+    'before',
+  );
+};
+
 export const getSlashMenu = (editor: BlockEditorInstance): SuggestionItem[] => {
   const defaultItems = getDefaultReactSlashMenuItems(editor)
-    .filter((item) => item.title !== 'File')
+    .filter((item) => !DEFAULT_ITEM_TITLES_REPLACED_BY_CUSTOM.has(item.title))
     .map((item) => {
       const definition = SLASH_MENU_DEFAULT_ITEM_DEFINITIONS[item.title];
 
@@ -83,6 +120,30 @@ export const getSlashMenu = (editor: BlockEditorInstance): SuggestionItem[] => {
       onItemClick: () =>
         insertOrUpdateBlockForSlashMenu(editor, { type: 'tableOfContents' }),
     },
+    {
+      ...localizeDefinition(SLASH_MENU_CUSTOM_ITEM_DEFINITIONS['To-do']),
+      onItemClick: () =>
+        insertOrUpdateBlockForSlashMenu(editor, {
+          type: 'todoTask',
+          props: { checked: false, taskId: '' },
+        }),
+    },
+    {
+      ...localizeDefinition(SLASH_MENU_CUSTOM_ITEM_DEFINITIONS['Web bookmark']),
+      onItemClick: () =>
+        insertOrUpdateBlockForSlashMenu(editor, {
+          type: 'bookmark',
+          props: { url: '', title: '', hostname: '' },
+        }),
+    },
+    {
+      ...localizeDefinition(SLASH_MENU_CUSTOM_ITEM_DEFINITIONS['Sub-page']),
+      onItemClick: () =>
+        insertOrUpdateBlockForSlashMenu(editor, {
+          type: 'pageLink',
+          props: { documentId: '', title: '' },
+        }),
+    },
     ...COLUMN_LIST_ITEMS.map(({ definitionKey, columnCount }) => ({
       ...localizeDefinition(SLASH_MENU_CUSTOM_ITEM_DEFINITIONS[definitionKey]),
       onItemClick: () =>
@@ -91,25 +152,10 @@ export const getSlashMenu = (editor: BlockEditorInstance): SuggestionItem[] => {
           getColumnListBlock(columnCount),
         ),
     })),
-    {
-      ...localizeDefinition(SLASH_MENU_CUSTOM_ITEM_DEFINITIONS.File),
-      onItemClick: () => {
-        const currentBlock = editor.getTextCursorPosition().block;
-
-        editor.insertBlocks(
-          [
-            {
-              type: 'file',
-              props: {
-                url: '',
-              },
-            },
-          ],
-          currentBlock,
-          'before',
-        );
-      },
-    },
+    ...CUSTOM_MEDIA_ITEM_DEFINITION_KEYS.map((definitionKey) => ({
+      ...localizeDefinition(SLASH_MENU_CUSTOM_ITEM_DEFINITIONS[definitionKey]),
+      onItemClick: () => insertFileBlock(editor),
+    })),
   ];
 
   return sortSlashMenuItemsByGroup([...defaultItems, ...customItems]);

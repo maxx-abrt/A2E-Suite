@@ -454,11 +454,12 @@
         "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-front clean; oxlint --type-aware + oxfmt --check on touched files; targeted jest green; no i18n catalog churn; no AI attribution"
       ],
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "notes": "Depends on US-121 (shared slash-menu grouping infrastructure). Lane L-EDITOR.",
       "dependsOn": [
         "US-121"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-123",
@@ -612,6 +613,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-30T19:15:01.698Z"
+    "updatedAt": "2026-09-30T20:45:43.762Z"
   }
 }

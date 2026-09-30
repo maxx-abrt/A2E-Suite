@@ -96,6 +96,8 @@ export const BlockEditorExportMenu = ({
     'callout-degrades': t`Callouts degrade to plain paragraphs`,
     'file-omitted': t`File blocks are omitted`,
     'mention-degrades': t`Mentions degrade to plain text`,
+    'bookmark-degrades': t`Web bookmarks degrade to a plain link`,
+    'page-link-degrades': t`Page links degrade to their title`,
   };
 
   const renderWarnings = (format: keyof typeof formatWarnings) =>

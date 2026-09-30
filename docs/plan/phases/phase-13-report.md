@@ -300,3 +300,36 @@ CLAIMED — US-121/structural-blocks — deepseek-v4.1-flash — 2026-09-30T19:0
 **Do not redo:** toggle list, toggle heading, divider, quote, code-with-language and the BlockNote table already ship via `defaultBlockSpecs` and BlockNote's default slash items — only columns (2–4) and the ToC block were genuinely missing. The slash-menu content seam is `utils/getSlashMenu.ts`, called by `BlockEditor.tsx:319`; `BlockEditor.tsx`/`CustomAddBlockItem.tsx` needed no edit because the menu is already wired there (AC1's file list is the location hint, not a required diff). Column items are built directly (`getColumnListBlock`) rather than importing `getMultiColumnSlashMenuItems` so the 4-column case and our group labels are uniform.
 **Remaining:** US-122…US-130 (9) plus the open US-118 entry-points / US-119 save-action mount legs (2)
 **Next:** add `blocks/__stories__/` light+dark stories (two `ThemeProvider colorScheme` wrappers per `ObjectLayoutHeroCard.stories.tsx`) seeding a ToC + columnList + code/quote/divider; then orchestrator runs the E14 browser round-trip legs.
+
+CLAIMED — US-122/interactive-linking-blocks — deepseek-v4.1-flash — 2026-09-30T20:29:43Z — base a98a44e37eaf176ab1850f9b1247805a25edcaa2
+
+## 2026-09-30 20:44 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-122 M8a-2: slash menu interactive/linking blocks (to-do→task, embeds, bookmark, page link, record mention, date/reminder) · **Slice:** the interactive/linking custom blocks — to-do→task, FileBlock media embeds, web bookmark card, page link/sub-page (creates child document) + slash-menu Media/Bureau/Links registration
+**Claim:** partial
+**Ready-to-tick:** no — 4 of 6 bullet-1 block families are implemented and green, but date/reminder mention (Agenda reminder creation) and the storybook stories are absent; the E14 browser legs are Tier 2
+**Base:** a98a44e37eaf176ab1850f9b1247805a25edcaa2
+**Changed:**
+- `blocks/TodoTaskBlock.tsx` (NEW custom `todoTask` block: checkbox + inline content + `Convert to task`; on convert it creates a native `task` through `useCreateOneRecord` and stores the returned id in the block props — provenance/idempotency; converted state renders the `task` `MentionRecordChip`; `toExternalHTML` emits a GFM checkbox)
+- `blocks/BookmarkBlock.tsx` (NEW custom `bookmark` block: URL input → card with title/hostname + link; no network OG fetch yet; `toExternalHTML` → `<a>`)
+- `blocks/PageLinkBlock.tsx` (NEW custom `pageLink` block: creates a `document` via `useCreateOneRecord`, nesting it under the current document read from `BlockEditorDocumentContext`; renders `MentionRecordChip`)
+- `contexts/BlockEditorDocumentContext.ts` (NEW: exposes `documentRecordId` to block renderers)
+- `blocks/FileBlock.tsx` (category-aware render: image/video/audio inline, everything else download link)
+- `blocks/Schema.ts` (registers `todoTask`/`bookmark`/`pageLink`)
+- `components/BlockEditor.tsx` (wraps `BlockNoteView` in `BlockEditorDocumentContext.Provider`)
+- `utils/getSlashMenu.ts` + `utils/slashMenuItemDefinitions.ts` (To-do/Web bookmark/Sub-page + Image/Video/Audio/PDF embed items in Bureau/Links/Media; drops BlockNote's own Image/Video/Audio/File items so media always routes through FileBlock)
+- `export/utils/exportFidelity.ts` + `export/components/BlockEditorExportMenu.tsx` (bookmark/pageLink count as content and warn as degraded in md/docx)
+- 5 NEW pure utils + 5 tests (`buildTaskFromTodoBlockInput`, `buildChildDocumentInput`, `buildBookmarkCardFromUrl`, `getFileEmbedKind`, `getInlineContentPlainText`); updated `getSlashMenu.test.ts` + `exportFidelity.test.ts`
+**Checks:**
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0 (clean)
+- `npx oxlint --type-aware -c .oxlintrc.json <23 touched files>` → 0 warnings / 0 errors
+- `npx oxfmt --check <23 touched files>` → clean
+- `npx jest src/modules/blocknote-editor --config=jest.config.mjs` → 28 suites / 183 tests pass (was 23/155; +5/+28)
+- `npx jest --findRelatedTests <5 changed sources> --config=jest.config.mjs` → 19 suites / 160 tests pass
+- no `locales/**` touched; no AI attribution
+**Missing for tick:** (1) **date/reminder mention** (inline content + "creates an Agenda reminder") — not started; `CreateCalendarEventInput` needs a `connectedAccountId` and the composer owns that flow, so live reminder creation is a real sub-slice, not a chip. (2) **Storybook light/dark stories** for the new blocks — skipped: the blocks call `useCreateOneRecord` (Apollo/metadata providers), so a standalone story needs the app provider tree; shipping unverified stories would risk the storybook build. (3) **Tier 2** E14 interactive-block browser legs. (4) **Syna group** has no member — M8a defines no Syna block (Syna app is D-B1/M7e); the group scaffold was added by US-121.
+**Do not redo:** **record mention for any object already ships** (`MentionInlineContent` + `useMentionMenu` search over readable/searchable objects + `LinkToRecordPicker`, existing `RecordChip`/`MentionRecordChip` rendering) — this slice touched neither. `getInlineContentPlainText`, `getBlockOutline`, `getBlockWordCount` are the three structural text extractors; reuse them. The slash-menu content seam stays `utils/getSlashMenu.ts` (called by `BlockEditor.tsx:319`), the group scaffold is `slashMenuGroups.ts`. `Math/equation` is **NO-GO this phase** per `docs/plan/p3.4-advanced-authoring-feasibility.md` (verdict row "Math/diagrams", line 112) and D07 — no `xl-math` import.
+**Remaining:** US-123…US-130 (8) plus the open US-118 entry-points / US-119 save-action mount legs (2)
+**Next:** add the **date/reminder** slice — a `dateReminder` inline content (chip + `buildDateReminderMention` util) whose slash item creates the `calendarEvent` through the existing calendar primitives (resolve/require a connected account, degrade with a snackbar when none), then the light/dark stories by first adding a provider-free presentational view per block; finally the orchestrator runs E14.
+
+### Intentional behaviour change (recorded, not silent)
+The Image/Video/Audio/File slash items now all insert our `file` block (FileBlock: attachments upload + category-aware inline media) instead of BlockNote's per-type image/video/audio blocks. The default block specs stay registered, so **existing** documents with those blocks still load and render; only slash-menu insertion changes. This is what the AC's "image/video/audio/PDF embed via FileBlock (attachments storage)" asks for — one upload path, not two.

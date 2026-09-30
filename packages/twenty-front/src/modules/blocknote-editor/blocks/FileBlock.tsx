@@ -8,6 +8,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { FileIcon } from '@/file/components/FileIcon';
+import { getFileEmbedKind } from '@/blocknote-editor/utils/getFileEmbedKind';
 import { t } from '@lingui/core/macro';
 import { getSafeUrl, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
@@ -36,6 +37,23 @@ const StyledUploadFileContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledEmbedImage = styled.img`
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  display: block;
+  max-width: 100%;
+`;
+
+const StyledEmbedVideo = styled.video`
+  display: block;
+  max-width: 100%;
+`;
+
+const StyledEmbedAudio = styled.audio`
+  display: block;
+  width: 100%;
 `;
 
 export const FileBlock = createReactBlockSpec(
@@ -89,6 +107,34 @@ export const FileBlock = createReactBlockSpec(
       const safeUrl = getSafeUrl(block.props.url);
 
       if (safeUrl) {
+        // Media the browser can play inline is embedded; documents, PDF and
+        // archives stay a download link so a page never inlines arbitrary HTML.
+        const embedKind = getFileEmbedKind(
+          block.props.fileCategory as AttachmentFileCategory,
+        );
+
+        if (embedKind === 'image') {
+          return (
+            <StyledEmbedImage
+              src={safeUrl}
+              alt={block.props.name}
+              contentEditable={false}
+            />
+          );
+        }
+
+        if (embedKind === 'video') {
+          return (
+            <StyledEmbedVideo src={safeUrl} controls contentEditable={false} />
+          );
+        }
+
+        if (embedKind === 'audio') {
+          return (
+            <StyledEmbedAudio src={safeUrl} controls contentEditable={false} />
+          );
+        }
+
         return (
           <StyledFileLine>
             <FileIcon

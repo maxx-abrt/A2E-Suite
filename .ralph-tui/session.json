@@ -3,10 +3,10 @@
   "sessionId": "c3d9d5b5-131c-4bed-9971-37e80fe99ea9",
   "status": "running",
   "startedAt": "2026-09-29T18:49:46.574Z",
-  "updatedAt": "2026-09-30T19:15:01.699Z",
-  "currentIteration": 24,
+  "updatedAt": "2026-09-30T20:45:43.762Z",
+  "currentIteration": 25,
   "maxIterations": 20,
-  "tasksCompleted": 21,
+  "tasksCompleted": 22,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -256,6 +256,16 @@
       "durationMs": 443162,
       "startedAt": "2026-09-30T18:39:33.396Z",
       "endedAt": "2026-09-30T18:46:56.558Z"
+    },
+    {
+      "iteration": 25,
+      "status": "completed",
+      "taskId": "US-121",
+      "taskTitle": "M8a-1: slash menu core/structural blocks (toggle, columns, divider, quote, code+language, table, ToC)",
+      "taskCompleted": true,
+      "durationMs": 1361968,
+      "startedAt": "2026-09-30T18:52:19.726Z",
+      "endedAt": "2026-09-30T19:15:01.694Z"
     }
   ],
   "skippedTaskIds": [],
