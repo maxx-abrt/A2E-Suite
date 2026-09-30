@@ -24,6 +24,12 @@ jest.mock('@/home-dashboard/components/UpcomingEventsWidget', () => ({
 jest.mock('@/home-dashboard/components/RecentActivityWidget', () => ({
   RecentActivityWidget: () => <div>recent-activity-widget</div>,
 }));
+jest.mock('@/home-dashboard/components/RecentPagesWidget', () => ({
+  RecentPagesWidget: () => <div>recent-pages-widget</div>,
+}));
+jest.mock('@/home-dashboard/components/PendingBilanWidget', () => ({
+  PendingBilanWidget: () => <div>pending-bilan-widget</div>,
+}));
 jest.mock('@/home-dashboard/components/PomodoroWidget', () => ({
   PomodoroWidget: () => <div>focus-widget</div>,
 }));
@@ -92,6 +98,8 @@ describe('HomeDashboard', () => {
       ['home-card-my-tasks', 'my-tasks-widget'],
       ['home-card-upcoming-events', 'upcoming-events-widget'],
       ['home-card-recent-activity', 'recent-activity-widget'],
+      ['home-card-recent-pages', 'recent-pages-widget'],
+      ['home-card-pending-bilan', 'pending-bilan-widget'],
       ['home-card-focus', 'focus-widget'],
       ['home-card-contributions', 'contributions-widget'],
       ['home-card-help', 'help-widget'],
@@ -100,7 +108,7 @@ describe('HomeDashboard', () => {
     }
   });
 
-  it('deep-links tasks and events to their native pages', () => {
+  it('deep-links cards to their native pages', () => {
     renderHomeDashboard('Ada');
 
     expect(screen.getByRole('link', { name: 'See all tasks' })).toHaveAttribute(
@@ -110,6 +118,14 @@ describe('HomeDashboard', () => {
     expect(screen.getByRole('link', { name: 'Open Agenda' })).toHaveAttribute(
       'href',
       '/calendar',
+    );
+    expect(screen.getByRole('link', { name: 'See all pages' })).toHaveAttribute(
+      'href',
+      '/objects/documents',
+    );
+    expect(screen.getByRole('link', { name: 'Open Bilan' })).toHaveAttribute(
+      'href',
+      '/objects/invoices',
     );
   });
 });

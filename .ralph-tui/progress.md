@@ -236,6 +236,16 @@ after each iteration and it's included in prompts for context.
   `resolveDocumentCover`) and the personal `documentFavorite` path. The sandbox
   cannot import `twenty-ui`, so page icons are emoji + verbatim name fallback;
   light/dark comes from `var(--t-*)` CSS variables.
+- `home-dashboard` cards self-gate on app install: `useObjectMetadataItem`
+  (inside `useFindManyRecords`) THROWS `ObjectMetadataItemNotFoundError` for an
+  absent object before `skip` is read, so a widget must branch on
+  `useObjectMetadataItems().some(o => o.nameSingular === '<object>')` and render
+  its `*WidgetContent` empty state before mounting the fetch child. Bilan
+  installs as a unit, so one object (`invoice`) is the gate for both invoice and
+  grant-deadline queries. Card see-all links use
+  `getAppPath(AppPath.RecordIndexPage, { objectNamePlural })`; `IconFileInvoice`
+  is NOT exported from `twenty-ui/icon` (only via `AllIcons`), so app-object
+  cards pick an exported icon (`IconCoins`, `IconNotes`).
 
 ---
 
@@ -576,4 +586,31 @@ after each iteration and it's included in prompts for context.
   - `WidgetType` is a closed host enum and `SyncableEntity` has no `PageLayoutWidget`; an app's only code-backed widget is `FRONT_COMPONENT`, nested in a layout/tab it declares (standalone tab on a standard page layout = the additive pattern, `a2e-chat`).
 - Missing (Tier 2 orchestrator): install in prerequisite order + E17 browser proof of a link surviving reload and optional-app removal.
 - Next: the M11a implementation legs (a2e-links scaffold → picker wiring → Related front-component tab).
+---
+
+## [2026-09-30] - US-126 (M11b: Today view — recent pages + pending Bilan cards)
+- Extended the existing 7-card `HomeDashboard` with two install-gated cards + a
+  "Today" eyebrow label, reusing `HomeDashboardCard`/`HomeWidgetList`:
+  `RecentPagesWidget` (Bureau `document`, newest updated first, templates
+  excluded, opens in side panel, see-all `/objects/documents`) and
+  `PendingBilanWidget` (merges unpaid `invoice` + active `savedSubvention` grant
+  deadlines, overdue flagged, see-all `/objects/invoices`).
+- Pure testable seams: `hasObjectMetadataItem` (install-gate),
+  `selectRecentPages`, `selectPendingBilanItems` (+ unit tests); pure
+  `*WidgetContent` empty-state tests; `HomeDashboard.test.tsx` extended to 9
+  cards + 4 deep links.
+- Files changed: `packages/twenty-front/src/modules/home-dashboard/{components,utils}/**`
+  (+ tests), `docs/plan/phases/phase-15-report.md`, `.ralph-tui/progress.md`.
+- **Learnings:**
+  - Install-gating MUST be a render branch, not a `skip`: `useFindManyRecords` →
+    `useObjectMetadataItem` throws for an absent app object before `skip`.
+    Self-gate in the widget and delegate the fetch to a child component.
+  - `twenty-ui/icon` exports a curated set — `IconFileInvoice` is not among them
+    (only in `AllIcons`, used by object metadata); consumer cards must choose an
+    exported icon.
+  - See-all links for app objects: `getAppPath(AppPath.RecordIndexPage, {
+    objectNamePlural })` (no `AppPath` member for app objects).
+- Missing (Tier 2 orchestrator): browser pass on a workspace with Bureau + Bilan
+  installed; empty states without the apps.
+- Next: optional Syna-digest card (hidden without the AI permission) or US-127.
 ---

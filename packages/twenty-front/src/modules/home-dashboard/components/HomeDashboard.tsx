@@ -1,13 +1,16 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 import {
   IconAlertCircle,
   IconCalendarEvent,
   IconChartBar,
   IconCheckbox,
   IconClockPlay,
+  IconCoins,
   IconHelpCircle,
+  IconNotes,
   IconTimelineEvent,
 } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -18,8 +21,10 @@ import { ContributionGridWidget } from '@/home-dashboard/components/Contribution
 import { HomeDashboardCard } from '@/home-dashboard/components/HomeDashboardCard';
 import { HomeSuggestionsWidget } from '@/home-dashboard/components/HomeSuggestionsWidget';
 import { MyTasksWidget } from '@/home-dashboard/components/MyTasksWidget';
+import { PendingBilanWidget } from '@/home-dashboard/components/PendingBilanWidget';
 import { PomodoroWidget } from '@/home-dashboard/components/PomodoroWidget';
 import { RecentActivityWidget } from '@/home-dashboard/components/RecentActivityWidget';
+import { RecentPagesWidget } from '@/home-dashboard/components/RecentPagesWidget';
 import { UpcomingEventsWidget } from '@/home-dashboard/components/UpcomingEventsWidget';
 import { getHomeGreetingPeriod } from '@/home-dashboard/utils/getHomeGreetingPeriod';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -41,6 +46,14 @@ const StyledHeader = styled.header`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledToday = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 `;
 
 const StyledGreeting = styled.h1`
@@ -103,6 +116,7 @@ export const HomeDashboard = () => {
   return (
     <StyledContainer data-testid="home-dashboard">
       <StyledHeader>
+        <StyledToday>{t`Today`}</StyledToday>
         <StyledGreeting>{getGreeting()}</StyledGreeting>
         <StyledDate>{dateLabel}</StyledDate>
       </StyledHeader>
@@ -136,6 +150,32 @@ export const HomeDashboard = () => {
           testId="home-card-recent-activity"
         >
           <RecentActivityWidget />
+        </HomeDashboardCard>
+        <HomeDashboardCard
+          title={t`Recent pages`}
+          Icon={IconNotes}
+          testId="home-card-recent-pages"
+          seeAllLink={{
+            label: t`See all pages`,
+            to: getAppPath(AppPath.RecordIndexPage, {
+              objectNamePlural: 'documents',
+            }),
+          }}
+        >
+          <RecentPagesWidget />
+        </HomeDashboardCard>
+        <HomeDashboardCard
+          title={t`Pending in Bilan`}
+          Icon={IconCoins}
+          testId="home-card-pending-bilan"
+          seeAllLink={{
+            label: t`Open Bilan`,
+            to: getAppPath(AppPath.RecordIndexPage, {
+              objectNamePlural: 'invoices',
+            }),
+          }}
+        >
+          <PendingBilanWidget />
         </HomeDashboardCard>
         <HomeDashboardCard
           title={t`Focus`}

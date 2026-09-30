@@ -531,9 +531,10 @@
         "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-front clean; oxlint --type-aware + oxfmt --check on touched files; targeted jest for home-dashboard touched modules green; no i18n catalog churn; no AI attribution"
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "notes": "Independent per the M11 lane table ('M11a spike first; M11b independent'). Lane L-LINK.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-127",
@@ -616,6 +617,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-30T21:26:29.811Z"
+    "updatedAt": "2026-09-30T21:36:47.858Z"
   }
 }
