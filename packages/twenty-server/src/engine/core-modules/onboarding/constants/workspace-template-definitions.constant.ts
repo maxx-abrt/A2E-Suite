@@ -15,10 +15,18 @@ const A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER =
 // Proposed starter content previewed per persona (P1.6d). Labels mirror the
 // app-owned starter payload descriptors (a2e-documents starter-templates.ts,
 // a2e-accounting starter-books.ts) so the setup preview can show what a persona
-// seeds. These are proposals, not the seed source of truth: the rows are still
-// created only by each app's post-install hook (D02 owns the final contents).
+// seeds. Each item also names the US-117 gallery descriptor key it references
+// (M9d/G14) where the app ships one. These are proposals, not the seed source
+// of truth: the rows are still created only by each app's post-install hook
+// (D02 owns the final contents). Adding Agenda, Archive, Projects or Syna to a
+// preset is a D02-gated app-set change, deliberately out of M9d's scope.
 export type WorkspaceTemplateBundleContent = TemplatePreviewSample & {
   applicationUniversalIdentifier: string;
+  // US-117 gallery descriptor key (C1) this proposal instantiates, when the app
+  // ships a descriptor for it. Optional because a preset may propose content an
+  // app seeds without a gallery descriptor (the Bilan starter sheets are app
+  // seeds, not gallery templates).
+  templateKey?: string;
 };
 
 // Upstream gates that defer a proposed bundle item until a later phase. Recorded
@@ -29,52 +37,68 @@ export type WorkspaceTemplateBundleBlockReason = 'P7.0_SAFETY_GATE';
 export type WorkspaceTemplateBlockedBundleContent = TemplatePreviewSample & {
   applicationUniversalIdentifier: string;
   blockedBy: WorkspaceTemplateBundleBlockReason;
+  // Same C1 gallery-key reference as WorkspaceTemplateBundleContent, carried
+  // even while the item is gated upstream so the reference is not lost.
+  templateKey?: string;
 };
 
 const bundleContent = (
   applicationUniversalIdentifier: string,
   label: string,
+  templateKey?: string,
 ): WorkspaceTemplateBundleContent => ({
   applicationUniversalIdentifier,
   label,
   locale: 'fr',
+  ...(templateKey === undefined ? {} : { templateKey }),
 });
 
 const blockedBundleContent = (
   applicationUniversalIdentifier: string,
   label: string,
   blockedBy: WorkspaceTemplateBundleBlockReason,
+  templateKey?: string,
 ): WorkspaceTemplateBlockedBundleContent => ({
   applicationUniversalIdentifier,
   label,
   locale: 'fr',
   blockedBy,
+  ...(templateKey === undefined ? {} : { templateKey }),
 });
 
 // Named items (not string-filtered) so a typo is a compile-time error and the
-// persona lists cannot silently drop a proposed content item.
+// persona lists cannot silently drop a proposed content item. Each item names
+// the US-117 gallery descriptor key it references (M9d/G14) so a persona's
+// preview and the gallery describe the same template.
 const DOCUMENT_BUNDLE_ITEM = {
   meetingNotes: bundleContent(
     A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER,
     'Notes de réunion',
+    'notes-de-reunion',
   ),
   projectBrief: bundleContent(
     A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER,
     'Brief de projet',
+    'brief-de-projet',
   ),
   productRequirements: bundleContent(
     A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER,
     'Spécifications produit (PRD)',
+    'specifications-produit-prd',
   ),
   oneOnOne: bundleContent(
     A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER,
     'Entretien individuel',
+    'entretien-individuel',
   ),
 } satisfies Record<string, WorkspaceTemplateBundleContent>;
 
 // Bilan (a2e-accounting) proposed contents are deferred behind the P7.0 safety
 // gate: they are recorded here as blocked upstream, never previewed as ready,
-// and never included in `starterBundleContents`.
+// and never included in `starterBundleContents`. The two fiche items reference
+// their US-117 gallery descriptor key; the three Bilan sheets are app seeds
+// with no gallery descriptor, so they stay key-less rather than referencing a
+// template the gallery does not list.
 const BLOCKED_ACCOUNTING_BUNDLE_ITEM = {
   cashflow: blockedBundleContent(
     A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -95,11 +119,13 @@ const BLOCKED_ACCOUNTING_BUNDLE_ITEM = {
     A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER,
     'Budget prévisionnel à l’équilibre',
     'P7.0_SAFETY_GATE',
+    'BUDGET_EQUILIBRE',
   ),
   grantRequest: blockedBundleContent(
     A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER,
     'Demande de subvention',
     'P7.0_SAFETY_GATE',
+    'DEMANDE_SUBVENTION',
   ),
 } satisfies Record<string, WorkspaceTemplateBlockedBundleContent>;
 

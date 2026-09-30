@@ -410,7 +410,7 @@
         "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-front clean; packages/twenty-server onboarding suites green (tsgo clean); oxlint/oxfmt on touched files; no i18n catalog churn; no AI attribution"
       ],
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "notes": "Depends on US-118 + the family slices. D02 (exact persona bundle contents + version matrix) remains the product gate for app-set changes. Lane L-TPL.",
       "dependsOn": [
         "US-118",
@@ -419,7 +419,8 @@
         "US-105",
         "US-106",
         "US-107"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-121",
@@ -610,6 +611,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-30T04:22:15.252Z"
+    "updatedAt": "2026-09-30T18:46:56.562Z"
   }
 }

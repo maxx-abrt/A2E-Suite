@@ -246,3 +246,28 @@ AC1 says "an `isTemplate` flag + provenance on the existing object, as the docum
 
 ### Dependency note (US-118 partial → this is its first buildable successor bullet)
 US-118's own report is `partial` (gallery module + surface exist; Cmd+K/New-surface entry-points and the app-side apply path do not), yet Ralph's engine committed it and advanced the queue to US-119. Per the executor contract this slice takes US-119's first unmet bullet (the payload builders, AC2) which is self-contained and does not need the gallery mounted; the AC's mount leg is left to the slice that lands US-118's entry-points, so the two compose rather than fork.
+
+CLAIMED — US-120/M9d-persona-gallery-keys — deepseek-v4.1-flash — 2026-09-30T18:10:35Z — base 07d26eb5bdec6e6f2c502e279b01960f59e4ebec
+
+## 2026-09-30 18:45 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-120 M9d: persona presets reference gallery template keys (fixes G14 together with M2) · **Slice:** the whole task — wire each preset's proposed bundle item to the US-117 gallery descriptor key it references + per-app drift-guard unit tests
+**Claim:** done-for-review
+**Ready-to-tick:** yes — all Tier-0 gate suites green; only the Tier-2 browser persona-apply leg is absent. D02-gated app-set expansion (Agenda/Archive/Projects/Syna) is recorded, not pre-empted, per AC2.
+**Base:** 07d26eb5bdec6e6f2c502e279b01960f59e4ebec
+**Changed:**
+- `packages/twenty-server/src/engine/core-modules/onboarding/constants/workspace-template-definitions.constant.ts` (+optional `templateKey` on `WorkspaceTemplateBundleContent`/`WorkspaceTemplateBlockedBundleContent` + the `bundleContent`/`blockedBundleContent` helpers; documents items `notes-de-reunion`/`brief-de-projet`/`specifications-produit-prd`/`entretien-individuel`, blocked Bilan items `BUDGET_EQUILIBRE`/`DEMANDE_SUBVENTION`; WHY comment records the D02 app-set gate)
+- `packages/twenty-apps/internal/a2e-documents/src/lib/__tests__/persona-template-bundle-keys.test.ts` (NEW: reads the server preset constant, extracts the document `bundleContent(...)` keys by app UUID, asserts each resolves to a shipped `buildDocumentTemplateDescriptors()` key)
+- `packages/twenty-apps/internal/a2e-accounting/src/lib/__tests__/persona-template-bundle-keys.test.ts` (NEW: same for the blocked Bilan `blockedBundleContent(...)` keys vs `buildFicheTemplateDescriptors()`)
+- this report
+**Checks:**
+- `npx nx build twenty-shared --skip-nx-cache` → `Successfully ran target build`
+- a2e-documents: `yarn typecheck` exit 0 · `yarn lint` 0 warnings/0 errors (83 files) · `yarn test:unit` 229/229 (was 227; +2)
+- a2e-accounting: `yarn typecheck` exit 0 · `yarn lint` 0/0 (112 files) · `yarn test:unit` 123/123 (was 121; +2)
+- twenty-server: `npx tsgo -p tsconfig.json --noEmit` exit 0 · `npx jest --config=jest.config.mjs src/engine/core-modules/onboarding` → 11 suites / 97 tests pass
+- twenty-front: `npx tsgo -p tsconfig.json --noEmit` exit 0 · `npx jest src/modules/a2e-workspace/constants/__tests__/A2eWorkspaceTemplates.test.ts` → 13/13 pass (US-090 copy spec untouched)
+- `npx oxlint --type-aware -c .oxlintrc.json <server constant>` → 0/0; `npx oxfmt --check <server constant>` → correct; no `locales/**` touched
+**Missing for tick:** Tier 2 (orchestrator): apply each persona in a browser and observe seeded content rows > 0 (M2b leg). No server schema change, so no migration.
+**Do not redo:** the `templateKey` wiring + the two app drift-guard specs. The key is declarative on the proposal (`starterBundleContents` is preview-only; seeding stays in each app's post-install hook, D02 owns final contents) — do not add a second seeding path. `getHiddenStandardNavigationMenuItemUniversalIdentifiers` / apply / retry idempotency are untouched and green.
+**Note (adjacent pre-existing defect, not this slice):** `a2e-documents/src/lib/document-template-descriptors.ts`'s `DOCUMENT_TEMPLATE_EN_LABELS` map keys several entries wrong (`notes-reunion` vs the real slug `notes-de-reunion`, `brief-projet` vs `brief-de-projet`, `accueil-wiki-equipe`, `guide-integration`, `journal-decisions-adr`), so those en labels silently fall back to French. This is US-117's map, not the preset wiring; the corrected `templateKey` references above use the real slugs. Left for a US-117 follow-up rather than scope-creeping this slice.
+**Remaining:** US-118's open entry-points mount leg + US-119's save-action mount leg, then US-121…US-130.
+**Next:** orchestrator Tier-2 persona-apply proof; or, if the queue advances, US-121 (M8a-1 slash-menu structural blocks).

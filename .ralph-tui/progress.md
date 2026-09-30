@@ -174,6 +174,17 @@ after each iteration and it's included in prompts for context.
   `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`, so a board-view template's marker
   lives in the payload + name prefix — never add a core `view` column from an
   app slice.
+- Persona presets (`WORKSPACE_TEMPLATE_DEFINITIONS[].starterBundleContents`) are
+  preview-only proposals; seeding stays in each app's post-install hook. A
+  preset bundle item can reference a US-117 gallery key via the optional
+  `templateKey` on `WorkspaceTemplateBundleContent`/`...BlockedBundleContent`
+  (the `bundleContent`/`blockedBundleContent` helpers take it as a last arg).
+  Validate the references in the *owning app* with a spec that source-scrapes
+  the twenty-server constant and compares against `build*Descriptors()` keys —
+  but the server constants put the UUID on the next line after `=`, so the
+  name→UUID map regex must be `const (\w+) =\s*'([0-9a-f-]{36})'`, and a
+  document key is the slug of its French title (`notes-de-reunion`), NOT the
+  (stale) `DOCUMENT_TEMPLATE_EN_LABELS` map keys.
 
 ---
 
@@ -433,4 +444,18 @@ after each iteration and it's included in prompts for context.
   - App node tests use `node --test --experimental-strip-types`; enum-typed manifest literals must be imported from `twenty-sdk/define` (string literals are not assignable to the string enums), and optional-chain assignment (`x?.[0].y =`) is rejected — guard first.
   - Gates all green: projects typecheck/lint(0 err, 1 pre-existing task-labels warning)/test:unit 357/357/dev:build 50 files; accounting typecheck/lint 0-0/test:unit 121/121/dev:build 30 files; documents contract suites 31/31; manifests carry project+fiche `isTemplate` BOOLEAN; no locales churn.
   - Missing (Tier 2 orchestrator): gallery/record mount + save→instantiate round-trip and non-aliasing proof in a browser.
+---
+
+## 2026-09-30 - US-120 (M9d: persona presets reference gallery template keys)
+- Wired each persona preset's proposed bundle item to the US-117 gallery descriptor key it references, and added per-app drift-guard specs that fail when a referenced key stops resolving to a shipped descriptor.
+- `workspace-template-definitions.constant.ts`: added an optional `templateKey` to `WorkspaceTemplateBundleContent`/`WorkspaceTemplateBlockedBundleContent` (and the `bundleContent`/`blockedBundleContent` helpers); documents items now carry the real slugs (`notes-de-reunion`, `brief-de-projet`, `specifications-produit-prd`, `entretien-individuel`), blocked Bilan items carry `BUDGET_EQUILIBRE`/`DEMANDE_SUBVENTION`. Comment records that Agenda/Archive/Projects/Syna app-set expansion is D02-gated, not pre-empted.
+- NEW `a2e-documents/src/lib/__tests__/persona-template-bundle-keys.test.ts` + `a2e-accounting/.../persona-template-bundle-keys.test.ts`: read the server constant (source-scrape), extract the app's `bundleContent(...)`/`blockedBundleContent(...)` keys by app UUID, assert each ∈ shipped descriptor keys.
+- Files changed: the server constant + 2 new app specs + phase report + this file. No app `package.json` bump (test-only change).
+- **Learnings:**
+  - Resumed a dead prior US-120 run (uncommitted, no report) that died on an external-directory permission rejection while running the app tests. The two new specs were buggy: their `const (\w+) = '...uuid...'` map regex missed the server constants because those put the UUID on the **next line** after `=`; `=\s*'...'` is required (the US-090 `A2eWorkspaceTemplates.test.ts` already used `\s*`).
+  - The prior run copied keys from `document-template-descriptors.ts`'s `DOCUMENT_TEMPLATE_EN_LABELS` map, which itself has stale keys (`notes-reunion`, `brief-projet`, …) — the real keys are the slug of the French title (`notes-de-reunion`, `brief-de-projet`). Derive the key from `buildDocumentTemplateDescriptors()`, never trust the en-label map.
+  - `starterBundleContents` is preview-only (seeding stays in each app's post-install hook), so the key reference is declarative; `templateKey` is intentionally not yet surfaced through the preview DTO/service.
+  - Gates green: server tsgo 0 + onboarding jest 11 suites/97 tests; twenty-front tsgo 0 + US-090 spec 13/13; docs typecheck/lint 0-0/test:unit 229/229; accounting typecheck/lint 0-0/test:unit 123/123; oxlint/oxfmt 0-0 on the server constant; no locales churn.
+- Missing (Tier 2 orchestrator): apply each persona in a browser and observe seeded content rows > 0 (M2b).
+- Next: orchestrator Tier-2, or US-121 (M8a-1 slash-menu structural blocks).
 ---
