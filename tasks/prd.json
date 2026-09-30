@@ -435,9 +435,10 @@
         "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-front clean; oxlint --type-aware + oxfmt --check on touched files; targeted jest for blocknote-editor touched modules green; no i18n catalog churn; no AI attribution"
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "notes": "Split of M8a into two one-session slices; US-122 carries the interactive/linking half. Lane L-EDITOR.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-122",
@@ -611,6 +612,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-30T18:46:56.562Z"
+    "updatedAt": "2026-09-30T19:15:01.698Z"
   }
 }

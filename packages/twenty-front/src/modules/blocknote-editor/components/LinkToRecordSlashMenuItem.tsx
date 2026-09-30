@@ -1,8 +1,11 @@
+import { i18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { IconLink } from 'twenty-ui/icon';
 
 import { LinkToRecordPicker } from '@/blocknote-editor/components/LinkToRecordPicker';
 import { type SuggestionItem } from '@/blocknote-editor/types/types';
+import { SLASH_MENU_GROUP_LABELS } from '@/blocknote-editor/utils/slashMenuGroups';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -32,9 +35,10 @@ export const LinkToRecordSlashMenuItem = ({
   );
 
   const item: SuggestionItem = {
-    title: 'Link to record',
-    aliases: ['link', 'record'],
-    group: 'Advanced',
+    title: i18n._(msg`Link to record`),
+    aliases: ['link', 'record', 'lien', 'enregistrement'],
+    group: i18n._(SLASH_MENU_GROUP_LABELS.links),
+    groupKey: 'links',
     Icon: IconLink,
     onItemClick: () => {
       openDropdown({

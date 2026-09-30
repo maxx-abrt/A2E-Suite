@@ -24,6 +24,19 @@ after each iteration and it's included in prompts for context.
 - Lingui macro `t`/`msg` fall back to the source string when the key is absent
   from `locales/generated/en`, so renaming a source message does not require
   touching catalogs (do not commit catalog churn).
+- Bureau editor (`twenty-front/src/modules/blocknote-editor`): the slash-menu
+  content seam is `utils/getSlashMenu.ts` (called by `BlockEditor.tsx`). Default
+  items come from `getDefaultReactSlashMenuItems` and are localized with the
+  global `i18n._(msg\`…\`)` + fr aliases, then reassigned to `SuggestionItem.groupKey`
+  (Basic/Media/Bureau/Links/Syna). Extra block specs go in `blocks/Schema.ts`:
+  multi-column via `withMultiColumn` (`@blocknote/xl-multi-column`, 2/3 only —
+  build 4 by hand), custom blocks via `createReactBlockSpec`. A custom block's
+  `toExternalHTML` is what feeds the Markdown/DOCX export (markdown =
+  external-HTML → `htmlToMarkdown`), and an inline custom block's live UI must fit
+  the existing `SelectableList` (index-based keyboard nav over the flat item
+  array, so group headers are non-selectable siblings). Jest specs touching this
+  tree must mock `@blocknote/react` and `@blocknote/core/extensions` (the core
+  dist cannot be loaded under Jest).
 - `packages/twenty-shared/src/utils/index.ts` is an auto-generated barrel:
   `npx nx build twenty-shared` runs `generateBarrels` and rewrites it. After
   adding a new util under `src/utils/`, build and let the barrel pick it up —
@@ -458,4 +471,17 @@ after each iteration and it's included in prompts for context.
   - Gates green: server tsgo 0 + onboarding jest 11 suites/97 tests; twenty-front tsgo 0 + US-090 spec 13/13; docs typecheck/lint 0-0/test:unit 229/229; accounting typecheck/lint 0-0/test:unit 123/123; oxlint/oxfmt 0-0 on the server constant; no locales churn.
 - Missing (Tier 2 orchestrator): apply each persona in a browser and observe seeded content rows > 0 (M2b).
 - Next: orchestrator Tier-2, or US-121 (M8a-1 slash-menu structural blocks).
+---
+
+## 2026-09-30 - US-121 (M8a-1: slash menu core/structural blocks)
+- Implemented the structural block set + grouped/localized slash menu. Toggle list, toggle heading, divider, quote, code-with-language and the BlockNote table already shipped via `defaultBlockSpecs`, so the real gaps were **columns (2–4)** and a **table of contents** block, plus the Basic/Media/Bureau/Links/Syna grouping.
+- Files changed: `blocks/Schema.ts` (wrap in `withMultiColumn`, register `tableOfContents`); NEW `blocks/TableOfContentsBlock.tsx`; NEW `utils/getColumnListBlock.ts`; NEW `utils/slashMenuGroups.ts`; NEW `utils/slashMenuItemDefinitions.ts`; `utils/getSlashMenu.ts` (localized + grouped + custom items); `components/CustomSlashMenu.tsx` (group headers); `components/LinkToRecordSlashMenuItem.tsx` (Links group); `types/types.ts` (+`groupKey`); `utils/__tests__/getSlashMenu.test.ts` (rewritten) + NEW `utils/__tests__/getColumnListBlock.test.ts`.
+- **Learnings:**
+  - Multi-column is `withMultiColumn` from `@blocknote/xl-multi-column` (already hoisted as a transitive dep of the docx/pdf exporters). It only ships **2/3** columns, so 4 columns is built by hand with `getColumnListBlock` + `insertOrUpdateBlockForSlashMenu` from `@blocknote/core/extensions`.
+  - A custom ToC block is `createReactBlockSpec({ type:'tableOfContents', content:'none' })`; its `toExternalHTML` drives **Markdown and DOCX** export (markdown = `createExternalHTMLExporter` → `htmlToMarkdown`), so emitting a `<ul>` of headings keeps the ToC in the Markdown export while the live React render shows the clickable outline.
+  - Grouping/localization goes through `i18n._(msg\`Basic\`)` / `i18n._(descriptor)` (global `i18n`, like `getWidgetTitle`), not `useLingui`, so `getSlashMenu` stays hook-free and jest-loadable without an `I18nProvider` (`@lingui/swc-plugin` compiles the macros and `i18n._` falls back to the source string). The `SelectableList` keyboard nav is index-based over the flat `items` array, so group headers are non-selectable siblings and ordering must happen in `getSlashMenu` before it returns.
+  - `insertOrUpdateBlockForSlashMenu` lives in `@blocknote/core/extensions`; jest specs that touch `getSlashMenu` must mock both `@blocknote/react` and `@blocknote/core/extensions` (the core dist cannot be loaded under Jest).
+  - `twenty(max-consts-per-file)` only applies to `**/constants/*.ts` and `**/*.constants.ts`, so grouping/definition maps can live together in `utils/`.
+- Missing (Tier 2 orchestrator): E14 browser round-trip of ToC/columns save→reload→export; AC4 storybook light/dark stories not written.
+- Next: storybook stories for the new blocks, then the E14 browser legs.
 ---

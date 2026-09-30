@@ -4,9 +4,14 @@ import type {
 } from '@blocknote/react';
 import { type IconComponent } from 'twenty-ui/icon';
 
+import { type SlashMenuGroupKey } from '@/blocknote-editor/utils/slashMenuGroups';
+
 export type SuggestionItem = DefaultReactSuggestionItem & {
   aliases?: string[];
   Icon?: IconComponent;
+  // Slug of the localized `group` label, used to keep the section order stable
+  // regardless of translation.
+  groupKey?: SlashMenuGroupKey;
 };
 
 export type CustomSlashMenuProps = SuggestionMenuProps<SuggestionItem>;

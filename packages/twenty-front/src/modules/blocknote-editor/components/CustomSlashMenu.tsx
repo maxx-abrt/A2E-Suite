@@ -2,7 +2,10 @@ import { useBlockNoteEditor } from '@blocknote/react';
 import { styled } from '@linaria/react';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 import { motion } from 'framer-motion';
+import { Fragment } from 'react';
 import { createPortal } from 'react-dom';
+import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/SlashMenuDropdownClickOutsideId';
 import { SLASH_MENU_LIST_ID } from '@/ui/input/constants/SlashMenuListId';
@@ -22,6 +25,15 @@ export type { SuggestionItem };
 const StyledContainer = styled.div`
   height: 1px;
   width: 1px;
+`;
+
+const StyledGroupLabel = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-family: ${themeCssVariables.font.family};
+  font-size: ${themeCssVariables.font.size.xxs};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+  text-transform: uppercase;
 `;
 
 export const CustomSlashMenu = ({
@@ -81,9 +93,21 @@ export const CustomSlashMenu = ({
                     selectableListInstanceId={SLASH_MENU_LIST_ID}
                     selectableItemIdArray={items.map((item) => item.title)}
                   >
-                    {items.map((item) => (
-                      <CustomSlashMenuListItem key={item.title} item={item} />
-                    ))}
+                    {items.map((item, index) => {
+                      const previousGroup =
+                        index > 0 ? items[index - 1].group : undefined;
+                      const shouldShowGroupLabel =
+                        isDefined(item.group) && item.group !== previousGroup;
+
+                      return (
+                        <Fragment key={item.title}>
+                          {shouldShowGroupLabel ? (
+                            <StyledGroupLabel>{item.group}</StyledGroupLabel>
+                          ) : null}
+                          <CustomSlashMenuListItem item={item} />
+                        </Fragment>
+                      );
+                    })}
                   </SelectableList>
                 </DropdownMenuItemsContainer>
               </DropdownContent>

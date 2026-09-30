@@ -271,3 +271,32 @@ CLAIMED — US-120/M9d-persona-gallery-keys — deepseek-v4.1-flash — 2026-09-
 **Note (adjacent pre-existing defect, not this slice):** `a2e-documents/src/lib/document-template-descriptors.ts`'s `DOCUMENT_TEMPLATE_EN_LABELS` map keys several entries wrong (`notes-reunion` vs the real slug `notes-de-reunion`, `brief-projet` vs `brief-de-projet`, `accueil-wiki-equipe`, `guide-integration`, `journal-decisions-adr`), so those en labels silently fall back to French. This is US-117's map, not the preset wiring; the corrected `templateKey` references above use the real slugs. Left for a US-117 follow-up rather than scope-creeping this slice.
 **Remaining:** US-118's open entry-points mount leg + US-119's save-action mount leg, then US-121…US-130.
 **Next:** orchestrator Tier-2 persona-apply proof; or, if the queue advances, US-121 (M8a-1 slash-menu structural blocks).
+
+CLAIMED — US-121/structural-blocks — deepseek-v4.1-flash — 2026-09-30T19:02:22Z — base 285d4317509a7651cdec5fd0d5e20807bad15654
+
+## 2026-09-30 19:40 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-121 M8a-1: slash menu core/structural blocks (toggle, columns, divider, quote, code+language, table, ToC) · **Slice:** AC1 block set + AC2 grouped/localized slash menu
+**Claim:** partial
+**Ready-to-tick:** no — AC1+AC2 and AC3's unit tests are done and green, but AC3's browser round-trip leg (Tier 2) and AC4 storybook stories are absent
+**Base:** 285d4317509a7651cdec5fd0d5e20807bad15654
+**Changed:**
+- `packages/twenty-front/src/modules/blocknote-editor/blocks/Schema.ts` (wraps the schema in `withMultiColumn` so `column`/`columnList` exist; registers `tableOfContents`)
+- `packages/twenty-front/src/modules/blocknote-editor/blocks/TableOfContentsBlock.tsx` (NEW custom block: reactive heading outline via `getBlockOutline`, click-to-jump, `toExternalHTML` → `<ul>` so Markdown/DOCX keep a heading list)
+- `packages/twenty-front/src/modules/blocknote-editor/utils/getColumnListBlock.ts` (NEW pure 2–4 column `columnList` builder)
+- `packages/twenty-front/src/modules/blocknote-editor/utils/slashMenuGroups.ts` (NEW Basic/Media/Bureau/Links/Syna keys + `msg` labels + order)
+- `packages/twenty-front/src/modules/blocknote-editor/utils/slashMenuItemDefinitions.ts` (NEW per-block localized title/Icon/group + fr+en aliases for the 23 default items and the 6 custom ones)
+- `packages/twenty-front/src/modules/blocknote-editor/utils/getSlashMenu.ts` (localizes + regroups defaults via `i18n._`, appends Callout/ToC/2-4 columns/File, stable group sort)
+- `packages/twenty-front/src/modules/blocknote-editor/components/CustomSlashMenu.tsx` (renders localized group-header rows inside the existing `SelectableList`; keyboard nav unchanged)
+- `packages/twenty-front/src/modules/blocknote-editor/components/LinkToRecordSlashMenuItem.tsx` (group `Advanced` → `Links`, localized title + fr aliases, `groupKey: 'links'`)
+- `packages/twenty-front/src/modules/blocknote-editor/types/types.ts` (`SuggestionItem.groupKey?: SlashMenuGroupKey`)
+- `.../utils/__tests__/getSlashMenu.test.ts` (rewritten) + `.../utils/__tests__/getColumnListBlock.test.ts` (NEW)
+**Checks:**
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx oxlint --type-aware -c .oxlintrc.json <11 touched files>` → 0 warnings / 0 errors
+- `npx oxfmt --check <touched files>` → clean
+- `npx jest src/modules/blocknote-editor --config=jest.config.mjs` → 23 suites / 155 tests pass
+- `npx jest --findRelatedTests <touched files> --config=jest.config.mjs` → 19 suites / 147 tests pass; no `locales/**` touched; no AI attribution
+**Missing for tick:** AC3 save→reload→export round-trip of each new block in a browser (Tier 2, orchestrator) and AC4 light/dark Storybook stories for the new blocks
+**Do not redo:** toggle list, toggle heading, divider, quote, code-with-language and the BlockNote table already ship via `defaultBlockSpecs` and BlockNote's default slash items — only columns (2–4) and the ToC block were genuinely missing. The slash-menu content seam is `utils/getSlashMenu.ts`, called by `BlockEditor.tsx:319`; `BlockEditor.tsx`/`CustomAddBlockItem.tsx` needed no edit because the menu is already wired there (AC1's file list is the location hint, not a required diff). Column items are built directly (`getColumnListBlock`) rather than importing `getMultiColumnSlashMenuItems` so the 4-column case and our group labels are uniform.
+**Remaining:** US-122…US-130 (9) plus the open US-118 entry-points / US-119 save-action mount legs (2)
+**Next:** add `blocks/__stories__/` light+dark stories (two `ThemeProvider colorScheme` wrappers per `ObjectLayoutHeroCard.stories.tsx`) seeding a ToC + columnList + code/quote/divider; then orchestrator runs the E14 browser round-trip legs.

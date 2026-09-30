@@ -1,0 +1,100 @@
+# Iteration 24 Log
+
+## Metadata
+
+- **Task ID**: US-120
+- **Task Title**: M9d: persona presets reference gallery template keys (fixes G14 together with M2)
+- **Description**: As a persona-preset user, I want the six presets' starter bundles to reference the gallery's curated templates (and offer Agenda/Archive/Projects/Syna where relevant) so that presets seed real content...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-30T18:39:33.396Z
+- **Ended At**: 2026-09-30T18:46:56.558Z
+- **Duration**: 7m 23s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the clean-start check and gather context.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+A prior run claimed US-120 and left uncommitted work. Per §0 that's expected — I'll resume. Let me gather context.
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ" && echo "---" && git log --oneline -5 && echo "---diff-stat---" && git...
+[94m[bash][0m $ git diff packages/twenty-server/src/engine/core-modules/onboarding/constants/workspace-template-defi...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "US-120" PLAN.md
+[94m[bash][0m $ grep -rn "US-120" --include=*.md --include=*.json . | grep -v node_modules | grep -v ".ralph-tui/ite...
+[94m[bash][0m $ grep -rn "US-120" PLAN.md docs tasks 2>/dev/null | head -50
+[94m[bash][0m $ sed -n '390,460p' tasks/prd.json 2>/dev/null || true
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-documents && grep -n "key:" src/lib/document-template-descripto...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/document-template-descriptors.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/fiche-template-descriptors.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && find . -name "A2eWorkspaceTemplates.test.ts" -not -path "...
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "starterBundleContents\|WorkspaceTemplateBundleC...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "starterBundleContents\|WorkspaceTemplateBundleC...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents" && cat package.j...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx nx build twenty-shared --skip-nx-cache 2>&1 | tail -5
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents" && node --test -...
+[94m[edit][0m
+The prior run's tests have a regex bug — the server constants put the UUID on the next line, so the map never populates. Let me fix both.
+[94m[edit][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents" && node --test -...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents" && node --test -...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents" && grep -n "titl...
+[94m[bash][0m $ " 2>&1 | head -25
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/fiche-templates.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting" && node --test ...
+[94m[edit][0m
+Now correct the document keys to match the actual shipped slugs.
+[94m[edit][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents" && node --test -...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "G14\|M2 —\|M2 \|G4" PLAN.md | head -20
+[94m[read][0m
+Both key tests pass. Now let me run the full app gates for the two touched apps.
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents" && yarn typechec...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting" && yarn typeche...
+[94m[bash][0m $ cat package.json | grep -A3 '"test"\|test:unit\|jest'
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && npx jest --config=jest.config.mjs ...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && npx tsgo -p tsconfig.json --noEmit...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx jest src/modules/a2e-workspace/...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && npx tsgo -p tsconfig.json --noEmit ...
+[94m[bash][0m $ cat packages/twenty-server/project.json 2>/dev/null | grep -A5 lint | head -20
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && npx oxlint --type-aware -c .oxlint...
+Let me review the complete diff of my touched files and check for strays.
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git diff packages/twenty-server/src/engine/core-modules/o...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting" && npx oxfmt --...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && tail -30 .ralph-tui/iterations/c3d9d5b5_2026-09-30_20-03-...
+All gates pass. Let me capture the final state and write the report.
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && date -u +"%Y-%m-%d %H:%M UTC" && git rev-parse HEAD && gi...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && tail -30 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "^## \|^---" .ralph-tui/progress.md | head -12
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git status --porcelain && echo "---" && git diff --stat -...
+Resumed the dead US-120 run and completed the slice.
+
+## Summary
+
+**US-120 M9d — persona presets reference gallery template keys**
+
+The prior run died (permission rejection) leaving uncommitted work with two buggy drift-guard specs. I fixed and completed it:
+
+- `workspace-template-definitions.constant.ts:23` — added optional `templateKey` to bundle-content types + helpers; documents items now reference the **real** shipped slugs `notes-de-reunion`, `brief-de-projet`, `specifications-produit-prd`, `entretien-individuel`; blocked Bilan items reference `BUDGET_EQUILIBRE`, `DEMANDE_SUBVENTION`. D02-gated Agenda/Archive/Projects/Syna expansion is recorded in comments, not pre-empted.
+- Two new app specs source-scrape the server preset constant and assert each referenced key resolves to a shipped descriptor.
+- Fixed two defects in the prior run's specs: the name→UUID map regex needed `=\s*` (UUIDs sit on the next line), and the referenced document keys were copied from a stale en-label map rather than the title-slug the descriptor actually mints.
+
+**Gates green:** server tsgo + onboarding jest 11 suites/97 tests; twenty-front tsgo + US-090 copy spec 13/13; documents typecheck/lint/test 229/229; accounting 123/123; oxlint/oxfmt clean; no catalog churn. Only Tier-2 (browser persona apply rows > 0) remains for the orchestrator.
+
+Reports appended to `docs/plan/phases/phase-13-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

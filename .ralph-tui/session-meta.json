@@ -2,13 +2,13 @@
   "id": "c3d9d5b5-131c-4bed-9971-37e80fe99ea9",
   "status": "running",
   "startedAt": "2026-09-29T18:49:46.094Z",
-  "updatedAt": "2026-09-30T18:39:33.378Z",
+  "updatedAt": "2026-09-30T18:52:19.704Z",
   "agentPlugin": "opencode",
   "trackerPlugin": "json",
   "executionScopes": [],
-  "currentIteration": 23,
-  "maxIterations": 24,
+  "currentIteration": 24,
+  "maxIterations": 25,
   "totalTasks": 0,
-  "tasksCompleted": 20,
+  "tasksCompleted": 21,
   "cwd": "/Users/maxaubert/Projets/A2E Suite"
 }

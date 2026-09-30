@@ -3,10 +3,10 @@
   "sessionId": "c3d9d5b5-131c-4bed-9971-37e80fe99ea9",
   "status": "running",
   "startedAt": "2026-09-29T18:49:46.574Z",
-  "updatedAt": "2026-09-30T18:46:56.563Z",
-  "currentIteration": 23,
+  "updatedAt": "2026-09-30T19:15:01.699Z",
+  "currentIteration": 24,
   "maxIterations": 20,
-  "tasksCompleted": 20,
+  "tasksCompleted": 21,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -246,6 +246,16 @@
       "durationMs": 597087,
       "startedAt": "2026-09-30T18:03:00.610Z",
       "endedAt": "2026-09-30T18:12:57.697Z"
+    },
+    {
+      "iteration": 24,
+      "status": "completed",
+      "taskId": "US-120",
+      "taskTitle": "M9d: persona presets reference gallery template keys (fixes G14 together with M2)",
+      "taskCompleted": true,
+      "durationMs": 443162,
+      "startedAt": "2026-09-30T18:39:33.396Z",
+      "endedAt": "2026-09-30T18:46:56.558Z"
     }
   ],
   "skippedTaskIds": [],
