@@ -45,6 +45,7 @@ describe('isDocumentEmptyForExport', () => {
   it('counts linking blocks (bookmark/pageLink) as content', () => {
     expect(isDocumentEmptyForExport([{ type: 'bookmark' }])).toBe(false);
     expect(isDocumentEmptyForExport([{ type: 'pageLink' }])).toBe(false);
+    expect(isDocumentEmptyForExport([{ type: 'recordView' }])).toBe(false);
   });
 
   it('counts non-array content (e.g. table payload) as content', () => {
@@ -126,6 +127,17 @@ describe('collectExportFidelityWarnings', () => {
       'bookmark-degrades',
       'page-link-degrades',
     ]);
+  });
+
+  it('flags an embedded view for markdown and docx only', () => {
+    const embeddedViewDocument = [{ type: 'recordView', content: [] }];
+
+    expect(collectExportFidelityWarnings(embeddedViewDocument, 'pdf')).toEqual(
+      [],
+    );
+    expect(
+      collectExportFidelityWarnings(embeddedViewDocument, 'markdown'),
+    ).toEqual(['record-view-degrades']);
   });
 
   it('handles null documents', () => {

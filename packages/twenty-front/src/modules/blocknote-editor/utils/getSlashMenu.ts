@@ -144,6 +144,14 @@ export const getSlashMenu = (editor: BlockEditorInstance): SuggestionItem[] => {
           props: { documentId: '', title: '' },
         }),
     },
+    {
+      ...localizeDefinition(SLASH_MENU_CUSTOM_ITEM_DEFINITIONS['Record view']),
+      onItemClick: () =>
+        insertOrUpdateBlockForSlashMenu(editor, {
+          type: 'recordView',
+          props: { viewId: '', viewName: '', objectMetadataId: '' },
+        }),
+    },
     ...COLUMN_LIST_ITEMS.map(({ definitionKey, columnCount }) => ({
       ...localizeDefinition(SLASH_MENU_CUSTOM_ITEM_DEFINITIONS[definitionKey]),
       onItemClick: () =>

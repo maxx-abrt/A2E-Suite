@@ -13,7 +13,8 @@ export type ExportFidelityWarning =
   | 'file-omitted'
   | 'mention-degrades'
   | 'bookmark-degrades'
-  | 'page-link-degrades';
+  | 'page-link-degrades'
+  | 'record-view-degrades';
 
 type ExportBlockInput = {
   type?: unknown;
@@ -31,6 +32,7 @@ const ALWAYS_EXPORTED_BLOCK_TYPES = new Set([
   'audio',
   'bookmark',
   'pageLink',
+  'recordView',
 ]);
 
 // The canonical warning order, also the format allow-list: PDF prints the live
@@ -47,6 +49,7 @@ const WARNINGS_BY_FORMAT: Record<
     'mention-degrades',
     'bookmark-degrades',
     'page-link-degrades',
+    'record-view-degrades',
   ],
   markdown: [
     'callout-degrades',
@@ -54,6 +57,7 @@ const WARNINGS_BY_FORMAT: Record<
     'mention-degrades',
     'bookmark-degrades',
     'page-link-degrades',
+    'record-view-degrades',
   ],
 };
 
@@ -148,6 +152,10 @@ export const collectExportFidelityWarnings = (
 
     if (blockType === 'pageLink') {
       foundWarnings.add('page-link-degrades');
+    }
+
+    if (blockType === 'recordView') {
+      foundWarnings.add('record-view-degrades');
     }
 
     if (Array.isArray(block.content)) {

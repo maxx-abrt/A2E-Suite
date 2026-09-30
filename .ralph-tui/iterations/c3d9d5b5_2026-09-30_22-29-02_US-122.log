@@ -1,0 +1,261 @@
+# Iteration 26 Log
+
+## Metadata
+
+- **Task ID**: US-122
+- **Task Title**: M8a-2: slash menu interactive/linking blocks (to-do→task, embeds, bookmark, page link, record mention, date/reminder)
+- **Description**: As a Bureau writer, I want blocks that connect pages to the suite's records and agenda so that documents are working surfaces, not text. Starting state: not started — depends on US-121's slash-menu gr...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-30T20:29:02.119Z
+- **Ended At**: 2026-09-30T20:45:43.759Z
+- **Duration**: 16m 41s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git log --oneline -5
+[94m[bash][0m $ git status --porcelain && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-122" PLAN.md | head -20
+[94m[bash][0m $ ls docs/plan/phases/
+[94m[bash][0m $ grep -rn "US-122" docs/ PLAN.md tasks/prd.json 2>/dev/null | head -30
+[94m[bash][0m $ grep -n "M8a\|US-121\|US-120" PLAN.md | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ sed -n '420,490p' tasks/prd.json
+[94m[bash][0m $ grep -rn "US-121\|US-122" docs/plan/phases/ | head -30
+[94m[bash][0m $ grep -n "US-121\|M8a\|L-EDITOR\|cancelMenuGrouping" docs/plan/phases/phase-13-report.md | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ done
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ printf '\nCLAIMED — US-122/interactive-linking-blocks — deepseek-v4.1-flash — 2026-09-30T20:29:43Z —...
+[94m[bash][0m $ find packages/twenty-front/src/modules/blocknote-editor -type f | sort
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/Schema.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/FileBlock.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/MentionInlineContent.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/getSlashMenu.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/slashMenuItemDefinitions.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/slashMenuGroups.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/BlockEditor.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/CustomMentionMenu.tsx
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/types/types.ts
+[94m[bash][0m $ find packages/twenty-front/src/modules/blocknote-editor -path '*stories*' -o -name '*.stories.tsx' |...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/LinkToRecordPicker.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/mention/hooks/useMentionMenu.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/mention/hooks/useMentionSearch.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/mention/components/MentionRecordChip.tsx
+[94m[bash][0m $ rg -l -i "convert.*task|task.*from.*note|createTask" packages/twenty-front/src/modules --glob '*.ts*...
+[94m[bash][0m $ rg -l "calendarReminder|CalendarReminder|createCalendarEvent|useCreateCalendarEvent" packages/twenty...
+[94m[bash][0m $ rg -l "useCreateOneRecord|createOneRecord" packages/twenty-front/src/modules/activities packages/twe...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules[0m pattern: [96mconvert.*[Tt]ask|createTask|Task creation[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules[0m pattern: [96mcalendarReminder|CalendarReminder|createCalendarEvent[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules[0m pattern: [96mcreateOneRecord.*document|objectNameSingular: 'document'|CoreObjectNameSingular.Document[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules[0m pattern: [96mcheckListItem|CheckListItem[0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/export/utils/exportFidelity.ts
+[94m[read][0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules[0m pattern: [96m<BlockEditor[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules[0m pattern: [96museCreateOneRecord\(\{[^}]*document|nameSingular: 'document'|'document' as const[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mCreateDocument|useCreateDocument|createDocument[0m
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents/src/objects -type f
+[94m[bash][0m $ grep -rn "parent\|tree\|child" packages/twenty-apps/internal/a2e-documents/src/objects/*.ts | head -...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/objects/document.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/CalloutBlock.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/TableOfContentsBlock.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/CustomSlashMenu.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/quick-capture/hooks/useQuickCapture.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/hooks/useCalendarTaskQuickCreate.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/quick-capture/utils/quickCapture.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/buildCalendarQuickTaskInput.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/getColumnListBlock.ts
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-front/.oxlintrc.json 2>/dev/null | head -80
+[94m[bash][0m $ find packages/twenty-front/src -name 'ObjectLayoutHeroCard.stories.tsx'
+[94m[bash][0m $ sed -n '80,200p' packages/twenty-front/.oxlintrc.json
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/activities/files/utils/getFileType.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/activities/files/types/AttachmentFileCategory.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/parseInitialBlocknote.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/hooks/useCreateOneRecord.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/constants/CalendarReminderPresets.ts
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mtype CreateCalendarEventInput[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/generated-metadata/graphql.ts
+[94m[bash][0m $ grep -rn "connectedAccountId" packages/twenty-front/src/modules/activities/calendar packages/twenty-...
+[94m[bash][0m $ grep -rn "connectedAccount" packages/twenty-front/src/modules --include=*.ts* -l | head -20
+[94m[todowrite][0m
+[94m[write][0m "export type TodoTaskInput = {
+  id: string;
+  title: string;
+  status: 'TODO';
+  dueAt?: string;
+};
+
+// Native `task` payload for the to-do block's "Convert to task" action. The
+// block keeps the ret... (743 chars)"
+[94m[write][0m "export type ChildDocumentInput = {
+  title: string;
+  kind: 'DOCUMENT';
+  parentId?: string;
+};
+
+// Payload that turns a page-link block into a real child in the document tree.
+// `parentId` is the cu... (789 chars)"
+[94m[write][0m "export type BookmarkCard = {
+  url: string;
+  title: string;
+  hostname: string;
+};
+
+export const getBookmarkHostname = (url: string): string => {
+  try {
+    return new URL(url).hostname.replace(/^ww... (825 chars)"
+[94m[write][0m "import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
+
+export type FileEmbedKind = 'image' | 'video' | 'audio' | 'link';
+
+// Maps the attachment category to ho... (669 chars)"
+[94m[write][0m "import { buildTaskFromTodoBlockInput } from '@/blocknote-editor/utils/buildTaskFromTodoBlockInput';
+import { describe, expect, it } from '@jest/globals';
+
+describe('buildTaskFromTodoBlockInput', () =>... (1157 chars)"
+[94m[write][0m "import { buildChildDocumentInput } from '@/blocknote-editor/utils/buildChildDocumentInput';
+import { describe, expect, it } from '@jest/globals';
+
+describe('buildChildDocumentInput', () => {
+  it('nes... (963 chars)"
+[94m[write][0m "import {
+  buildBookmarkCardFromUrl,
+  getBookmarkHostname,
+} from '@/blocknote-editor/utils/buildBookmarkCardFromUrl';
+import { describe, expect, it } from '@jest/globals';
+
+describe('getBookmarkHost... (1173 chars)"
+[94m[write][0m "import { getFileEmbedKind } from '@/blocknote-editor/utils/getFileEmbedKind';
+import { describe, expect, it } from '@jest/globals';
+
+describe('getFileEmbedKind', () => {
+  it.each([
+    ['IMAGE', 'ima... (530 chars)"
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[write][0m "// Structural `unknown` input keeps this testable without importing the
+// blocknote runtime (which cannot be jest-loaded — see phase-13 report).
+type InlineContentLike = {
+  text?: unknown;
+  content... (948 chars)"
+[94m[write][0m "import { getInlineContentPlainText } from '@/blocknote-editor/utils/getInlineContentPlainText';
+import { describe, expect, it } from '@jest/globals';
+
+describe('getInlineContentPlainText', () => {
+  i... (1045 chars)"
+[94m[write][0m "import { createContext } from 'react';
+
+// The id of the `document` record the editor is open on, or null when the
+// editor is not a full-page document (notes, dashboards). Page-link blocks read
+// i... (394 chars)"
+[94m[write][0m "import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { buildTaskFromTodoBlockInput } from '@/blocknote-editor/utils/buildTaskFromTodoBlockInput';
+import { getInlineContentPlain... (4613 chars)"
+[94m[bash][0m $ grep -rn "toExternalHTML" packages/twenty-front/node_modules/@blocknote/react/dist/*.d.ts 2>/dev/nul...
+[94m[bash][0m $ grep -rn "toExternalHTML" packages/twenty-front/node_modules/@blocknote/core/dist/types.d.ts package...
+[94m[bash][0m $ find . -maxdepth 4 -type d -name '@blocknote' 2>/dev/null | head
+[94m[bash][0m $ grep -rn "toExternalHTML" node_modules/@blocknote/react/dist/*.d.ts node_modules/@blocknote/core/dis...
+[94m[bash][0m $ find node_modules/@blocknote/react node_modules/@blocknote/core -name '*.d.ts' | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/node_modules/@blocknote/react/types/src/schema/ReactBlockSpec.d.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/TodoTaskBlock.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/TodoTaskBlock.tsx
+[94m[write][0m "import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { buildBookmarkCardFromUrl } from '@/blocknote-editor/utils/buildBookmarkCardFromUrl';
+import { createReactBlockSpec } from... (4043 chars)"
+[94m[bash][0m $ find packages/twenty-ui/src/input -iname '*textinput*' | head
+[94m[bash][0m $ grep -rn "from 'twenty-ui/input'" packages/twenty-front/src/modules | grep TextInput | head -3
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ui/input/components/TextInput.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/BookmarkBlock.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/BookmarkBlock.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/BookmarkBlock.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/BookmarkBlock.tsx
+[94m[write][0m "import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { BlockEditorDocumentContext } from '@/blocknote-editor/contexts/BlockEditorDocumentContext';
+import { buildChildDocumentIn... (3853 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/FileBlock.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/FileBlock.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/FileBlock.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/Schema.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/Schema.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/BlockEditor.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/BlockEditor.tsx
+[94m[bash][0m $ grep -rn "IconFileTypePdf\|IconBookmark\|IconFileDescription" packages/twenty-ui/src --include='*.ts...
+[94m[bash][0m $ grep -n "IconFileDescription\|IconFileTypePdf\|IconFileTypeDoc\|IconColumns\|IconListSearch" package...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/slashMenuItemDefinitions.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/slashMenuItemDefinitions.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/getSlashMenu.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/getSlashMenu.ts
+[94m[read][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/export/utils/exportFidelity.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/export/utils/exportFidelity.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/export/utils/exportFidelity.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/export/utils/exportFidelity.ts
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ grep -rln "useCreateBlockNote" packages/twenty-front/src/modules | head
+[94m[bash][0m $ find packages/twenty-ui/src/icon -name '*.tsx' | head
+[94m[bash][0m $ grep -rn "export.*IconCheck" packages/twenty-ui/src/icon/index.ts
+[94m[bash][0m $ find packages/twenty-ui/src -path '*Button*' -name '*.tsx' | head
+[94m[bash][0m $ grep -rn "size\?:\|disabled\?:\|Icon\?:" packages/twenty-ui/src/input/button/components/Button/Butto...
+[94m[bash][0m $ grep -n "size\|disabled\|Icon" packages/twenty-ui/src/input/Button/Button.tsx | head -30
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | head -60
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/TodoTaskBlock.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/BookmarkBlock.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/PageLinkBlock.tsx
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | head -40
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/blocknote-editor/blocks/TodoTaskBlock.tsx src/...
+[94m[edit][0m
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/blocknote-editor/blocks/TodoTaskBlock.tsx src/...
+[94m[bash][0m $ npx oxfmt --check src/modules/blocknote-editor/blocks/TodoTaskBlock.tsx src/modules/blocknote-editor...
+[94m[bash][0m $ npx oxfmt src/modules/blocknote-editor/blocks/PageLinkBlock.tsx 2>&1 | tail -5
+[94m[bash][0m $ npx jest src/modules/blocknote-editor --config=jest.config.mjs 2>&1 | tail -40
+[94m[bash][0m $ ls docs/plan | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/p3.4-advanced-authoring-feasibility.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/TodoTaskBlock.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/BookmarkBlock.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/getSlashMenu.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/getSlashMenu.ts
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -20 && echo "TSC_OK"
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/blocknote-editor/utils/getSlashMenu.ts src/mod...
+[94m[bash][0m $ npx jest src/modules/blocknote-editor --config=jest.config.mjs 2>&1 | tail -8
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ npx jest --findRelatedTests src/modules/blocknote-editor/utils/getSlashMenu.ts src/modules/blocknote...
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ only slash-menu insertion changes. This is what the AC's "image/video/audio/PDF embed via FileBlock ...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ Syna group has no M8a member. - Next: date/reminder inline content + calendar-event creation slice, ...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -25 docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ git status --porcelain | grep -v '.ralph-tui/session' | grep -v 'tasks/prd.json' | grep -v '.ralph-t...
+[94m[todowrite][0m
+US-122 executed as a `partial` slice — 4 of the 6 interactive/linking block families implemented, all Tier-0 gates green, reports appended.
+
+**Delivered**
+- `TodoTaskBlock` — to-do with "Convert to task" creating a native `task` (id stored in block props for provenance/idempotency)
+- `BookmarkBlock` — web bookmark card
+- `PageLinkBlock` — sub-page block creating a child `document` (parent from `BlockEditorDocumentContext`)
+- `FileBlock` — category-aware image/video/audio inline embeds vs download link
+- Slash-menu Media/Bureau/Links entries, export external-HTML + fidelity warnings, 5 pure serializers + 5 new tests
+
+**Checks:** tsgo clean · oxlint 0/0 · oxfmt clean · `blocknote-editor` jest 28 suites/183 tests · `--findRelatedTests` 19 suites/160 tests · no catalog churn.
+
+**Not done (reported):** date/reminder mention + Agenda-reminder creation (needs a connected account), storybook stories (blocks need app providers), E14 browser legs (Tier 2), Syna group (no M8a block); math is NO-GO per `p3.4-advanced-authoring-feasibility.md`. Record mention already shipped — left untouched.
+
+<promise>COMPLETE</promise>

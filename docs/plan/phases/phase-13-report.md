@@ -333,3 +333,33 @@ CLAIMED — US-122/interactive-linking-blocks — deepseek-v4.1-flash — 2026-0
 
 ### Intentional behaviour change (recorded, not silent)
 The Image/Video/Audio/File slash items now all insert our `file` block (FileBlock: attachments upload + category-aware inline media) instead of BlockNote's per-type image/video/audio blocks. The default block specs stay registered, so **existing** documents with those blocks still load and render; only slash-menu insertion changes. This is what the AC's "image/video/audio/PDF embed via FileBlock (attachments storage)" asks for — one upload path, not two.
+
+CLAIMED — US-123/record-view-block — deepseek-v4.1-flash — 2026-09-30T20:54:57Z — base 9064b3b8a28d94834794b3003fa9734e0eb9807f
+
+## 2026-09-30 21:03 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-123 M8b: inline views ('databases') in pages — embed a native view block (read-only first) · **Slice:** the first (read-only) half — the `recordView` block + embedding host + safe permission stub + object/view picker, reusing the record-table widget stack
+**Claim:** partial
+**Ready-to-tick:** no — the read-only embed is implemented and green, but the AC's editable half ("edits in the block reflect on /objects/tasks") and the Tier-2 E14 browser proof are still absent
+**Base:** 9064b3b8a28d94834794b3003fa9734e0eb9807f
+**Changed:**
+- `blocks/RecordViewBlock.tsx` (NEW `recordView` atom block: props `viewId`/`viewName`/`objectMetadataId`, `content: 'none'`; render delegates to the host; `toExternalHTML` emits the view name)
+- `blocks/Schema.ts` (registers `recordView`)
+- `components/RecordViewEmbedHost.tsx` (NEW: resolves view→object, wraps the shared `RecordTableWidgetRendererContent` in `PageLayoutEditModeProviderContext` + a unique `PageLayoutComponentInstanceContext` + an `ErrorBoundary`; renders the picker when unconfigured and the safe stub on denied/unavailable)
+- `components/RecordViewEmbedStub.tsx` (NEW: the single safe-degradation surface — lock icon + localized message, never a raw error)
+- `components/RecordViewEmbedViewPicker.tsx` (NEW: two-step object→view picker over `useReadableObjectMetadataItems` + `viewsFromObjectMetadataItemFamilySelector`; writes block props via `onSelectView`)
+- `constants/RecordViewEmbedPickerDropdownId.ts` (NEW)
+- `utils/resolveRecordViewEmbedState.ts` (NEW pure resolver: unconfigured / unavailable / denied / ready)
+- `utils/getRecordViewEmbedExportText.ts` (NEW pure serializer helper)
+- `utils/getSlashMenu.ts` + `utils/slashMenuItemDefinitions.ts` (Record view item → Bureau group, fr+en aliases, `IconDatabase`)
+- `export/utils/exportFidelity.ts` + `export/components/BlockEditorExportMenu.tsx` (`recordView` counts as content; `record-view-degrades` warning for md/docx)
+- 4 NEW/updated tests: `resolveRecordViewEmbedState.test.ts`, `getRecordViewEmbedExportText.test.ts`, `components/__tests__/RecordViewEmbedHost.test.tsx`, and updated `getSlashMenu.test.ts` / `exportFidelity.test.ts`
+**Checks:**
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx oxlint --type-aware -c .oxlintrc.json <17 touched files>` → 0 warnings / 0 errors; `npx oxfmt --check <17 touched files>` → clean
+- `npx jest src/modules/blocknote-editor --config=jest.config.mjs` → 31 suites / 196 tests pass (was 28/183; +3 suites / +13 tests)
+- `npx jest --findRelatedTests <11 changed sources> --config=jest.config.mjs` → 22 suites / 173 tests pass
+- no `locales/**` touched; no AI attribution
+**Missing for tick:** (1) **editable embed** — the host passes `isUIEditable={false}` (read-only first, as the AC explicitly sequences); making it editable and proving an edit reflects on `/objects/tasks` is the next bullet. (2) **Tier 2** E14 embedded-view browser proof incl. the permission stub. (3) Gallery layout does not exist in this fork (`ViewType` has no GALLERY; the 4th layout is LIST) — the widget stack already dispatches TABLE/KANBAN/LIST/CALENDAR.
+**Do not redo:** the **record-table widget stack already renders a read-only native view** (`RecordTableWidgetRendererContent` + `RecordTableWidgetProvider`); the embed reuses it rather than forking a second table engine. The view host must supply `PageLayoutEditModeProviderContext value={{ isInEditMode: false }}` (a *Provider component*, not `.Provider`) AND a `PageLayoutComponentInstanceContext` with a per-block unique `instanceId` — `RecordTableWidgetRendererContent` reads a component-family draft selector that throws otherwise. `RecordIndexContainerGater` is the full index page, not the embed seam. `getObjectPermissionsForObject` defaults to *allowed* for unknown ids, so the object-existence check must precede it. `useObjectMetadataItem`/`useObjectMetadataItemById` throw when absent — the resolver guards them. Slash-menu content seam stays `utils/getSlashMenu.ts`.
+**Remaining:** US-124…US-130 (7) plus the open US-118 entry-points / US-119 save-action mount legs (2)
+**Next:** flip the host to `isUIEditable` driven by object `canUpdateObjectRecords`, wire the widget's field-update/draft hooks back to the view (persist path), then add the E14 browser leg (embed Tasks board filtered by project → edit → confirm on `/objects/tasks`).

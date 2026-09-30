@@ -98,6 +98,7 @@ export const BlockEditorExportMenu = ({
     'mention-degrades': t`Mentions degrade to plain text`,
     'bookmark-degrades': t`Web bookmarks degrade to a plain link`,
     'page-link-degrades': t`Page links degrade to their title`,
+    'record-view-degrades': t`Embedded views degrade to their name`,
   };
 
   const renderWarnings = (format: keyof typeof formatWarnings) =>

@@ -10,6 +10,7 @@ import { CalloutBlock } from '@/blocknote-editor/blocks/CalloutBlock';
 import { FileBlock } from '@/blocknote-editor/blocks/FileBlock';
 import { MentionInlineContent } from '@/blocknote-editor/blocks/MentionInlineContent';
 import { PageLinkBlock } from '@/blocknote-editor/blocks/PageLinkBlock';
+import { RecordViewBlock } from '@/blocknote-editor/blocks/RecordViewBlock';
 import { TableOfContentsBlock } from '@/blocknote-editor/blocks/TableOfContentsBlock';
 import { TodoTaskBlock } from '@/blocknote-editor/blocks/TodoTaskBlock';
 
@@ -25,6 +26,7 @@ export const BLOCK_SCHEMA = withMultiColumn(
       todoTask: TodoTaskBlock(),
       bookmark: BookmarkBlock(),
       pageLink: PageLinkBlock(),
+      recordView: RecordViewBlock(),
     },
     inlineContentSpecs: {
       ...defaultInlineContentSpecs,

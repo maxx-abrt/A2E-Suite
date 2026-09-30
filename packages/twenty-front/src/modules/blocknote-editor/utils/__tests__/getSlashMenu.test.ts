@@ -122,6 +122,16 @@ describe('getSlashMenu', () => {
     expect(subPage?.aliases).toContain('sous-page');
   });
 
+  it('appends the embedded record view item in the Bureau group', () => {
+    const items = getSlashMenu(fakeEditor);
+
+    const recordView = items.find((item) => item.title === 'Record view');
+
+    expect(recordView?.groupKey).toBe('bureau');
+    expect(typeof recordView?.onItemClick).toBe('function');
+    expect(recordView?.aliases).toContain('base de données');
+  });
+
   it('replaces the default Image/Video/Audio items with FileBlock-backed ones', () => {
     const items = getSlashMenu(fakeEditor);
 

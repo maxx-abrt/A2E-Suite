@@ -13,6 +13,17 @@ after each iteration and it's included in prompts for context.
   The publisher names it `workspace:<id>:chat:<channelId>` (`buildChatChannelTopic`).
   Heartbeat revocation is the one `revalidateSocketAuthorizations` path — never add a
   second ACL path. The `object:` half is implemented but latent (no `object:` publisher).
+- Embedding a native object view outside a page layout is a solved seam: reuse
+  `page-layout/widgets/record-table/components/RecordTableWidgetRendererContent`
+  (dispatches TABLE/KANBAN/LIST/CALENDAR, defaults `isUIEditable=false`) wrapped in
+  `PageLayoutEditModeProviderContext value={{ isInEditMode: false }}` — that's a
+  **Provider component** from `createRequiredContext`, so `<X value=...>`, never
+  `<X.Provider>` — plus a `PageLayoutComponentInstanceContext` with a **unique
+  `instanceId` per embed** (its draft component-family selector throws otherwise).
+  `RecordIndexContainerGater` is the full index page, not the embed seam;
+  `getObjectPermissionsForObject` defaults to allowed for unknown ids, so check
+  object-metadata existence before the permission check, and note this fork has no
+  `GALLERY` ViewType (the 4th layout is `LIST`).
 - twenty-front enforces a custom oxlint rule `twenty(max-consts-per-file)` (max 1
   top-level `const` per file). Put a new exported constant in its own file, not
   appended to an existing constants module. Run `npx oxlint --type-aware -c
@@ -506,4 +517,17 @@ after each iteration and it's included in prompts for context.
   - `npx oxlint` (not `nx lint:diff-with-main`) is the only way to lint uncommitted work; `no-script-url` rejects a literal `javascript:` string in a test fixture.
 - Missing (Tier 2 orchestrator): date/reminder mention + live reminder creation; storybook light/dark stories (blocks need app providers); E14 interactive-block browser legs; Syna group has no M8a member.
 - Next: date/reminder inline content + calendar-event creation slice, then provider-free presentational views for stories.
+---
+
+## 2026-09-30 - US-123 (M8b: inline views/databases in pages, read-only first)
+- Implemented the read-only half of the embedded-view block: a `recordView` atom block that renders a live native view (table/kanban/list/calendar) of any object inside a page, with a safe permission stub and an object→view picker.
+- Files changed: NEW `blocks/RecordViewBlock.tsx`; `blocks/Schema.ts`; NEW `components/RecordViewEmbedHost.tsx`, `components/RecordViewEmbedStub.tsx`, `components/RecordViewEmbedViewPicker.tsx`; NEW `constants/RecordViewEmbedPickerDropdownId.ts`; NEW `utils/resolveRecordViewEmbedState.ts` + `utils/getRecordViewEmbedExportText.ts`; `utils/getSlashMenu.ts` + `utils/slashMenuItemDefinitions.ts`; `export/utils/exportFidelity.ts` + `export/components/BlockEditorExportMenu.tsx`; NEW/updated tests `utils/__tests__/resolveRecordViewEmbedState.test.ts`, `utils/__tests__/getRecordViewEmbedExportText.test.ts`, `components/__tests__/RecordViewEmbedHost.test.tsx`, `utils/__tests__/getSlashMenu.test.ts`, `export/utils/__tests__/exportFidelity.test.ts`.
+- **Learnings:**
+  - Reuse `RecordTableWidgetRendererContent` (`page-layout/widgets/record-table`) as the embed host: it already dispatches TABLE/KANBAN/LIST/CALENDAR and defaults `isUIEditable=false`. Its required providers are `PageLayoutEditModeProviderContext` (a **Provider component** from `createRequiredContext`, so `<X value=...>`, NOT `<X.Provider>`) and a `PageLayoutComponentInstanceContext` with a **unique `instanceId` per embed** (the draft component-family selector throws without it). Give each embed a distinct id and it resets read-only flags on unmount (no leakage between embeds).
+  - `RecordIndexContainerGater` is the full `/objects/:plural` page, not the embed seam.
+  - `getObjectPermissionsForObject` **defaults to allowed** for unknown ids, so check object-metadata existence *before* the permission check; `useObjectMetadataItem`/`useObjectMetadataItemById` throw when absent.
+  - There is **no `GALLERY` ViewType** in this fork; the fourth layout is `LIST`.
+  - Keep custom blocks free of `@blocknote/react` in their testable seams: the block wrapper delegates to `components/RecordViewEmbedHost.tsx` (no blocknote import), which the host unit test renders with `I18nProvider` (the stub uses `useLingui`).
+- Missing (Tier 2 orchestrator): editable embed (edit → reflects on `/objects/tasks`); E14 embedded-view browser proof incl. permission stub.
+- Next: make the host editable under `canUpdateObjectRecords` and wire the view draft/persist path; then the E14 browser leg.
 ---

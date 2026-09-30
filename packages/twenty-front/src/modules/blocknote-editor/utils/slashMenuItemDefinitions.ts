@@ -7,6 +7,7 @@ import {
   IconBookmark,
   IconCode,
   IconColumns,
+  IconDatabase,
   IconFile,
   IconFileText,
   IconH1,
@@ -271,5 +272,11 @@ export const SLASH_MENU_CUSTOM_ITEM_DEFINITIONS: Record<
     aliases: ['sous-page', 'page enfant', 'page', 'subpage'],
     groupKey: 'links',
     Icon: IconFileText,
+  },
+  'Record view': {
+    title: msg`Record view`,
+    aliases: ['vue', 'base de données', 'tableau', 'kanban', 'embed', 'view'],
+    groupKey: 'bureau',
+    Icon: IconDatabase,
   },
 };
