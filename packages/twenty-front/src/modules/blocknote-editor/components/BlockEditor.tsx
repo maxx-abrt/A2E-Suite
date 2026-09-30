@@ -18,6 +18,7 @@ import {
   type SuggestionItem,
 } from '@/blocknote-editor/components/CustomSlashMenu';
 import { LinkToRecordSlashMenuItem } from '@/blocknote-editor/components/LinkToRecordSlashMenuItem';
+import { SynaSlashMenuItem } from '@/blocknote-editor/components/SynaSlashMenuItem';
 import { BlockEditorRemoteCursorsEffect } from '@/blocknote-editor/co-editing/components/BlockEditorRemoteCursorsEffect';
 import { useDocumentCursors } from '@/blocknote-editor/co-editing/hooks/useDocumentCursors';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -315,40 +316,45 @@ export const BlockEditor = ({
           editable={!readonly}
         >
           <CustomSideMenu editor={editor} />
-          <LinkToRecordSlashMenuItem>
-            {(linkToRecordItem) => {
-              const slashMenuWithLinkToRecord = () => [
-                ...getSlashMenu(editor),
-                linkToRecordItem,
-              ];
+          <SynaSlashMenuItem>
+            {(synaItems) => (
+              <LinkToRecordSlashMenuItem>
+                {(linkToRecordItem) => {
+                  const slashMenuItems = () => [
+                    ...getSlashMenu(editor),
+                    linkToRecordItem,
+                    ...synaItems,
+                  ];
 
-              return (
-                <SuggestionMenuController
-                  triggerCharacter="/"
-                  getItems={async (query: string) => {
-                    const filtered = filterSuggestionItems<SuggestionItem>(
-                      slashMenuWithLinkToRecord(),
-                      query,
-                    );
+                  return (
+                    <SuggestionMenuController
+                      triggerCharacter="/"
+                      getItems={async (query: string) => {
+                        const filtered = filterSuggestionItems<SuggestionItem>(
+                          slashMenuItems(),
+                          query,
+                        );
 
-                    if (filtered.length > 0) {
-                      return filtered;
-                    }
+                        if (filtered.length > 0) {
+                          return filtered;
+                        }
 
-                    return [
-                      {
-                        title: t`Close menu`,
-                        Icon: IconX,
-                        onItemClick: () =>
-                          editor.getExtension(SuggestionMenu)?.closeMenu(),
-                      },
-                    ];
-                  }}
-                  suggestionMenuComponent={CustomSlashMenu}
-                />
-              );
-            }}
-          </LinkToRecordSlashMenuItem>
+                        return [
+                          {
+                            title: t`Close menu`,
+                            Icon: IconX,
+                            onItemClick: () =>
+                              editor.getExtension(SuggestionMenu)?.closeMenu(),
+                          },
+                        ];
+                      }}
+                      suggestionMenuComponent={CustomSlashMenu}
+                    />
+                  );
+                }}
+              </LinkToRecordSlashMenuItem>
+            )}
+          </SynaSlashMenuItem>
           <SuggestionMenuController
             triggerCharacter="@"
             getItems={async (query) => getMentionItems(query)}

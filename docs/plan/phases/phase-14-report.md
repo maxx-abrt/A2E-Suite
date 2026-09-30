@@ -76,3 +76,29 @@ CLAIMED — US-127/M10a-2 — deepseek-v4.1-flash — 2026-09-30T21:43:10Z — b
 
 ### Resume note (stalled claim)
 A prior Ralph iteration (31, 21:37:17Z) wrote a `CLAIMED — US-127/M10a-2` line then died ~4 min later mid-exploration with **zero code changes** (only that claim line dirty). This session is the same Ralph run/model, so I refreshed the claim (21:43:10Z) and resumed rather than reporting `BLOCKED — already claimed`; no competing executor exists (parallel mode `never`). The duplicate claim line is historical.
+
+CLAIMED — US-128/M10b-e1 — deepseek-v4.1-flash — 2026-09-30T22:07:36Z — base f14df7d1351e25aa345f111f7d894bb814f933f5
+
+## 2026-09-30 22:11 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-128 M10b: Syna everywhere — one entry per context (Cmd+K, editor slash, record page, Bilan, Agenda) · **Slice:** editor slash `/syna` entry — the first unmet sub-item of AC bullet 2 (Cmd+K and record-page entries already wired; selection toolbar has no infra in this fork)
+**Claim:** partial
+**Ready-to-tick:** no — the task spans more bullets; this slice (editor `/syna` entries) is complete and green, selection toolbar + the US-130 provider gate remain
+**Base:** f14df7d1351e25aa345f111f7d894bb814f933f5
+**Changed:**
+- new `twenty-front/src/modules/ai/types/SynaAiAction.ts`, `.../ai/constants/synaDocumentAiActions.ts` (3 read-only P9.2 document actions), `.../ai/utils/getOfferedSynaActions.ts`
+- new `.../ai/utils/__tests__/getOfferedSynaActions.test.ts` (+7)
+- new `.../blocknote-editor/components/SynaSlashMenuItem.tsx` (outer zero-AI gate + inner context-tool mapping) and `.../components/__tests__/SynaSlashMenuItem.test.tsx` (+5)
+- edit `.../blocknote-editor/components/BlockEditor.tsx` (append the Syna items to the `/` slash menu via the existing render-prop seam)
+- this report; `.ralph-tui/progress.md`
+**Checks:**
+- `npx jest src/modules/ai/utils/__tests__/getOfferedSynaActions.test.ts --config=packages/twenty-front/jest.config.mjs` → 7 passed
+- `npx jest src/modules/blocknote-editor/components/__tests__/SynaSlashMenuItem.test.tsx --config=packages/twenty-front/jest.config.mjs` → 5 passed
+- `npx jest src/modules/blocknote-editor/utils/__tests__/getSlashMenu.test.ts --config=packages/twenty-front/jest.config.mjs` → 9 passed
+- `cd packages/twenty-front && npx jest --findRelatedTests <BlockEditor + SynaSlashMenuItem + getOfferedSynaActions> --config=jest.config.mjs` → 21 suites / 163 passed
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx oxlint --type-aware -c .oxlintrc.json <7 touched>` → 0 warnings / 0 errors; `oxfmt --check <7>` → clean; no `locales/**` touched; no AI attribution
+**Missing for tick:** Tier 2 live dispatch journeys (orchestrator). Remaining entry work: the BlockNote selection toolbar (this fork renders only BlockNote's default formatting toolbar and contains no `FormattingToolbarController`; appending Syna buttons means supplying a custom toolbar that reproduces the default controls — out of this slice's blast radius). The `/syna` slash actions confirm-first: every item stages a PREFILL draft via `openAskAiPageWithPreprompt`, never a direct execution; a mutating action is filtered by `getOfferedSynaActions` and a missing backing tool fails closed. Zero-AI: the outer component hides all items when the `AI` permission flag is absent or `enabledModels` is empty. The accepted provider gate is still the `enabledModels` proxy — US-130 swaps it for the US-102 resolution order.
+**Deferrals recorded (AC bullet 3):** Bilan categorization suggestions stay P7-gated — no accounting tool was added; `SYNA_DOCUMENT_AI_ACTIONS` contains document actions only. Agenda "find a slot"/"prepare meeting": the only calendar primitives today are event create/compose (`useComposeCalendarEventRelatedRecordAction`) and the reminder scheduling pipeline; no read-only scheduling registry tool exists, so no Agenda Syna entry can be offered yet — recorded as a gap.
+**Do not redo:** Cmd+K "Ask Syna" already exists (`EngineComponentKey.ASK_AI` standard command item, `askAi` constant, opens `SidePanelPages.AskAI` titled Syna, gated `permissionFlags.AI and not isInSidePanel`); the record-page context is already served by `AiChatContextToolButtons` in the assistant empty state (existing US-053/066/067 path). Do not rebuild either.
+**Remaining:** 3 M10 bullets (M10b selection-toolbar/record-page remainder, M10c, M10d) plus US-129/US-130.
+**Next:** wire the selection toolbar by wrapping `BlockNoteView` with `formattingToolbar={false}` + a custom `FormattingToolbarController` that keeps the default styles and appends the same `getOfferedSynaActions` items; then reconcile US-130's provider-resolution gate with the current `enabledModels` proxy and add the Agenda entry once a read-only scheduling tool exists.

@@ -1,0 +1,380 @@
+# Iteration 32 Log
+
+## Metadata
+
+- **Task ID**: US-127
+- **Task Title**: M10a-2: Settings → Syna → Providers UI (add/test key, default + fast model, Audit masking preserved)
+- **Description**: As a workspace admin, I want a Settings page to add and test my BYOK provider key and pick default/fast models so that US-102's server core is usable. Starting state: depends on US-102 (entity + resol...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-30T21:41:17.025Z
+- **Ended At**: 2026-09-30T22:01:14.081Z
+- **Duration**: 19m 57s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the clean-start check and gather context.
+[94m[bash][0m $ grep -n "US-127" PLAN.md
+[94m[bash][0m $ git rev-parse HEAD
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ grep -rn "US-127" PLAN.md docs/plan/phases/phase-14-report.md tasks/prd.json 2>/dev/null | head -50
+[94m[bash][0m $ ls -la .ralph-tui/iterations/ | tail -5
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-14-report.md
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ git diff docs/plan/phases/phase-14-report.md
+The report has a recent CLAIMED entry for my exact slice (21:37:17Z, ~4 min ago). Let me inspect the iteration log to determine if that run is stalled or is my own session.
+[94m[bash][0m $ cat ".ralph-tui/iterations/c3d9d5b5_2026-09-30_23-36-53_US-127.log" | head -100
+[94m[bash][0m $ cat .ralph-tui/session.json 2>/dev/null | head -80
+The prior iteration (31) for US-127 claimed at 21:37:17Z then ended at 21:41:12Z with "Task Completed: No" — a stalled run with no code changes. Let me check the engine config and progress log to determine the right handling.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/config.toml
+[94m[bash][0m $ grep -n "timeout\|iterations\|maxIterations\|permission\|turn" .ralph-tui/prompt.hbs | head -40
+[94m[bash][0m $ grep -n "US-127\|already claimed\|stalled\|timed out\|timeout" .ralph-tui/progress.md | head -40
+[94m[bash][0m $ ls -la .ralph-tui/iterations/ | grep US-127
+[94m[bash][0m $ grep -rn "CLAIMED" docs/plan/phases/*.md | tail -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-15-report.md
+[94m[bash][0m $ grep -n "CLAIMED\|stalled\|already claimed\|lost claim\|resume" .ralph-tui/prompt.hbs
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ grep -n "M10a\|M10b\|M10c\|M10d" PLAN.md | head -20
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) for s in d['userStories']:     if s['id...
+I have full context now. The prior iteration 31 (same session, same model) claimed this slice at 21:37:17Z, then died 4 minutes later mid-exploration with zero code changes and no follow-up report. Precedent (US-117, phase-13 report) resumes dead-run work. Let me verify the dependency, then claim and resume.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) for s in d['userStories']:     if s['id...
+[94m[bash][0m $ cat >> docs/plan/phases/phase-14-report.md << 'EOF'  CLAIMED — US-127/M10a-2 — deepseek-v4.1-flash —...
+Dependency US-102 is `passes: true`. Claiming the slice now, noting the stalled-run resume.
+[94m[bash][0m $ tail -5 docs/plan/phases/phase-14-report.md
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-front/codegen* 2>/dev/null
+No competing claim. Now efficient parallel exploration (I already have detailed maps from the stalled run's log).
+[94m[bash][0m $ rg -n "AI_SETTINGS" packages/twenty-server/src --glob '!*.spec.ts' | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/codegen-metadata.cjs
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules[0m pattern: [96mSettingsPermissionGuard[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/ai/ai-models/ai-models.module.ts
+
+
+[94m[bash][0m $ [print(k, '->', v.get('options',{}).get('command','') or v.get('options',{}).get('commands','')) for...
+[94m[bash][0m $ ls packages/twenty-server/src/scripts 2>/dev/null | head -30
+[94m[read][0m
+
+
+[94m[bash][0m $ echo "done"
+[94m[bash][0m $ grep -rn "useQuery<\|useMutation<" packages/twenty-front/src/modules/settings --include="*.tsx" --in...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/ai/ai-agent/agent.resolver.ts
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-server/src/engine/metadata-modules/ai/ai-models/services/default-ai-...
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-server/src/engine/metadata-modules/ai/ai.exception.ts
+A dev server is already on :3000, but codegen would regenerate a huge generated file; there's an established hand-typed `useQuery<T>` pattern in the same settings area. Let me read the server patterns.
+
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-server/src/engine/metadata-modules/ai/ai-agent/ai-agent.module.ts
+[94m[bash][0m $ python3 -c " import json d=json.load(open('packages/twenty-server/src/engine/metadata-modules/ai/ai-...
+[94m[bash][0m $ cat packages/twenty-server/src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.schema....
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/metadata-engine.module.ts
+[94m[bash][0m $ cat packages/twenty-server/src/engine/metadata-modules/ai/utils/ai-graphql-api-exception-handler.uti...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/settings/hooks/useSettingsNavigationItems.tsx
+[94m[bash][0m $ sed -n '800,860p' packages/twenty-front/src/modules/app/components/SettingsRoutes.tsx
+Now the front patterns.
+
+
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/SettingsAI.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/utils/getAiProviderCredentialStatuses.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/settings/hooks/useSettingsNavigationItems.tsx
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-front/src/modules/settings/components/layout/SettingsTabBar.tsx 2>/de...
+[94m[bash][0m $ grep -rn "MetadataResolver\|metadata-resolver" packages/twenty-server/src/engine/api/graphql --inclu...
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-front/src/modules/ui/layout/tab-list/types/TabListProps.ts 2>/dev/nul...
+[94m[bash][0m $ find packages/twenty-front/src/pages/settings/ai packages/twenty-front/src/modules/settings/ai -name...
+[94m[bash][0m $ grep -rn "resolverSchemaScope\|RESOLVER_SCHEMA_SCOPE_KEY" packages/twenty-server/src/engine/api/grap...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/components/SettingsAiAuditTab.tsx
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96mResolverSchemaScope[0m
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-server/src/engine/api/graphql/metadata-graphql-api.module.ts 2>/dev/n...
+
+
+[94m[bash][0m $ ls packages/twenty-server/src/engine/api/graphql/graphql-config/
+Let me check whether the model registry actually consumes workspace providers (the US-102 report noted no production caller).
+[94m[bash][0m $ grep -n "buildModelRegistry\|getResolvedProviders\|workspaceId" packages/twenty-server/src/engine/me...
+[94m[bash][0m $ find packages/twenty-front/src/modules/settings -path "*graphql*" -name "*.ts" | grep -v admin-panel...
+The registry doesn't consume workspace keys yet (documented US-102 open item; wiring is M10b/M10d scope). My slice: server read/write/test surface + front page. Let me study the front Apollo conventions.
+[94m[bash][0m $ sed -n '1,140p' packages/twenty-front/src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+[94m[bash][0m $ sed -n '1,90p' packages/twenty-front/src/modules/ui/input/components/Select.tsx | grep -n "type Sele...
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-front/src/pages/settings/ai/components/__tests__/SettingsAiAuditTab.t...
+[94m[bash][0m $ cat "$f"
+[94m[todowrite][0m
+Let me set up the task list, then verify a few UI component imports.
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-front/src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+[94m[write][0m "import { registerEnumType } from '@nestjs/graphql';
+
+export enum WorkspaceAiProviderSource {
+  WORKSPACE = 'WORKSPACE',
+  INSTANCE = 'INSTANCE',
+  CATALOG = 'CATALOG',
+}
+
+registerEnumType(WorkspaceAiP... (353 chars)"
+[94m[write][0m "import { registerEnumType } from '@nestjs/graphql';
+
+export enum WorkspaceAiProviderTestErrorCode {
+  INVALID_API_KEY = 'INVALID_API_KEY',
+  MODEL_NOT_FOUND = 'MODEL_NOT_FOUND',
+  PROVIDER_UNREACHABLE... (496 chars)"
+Now writing the server side. DTOs and enums first.
+[94m[write][0m "import { Field, ObjectType } from '@nestjs/graphql';
+
+import { WorkspaceAiProviderSource } from 'src/engine/metadata-modules/ai/ai-models/dtos/workspace-ai-provider-source.enum';
+
+@ObjectType()
+export... (1634 chars)"
+[94m[write][0m "import { Field, ObjectType } from '@nestjs/graphql';
+
+import { WorkspaceAiProviderTestErrorCode } from 'src/engine/metadata-modules/ai/ai-models/dtos/workspace-ai-provider-test-error-code.enum';
+
+@Obj... (648 chars)"
+[94m[write][0m "import { Field, InputType } from '@nestjs/graphql';
+
+@InputType()
+export class UpsertWorkspaceAiProviderInput {
+  @Field(() => String)
+  provider: string;
+
+  @Field(() => String)
+  npm: string;
+
+  @Fi... (600 chars)"
+[94m[write][0m "import { Field, InputType } from '@nestjs/graphql';
+
+@InputType()
+export class TestWorkspaceAiProviderInput {
+  @Field(() => String)
+  provider: string;
+
+  @Field(() => String)
+  npm: string;
+
+  // Om... (403 chars)"
+[94m[bash][0m $ grep -rn "AI_SDK_PACKAGES" packages/twenty-shared/src/ai/*.ts | head -5
+[94m[edit][0m
+Now the server service additions and admin projection service.
+[94m[edit][0m
+[94m[write][0m "import { WorkspaceAiProviderTestErrorCode } from 'src/engine/metadata-modules/ai/ai-models/dtos/workspace-ai-provider-test-error-code.enum';
+
+const hasNumericStatusCode = (
+  error: unknown,
+): error ... (1278 chars)"
+[94m[write][0m "import { Injectable, Logger } from '@nestjs/common';
+
+import { isNonEmptyString } from '@sniptt/guards';
+import { generateText } from 'ai';
+import { isDefined } from 'twenty-shared/utils';
+
+import { A... (8281 chars)"
+[94m[write][0m "import { UseGuards, UseInterceptors } from '@nestjs/common';
+import { Args, Mutation, Query } from '@nestjs/graphql';
+
+import { PermissionFlagType } from 'twenty-shared/constants';
+
+import { Workspace... (3665 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[write][0m "import { Module } from '@nestjs/common';
+
+import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
+import { AiModelsModule }... (745 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/metadata-engine.module.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/metadata-engine.module.ts
+[94m[read][0m
+Now the server spec. Let me check an existing spec's shape first.
+[94m[write][0m "import { generateText } from 'ai';
+
+import { WorkspaceAiProviderTestErrorCode } from 'src/engine/metadata-modules/ai/ai-models/dtos/workspace-ai-provider-test-error-code.enum';
+import { WorkspaceAiPro... (9531 chars)"
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai/ai-models/services/__tests__/workspace-ai-provider-admin.ser...
+
+
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -30
+[94m[bash][0m $ grep -in "key\|provider\|plug\|credential" packages/twenty-ui/src/icon/icon-dictionary.md | head -20
+Server typecheck clean. Now the front. First check the icon dictionary and SettingsRoutes lazy imports.
+[94m[bash][0m $ sed -n '253,290p' packages/twenty-front/src/modules/app/components/SettingsRoutes.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/SettingsPath.ts
+[94m[bash][0m $ sed -n '1,30p' packages/twenty-ui/src/feedback/info/Info.tsx 2>/dev/null
+[94m[bash][0m $ cat packages/twenty-front/src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderList...
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-front/src/modules/settings/components/SettingsListCard.tsx
+[94m[write][0m "export type WorkspaceAiProviderSource = 'WORKSPACE' | 'INSTANCE' | 'CATALOG';
+
+// Projection of the server's key-safe provider DTO: the API key itself never
+// travels, only its presence and a fixed m... (711 chars)"
+[94m[write][0m "export type WorkspaceAiProviderTestErrorCode =
+  | 'INVALID_API_KEY'
+  | 'MODEL_NOT_FOUND'
+  | 'PROVIDER_UNREACHABLE'
+  | 'INVALID_CONFIGURATION'
+  | 'UNKNOWN_ERROR';
+
+// The server never echoes a pro... (487 chars)"
+[94m[write][0m "import { gql } from '@apollo/client';
+
+export const GET_WORKSPACE_AI_PROVIDERS = gql`
+  query WorkspaceAiProviders {
+    workspaceAiProviders {
+      resolutionOrder
+      providers {
+        provider... (426 chars)"
+[94m[write][0m "import { gql } from '@apollo/client';
+
+export const UPSERT_WORKSPACE_AI_PROVIDER = gql`
+  mutation UpsertWorkspaceAiProvider($input: UpsertWorkspaceAiProviderInput!) {
+    upsertWorkspaceAiProvider(in... (475 chars)"
+[94m[write][0m "import { gql } from '@apollo/client';
+
+export const TEST_WORKSPACE_AI_PROVIDER = gql`
+  mutation TestWorkspaceAiProvider($input: TestWorkspaceAiProviderInput!) {
+    testWorkspaceAiProvider(input: $in... (275 chars)"
+[94m[write][0m "import { gql } from '@apollo/client';
+
+export const REMOVE_WORKSPACE_AI_PROVIDER = gql`
+  mutation RemoveWorkspaceAiProvider($provider: String!) {
+    removeWorkspaceAiProvider(provider: $provider) {
+... (460 chars)"
+Now writing the front types and GraphQL documents.
+Let me verify the max-consts-per-file rule's actual limit before writing components.
+[94m[bash][0m $ find packages/twenty-front -name "*max-consts*" -not -path "*/node_modules/*" 2>/dev/null | head
+[94m[bash][0m $ grep -rn "max-consts-per-file" packages/twenty-front/.oxlintrc.json -B 20 | head -40
+[94m[bash][0m $ sed -n '142,175p' packages/twenty-front/.oxlintrc.json
+[94m[edit][0m
+[94m[edit][0m
+[94m[write][0m "import { useMutation, useQuery } from '@apollo/client/react';
+import { useState } from 'react';
+
+import { REMOVE_WORKSPACE_AI_PROVIDER } from '~/pages/settings/ai/graphql/mutations/removeWorkspaceAiPr... (3396 chars)"
+[94m[bash][0m $ grep -rn "IconCircleCheck\|IconAlertCircle\|IconKey\b" packages/twenty-ui/src/icon/index.ts packages...
+[94m[bash][0m $ grep -n "IconCircleCheck\|IconRosetteDiscountCheck\|IconCheck\b\|IconShieldCheck" packages/twenty-ui...
+[94m[bash][0m $ grep -rn "green\b" packages/twenty-ui/src/theme/constants/ColorsLight.ts 2>/dev/null | head -5
+[94m[bash][0m $ grep -n "green" packages/twenty-ui/src/theme-constants/themeCssVariables.ts | head -5
+[94m[bash][0m $ sed -n '345,360p' packages/twenty-ui/src/theme-constants/themeCssVariables.ts
+[94m[bash][0m $ grep -n "export type TextInputProps\|label\|placeholder\|type\|fullWidth\|error" packages/twenty-fro...
+[94m[bash][0m $ cat packages/twenty-shared/src/ai/constants/ai-sdk-packages.const.ts
+[94m[bash][0m $ grep -rn "<TextInput" packages/twenty-front/src/modules/settings --include="*.tsx" | grep -v admin-p...
+[94m[write][0m "import { t } from '@lingui/core/macro';
+
+import { type WorkspaceAiProviderTestErrorCode } from '~/pages/settings/ai/types/WorkspaceAiProviderTestResult';
+
+export const getWorkspaceAiProviderTestErrorM... (865 chars)"
+[94m[write][0m "import { styled } from '@linaria/react';
+
+import { Trans } from '@lingui/react/macro';
+import { IconAlertCircle, IconCheck } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme-c... (1614 chars)"
+Now the presentational components.
+[94m[write][0m "import { styled } from '@linaria/react';
+
+import { t } from '@lingui/core/macro';
+import { Status } from 'twenty-ui/data-display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+impor... (2391 chars)"
+[94m[write][0m "import { useState } from 'react';
+
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { Button } from 'twenty-ui/input... (6244 chars)"
+[94m[bash][0m $ grep -rn "type StatusColor" packages/twenty-ui/src --include="*.ts" --include="*.tsx" | head -2
+[94m[bash][0m $ grep -rn "type StatusProps" -A 10 $(find packages/twenty-ui/src -name "Status.tsx" | head -1) 2>/dev...
+[94m[bash][0m $ sed -n '1,12p' packages/twenty-ui/src/data-display/Status/Status.tsx
+[94m[bash][0m $ sed -n '1,30p' packages/twenty-ui/src/theme/constants/MainColorNames.ts
+ 
+
+[94m[bash][0m $ grep -n "gray\|blue\|green\|orange\|red" packages/twenty-ui/src/theme/constants/MainColorsLight.ts |...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/components/SettingsAiProviderForm.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/components/SettingsAiProviderForm.tsx
+[94m[write][0m "import { useState } from 'react';
+
+import { t } from '@lingui/core/macro';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
+import { Info } fr... (7007 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/app/components/SettingsRoutes.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/app/components/SettingsRoutes.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/SettingsPath.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/settings/hooks/useSettingsNavigationItems.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/settings/hooks/useSettingsNavigationItems.tsx
+[94m[bash][0m $ npx nx build twenty-shared --skip-nx-cache 2>&1 | tail -8
+
+
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | head -50
+[94m[bash][0m $ grep -rn "createContext" packages/twenty-ui/src/theme-constants/ThemeContext.tsx packages/twenty-ui/...
+Front typecheck is clean. Now component tests. Let me check the existing test wrapper details and ThemeContext default.
+[94m[bash][0m $ grep -rln "@testing-library/user-event" packages/twenty-front/src/modules/settings --include="*.test...
+[94m[bash][0m $ grep -rn "user-event" packages/twenty-front/package.json | head -2
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import ... (2598 chars)"
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import ... (4686 chars)"
+[94m[bash][0m $ npx jest src/pages/settings/ai/components/__tests__/SettingsAiProvidersList.test.tsx src/pages/setti...
+All tests pass. Now the lint/format gates on touched files.
+[94m[bash][0m $ npx oxfmt $FILES && npx oxfmt --check $FILES && npx oxlint --type-aware -c .oxlintrc.json $FILES
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json "${FILES[@]}"
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import ... (4623 chars)"
+The prop-spreading lint rule forbids JSX spreads in the test. Rewriting with `createElement`.
+[94m[bash][0m $ npx oxfmt --check src/pages/settings/ai/components/__tests__/SettingsAiProviderForm.test.tsx && npx ...
+[94m[bash][0m $ npx jest src/pages/settings/ai/components/__tests__/SettingsAiProviderForm.test.tsx --config=package...
+[94m[bash][0m $ npx jest src/pages/settings/ai/components/__tests__/SettingsAiProviderForm.test.tsx src/pages/settin...
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai/ai-models --config=packages/twenty-server/jest.config.mjs 2>...
+[94m[bash][0m $ npx oxfmt --check "${FILES[@]}" && npx oxlint --type-aware -c .oxlintrc.json "${FILES[@]}"
+
+
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json "${FILES[@]}"
+[94m[bash][0m $ npx jest src/pages/settings/ai src/modules/settings/ai --config=packages/twenty-front/jest.config.mj...
+[94m[bash][0m $ sys.exit(0) queries=[f['name'] for f in schema['queryType']['fields']] mutations=[f['name'] for f in...
+All gates green so far. Let me verify the running dev server actually exposes the new field (strong registration check), then check git status.
+[94m[bash][0m $ git status --porcelain
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+Improving the Google/Mistral 400 mapping and broadening the config-rejection copy.
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai/ai-models/services/__tests__/workspace-ai-provider-admin.ser...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/pages/settings/ai/utils/getWorkspaceAiProviderTestErro...
+
+
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -20
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -20
+[94m[bash][0m $ npx jest --findRelatedTests packages/twenty-front/src/pages/settings/ai/SettingsAiProviders.tsx pack...
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) pending=[s['id'] for s in d['userStorie...
+[94m[bash][0m $ git status --porcelain | grep -c "locales/" || true
+All checks green. Let me locate the patterns section boundary in progress.md before writing reports.
+[94m[bash][0m $ tail -20 .ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+Now writing the reports.
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ no competing executor exists (parallel mode `never`). The duplicate claim line is historical. EOF ec...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ `npx jest --findRelatedTests` + direct `oxlint`/`oxfmt` are the     working-tree lint path (`lint:di...
+[94m[bash][0m $ git status --porcelain | grep -v "ralph-tui/session\|tasks/prd.json"
+[94m[todowrite][0m
+US-127 (M10a-2) implemented and verified. Summary:
+
+**Server (new key-safe GraphQL surface — US-102 shipped no resolver):**
+- `workspaceAiProviders` query, `upsert`/`remove` mutations (return the fresh overview), `testWorkspaceAiProvider` (typed `success`/`errorCode`).
+- `WorkspaceAiProviderAdminService` projects presence + a fixed `••••••••` mask + catalog `apiKeyConfigVariable`; never the key. "Test key" = 1-token `generateText` on a **transient** provider (avoids the factory's name cache retesting the old key); provider error bodies are classified, never echoed.
+- Registered `WorkspaceAiProviderModule` in `MetadataEngineModule` (required for the metadata schema graph).
+
+**Front:** Settings → Syna → Providers (nav sub-item + `/settings/ai/providers`): provider list with source badge (Workspace/Instance/Catalog) + mask, add/edit form (masked API-key placeholder, base URL only for OpenAI-compatible, default+fast model picks), test-key states, remove with documented fallback to instance → catalog, and the D-N4 billing-gating copy. Lingui + Linaria/theme tokens + `IconKey`.
+
+**Gates (all green):** server tsgo 0 errors; front tsgo 0 errors; `workspace-ai-provider-admin` + whole `ai-models` jest 48 pass; front settings/ai + related 48 pass; `oxlint --type-aware`/`oxfmt` clean on all touched files; `nx build twenty-shared` success; no `locales/**` churn.
+
+**Flagged for orchestrator:** Tier-2 browser journey (E16) and metadata codegen (`npx nx run twenty-front:graphql:generate --configuration=metadata`) still pending; and a workspace key is not yet consumed at generation time — `AiModelRegistryService` remains instance-wide (M10a/M10b server leg, matching US-102's open item).
+
+Reports appended to `docs/plan/phases/phase-14-report.md` and `.ralph-tui/progress.md` (claim refreshed after the prior stalled run of the same session).
+
+<promise>COMPLETE</promise>

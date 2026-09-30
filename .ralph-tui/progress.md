@@ -56,6 +56,16 @@ after each iteration and it's included in prompts for context.
   is a pure `unknown`-input util under `utils/` (tests can't load the blocknote
   dist). Record mention for any object already ships via `MentionInlineContent`
   + `useMentionMenu` + `LinkToRecordPicker` — do not rebuild it.
+- Context entries appended to the editor `/` slash menu use the render-prop seam
+  (`LinkToRecordSlashMenuItem`): `getSlashMenu(editor)` stays hook-free and a
+  sibling component appends its items in `BlockEditor`. Gate on the `AI`
+  permission flag + `enabledModels` in an OUTER component so the inner one
+  (which calls `useContextToolButtons` → `GET_TOOL_INDEX`) only mounts when AI
+  is on; map actions to registry tool names with `buildLogicFunctionToolName`
+  and open the assistant with `openAskAiPageWithPreprompt({ mode: 'PREFILL' })`
+  — never direct execution. This fork has no custom `FormattingToolbarController`
+  (only BlockNote's default selection toolbar), so a selection-toolbar entry
+  needs a full replacement toolbar first.
 - `packages/twenty-shared/src/utils/index.ts` is an auto-generated barrel:
   `npx nx build twenty-shared` runs `generateBarrels` and rewrites it. After
   adding a new util under `src/utils/`, build and let the barrel pick it up —
@@ -665,4 +675,33 @@ after each iteration and it's included in prompts for context.
     working-tree lint path (`lint:diff-with-main` sees only commits).
 - **Open:** workspace keys are addable/testable but not yet consumed by
   `AiModelRegistryService` (still instance-wide) — the remaining M10a/M10b server leg.
+---
+
+## [2026-09-30] - US-128 (M10b: Syna everywhere — editor `/syna` slash entry)
+- Wired the editor `/syna` entries: a new `SynaSlashMenuItem` render-prop appends
+  Summarize / Translate / Improve writing to the `/` slash menu, mapped to the
+  P9.2 read-only document tools by `buildLogicFunctionToolName`. Selecting one
+  opens the assistant with a PREFILL draft (`openAskAiPageWithPreprompt`) — the
+  confirm-first contract; nothing executes directly.
+- Added the pure gating seam `getOfferedSynaActions`: zero without the `AI`
+  permission flag or an available model, never a mutating action, and fails
+  closed when the backing registry tool is absent from the context.
+- Files changed: new `ai/types/SynaAiAction.ts`,
+  `ai/constants/synaDocumentAiActions.ts`, `ai/utils/getOfferedSynaActions.ts`,
+  `blocknote-editor/components/SynaSlashMenuItem.tsx` + 2 specs; edit
+  `blocknote-editor/components/BlockEditor.tsx`.
+- **Learnings:**
+  - The `/` slash menu's extension seam is the render-prop
+    (`LinkToRecordSlashMenuItem`): `getSlashMenu(editor)` stays hook-free, and the
+    availability-gated item provider lives in a sibling component.
+  - Split the item provider in two components: an outer gate on the `AI` flag +
+    `enabledModels` stops `useContextToolButtons` (→ `GET_TOOL_INDEX` query) from
+    mounting in zero-AI mode; the inner one then maps the context tool names.
+  - Cmd+K "Ask Syna" and the record-page context buttons already exist
+    (`EngineComponentKey.ASK_AI` + `AiChatContextToolButtons`) — do not rebuild.
+  - This fork has no custom `FormattingToolbarController`; the selection-toolbar
+    actions need a replacement default toolbar, deferred.
+- **Gaps recorded:** Bilan categorization stays P7-gated (no accounting tool
+  added); no read-only "find a slot"/"prepare meeting" scheduling tool exists, so
+  no Agenda entry could be offered.
 ---
