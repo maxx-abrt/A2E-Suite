@@ -562,3 +562,18 @@ after each iteration and it's included in prompts for context.
 - Missing (Tier 2 orchestrator): browser rendering pass on real pages; fr+en catalog; cover-image upload button (URL field for now).
 - Next: orchestrator browser pass; optional `uploadFile` cover button.
 ---
+
+## [2026-09-30] - US-125 (M11a-spike: universal link picker & 'Related' panel — pattern decision, report-only)
+- Decided the generic cross-app linking pattern in `docs/plan/phases/phase-15-report.md` (no product code, no metadata).
+- **Decision D-M11A-LINK:** app-owned `a2eLink` junction with morph targets, owned by a new internal `a2e-links` app, reusing the native `MORPH_RELATION` primitive. Consumer owns both sides (per P4.3): `a2e-links` declares the morph legs AND the inverse O2M on every target object. Provider apps install first; C3 `computeCrossAppDependents`/`assertUninstallAllowed` already blocks their removal (no code change). Backlinks read the persisted inverse relation (no read-time scan); M8d mention backlinks should land in the SAME junction under a `linkType` discriminator.
+- Search reuse: core `search` via `useObjectRecordSearchRecords` (`SearchDocument`) + existing `SingleRecordPicker`. `searchAppRecords` cannot create links (its DTO has only an opaque `path`, no `objectNameSingular`). Related surface: app `FRONT_COMPONENT` widget in an app-declared standalone page-layout tab (native widget type is a closed enum / not app-syncable); per-direction lists can reuse the native junction resolver (`resolveJunctionConfig`/`resolveReverseJunctionConfig`).
+- Rejected: reusing `attachment` (FILES-widget pollution, file semantics, no source endpoint); discriminator-pair junction (forks a parallel system); host-owned holder (out of the app-file lane, recorded as fallback).
+- Files changed: `docs/plan/phases/phase-15-report.md` (new), `.ralph-tui/progress.md`.
+- **Learnings:**
+  - Native morph = one `MORPH_RELATION` field row per target sharing one `morphId`; the inverse `RELATION` O2M must exist on each target. App manifests express it with `morphId` (`fieldManifestType.ts:48-64`; `packages/twenty-apps/public/last-contact` precedent). No stored discriminator column.
+  - The host auto-provisions an inverse morph for **every** new object only for the four holders `DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS` (attachment/noteTarget/taskTarget/timelineActivity) — the only truly-open morph targets; an app-owned junction cannot be added to that list.
+  - `search` returns `objectNameSingular` (link-addressable) while `searchAppRecords` returns only `path` (display-only) — never build link creation on the app-provider search.
+  - `WidgetType` is a closed host enum and `SyncableEntity` has no `PageLayoutWidget`; an app's only code-backed widget is `FRONT_COMPONENT`, nested in a layout/tab it declares (standalone tab on a standard page layout = the additive pattern, `a2e-chat`).
+- Missing (Tier 2 orchestrator): install in prerequisite order + E17 browser proof of a link surviving reload and optional-app removal.
+- Next: the M11a implementation legs (a2e-links scaffold → picker wiring → Related front-component tab).
+---

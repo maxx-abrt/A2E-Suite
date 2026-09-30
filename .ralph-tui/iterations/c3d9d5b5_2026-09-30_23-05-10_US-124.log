@@ -1,0 +1,238 @@
+# Iteration 28 Log
+
+## Metadata
+
+- **Task ID**: US-124
+- **Task Title**: M8c: page chrome — icon, cover, full-width/small-text toggles, breadcrumbs, word count, lock page
+- **Description**: As a Bureau writer, I want page icon/cover and reading controls so that pages feel like polished Notion pages. Starting state: not started — document object has icon/coverColor columns but no page-chr...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-30T21:05:10.287Z
+- **Ended At**: 2026-09-30T21:15:09.304Z
+- **Duration**: 9m 59s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the mandatory clean-start check.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+Dirty files are Ralph's own metadata (`tasks/prd.json`, `.ralph-tui/*`), not source. Proceeding.
+[94m[bash][0m $ grep -n "US-124" PLAN.md
+[94m[glob][0m pattern: [96mdocs/plan/phases/phase-*-report.md[0m
+[94m[bash][0m $ grep -n "M8c\|M8\|page chrome\|lock page" PLAN.md | head -50
+[94m[bash][0m $ grep -rn "US-124\|M8c" docs/ .ralph-tui/ 2>/dev/null | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) def walk(o):     if isinstance(o,dict):...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/src/fields/company-documents.field.ts
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/*/src/fields/ 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/page-layouts/document.page-layout.ts
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-drive/src/fields/attachment-starred.field.ts
+[94m[bash][0m $ grep -n "DOCUMENT_FIELD_IDS" -A8 packages/twenty-apps/internal/a2e-projects/src/constants/universal-...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/lib/__tests__/
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/.oxlintrc.json
+[94m[bash][0m $ ls packages/twenty-sdk/src/ 2>/dev/null
+[94m[bash][0m $ console.log(JSON.stringify(p.exports,null,1))" 2>/dev/null | head -60
+[94m[bash][0m $ grep -rn "lingui\|i18n\|translate\|useTranslation" packages/twenty-sdk/src/ 2>/dev/null | grep -v no...
+[94m[bash][0m $ cat packages/twenty-sdk/src/sdk/front-component/translations/*.ts 2>/dev/null | head -120
+[94m[bash][0m $ cat packages/twenty-sdk/src/sdk/front-component/index.ts 2>/dev/null
+[94m[bash][0m $ cat packages/twenty-sdk/src/sdk/front-component/hooks/useTranslate.ts
+[94m[bash][0m $ grep -rln "getFrontComponentTranslations\|collect-translatable\|useTranslate" packages/twenty-sdk/sr...
+[94m[bash][0m $ grep -rn "translations\|catalog" packages/twenty-sdk/src/cli/utilities/translations/collect-translat...
+[94m[bash][0m $ ls packages/twenty-apps/internal/real-estate/ 2>/dev/null
+[94m[bash][0m $ grep -rn "extractApplicationTranslations\|compileApplicationTranslations" packages/twenty-sdk/src/cl...
+[94m[bash][0m $ grep -rn "extractApplicationTranslations\|compileApplicationTranslations\|collectFrontComponentStrin...
+[94m[bash][0m $ ls packages/twenty-front/src/modules/blocknote-editor/hooks/ 2>/dev/null
+[94m[bash][0m $ grep -rln "readcrumb" packages/twenty-front/src/modules/blocknote-editor/ packages/twenty-front/src/...
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/src/lib/__tests__/document-outline.test.ts | head -6...
+[94m[bash][0m $ grep -rln "updatedBy" packages/twenty-front/src/modules/object-record/record-show/ 2>/dev/null | hea...
+[94m[bash][0m $ ls packages/twenty-front/src/modules/object-record/record-show/components/ | head -40
+[94m[bash][0m $ grep -rn "updatedBy" packages/twenty-front/src packages/twenty-shared/src 2>/dev/null | grep -v node...
+[94m[bash][0m $ grep -rln "STANDARD_OBJECT_FIELDS\|isSystem" packages/twenty-server/src/engine/core-modules/applicat...
+[94m[bash][0m $ grep -rln "updatedBy" packages/twenty-shared/src 2>/dev/null | head
+[94m[bash][0m $ grep -rln "last edited\|Last edited\|updatedBy" packages/twenty-front/src/modules/object-record/ 2>/...
+[94m[bash][0m $ grep -rln "buildStandardObjectSystemFields\|getStandardObjectSystemFields" packages/twenty-server/sr...
+[94m[bash][0m $ grep -n "fullWidth\|smallText\|fontSize\|editor-status\|StatusBar" packages/twenty-front/src/modules...
+[94m[bash][0m $ find packages/twenty-front/src -iname "*HeroCard*" | head
+[94m[bash][0m $ cat packages/twenty-sdk/src/sdk/front-component/hooks/useLocale.ts
+[94m[bash][0m $ cat packages/twenty-sdk/src/cli/commands/dev/translations-extract.ts | head -90
+[94m[bash][0m $ grep -rn "translations-extract\|TranslationsExtract" packages/twenty-sdk/src/cli/ | grep -v "command...
+[94m[bash][0m $ sed -n '195,215p' packages/twenty-sdk/src/cli/commands/dev/index.ts
+[94m[bash][0m $ grep -rln "translations-extract\|compileApplicationTranslations\|collectFrontComponentStrings\|SOURC...
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-sdk/src/cli/utilities/translations/__tests__/collect-front-component-...
+[94m[bash][0m $ cat packages/twenty-sdk/src/cli/utilities/translations/load-front-component-translation-catalogs.ts
+[94m[bash][0m $ grep -rn "Lingui\|lingui\|fr+en\|fr-FR" docs/plan/phases/phase-13-report.md docs/plan/phases/phase-1...
+[94m[bash][0m $ grep -rn "t(\|msg(\|useTranslate\|Trans" packages/twenty-apps/internal/*/src/front-components/*.tsx ...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/src/lib/fractional-position.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/node_modules/twenty-client-sdk/ 2>/dev/null
+[94m[bash][0m $ sed -n '90,110p' packages/twenty-front/src/testing/mock-data/generated/data/tasks/mock-tasks-data.ts
+[94m[bash][0m $ grep -rn "name\|workspaceMemberId\|source\|context" packages/twenty-server/src/engine/core-modules/a...
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-server/src/engine/core-modules/actor/services/actor-from-auth-contex...
+[94m[bash][0m $ grep -rn -A15 "type ActorMetadata" packages/twenty-shared/src/types/*.ts | head -40
+[94m[bash][0m $ grep -rn "class ActorDTO\|ActorDTO" packages/twenty-server/src 2>/dev/null | head
+[94m[bash][0m $ grep -n "CLAIMED" docs/plan/phases/phase-13-report.md | tail -10
+[94m[todowrite][0m
+Now I understand the codebase. Let me set up the work plan and claim the slice.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ printf '\nCLAIMED — US-124/page-chrome — deepseek-v4.1-flash — 2026-09-30T21:09:24Z — base dfd3f1ec3...
+[94m[todowrite][0m
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-apps/internal/a2e-documents/src/constants/field-vocabulary.ts
+[94m[bash][0m $ grep -c "Icon" packages/twenty-ui/src/icon/icon-dictionary.md 2>/dev/null
+[94m[bash][0m $ grep -rn "IconPhoto\|IconTypography\|IconLayoutColumns\|IconMaximize" packages/twenty-ui/src/icon/ 2...
+[94m[bash][0m $ done
+[94m[write][0m "import { defineField, FieldType } from 'twenty-sdk/define';
+
+import { OBJECT_IDS } from '../constants/universal-identifiers.ts';
+import { DOCUMENT_CHROME_FIELD_IDS } from '../constants/universal-ident... (874 chars)"
+[94m[write][0m "import { defineField, FieldType } from 'twenty-sdk/define';
+
+import {
+  DOCUMENT_CHROME_FIELD_IDS,
+  OBJECT_IDS,
+} from '../constants/universal-identifiers.ts';
+
+// M8c page chrome (cover). Standalone... (823 chars)"
+[94m[write][0m "import { defineField, FieldType } from 'twenty-sdk/define';
+
+import {
+  DOCUMENT_CHROME_FIELD_IDS,
+  OBJECT_IDS,
+} from '../constants/universal-identifiers.ts';
+
+// M8c reading control: widen the edit... (770 chars)"
+[94m[write][0m "import { defineField, FieldType } from 'twenty-sdk/define';
+
+import {
+  DOCUMENT_CHROME_FIELD_IDS,
+  OBJECT_IDS,
+} from '../constants/universal-identifiers.ts';
+
+// M8c reading control: shrink the bod... (681 chars)"
+[94m[write][0m "import { defineField, FieldType } from 'twenty-sdk/define';
+
+import {
+  DOCUMENT_CHROME_FIELD_IDS,
+  OBJECT_IDS,
+} from '../constants/universal-identifiers.ts';
+
+// M8c lock. A managed flag, not a per... (883 chars)"
+Now add the field identifiers to `universal-identifiers.ts`:
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts
+Now the pure utils. Starting with breadcrumbs:
+[94m[write][0m "// Breadcrumbs for the document page chrome (M8c).
+//
+// The trail derives from the document tree: the page widget reads the current
+// record and walks its `parent` relation upward. Ordering is pure ... (1413 chars)"
+[94m[write][0m "// Word/character count for the document page chrome (M8c). Operates on the
+// markdown projection of the RICH_TEXT field, like document-outline.ts: the
+// blocknote AST is not parseable in the sandbo... (1753 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/document-word-count.ts
+[94m[write][0m "// Page-chrome preferences and write payloads for the document page (M8c).
+//
+// Kept pure so the component only wires state and Core API calls, and so the
+// field payload shape is unit-testable with... (2408 chars)"
+[94m[write][0m "// Page-icon dictionary for the document chrome (M8c).
+//
+// Stored in the document's existing `icon` TEXT field, so no new column is
+// needed for the icon itself. Emoji are the portable choice for a... (1042 chars)"
+Now add the cover palette + resolver to `document-chrome.ts`:
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/document-chrome.ts
+Now the unit tests:
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  buildBreadcrumbTrail,
+  type DocumentBreadcrumbNode,
+} from '../document-breadcrumbs.ts';
+
+const node = (
+  id: s... (1783 chars)"
+[94m[edit][0m
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  countDocumentCharacters,
+  countDocumentWords,
+} from '../document-word-count.ts';
+
+test('counts prose words', ()... (1204 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/document-word-count.ts
+[94m[edit][0m
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  buildDocumentChromeUpdatePayload,
+  DEFAULT_DOCUMENT_COVER_COLOR,
+  DOCUMENT_COVER_COLOR_CHOICES,
+  readDocumentC... (2171 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/__tests__/document-chrome.test.ts
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  DEFAULT_DOCUMENT_PAGE_ICON,
+  DOCUMENT_PAGE_ICON_CHOICES,
+  resolveDocumentPageIcon,
+} from '../document-page-ico... (1032 chars)"
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -40
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/document-breadcrumbs.test.ts" "src/lib/__t...
+[94m[bash][0m $ sed -n '80,200p' packages/twenty-apps/internal/a2e-documents/src/lib/document-favorites.ts
+Now the main component. Let me rewrite `document-page.front-component.tsx` with the chrome surface:
+[94m[write][0m "import { useCallback, useEffect, useState } from 'react';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  AppPath,
+  naviga... (24092 chars)"
+[94m[edit][0m
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -40
+[94m[edit][0m
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -40
+[94m[bash][0m $ yarn lint 2>&1 | tail -40
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/package.json
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -60
+[94m[bash][0m $ ls .twenty/output/ 2>/dev/null | head -20
+[94m[bash][0m $ console.log('doc fields:', (o?.fields||[]).map(f=>f.name).join(', '))" 2>&1 | head
+[94m[bash][0m $ }"
+[94m[bash][0m $ console.log(m.fields.map(f=>({name:f.name, object:f.objectUniversalIdentifier, type:f.type})))"
+[94m[bash][0m $ git status --porcelain
+All app gates pass. Let me run the `twenty-front` tsgo gate the AC names (no host files changed, but the AC lists it):
+[94m[bash][0m $ echo "EXIT: $?"
+Let me review the final utils for correctness and formatting:
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/document-word-count.ts
+[94m[todowrite][0m
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ never write the deprecated `document.isFavorite` boolean. Reuse `countDocumentWords` / `buildBreadcr...
+[94m[bash][0m $ tail -30 .ralph-tui/progress.md
+[94m[bash][0m $ grep -n "^## \|^---$" .ralph-tui/progress.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ optional `uploadFile` cover button. --- EOF tail -4 .ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ yarn typecheck && yarn lint && yarn test:unit 2>&1 | tail -6
+[94m[todowrite][0m
+US-124 slice complete. Summary:
+
+**Implemented** the M8c page chrome in `a2e-documents`:
+- 4 new standalone `defineField` manifests on the app-owned `document` object (`coverImage`, `isFullWidth`, `isSmallText`, `isLocked`), IDs in `DOCUMENT_CHROME_FIELD_IDS` — app metadata path, no server migration.
+- 4 pure lib seams + 23 node tests: `document-breadcrumbs`, `document-word-count`, `document-chrome` (prefs/payload/cover resolution), `document-page-icons`.
+- Extended `document-page.front-component.tsx`: breadcrumbs from the tree, emoji icon picker, image/color cover, full-width + small-text toggles, last-edited-by from `updatedBy`, word/char count, personal favourite via the existing `documentFavorite` path, and a managed lock that gates only the chrome controls (content/revision untouched).
+- Version `0.2.7 → 0.2.8`.
+
+**Gates (all green):** `yarn typecheck` exit 0 · `yarn lint` 0/0 · `yarn test:unit` 252 pass/0 fail · `npx twenty dev:build .` succeeded (manifest fields merged) · `twenty-front` tsgo exit 0 · no `locales/**`, no AI attribution.
+
+**Recorded deviations/missing:** Tier-2 browser pass (orchestrator), fr+en stays French-only (contract forbids `locales/**`; same as US-103…107), cover is a URL field (no upload yet).
+
+Phase report and `progress.md` entries appended. No commit made.
+
+<promise>COMPLETE</promise>

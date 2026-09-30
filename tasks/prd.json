@@ -512,9 +512,10 @@
         "Quality gates: node docs/scripts/check-docs.mjs PASS; docs-only change — lint/tsgo N/A by design, reported as such (US-048 precedent); no i18n catalog churn; no AI attribution"
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "notes": "M11a's implementation stories are next-batch once this spike records the pattern. Lane L-LINK.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-126",
@@ -615,6 +616,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-30T21:15:09.305Z"
+    "updatedAt": "2026-09-30T21:26:29.811Z"
   }
 }
