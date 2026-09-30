@@ -128,6 +128,7 @@ export class WorkspaceService {
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     enabledAiModelIds: PermissionFlagType.AI_SETTINGS,
     useRecommendedModels: PermissionFlagType.AI_SETTINGS,
+    aiMonthlyTokenCap: PermissionFlagType.AI_SETTINGS,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
   };
 

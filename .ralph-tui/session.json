@@ -3,10 +3,10 @@
   "sessionId": "c3d9d5b5-131c-4bed-9971-37e80fe99ea9",
   "status": "running",
   "startedAt": "2026-09-29T18:49:46.574Z",
-  "updatedAt": "2026-09-30T22:18:17.233Z",
-  "currentIteration": 33,
+  "updatedAt": "2026-09-30T22:34:07.295Z",
+  "currentIteration": 34,
   "maxIterations": 20,
-  "tasksCompleted": 29,
+  "tasksCompleted": 30,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -346,6 +346,16 @@
       "durationMs": 668186,
       "startedAt": "2026-09-30T22:01:19.636Z",
       "endedAt": "2026-09-30T22:12:27.822Z"
+    },
+    {
+      "iteration": 34,
+      "status": "completed",
+      "taskId": "US-129",
+      "taskTitle": "M10c: Syna context & memory, scoped — record/page + explicit @mentions only, admin house-style",
+      "taskCompleted": true,
+      "durationMs": 343914,
+      "startedAt": "2026-09-30T22:12:33.316Z",
+      "endedAt": "2026-09-30T22:18:17.230Z"
     }
   ],
   "skippedTaskIds": [],

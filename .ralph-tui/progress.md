@@ -5,6 +5,17 @@ after each iteration and it's included in prompts for context.
 
 ## Codebase Patterns (Study These First)
 
+- A per-workspace numeric guardrail is a plain **workspace column**, not `core.usageLimit`:
+  add the column to `workspace.entity.ts` + `fromWorkspaceEntityToFlat` + `UpdateWorkspaceInput`
+  + `WorkspaceService.WORKSPACE_FIELD_PERMISSIONS` (gate `AI_SETTINGS`), then a fast instance
+  command (2-39, timestamp > `1790720500000`). `core.usageLimit` is the enterprise
+  `USAGE_LIMIT`-gated quota — reusing it would leave self-hosted/BYOK workspaces uncapped.
+  AI cost enforcement goes in `AiBillingService.assertAiExecutionAllowed` (the single AI
+  pre-execution choke point, called by chat/agent/generate-text): a service reads month-to-date
+  `usageEvent` (`AI_CHAT_TOKEN`/`WEB_SEARCH` `quantity`) and throws a typed `AiException`
+  (mapped in `ai-graphql-api-exception-handler.util.ts`, exhaustive switch). Null/0 cap and
+  zero-usage months fail open; scope the check to the metered operation types so workflow
+  tokens are not cross-blocked.
 - Realtime topic ACLs live in ONE seam: `realtime-topic-authorization.service.ts`
   `assertTopicAuthorized` → `RealtimeTopicAccessService` (`assertCanAccessObjectRecord`
   / `assertCanAccessChatChannel`). Channel rule: `chatChannel.visibility === 'PUBLIC'`
@@ -737,4 +748,17 @@ after each iteration and it's included in prompts for context.
   - Gotcha: in a jest spec the `UIMessagePart` union does not narrow on
     `expect(part.type).toBe('text')`; add an `if (part.type !== 'text') throw`
     guard before touching `.text` or `tsgo` fails.
+---
+
+## 2026-09-30 - US-130
+- Implemented the M10d **per-workspace monthly AI token cap** (server-enforced):
+  - New `aiMonthlyTokenCap` nullable integer workspace column, settable by AI_SETTINGS admins via `updateWorkspace`, cached via `fromWorkspaceEntityToFlat`; fast 2-39 instance command `1790807243394`.
+  - New `AiMonthlyTokenCapService` reads month-to-date `usageEvent` `AI_CHAT_TOKEN`/`WEB_SEARCH` quantity and refuses with typed `AiExceptionCode.MONTHLY_TOKEN_CAP_EXCEEDED`; pure `isMonthlyTokenCapExceeded` util fails open on null/0 cap and zero usage.
+  - Wired into `AiBillingService.assertAiExecutionAllowed` (scoped to the metered operations). ClickHouse reads fail open.
+- Files changed: server workspace entity/input/service/flat-util, `ai.exception.ts`, exception handler, `ai-billing.{service,module}.ts`, new cap service + util + specs, `ai-billing.service.spec.ts`, 2-39 upgrade command + name constant + `instance-commands.constant.ts`, phase report.
+- **Learnings:**
+  - Adding an `AiExceptionCode` requires updating the exhaustive switch in `ai-graphql-api-exception-handler.util.ts` or `tsgo` fails with `not assignable to parameter of type 'never'`.
+  - Workspace `@Field` additions need the entity, the flat cache mapper, `UpdateWorkspaceInput` and `WORKSPACE_FIELD_PERMISSIONS` in lockstep; the entity field alone is not settable.
+  - `coreEntityCacheService.get('workspaceEntity', id)` returns `FlatWorkspace` hydrated by `WorkspaceEntityCacheProviderService` → `fromWorkspaceEntityToFlat`, so cached fields must be mapped there.
+- **Remaining:** zero-AI entry gating through the US-102 order + admin "Connect a provider" link, and the usage-view cap display (front).
 ---

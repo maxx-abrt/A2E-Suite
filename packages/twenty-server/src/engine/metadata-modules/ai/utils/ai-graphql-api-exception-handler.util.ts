@@ -36,6 +36,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED:
       case AiExceptionCode.RUN_AGENT_NOT_ALLOWED:
       case AiExceptionCode.DIRECT_TOOL_INVOCATION_NOT_AVAILABLE:
+      case AiExceptionCode.MONTHLY_TOKEN_CAP_EXCEEDED:
         throw new ForbiddenError(error);
       case AiExceptionCode.AGENT_EXECUTION_FAILED:
       case AiExceptionCode.API_KEY_NOT_CONFIGURED:

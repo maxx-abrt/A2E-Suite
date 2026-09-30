@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
 
 import {
   IsArray,
@@ -145,6 +145,12 @@ export class UpdateWorkspaceInput {
   @IsBoolean()
   @IsOptional()
   useRecommendedModels?: boolean;
+
+  @Field(() => Int, { nullable: true })
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  aiMonthlyTokenCap?: number | null;
 
   @Field({ nullable: true })
   @IsBoolean()

@@ -1,0 +1,121 @@
+# Iteration 34 Log
+
+## Metadata
+
+- **Task ID**: US-129
+- **Task Title**: M10c: Syna context & memory, scoped — record/page + explicit @mentions only, admin house-style
+- **Description**: As a workspace admin, I want Syna's context strictly scoped to the current record/page plus explicit @mentions, and a workspace-level house-style instruction editable by admins, so that no silent work...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-30T22:12:33.316Z
+- **Ended At**: 2026-09-30T22:18:17.230Z
+- **Duration**: 5m 43s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the mandatory clean-start check and then locate my task's context.
+[94m[bash][0m $ ls docs/plan/phases/ 2>/dev/null && echo "---" && ls .ralph-tui/ 2>/dev/null
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+Dirty files are Ralph engine internals, not code. Let me find US-129 in PLAN.md and the relevant phase report.
+[94m[bash][0m $ grep -n "US-129" PLAN.md
+[94m[bash][0m $ grep -rn "US-129" docs/plan/phases/ 2>/dev/null
+[94m[bash][0m $ grep -n "US-129\|M10c\|Syna context" tasks/prd.json | head
+[94m[bash][0m $ grep -n "M10c\|M10\b\|Syna context" PLAN.md | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+Now let me check dependency US-102 status and read the phase-14 report for existing claims.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-14-report.md
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd.json')) for t in d['tasks']:     if t['id'] in ...
+Dependencies met (US-102 done). Let me explore the AI/chat context seams before claiming.
+[94m[bash][0m $ grep -rn "browsingContext\|BrowsingContext\|listView\|channel" packages/twenty-server/src/engine/met...
+[94m[bash][0m $ ls packages/twenty-front/src/modules/ai/ 2>/dev/null
+[94m[bash][0m $ ls -R packages/twenty-server/src/engine/metadata-modules/ai/ai-chat 2>/dev/null | head -80
+[94m[bash][0m $ grep -rn "browsingContext\|BrowsingContext" packages/twenty-front/src/modules/ai/ -l 2>/dev/null | h...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "aiAdditionalInstructions\|aiAdditionalInstructions" packages/twenty-server/src packages/tw...
+Key finding: `workspace.aiAdditionalInstructions` already exists and is injected into the system prompt. Let me examine the existing house-style surface and its permission gating.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
+[94m[read][0m
+[94m[read][0m
+The house-style primitive already exists. Let me check for existing tests and any "house style" naming, plus the Syna Settings structure.
+[94m[bash][0m $ grep -rn "AiOverview\|AiProviders\|SettingsAi" packages/twenty-shared/src/types/SettingsPath.ts pack...
+[94m[bash][0m $ grep -rn "houseStyle\|house style\|House Style\|Workspace Instructions\|workspaceInstructions" packa...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "buildWorkspaceInstructionsSection\|build-workspace-instructions" packages/twenty-server/sr...
+[94m[bash][0m $ grep -n "Syna\|AiProvider\|SettingsPath.Ai\|ai/providers\|ai/overview" packages/twenty-front/src/mod...
+[94m[bash][0m $ grep -rn "SettingsAiOverviewTab\|AiOverview\|ai/overview" packages/twenty-front/src packages/twenty-...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/settings/hooks/useSettingsNavigationItems.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/SettingsAI.tsx
+[94m[bash][0m $ grep -rn "US-066\|browsing context\|browsing_context\|Workspace Instructions\|house style\|houseStyl...
+[94m[bash][0m $ grep -rn "aiAdditionalInstructions\|AI_INSTRUCTIONS_EDITOR_PROFILE" packages/twenty-server/src packa...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "AI_INSTRUCTIONS_EDITOR_PROFILE" packages/twenty-front/src --include="*.ts" --include="*.ts...
+[94m[bash][0m $ grep -rn "buildFullSystemPrompt\|buildWorkspaceInstructionsSection" packages/twenty-server/src --inc...
+[94m[read][0m
+[94m[bash][0m $ grep -n "CLAIMED\|US-129" docs/plan/phases/phase-14-report.md | tail -10
+The house-style primitive (`workspace.aiAdditionalInstructions`) already exists and is injected, and the browsing-context scoping (US-066) is in place. The genuinely unmet acceptance is the boundary/read-write test coverage. Let me check the time and claim my slice.
+[94m[bash][0m $ grep -rn "US-129" .ralph-tui/progress.md tasks/prd.json docs/ 2>/dev/null | grep -v "phase-14" | hea...
+No prior US-129 claim; the dirty files are Ralph engine state only. Claiming my slice now.
+[94m[bash][0m $ printf '\nCLAIMED — US-129/house-style-scoping-tests — deepseek-v4.1-flash — 2026-09-30T22:14:37Z — ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/tiptap/tiptap-document-to-markdown.ts
+[94m[bash][0m $ sed -n '100,215p' packages/twenty-shared/src/utils/tiptap/__tests__/tiptap-document.test.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/tiptap/tiptap-document-to-markdown.ts
+Now let me read the top of the tipTap util to get empty-handling right.
+[94m[todowrite][0m
+[94m[write][0m "import { buildWorkspaceInstructionsSection } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-instructions-section.util';
+
+const buildTipTapDocument = (text: string) =>
+  JSON.string... (1626 chars)"
+[94m[write][0m "import { streamText } from 'ai';
+
+import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
+import { type BrowsingContextType } from 'src/engine/me... (6218 chars)"
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai/ai-chat/utils/__tests__/build-workspace-instructions-section...
+All 9 pass. Now run the broader module tests, typecheck, and lint/format on touched files.
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai --config=packages/twenty-server/jest.config.mjs 2>&1 | tail ...
+[94m[bash][0m $ echo "TSGO_EXIT=$?"
+[94m[edit][0m
+[94m[bash][0m $ echo "TSGO_EXIT=$?"
+[94m[bash][0m $ npx oxfmt --check src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service.ts src/engi...
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai/ai-chat/services/__tests__/chat-execution.service.workspace-...
+[94m[bash][0m $ echo "OZFMT_EXIT=$?"
+[94m[bash][0m $ git diff --stat
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai/ai-chat --config=packages/twenty-server/jest.config.mjs 2>&1...
+Let me add one explicit assertion that @mentions pass through as plain text (no retrieval).
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai/ai-chat/services/__tests__/chat-execution.service.workspace-...
+[94m[bash][0m $ npx oxfmt --check src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service.ts src/engi...
+[94m[bash][0m $ echo "TSGO_EXIT=$?"
+[94m[todowrite][0m
+[94m[bash][0m $ head -5 .ralph-tui/progress.md
+[94m[bash][0m $ git diff packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/chat-execution.servi...
+[94m[bash][0m $ grep -n "^## " .ralph-tui/progress.md | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai/ai-chat --config=packages/twenty-server/jest.config.mjs 2>&1...
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ a parallel `synaHouseStyle` column would duplicate an existing primitive. **Remaining:** US-130 (M10...
+[94m[bash][0m $ add an `if (part.type !== 'text') throw`     guard before touching `.text` or `tsgo` fails. --- EOF ...
+[94m[bash][0m $ git diff --stat -- packages/twenty-server
+[94m[todowrite][0m
+US-129 slice complete. Summary:
+
+**Finding:** The M10c product seams already exist in base — house style is `workspace.aiAdditionalInstructions` (admin-gated `PermissionFlagType.WORKSPACE`, editor at Settings → Syna → Overview with Lingui fr+en), injected into the chat prompt by `buildFullSystemPrompt`; browsing context is scoped to the single record/page/channel (US-066). The unmet acceptance was the boundary/read-write test coverage.
+
+**Changes:**
+- New `build-workspace-instructions-section.util.spec.ts` (+4): empty/blank → no section, tipTap→markdown projection, legacy plain-text passthrough, admin-attributed header.
+- New `chat-execution.service.workspace-instructions.spec.ts` (+6): house style reaches the system prompt; absent when unset; no workspace-wide data; browsing context injected as a guarded `<browsing_context>` **text** part (never a tool); `@mentions` pass through verbatim; record-page context is single-record.
+- `chat-execution.service.ts`: 3-line WHY comment documenting the storage choice + scoping invariant.
+
+**Gates:** 2 new specs 10 passed; `ai-chat` folder 32 suites/217; `tsgo --noEmit` exit 0; oxlint 0/0; oxfmt clean; no catalogs, no AI attribution. Claimed/documented in `phase-14-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

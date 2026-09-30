@@ -14,6 +14,7 @@ import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
+import { AiMonthlyTokenCapService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-monthly-token-cap.service';
 
 export type BillingUsageInput = {
   usage: LanguageModelUsage;
@@ -28,6 +29,7 @@ export class AiBillingService {
     private readonly usageRecorderService: UsageRecorderService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly aiMonthlyTokenCapService: AiMonthlyTokenCapService,
   ) {}
 
   async assertAiExecutionAllowed({
@@ -39,6 +41,13 @@ export class AiBillingService {
     operationType: UsageOperationType;
     spenders: UsageSpenders;
   }): Promise<void> {
+    // Workspace-level cost guardrail, checked before the billing gate so it
+    // also covers BYOK/self-hosted workspaces where billing is disabled.
+    await this.aiMonthlyTokenCapService.assertWithinMonthlyTokenCap({
+      workspaceId,
+      operationType,
+    });
+
     await this.billingUsageService.assertUsageAllowed({
       workspaceId,
       resourceType: UsageResourceType.AI,

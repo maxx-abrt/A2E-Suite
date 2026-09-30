@@ -34,6 +34,7 @@ export const fromWorkspaceEntityToFlat = (
   aiAdditionalInstructions: entity.aiAdditionalInstructions,
   enabledAiModelIds: entity.enabledAiModelIds,
   useRecommendedModels: entity.useRecommendedModels,
+  aiMonthlyTokenCap: entity.aiMonthlyTokenCap,
   isInternalMessagesImportEnabled: entity.isInternalMessagesImportEnabled,
   workspaceCustomApplicationId: entity.workspaceCustomApplicationId,
   workspaceTemplate: entity.workspaceTemplate,

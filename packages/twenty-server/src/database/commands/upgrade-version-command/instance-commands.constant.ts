@@ -183,6 +183,7 @@ import { AddIsHiddenToAgentMessageFastInstanceCommand } from './2-25/2-25-instan
 import { CreateNotificationWatchTableFastInstanceCommand } from './2-39/2-39-instance-command-fast-1789900000000-create-notification-watch-table';
 import { AddBundledAppSourcePathToApplicationRegistrationFastInstanceCommand } from './2-39/2-39-instance-command-fast-1789905000000-add-bundled-app-source-path';
 import { CreateWorkspaceAiProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1790711712877-create-workspace-ai-provider';
+import { AddAiMonthlyTokenCapToWorkspaceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1790807243394-add-ai-monthly-token-cap-to-workspace';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -368,4 +369,5 @@ export const INSTANCE_COMMANDS = [
   CreateNotificationWatchTableFastInstanceCommand,
   AddBundledAppSourcePathToApplicationRegistrationFastInstanceCommand,
   CreateWorkspaceAiProviderFastInstanceCommand,
+  AddAiMonthlyTokenCapToWorkspaceFastInstanceCommand,
 ];

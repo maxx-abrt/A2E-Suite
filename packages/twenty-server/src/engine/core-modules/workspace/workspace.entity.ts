@@ -1,8 +1,9 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { type Application } from 'cloudflare/resources/zero-trust/access/applications/applications';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
+import { ADD_AI_MONTHLY_TOKEN_CAP_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-39/add-ai-monthly-token-cap-to-workspace-upgrade-command-name.constant';
 import { ADD_WORKSPACE_TEMPLATE_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-39/add-workspace-template-to-workspace-upgrade-command-name.constant';
 import { WorkspaceTemplate } from 'src/engine/core-modules/onboarding/enums/workspace-template.enum';
 import {
@@ -350,6 +351,16 @@ export class WorkspaceEntity {
   @Field(() => Boolean, { nullable: false })
   @Column({ type: 'boolean', nullable: false, default: true })
   useRecommendedModels: boolean;
+
+  @Field(() => Int, { nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_AI_MONTHLY_TOKEN_CAP_TO_WORKSPACE_UPGRADE_COMMAND_NAME,
+  })
+  // Null means no cap: AI keeps working unbounded, matching the zero-config
+  // self-hosted default. Enforced against event-logs AI token usage.
+  @Column({ type: 'integer', nullable: true, default: null })
+  aiMonthlyTokenCap: number | null;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceCustomApplicationId: string;

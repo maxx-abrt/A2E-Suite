@@ -125,3 +125,29 @@ CLAIMED — US-129/house-style-scoping-tests — deepseek-v4.1-flash — 2026-09
 **Storage choice (AC3):** reused the existing workspace-metadata primitive — no new entity, migration or 2-39 upgrade command. Generic "workspace instructions" IS the house style (PLAN words them synonymously), is admin-gated, localized via Lingui, and already lands in the chat system prompt; a parallel `synaHouseStyle` column would duplicate an existing primitive.
 **Remaining:** US-130 (M10d) plus the US-128 selection-toolbar remainder.
 **Next:** US-130 — zero-AI entry gating + per-workspace monthly token cap + usage view.
+
+CLAIMED — US-130/server-availability-and-cap-guardrail — deepseek-v4.1-flash — 2026-09-30T22:19:00Z — base 63e23202a8da70b643091a9a8fbc8204595d7238
+
+## 2026-09-30 22:33 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-130 M10d: zero-AI & cost guardrails — hidden entries without keys, monthly token cap, usage view · **Slice:** AC bullet 3 — per-workspace monthly AI token cap, server-enforced against P9.1 event-logs usage (`AI_CHAT_TOKEN` / `WEB_SEARCH`), with a typed refusal
+**Claim:** partial
+**Ready-to-tick:** no — the task spans more bullets; the cap leg is complete and green, the zero-AI entry gating and the usage-view cap display remain
+**Base:** 63e23202a8da70b643091a9a8fbc8204595d7238
+**Changed:**
+- server new `engine/metadata-modules/ai/ai-billing/services/ai-monthly-token-cap.service.ts` (cap read + month-to-date usage from `usageEvent`) and `.../utils/is-monthly-token-cap-exceeded.util.ts` (pure predicate)
+- server edit `.../services/ai-billing.service.ts` (check inside `assertAiExecutionAllowed`, the single AI pre-execution choke point), `.../ai-billing.module.ts` (import `ClickHouseModule` + `CoreEntityCacheModule`, provide the new service)
+- server edit `engine/metadata-modules/ai/ai.exception.ts` (`MONTHLY_TOKEN_CAP_EXCEEDED` + fr-source Lingui msg) and `.../ai/utils/ai-graphql-api-exception-handler.util.ts` (map to `ForbiddenError`)
+- server edit `core-modules/workspace/{workspace.entity.ts,dtos/update-workspace-input.ts,services/workspace.service.ts,utils/from-workspace-entity-to-flat.util.ts}` (`aiMonthlyTokenCap` integer column, admin-settable via `updateWorkspace` under `AI_SETTINGS`, cached flat mapping)
+- server new `2-39-instance-command-fast-1790807243394-add-ai-monthly-token-cap-to-workspace.ts` + name constant, registered in `instance-commands.constant.ts` (timestamp > 1790720500000)
+- server new specs `ai-monthly-token-cap.service.spec.ts` (+7), `is-monthly-token-cap-exceeded.util.spec.ts` (+4); edit `ai-billing.service.spec.ts` (new provider + cap-call assertion)
+- this report; `.ralph-tui/progress.md`
+**Checks:**
+- `npx jest src/engine/metadata-modules/ai/ai-billing --config=packages/twenty-server/jest.config.mjs` → 3 suites / 18 passed
+- `npx jest src/engine/metadata-modules/ai/utils/__tests__/ai-graphql-api-exception-handler.util.spec.ts ...` → 4 suites / 21 passed
+- `cd packages/twenty-server && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `cd packages/twenty-server && npx oxlint --type-aware -c .oxlintrc.json <16 touched>` → 0 warnings/0 errors; `npx oxfmt --check <16>` → clean; no `locales/**` touched; no AI attribution
+**Missing for tick:** AC bullet 2 (gate every M10b/M10c entry + assistant surfaces on provider availability resolved through the US-102 order; admins see the one-line "Connect a provider" link, members nothing) and AC bullet 4's cap display (the Settings → Syna Usage/Audit event-logs view already exists from US-045 but does not surface `aiMonthlyTokenCap`). The front needs a workspace-scoped availability signal that includes workspace BYOK; today `ClientConfig.aiModels` is instance-wide (`AiModelRegistryService.buildModelRegistry` is not workspace-scoped), so wiring that resolution is the prerequisite. Tier-2 zero-AI/cap browser journey (E16) is the orchestrator's.
+**Do not redo:** the US-045 Audit tab + `SettingsAiUsageTab` event-logs surface; the US-128 `enabledModels`-based hiding of the `/syna` slash items; the US-102/127 provider entity, resolver and admin projection.
+**Cap design (WHY):** reused the workspace-metadata primitive (`aiMonthlyTokenCap` column) rather than the generic `core.usageLimit` quota, which is enterprise-gated (`USAGE_LIMIT`) and would leave self-hosted/BYOK workspaces uncapped — matching "no new billing backend". A null/0 cap is a fail-open no-op and a zero-usage month never trips, so ordinary (non-AI) work and unconfigured workspaces are unaffected; only the metered operations (`AI_CHAT_TOKEN`/`WEB_SEARCH`) are refused, so workflow tokens are not cross-blocked. ClickHouse reads fail open (`select` returns `[]` → 0).
+**Remaining:** US-130 (M10d) remaining legs — zero-AI gating (US-102 order + admin "Connect a provider" link) and the usage-view cap display — plus the standing US-128 selection-toolbar remainder.
+**Next:** add a workspace-scoped AI-availability read (resolve `ProviderConfigService.getResolvedProvidersForWorkspace` → `hasConfiguredAiProvider`) consumed by the front gate, show the cap in the Usage tab, then report the fr+en/front tests.

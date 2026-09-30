@@ -27,6 +27,7 @@ export enum AiExceptionCode {
   NO_FAILED_TURN_TO_RETRY = 'NO_FAILED_TURN_TO_RETRY',
   STREAM_INTERRUPTED = 'STREAM_INTERRUPTED',
   DIRECT_TOOL_INVOCATION_NOT_AVAILABLE = 'DIRECT_TOOL_INVOCATION_NOT_AVAILABLE',
+  MONTHLY_TOKEN_CAP_EXCEEDED = 'MONTHLY_TOKEN_CAP_EXCEEDED',
 }
 
 const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
@@ -75,6 +76,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`The response was interrupted before it could finish.`;
     case AiExceptionCode.DIRECT_TOOL_INVOCATION_NOT_AVAILABLE:
       return msg`This action is not available for your request.`;
+    case AiExceptionCode.MONTHLY_TOKEN_CAP_EXCEEDED:
+      return msg`Your workspace reached its monthly AI token cap. Increase or remove the cap in Settings → Syna.`;
     default:
       assertUnreachable(code);
   }

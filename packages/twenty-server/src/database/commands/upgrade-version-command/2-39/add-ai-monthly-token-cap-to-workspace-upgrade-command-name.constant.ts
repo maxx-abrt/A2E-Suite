@@ -1,0 +1,2 @@
+export const ADD_AI_MONTHLY_TOKEN_CAP_TO_WORKSPACE_UPGRADE_COMMAND_NAME =
+  '2.39.0_AddAiMonthlyTokenCapToWorkspaceFastInstanceCommand_1790807243394';

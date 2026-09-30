@@ -14,6 +14,7 @@ import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { AiMonthlyTokenCapService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-monthly-token-cap.service';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
@@ -26,6 +27,7 @@ describe('AiBillingService usage logging', () => {
   let emitCustomBatchEvent: jest.Mock;
   let assertUsageAllowed: jest.Mock;
   let consumeUsageQuota: jest.Mock;
+  let assertWithinMonthlyTokenCap: jest.Mock;
 
   // The real UsageRecorderService is wired in so the assertion is on the
   // USAGE_RECORDED batch the event-logs bridge consumes, not on a mocked seam.
@@ -38,6 +40,7 @@ describe('AiBillingService usage logging', () => {
     consumeUsageQuota = jest
       .fn()
       .mockResolvedValue({ hasNoMoreAvailableCredits: false });
+    assertWithinMonthlyTokenCap = jest.fn().mockResolvedValue(undefined);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -50,6 +53,10 @@ describe('AiBillingService usage logging', () => {
         {
           provide: BillingUsageService,
           useValue: { assertUsageAllowed, consumeUsageQuota },
+        },
+        {
+          provide: AiMonthlyTokenCapService,
+          useValue: { assertWithinMonthlyTokenCap },
         },
         {
           provide: WorkspaceEventEmitter,
@@ -226,6 +233,10 @@ describe('AiBillingService usage logging', () => {
       resourceType: UsageResourceType.AI,
       operationType: UsageOperationType.AI_CHAT_TOKEN,
       spenders: { userWorkspaceId: USER_WORKSPACE_ID },
+    });
+    expect(assertWithinMonthlyTokenCap).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      operationType: UsageOperationType.AI_CHAT_TOKEN,
     });
   });
 });
