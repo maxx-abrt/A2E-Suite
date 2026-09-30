@@ -550,11 +550,12 @@
         "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-front clean; oxlint --type-aware + oxfmt --check on touched files; targeted jest for settings/ai touched modules green; no i18n catalog churn; no AI attribution"
       ],
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "notes": "Depends on US-102. Lane L-AI.",
       "dependsOn": [
         "US-102"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-128",
@@ -617,6 +618,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-30T21:36:47.858Z"
+    "updatedAt": "2026-09-30T22:01:14.086Z"
   }
 }

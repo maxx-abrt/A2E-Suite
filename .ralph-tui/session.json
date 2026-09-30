@@ -3,10 +3,10 @@
   "sessionId": "c3d9d5b5-131c-4bed-9971-37e80fe99ea9",
   "status": "running",
   "startedAt": "2026-09-29T18:49:46.574Z",
-  "updatedAt": "2026-09-30T21:36:47.858Z",
-  "currentIteration": 29,
+  "updatedAt": "2026-09-30T22:01:14.087Z",
+  "currentIteration": 31,
   "maxIterations": 20,
-  "tasksCompleted": 26,
+  "tasksCompleted": 27,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -306,6 +306,26 @@
       "durationMs": 675007,
       "startedAt": "2026-09-30T21:15:14.803Z",
       "endedAt": "2026-09-30T21:26:29.810Z"
+    },
+    {
+      "iteration": 30,
+      "status": "completed",
+      "taskId": "US-126",
+      "taskTitle": "M11b: Today view — Home becomes 'Today' (due/overdue tasks, today's events, recent pages, pending Bilan)",
+      "taskCompleted": true,
+      "durationMs": 612561,
+      "startedAt": "2026-09-30T21:26:35.296Z",
+      "endedAt": "2026-09-30T21:36:47.857Z"
+    },
+    {
+      "iteration": 31,
+      "status": "completed",
+      "taskId": "US-127",
+      "taskTitle": "M10a-2: Settings → Syna → Providers UI (add/test key, default + fast model, Audit masking preserved)",
+      "taskCompleted": false,
+      "durationMs": 258658,
+      "startedAt": "2026-09-30T21:36:53.358Z",
+      "endedAt": "2026-09-30T21:41:12.016Z"
     }
   ],
   "skippedTaskIds": [],

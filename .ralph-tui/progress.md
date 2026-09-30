@@ -246,6 +246,25 @@ after each iteration and it's included in prompts for context.
   `getAppPath(AppPath.RecordIndexPage, { objectNamePlural })`; `IconFileInvoice`
   is NOT exported from `twenty-ui/icon` (only via `AllIcons`), so app-object
   cards pick an exported icon (`IconCoins`, `IconNotes`).
+- Workspace BYOK provider settings (US-127, M10a-2): the metadata schema can carry
+  a key-safe provider surface — `workspaceAiProviders` query +
+  `{upsert,remove}WorkspaceAiProvider` (return the fresh `WorkspaceAiProvidersDTO`,
+  so the front needs no refetch) + `testWorkspaceAiProvider`, all under
+  `SettingsPermissionGuard(AI_SETTINGS)` and projected by
+  `WorkspaceAiProviderAdminService` (presence + fixed `••••••••` mask + catalog
+  `apiKeyConfigVariable`; never the key). "Test key" is a `generateText` 1-token
+  call on a **transient** provider (`SdkProviderFactoryService.createTransientProvider`
+  — the cached instance would test the OLD key) returning a typed
+  `WorkspaceAiProviderTestErrorCode`; never echo the provider error body (it can
+  contain key material). Register the resolver in a module imported by
+  `MetadataEngineModule` — `@Global` alone does not put it in the
+  `include: [MetadataGraphQLApiModule]` schema graph. New front operations under
+  `src/pages/**/graphql/**` are codegen inputs; until codegen runs (needs the live
+  `/metadata` endpoint), hand-type `useQuery<T>(PLAIN_GQL_DOC)` (same as
+  `useUpdateWorkspaceMemberSettings`) so `tsgo` is green without regenerating
+  `generated-metadata/graphql.ts`. Caveat: a saved workspace key is not yet used at
+  generation time — `AiModelRegistryService.buildModelRegistry` is still
+  instance-wide, so `getResolvedProvidersForWorkspace` only backs the new read path.
 
 ---
 
@@ -613,4 +632,37 @@ after each iteration and it's included in prompts for context.
 - Missing (Tier 2 orchestrator): browser pass on a workspace with Bureau + Bilan
   installed; empty states without the apps.
 - Next: optional Syna-digest card (hidden without the AI permission) or US-127.
+---
+
+## 2026-09-30 - US-127 (M10a-2: Settings → Syna → Providers UI)
+- Implemented the key-safe server GraphQL surface the UI needs (US-102 shipped the
+  entity/resolution but no resolver): `workspaceAiProviders` read (resolution-order
+  + masked provider projection), `upsert`/`remove` (return the fresh overview), and
+  `testWorkspaceAiProvider` (typed `success/errorCode`, a 1-token `generateText`
+  call on a transient provider; provider error bodies never echoed). Wired a new
+  `WorkspaceAiProviderModule` into `MetadataEngineModule`.
+- Built Settings → Syna → Providers: nav sub-item + `/settings/ai/providers` route,
+  a provider list (source badge + masked key + Configured/No-key), an add/edit form
+  (API key password field with masked placeholder, base URL only for
+  OpenAI-compatible, default+fast model picks), Test-key states
+  (idle/testing/success/typed failure), Remove with documented fallback to
+  instance → catalog, and the D-N4 billing-gating copy.
+- Files changed: server `ai-models/{dtos,resolvers,services,utils}` + module +
+  metadata-engine + a new spec; `twenty-shared/src/types/SettingsPath.ts`;
+  front `pages/settings/ai/**` (page, components, hook, graphql, types, utils,
+  2 specs) + `SettingsRoutes.tsx` + `useSettingsNavigationItems.tsx`.
+- **Learnings:**
+  - Metadata resolvers are only in the schema if their module is in the
+    `MetadataEngineModule` graph (`include: [MetadataGraphQLApiModule]`); a
+    `@Global` module is not traversed.
+  - `SdkProviderFactoryService.createProvider` caches by provider name — a key
+    test must use the new transient variant or it re-tests the stored key.
+  - The metadata codegen endpoint (`/metadata`) needs the running app and returned
+    non-JSON for introspection here; hand-typed Apollo generics over plain `gql`
+    documents keep `tsgo` green and the next codegen folds the documents in.
+  - A stale Ralph claim from a dead iteration of the same session can be refreshed
+    and resumed; `npx jest --findRelatedTests` + direct `oxlint`/`oxfmt` are the
+    working-tree lint path (`lint:diff-with-main` sees only commits).
+- **Open:** workspace keys are addable/testable but not yet consumed by
+  `AiModelRegistryService` (still instance-wide) — the remaining M10a/M10b server leg.
 ---

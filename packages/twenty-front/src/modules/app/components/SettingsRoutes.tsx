@@ -256,6 +256,12 @@ const SettingsAI = lazy(() =>
   })),
 );
 
+const SettingsAiProviders = lazy(() =>
+  import('~/pages/settings/ai/SettingsAiProviders').then((module) => ({
+    default: module.SettingsAiProviders,
+  })),
+);
+
 const SettingsAiUsageUserDetail = lazy(() =>
   import('~/pages/settings/ai/SettingsAiUsageUserDetail').then((module) => ({
     default: module.SettingsAiUsageUserDetail,
@@ -813,6 +819,10 @@ const createSettingsRouteElements = ({
       }
     >
       <Route path={SettingsPath.AI} element={<SettingsAI />} />
+      <Route
+        path={SettingsPath.AiProviders}
+        element={<SettingsAiProviders />}
+      />
       <Route path={SettingsPath.AiPrompts} element={<SettingsAiPrompts />} />
       <Route
         path={SettingsPath.AiNewAgent}

@@ -26,6 +26,7 @@ import {
   IconDoorEnter,
   IconHelpCircle,
   IconHierarchy,
+  IconKey,
   IconMail,
   IconMessage,
   IconMessageCircle,
@@ -172,6 +173,15 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.AI,
           Icon: IconSparkles,
           isHidden: !permissionMap[PermissionFlagType.AI_SETTINGS],
+          subItems: [
+            {
+              label: t`Providers`,
+              path: SettingsPath.AiProviders,
+              Icon: IconKey,
+              indentationLevel: 2,
+              isHidden: !permissionMap[PermissionFlagType.AI_SETTINGS],
+            },
+          ],
         },
         {
           label: t`Communication`,

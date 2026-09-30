@@ -1,0 +1,237 @@
+# Iteration 30 Log
+
+## Metadata
+
+- **Task ID**: US-126
+- **Task Title**: M11b: Today view — Home becomes 'Today' (due/overdue tasks, today's events, recent pages, pending Bilan)
+- **Description**: As a user opening the app, I want a Today view that shows what needs attention today so that Home is useful immediately. Starting state: partial — the P2.6 re-home shipped a 7-card native HomeDashboar...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-09-30T21:26:35.296Z
+- **Ended At**: 2026-09-30T21:36:47.857Z
+- **Duration**: 10m 12s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "US-126" PLAN.md
+I'll start with the clean-start check and gather context.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-126\|M11b\|Today view" PLAN.md | head -50
+[94m[bash][0m $ ls docs/plan/phases/ | grep -i "11\|10"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ ls docs/plan/phases/ | sort
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-15-report.md
+[94m[bash][0m $ grep -n "M11b\|home-dashboard\|HomeDashboard\|Today" PLAN.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -rn "US-126\|M11b\|Today" docs/plan/phases/*.md | head -30
+[94m[bash][0m $ find packages/twenty-front/src/modules/home-dashboard -type f | sort
+Now let me explore the home-dashboard module structure.
+[94m[bash][0m $ grep -rln "home-dashboard" packages/twenty-front/src --include=*.ts --include=*.tsx | grep -v "modul...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/HomeDashboard.tsx
+[94m[bash][0m $ grep -rln "home-dashboard" packages/twenty-front/src --include="*.ts" --include="*.tsx" | grep -v "m...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/RecentActivityWidget.tsx
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/MyTasksWidget.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/MyTasksWidgetContent.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/HomeWidgetList.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/HomeDashboardCard.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/types/HomeWidgetListEntry.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/utils/selectMyTasks.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/
+[94m[bash][0m $ grep -rln "a2e-accounting\|isSoloWorkspace\|Bilan" packages/twenty-front/src --include="*.ts" --incl...
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-accounting/src/objects -type f | sort
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/workspace-member/utils/isSoloWorkspace.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/objects/invoice.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/objects/subvention.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/quick-capture/utils/quickCapture.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/quick-capture/hooks/useQuickCapture.ts
+[94m[bash][0m $ grep -rn "export const useObjectMetadataItems\|export const useObjectMetadataItem" packages/twenty-f...
+[94m[bash][0m $ grep -rln "installedApplication\|InstalledApplication\|applicationRegistration" packages/twenty-fron...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-metadata/hooks/useObjectMetadataItems.ts
+[94m[bash][0m $ grep -rn "nameSingular" packages/twenty-apps/internal/a2e-documents/src/objects/*.ts | head
+[94m[bash][0m $ grep -n "INVOICE_STATUS" packages/twenty-apps/internal/a2e-accounting/src/constants/field-vocabulary...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/objects/saved-subvention.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/constants/field-vocabulary.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/objects/document.object.ts
+[94m[bash][0m $ grep -rln "HomeDashboard" packages/twenty-front/src --include="*.tsx" --include="*.ts" | grep -v "mo...
+[94m[bash][0m $ grep -rn "RecordShowPage\|ObjectsPage\|RecordIndexPage\|Calendar\|TasksPage" packages/twenty-shared/...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/mobile-home/MobileHomePage.tsx
+[94m[bash][0m $ grep -rn "MobileHomePage\|AppPath.Home" packages/twenty-front/src --include="*.tsx" | grep -v "__tes...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/hooks/useFindManyRecords.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/UpcomingEventsWidget.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-metadata/hooks/useObjectMetadataItem.ts
+[94m[bash][0m $ grep -rn "export const objectMetadataItemsWithFieldsSelector\|objectMetadataItemsWithFieldsSelector"...
+[94m[bash][0m $ ls packages/twenty-front/src/modules/object-metadata/utils/ | head -40
+[94m[bash][0m $ grep -rln "objectMetadataItemFamilySelector\|ObjectMetadataItemNotFoundError\|objectMetadataItemsWit...
+[94m[bash][0m $ grep -rn "nameSingular ===" packages/twenty-front/src/modules --include="*.ts" --include="*.tsx" | g...
+[94m[bash][0m $ grep -rln "useObjectMetadataItems" packages/twenty-front/src/modules --include="*.ts" --include="*.t...
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents/src -iname "*navigation*" -o -iname "*page*" | sort
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-accounting/src -iname "*navigation*" -o -iname "*page*" | sor...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/utils/formatHomeWidgetDayLabel.ts
+[94m[read][0m
+[94m[bash][0m $ grep -n "max-consts-per-file" -A 15 packages/twenty-front/.oxlintrc.json
+[94m[bash][0m $ cat packages/twenty-front/.oxlintrc.json | head -80
+[94m[bash][0m $ find packages/twenty-oxlint-rules/src -iname "*const*"
+[94m[bash][0m $ find packages/twenty-oxlint-rules -maxdepth 2 -not -path "*/node_modules/*" | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-oxlint-rules/rules/max-consts-per-file.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/.oxlintrc.json
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/side-panel/hooks/useOpenRecordInSidePanel.ts
+[94m[bash][0m $ grep -n "TEMPLATE\|DOCUMENT\|values\|value:" packages/twenty-apps/internal/a2e-documents/src/constan...
+[94m[bash][0m $ grep -n "PageLayout\|Dashboard\|page-layout" packages/twenty-shared/src/types/AppPath.ts
+[94m[bash][0m $ grep -rn "NavigationMenuItemType.PAGE_LAYOUT" packages/twenty-front/src --include="*.ts" --include="...
+[94m[bash][0m $ grep -rn "'DescNullsLast'\|DescNullsLast" packages/twenty-front/src --include="*.tsx" | head -5
+[94m[bash][0m $ grep -rn "kind: { neq" packages/twenty-front/src --include="*.tsx" | head
+[94m[bash][0m $ grep -rn "type OrderByDirection\|RecordGqlOrderByDirection\|OrderByDirection =" packages/twenty-shar...
+[94m[bash][0m $ grep -rn "updatedAt" packages/twenty-front/src/modules/object-record/record-index/hooks/*.ts 2>/dev/...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/utils/buildHomeSuggestions.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/HomeSuggestionsWidget.tsx
+[94m[bash][0m $ grep -rn "AscNullsFirst\|DescNullsFirst" packages/twenty-front/src/modules --include="*.tsx" | grep ...
+[94m[bash][0m $ grep -rn "status: { in:\|notIn:\|status: { eq:" packages/twenty-front/src/modules --include="*.tsx" ...
+[94m[bash][0m $ grep -rln "RecordGqlOperationFilter" packages/twenty-shared/src/types/*.ts | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/RecordGqlOperationFilter.ts
+[94m[bash][0m $ grep -n "and\|or" packages/twenty-shared/src/types/RecordGqlOperationFilter.ts | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/RecordGqlOperationFilter.ts
+[94m[bash][0m $ grep -rn "export.*IconFileInvoice\|export.*IconNotes" packages/twenty-ui/src/icon/ | head
+[94m[bash][0m $ grep -rn "IconFileInvoice" packages/twenty-ui/src --include="*.ts" | head
+[94m[bash][0m $ grep -n "Icon.*Invoice\|IconReceipt\|IconCash\|IconCurrency\|IconFileText\|IconAward\|IconWallet" pa...
+[94m[bash][0m $ grep -n "^  IconFile\b\|IconFile\|IconReceipt\|IconCash\|IconWallet\|IconCoins\|IconBrandCashapp" pa...
+[94m[bash][0m $ tail -20 .ralph-tui/progress.md 2>/dev/null
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+Now I'll create the pure utils and tests. Let me first claim my slice and check the phase report.
+[94m[bash][0m $ printf '\nCLAIMED — US-126/m11b-today-cards — deepseek-v4.1-flash — 2026-09-30T21:31:42Z — base 5fc1...
+[94m[write][0m "export type ObjectMetadataNameHolder = {
+  nameSingular: string;
+};
+
+// Apps install as a unit, so one object metadata item is the install signal a
+// widget gates on: calling `useFindManyRecords` for... (540 chars)"
+[94m[write][0m "export type HomeRecentPageSummary = {
+  id: string;
+  title: string;
+  kind: string | null;
+  updatedAt: string | null;
+};
+
+export const HOME_DOCUMENT_TEMPLATE_KIND = 'TEMPLATE';
+
+const getTimestamp =... (986 chars)"
+Claim recorded. Now creating the pure utils.
+[94m[write][0m "export type HomeBilanInvoiceSummary = {
+  id: string;
+  number: string | null;
+  status: string | null;
+  dueDate: string | null;
+};
+
+export type HomeBilanGrantSummary = {
+  id: string;
+  name: string... (2832 chars)"
+[94m[write][0m "import { useLingui } from '@lingui/react/macro';
+
+import { HomeWidgetList } from '@/home-dashboard/components/HomeWidgetList';
+import { type HomeWidgetListEntry } from '@/home-dashboard/types/HomeWidg... (660 chars)"
+[94m[write][0m "import { useLingui } from '@lingui/react/macro';
+
+import { HomeWidgetList } from '@/home-dashboard/components/HomeWidgetList';
+import { type HomeWidgetListEntry } from '@/home-dashboard/types/HomeWidg... (673 chars)"
+Now the content components.
+[94m[write][0m "import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useOpenRecordInSidePane... (2214 chars)"
+[94m[write][0m "import { useLingui } from '@lingui/react/macro';
+import { useMemo } from 'react';
+
+import { PendingBilanWidgetContent } from '@/home-dashboard/components/PendingBilanWidgetContent';
+import { type Home... (3714 chars)"
+Now wire the cards into `HomeDashboard.tsx`.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/HomeDashboard.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/HomeDashboard.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/HomeDashboard.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/HomeDashboard.tsx
+[94m[write][0m "import { hasObjectMetadataItem } from '@/home-dashboard/utils/hasObjectMetadataItem';
+
+describe('hasObjectMetadataItem', () => {
+  it('is true when the object name is installed', () => {
+    expect(
+ ... (625 chars)"
+[94m[write][0m "import {
+  type HomeRecentPageSummary,
+  selectRecentPages,
+} from '@/home-dashboard/utils/selectRecentPages';
+
+const buildPage = (
+  overrides: Partial<HomeRecentPageSummary> & { id: string },
+): Hom... (1404 chars)"
+Now the tests.
+[94m[write][0m "import {
+  type HomeBilanGrantSummary,
+  type HomeBilanInvoiceSummary,
+  selectPendingBilanItems,
+} from '@/home-dashboard/utils/selectPendingBilanItems';
+
+const NOW = new Date('2026-09-18T12:00:00.00... (3060 chars)"
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+
+import { RecentPagesWidgetContent } from '@/home-dashboard/... (952 chars)"
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+
+import { PendingBilanWidgetContent } from '@/home-dashboard... (1046 chars)"
+Now update `HomeDashboard.test.tsx`.
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ ls packages/twenty-front/tsconfig.json
+[94m[bash][0m $ npx jest src/modules/home-dashboard --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -50
+[94m[bash][0m $ npx jest src/modules/home-dashboard --config=jest.config.mjs 2>&1 | tail -60
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -40
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/home-dashboard/components/HomeDashboard.tsx sr...
+[94m[bash][0m $ npx oxfmt --check src/modules/home-dashboard/components/HomeDashboard.tsx src/modules/home-dashboard...
+[94m[bash][0m $ npx oxfmt src/modules/home-dashboard/components/PendingBilanWidget.tsx src/modules/home-dashboard/co...
+[94m[bash][0m $ npx oxfmt --check src/modules/home-dashboard/components/HomeDashboard.tsx src/modules/home-dashboard...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ npx jest src/modules/home-dashboard --config=jest.config.mjs 2>&1 | tail -6
+[94m[bash][0m $ git diff packages/twenty-front/src/modules/home-dashboard/components/HomeDashboard.tsx
+[94m[bash][0m $ grep -rn "useIsSoloWorkspace\|isSoloWorkspace" packages/twenty-front/src/modules --include="*.tsx" -...
+[94m[bash][0m $ npx jest --findRelatedTests src/modules/home-dashboard/components/HomeDashboard.tsx src/modules/home...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/PendingBilanWidget.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/RecentPagesWidget.tsx
+[94m[read][0m
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/modules/home-dashboard --config=jest.config.mjs 2>&1 | tail -5
+[94m[bash][0m $ npx oxfmt --check src/modules/home-dashboard/components/__tests__/HomeDashboard.test.tsx 2>&1 | tail...
+[94m[bash][0m $ git rev-parse HEAD
+[94m[bash][0m $ orchestrator ticks this slice after the Tier-2 browser pass. EOF echo done
+[94m[bash][0m $ wc -l .ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ empty states without the apps. - Next: optional Syna-digest card (hidden without the AI permission) ...
+[94m[bash][0m $ git status --porcelain | grep -c "locales/" || true
+Implemented and verified US-126's first unmet slice: the "Today" home view gains a **Recent pages** card (Bureau `document`, newest first, templates excluded) and a **Pending in Bilan** card (unpaid invoices + active grant deadlines merged by nearest date, overdue flagged), both install-gated with safe empty states and deep-linked (`/objects/documents`, `/objects/invoices`), plus a "Today" header label. Reused the existing `HomeDashboardCard`/`HomeWidgetList` seam — no second dashboard.
+
+**Checks (Tier 0):**
+- `npx jest src/modules/home-dashboard --config=jest.config.mjs` → 23 suites / 83 tests pass
+- `npx jest --findRelatedTests <6 touched sources>` → 6 suites / 56 tests pass
+- `npx tsgo -p tsconfig.json --noEmit` (twenty-front) → exit 0
+- `npx oxlint --type-aware -c .oxlintrc.json <14 touched files>` → 0 errors
+- `npx oxfmt --check <14 touched files>` → clean
+
+**Missing for tick (Tier 2):** browser proof on a workspace with Bureau + Bilan installed, and the empty states without the apps.
+
+Report appended to `docs/plan/phases/phase-15-report.md` (Ready-to-tick: yes) and `.ralph-tui/progress.md`. No catalogs touched, no commits.
+
+<promise>COMPLETE</promise>

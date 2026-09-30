@@ -64,6 +64,22 @@ export class WorkspaceAiProviderService {
     });
   }
 
+  // Raw rows for the admin projection: it only needs presence/metadata and must
+  // not fail (nor decrypt) because one stored key cannot be decrypted.
+  async findProviders(
+    workspaceId: string,
+  ): Promise<WorkspaceAiProviderEntity[]> {
+    return this.workspaceAiProviderRepository.find(workspaceId, {
+      order: { createdAt: 'ASC' },
+    });
+  }
+
+  // Decryption for the admin test path only. Callers must never return the
+  // value to a client; the thrown AiException is already key-free.
+  decryptProviderApiKey(row: WorkspaceAiProviderEntity): string | undefined {
+    return this.decryptApiKeyOrThrow(row);
+  }
+
   // A rejected update must not overwrite the stored key, so an omitted apiKey
   // keeps the existing ciphertext (or fails on insert when there is none).
   async upsertProvider({

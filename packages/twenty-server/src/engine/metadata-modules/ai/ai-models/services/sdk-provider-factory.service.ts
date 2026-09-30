@@ -61,6 +61,13 @@ export class SdkProviderFactoryService {
     return instance;
   }
 
+  // Uncached variant for validating a candidate key: the provider-name cache
+  // holds the instance built from the stored config, which would silently test
+  // the old key instead of the candidate.
+  createTransientProvider(config: AiProviderConfig): AiSdkProviderInstance {
+    return this.buildProviderInstance(config);
+  }
+
   getRawProvider<T>(
     providerName: string,
     ...allowedPackages: string[]

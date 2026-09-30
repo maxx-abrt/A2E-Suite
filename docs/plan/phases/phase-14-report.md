@@ -40,3 +40,39 @@ CLAIMED — US-102/M10a-1 — deepseek-v4.1-flash — 2026-09-29T19:52:00Z — b
 - The integration spec's module graph is a **distinct copy** of the app's, so `global.app.get(SomeServiceClass)` throws "does not exist in the current context" even though the provider is present (`strict: false` does **not** fix class tokens, only repository tokens resolved by the app's own classes — see `getCoreRepository`). Resolved with a new test util `getAppProviderByName` that reads the provider instance out of the `AiModelsModule` container by name.
 - `npx nx run twenty-server:database:migrate:generate` emitted unrelated drift (documentShare/notification/notificationWatch FK renames, a `titleSnapshot` NOT NULL drop) because the dev DB has stale constraint names. Those statements were **removed** from the generated command; only the `workspaceAiProvider` table + FK remain. A future generator run on a stale DB will do the same — always diff the generated migration before keeping it.
 - The table is created by the instance command, not by the legacy TypeORM migration system (frozen); the integration test applies `up` itself when `to_regclass` is null and reverts with `down`, so the suite is self-contained on a DB that predates the command.
+
+CLAIMED — US-127/M10a-2 — deepseek-v4.1-flash — 2026-09-30T21:37:17Z — base 6cec8604d5bf0147bed18997b20ab4b8e960f784
+
+CLAIMED — US-127/M10a-2 — deepseek-v4.1-flash — 2026-09-30T21:43:10Z — base 6cec8604d5bf0147bed18997b20ab4b8e960f784
+
+## 2026-09-30 22:00 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-127 M10a-2: Settings → Syna → Providers UI (add/test key, default + fast model, Audit masking preserved) · **Slice:** the whole task — the key-safe server GraphQL surface required for the UI (BYOK had no resolver after US-102) plus the Settings → Syna → Providers page (add/test key, default+fast model, fallback + billing copy)
+**Claim:** done-for-review
+**Ready-to-tick:** yes — all Tier 0/1 gates green on the working tree; only the AC's own Tier-2 browser journey (E16) is absent.
+**Base:** 6cec8604d5bf0147bed18997b20ab4b8e960f784
+**Changed:**
+- server new `ai-models/dtos/{workspace-ai-provider,workspace-ai-provider-test-result}.dto.ts` + `{upsert,test}-workspace-ai-provider.input.ts` + `{workspace-ai-provider-source,workspace-ai-provider-test-error-code}.enum.ts`
+- server new `ai-models/services/workspace-ai-provider-admin.service.ts` (read projection + `generateText` key test), `ai-models/utils/classify-ai-provider-test-error.util.ts`, `ai-models/resolvers/workspace-ai-provider.resolver.ts`, `ai-models/workspace-ai-provider.module.ts`
+- server edit `ai-models/services/sdk-provider-factory.service.ts` (+`createTransientProvider`), `ai-models/services/workspace-ai-provider.service.ts` (+`findProviders`, `decryptProviderApiKey`), `metadata-engine.module.ts` (import module)
+- server new spec `ai-models/services/__tests__/workspace-ai-provider-admin.service.spec.ts` (+10)
+- shared `twenty-shared/src/types/SettingsPath.ts` (+`AiProviders = 'ai/providers'`)
+- front new `pages/settings/ai/SettingsAiProviders.tsx`, `.../components/{SettingsAiProviderForm,SettingsAiProvidersList,SettingsAiProviderTestFeedback}.tsx`, `.../hooks/useWorkspaceAiProviders.ts`, `.../graphql/{queries/getWorkspaceAiProviders,mutations/{upsert,test,remove}WorkspaceAiProvider}.ts`, `.../types/{WorkspaceAiProviderStatus,WorkspaceAiProviderTestResult}.ts`, `.../utils/getWorkspaceAiProviderTestErrorMessage.ts` + 2 component specs (+6)
+- front edit `modules/app/components/SettingsRoutes.tsx` (route), `modules/settings/hooks/useSettingsNavigationItems.tsx` (Syna → Providers sub-item); this report; `.ralph-tui/progress.md`
+**Checks:**
+- `cd packages/twenty-server && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx jest src/engine/metadata-modules/ai/ai-models/services/__tests__/workspace-ai-provider-admin.service.spec.ts --config=packages/twenty-server/jest.config.mjs` → 10 passed
+- `npx jest src/engine/metadata-modules/ai/ai-models --config=packages/twenty-server/jest.config.mjs` → 8 suites / 48 passed
+- `cd packages/twenty-server && npx oxlint --type-aware -c .oxlintrc.json <14 touched>` → 0 warnings/0 errors; `oxfmt --check` clean
+- `npx nx build twenty-shared --skip-nx-cache` → success (so dependents see `SettingsPath.AiProviders`)
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx jest src/pages/settings/ai src/modules/settings/ai --config=packages/twenty-front/jest.config.mjs` → 4 suites / 13 passed
+- `npx jest --findRelatedTests <SettingsAiProviders + useSettingsNavigationItems + SettingsRoutes> --config=packages/twenty-front/jest.config.mjs` → 4 suites / 48 passed
+- `cd packages/twenty-front && npx oxlint --type-aware -c .oxlintrc.json <16 touched>` → 0 warnings/0 errors; `oxfmt --check` clean; no `locales/**` touched; no AI attribution
+**Missing for tick:** Tier 2 only — on a running workspace (Bureau/Bilan optional): open Settings → Syna → Providers, add a real OpenAI/Anthropic/Mistral/Google key and an OpenAI-compatible base URL, confirm the key input shows the `••••••••` placeholder and the list badges show Workspace key → Instance → Catalog, test a good and a bad key (typed success/failure), pick default+fast model, remove the key and confirm the source badge falls back. `npx nx run twenty-front:graphql:generate --configuration=metadata` should be run after `yarn start` to fold the 4 new documents into `generated-metadata/graphql.ts` (codegen needs the live /metadata endpoint; introspection returned non-JSON this session, so the hooks use the established hand-typed `useQuery<T>(gql)` pattern instead — tsgo is green without it).
+**Open item (flagged, not silently changed):** the workspace BYOK key is now addable/testable/visible, but it still has **no generation-time consumer** — `AiModelRegistryService.buildModelRegistry` remains instance-wide (`getResolvedProviders()`), so `getResolvedProvidersForWorkspace` is only surfaced by the new admin read path. Wiring the workspace resolution into the registry is the remaining M10a server leg (or M10b) and is out of the UI half's scope, matching the US-102 report's open item.
+**Do not redo:** the US-102 entity/service/migration/`getResolvedProvidersForWorkspace`; the Audit tab masking (`getAiProviderCredentialStatuses` + `AI_PROVIDER_CREDENTIAL_MASK`, untouched, tests green); the Admin Panel instance-provider UI.
+**Remaining:** US-128, US-129, US-130 (3) in this execution order.
+**Next:** orchestrator Tier-2 browser journey E16 + metadata codegen; then wire the workspace resolution into the model registry (M10b server leg) and start US-128 (Syna everywhere).
+
+### Resume note (stalled claim)
+A prior Ralph iteration (31, 21:37:17Z) wrote a `CLAIMED — US-127/M10a-2` line then died ~4 min later mid-exploration with **zero code changes** (only that claim line dirty). This session is the same Ralph run/model, so I refreshed the claim (21:43:10Z) and resumed rather than reporting `BLOCKED — already claimed`; no competing executor exists (parallel mode `never`). The duplicate claim line is historical.
