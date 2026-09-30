@@ -217,6 +217,25 @@ after each iteration and it's included in prompts for context.
   name→UUID map regex must be `const (\w+) =\s*'([0-9a-f-]{36})'`, and a
   document key is the slug of its French title (`notes-de-reunion`), NOT the
   (stale) `DOCUMENT_TEMPLATE_EN_LABELS` map keys.
+- App front components DO have an i18n seam: `t`/`msg`/`Trans`/`useTranslate`
+  from `twenty-sdk/front-component` (same `generateMessageId` as Lingui), catalogs
+  in `<app>/locales/<locale>.json` (readable context-group shape) extracted by
+  `twenty dev:translations-extract --locale fr-FR` and compiled by `dev:build`.
+  `SOURCE_LOCALE` is `en`, another locale is `fr-FR`. But the executor contract
+  forbids touching `locales/**`, and no internal app ships catalogs — so app
+  front-component strings stay French-only (documented deviation, US-103…107).
+- Adding fields to an **app-owned** object follows the same standalone
+  `defineField` manifest path as external ones: `objectUniversalIdentifier:
+  OBJECT_IDS.document` under `src/fields/`, no generated server migration
+  (a2e-projects pins fields on a2e-documents' `document` this way). `dev:build`
+  merges them into the manifest's top-level `fields` array; identifiers continue
+  the object's own-field UUID sequence. Bump the app patch version to upgrade.
+- The document page chrome is an app **front component** (`document-page`),
+  not host code: it reuses pure lib seams (`extractOutline`, `countDocumentWords`,
+  `buildBreadcrumbTrail`, `buildDocumentChromeUpdatePayload`,
+  `resolveDocumentCover`) and the personal `documentFavorite` path. The sandbox
+  cannot import `twenty-ui`, so page icons are emoji + verbatim name fallback;
+  light/dark comes from `var(--t-*)` CSS variables.
 
 ---
 
@@ -530,4 +549,16 @@ after each iteration and it's included in prompts for context.
   - Keep custom blocks free of `@blocknote/react` in their testable seams: the block wrapper delegates to `components/RecordViewEmbedHost.tsx` (no blocknote import), which the host unit test renders with `I18nProvider` (the stub uses `useLingui`).
 - Missing (Tier 2 orchestrator): editable embed (edit → reflects on `/objects/tasks`); E14 embedded-view browser proof incl. permission stub.
 - Next: make the host editable under `canUpdateObjectRecords` and wire the view draft/persist path; then the E14 browser leg.
+---
+
+## 2026-09-30 - US-124 (M8c: page chrome — icon, cover, reading toggles, breadcrumbs, word count, lock)
+- Implemented the document page chrome as the app's `document-page` front component plus 4 new app-owned fields.
+- Files changed: `a2e-documents/src/fields/document-cover-image.field.ts`, `document-is-full-width.field.ts`, `document-is-small-text.field.ts`, `document-is-locked.field.ts` (NEW standalone `defineField` manifests on `OBJECT_IDS.document`); `src/constants/universal-identifiers.ts` (+`DOCUMENT_CHROME_FIELD_IDS`); NEW `src/lib/document-breadcrumbs.ts`, `document-word-count.ts`, `document-chrome.ts`, `document-page-icons.ts`; NEW tests `document-breadcrumbs.test.ts`, `document-word-count.test.ts`, `document-chrome.test.ts`, `document-page-icons.test.ts` (23 tests); `src/front-components/document-page.front-component.tsx` (chrome surface); `package.json` (0.2.7→0.2.8).
+- **Learnings:**
+  - App `fields/*.field.ts` standalone manifests work on an **app-owned** object too (`objectUniversalIdentifier: OBJECT_IDS.document`) — the same path a2e-projects uses to pin fields on a2e-documents' object. No generated server migration; `dev:build` merges them into the manifest's top-level `fields`.
+  - App front components have an i18n seam (`t`/`msg`/`Trans` from `twenty-sdk/front-component`, catalogs in `locales/`), but the executor contract forbids `locales/**` and no internal app ships catalogs → strings stay French-only (recorded deviation, same as US-103…107).
+  - The front-component sandbox cannot import `twenty-ui`, so page icons are emoji + verbatim name fallback; themes come from `var(--t-*)`. Keep every testable seam pure under `src/lib/` (node `--test` can't render the component).
+  - Reuse the personal `documentFavorite` path (`buildDocumentFavoriteToggle`) for the page star; never write the deprecated `document.isFavorite` boolean. The lock is an app-owned BOOLEAN gating only the chrome's own write controls — it never touches `content`/`contentRevision`, so the P3.2 save contract is preserved.
+- Missing (Tier 2 orchestrator): browser rendering pass on real pages; fr+en catalog; cover-image upload button (URL field for now).
+- Next: orchestrator browser pass; optional `uploadFile` cover button.
 ---

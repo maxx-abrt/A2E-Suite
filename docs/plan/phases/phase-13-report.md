@@ -363,3 +363,32 @@ CLAIMED — US-123/record-view-block — deepseek-v4.1-flash — 2026-09-30T20:5
 **Do not redo:** the **record-table widget stack already renders a read-only native view** (`RecordTableWidgetRendererContent` + `RecordTableWidgetProvider`); the embed reuses it rather than forking a second table engine. The view host must supply `PageLayoutEditModeProviderContext value={{ isInEditMode: false }}` (a *Provider component*, not `.Provider`) AND a `PageLayoutComponentInstanceContext` with a per-block unique `instanceId` — `RecordTableWidgetRendererContent` reads a component-family draft selector that throws otherwise. `RecordIndexContainerGater` is the full index page, not the embed seam. `getObjectPermissionsForObject` defaults to *allowed* for unknown ids, so the object-existence check must precede it. `useObjectMetadataItem`/`useObjectMetadataItemById` throw when absent — the resolver guards them. Slash-menu content seam stays `utils/getSlashMenu.ts`.
 **Remaining:** US-124…US-130 (7) plus the open US-118 entry-points / US-119 save-action mount legs (2)
 **Next:** flip the host to `isUIEditable` driven by object `canUpdateObjectRecords`, wire the widget's field-update/draft hooks back to the view (persist path), then add the E14 browser leg (embed Tasks board filtered by project → edit → confirm on `/objects/tasks`).
+
+CLAIMED — US-124/page-chrome — deepseek-v4.1-flash — 2026-09-30T21:09:24Z — base dfd3f1ec3b06735d5b17302abfb18239c6ff9b82
+
+## 2026-09-30 21:14 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-124 M8c: page chrome — icon, cover, full-width/small-text toggles, breadcrumbs, word count, lock page · **Slice:** the first bullet (verbatim M8c scope): chrome fields via app `fields/` + the page-chrome surface on the document page widget
+**Claim:** done-for-review
+**Ready-to-tick:** yes — all Tier-0 gates green; only the Tier-2 browser pass and the fr+en catalog deviation remain (both recorded)
+**Base:** dfd3f1ec3b06735d5b17302abfb18239c6ff9b82
+**Changed:**
+- `packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts` (+`DOCUMENT_CHROME_FIELD_IDS`: coverImage/isFullWidth/isSmallText/isLocked, object-01 own-field suffixes 00d–010)
+- `.../src/fields/document-cover-image.field.ts`, `document-is-full-width.field.ts`, `document-is-small-text.field.ts`, `document-is-locked.field.ts` (NEW standalone `defineField` manifests pinned on `OBJECT_IDS.document` — the a2e-projects `document-*.field.ts` pattern; app metadata path, no server migration)
+- `.../src/lib/document-breadcrumbs.ts` (NEW pure `buildBreadcrumbTrail`, depth+cycle guarded)
+- `.../src/lib/document-word-count.ts` (NEW pure `countDocumentWords`/`countDocumentCharacters`, markdown projection like document-outline.ts)
+- `.../src/lib/document-chrome.ts` (NEW `readDocumentChromePreferences`, `buildDocumentChromeUpdatePayload`, `DOCUMENT_COVER_COLOR_CHOICES`, `resolveDocumentCover` image/color/none)
+- `.../src/lib/document-page-icons.ts` (NEW emoji/name dictionary + `resolveDocumentPageIcon`)
+- `.../src/lib/__tests__/document-breadcrumbs.test.ts`, `document-word-count.test.ts`, `document-chrome.test.ts`, `document-page-icons.test.ts` (NEW, 23 tests)
+- `.../src/front-components/document-page.front-component.tsx` (chrome surface: breadcrumbs, emoji icon picker, image/color cover, full-width + small-text toggles, last-edited-by from `updatedBy`, word/char count, per-member favourite via the existing documentFavorite path, managed lock banner + control gating; existing cover/outline/sub-pages/template behavior preserved)
+- `.../package.json` (0.2.7 → 0.2.8)
+**Checks:**
+- `yarn typecheck` (tsc --noEmit, app) → exit 0
+- `yarn lint` → 0 warnings / 0 errors (95 files)
+- `yarn test:unit` → 252 tests pass / 0 fail (+23 new)
+- `npx twenty dev:build .` → Build succeeded (30 files); manifest `fields` = 6 and includes coverImage/isFullWidth/isSmallText/isLocked on object `c31a0100-0000-4000-8000-000000000000`
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0 (no host file changed)
+- no `locales/**` touched; no AI attribution
+**Missing for tick:** (1) **Tier 2** browser rendering pass on real pages (orchestrator). (2) **fr+en catalog** — strings ship French-only like every `packages/twenty-apps/internal/*` front component; the executor contract forbids `locales/**`, and no app has an i18n layer (same documented deviation as US-103/104/105). (3) Chrome TSX components are not unit-tested (front components need the host provider tree); the pure seams they call ARE tested. (4) Cover image is a URL field, no upload button yet.
+**Do not redo:** the existing document-page furniture (cover strip, heading outline via `extractOutline`, child-page list, template instantiate) was preserved, not rebuilt. The favourite is the personal `documentFavorite` row (`buildDocumentFavoriteToggle`); never write the deprecated `document.isFavorite` boolean. Reuse `countDocumentWords` / `buildBreadcrumbTrail` / `buildDocumentChromeUpdatePayload` rather than re-deriving. App fields on app-owned objects use the standalone-manifest path (no generated server migration).
+**Remaining:** US-125…US-130 (6) plus the open US-118 entry-points / US-119 save-action mount legs (2)
+**Next:** orchestrator runs the Tier-2 browser pass (open a page → set icon/cover → toggle full-width/small-text → breadcrumb nav → lock → confirm favourite persists). Optional follow-up: cover-image `uploadFile` button and surfacing the same chrome on the browser rows.

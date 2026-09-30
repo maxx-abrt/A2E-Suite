@@ -495,9 +495,10 @@
         "Quality gates: in packages/twenty-apps/internal/a2e-documents: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; packages/twenty-front tsgo clean; targeted jest green; no i18n catalog churn; no AI attribution"
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "notes": "Independent of the slash-menu slices (fields + chrome surface). Lane L-EDITOR.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-125",
@@ -614,6 +615,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-30T21:05:04.781Z"
+    "updatedAt": "2026-09-30T21:15:09.305Z"
   }
 }

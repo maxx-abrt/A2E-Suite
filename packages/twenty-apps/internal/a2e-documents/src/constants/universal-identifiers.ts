@@ -41,6 +41,18 @@ export const LABEL_IDENTIFIER_IDS = {
   documentFavoriteKey: 'c31a0400-0001-4000-8000-000000000001',
 } as const;
 
+// M8c page-chrome fields. Standalone manifests on the app-owned `document`
+// object (src/fields/document-*.field.ts) so the chrome surface is reviewable
+// independently of the object definition. Presentation-only markers: none
+// grants or hides anything (C5). Suffixes continue the object 01 own-field
+// sequence after the inline object fields (…000c).
+export const DOCUMENT_CHROME_FIELD_IDS = {
+  coverImage: 'c31a0100-0001-4000-8000-00000000000d',
+  isFullWidth: 'c31a0100-0001-4000-8000-00000000000e',
+  isSmallText: 'c31a0100-0001-4000-8000-00000000000f',
+  isLocked: 'c31a0100-0001-4000-8000-000000000010',
+} as const;
+
 export const LOGIC_FUNCTION_IDS = {
   postInstall: 'c31a0000-0012-4000-8000-000000000001',
   purgeArchivedDocuments: 'c31a0000-0012-4000-8000-000000000002',
