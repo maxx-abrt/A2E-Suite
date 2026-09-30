@@ -178,3 +178,38 @@ Apps import `type TemplateDescriptor` from `twenty-shared/application`; it is a 
 
 ### Recipes boundary (why a2e-projects lists 12, not 18)
 US-107 already ships `workflow-recipes.ts` with its own `WorkflowRecipeDescriptor` (key/version/fr+en labels/category/requiredApps/status/preview, incl. the DEFERRED invoice recipe). US-117's AC names only the four content-template apps, and the task note defers recipes to "their own slice", so `a2e-projects`'s descriptor function exposes the 12 project templates only. US-118 may merge both sources; no recipe descriptor was re-declared or rewritten.
+
+CLAIMED — US-118/gallery-surface — deepseek-v4.1-flash — 2026-09-30T03:44:35Z — base 4b444e7bb73815b31ba5be1bbc08b463bc05947d
+
+## 2026-09-30 03:44 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-118 M9a-2: gallery surface — one host surface with categories, search, preview, Use template / Blank · **Slice:** the new front module `packages/twenty-front/src/modules/template-gallery/` — the gallery's install-gated data layer (consumes the US-117 descriptors) + the presentational surface (categories, search, preview pane, Use template / Blank)
+**Claim:** partial
+**Ready-to-tick:** no — the gallery surface + data layer exist and are green, but the AC's entry-points (Cmd+K `Templates`, every existing `New` surface, app landing pages) are NOT wired this session, and the app-side `applyTemplateByKey` logic functions the "Use template" callback must call do not exist yet. See Next / Missing.
+**Base:** 4b444e7bb73815b31ba5be1bbc08b463bc05947d
+**Changed:**
+- `packages/twenty-front/src/modules/template-gallery/types/TemplateGalleryItem.ts` (NEW)
+- `.../types/TemplateGalleryDescriptorGroup.ts` (NEW)
+- `.../constants/TemplateDescriptorLogicFunctionName.ts` (NEW: well-known `list-template-descriptors` name)
+- `.../constants/TemplateGalleryCategoryConfig.ts` (NEW: per-category fr+en label + canonical icon)
+- `.../utils/collectTemplateDescriptorLogicFunctions.ts` (NEW: resolve each installed app's descriptor function by name+application)
+- `.../utils/buildTemplateGalleryItems.ts` (NEW: install-gated projection — `available` = every `requiredApps` installed)
+- `.../utils/filterTemplateGalleryItems.ts` (NEW: category + diacritic-insensitive search)
+- `.../hooks/useTemplateGalleryItems.ts` (NEW: executes each installed app's descriptor function via `ExecuteOneLogicFunctionDocument`, validates with `isTemplateDescriptor`, merges into items; a failing function degrades to skipped)
+- `.../components/TemplateGallery.tsx` (NEW: search box, category tabs, template list, descriptor preview pane, `Use template`/`Blank` host callbacks, locale-aware fr/en labels, unavailable safe state + disabled apply)
+- 4 test files (3 utils + 1 component, 18 tests); this report
+**Checks:**
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `cd packages/twenty-front && npx oxlint --type-aware -c .oxlintrc.json src/modules/template-gallery` → `Found 0 warnings and 0 errors` (13 files)
+- `cd packages/twenty-front && npx oxfmt --check src/modules/template-gallery` → `All matched files use the correct format.`
+- `cd packages/twenty-front && npx jest src/modules/template-gallery --config=jest.config.mjs` → `4 passed / 18 tests` (0 snapshots)
+- no `locales/**` touched
+**Missing for tick:**
+- **Entry-points (AC 3):** `SidePanelPages.TemplatesGallery` + a `SidePanelTemplatesGalleryPage` + a Cmd+K `TemplatesCommand` + openers from the existing `New` surfaces / app landing pages are NOT added. The surface is self-contained with host callbacks; mounting is the next slice.
+- **Use-template write path (AC 4):** app-side `applyTemplateByKey` logic functions do not exist (US-117 shipped read-only `list-template-descriptors`; only a2e-documents has an instantiate path, keyed by a live document id, not descriptor key).
+- **Tier 2 (orchestrator):** E15 gallery browser journey + live execution of each app's `list-template-descriptors`.
+**Do not redo:** the gallery module's data layer and surface. Install-gating lives in `buildTemplateGalleryItems` (`requiredApps` is the single source of truth). Search/filter is pure and tested. The presentational surface takes `items` + `onUseTemplate`/`onBlank`, so the mounting slice only supplies host wiring. `twenty(max-consts-per-file)` only applies under `**/constants/*.ts`; both constants files export a single const.
+**Remaining:** 13 other pending tasks (US-118 → US-119 → US-120, then US-121…US-130).
+**Next:** (1) add the four app-side `applyTemplateByKey` logic functions (additive, patch bump each: documents extract the `buildTemplateCopyPayload`/`post-install` path keyed by descriptor key; projects/accounting/drive extract their `post-install` seeding into a keyed handler); (2) mount the surface (`SidePanelPages.TemplatesGallery` in twenty-shared, a side-panel page wired to `useTemplateGalleryItems` + the apply functions, a `TemplatesCommand`, and a `New`-surface opener); (3) Tier-2 E15 by the orchestrator.
+
+### Scope note (why a data-layer+surface slice, not the full AC)
+US-118's AC spans three separable pieces: the gallery module (this slice), the per-app callable apply functions, and the shell entry-points. Per the executor contract the slice is the task's first unmet bullet; this session built the module and the surface it renders, leaving entry-points and the write-path for the next slice rather than half-wiring an untestable shell. Two honest deviations: (a) "Use template" is a host callback, not yet bound to an apply logic function, because no app exposes one keyed by descriptor key — inventing a consumer-side copy would fork the template-copy path the C1 note warns against; (b) entry-points are deliberately deferred so the next session lands them together with their command tests.

@@ -393,3 +393,20 @@ after each iteration and it's included in prompts for context.
 - Missing (Tier 2 orchestrator): invoke each descriptor function on an installed workspace (documents 20 / projects 12 / accounting 10 / drive 4).
 ---
 
+## 2026-09-30 - US-118 (M9a-2: template gallery surface — module + install-gated data layer)
+- Built the new front module `packages/twenty-front/src/modules/template-gallery/`: the gallery's install-gated data layer + a presentational host surface. **Partial** — entry-points and the app-side apply path are the next slice.
+- Data layer: `buildTemplateGalleryItems` (install-gating: a descriptor is `available` iff every `requiredApps` is installed; missing ⇒ safe state), `collectTemplateDescriptorLogicFunctions` (resolve each installed app's `list-template-descriptors` by name+applicationId), `filterTemplateGalleryItems` (category + diacritic-insensitive search over fr/en labels, key, app name), and `useTemplateGalleryItems` (executes each app's descriptor fn via `ExecuteOneLogicFunctionDocument`, validates with `isTemplateDescriptor`, degrades a failing app to skipped).
+- Surface: `TemplateGallery` renders search, category tabs, list, descriptor preview pane (`preview` + `inputs`), locale-aware fr/en label pick, `Use template`/`Blank` host callbacks, unavailable → safe state + disabled apply.
+- Files changed: 13 new files under `template-gallery/` (types ×2, constants ×2, utils ×3, hook ×1, component ×1, tests ×4); `docs/plan/phases/phase-13-report.md`; this file.
+- **Learnings:**
+  - `twenty(max-consts-per-file)` is scoped to `**/constants/*.ts` (`.oxlintrc.json:144-148`), so one-export-per-constants-file is compliant; the "max 1 const per file" note is narrower than the literal rule.
+  - The front has **no existing example** of invoking an app logic function: the only path is the `executeOneLogicFunction` mutation, wrapped by `useExecuteLogicFunction` which is settings/workflow-specific and takes no payload. `useTemplateGalleryItems` calls `useMutation(ExecuteOneLogicFunctionDocument)` directly with `{ input: { id, payload? } }`.
+  - `applicationId` on a `LogicFunction` is `string | null | undefined` — guard with `isNonEmptyString` from `@sniptt/guards` (`twenty-shared/utils` does NOT export `isNonEmptyString`).
+  - `useLingui()` from `@lingui/react/macro` returns `{ i18n, t }`; use `i18n.locale` to pick fr vs en from the descriptor's plain-string labels (descriptors are not Lingui messages).
+  - Icons follow the dictionary's "no concept matches → existing `twenty-ui/icon`" rule (no Template concept): `IconFileText/IconBriefcase/IconCoins/IconArchive/IconCalendarEvent/IconSettingsAutomation`.
+  - `JSX.Element` is not available globally; use `ReactNode` for render-helpers.
+  - Gates: tsgo exit 0; oxlint 0/0 (13 files); oxfmt clean; jest `src/modules/template-gallery` 4 suites / 18 tests green.
+  - **PITFALL:** `Write` overwrites files — appending to the shared phase report with `Write` clobbered all prior entries; recovered with `git checkout --` then `cat >>`. Always append phase reports with a shell append, never `Write`.
+- Missing (Tier 2 orchestrator): E15 gallery browser journey; live execution of each app's `list-template-descriptors`.
+- Next: (1) four app-side `applyTemplateByKey` logic functions (additive, app patch bump); (2) mount the surface (`SidePanelPages.TemplatesGallery` + side-panel page + Cmd+K `TemplatesCommand` + `New`-surface openers).
+---
