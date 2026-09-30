@@ -371,6 +371,9 @@ export class ChatExecutionService {
       userContext.timezone,
     );
 
+    // House style is the workspace-level admin copy stored on the workspace
+    // (Settings → Syna); browsing context stays scoped to the single current
+    // record/page/channel, so this prompt never carries workspace-wide retrieval.
     const systemPrompt = buildFullSystemPrompt({
       toolCatalog,
       skillCatalog,

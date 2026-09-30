@@ -591,11 +591,12 @@
         "Quality gates: npx tsgo -p tsconfig.json --noEmit in packages/twenty-server (+ twenty-front if touched) clean; oxlint --type-aware + oxfmt --check on touched files; targeted jest green; no i18n catalog churn; no AI attribution"
       ],
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "notes": "Depends on US-102 for the Syna framing; the scoping contract is enforceable independently. Lane L-AI.",
       "dependsOn": [
         "US-102"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-130",
@@ -619,6 +620,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-09-30T22:12:27.823Z"
+    "updatedAt": "2026-09-30T22:18:17.233Z"
   }
 }

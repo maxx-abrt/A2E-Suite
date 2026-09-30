@@ -102,3 +102,26 @@ CLAIMED — US-128/M10b-e1 — deepseek-v4.1-flash — 2026-09-30T22:07:36Z — 
 **Do not redo:** Cmd+K "Ask Syna" already exists (`EngineComponentKey.ASK_AI` standard command item, `askAi` constant, opens `SidePanelPages.AskAI` titled Syna, gated `permissionFlags.AI and not isInSidePanel`); the record-page context is already served by `AiChatContextToolButtons` in the assistant empty state (existing US-053/066/067 path). Do not rebuild either.
 **Remaining:** 3 M10 bullets (M10b selection-toolbar/record-page remainder, M10c, M10d) plus US-129/US-130.
 **Next:** wire the selection toolbar by wrapping `BlockNoteView` with `formattingToolbar={false}` + a custom `FormattingToolbarController` that keeps the default styles and appends the same `getOfferedSynaActions` items; then reconcile US-130's provider-resolution gate with the current `enabledModels` proxy and add the Agenda entry once a read-only scheduling tool exists.
+
+CLAIMED — US-129/house-style-scoping-tests — deepseek-v4.1-flash — 2026-09-30T22:14:37Z — base 0876d6988bdffeadb1926b1cda2849aa9dff0877
+
+## 2026-09-30 22:17 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-129 M10c: Syna context & memory, scoped — record/page + explicit @mentions only, admin house-style · **Slice:** AC bullets 2–4 — house-style read/write + context-injection boundary tests (the storage/injection product seam already exists in base)
+**Claim:** done-for-review
+**Ready-to-tick:** yes — Tier 0/1 gates green on the working tree; only the AC's own Tier-2 live journey is absent
+**Base:** 0876d6988bdffeadb1926b1cda2849aa9dff0877
+**Changed:**
+- new `.../ai-chat/utils/__tests__/build-workspace-instructions-section.util.spec.ts` (+4)
+- new `.../ai-chat/services/__tests__/chat-execution.service.workspace-instructions.spec.ts` (+6)
+- edit `.../ai-chat/services/chat-execution.service.ts` (WHY comment documenting the scoping/house-style invariant at the prompt seam only)
+- this report; `.ralph-tui/progress.md`
+**Checks:**
+- `npx jest <2 new specs> --config=packages/twenty-server/jest.config.mjs` → 2 suites / 10 passed
+- `npx jest src/engine/metadata-modules/ai/ai-chat --config=packages/twenty-server/jest.config.mjs` → 32 suites / 217 passed
+- `npx tsgo -p tsconfig.json --noEmit` (packages/twenty-server) → exit 0
+- `npx oxlint --type-aware -c .oxlintrc.json <3 files>` → 0 warnings/0 errors; `npx oxfmt --check <3 files>` → clean; no `locales/**` touched; no AI attribution
+**Missing for tick:** Tier 2 only — live context-scoping journey: in a running workspace ask Syna about the open record/page and confirm only that context is used (no workspace-wide scan), then set a house style in Settings → Syna → Overview and confirm it reaches the chat system prompt.
+**Do not redo:** `workspace.aiAdditionalInstructions` storage + `WORKSPACE_FIELD_PERMISSIONS` admin gate + the `SettingsAiOverviewTab` Lingui editor (already fr+en); `buildWorkspaceInstructionsSection`/`buildFullSystemPrompt` injection; `buildContextFromBrowsingContext` + guarded `<browsing_context>` text injection (US-066). All exist and pass.
+**Storage choice (AC3):** reused the existing workspace-metadata primitive — no new entity, migration or 2-39 upgrade command. Generic "workspace instructions" IS the house style (PLAN words them synonymously), is admin-gated, localized via Lingui, and already lands in the chat system prompt; a parallel `synaHouseStyle` column would duplicate an existing primitive.
+**Remaining:** US-130 (M10d) plus the US-128 selection-toolbar remainder.
+**Next:** US-130 — zero-AI entry gating + per-workspace monthly token cap + usage view.

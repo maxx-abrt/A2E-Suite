@@ -275,6 +275,16 @@ after each iteration and it's included in prompts for context.
   `generated-metadata/graphql.ts`. Caveat: a saved workspace key is not yet used at
   generation time — `AiModelRegistryService.buildModelRegistry` is still
   instance-wide, so `getResolvedProvidersForWorkspace` only backs the new read path.
+- Syna house style is the **pre-existing** `workspace.aiAdditionalInstructions`
+  (no new entity): `PermissionFlagType.WORKSPACE`-gated, edited in
+  Settings → Syna → Overview ("Workspace Instructions"), projected by
+  `buildWorkspaceInstructionsSection` (tipTap → markdown, plain-text passthrough)
+  and injected by `buildFullSystemPrompt` under `## Workspace Instructions`.
+  Chat context is scoped to the single `browsingContext` record/page/channel,
+  injected as a guarded `<browsing_context>` **text** part (never a tool call);
+  explicit `@mentions` stay literal text. Never add workspace-wide retrieval.
+  Boundary specs: `chat-execution.service.workspace-instructions.spec.ts`,
+  `build-workspace-instructions-section.util.spec.ts`.
 
 ---
 
@@ -704,4 +714,27 @@ after each iteration and it's included in prompts for context.
 - **Gaps recorded:** Bilan categorization stays P7-gated (no accounting tool
   added); no read-only "find a slot"/"prepare meeting" scheduling tool exists, so
   no Agenda entry could be offered.
+---
+
+## 2026-09-30 - US-129
+- Hardened the M10c scoping contract with tests; no new product seam was
+  needed because the house-style storage and the browsing-context injection
+  already exist in base. Added boundary/read-write specs and one WHY comment.
+- Files changed: new
+  `twenty-server/src/engine/metadata-modules/ai/ai-chat/utils/__tests__/build-workspace-instructions-section.util.spec.ts`,
+  new `.../ai-chat/services/__tests__/chat-execution.service.workspace-instructions.spec.ts`,
+  edit `.../ai-chat/services/chat-execution.service.ts` (comment only),
+  `docs/plan/phases/phase-14-report.md`, `.ralph-tui/progress.md`.
+- **Learnings:**
+  - House style = `workspace.aiAdditionalInstructions` (`PermissionFlagType.WORKSPACE`,
+    editor at Settings → Syna → Overview "Workspace Instructions",
+    `buildWorkspaceInstructionsSection` tipTap→markdown + plain-text passthrough,
+    injected by `buildFullSystemPrompt`). Reuse it; do not add an entity.
+  - The scoping boundary is testable without a DB: mock `ai`'s `streamText`,
+    build `ChatExecutionService`, then read `mock.calls[0][0].messages[0].content`
+    for the system prompt; private helpers (`buildContextFromBrowsingContext`,
+    `injectBrowsingContextIntoLastUserMessage`) are reachable via index access.
+  - Gotcha: in a jest spec the `UIMessagePart` union does not narrow on
+    `expect(part.type).toBe('text')`; add an `if (part.type !== 'text') throw`
+    guard before touching `.text` or `tsgo` fails.
 ---
