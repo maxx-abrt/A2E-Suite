@@ -3,10 +3,10 @@
   "sessionId": "6b30e8e0-f0b6-4aaa-aa47-219b2bae47b8",
   "status": "running",
   "startedAt": "2026-10-01T20:37:10.521Z",
-  "updatedAt": "2026-10-01T22:29:25.761Z",
-  "currentIteration": 7,
+  "updatedAt": "2026-10-01T22:41:22.306Z",
+  "currentIteration": 9,
   "maxIterations": 20,
-  "tasksCompleted": 7,
+  "tasksCompleted": 8,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -86,6 +86,26 @@
       "durationMs": 939153,
       "startedAt": "2026-10-01T22:00:30.333Z",
       "endedAt": "2026-10-01T22:16:09.486Z"
+    },
+    {
+      "iteration": 8,
+      "status": "completed",
+      "taskId": "US-157",
+      "taskTitle": "M8f: drag & drop tree polish — move pages, move-to dialog with search, duplicate, copy link, open in side panel, keyboard alternatives",
+      "taskCompleted": true,
+      "durationMs": 790743,
+      "startedAt": "2026-10-01T22:16:15.017Z",
+      "endedAt": "2026-10-01T22:29:25.760Z"
+    },
+    {
+      "iteration": 9,
+      "status": "failed",
+      "taskId": "US-158",
+      "taskTitle": "M8g: Markdown & Notion import into Bureau + page-subtree zip export",
+      "taskCompleted": false,
+      "durationMs": 471404,
+      "startedAt": "2026-10-01T22:29:31.271Z",
+      "endedAt": "2026-10-01T22:37:22.675Z"
     }
   ],
   "skippedTaskIds": [],

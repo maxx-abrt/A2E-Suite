@@ -179,9 +179,10 @@
         "Quality gates: touched packages: npx nx lint:diff-with-main <pkg> clean + npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; a2e-documents slice yarn typecheck && yarn lint && yarn test:unit && npx twenty dev:build . green (bump version once if touched); no i18n catalog churn; no AI attribution"
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-EDITOR. Large utility surface — keep the conversion table explicit and test-driven; unsupported Notion block types degrade to markdown paragraphs honestly.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-159",
@@ -403,6 +404,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T22:29:25.761Z"
+    "updatedAt": "2026-10-01T22:41:22.305Z"
   }
 }

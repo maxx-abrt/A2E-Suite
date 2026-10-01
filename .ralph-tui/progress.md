@@ -120,3 +120,19 @@ after each iteration and it's included in prompts for context.
   - The document tree lives entirely in the sandboxed `a2e-documents` front components — it cannot import `twenty-front`, `twenty-shared` or `@dnd-kit`; DnD is native HTML5 `dataTransfer` (`text/a2e-document-id`). Port host helpers locally (fractional position already is).
   - `createDocuments` mints ids server-side, so a recursive subtree copy must create parent-first and map `parentIndex` → the id returned by the previous mutation; it cannot reference a client-generated UUID for the parent link (the template copy path already sidesteps this by dropping relations).
   - `Lingui`/po catalogs only exist in `twenty-front` + `twenty-server`; internal apps carry raw fr strings, so an app-only slice has no catalog to churn (still no locale files touched).
+
+## 2026-10-01 - US-158 M8g: Markdown & Notion import into Bureau + page-subtree zip export
+- Resumed a same-session stalled iteration that left uncommitted WIP (4 utilities + 4 specs), then finished the surface.
+- Import path (all in `twenty-front/src/modules/blocknote-editor/import/utils/`):
+  - `documentsTransferEntries.ts` — codec-agnostic `DocumentsTransferEntry` (`path`+`bytes`) + path/extension/notion-hash/root helpers.
+  - `markdownToImportedBlocks.ts` — explicit `MARKDOWN_BLOCK_CONVERTERS` table (`satisfies`-total) for heading/paragraph/bullet/numbered/check/code/quote/image/divider + `parseMarkdownInline`; unsupported lines degrade to paragraph.
+  - `notionExportZip.ts` — pure zip-structure walk (no Notion API): nested page tree from `.md`/asset-folder shape, image re-attach, warnings.
+  - `bureauImportPlan.ts` — tree → ordered create list with `parentIndex`; typed `BureauImportPermissionError` on denial; `planBureauMarkdownFileImport` for plain `.md`.
+  - `zipArchiveCodec.ts` — fflate adapter (added this iteration).
+- Export path: `export/utils/documentSubtreeExportEntries.ts` — subtree → one `.md` per page + images under the page asset folder + nested child pages (Notion-export shape), sibling slug disambiguation; round-trips through `readNotionExportZip`.
+- Files: 6 import utils + 1 export util; specs `markdownToImportedBlocks`, `notionExportZip`, `bureauImportPlan`, `zipArchiveCodec`, `export/__tests__/documentSubtreeExportEntries`.
+- Checks: 13 suites / 77 tests pass; `tsgo --noEmit` 0; oxlint 0/0; oxfmt clean. Tier-2 browser journey left to orchestrator.
+- **Learnings:**
+  - `fflate` resolves in the workspace (transitive) but is not declared by any package.json; `readZipEntries` must drop empty/`/`-suffixed entries (fflate's directory marker) so the export→import round-trip is symmetric.
+  - Keep archive codec behind a plain `{path, bytes}[]` contract so the whole conversion is unit-testable without a zip runtime — the walker/builder never import fflate.
+  - `slugifyExportFileName` from the existing export util is the canonical title→filename helper; reuse it rather than adding a second slugifier.

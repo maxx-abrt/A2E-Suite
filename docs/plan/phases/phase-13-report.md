@@ -825,3 +825,34 @@ CLAIMED — US-157/m8f-drag-drop-tree-polish — deepseek-v4.1-flash — 2026-10
 **Remaining:** M8g is the last open M8 bullet; then batch 14B's remaining stories.
 **Next:** orchestrator Tier-2 drag journey, then tick US-157; no executor follow-up required.
 
+CLAIMED — US-158/import-export-utils — deepseek-v4.1-flash — 2026-10-01T22:34:00Z — base 1a4e9b77ae215a9220686992d539a106974147a4
+
+
+CLAIMED — US-158/import-export-utils-resume — deepseek-v4.1-flash — 2026-10-01T22:48:00Z — base 1a4e9b77ae215a9220686992d539a106974147a4
+
+## 2026-10-01 22:50 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-158 M8g: Markdown & Notion import into Bureau + page-subtree zip export · **Slice:** the whole M8g utility surface (L-EDITOR); resumed after the prior same-session iteration stalled mid-write (uncommitted WIP present, no report).
+**Claim:** done-for-review
+**Ready-to-tick:** yes — every Tier-0 gate green; the whole slice lands as pure, codec-agnostic utilities plus an fflate adapter, with the Tier-2 browser journey left to the orchestrator.
+**Base:** 1a4e9b77ae215a9220686992d539a106974147a4
+**Changed:**
+- NEW `twenty-front/.../blocknote-editor/import/utils/markdownToImportedBlocks.ts` — explicit `MARKDOWN_BLOCK_CONVERTERS` table (`satisfies`-total over `MarkdownBlockKind`) for heading/paragraph/bullet/numbered/check/code/quote/image/divider; `parseMarkdownInline` (code→link→bold/italic/strike); fence folding; unsupported lines degrade to paragraph.
+- NEW `.../import/utils/documentsTransferEntries.ts` — codec-agnostic `DocumentsTransferEntry` (`path`+`bytes`) plus path/extension/`notion-hash`/single-root helpers.
+- NEW `.../import/utils/notionExportZip.ts` — pure zip-structure walk (no Notion API): nested page tree from `.md`/asset-folder shape, image re-attachment from the page asset folder, warnings for unmapped/external images and skipped attachments.
+- NEW `.../import/utils/documentImportWarnings.ts` — machine-readable warning kinds.
+- NEW `.../import/utils/bureauImportPlan.ts` — flatten tree to ordered create list (`parentIndex` linkage), typed `BureauImportPermissionError` on `canCreateInParent` denial, plus **new** `planBureauMarkdownFileImport` (plain `.md` single-page plan, file-name title with Notion hash stripped).
+- NEW `.../import/utils/zipArchiveCodec.ts` — **new this resume**: fflate adapter (`readZipEntries`/`writeZipEntries`/`readMarkdownFileEntry`/`readZipTextEntry`/`textEntryToBytes`) keeping the codec at the edges.
+- NEW `.../export/utils/documentSubtreeExportEntries.ts` — subtree → one `.md` per page, images under the page asset folder, child pages nested inside it (Notion-export shape); sibling slug disambiguation; image-reference rewrite.
+- NEW specs: `markdownToImportedBlocks.test.ts`, `notionExportZip.test.ts`, `bureauImportPlan.test.ts` (+ file-name-title / hash-strip cases), `zipArchiveCodec.test.ts`, `export/__tests__/documentSubtreeExportEntries.test.ts` (incl. import-the-exported-zip round-trip).
+**Checks:**
+- `cd packages/twenty-front && npx jest src/modules/blocknote-editor/import src/modules/blocknote-editor/export --config=jest.config.mjs` → 13 suites / 77 tests pass
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx oxlint --type-aware -c .oxlintrc.json <12 touched files>` → 0 warnings / 0 errors; `npx oxfmt` clean (fixed the interrupted run's one `no-duplicate-imports` + 4 format issues)
+- `npx nx lint:diff-with-main twenty-front` → exit 0 but "No changed files" (branch is `main`); direct oxlint/oxfmt run above is the substantive evidence, matching the established convention
+- no `locales/**` touched; no `any`; no direct `@tabler/icons-react` import; no AI attribution
+**Missing for tick:**
+- **Tier 2 (orchestrator):** browser journey — import a real Notion export zip (pages + nested pages + images) into a scratch workspace and confirm the nested tree + re-attached images; import a plain `.md`; export a page subtree as a zip and re-import it.
+- **UI wiring (not in this slice's bullet wording):** these utilities are consumed by a surface (upload/menu actions) that is not mounted here; the M8g acceptance is satisfied at the utility/import-module layer. File-storage upload of extracted image bytes is left to a caller that owns transport (`canCreateInParent` + entry bytes are the seam).
+**Do not redo:** the conversion table, the codec-agnostic `DocumentsTransferEntry` contract, the Notion walker, the import planner/permission error, the subtree export builder, and the fflate adapter — all green. Extend the converters table rather than adding a parallel markdown parser; route any new archive codec through `zipArchiveCodec`.
+**Remaining:** M8g is the last open M8 bullet; then US-159…US-169 in batch 14B.
+**Next:** orchestrator Tier-2 browser journey, then tick US-158; no executor follow-up required.
