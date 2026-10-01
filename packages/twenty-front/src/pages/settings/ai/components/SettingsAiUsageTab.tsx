@@ -16,9 +16,24 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
+import { SettingsAiMonthlyTokenCapSection } from '~/pages/settings/ai/components/SettingsAiMonthlyTokenCapSection';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
 export const SettingsAiUsageTab = () => {
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+
+  return (
+    <>
+      <SettingsAiMonthlyTokenCapSection
+        capTokens={currentWorkspace?.aiMonthlyTokenCap}
+        usedTokens={currentWorkspace?.aiMonthlyTokenUsage}
+      />
+      <SettingsAiUsageAnalytics />
+    </>
+  );
+};
+
+const SettingsAiUsageAnalytics = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;

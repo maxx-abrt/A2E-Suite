@@ -5,7 +5,14 @@ import {
   UsePipes,
   createParamDecorator,
 } from '@nestjs/common';
-import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
+import {
+  Args,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
 
 import assert from 'assert';
 
@@ -44,6 +51,8 @@ import {
 } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { WorkspaceUrlsDTO } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
+import { AiMonthlyTokenCapService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-monthly-token-cap.service';
+import { ProviderConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-config.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { getAuthBypassProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-bypass-providers-by-workspace.util';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
@@ -100,6 +109,8 @@ export class WorkspaceResolver {
     private readonly customDomainManagerService: CustomDomainManagerService,
     private readonly applicationService: ApplicationService,
     private readonly enterprisePlanService: EnterprisePlanService,
+    private readonly providerConfigService: ProviderConfigService,
+    private readonly aiMonthlyTokenCapService: AiMonthlyTokenCapService,
   ) {}
 
   @Query(() => WorkspaceEntity)
@@ -238,6 +249,35 @@ export class WorkspaceResolver {
     @Parent() workspace: WorkspaceEntity,
   ): Promise<boolean> {
     return workspace.useRecommendedModels;
+  }
+
+  // Workspace-scoped, unlike `ClientConfig.aiModels` (instance-wide): includes
+  // the workspace's own BYOK keys so the zero-AI front gate can tell a
+  // key-less workspace from a BYOK-only one. Always false when no provider in
+  // the workspace resolution order carries a real credential.
+  @ResolveField(() => Boolean, { nullable: false })
+  async hasConfiguredAiProvider(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<boolean> {
+    return this.providerConfigService.hasConfiguredAiProvider(workspace.id);
+  }
+
+  // Month-to-date metered token usage (AI_CHAT_TOKEN + WEB_SEARCH), only read
+  // when a cap is set: an uncapped workspace never pays for the ClickHouse
+  // query. Null cap/0 usage read as "no cap" and "nothing used" respectively.
+  @ResolveField(() => Int, { nullable: true })
+  async aiMonthlyTokenUsage(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<number | null> {
+    const capTokens = workspace.aiMonthlyTokenCap;
+
+    if (!isDefined(capTokens) || capTokens <= 0) {
+      return null;
+    }
+
+    return this.aiMonthlyTokenCapService.getMonthlyTokenUsage({
+      workspaceId: workspace.id,
+    });
   }
 
   @ResolveField(() => ApplicationDTO, { nullable: true })

@@ -39,11 +39,17 @@ export type CurrentWorkspace = Pick<
   | 'fastModel'
   | 'smartModel'
   | 'aiAdditionalInstructions'
+  | 'aiMonthlyTokenCap'
+  | 'aiMonthlyTokenUsage'
   | 'editableProfileFields'
   | 'enabledAiModelIds'
   | 'useRecommendedModels'
   | 'isInternalMessagesImportEnabled'
 > & {
+  // Optional during the codegen window: older persisted workspaces and test
+  // fixtures predate the field, and the availability hook falls back to the
+  // instance-wide model list when it is absent.
+  hasConfiguredAiProvider?: boolean;
   defaultRole?: Omit<Role, 'workspaceMembers' | 'agents' | 'apiKeys'> | null;
   workspaceCustomApplication: Pick<Application, 'id'> | null;
   installedApplications: Pick<

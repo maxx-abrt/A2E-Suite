@@ -212,3 +212,29 @@ CLAIMED — US-140/M10b-e2 — deepseek-v4.1-flash — 2026-10-01T18:45:00Z — 
 **Do not redo:** the US-128 `/syna` slash entries (`SynaSlashMenuItem`, `SYNA_DOCUMENT_AI_ACTIONS`, `getOfferedSynaActions`, `useOpenAskAiPageWithPreprompt` confirm-first) — the toolbar reuses them verbatim; the Cmd+K "Ask Syna" and record-page context buttons; the `DashboardFormattingToolbar` in `standalone-rich-text` (different editor, context-specific subset — left untouched).
 **Remaining:** US-140 was the last batch-A item; US-141 (M10d-2 zero-AI gating + cap display) and US-142+ remain in Ralph's batch.
 **Next:** orchestrator Tier-2 browser journey (select → Syna action → draft → confirm-first); separately, land US-130/US-141's workspace-scoped availability read to swap the `enabledModels` proxy for the US-102 resolution order.
+
+CLAIMED — US-141/M10d-2 — deepseek-v4.1-flash — 2026-10-01T16:55:00Z — base 47a80925daf50b8e47293393c9543425ead46f40
+
+## 2026-10-01 17:06 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-141 M10d-2: zero-AI entry gating through the workspace resolution + monthly cap surfaced in the Usage tab · **Slice:** AC bullets 2–4 — workspace-scoped `hasConfiguredAiProvider` read + front gate + admin "Connect a provider" link, and `aiMonthlyTokenCap`/month-to-date usage in the Usage tab
+**Claim:** partial
+**Ready-to-tick:** no — Tier 0/1 green, but Cmd+K (seeded `ASK_AI` command-menu item) and the record-page context buttons are not gated, and the chat surface still keys on `enabledModels`; a BYOK-only workspace's model list stays empty until `ClientConfig.aiModels` is made workspace-scoped (US-135's remaining leg)
+**Base:** 47a80925daf50b8e47293393c9543425ead46f40
+**Changed:**
+- server `ai-models/services/provider-config.service.ts` — new `hasConfiguredAiProvider(workspaceId)` (resolution order → `isProviderConfigured`, includes workspace BYOK)
+- server `workspace/workspace.resolver.ts` (+ module) — `hasConfiguredAiProvider` ResolveField; `aiMonthlyTokenUsage` ResolveField (null when no cap, else `AiMonthlyTokenCapService.getMonthlyTokenUsage`); `ai-billing.module.ts` exports `AiMonthlyTokenCapService`; `workspace.module.ts` imports `AiBillingModule`
+- server `provider-config.service.spec.ts` (+3: instance/workspace/none mapping)
+- front `ai/hooks/useWorkspaceAiModelAvailability.ts` (+`hasConfiguredAiProvider`, falls back to `realModels.length > 0`), new `ai/utils/isSynaAvailable.ts`, `blocknote-editor/components/SynaSlashMenuItem.tsx` (admin "Connect a provider" item → Settings → Syna → Providers) + `SynaFormattingToolbar.tsx` (gate swap), `userQueryFragment.ts`, `currentWorkspaceState.ts`, `testing/mock-data/users.ts`, `generated-metadata/graphql.ts` (bridge: type + doc nodes for the 3 fields)
+- front new `SettingsAiMonthlyTokenCapSection.tsx` + wired into `SettingsAiUsageTab.tsx` (rendered before the enterprise/ClickHouse gate)
+- new tests: `isSynaAvailable.test.ts` (+4), `SynaSlashMenuItem.test.tsx` (admin vs member), `SynaFormattingToolbar.test.tsx`, `SettingsAiMonthlyTokenCapSection.test.tsx` (+4)
+**Checks:**
+- `npx jest provider-config.service.spec.ts ai-billing --config=packages/twenty-server/jest.config.mjs` → 4 suites / 29 passed; `--findRelatedTests <4 server files>` → 22 suites / 166 passed
+- `cd packages/twenty-server && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx jest <blocknote+ai hooks+ai utils+settings/ai> --config=packages/twenty-front/jest.config.mjs` → 43 suites / 288 passed; cap + isSynaAvailable + slash (10) green
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx oxlint --type-aware -c .oxlintrc.json <touched>` → 0/0 both packages; `npx oxfmt --check <touched>` clean after formatting 3 files; no `locales/**` touched; no AI attribution
+- Pre-existing failure unrelated to this slice: `src/hooks/__tests__/usePageChangeEffectNavigateLocation.test.ts` (stale `AppPath` count; `AppPath.ts` last changed 2026-09-20, test 2026-09-12) — present on HEAD, untouched by me
+**Missing for tick:** (Tier 2, orchestrator) E16 zero-AI leg + admin link browser journey; metadata codegen (`npx nx run twenty-front:graphql:generate --configuration=metadata`) needs the running server and will regenerate the 3 hand-bridged fields in `generated-metadata/graphql.ts` (source fragments already updated). Seeded Cmd+K `ASK_AI` item and record-page context buttons are still shown without a provider; gating Cmd+K needs a new command-menu availability variable + an upgrade command (schema/seed change), out of this slice.
+**Do not redo:** US-130 `AiMonthlyTokenCapService`/`aiMonthlyTokenCap` column/refusal; US-128/140 `SYNA_DOCUMENT_AI_ACTIONS`, `getOfferedSynaActions`, `useOpenAskAiPageWithPreprompt` confirm-first; the US-045 `SettingsAiUsageTab` enterprise/ClickHouse-gated analytics; US-102/127 provider entity/resolver/Settings UI; US-135 `runWithWorkspaceRegistry`.
+**Remaining:** US-141: Cmd+K/record-page/chat-surface gating + workspace-scoped `ClientConfig.aiModels` (unblocks BYOK model pickers); plus US-142+ in Ralph's batch.
+**Next:** make `ClientConfigService.getClientConfig` resolve `getAvailableModels`/defaults through `runWithWorkspaceRegistry` (needs a workspace id in that path), then extend the command-menu availability evaluator with `hasConfiguredAiProvider` and add the `ASK_AI` expression/upgrade command.

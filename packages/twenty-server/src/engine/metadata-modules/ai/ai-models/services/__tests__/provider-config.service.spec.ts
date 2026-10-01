@@ -9,6 +9,7 @@ const buildProviderConfigService = ({
   catalog,
   instanceProviders,
   workspaceProviders,
+  instanceOpenAiKey = 'instance-openai-key',
 }: {
   catalog: Record<string, unknown>;
   instanceProviders?: Record<string, unknown>;
@@ -18,6 +19,7 @@ const buildProviderConfigService = ({
     defaultModel: string | null;
     fastModel: string | null;
   }>;
+  instanceOpenAiKey?: string | undefined;
 }) => {
   const twentyConfigService = {
     get: jest.fn((key: string) => {
@@ -26,7 +28,7 @@ const buildProviderConfigService = ({
       }
 
       if (key === 'OPENAI_API_KEY') {
-        return 'instance-openai-key';
+        return instanceOpenAiKey;
       }
 
       return undefined;
@@ -226,6 +228,58 @@ describe('ProviderConfigService', () => {
 
     expect(resolution.hasWorkspaceOverrides).toBe(true);
     expect(resolution.providers.openai.apiKey).toBe('workspace-key');
+  });
+
+  describe('hasConfiguredAiProvider', () => {
+    it('is true when an instance provider holds a credential', async () => {
+      const service = buildProviderConfigService({
+        catalog: {
+          openai: {
+            npm: '@ai-sdk/openai',
+            apiKey: '{{OPENAI_API_KEY}}',
+            models: [],
+          },
+        },
+      });
+
+      await expect(service.hasConfiguredAiProvider(WORKSPACE_ID)).resolves.toBe(
+        true,
+      );
+    });
+
+    it('is true when only the workspace saved a BYOK key', async () => {
+      const service = buildProviderConfigService({
+        catalog: {
+          openai: { npm: '@ai-sdk/openai', models: [] },
+        },
+        instanceOpenAiKey: undefined,
+        workspaceProviders: [
+          {
+            providerName: 'openai',
+            providerConfig: { npm: '@ai-sdk/openai', apiKey: 'workspace-key' },
+            defaultModel: null,
+            fastModel: null,
+          },
+        ],
+      });
+
+      await expect(service.hasConfiguredAiProvider(WORKSPACE_ID)).resolves.toBe(
+        true,
+      );
+    });
+
+    it('is false when no provider in the resolution order is configured', async () => {
+      const service = buildProviderConfigService({
+        catalog: {
+          openai: { npm: '@ai-sdk/openai', models: [] },
+        },
+        instanceOpenAiKey: undefined,
+      });
+
+      await expect(service.hasConfiguredAiProvider(WORKSPACE_ID)).resolves.toBe(
+        false,
+      );
+    });
   });
 
   it('resolves templates in the catalog but keeps custom instance providers literal', async () => {

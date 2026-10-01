@@ -15,6 +15,7 @@ import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPr
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { buildSynaSelectionPrompt } from '@/ai/utils/buildSynaSelectionPrompt';
 import { getOfferedSynaActions } from '@/ai/utils/getOfferedSynaActions';
+import { isSynaAvailable } from '@/ai/utils/isSynaAvailable';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
@@ -37,9 +38,9 @@ export const SynaFormattingToolbar = (): ReactNode => (
 
 const SynaFormattingToolbarButtons = () => {
   const hasAiPermissionFlag = useHasPermissionFlag(PermissionFlagType.AI);
-  const { enabledModels } = useWorkspaceAiModelAvailability();
+  const { hasConfiguredAiProvider } = useWorkspaceAiModelAvailability();
 
-  if (!hasAiPermissionFlag || enabledModels.length === 0) {
+  if (!isSynaAvailable({ hasAiPermissionFlag, hasConfiguredAiProvider })) {
     return null;
   }
 

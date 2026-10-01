@@ -59,7 +59,7 @@ describe('SynaFormattingToolbar', () => {
     jest.clearAllMocks();
     mockUseHasPermissionFlag.mockReturnValue(true);
     mockUseWorkspaceAiModelAvailability.mockReturnValue({
-      enabledModels: [{ modelId: 'gpt-4o' }],
+      hasConfiguredAiProvider: true,
     });
     mockUseContextToolButtons.mockReturnValue([summarizeTool]);
     mockGetSelectedText.mockReturnValue('Le passage sélectionné');
@@ -81,9 +81,9 @@ describe('SynaFormattingToolbar', () => {
     expect(screen.queryByRole('button', { name: 'Summarize' })).toBeNull();
   });
 
-  it('renders only the default items when no model is available (zero-AI mode)', () => {
+  it('renders only the default items when no provider is configured (zero-AI mode)', () => {
     mockUseWorkspaceAiModelAvailability.mockReturnValue({
-      enabledModels: [],
+      hasConfiguredAiProvider: false,
     });
 
     render(<SynaFormattingToolbar />);

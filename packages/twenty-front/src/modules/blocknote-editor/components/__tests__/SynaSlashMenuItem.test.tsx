@@ -3,11 +3,13 @@ import { render } from '@testing-library/react';
 import { type ContextToolButton } from '@/ai/types/ContextToolButton';
 import { SynaSlashMenuItem } from '@/blocknote-editor/components/SynaSlashMenuItem';
 import { type SuggestionItem } from '@/blocknote-editor/types/types';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const mockUseContextToolButtons = jest.fn();
 const mockOpenAskAiPageWithPreprompt = jest.fn();
 const mockUseWorkspaceAiModelAvailability = jest.fn();
 const mockUseHasPermissionFlag = jest.fn();
+const mockNavigate = jest.fn();
 
 jest.mock('@/ai/hooks/useContextToolButtons', () => ({
   useContextToolButtons: () => mockUseContextToolButtons(),
@@ -24,7 +26,12 @@ jest.mock('@/ai/hooks/useWorkspaceAiModelAvailability', () => ({
 }));
 
 jest.mock('@/settings/roles/hooks/useHasPermissionFlag', () => ({
-  useHasPermissionFlag: () => mockUseHasPermissionFlag(),
+  useHasPermissionFlag: (flag: PermissionFlagType) =>
+    mockUseHasPermissionFlag(flag),
+}));
+
+jest.mock('react-router-dom', () => ({
+  useNavigate: () => mockNavigate,
 }));
 
 const summarizeTool = {
@@ -52,7 +59,7 @@ describe('SynaSlashMenuItem', () => {
     jest.clearAllMocks();
     mockUseHasPermissionFlag.mockReturnValue(true);
     mockUseWorkspaceAiModelAvailability.mockReturnValue({
-      enabledModels: [{ modelId: 'gpt-4o' }],
+      hasConfiguredAiProvider: true,
     });
     mockUseContextToolButtons.mockReturnValue([summarizeTool]);
   });
@@ -63,12 +70,32 @@ describe('SynaSlashMenuItem', () => {
     expect(renderItems()).toEqual([]);
   });
 
-  it('offers no entry when no model is available (zero-AI mode)', () => {
+  it('offers no entry when no provider is configured (zero-AI mode, member)', () => {
     mockUseWorkspaceAiModelAvailability.mockReturnValue({
-      enabledModels: [],
+      hasConfiguredAiProvider: false,
     });
+    mockUseHasPermissionFlag.mockImplementation(
+      (flag) => flag === PermissionFlagType.AI,
+    );
 
     expect(renderItems()).toEqual([]);
+  });
+
+  it('offers a single Connect a provider entry to admins when no provider is configured', () => {
+    mockUseWorkspaceAiModelAvailability.mockReturnValue({
+      hasConfiguredAiProvider: false,
+    });
+    mockUseHasPermissionFlag.mockReturnValue(true);
+
+    const items = renderItems();
+
+    expect(items.map((item) => item.title)).toEqual(['Connect a provider']);
+
+    items[0].onItemClick();
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expect.stringContaining('ai/providers'),
+    );
   });
 
   it('offers no entry when the backing document tool is absent from context', () => {

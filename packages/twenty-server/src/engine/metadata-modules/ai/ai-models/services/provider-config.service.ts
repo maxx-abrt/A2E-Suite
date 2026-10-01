@@ -11,6 +11,7 @@ import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/
 import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
+import { isProviderConfigured } from 'src/engine/metadata-modules/ai/ai-models/utils/is-provider-configured.util';
 
 @Injectable()
 export class ProviderConfigService {
@@ -64,6 +65,22 @@ export class ProviderConfigService {
     });
 
     return providers;
+  }
+
+  // The front's zero-AI gate reads this instead of the instance-wide model
+  // list: resolution includes workspace BYOK rows, so a workspace that saved
+  // its own key is AI-capable even when the instance has no provider and the
+  // global `ClientConfig.aiModels` is empty. The check mirrors the registry's
+  // own "usable provider" test (`isProviderConfigured`) so the gate can never
+  // advertise a provider the registry would refuse to build.
+  async hasConfiguredAiProvider(workspaceId: string): Promise<boolean> {
+    const providers = await this.getResolvedProvidersForWorkspace({
+      workspaceId,
+    });
+
+    return Object.values(providers).some((config) =>
+      isProviderConfigured(config),
+    );
   }
 
   // Registry callers need to know whether a workspace overrides anything at

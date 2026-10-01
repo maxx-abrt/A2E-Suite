@@ -94,6 +94,7 @@ export const mockCurrentWorkspace = {
   routerModel: 'auto',
   enabledAiModelIds: [],
   useRecommendedModels: true,
+  hasConfiguredAiProvider: true,
   isInternalMessagesImportEnabled: false,
   currentBillingSubscription: {
     __typename: 'BillingSubscription',

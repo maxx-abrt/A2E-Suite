@@ -104,8 +104,11 @@ export const USER_QUERY_FRAGMENT = gql`
       fastModel
       smartModel
       aiAdditionalInstructions
+      aiMonthlyTokenCap
+      aiMonthlyTokenUsage
       enabledAiModelIds
       useRecommendedModels
+      hasConfiguredAiProvider
       isTwoFactorAuthenticationEnforced
       trashRetentionDays
       eventLogRetentionDays

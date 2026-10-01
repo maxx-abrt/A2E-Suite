@@ -17,6 +17,6 @@ import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-mode
     CoreEntityCacheModule,
   ],
   providers: [AiBillingService, AiMonthlyTokenCapService],
-  exports: [AiBillingService],
+  exports: [AiBillingService, AiMonthlyTokenCapService],
 })
 export class AiBillingModule {}

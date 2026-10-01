@@ -217,9 +217,10 @@
         "Quality gates: touched packages: npx nx lint:diff-with-main <pkg> clean + npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; Lingui fr+en ('Connect a provider' etc.); no i18n catalog churn; no AI attribution"
       ],
       "priority": 11,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-AI. Phase-14-report line 153 names exactly this next step. Completes M10d at Tier 1.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-142",
@@ -377,6 +378,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T16:49:49.607Z"
+    "updatedAt": "2026-10-01T17:06:51.277Z"
   }
 }

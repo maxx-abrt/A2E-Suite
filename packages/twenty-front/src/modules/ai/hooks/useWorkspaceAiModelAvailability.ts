@@ -19,9 +19,17 @@ export const useWorkspaceAiModelAvailability = () => {
     ? realModels.filter((model) => model.isRecommended === true)
     : realModels.filter((model) => enabledAiModelIds.has(model.modelId));
 
+  // Workspace-scoped provider availability (US-141): includes the workspace's
+  // own BYOK keys, unlike the instance-wide `aiModels` list. Falls back to the
+  // old instance-only proxy while the field is absent (pre-codegen persisted
+  // workspaces / fixtures) so existing workspaces are never falsely zero-AI.
+  const hasConfiguredAiProvider =
+    currentWorkspace?.hasConfiguredAiProvider ?? realModels.length > 0;
+
   return {
     enabledModels,
     realModels,
     useRecommendedModels,
+    hasConfiguredAiProvider,
   };
 };
