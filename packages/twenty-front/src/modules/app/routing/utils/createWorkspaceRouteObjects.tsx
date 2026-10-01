@@ -53,6 +53,12 @@ const InboxPage = lazy(() =>
   })),
 );
 
+const BureauPage = lazy(() =>
+  import('~/pages/bureau/BureauPage').then((module) => ({
+    default: module.BureauPage,
+  })),
+);
+
 const DrivePage = lazy(() =>
   import('~/pages/drive/DrivePage').then((module) => ({
     default: module.DrivePage,
@@ -164,6 +170,14 @@ export const createWorkspaceRouteObjects = ({
       element: (
         <LazyRoute>
           <InboxPage />
+        </LazyRoute>
+      ),
+    },
+    {
+      path: AppPath.Bureau,
+      element: (
+        <LazyRoute>
+          <BureauPage />
         </LazyRoute>
       ),
     },

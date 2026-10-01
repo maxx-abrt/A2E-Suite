@@ -3,10 +3,7 @@ import { test } from 'node:test';
 
 import { NavigationMenuItemType } from 'twenty-sdk/define';
 
-import {
-  NAVIGATION_MENU_ITEM_IDS,
-  VIEW_IDS,
-} from '../../constants/universal-identifiers.ts';
+import { NAVIGATION_MENU_ITEM_IDS } from '../../constants/universal-identifiers.ts';
 
 // The Bureau suite root (a2e-documents) owns one FOLDER nav item; its own
 // "Pages" row nests inside it (M7c). The sibling Bureau apps point their rows
@@ -18,7 +15,7 @@ type NavigationMenuItemDefinition = {
   name: string;
   type: NavigationMenuItemType;
   position: number;
-  viewUniversalIdentifier?: string;
+  link?: string;
   folderUniversalIdentifier?: string;
 };
 
@@ -59,11 +56,11 @@ test('a2e-documents owns the Bureau folder and nests its Pages row inside it', a
   );
 
   assert.equal(pages.universalIdentifier, NAVIGATION_MENU_ITEM_IDS.documents);
-  assert.equal(pages.type, NavigationMenuItemType.VIEW);
+  assert.equal(pages.type, NavigationMenuItemType.LINK);
   assert.equal(pages.name, 'Pages');
   assert.equal(
     pages.folderUniversalIdentifier,
     NAVIGATION_MENU_ITEM_IDS.bureauFolder,
   );
-  assert.equal(pages.viewUniversalIdentifier, VIEW_IDS.allDocuments);
+  assert.equal(pages.link, '/bureau');
 });

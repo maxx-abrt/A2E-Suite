@@ -16,6 +16,7 @@ describe('title-utils', () => {
       'Create Workspace',
     );
     expect(getPageTitleFromPath('/create/profile')).toBe('Create Profile');
+    expect(getPageTitleFromPath('/bureau')).toBe('Bureau');
     expect(getPageTitleFromPath('/calendar')).toBe('Agenda');
     expect(getPageTitleFromPath('/settings/objects/opportunities')).toBe(
       'Data model - Settings',

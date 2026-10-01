@@ -1,7 +1,7 @@
 {
   "name": "A2E Suite — executor batch 14B (2026-10-01, base e952bf15): M7–M13 experience program, breadth half",
-  "branchName": "main",
   "description": "Second half of the batch-14 extraction (see prd-batch-a.json for the full scan narrative, PRIORITY-0 finding and exclusions). 20 stories, US-150–US-169, covering: M7f per-app landing pages (incl. the Archive folder leg completing M7c), M8f/g polish, M11c–e interconnection, M12 documentation (b/d/f/g), and the full M13 guided-or-in-control set.\n\nRUN ORDER: execute batch 14A first — US-154/156/160/163/164/169 depend on batch-14A outputs (US-131/132/133/139/142/143/147 appear in their dependsOn; if the tracker runs files standalone, complete 14A before loading 14B).\n\nSame rules as batch 14A: executor-completable at Tier 0/1 only (no running app, no browser, no Tier-2 evidence claimed); acceptance criteria copied verbatim from PLAN.md or the cited phase-report line; starting state noted; Tier 0/1 quality-gate block appended; executors append phase reports and never tick (orchestrator verifies, ticks, commits); one slice touching an app bumps that app's patch version once per session; host strings via Lingui fr+en; never commit catalogs; no AI attribution.",
+  "branchName": "main",
   "userStories": [
     {
       "id": "US-150",
@@ -17,9 +17,12 @@
         "Quality gates: touched packages: npx nx lint:diff-with-main <pkg> clean + npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; a2e-* slice yarn typecheck && yarn lint && yarn test:unit && npx twenty dev:build . green (bump version once if touched); Lingui fr+en; no i18n catalog churn; no AI attribution"
       ],
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-NAV/L-LINK. Depends on the gallery being reachable (US-132) for template links. UNLOCKS US-165 (empty states), US-167 (customize in place).",
-      "dependsOn": ["US-132"]
+      "dependsOn": [
+        "US-132"
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-151",
@@ -36,7 +39,9 @@
       "priority": 2,
       "passes": false,
       "notes": "Lane L-NAV (host calendar pages). Pairs naturally after US-142 (Agenda template family) so template links are real, but not hard-blocked on it.",
-      "dependsOn": ["US-132"]
+      "dependsOn": [
+        "US-132"
+      ]
     },
     {
       "id": "US-152",
@@ -53,7 +58,9 @@
       "priority": 3,
       "passes": false,
       "notes": "Lane L-AI/L-NAV. Pairs after US-141 (gating) and US-143 (recipes) for full content, not hard-blocked.",
-      "dependsOn": ["US-132"]
+      "dependsOn": [
+        "US-132"
+      ]
     },
     {
       "id": "US-153",
@@ -71,7 +78,9 @@
       "priority": 4,
       "passes": false,
       "notes": "Lane L-NAV. Completes M7c's drive half + M7f's Archive leg together, per the phase-11 sequencing note.",
-      "dependsOn": ["US-132"]
+      "dependsOn": [
+        "US-132"
+      ]
     },
     {
       "id": "US-154",
@@ -89,7 +98,9 @@
       "priority": 5,
       "passes": false,
       "notes": "Lane L-LINK (command-menu). Depends on US-147 (junction for pre-link). Invoice/expense entries are install-gated descriptors of existing a2e-accounting features — P7-gated *expansion* is untouched.",
-      "dependsOn": ["US-147"]
+      "dependsOn": [
+        "US-147"
+      ]
     },
     {
       "id": "US-155",
@@ -124,7 +135,10 @@
       "priority": 7,
       "passes": false,
       "notes": "Lane L-LINK/L-AI boundary. Depends on US-155 (event contract) and US-139 (mention index).",
-      "dependsOn": ["US-155", "US-139"]
+      "dependsOn": [
+        "US-155",
+        "US-139"
+      ]
     },
     {
       "id": "US-157",
@@ -195,7 +209,10 @@
       "priority": 11,
       "passes": false,
       "notes": "Lane L-DOCS. Best after US-142/US-143 so all families are covered; runs fine earlier with partial families.",
-      "dependsOn": ["US-142", "US-143"]
+      "dependsOn": [
+        "US-142",
+        "US-143"
+      ]
     },
     {
       "id": "US-161",
@@ -229,7 +246,9 @@
       "priority": 13,
       "passes": false,
       "notes": "Lane L-DOCS/L-UX boundary. Depends on US-159 (Getting started) landing first; US-165/166 consume the same 'Learn more' slot pattern.",
-      "dependsOn": ["US-159"]
+      "dependsOn": [
+        "US-159"
+      ]
     },
     {
       "id": "US-163",
@@ -248,7 +267,10 @@
       "priority": 14,
       "passes": false,
       "notes": "Lane L-UX. Depends on US-131 (apply path) + US-132 (entry seam). Persona suggestions must not pre-empt D02.",
-      "dependsOn": ["US-131", "US-132"]
+      "dependsOn": [
+        "US-131",
+        "US-132"
+      ]
     },
     {
       "id": "US-164",
@@ -266,7 +288,9 @@
       "priority": 15,
       "passes": false,
       "notes": "Lane L-UX (onboarding front + server constants). Depends on US-133 so catalogue copy matches the Bureau bundle reality.",
-      "dependsOn": ["US-133"]
+      "dependsOn": [
+        "US-133"
+      ]
     },
     {
       "id": "US-165",
@@ -284,7 +308,11 @@
       "priority": 16,
       "passes": false,
       "notes": "Lane L-UX. Split from M13c by app groups for one-session sizing; Bilan/Archive/Syna in US-166.",
-      "dependsOn": ["US-150", "US-151", "US-162"]
+      "dependsOn": [
+        "US-150",
+        "US-151",
+        "US-162"
+      ]
     },
     {
       "id": "US-166",
@@ -302,7 +330,11 @@
       "priority": 17,
       "passes": false,
       "notes": "Lane L-UX. Depends on US-152/153 landings + US-162 help pattern.",
-      "dependsOn": ["US-152", "US-153", "US-162"]
+      "dependsOn": [
+        "US-152",
+        "US-153",
+        "US-162"
+      ]
     },
     {
       "id": "US-167",
@@ -320,7 +352,10 @@
       "priority": 18,
       "passes": false,
       "notes": "Lane L-UX. Depends on landing pages existing (US-150, US-153; Agenda US-151 optional).",
-      "dependsOn": ["US-150", "US-153"]
+      "dependsOn": [
+        "US-150",
+        "US-153"
+      ]
     },
     {
       "id": "US-168",
@@ -355,7 +390,12 @@
       "priority": 20,
       "passes": false,
       "notes": "Lane L-UX. Depends on US-131 (apply path with operation ids). The audit list must be explicit in the phase report; anything not undoable natively is recorded as a gap, not forced.",
-      "dependsOn": ["US-131"]
+      "dependsOn": [
+        "US-131"
+      ]
     }
-  ]
+  ],
+  "metadata": {
+    "updatedAt": "2026-10-01T21:00:34.093Z"
+  }
 }

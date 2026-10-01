@@ -24,6 +24,8 @@ export enum AppPath {
   Discussions = '/discussions',
   // Native inbox for P8 notifications (core-schema rows, not an app object).
   Inbox = '/inbox',
+  // Bureau home: the a2e-documents landing (recent pages, new page, templates).
+  Bureau = '/bureau',
   // Native workspace file browser (a2e-drive folders + standard attachments).
   Drive = '/drive',
   // Native workspace calendar over standard calendarEvent rows (P4C.2).

@@ -1,5 +1,6 @@
 import { useOpenTemplateGallery } from '@/template-gallery/hooks/useOpenTemplateGallery';
 import { templateGalleryCategoryPreselectState } from '@/template-gallery/states/templateGalleryCategoryPreselectState';
+import { templateGalleryTemplateKeyPreselectState } from '@/template-gallery/states/templateGalleryTemplateKeyPreselectState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { i18n } from '@lingui/core';
 import { act, renderHook } from '@testing-library/react';
@@ -26,6 +27,7 @@ describe('useOpenTemplateGallery', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jotaiStore.set(templateGalleryCategoryPreselectState.atom, null);
+    jotaiStore.set(templateGalleryTemplateKeyPreselectState.atom, null);
   });
 
   it('navigates to the gallery host surface', () => {
@@ -62,8 +64,26 @@ describe('useOpenTemplateGallery', () => {
     );
   });
 
+  it('carries a requested template key as a soft preselect', () => {
+    const { result } = renderHook(() => useOpenTemplateGallery(), {
+      wrapper: Wrapper,
+    });
+
+    act(() => {
+      result.current.openTemplateGallery({
+        category: 'Pages',
+        templateKey: 'okr',
+      });
+    });
+
+    expect(jotaiStore.get(templateGalleryTemplateKeyPreselectState.atom)).toBe(
+      'okr',
+    );
+  });
+
   it('clears a previous preselect when opened without a category', () => {
     jotaiStore.set(templateGalleryCategoryPreselectState.atom, 'Bilan');
+    jotaiStore.set(templateGalleryTemplateKeyPreselectState.atom, 'okr');
 
     const { result } = renderHook(() => useOpenTemplateGallery(), {
       wrapper: Wrapper,
@@ -75,6 +95,9 @@ describe('useOpenTemplateGallery', () => {
 
     expect(
       jotaiStore.get(templateGalleryCategoryPreselectState.atom),
+    ).toBeNull();
+    expect(
+      jotaiStore.get(templateGalleryTemplateKeyPreselectState.atom),
     ).toBeNull();
   });
 });

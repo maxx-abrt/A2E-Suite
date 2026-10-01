@@ -2,7 +2,7 @@ import { TemplateGallery } from '@/template-gallery/components/TemplateGallery';
 import { type TemplateGalleryItem } from '@/template-gallery/types/TemplateGalleryItem';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
 import { type TemplateDescriptor } from 'twenty-shared/application';
@@ -203,6 +203,34 @@ describe('TemplateGallery', () => {
     );
 
     expect(screen.getByText('No templates found')).toBeInTheDocument();
+  });
+
+  it('preselects the entry-point template key within its category', () => {
+    const projectBriefItem: TemplateGalleryItem = {
+      ...meetingNotesItem,
+      descriptor: {
+        ...meetingNotesItem.descriptor,
+        key: 'brief-de-projet',
+        labels: { fr: 'Brief de projet', en: 'Project brief' },
+      },
+    };
+
+    render(
+      <TemplateGallery
+        items={[meetingNotesItem, projectBriefItem]}
+        initialCategory="Pages"
+        initialTemplateKey="brief-de-projet"
+        onUseTemplate={jest.fn()}
+        onBlank={jest.fn()}
+      />,
+      { wrapper: Wrapper },
+    );
+
+    expect(
+      within(screen.getByTestId('template-gallery-preview')).getByText(
+        'Project brief',
+      ),
+    ).toBeInTheDocument();
   });
 
   it('starts filtered on the entry-point category without trapping the user', async () => {

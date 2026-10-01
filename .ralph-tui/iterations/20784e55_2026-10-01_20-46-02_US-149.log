@@ -1,0 +1,226 @@
+# Iteration 9 Log
+
+## Metadata
+
+- **Task ID**: US-149
+- **Task Title**: M11a-i3: 'Related' FRONT_COMPONENT tab — links + backlinks on record pages
+- **Description**: As a user, I want a Related tab on record pages listing everything linked to or from this record so that connections are visible in both directions. Starting state: not started; per US-125 spike: 'bac...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-01T18:46:02.394Z
+- **Ended At**: 2026-10-01T19:02:34.051Z
+- **Duration**: 16m 31s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ grep -n "US-149" PLAN.md
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ ls .ralph-tui/
+[94m[bash][0m $ grep -rln "US-149" . --include="*.md" 2>/dev/null | grep -v node_modules | head -30
+[94m[bash][0m $ grep -n "US-149" tasks/prd-batch-a.json
+[94m[bash][0m $ grep -n "US-147\|US-148\|US-139" PLAN.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd-batch-a.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "US-139" tasks/prd-batch-a.json
+[94m[bash][0m $ tail -60 .ralph-tui/progress.md
+[94m[bash][0m $ grep -n "US-149\|US-148\|US-147\|CLAIMED" docs/plan/phases/phase-15-report.md | tail -40
+[94m[bash][0m $ wc -l docs/plan/phases/phase-15-report.md
+[94m[bash][0m $ ls -R packages/twenty-front/src/modules/a2e-links 2>/dev/null
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ echo "TZ=$TZ"
+[94m[bash][0m $ tail -30 ".ralph-tui/iterations/20784e55_2026-10-01_20-36-20_US-149.log"
+[94m[bash][0m $ cat >> docs/plan/phases/phase-15-report.md <<'EOF'  CLAIMED — US-149/m11a-i3-related-tab — deepseek-...
+[94m[bash][0m $ find packages/twenty-apps/internal -name "*front-component*" -o -name "*page-layout*" 2>/dev/null | ...
+[94m[bash][0m $ grep -rln "front-component\|frontComponent\|FRONT_COMPONENT\|pageLayoutTab\|PageLayoutTab" packages/...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/page-layouts/document.page-layout.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/real-estate/src/page-layouts/opportunity.page-layout.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/front-components/
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/front-components/constants.ts
+[94m[bash][0m $ done
+[94m[bash][0m $ find packages/twenty-sdk/src -iname "*page-layout*"
+[94m[bash][0m $ grep -rln "FRONT_COMPONENT\|PageLayoutWidgetType\|pageLayout" packages/twenty-server/src/engine --in...
+[94m[bash][0m $ done
+[94m[bash][0m $ grep -rln "definePageLayoutTab" packages/twenty-apps/internal --include="*.ts" --include="*.tsx" | g...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/src/page-layouts/chat-channel.page-layout.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/page-layouts/standard-page-layout-ids.ts
+[94m[bash][0m $ find packages/twenty-sdk/src/sdk/define -maxdepth 1 -type f
+[94m[bash][0m $ grep -rln "STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS" packages/twenty-shared/src | head
+[94m[bash][0m $ grep -n "RecordPage\|recordPage\|document\|task" packages/twenty-shared/src/metadata/constants/stand...
+[94m[bash][0m $ find packages/twenty-apps/internal -path "*/src/page-layout*" -name "*.ts" | grep -v node_modules | ...
+[94m[bash][0m $ grep -rn "pageLayoutUniversalIdentifier" packages/twenty-server/src/engine --include="*.ts" | grep -...
+[94m[bash][0m $ grep -rln "pageLayoutTabs\|PageLayoutTab\|pageLayoutUniversalIdentifier" packages/twenty-server/src/...
+[94m[bash][0m $ cat packages/twenty-server/src/engine/core-modules/application/application-manifest/converters/from-...
+[94m[bash][0m $ grep -rn "pageLayoutUniversalIdentifier\|PageLayoutUniversalIdentifier" packages/twenty-server/src/e...
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-links/node_modules/twenty-sdk/dist/front-component/index.d.ts ...
+[94m[bash][0m $ find packages/twenty-shared/src/application -iname "*page-layout*"
+[94m[bash][0m $ grep -rn "configurationType: 'FRONT_COMPONENT'\|PageLayoutWidgetUniversalConfiguration" packages/twe...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/pageLayoutManifestType.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/page-layout/page-layout-widget-configuration.type.ts
+[94m[bash][0m $ grep -rn "FRONT_COMPONENT_IDS\|documentPage" packages/twenty-apps/internal/a2e-documents/src/constan...
+[94m[bash][0m $ grep -rln "frontComponentHostCommunicationApi\|FrontComponentHostCommunication" packages/twenty-fron...
+[94m[bash][0m $ grep -rn "frontComponentHostCommunicationApi\|openCommandConfirmationModal\|navigate\|openSidePanelP...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rln "documentMention\|MentionedIn\|mentioned" packages/twenty-apps/internal/a2e-documents/src ...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/src/lib/document-mentions.ts
+[94m[bash][0m $ grep -rn "US-139" docs/plan/phases/phase-13-report.md -A20 | grep -A20 "^docs.*US-139.*executor" | h...
+[94m[bash][0m $ grep -rn "mentioned-in\|Mentioned In\|Mentioned in\|mention" docs/plan/phases/phase-13-report.md | s...
+[94m[bash][0m $ grep -n "M8d\|Related\|backlink" PLAN.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-links/components/LinkToRecordButton.tsx
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-shared/src/types/page-layout/widget-type.type.ts 2>/dev/null || grep ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/page-layout/WidgetType.ts
+[94m[bash][0m $ cat packages/twenty-shared/src/application/syncableEntityOptionsType.ts
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-links/src/lib/__tests__/a2e-links-integrity.test.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-links/.twenty/output/ 2>/dev/null
+[94m[bash][0m $ grep -rn "front-components\|page-layouts\|page-layout-tabs\|command-menu-items" packages/twenty-sdk/...
+[94m[bash][0m $ grep -rln "src/front-components\|'front-components'\|page-layout-tabs" packages/twenty-sdk/src/cli -...
+[94m[bash][0m $ grep -rn "ENTITY_DIR\|entityDirectory\|'objects'\|folderName\|sourcePath" packages/twenty-sdk/src/cl...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/cli/utilities/build/manifest/manifest-build.ts
+[94m[bash][0m $ cat packages/twenty-sdk/src/cli/utilities/entity/entity-page-layout-tab-template.ts
+[94m[bash][0m $ cat packages/twenty-front/src/modules/a2e-links/utils/buildA2eLinkKey.ts packages/twenty-front/src/m...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-links/.twenty/output/README.md 2>/dev/null | head -40
+[94m[bash][0m $ print(list(d.keys()))"
+[94m[bash][0m $ grep -n "STANDARD_PAGE_LAYOUT\|definePageLayoutTab\|PageLayoutTabLayoutMode" packages/twenty-apps/in...
+[94m[bash][0m $ sed -n '3870,3910p' packages/twenty-apps/internal/a2e-links/node_modules/twenty-sdk/dist/define/inde...
+[94m[bash][0m $ grep -n "RecordPage:" packages/twenty-apps/internal/a2e-links/node_modules/twenty-sdk/dist/define/in...
+Now I have enough context. Let me look at the remaining front utils and the app tsconfig, then implement.
+[94m[bash][0m $ grep -n "front-component" packages/twenty-apps/internal/a2e-links/node_modules/twenty-sdk/dist/front...
+[94m[todowrite][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/constants/universal-identifiers.ts
+[94m[write][0m "import type { CoreApiClient } from 'twenty-client-sdk/core';
+
+// M11a-i3 "Related" read model (US-149).
+//
+// A record page lists everything linked to or from the current record. Both
+// directions ar... (6959 chars)"
+[94m[bash][0m $ grep -rn "LIKE\|CONTAINS\|Ilike" packages/twenty-shared/src/types/*.ts packages/twenty-shared/src/ty...
+[94m[bash][0m $ grep -rn "ilike" packages/twenty-front/src/modules/object-record --include="*.ts" | grep -v test | h...
+[94m[bash][0m $ sed -n '260,340p' packages/twenty-apps/internal/a2e-accounting/src/front-components/subvention-explo...
+[94m[write][0m "import type { CoreApiClient } from 'twenty-client-sdk/core';
+
+import {
+  isRelatedLinkedObjectNameSingular,
+  RELATED_LINKED_OBJECT_NAME_SINGULARS,
+  RELATED_LINKS_TYPE_USER_LINK,
+  RELATED_LINKS_PAGE... (5737 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/lib/related-links-targets.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/lib/related-links-targets.ts
+[94m[bash][0m $ find packages/twenty-front/src -name "useCreateOneRecord*" | head
+[94m[bash][0m $ cat packages/twenty-front/src/modules/object-record/utils/getCreateOneRecordMutationResponseField.ts
+[94m[bash][0m $ grep -rn "export const capitalize" packages/twenty-shared/src/utils/*.ts | head
+[94m[read][0m
+[94m[bash][0m $ grep -rln "const capitalize" packages/twenty-shared/src/utils/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/utils/strings/capitalize.ts
+[94m[write][0m "import { useCallback, useEffect, useState } from 'react';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import {
+  AppPath,
+  enqueueSnackbar,
+  navigate,
+  useSelectedRecordIds,
+} from 'twe... (10621 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[write][0m "import { defineFrontComponent } from 'twenty-sdk/define';
+
+import { FRONT_COMPONENT_IDS } from '../constants/universal-identifiers.ts';
+import { createRelatedLinksFrontComponent } from './related-link... (706 chars)"
+[94m[write][0m "import { defineFrontComponent } from 'twenty-sdk/define';
+
+import { FRONT_COMPONENT_IDS } from '../constants/universal-identifiers.ts';
+import { createRelatedLinksFrontComponent } from './related-link... (699 chars)"
+[94m[write][0m "import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+
+import {
+  DOCUMENT_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  FRONT_COMPONENT_IDS,
+  PAGE_LAYOUT_TAB_IDS,
+} fro... (1234 chars)"
+[94m[write][0m "import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+  STANDARD_PAGE_LAYOUT,
+} from 'twenty-sdk/define';
+
+import {
+  FRONT_COMPONENT_IDS,
+  PAGE_LAYOUT_TAB_IDS,
+} from '../constants/universal-id... (1042 chars)"
+[94m[bash][0m $ cat packages/twenty-shared/src/types/FormatRecordSerializedRelationProperties.type.ts
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -40
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  buildRelatedLinksGraphqlQuery,
+  countRelatedLinks,
+  createEmptyRelatedLinks,
+  isRelatedLinkedObjectNameSingula... (8452 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/lib/__tests__/related-links.test.ts
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -20
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-links && perl -0pi -e "s/'documents' in query/'document' in que...
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -20
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/lib/related-links-targets.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/lib/related-links-targets.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/lib/related-links-targets.ts
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-links && perl -0pi -e "s/'document' in query/'documents' in que...
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -10
+[94m[bash][0m $ yarn lint 2>&1 | tail -30
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -30
+[94m[bash][0m $ python3 - <<'EOF' import json d=json.load(open('packages/twenty-apps/internal/a2e-links/.twenty/outp...
+[94m[bash][0m $ grep -rn "companyRecordPage" packages/twenty-shared/src/metadata/constants/standard-page-layout-univ...
+[94m[bash][0m $ find packages/twenty-shared/src -name "build-standard-object-record-page-layout*"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/package.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/README.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/README.md
+[94m[bash][0m $ print(d['application'].get('version'), d['application'].get('universalIdentifier'))"
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ console.log(d.STANDARD_PAGE_LAYOUT.taskRecordPage.universalIdentifier)" 2>&1 | tail -3
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-links/src/roles/default-function.role.ts
+[94m[bash][0m $ grep -rn "Related\|Liens" docs/applications.md 2>/dev/null | head
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-links && perl -0pi -e "s/title: 'Liens',/title: 'Related',/g" s...
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import { STANDARD_PAGE_LAYOUT } from 'twenty-sdk/define';
+
+import {
+  DOCUMENT_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  FRO... (3304 chars)"
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -18
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -5
+[94m[bash][0m $ python3 - <<'EOF' import json d=json.load(open('packages/twenty-apps/internal/a2e-links/.twenty/outp...
+[94m[bash][0m $ python3 - <<'EOF' import json d=json.load(open('.twenty/output/manifest.json')) for t in d.get('page...
+[94m[bash][0m $ print(json.dumps(d.get('application',{}).get('filePaths',{}),indent=0)[:800])" 2>/dev/null | head
+[94m[bash][0m $ git status --porcelain packages/twenty-apps/internal/a2e-links
+[94m[bash][0m $ tail -18 docs/plan/phases/phase-15-report.md
+Now let me write the phase report and progress entry.
+Now the progress.md entry:
+[94m[bash][0m $ tail -12 .ralph-tui/progress.md
+[94m[todowrite][0m
+US-149 implemented and reported (`done-for-review`).
+
+**What landed** (all in `packages/twenty-apps/internal/a2e-links`, no `twenty-front` source touched):
+- App-owned **Related** front-component panel, one entry per consumer target via a factory (sandbox renders empty props), listing outbound junction rows + inbound backlinks read from the persisted inverse relation `outgoingLinks`/`incomingLinks` — no read-time scan.
+- Unreadable endpoints (server resolves the relation to `null`) are dropped; a failed junction query degrades to an empty panel (uninstall-safe).
+- Empty state offers a "Lier…" action. Because a sandboxed front component cannot reach the host `SingleRecordPicker`, it searches the declared linkable set and writes the identical `a2eLink` row (same `linkKey`, same morph FKs), so both entry points share one store.
+- Two app-owned standalone page-layout tabs: `document` (A2E Documents' layout) and standard `task` — so they vanish on uninstall (C3).
+- Version bumped 0.1.1 → 0.1.2; README updated.
+
+**Gates**: `yarn typecheck` exit 0 · `yarn lint` 0/0 (23 files) · `yarn test:unit` 27/27 (17 new read-model + 3 surface + 7 existing) · `npx twenty dev:build .` "Build succeeded (6 files)" with 2 frontComponents + 2 `FRONT_COMPONENT` page-layout tabs in the manifest.
+
+**Missing for tick (Tier 2 only)**: live install + browser E17 leg (Related on both sides, survives reload, tab gone on uninstall). Report appended to `docs/plan/phases/phase-15-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

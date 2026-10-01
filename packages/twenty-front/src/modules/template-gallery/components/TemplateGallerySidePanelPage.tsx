@@ -3,6 +3,7 @@ import { TemplateGallery } from '@/template-gallery/components/TemplateGallery';
 import { useApplyTemplate } from '@/template-gallery/hooks/useApplyTemplate';
 import { useTemplateGalleryItems } from '@/template-gallery/hooks/useTemplateGalleryItems';
 import { templateGalleryCategoryPreselectState } from '@/template-gallery/states/templateGalleryCategoryPreselectState';
+import { templateGalleryTemplateKeyPreselectState } from '@/template-gallery/states/templateGalleryTemplateKeyPreselectState';
 import { type TemplateGalleryItem } from '@/template-gallery/types/TemplateGalleryItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -40,6 +41,9 @@ export const TemplateGallerySidePanelPage = () => {
   const templateGalleryCategoryPreselect = useAtomStateValue(
     templateGalleryCategoryPreselectState,
   );
+  const templateGalleryTemplateKeyPreselect = useAtomStateValue(
+    templateGalleryTemplateKeyPreselectState,
+  );
   const { goBackFromSidePanel } = useSidePanelHistory();
 
   const [rejection, setRejection] = useState<TemplateApplyRejected | null>(
@@ -74,6 +78,7 @@ export const TemplateGallerySidePanelPage = () => {
         isLoading={isLoading}
         isApplying={isApplying}
         initialCategory={templateGalleryCategoryPreselect}
+        initialTemplateKey={templateGalleryTemplateKeyPreselect}
         onUseTemplate={handleUseTemplate}
         onBlank={handleBlank}
       />

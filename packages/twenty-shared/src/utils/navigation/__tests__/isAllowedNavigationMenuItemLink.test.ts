@@ -5,6 +5,7 @@ describe('isAllowedNavigationMenuItemLink', () => {
     'https://twenty.com',
     'http://localhost:3000',
     'twenty.com',
+    '/bureau',
     '/calendar',
     '/drive',
     '/discussions',

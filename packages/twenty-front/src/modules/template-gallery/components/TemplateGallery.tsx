@@ -179,6 +179,10 @@ export type TemplateGalleryProps = {
   // The user can still clear or change it, so it narrows the landing view
   // without becoming a filter they cannot escape (AC5).
   initialCategory?: TemplateDescriptorCategory | null;
+  // A soft starting template within that category, for an entry-point that
+  // deep-links a named starter (M7f). An unknown key just falls back to the
+  // category's first item.
+  initialTemplateKey?: string | null;
   onUseTemplate: (item: TemplateGalleryItem) => void;
   onBlank: (item: TemplateGalleryItem) => void;
 };
@@ -193,6 +197,7 @@ export const TemplateGallery = ({
   isLoading = false,
   isApplying = false,
   initialCategory = null,
+  initialTemplateKey = null,
   onUseTemplate,
   onBlank,
 }: TemplateGalleryProps) => {
@@ -200,7 +205,9 @@ export const TemplateGallery = ({
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] =
     useState<TemplateDescriptorCategory | null>(initialCategory);
-  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [selectedKey, setSelectedKey] = useState<string | null>(
+    initialTemplateKey,
+  );
 
   // The descriptors ship both labels; render the one matching the active
   // locale so the gallery is French in a French workspace without a second

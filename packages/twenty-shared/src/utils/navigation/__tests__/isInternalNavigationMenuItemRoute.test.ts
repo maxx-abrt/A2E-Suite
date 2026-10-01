@@ -1,12 +1,17 @@
 import { isInternalNavigationMenuItemRoute } from '@/utils/navigation/isInternalNavigationMenuItemRoute';
 
 describe('isInternalNavigationMenuItemRoute', () => {
-  it.each(['/calendar', '/chat', '/discussions', '/drive', '/home', '/inbox'])(
-    'should accept the allow-listed route %s',
-    (link) => {
-      expect(isInternalNavigationMenuItemRoute(link)).toBe(true);
-    },
-  );
+  it.each([
+    '/bureau',
+    '/calendar',
+    '/chat',
+    '/discussions',
+    '/drive',
+    '/home',
+    '/inbox',
+  ])('should accept the allow-listed route %s', (link) => {
+    expect(isInternalNavigationMenuItemRoute(link)).toBe(true);
+  });
 
   it('should accept a nested path under an allow-listed route', () => {
     expect(isInternalNavigationMenuItemRoute('/chat/thread-42')).toBe(true);
