@@ -294,9 +294,10 @@
         "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; npx nx storybook:build twenty-front green; targeted jest green; no i18n catalog churn; no AI attribution"
       ],
       "priority": 15,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-EDITOR. Completes the last Tier-0 leg of M8a; E14 round-trip stays Tier-2.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-146",
@@ -381,6 +382,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T17:47:54.237Z"
+    "updatedAt": "2026-10-01T17:49:46.308Z"
   }
 }

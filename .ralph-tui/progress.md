@@ -49,3 +49,12 @@ after each iteration and it's included in prompts for context.
   - zsh does not word-split unquoted `$FILES`; pass lint file lists explicitly (or `${=FILES}`) or oxlint sees one non-existent filename and reports "0 files".
   - Reusable pattern added to the Codebase Patterns section above.
 ---
+
+## [2026-10-01] - US-145 (blocked — already claimed)
+- What was implemented: nothing. Stopped at contract §1.3: `phase-13-report.md:682` holds an unexpired `CLAIMED — US-145/provider-free-stories` (2026-10-01T17:47:00Z, base `bf9acfc0`), ~72s old with no follow-up. Zero source edits made.
+- Files changed: none (only this progress note + the phase-13 report entry).
+- **Learnings:**
+  - The claim was not this iteration's: `git log -S "US-145/provider-free-stories"` shows it entered HEAD `0d9ede12` (iter-17/US-144 engine commit at 17:47:54Z) while its declared base `bf9acfc0` predates that commit — a concurrent live session racing the same report file appended it just before the US-144 report; both appends landed in one engine commit.
+  - Distinguish a real competing claim from a stale one by comparing the claim's declared `base` to current HEAD: a base that predates the last engine commit that *introduced the line* means another session wrote it after you started, not your own prior iteration.
+  - Never append a second `CLAIMED` when one is already unexpired for your exact slice — that only deepens the race. Report `blocked — already claimed` and let the orchestrator adjudicate.
+---

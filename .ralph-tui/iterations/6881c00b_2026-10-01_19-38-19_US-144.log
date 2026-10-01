@@ -1,0 +1,219 @@
+# Iteration 17 Log
+
+## Metadata
+
+- **Task ID**: US-144
+- **Task Title**: M8a-3: date/reminder mention block — dateReminder inline content creating an Agenda reminder
+- **Description**: As a user writing a page, I want to mention a date/reminder inline that becomes an Agenda reminder so that commitments made in notes surface in the calendar. Starting state: not started — PLAN M8a ann...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-01T17:38:19.822Z
+- **Ended At**: 2026-10-01T17:47:54.236Z
+- **Duration**: 9m 34s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the mandatory clean-start check.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-144" PLAN.md
+[94m[bash][0m $ ls docs/plan/phases/ | tail -20
+Dirty files are Ralph engine metadata (.ralph-tui, tasks/prd-batch-a.json), not source. Let me verify against the phase report and find my task.
+[94m[bash][0m $ grep -rn "M8a-3\|date/reminder\|dateReminder" PLAN.md | head -30
+[94m[bash][0m $ grep -rn "US-144" PLAN.md tasks/ .ralph-tui/ 2>/dev/null | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "US-144\|M8a-3\|333\|332\|331\|334" docs/plan/phases/phase-13-report.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd-batch-a.json
+US-144 confirmed, no dependencies. Now reading the phase-13 slice spec and the report tail.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ grep -n "CLAIMED\|US-144" docs/plan/phases/phase-13-report.md docs/plan/phases/phase-14-report.md do...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ date +"%Y-%m-%d %H:%M:%S %Z" && date -u +"%Y-%m-%d %H:%M:%S UTC" && git log -1 --format="%H %ci"
+Clean-start check: dirty files are Ralph engine state (`.ralph-tui/*`, `tasks/prd-batch-a.json`) matching the US-143 iteration, not source. No US-144 claim exists; deps empty. Claiming my slice now.
+[94m[bash][0m $ printf '\nCLAIMED — US-144/date-reminder-mention — deepseek-v4.1-flash — 2026-10-01T19:38:50Z — base...
+Claim is unique. Now exploring the blocknote-editor module structure.
+[94m[bash][0m $ find packages/twenty-front/src/modules/blocknote-editor -type f | sort
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/MentionInlineContent.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/Schema.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/slashMenuItemDefinitions.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/getSlashMenu.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/types/types.ts
+[94m[bash][0m $ grep -rn "connectedAccount" packages/twenty-front/src/modules/calendar --include=*.ts --include=*.ts...
+[94m[bash][0m $ grep -rn "calendarEvent" packages/twenty-front/src/modules --include=*.ts --include=*.tsx -l | head ...
+[94m[grep][0m [95mpackages/twenty-front/src/modules/calendar[0m pattern: [96mconnectedAccountId[0m
+[94m[grep][0m [95mpackages/twenty-front/src/modules/calendar[0m pattern: [96museCreateOneRecord|createOneRecord[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/hooks/useCalendarEventMutations.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/hooks/useCalendarTaskQuickCreate.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/types/CalendarEventDraft.ts
+[94m[bash][0m $ grep -rln "connectedAccount" packages/twenty-front/src/modules/calendar packages/twenty-front/src/mo...
+[94m[grep][0m [95mpackages/twenty-front/src[0m pattern: [96mconnectedAccountId[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/hooks/useAgendaTemplateApply.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/activities/emails/hooks/useFirstConnectedAccount.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/export/utils/exportFidelity.ts
+[94m[bash][0m $ grep -rn "mention" packages/twenty-front/src/modules/blocknote-editor/components/BlockEditor.tsx | h...
+[94m[bash][0m $ grep -rln "useMentionMenu\|MentionInlineContent\|insertInlineContent" packages/twenty-front/src/modu...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/mention/hooks/useMentionMenu.ts
+[94m[grep][0m [95mpackages/twenty-front/src/modules/blocknote-editor/components/BlockEditor.tsx[0m pattern: [96mmention|Mention|insertInlineContent[0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/LinkToRecordPicker.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/SynaSlashMenuItem.tsx
+[94m[grep][0m [95mpackages/twenty-front/src[0m pattern: [96mLinkToRecordSlashMenuItem[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/BlockEditor.tsx
+[94m[read][0m
+[94m[bash][0m $ grep -rln "useSnackBar" packages/twenty-front/src/modules/blocknote-editor packages/twenty-front/src...
+[94m[bash][0m $ grep -rn "useSnackBar" packages/twenty-front/src/modules/ui 2>/dev/null | head
+[94m[bash][0m $ grep -rln "useSnackBar\|SnackBar\|snackBar" packages/twenty-front/src/modules | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
+[94m[bash][0m $ grep -rln "reminderMinutes" packages/twenty-front/src/modules/calendar | head
+[94m[bash][0m $ grep -rln "buildCalendarEvent\|CalendarQuickTaskInput\|buildCalendarQuickTaskInput" packages/twenty-...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/buildCalendarEventInputFromDraft.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/constants/CalendarReminderPresets.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/mention/components/MentionRecordChip.tsx
+[94m[bash][0m $ find packages/twenty-server/src -iname "*calendar-event*.entity.ts" -o -iname "*calendarEvent*.entit...
+[94m[bash][0m $ grep -rn "reminderMinutes\|connectedAccount" packages/twenty-server/src/modules/calendar --include="...
+[94m[bash][0m $ find packages/twenty-server/src -path "*calendar*" -name "*.entity.ts" | head -20
+[94m[bash][0m $ grep -rln "CalendarEvent" packages/twenty-shared/src 2>/dev/null | head
+[94m[bash][0m $ grep -rn "CreateCalendarEvent\|createCalendarEvent" packages/twenty-server/src --include="*.ts" -l |...
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-met...
+[94m[bash][0m $ grep -rn "CreateCalendarEventDocument\|createCalendarEvent" packages/twenty-front/src --include="*.t...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
+[94m[read][0m
+[94m[bash][0m $ find node_modules/@blocknote -name "*.d.ts" 2>/dev/null | head
+[94m[bash][0m $ grep -rn "toExternalHTML" packages/twenty-front/src packages/twenty-apps 2>/dev/null | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/RecordViewBlock.tsx
+[94m[bash][0m $ grep -rln "createReactInlineContentSpec" node_modules/@blocknote/react/types 2>/dev/null | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/node_modules/@blocknote/react/types/src/schema/ReactInlineContentSpec.d.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/getInlineContentPlainText.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/slashMenuGroups.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/settings/accounts/hooks/useMyConnectedAccounts.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/buildCalendarQuickTaskInput.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/buildChildDocumentInput.ts
+[94m[read][0m
+[94m[bash][0m $ grep -rln "blocks/Schema\|BLOCK_SCHEMA" packages/twenty-front/src --include="*.test.ts" --include="*...
+[94m[bash][0m $ grep -rln "blocksToMarkdownLossy\|BlockNoteEditor.create\|parseInitialBlocknote" packages/twenty-fro...
+[94m[bash][0m $ grep -rn "useCreateCalendarEvent\b" packages/twenty-front/src/modules --include="*.tsx" | grep -v te...
+[94m[bash][0m $ grep -rn "SnackBarComponentInstanceContext.Provider\|SnackBarProvider" packages/twenty-front/src/App...
+[94m[bash][0m $ grep -n "SnackBar\|Apollo\|DateTime" packages/twenty-front/src/modules/app/components/App.tsx | head...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/localization/hooks/useDateTimeFormat.ts
+[94m[bash][0m $ grep -rn "DateTimeFormatProvider\|DateTimeFormatContext" packages/twenty-front/src/modules/app 2>/de...
+[94m[bash][0m $ grep -rn "IconCalendarEvent\|IconCalendar" packages/twenty-ui/src/icon/icon-dictionary.md | head
+[94m[bash][0m $ find packages/twenty-ui/src -iname "Chip*.tsx" -o -iname "Chip*.ts" | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-ui/src/data-display/Chip/Chip.tsx
+[94m[bash][0m $ grep -rn "Calendar" packages/twenty-ui/src/icon/icon-dictionary.md | head
+[94m[bash][0m $ grep -rn "calendar\|Calendar" packages/twenty-ui/src/icon/icon-dictionary.md | head -20
+[94m[bash][0m $ grep -rln "IconCalendar" packages/twenty-ui/src | head
+[94m[bash][0m $ grep -rn "insertOrUpdateBlockForSlashMenu" node_modules/@blocknote/core/types 2>/dev/null | head
+[94m[bash][0m $ ls node_modules/@blocknote/react/dist 2>/dev/null | head
+[94m[bash][0m $ grep -n "onItemClick\|deleteRange\|removeSuggestionMenu\|closeMenu" node_modules/@blocknote/react/di...
+[94m[bash][0m $ grep -n "export type CreateCalendarEventInput" packages/twenty-front/src/generated-metadata/graphql....
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/generated-metadata/graphql.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/BlockEditor.tsx
+[94m[bash][0m $ grep -rln "<BlockEditor" packages/twenty-front/src --include="*.test.tsx" | head
+[94m[bash][0m $ grep -rln "from '@/blocknote-editor/components/BlockEditor'" packages/twenty-front/src --include="*....
+[94m[bash][0m $ grep -rn "IconCalendarEvent" packages/twenty-front/src --include="*.tsx" | head -5
+[94m[bash][0m $ grep -rn "leftComponent={<Icon\|leftComponent={" packages/twenty-front/src/modules --include="*.tsx"...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ui/field/display/components/FileChip.tsx
+[94m[bash][0m $ grep -rn "export type IconComponent\|type IconProps" packages/twenty-ui/src/icon/*.ts packages/twent...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-ui/src/icon/types/IconComponent.ts
+[94m[bash][0m $ grep -rn "renderHook" packages/twenty-front/src/modules/mention packages/twenty-front/src/modules/ac...
+[94m[bash][0m $ grep -rln "renderHook" packages/twenty-front/src/modules --include="*.test.ts" --include="*.test.tsx...
+[94m[read][0m
+Design is clear. Let me create the pure utils and types first.
+[94m[write][0m "import { Temporal } from 'temporal-polyfill';
+
+import { getCalendarEventComposerDefaultDates } from '@/activities/calendar/utils/getCalendarEventComposerDefaultDates';
+import { type CreateCalendarEven... (2261 chars)"
+[94m[write][0m "// The live chip cannot travel through Markdown/DOCX, so every export path
+// degrades it to this textual label (a date chip, never a broken node). An
+// unconfigured mention exports nothing.
+export c... (378 chars)"
+[94m[write][0m "import { createReactInlineContentSpec } from '@blocknote/react';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+imp... (2071 chars)"
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+import { useCallback } from 'react';
+import { Temporal } from 'temporal-polyfill';
+import { isDefined } from 'twenty-shar... (3087 chars)"
+Now register the inline content and wire the slash item.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/Schema.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/Schema.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/BlockEditor.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/BlockEditor.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/BlockEditor.tsx
+[94m[write][0m "import { describe, expect, it } from '@jest/globals';
+import { Temporal } from 'temporal-polyfill';
+
+import { buildDateReminderMention } from '@/blocknote-editor/utils/buildDateReminderMention';
+impor... (2608 chars)"
+[94m[write][0m "import { describe, expect, it } from '@jest/globals';
+
+import { getDateReminderMentionExportText } from '@/blocknote-editor/utils/getDateReminderMentionExportText';
+
+describe('getDateReminderMentionEx... (726 chars)"
+[94m[write][0m "import { act, renderHook } from '@testing-library/react';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+
+import { useDateReminderSlashMenuItem } from '@/blocknote-editor/hooks/useDat... (4033 chars)"
+Now run the new tests.
+[94m[bash][0m $ npx jest src/modules/blocknote-editor/utils/__tests__/buildDateReminderMention.test.ts src/modules/b...
+[94m[bash][0m $ echo "EXIT:${PIPESTATUS[0]}"
+[94m[bash][0m $ tail -30 /tmp/tsgo-front.log
+[94m[bash][0m $ echo "EXIT:$?"
+`lint:diff-with-main` compares committed history; my work is uncommitted, so it reports no files. Linting the touched files directly (same as prior executor reports).
+[94m[bash][0m $ echo "OXFMT_EXIT:$?"
+[94m[bash][0m $ echo "OXLINT_EXIT:$?"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/buildDateReminderMention.ts
+[94m[bash][0m $ echo "OXFMT_EXIT:$?"
+[94m[bash][0m $ echo "CHECK_EXIT:$?"
+[94m[bash][0m $ npx jest src/modules/blocknote-editor --config=jest.config.mjs 2>&1 | tail -25
+[94m[bash][0m $ tail -20 /tmp/tsgo-front2.log
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ ls -la packages/twenty-front/src/modules/blocknote-editor/blocks/DateReminderInlineContent.tsx packa...
+[94m[bash][0m $ git diff --stat
+[94m[bash][0m $ git show --stat --oneline HEAD | head -30
+[94m[bash][0m $ git show HEAD --format="%H%n%ci%n%an <%ae>%n%s" -- docs/plan/phases/phase-13-report.md | head -60
+A parallel Ralph iteration picked up the same slice and correctly deferred to my earlier claim. The engine auto-committed my in-flight files at HEAD. Let me verify my final working state and re-read the formatted hook.
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ git diff -- packages/twenty-front/src/modules/blocknote-editor/hooks/useDateReminderSlashMenuItem.ts...
+All checks green. Now appending my phase report and the Ralph progress entry.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ pass lint file lists explicitly (or `${=FILES}`) or oxlint sees one non-existent filename and report...
+[94m[bash][0m $ then US-145 (light/dark storybook stories for the M8a blocks). EOF echo done
+[94m[bash][0m $ git rev-parse HEAD
+US-144 complete. Summary of the slice:
+
+**Implemented** (`packages/twenty-front/src/modules/blocknote-editor/`):
+- `blocks/DateReminderInlineContent.tsx` — new `dateReminder` inline content: read-only date `Chip` + calendar icon, with `toExternalHTML` so Markdown/DOCX/prints degrade to the label, never a broken node.
+- `utils/buildDateReminderMention.ts` — pure builder (next half-hour slot, no guest invitations, localized label that doubles as the event title) returning `calendarEventInput` minus `connectedAccountId` + the chip `mention`.
+- `utils/getDateReminderMentionExportText.ts` — pure export fallback.
+- `hooks/useDateReminderSlashMenuItem.ts` — resolves a calendar-capable account (`isCalendarCreationEnabledForAccount`), creates the event via the existing `useCreateCalendarEvent` composer primitive, then inserts the chip; no account → warning snackbar and no insert.
+- Registered in `blocks/Schema.ts`; wired into `components/BlockEditor.tsx`'s slash menu.
+- 3 new test files (round-trip save→reload→markdown-export; fr aliases; no-account snackbar + no insert; account→create→chip; creation-failure→no broken node).
+
+**Checks (all green):** blocknote-editor `jest` 36 suites/221 tests; `tsgo --noEmit` exit 0; `oxlint --type-aware` 0/0 and `oxfmt --check` clean on the 9 touched files; no `locales/**`, no AI attribution.
+
+**Reported:** `done-for-review`, `Ready-to-tick: yes` — only the Tier-2 browser leg (insert mention → event in Agenda; E14 round-trip) remains for the orchestrator. Phase report and `.ralph-tui/progress.md` appended.
+
+Note: a parallel Ralph iteration picked up the same slice and correctly deferred to my earlier claim; the engine auto-committed the in-flight files as `bf9acfc0`, with my two post-commit lint/format fixes left in the working tree for the engine to commit.
+
+<promise>COMPLETE</promise>
+
+--- STDERR ---
+error: Error starting FSEvents stream

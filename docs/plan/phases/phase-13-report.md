@@ -707,3 +707,20 @@ CLAIMED — US-145/provider-free-stories — deepseek-v4.1-flash — 2026-10-01T
 **Do not redo:** the `mention` inline content / `useMentionMenu` / `MentionInlineContent` (untouched); the US-122 interactive blocks; the calendar composer (`useCreateCalendarEvent`, `isCalendarCreationEnabledForAccount`). US-143 is committed; the parallel iteration's `blocked — already claimed` entry above is historical (this claiming executor finished the slice).
 **Remaining:** US-145…US-149 plus batch 14B.
 **Next:** orchestrator Tier-2 browser pass (insert date mention → event in Agenda) + E14 round-trip; then US-145 (light/dark storybook stories for the M8a blocks).
+
+## 2026-10-01 17:48 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-145 M8a-4: light+dark storybook stories for the new editor blocks (provider-free presentational views) · **Slice:** the whole slice (stories + provider-free views)
+**Claim:** blocked — already claimed
+**Ready-to-tick:** no — an unexpired competing `CLAIMED` for this exact slice exists; this session did zero work to avoid clobbering it
+**Base:** 0d9ede12cb48681424fdd1c7f52b41ba86d95f65
+**Changed:** none (stopped at contract §1.3, before any edit; only this report entry appended)
+**Checks:** none run — no files touched, so no Tier-0 gate applies; this is a coordination stop, not a code stop
+**Evidence:**
+- `docs/plan/phases/phase-13-report.md:682` holds `CLAIMED — US-145/provider-free-stories — deepseek-v4.1-flash — 2026-10-01T17:47:00Z — base bf9acfc069b248ab6aaf107f0261c70a284f83ed`, still unexpired at the current UTC 17:48 (~72s old), with no `blocked`/`conflict`/`done` follow-up.
+- It was **not** written by this iteration: `git log -S "US-145/provider-free-stories"` shows the line was added in HEAD `0d9ede12` (engine commit at 17:47:54Z, iter 17 = US-144), and its declared base `bf9acfc0` predates that commit. A concurrent live Ralph session racing the same `phase-13-report.md` appended it just before the US-144 report (line 684); both appends were swept into the same engine commit.
+- Parallel sessions are live on this one checkout: `ps aux` shows three `bun .../ralph-tui run` processes (PIDs 24782/74194/68648) and `.ralph-tui/session-meta.json` shows session `20784e55` at iter 17 with `activeTaskIds: ["US-145"]`; `[parallel] mode = "never"` in `.ralph-tui/config.toml` is not enforced across invocations.
+- No work is yet visible (`packages/twenty-front/src/modules/blocknote-editor/blocks/` has no `__stories__/`, `git status --porcelain` shows no source changes), so the claiming executor is likely still reading — do not start editing.
+**Missing for tick:** the claiming executor's own Tier-0 gates + the orchestrator's Tier-2 `storybook:test` interaction pass + `npx nx storybook:build twenty-front` acceptance.
+**Do not redo:** the in-flight US-145 slice — let the claiming executor finish; do not add `__stories__/` files, edit the M8a blocks, append a second `CLAIMED`, or revert the claim.
+**Remaining:** US-145…US-149 plus batch 14B still open.
+**Next:** orchestrator — wait for the claiming executor's `done-for-review` on US-145; if it stalls with no `__stories__/` files, adjudicate the stale claim and re-dispatch.
