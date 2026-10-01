@@ -172,3 +172,29 @@ CLAIMED — US-151/agenda-landing — deepseek-v4.1-flash — 2026-10-01T21:04:0
 **Do not redo:** the US-142 `AGENDA_TEMPLATE_DESCRIPTORS`/`applyAgendaTemplate`/host apply wiring, the US-132 `useOpenTemplateGallery({category,templateKey})` seam, the US-101/116 `/calendar` standard LINK nav row and its allow-list, and the calendar write path (`handleComposerSubmit`, `buildCalendarEventInputFromDraft`, `buildCalendarSeriesAnchorInputFromDraft`). Agenda reuses all of them — do not fork a second gallery or calendar-write path.
 **Remaining:** M7f siblings US-152 (Syna), US-153 (Archive + drive folder); M7c drive/Bilan/CRM legs; then US-165/US-167 consume this landing.
 **Next:** US-152 (Syna landing) reuses this exact host-enrichment shape; when M13c lands, swap the landing's inline strip for the shared empty-state primitive rather than adding a second one.
+
+CLAIMED — US-152/syna-landing — deepseek-v4.1-flash — 2026-10-01T21:09:49Z — base 6b2a65b43ba631e074cf7e5264b7e89e105788c4
+
+## 2026-10-01 21:30 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-152 M7f-3: Syna landing page — chat + recent runs + actions library · **Slice:** the whole task — the Syna home as the `/chat` host empty state (primary action + 3 featured recipes + READY actions library + recent runs) behind the US-141 zero-AI gate
+**Claim:** done-for-review
+**Ready-to-tick:** yes — every Tier 0 check I own is green; only the Tier-2 browser render with/without a provider (E16 leg) is the orchestrator's
+**Base:** 6b2a65b43ba631e074cf7e5264b7e89e105788c4
+**Changed:**
+- twenty-front NEW `src/modules/ai/components/SynaLanding.tsx` — the landing: header + primary `New conversation` (`useSwitchToNewAiChat`), 3 featured M9c links and the full 7-READY actions library (each opens the shared `useOpenTemplateGallery({category:'Syna', templateKey})`), recent runs (`useChatThreads` + `useAiChatThreadClick`). Gate first: unavailable + `AI_SETTINGS` -> a single `Connect a provider` Link to Settings->Providers; unavailable + no admin -> null. Never dead-ends.
+- `src/modules/ai/components/AiChatEmptyState.tsx` — renders `<SynaLanding />` only on `AI_CHAT_SURFACE.PAGE` (reads the existing `AiChatSurfaceContext`), so the side-panel ask box never grows a second landing.
+- NEW `src/modules/ai/constants/SynaLandingTemplates.ts` (3 featured keys + Lingui labels) and `SynaLandingTemplateCategory.ts` (`'Syna'`, own file per max-consts-per-file).
+- NEW `src/modules/ai/utils/getRecentSynaRuns.ts` — derives recent runs from the existing `agentChatThreads` usage data (no new table): excludes archived, sorts by `lastMessageAt ?? updatedAt` desc, caps at 3, copies before sorting (no caller mutation).
+- NEW tests: `components/__tests__/SynaLanding.test.tsx` (10), `utils/__tests__/getRecentSynaRuns.test.ts` (4), `constants/__tests__/SynaLandingTemplates.test.ts` (4); edited `components/__tests__/AiChatEmptyState.test.tsx` (+2: landing on PAGE surface, absent on SIDE_PANEL).
+**Checks:**
+- `npx nx build twenty-shared --skip-nx-cache` -> success.
+- `npx jest <4 specs> --config=packages/twenty-front/jest.config.mjs` -> 4 suites / 24 pass.
+- `npx jest --findRelatedTests <5 changed sources> --config=jest.config.mjs` (twenty-front) -> 9 suites / 75 pass (incl. AiChatPage, MainAppLayoutWithSidePanel).
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` -> exit 0.
+- `npx oxlint --type-aware -c .oxlintrc.json <9 touched>` -> 0 warnings / 0 errors; `npx oxfmt --check <same>` -> all formatted (after running oxfmt on 4).
+- `npx nx lint:diff-with-main twenty-front` -> "No changed files." (tree uncommitted; direct oxlint/oxfmt is the real gate).
+- no `locales/**` touched; no app package touched (host-only slice, no `package.json` bump); no AI attribution.
+**Missing for tick:** Tier 2 (orchestrator) E16 leg — on a fresh workspace with a configured provider, `/chat` shows the Syna landing (New conversation; the 3 starters + full Actions library opening the gallery on the Syna category; the recent runs). Without a provider an admin sees only `Connect a provider` (lands on Settings->Syna->Providers) and a member sees no dead entry. Landing is currently the empty-state composer path, not a separate route (see Remaining).
+**Do not redo:** the US-143 `SYNA_RECIPE_DESCRIPTORS`/`findSynaRecipeDescriptor` registry; the US-132 `useOpenTemplateGallery({category,templateKey})` seam; the US-141 `isSynaAvailable`/`useWorkspaceAiModelAvailability` gate + `SettingsPath.AiProviders` link shape (reused, not forked); the US-116/130 chat entry points and the existing `AiChatEmptyState`/suggested-prompts/context-tools. Syna reuses all of them — do not add a second gallery, a second gate util, or a new thread table.
+**Remaining:** M7f sibling US-153 (Archive); M7c drive/Bilan/CRM legs; then US-165/US-167 consume this landing.
+**Next:** US-153 (Archive landing) reuses this host-enrichment shape; if M7f later wants a dedicated `/syna` route to own the recent-runs block during an active thread, add it as a sibling of `/bureau` (plan approval needed — not done here).

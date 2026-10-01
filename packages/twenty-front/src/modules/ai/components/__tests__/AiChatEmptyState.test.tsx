@@ -3,11 +3,14 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
+import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
+import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { type AiChatSurface } from '@/ai/types/AiChatSurface';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -21,18 +24,28 @@ jest.mock('@/ai/components/context-tools/AiChatContextToolButtons', () => ({
   AiChatContextToolButtons: () => <div data-testid="context-tool-buttons" />,
 }));
 
+jest.mock('@/ai/components/SynaLanding', () => ({
+  SynaLanding: () => <div data-testid="syna-landing" />,
+}));
+
 const INSTANCE_ID = 'aiChatEmptyStateTest';
 const THREAD_ID = 'thread-1';
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    <AgentChatComponentInstanceContext.Provider
-      value={{ instanceId: INSTANCE_ID }}
-    >
-      {children}
-    </AgentChatComponentInstanceContext.Provider>
-  </JotaiProvider>
-);
+const buildWrapper =
+  (surface: AiChatSurface = AI_CHAT_SURFACE.SIDE_PANEL) =>
+  ({ children }: { children: ReactNode }) => (
+    <JotaiProvider store={jotaiStore}>
+      <AgentChatComponentInstanceContext.Provider
+        value={{ instanceId: INSTANCE_ID }}
+      >
+        <AiChatSurfaceContext.Provider value={surface}>
+          {children}
+        </AiChatSurfaceContext.Provider>
+      </AgentChatComponentInstanceContext.Provider>
+    </JotaiProvider>
+  );
+
+const Wrapper = buildWrapper();
 
 describe('AiChatEmptyState', () => {
   beforeEach(() => {
@@ -56,6 +69,22 @@ describe('AiChatEmptyState', () => {
     });
 
     expect(getByTestId('context-tool-buttons')).toBeInTheDocument();
+  });
+
+  it('should render the Syna landing on the page surface', () => {
+    const { getByTestId } = render(<AiChatEmptyState />, {
+      wrapper: buildWrapper(AI_CHAT_SURFACE.PAGE),
+    });
+
+    expect(getByTestId('syna-landing')).toBeInTheDocument();
+  });
+
+  it('should not render the Syna landing on the side panel surface', () => {
+    const { queryByTestId } = render(<AiChatEmptyState />, {
+      wrapper: buildWrapper(AI_CHAT_SURFACE.SIDE_PANEL),
+    });
+
+    expect(queryByTestId('syna-landing')).not.toBeInTheDocument();
   });
 
   it('should render nothing when the current thread is awaiting its first chunk', () => {

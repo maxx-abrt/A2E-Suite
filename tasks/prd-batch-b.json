@@ -57,11 +57,12 @@
         "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; Lingui fr+en; no i18n catalog churn; no AI attribution"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-AI/L-NAV. Pairs after US-141 (gating) and US-143 (recipes) for full content, not hard-blocked.",
       "dependsOn": [
         "US-132"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-153",
@@ -397,6 +398,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T21:06:57.758Z"
+    "updatedAt": "2026-10-01T21:16:33.243Z"
   }
 }

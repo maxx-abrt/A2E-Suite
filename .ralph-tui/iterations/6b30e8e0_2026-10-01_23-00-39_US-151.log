@@ -1,0 +1,140 @@
+# Iteration 2 Log
+
+## Metadata
+
+- **Task ID**: US-151
+- **Task Title**: M7f-2: Agenda landing page — calendar week as the app home
+- **Description**: As a user opening Agenda, I want a landing that orients me on my week with quick actions so that Agenda feels like an app, not just a route. Starting state: not started — PLAN M7f open; Agenda is a ho...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-01T21:00:39.631Z
+- **Ended At**: 2026-10-01T21:06:57.757Z
+- **Duration**: 6m 18s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the mandated clean-start check and task confirmation.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-151" PLAN.md
+[94m[bash][0m $ grep -rn "US-151" docs/plan/phases/ 2>/dev/null | tail -30
+[94m[bash][0m $ grep -rn "M7f" PLAN.md | head -30
+[94m[bash][0m $ grep -rln "US-151" . --include="*.md" --include="*.json" 2>/dev/null | grep -v node_modules | head -...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd-batch-b.json')) def walk(o):     if isinstance(...
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd-batch-b.json')) def walk(o,path=''):     if isi...
+[94m[bash][0m $ done
+[94m[bash][0m $ grep -rn "US-15[0-3]\|M7f" docs/plan/phases/*.md | tail -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-11-report.md
+[94m[bash][0m $ git log --oneline -8
+[94m[glob][0m pattern: [96mpackages/twenty-front/src/pages/**/*alendar*[0m
+[94m[glob][0m pattern: [96mpackages/twenty-front/src/modules/template-gallery/**/*.{ts,tsx}[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/hooks/useOpenTemplateGallery.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/BureauLanding.tsx
+[94m[bash][0m $ ls packages/twenty-front/src/modules/bureau packages/twenty-front/src/modules/bureau/constants packa...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/constants/BureauLandingTemplates.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/constants/BureauLandingTemplateCategory.ts
+[94m[bash][0m $ ls packages/twenty-front/src/modules/bureau/components/__tests__/
+[94m[grep][0m [95mpackages/twenty-apps[0m pattern: [96mcategory: 'Agenda'|category: \"Agenda\"|'Agenda'[0m
+[94m[bash][0m $ grep -rln "Agenda" packages/twenty-apps/internal/*/src 2>/dev/null | head -20
+[94m[grep][0m [95mpackages/twenty-apps/internal/a2e-documents/src[0m pattern: [96mtime-block|timeblock|ritual|editorial|revision|run-sheet|roster[0m
+[94m[bash][0m $ grep -rln "weekly-time-block\|editorial-calendar\|event-run-sheet\|shift-roster\|exam-revision\|team...
+[94m[grep][0m [95mpackages/twenty-apps[0m pattern: [96mdescribeTemplate|defineTemplate|TemplateDescriptor[0m
+[94m[bash][0m $ grep -rln "TemplateDescriptorCategory" packages/twenty-shared/src packages/twenty-front/src | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/constants/AgendaTemplateDescriptors.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/__tests__/BureauLanding.test.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/CalendarToolbar.tsx
+[94m[bash][0m $ ls packages/twenty-front/src/modules/calendar/components/ packages/twenty-front/src/modules/calendar...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/types/CalendarEventDraft.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/calendarEventSlots.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/getCalendarEventSlotFromInstant.ts
+[94m[bash][0m $ cat packages/twenty-front/src/modules/calendar/types/CalendarViewMode.ts
+[94m[bash][0m $ grep -rn "20202020-b00c" packages/twenty-server/src packages/twenty-shared/src --include="*.ts" | he...
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-front/src/modules/calendar/utils/__tests__ | head
+[94m[bash][0m $ grep -rn "buildCalendarEventDraftFromSlot\b\|DefaultCalendarEventDraft\|defaultCalendarEventDraft" p...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/isCalendarLocalEditSurface.ts
+[94m[bash][0m $ grep -rn "isCalendarLocalEditSurface\|onCreateEventFromSlots\|CalendarWeekView" packages/twenty-fron...
+[94m[bash][0m $ grep -rn "principle 1\|binding UX\|no new chrome\|UX principle" docs/*.md docs/**/*.md 2>/dev/null |...
+[94m[bash][0m $ grep -rni "chrome" docs/product-experience.md 2>/dev/null | head
+[94m[bash][0m $ grep -rni "principle" docs/*.md | grep -i "ux\|chrome\|host\|navigation" | head -20
+[94m[bash][0m $ grep -ni "agenda\|calendar\|chrome\|host page\|sidebar" docs/product-experience.md | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/product-experience.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/findAgendaTemplateDescriptor.ts
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-front/src/modules/calendar/constants/
+[94m[bash][0m $ tail -20 .ralph-tui/progress.md
+Now I'll check for active claims overlapping my target files, then claim my slice.
+[94m[bash][0m $ grep -n "CLAIMED" docs/plan/phases/phase-11-report.md | tail -10
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-11-report.md
+[94m[bash][0m $ tail -5 docs/plan/phases/phase-11-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/bureau/BureauPage.tsx
+[94m[bash][0m $ cat packages/twenty-front/src/testing/constants/UntestedAppPaths.ts 2>/dev/null
+[94m[todowrite][0m
+[94m[write][0m "import { type TemplateDescriptorCategory } from 'twenty-shared/application';
+
+// The gallery category the Agenda home prefilters to. Agenda has no app; its
+// six M9c descriptors are host-side and all... (461 chars)"
+[94m[write][0m "import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+
+// A named starter the Agenda home features (M7f).
+export type AgendaLandingTemplateLink = {
+  descrip... (1030 chars)"
+[94m[write][0m "import { AGENDA_LANDING_TEMPLATE_CATEGORY } from '@/calendar/constants/AgendaLandingTemplateCategory';
+import { AGENDA_LANDING_TEMPLATE_LINKS } from '@/calendar/constants/AgendaLandingTemplates';
+impo... (3261 chars)"
+[94m[write][0m "import { Temporal } from 'temporal-polyfill';
+
+import { type CalendarEventDraft } from '@/calendar/types/CalendarEventDraft';
+import { buildCalendarEventDraftFromSlot } from '@/calendar/utils/calendar... (817 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[write][0m "import { AgendaLanding } from '@/calendar/components/AgendaLanding';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library... (2574 chars)"
+[94m[write][0m "import { AGENDA_LANDING_TEMPLATE_CATEGORY } from '@/calendar/constants/AgendaLandingTemplateCategory';
+import { AGENDA_LANDING_TEMPLATE_LINKS } from '@/calendar/constants/AgendaLandingTemplates';
+impo... (1100 chars)"
+[94m[write][0m "import { Temporal } from 'temporal-polyfill';
+
+import { buildDefaultCalendarEventDraft } from '@/calendar/utils/buildDefaultCalendarEventDraft';
+
+const TIME_ZONE = 'Europe/Paris';
+
+describe('buildDefa... (1325 chars)"
+[94m[bash][0m $ npx jest src/modules/calendar/components/__tests__/AgendaLanding.test.tsx src/modules/calendar/const...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -30
+[94m[bash][0m $ npx jest src/modules/calendar --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -15
+[94m[bash][0m $ npx jest --findRelatedTests src/pages/calendar/CalendarPage.tsx src/modules/calendar/components/Agen...
+[94m[bash][0m $ npx jest --findRelatedTests src/pages/calendar/CalendarPage.tsx src/modules/calendar/components/Agen...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/pages/calendar/CalendarPage.tsx src/modules/calendar/c...
+[94m[bash][0m $ npx oxfmt --check src/pages/calendar/CalendarPage.tsx src/modules/calendar/components/AgendaLanding....
+[94m[bash][0m $ npx oxfmt src/modules/calendar/components/__tests__/AgendaLanding.test.tsx 2>&1 | tail -5 && npx oxf...
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-front 2>&1 | tail -30
+[94m[bash][0m $ grep -rn "calendar-view-mode\|calendar-page\|CalendarPage" packages/twenty-front/src --include="*.te...
+[94m[todowrite][0m
+[94m[bash][0m $ git diff --stat -- packages/twenty-front
+[94m[bash][0m $ git diff -- packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -15
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-11-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-11-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ npx jest src/modules/calendar/components/__tests__/AgendaLanding.test.tsx src/modules/calendar/const...
+[94m[todowrite][0m
+US-151 implemented and self-verified. Enriched the existing `/calendar` host page (no new route/nav): `CalendarPage` defaults to the week view and renders an `AgendaLanding` strip with a primary "New event" (next-full-hour draft via the existing composer) and 3 featured Agenda gallery links. Added constants, a `buildDefaultCalendarEventDraft` util, and 7 unit tests (composition, primary action, gallery category, host-side drift guard). Calendar module 27 suites/257 green, tsgo exit 0, oxlint/oxfmt clean. Phase report + `progress.md` appended. Tier-2 browser E13 leg is the orchestrator's.
+
+<promise>COMPLETE</promise>

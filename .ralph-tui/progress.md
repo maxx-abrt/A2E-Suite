@@ -14,6 +14,7 @@ after each iteration and it's included in prompts for context.
 - **Two shapes of "landing"**: (1) a *new* host route (`~/pages/<x>` + `createWorkspaceRouteObjects` + `AppPath` + `title-utils` + nav row repoint), as with Bureau `/bureau`; or (2) an *existing* host page enriched in place when a nav row already targets it (Agenda `/calendar`), as with US-151 — default the host to the intended surface and prepend a self-contained header component that takes the host's own action as a callback, so the host keeps a single write path and no second route/nav is added.
 - **`twenty(max-consts-per-file)`**: max one exported `const` per file. Split paired constants into separate files (see `BureauLandingTemplateCategory.ts` vs `BureauLandingTemplates.ts`); `styled` consts are exempt.
 - **Pre-existing red**: `usePageChangeEffectNavigateLocation.test.ts` "tests should be exhaustive" was red at HEAD because `AppPath.{Drive,Calendar,Discussions,Inbox}` lack matrix rows; `UNTESTED_APP_PATHS` is the exemption list.
+- **Landing without an app object (Syna/Agenda)**: when the surface is a *host* feature (no `Application`/object metadata to install-gate on), mount the landing as an *empty-state* enrichment of the existing host page rather than a new route — for Syna that is `AiChatEmptyState`, gated on `AiChatSurfaceContext === AI_CHAT_SURFACE.PAGE` so the side panel stays compact. No `/syna` `AppPath` is needed. A *new* route is only justified when the landing must own content during an active thread.
 
 ---
 
@@ -41,3 +42,16 @@ after each iteration and it's included in prompts for context.
   - Keep landing constants + their drift guard co-located in the host package when both the featured keys and the descriptors are host-side (US-142 Agenda), unlike Bureau whose descriptors ship in a2e-documents.
 ---
 
+
+## 2026-10-01 - US-152 M7f-3: Syna landing page
+- Built the Syna home as the `/chat` host page's empty-state enrichment: new `SynaLanding` renders the primary "New conversation" (`useSwitchToNewAiChat`), 3 featured M9c recipe links, the full 7-READY actions library (each opens the shared gallery via `useOpenTemplateGallery({ category: 'Syna', templateKey })`) and the recent runs (`useChatThreads` + `useAiChatThreadClick`).
+- `AiChatEmptyState` now renders `<SynaLanding />` only when `AiChatSurfaceContext === AI_CHAT_SURFACE.PAGE`, so the side-panel ask box is untouched.
+- Zero-AI gate (US-141) first: `isSynaAvailable` false + `AI_SETTINGS` -> a single `Connect a provider` **Link** (`to={getSettingsPath(SettingsPath.AiProviders)}`); false without admin -> null.
+- Recent runs are derived from the existing `agentChatThreads` usage store (`getRecentSynaRuns`: exclude archived, sort by `lastMessageAt ?? updatedAt` desc, cap 3) — no new table.
+- Constants `SynaLandingTemplateCategory`/`SynaLandingTemplates` (own files per `max-consts-per-file`). Tests: `SynaLanding.test.tsx` (10), `getRecentSynaRuns.test.ts` (4), `SynaLandingTemplates.test.ts` (4, drift guard), `AiChatEmptyState.test.tsx` (+2 surface gating). 24 pass; tsgo 0; oxlint/oxfmt 0/0.
+- Files: `twenty-front/src/modules/ai/{components/SynaLanding.tsx,components/AiChatEmptyState.tsx,constants/SynaLandingTemplateCategory.ts,constants/SynaLandingTemplates.ts,utils/getRecentSynaRuns.ts}` + their `__tests__`.
+- **Learnings:**
+  - A host surface with **no app object** (Syna is the host AI chat, `AiChat` in `useNavigationDrawerModes`) cannot use `useIsDocumentApplicationInstalled` to self-gate; the right gate is the empty-state hook (`useShouldShowAiChatEmptyState`) and the existing page-vs-side-panel surface.
+  - `twenty(no-navigate-prefer-link)` fires on `navigate()` in an `onClick` — use `<Button to={...}>` (renders a react-router `Link`) for pure navigation.
+  - When unit-rendering a *child* that consumes a module-level React context (e.g. `AiChatSurfaceContext`) without the real provider tree, mock only the context's `Provider` to a pass-through and keep the real `createContext` value, instead of building the full agent-chat provider stack.
+---
