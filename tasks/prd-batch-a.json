@@ -276,9 +276,10 @@
         "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; Lingui fr+en; no i18n catalog churn; no AI attribution"
       ],
       "priority": 14,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-EDITOR. Phase-13-report line 332 is the slice spec; the connectedAccountId 'composer flow' concern is resolved per that line by reusing existing calendar primitives with graceful degradation.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-145",
@@ -380,6 +381,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T17:40:18.351Z"
+    "updatedAt": "2026-10-01T17:45:45.339Z"
   }
 }

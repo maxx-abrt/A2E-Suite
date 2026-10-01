@@ -662,3 +662,19 @@ CLAIMED — US-144/date-reminder-mention — deepseek-v4.1-flash — 2026-10-01T
 **Do not redo:** the committed US-143 source — `SynaRecipeDescriptor` type, `SYNA_RECIPE_DESCRIPTORS` (8), `findSynaRecipeDescriptor`/`buildSynaRecipePreview`/`resolveSynaRecipeExecution`/`validateSynaRecipeDescriptors`, `useSynaRecipeApply`, the `a2e-host-syna` group in `HostTemplateDescriptorGroups`, the `Syna` category in `TemplateGalleryCategoryConfig` + shared `TemplateDescriptorCategory` union, the `useApplyTemplate` delegation, and the three tests. Re-verified green from HEAD 953a7a89; do not rebuild or refactor.
 **Remaining:** the rest of Ralph's batch A (US-144…US-149) and batch 14B.
 **Next:** orchestrator Tier-2 gallery pass; then US-144 (already claimed at 19:38:50 by the prior iteration) per Ralph's queue.
+
+## 2026-10-01 17:45 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-144 M8a-3: date/reminder mention block — dateReminder inline content creating an Agenda reminder · **Slice:** the whole slice (single date-reminder inline-content slice)
+**Claim:** blocked — already claimed (with a live file-overlap conflict)
+**Ready-to-tick:** no — an active competing executor is mid-flight on this exact slice; this session did zero work to avoid clobbering it
+**Base:** 42c119a229f68903ddd6a55eb8e006f1c6310dd2
+**Changed:** none (stopped at contract §1.3 already-claimed + §3 file-overlap preflight, before any edit)
+**Checks:** none run — no files touched, so no gate applies; this is a coordination stop, not a code stop
+**Evidence:**
+- `docs/plan/phases/phase-13-report.md:647` holds an unexpired `CLAIMED — US-144/date-reminder-mention` (19:38:50Z, base 953a7a89) with no blocked/conflict/done follow-up.
+- A competing executor is actively writing the slice: `git status` at ~19:41 showed no source changes; by 19:45 it shows 7 new/changed files under `packages/twenty-front/src/modules/blocknote-editor/` with mtimes 19:43:57–19:44:34 — NEW `blocks/DateReminderInlineContent.tsx`, `hooks/useDateReminderSlashMenuItem.ts`, `utils/buildDateReminderMention.ts`, `utils/getDateReminderMentionExportText.ts`, `utils/__tests__/buildDateReminderMention.test.ts`, `utils/__tests__/getDateReminderMentionExportText.test.ts`; EDITS `blocks/Schema.ts`, `components/BlockEditor.tsx`.
+- `ps aux` shows multiple live `bun .../ralph-tui run` processes (PIDs 24782, 74194, 68648), so `[parallel] mode = "never"` in `.ralph-tui/config.toml` is not enforced across invocations in this checkout.
+**Missing for tick:** the active executor's own Tier-0 gates + Tier-2 browser evidence (insert date mention → event exists in Agenda; E14 round-trip leg).
+**Do not redo:** the in-flight slice files listed above — let the claiming executor finish; do not edit, revert, lint-clean, or build on them.
+**Remaining:** US-143 committed; US-144 in-flight; US-145…US-149 plus batch 14B still open.
+**Next:** orchestrator — wait for the live US-144 executor to append its report (or adjudicate the stale/in-flight claim if it stalls with those files present) before re-dispatching US-144.

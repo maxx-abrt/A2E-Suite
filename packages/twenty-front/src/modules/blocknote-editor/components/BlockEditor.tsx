@@ -19,6 +19,7 @@ import {
 } from '@/blocknote-editor/components/CustomSlashMenu';
 import { LinkToRecordSlashMenuItem } from '@/blocknote-editor/components/LinkToRecordSlashMenuItem';
 import { SynaSlashMenuItem } from '@/blocknote-editor/components/SynaSlashMenuItem';
+import { useDateReminderSlashMenuItem } from '@/blocknote-editor/hooks/useDateReminderSlashMenuItem';
 import { SynaFormattingToolbar } from '@/blocknote-editor/components/SynaFormattingToolbar';
 import { BlockEditorRemoteCursorsEffect } from '@/blocknote-editor/co-editing/components/BlockEditorRemoteCursorsEffect';
 import { useDocumentCursors } from '@/blocknote-editor/co-editing/hooks/useDocumentCursors';
@@ -275,6 +276,7 @@ export const BlockEditor = ({
 
   const blockNoteTheme = colorScheme === 'light' ? 'light' : 'dark';
   const getMentionItems = useMentionMenu(editor);
+  const dateReminderSlashMenuItem = useDateReminderSlashMenuItem(editor);
 
   const handleFocus = () => {
     onFocus?.();
@@ -325,6 +327,7 @@ export const BlockEditor = ({
                 {(linkToRecordItem) => {
                   const slashMenuItems = () => [
                     ...getSlashMenu(editor),
+                    dateReminderSlashMenuItem,
                     linkToRecordItem,
                     ...synaItems,
                   ];

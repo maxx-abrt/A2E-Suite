@@ -3,10 +3,10 @@
   "sessionId": "20784e55-938f-43af-9035-82514fa8f305",
   "status": "running",
   "startedAt": "2026-10-01T17:35:39.318Z",
-  "updatedAt": "2026-10-01T17:40:18.351Z",
-  "currentIteration": 0,
+  "updatedAt": "2026-10-01T17:45:45.339Z",
+  "currentIteration": 1,
   "maxIterations": 20,
-  "tasksCompleted": 0,
+  "tasksCompleted": 1,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -16,7 +16,18 @@
     "totalTasks": 0,
     "tasks": []
   },
-  "iterations": [],
+  "iterations": [
+    {
+      "iteration": 1,
+      "status": "completed",
+      "taskId": "US-143",
+      "taskTitle": "M9c family: 8+ Syna prompt/action recipes (summarize page, meeting→tasks, weekly digest, grant eligibility, email reply, translate page, clean up notes, draft invoice from time entries)",
+      "taskCompleted": true,
+      "durationMs": 270509,
+      "startedAt": "2026-10-01T17:35:47.841Z",
+      "endedAt": "2026-10-01T17:40:18.350Z"
+    }
+  ],
   "skippedTaskIds": [],
   "cwd": "/Users/maxaubert/Projets/A2E Suite",
   "activeTaskIds": [],

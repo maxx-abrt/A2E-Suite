@@ -7,6 +7,7 @@ import { withMultiColumn } from '@blocknote/xl-multi-column';
 
 import { BookmarkBlock } from '@/blocknote-editor/blocks/BookmarkBlock';
 import { CalloutBlock } from '@/blocknote-editor/blocks/CalloutBlock';
+import { DateReminderInlineContent } from '@/blocknote-editor/blocks/DateReminderInlineContent';
 import { FileBlock } from '@/blocknote-editor/blocks/FileBlock';
 import { MentionInlineContent } from '@/blocknote-editor/blocks/MentionInlineContent';
 import { PageLinkBlock } from '@/blocknote-editor/blocks/PageLinkBlock';
@@ -31,6 +32,7 @@ export const BLOCK_SCHEMA = withMultiColumn(
     inlineContentSpecs: {
       ...defaultInlineContentSpecs,
       mention: MentionInlineContent,
+      dateReminder: DateReminderInlineContent,
     },
   }),
 );

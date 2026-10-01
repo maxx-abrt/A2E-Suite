@@ -28,3 +28,13 @@ after each iteration and it's included in prompts for context.
   - Ralph can have overlapping iterations: this session was assigned US-143 while the 19:26 run was still mid-flight and had already committed it (a US-144 `CLAIMED` line follows in the phase report). Before doing any work, always re-check `git log` / `git status` and the report tail — the assigned task may already be committed. Never rebuild committed work.
   - The host-side Syna recipe family pattern is captured in the Codebase Patterns section above.
 ---
+
+
+## [2026-10-01] - US-144 (blocked — live competing executor)
+- What was implemented: nothing. Stopped at contract §1.3 + §3: an unexpired `CLAIMED — US-144/date-reminder-mention` (phase-13-report.md:647, 19:38:50Z) exists and a competing executor is actively writing the slice right now (7 new/changed `twenty-front/src/modules/blocknote-editor/` files, mtimes 19:43:57–19:44:34). Zero source edits made.
+- Files changed: none (only this progress note + the phase-13 report entry).
+- **Learnings:**
+  - `[parallel] mode = "never"` in `.ralph-tui/config.toml` is NOT enforced across separate `ralph-tui run` invocations: `ps aux` showed three live processes (PIDs 24782/74194/68648) on the same checkout. A clean `git status` can turn dirty mid-session while you are only reading — always re-check `git status` + target-file mtimes right before editing, not just at session start.
+  - To detect a live writer, compare `git status --porcelain` and `stat` mtimes across two reads a few minutes apart; a task that looked unclaimed can be mid-flight.
+  - Do not append `CLAIMED` or resume when a same-slice claim is unexpired and files are actively changing — report `blocked — already claimed` with the file/mtime evidence and stop.
+---
