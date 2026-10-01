@@ -73,3 +73,31 @@ CLAIMED — US-159/M12b — deepseek-v4.1-flash — 2026-10-01T22:42:01Z — bas
 **Do not redo:** both `getting-started.mdx` pages and their prior report entry; nav already wired
 **Remaining:** M12c–M12g (5 other [ ] bullets in the M12 milestone)
 **Next:** orchestrator ticks M12b; next executor starts M12c or M12d.
+
+CLAIMED — US-160/template-catalogue-script — deepseek-v4.1-flash — 2026-10-01T22:57:00Z — base 479979e2e1a88351cac5ff4524f0ac056f0aded6
+
+## 2026-10-01 23:05 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-160 M12d: templates catalogue page generated from the M9 descriptors by a script · **Slice:** the M12d bullet — generator script + regenerated en/fr catalogue pages
+**Claim:** done-for-review
+**Ready-to-tick:** yes — docs gates and the regeneration drift test are green; no i18n catalogs, no `locales/**`, no AI attribution; the only `mintlify validate` failure is the pre-existing unrelated `l/ar/...implementation-services.mdx:10:18` warning already recorded under M12a
+**Base:** 479979e2e1a88351cac5ff4524f0ac056f0aded6
+**Changed:**
+- new `packages/twenty-docs/scripts/generate-template-catalogue.ts` (entry: collect → render → Prettier → write en+fr)
+- new `packages/twenty-docs/scripts/template-catalogue/{collect-template-catalogue,render-template-catalogue}.ts` + `libphonenumber-js.shim.ts` + `tsconfig.json`
+- new `packages/twenty-docs/scripts/__tests__/template-catalogue.spec.ts` (determinism + every-key-resolves + committed==regeneration)
+- regenerated `packages/twenty-docs/user-guide/a2e-suite/templates.mdx` (en) and `packages/twenty-docs/l/fr/user-guide/a2e-suite/templates.mdx` (fr)
+- edit `packages/twenty-docs/vitest.config.mts` (`@` → twenty-front modules alias for the host-descriptor import) and `package.json` (`docs:generate-template-catalogue`)
+- this report; `.ralph-tui/progress.md`
+**Checks:**
+- `npx tsx --tsconfig packages/twenty-docs/scripts/template-catalogue/tsconfig.json packages/twenty-docs/scripts/generate-template-catalogue.ts` → writes both pages; re-run leaves the committed bytes identical (idempotent)
+- `npx vitest run --config packages/twenty-docs/vitest.config.mts` → 2 files / 20 tests pass, including `committed catalogue pages match regeneration (en|fr)` (the CI-able drift assertion)
+- `node docs/scripts/check-docs.mjs` → `PASS: 26 maintained documents, 219 local inline links, balanced code fences`
+- `cd packages/twenty-docs && npx tsx scripts/lint-mdx.ts` → `No angle bracket placeholders in 217 MDX files.`
+- `cd packages/twenty-docs && npx oxlint -c .oxlintrc.json .` → `Found 19 warnings and 0 errors` (16 pre-existing + 3 script `console` lines, warnings only)
+- `npx prettier --check` on all new/changed files + both generated pages → `All matched files use Prettier code style!`
+- `npx nx run twenty-docs:validate` → fails only on the pre-existing `l/ar/...:10:18` acorn warning; no warning/error from either catalogue page
+- Descriptor sources read live: `buildDocumentTemplateDescriptors` (20), `buildProjectTemplateDescriptors` (12), `buildFicheTemplateDescriptors` (10), `buildFolderStructureDescriptors` (4), `HOST_TEMPLATE_DESCRIPTOR_GROUPS` (Agenda 6 + Syna READY 7) = 59 rows; app names read from each `application.config.ts` `displayName` (no hand list)
+**Missing for tick:** `twenty-docs` has no `build` target (`npx nx build twenty-docs` → "Cannot find configuration for task twenty-docs:build"), so the documented docs gate is `check-docs.mjs` + `lint-mdx` + the vitest drift check — same situation recorded for M12a/M12b. Tier-2 screenshots remain placeholders (`Pending (Tier-2)` cell) per PLAN.
+**Do not redo:** the generator/renderer/spec, both generated `templates.mdx`, the vitest `@` alias, the root `docs:generate-template-catalogue` script. The deferred Syna recipe `syna-facture-depuis-temps` (DEFERRED, P7-gated) is intentionally absent because the catalogue mirrors the gallery's READY-only host group; do not add it as an available row.
+**Remaining:** M12c, M12e, M12f, M12g (4 other [ ] bullets in the M12 milestone)
+**Next:** orchestrator ticks M12d; next executor starts M12c (one page per app) or M12f (admin & self-host).

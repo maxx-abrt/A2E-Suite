@@ -154,3 +154,13 @@ after each iteration and it's included in prompts for context.
 - **Learnings:**
   - Contract §1.3: a `done-for-review` entry for the exact slice means verify-and-report, not rebuild — the uncommitted pages matched an existing claim/report, so no CONFLICT.
 ---
+
+## 2026-10-01 - US-160 M12d: generated templates catalogue
+- Added `packages/twenty-docs/scripts/generate-template-catalogue.ts` plus `scripts/template-catalogue/{collect,render}-template-catalogue.ts`: collects the real C1 descriptors (`buildDocumentTemplateDescriptors` 20, `buildProjectTemplateDescriptors` 12, `buildFicheTemplateDescriptors` 10, `buildFolderStructureDescriptors` 4, `HOST_TEMPLATE_DESCRIPTOR_GROUPS` Agenda 6 + Syna READY 7), renders one MDX table per category (name, app, what it creates, inputs, screenshot placeholder), Prettier-formats and writes both `user-guide/a2e-suite/templates.mdx` and `l/fr/user-guide/a2e-suite/templates.mdx`.
+- App names are read from each app's `application.config.ts` `displayName` via regex (executing the config graph is heavy); host app names come from `HOST_TEMPLATE_DESCRIPTOR_GROUPS.applicationName`.
+- Added `scripts/__tests__/template-catalogue.spec.ts`: determinism, every-collected-key-appears, and `committed page === regeneration` for en+fr (the CI drift check). Added root script `docs:generate-template-catalogue`.
+- **Learnings:**
+  - `tsx` executing `twenty-shared` dist fails on `libphonenumber-js` metadata interop (`{ default }`), which blocks any import chain through `twenty-shared/utils` (e.g. Syna recipes via `@/ai/utils/getContextToolButtons`). Fix: a generator-scoped tsconfig `paths` mapping `libphonenumber-js` → `scripts/template-catalogue/libphonenumber-js.shim.ts` (empty `getCountries`) plus `@/*` → `twenty-front/src/modules/*`; pass it with `tsx --tsconfig …`. Vitest needs no shim, only the `@` `resolve.alias` in `vitest.config.mts`.
+  - Order with code-unit `<`/`>` comparison, never `localeCompare`, so generated output cannot vary by machine locale.
+  - Read-only generated pages need a shared `render()` used by both the writer and the drift test, and the writer must run Prettier (`format({ filepath })`) or `nx fmt` goes red on table alignment.
+---

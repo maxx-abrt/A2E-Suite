@@ -216,12 +216,13 @@
         "Quality gates: packages/twenty-docs build/check green; script has its own minimal test or a deterministic-output assertion; no i18n catalog churn; no AI attribution"
       ],
       "priority": 11,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-DOCS. Best after US-142/US-143 so all families are covered; runs fine earlier with partial families.",
       "dependsOn": [
         "US-142",
         "US-143"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-161",
@@ -405,6 +406,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T22:55:58.169Z"
+    "updatedAt": "2026-10-01T23:06:26.984Z"
   }
 }

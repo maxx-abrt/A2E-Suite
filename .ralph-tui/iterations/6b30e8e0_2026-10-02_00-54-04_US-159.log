@@ -1,0 +1,51 @@
+# Iteration 12 Log
+
+## Metadata
+
+- **Task ID**: US-159
+- **Task Title**: M12b: Getting started documentation — workspace creation, personas, sidebar tour, Cmd+K, Home/Today
+- **Description**: As a new user reading the docs, I want a Getting started guide written from the real UI so that I can onboard myself. Starting state: M12a shipped the IA skeleton (11 en + 11 fr pages with stub conten...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-01T22:54:04.348Z
+- **Ended At**: 2026-10-01T22:55:58.169Z
+- **Duration**: 1m 53s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the clean-start check and understand the task.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+Working tree is dirty with files I didn't create. Per contract §0, I must check for matching CLAIMED entries before proceeding. Let me investigate.
+[94m[bash][0m $ git diff --stat && echo "===DIFF getting-started===" && git diff -- packages/twenty-docs/user-guide/...
+The getting-started docs already contain M12b content. Let me check the phase report for existing claims/results on US-159.
+[94m[bash][0m $ git diff -- docs/plan/phases/phase-16-report.md
+[94m[bash][0m $ grep -n "US-159\|M12a\|M12b" PLAN.md | head -50
+There's already a `done-for-review` entry for US-159/M12b. Per contract §1.3, I must verify rather than redo. Let me confirm dependencies and current state.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "a2eSuite\|getting-started" packages/twenty-docs/docs.json packages/twenty-docs/navigation/b...
+M12a is `[x]`; US-159 slice was completed and reported `done-for-review` by the previous iteration but not yet committed. Per contract I verify rather than redo. Let me confirm the acceptance evidence and run the documented checks.
+[94m[bash][0m $ grep -c "TODO: E13 screenshot" "packages/twenty-docs/user-guide/a2e-suite/getting-started.mdx" "pack...
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -20
+Both wired, 5 placeholders each. Now running the documented checks.
+[94m[bash][0m $ npx tsx scripts/lint-mdx.ts 2>&1 | tail -10
+Checks pass. Let me spot-verify the label grep-match claim on a few key labels.
+[94m[bash][0m $ done
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+All key labels grep-match source; `Start from scratch` has 0 hits and is explicitly documented as not-yet-shipped (M13b). The slice is verified complete. Let me check the progress.md state before appending my verification entry.
+Both the phase report and `progress.md` already contain the US-159 M12b `done-for-review` entry. The work is complete, verified, and checks are green. I made zero code changes. I'll append a concise re-verification entry to both records and stop.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-16-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-16-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain | grep -v "^?? .ralph-tui/iterations"
+Verified. US-159 M12b is already complete (`done-for-review` from the prior iteration), and I re-verified rather than redid it:
+
+- `check-docs.mjs` PASS, prettier clean, `lint-mdx.ts` clean
+- `docs.json` wiring at lines 381/867; 5 E13 placeholders per page
+- Labels grep-match source except planned `Start from scratch` (0 hits, documented as M13b)
+
+No code changed outside the two report files. Both records updated.
+
+<promise>COMPLETE</promise>
