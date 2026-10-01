@@ -5,35 +5,271 @@ description: Provisionnement, installation/mise à niveau/désinstallation, rôl
 
 > **Version documentée :** Suite A2E 0.2.1 · Twenty 2.39.0.
 >
-> Ceci est l'ébauche M12a. Le parcours est livré en **M12f**.
+> Cette page documente les surfaces d'administration livrées et les commandes
+> serveur qui les sous-tendent. Les libellés sont repris de l'interface et du
+> code. Le runbook de déploiement est le
+> [`DEPLOY.md`](https://github.com/maxx-abrt/A2E-Suite/blob/main/DEPLOY.md) du
+> dépôt et la référence de provisionnement des apps est
+> [`docs/applications.md`](https://github.com/maxx-abrt/A2E-Suite/blob/main/docs/applications.md) —
+> les deux sont liés plutôt que dupliqués. Ce qui ne peut être confirmé que sur
+> un déploiement en fonctionnement est marqué **Pending (environment)**.
 
-## Périmètre
+## Qui voit quoi
 
-Tout ce que fait un administrateur : provisionner une instance, installer et
-mettre à jour les apps, gérer les rôles et les membres, configurer les clés
-BYOK et comprendre les sauvegardes.
+Les Réglages sont regroupés en trois sections. Chaque élément n'est affiché
+qu'aux membres dont le rôle porte le flag de permission correspondant (voir
+[Rôles et membres](#rôles-et-membres-c4)).
 
-## Écrans couverts par cette page
+| Section       | Éléments                                                                              |
+| ------------- | ------------------------------------------------------------------------------------- |
+| **User**      | `Profile`, `Experience`, `Accounts` (`Emails`, `Calendars`)                           |
+| **Workspace** | `General`, `Data model`, `Layout`, `Members`, `Billing`, `MCP & APIs`, `Apps`, `Syna` |
+| **Other**     | `Admin Panel`, `Community`, `Support`, `Documentation`, `Logout`                      |
 
-- Réglages — `User` (`Profile`, `Experience`), `Workspace` (`General`,
-  `Data model`, `Layout`, `Members`, `Billing`, `MCP & APIs`, `Apps`,
-  `Syna`), `Other` (`Admin Panel`, `Community`, `Support`, `Documentation`).
-- Réglages → `Workspace` → **Syna** — `Models`, `Usage`, `Audit` (clés,
-  plafond d'usage).
-- Réglages → `Roles` et permissions.
-- Catalogue d'apps : installation / mise à niveau / désinstallation et sa
-  politique de données.
-- Archive `Storage usage` (stockage de l'espace).
+`Admin Panel` n'apparaît que pour les utilisateurs ayant la capacité
+d'administration complète (`canAccessFullAdminPanel` / `canImpersonate`).
+`Billing` exige en plus que la facturation soit activée sur l'instance.
 
-## Sections prévues
+## Provisionnement (M1)
 
-1. Provisionnement (voir `DEPLOY.md` dans le dépôt).
-2. Installer, mettre à niveau et désinstaller une app — la politique de
-   données (voir `docs/applications.md` dans le dépôt).
-3. Rôles et gestion des membres.
-4. Clés BYOK pour Syna.
-5. Sauvegardes et restauration.
+L'image de production embarque les apps A2E. La construction de l'image compile
+le tarball de chaque app dans `packages/twenty-apps/dist` ; le point d'entrée du
+conteneur les enregistre et les installe ensuite à chaque démarrage, de sorte
+qu'un déploiement neuf n'a pas besoin d'un rituel manuel
+`app:publish` + `app:install`.
 
-## Statut
+La séquence de démarrage dans `entrypoint.sh`, une fois la base migrée, est :
 
-Charpente uniquement.
+1. `command:prod app:provision-bundled`
+2. `command:prod install-pre-installed-apps`
+3. `command:prod cron:register:all`
+
+### `app:provision-bundled`
+
+Lit chaque `*.tgz` de `BUNDLED_APPS_DIR` (par défaut
+`/app/packages/twenty-apps/dist`) et l'enregistre comme application avec le
+type de source `BUNDLED`, `isPreInstalled=true`, `isListed=true` et
+`ownerWorkspaceId=null`. La commande est idempotente : un tarball déjà
+enregistré à la même version est ignoré, et une version embarquée plus récente
+met à jour le `latestAvailableVersion` de l'enregistrement existant. Deux
+options existent :
+
+- `--dir <path>` — lire les tarballs dans un autre répertoire que
+  `BUNDLED_APPS_DIR`.
+- `--dry-run` — journaliser les décisions d'enregistrement/mise à jour sans
+  écrire.
+
+Sur un serveur non Docker, le répertoire est absent : la commande le signale et
+s'arrête.
+
+### `install-pre-installed-apps`
+
+Parcourt chaque espace provisionné et installe, via le service d'installation
+normal, chaque enregistrement marqué `isPreInstalled`. La commande est
+idempotente : une app déjà installée à la même version ne fait rien, et une
+version enregistrée plus récente est appliquée comme une mise à niveau. Un échec
+sur une app est journalisé sans bloquer les autres. Sur une image **plus
+récente**, la nouvelle version embarquée est d'abord enregistrée, puis cette
+passe met à niveau les espaces qui font déjà tourner l'app.
+
+### Désactivation
+
+- `DISABLE_BUNDLED_APP_PROVISIONING=true` ignore les deux commandes sur un
+  conteneur.
+- Les définitions de worker livrées positionnent ce flag, car le provisionnement
+  doit s'exécuter une fois par démarrage dans le conteneur qui possède les
+  migrations.
+- Un conteneur démarré avec `DISABLE_DB_MIGRATIONS=true` ignore aussi le
+  provisionnement, sauf si `DISABLE_BUNDLED_APP_PROVISIONING=false` le force
+  (pour les déploiements qui migrent hors bande).
+
+Le contrat de démarrage est couvert par un test du dépôt qui exécute le vrai
+`entrypoint.sh` avec un `yarn` simulé. Exécuter le chemin image/Coolify sur un
+hôte réel est une étape de déploiement, **Pending (environment)** — suivez
+`DEPLOY.md`.
+
+## Installation, mise à niveau et désinstallation (C3)
+
+### Installer une app plus tard
+
+Ouvrez **Settings → Workspace → Apps** (titre de page **Applications**). La page
+a un onglet **Marketplace**, un onglet **Installed** et — avec la permission
+adéquate — un onglet **Developer**, plus une section **A2E Suite** dont l'en-tête
+indique **The all-in-one workspace modules built into this suite. Install only
+what you need.**
+
+Chaque app disponible apparaît sous forme de carte étiquetée **Part of A2E
+Suite** avec un bouton **Install**. Une carte peut aussi indiquer **Not
+registered on this server** ou **Incompatible server version** ; ce sont des
+états de disponibilité, pas des erreurs d'interface. Installer une app plus tard
+enrichit l'espace courant sans réinitialiser son preset et sans refaire
+l'onboarding.
+
+{/* TODO: E13 screenshot — Réglages → Applications → section A2E Suite avec une carte Install */}
+
+### Masquer n'est pas désinstaller
+
+Masquer une app est une préférence de navigation, pas une action sur l'app :
+ouvrez le panneau latéral d'édition de la ligne de l'app dans la barre latérale
+et utilisez **Remove from sidebar** (voir
+[Prise en main](/fr/user-guide/a2e-suite/getting-started)). L'app conserve ses
+données et continue de fonctionner. Il n'existe pas de mode « pause avec
+restauration garantie ».
+
+La désinstallation est une action distincte et destructrice. Depuis la page de
+l'app, **Uninstall** ouvre **Uninstall Application?**, dont le sous-titre énonce
+son propre contrat :
+
+> Uninstalling permanently deletes this application and its records.
+> Reinstalling will not restore deleted data.
+> To keep your data but stop seeing this app, remove it from your navigation
+> instead.
+
+### La politique de données à la désinstallation
+
+Le lancement de la désinstallation ouvre un précontrôle C3 qui affiche
+**Checking what will be deleted...** puis liste, sous **Will be deleted:**,
+chaque objet possédé par l'app, le nombre d'enregistrements par objet
+(`N records — <object>`), chaque champ et vue possédés sur les objets standards,
+et tout dépendant inter-app **&lt;app&gt; depends on: &lt;dependency&gt;**. Vous
+devez saisir `"yes"` pour confirmer.
+
+Le serveur refuse la désinstallation tant que cette destruction n'est pas sûre :
+
+- Si un objet possédé contient encore des enregistrements, la suppression est
+  bloquée par un message nommant les objets et vous demandant d'exporter ou de
+  supprimer d'abord les enregistrements — les réinstaller ne les restaurera pas.
+- Si une autre application en dépend, la suppression est bloquée en nommant les
+  applications dépendantes, à détacher ou désinstaller d'abord.
+
+Il n'existe pas encore de chemin d'export/ rétention pris en charge : une app qui
+détient des données est donc refusée plutôt que présentée comme sûre. Les
+enregistrements standards company, person et task survivent à une
+désinstallation ; les champs possédés par l'app sur des objets standards peuvent
+disparaître. Réinstaller restaure les défauts pris en charge, jamais les données
+supprimées. Ne déroulez le cycle complet
+installation → remplissage → mise à niveau → export → désinstallation →
+réinstallation que sur un espace jetable. Voir
+[`docs/applications.md`](https://github.com/maxx-abrt/A2E-Suite/blob/main/docs/applications.md) pour le tableau de dépannage par couche.
+
+### Mises à niveau
+
+Une app disposant d'une version **plus récente** affiche une étiquette
+**Update** et le bouton **Upgrade to &lt;version&gt;**. Ce bouton de mise à
+niveau dans l'app est proposé pour les types de source `npm` et `tarball`. Les
+apps A2E embarquées ne l'utilisent pas : elles sont mises à jour en déployant une
+image plus récente, dont le provisionnement au démarrage enregistre la nouvelle
+version et dont la passe d'installation met à niveau les espaces qui la font
+déjà tourner. La compatibilité de version est vérifiée avant l'application, donc
+une app peut signaler **Incompatible server version** plutôt que s'installer.
+
+{/* TODO: E13 screenshot — page d'app avec le bouton Upgrade et la confirmation de désinstallation */}
+
+## Rôles et membres (C4)
+
+La gestion des membres et des rôles se trouve sous
+**Settings → Workspace → Members**, qui a trois onglets : **Team**, **Invite**
+et **Roles**. L'onglet **Roles** n'apparaît qu'avec le flag de permission
+**Roles**.
+
+- **Team** — la liste des membres de l'espace (**Manage Members**), la
+  recherche et les actions sur les membres.
+- **Invite** — **Invite by link** et **Invite by email**, plus **Approved
+  Domains**. Les invitations arrivent dans cet espace et son identité de membre
+  configurée.
+- **Roles** — la liste complète des rôles.
+
+Chaque espace embarque deux rôles :
+
+- **Admin** — rôle géré par le système (`isEditable=false`). Il porte tout
+  l'accès aux réglages et toutes les permissions d'enregistrement (lecture, mise
+  à jour, suppression douce, destruction) et peut être assigné à des
+  utilisateurs et à des clés API. Il ne peut être ni modifié ni supprimé ; pour
+  « un Admin mais sans X », créez un nouveau rôle.
+- **Member** — le rôle par défaut de l'espace, attribué aux nouveaux membres.
+
+L'onglet **Roles** liste **All roles** (**Assign roles to specify access
+permissions**), avec **Create Role** pour ajouter un rôle personnalisé. Ouvrir un
+rôle affiche trois onglets :
+
+- **Permissions** — les flags de permission des réglages et les permissions
+  d'enregistrement par objet. Les flags incluent **MCP & APIs**, **Workspace**,
+  **Users**, **Roles**, **Data Model**, **Security**, **Workflows**, **SSO
+  Bypass**, **Impersonate**, **Applications**, **Layouts**, **Billing** et
+  **AI**.
+- **Assignment** — **Applicability** : **Assignable to Workspace Members**,
+  **Assignable to Agents**, **Assignable to API Keys**.
+- **Settings** — le nom et la description du rôle, et la **Danger zone**
+  (**Delete role**).
+
+Supprimer un rôle demande une confirmation : **Delete Role Permanently**, puis
+**Confirm deletion of &lt;role&gt; role? This cannot be undone. &lt;members,
+agents or API keys&gt; will be reassigned to the default role.** Le rôle par
+défaut de l'espace ne peut pas être supprimé, ni un rôle auquel vous êtes
+assigné, et le rôle admin ne peut pas être retiré au dernier administrateur.
+
+{/* TODO: E13 screenshot — Réglages → Members → Roles avec la liste des rôles */}
+
+## Clés BYOK pour Syna
+
+Les fournisseurs bring-your-own-key de l'espace se trouvent sous
+**Settings → Workspace → Syna → Providers** (titre de page **AI providers**).
+
+- **Resolution order** — **For every AI request, Syna resolves the workspace key
+  first, then the instance AI_PROVIDERS entry, then the built-in catalog.**
+- Les clés ajoutées ici appartiennent à cet espace uniquement et ne sont jamais
+  renvoyées au navigateur ; la note de facturation indique que le fournisseur
+  facture le compte qui détient la clé et qu'une clé d'espace contourne
+  l'entitlement de fournisseur personnalisé de l'instance.
+- La liste **Providers** affiche pour chaque fournisseur son badge de source —
+  **Workspace key**, **Instance** ou **Catalog** — et un état **Configured** /
+  **No key**, avec les modèles **Default:** et **Fast:** sélectionnés.
+- Le formulaire comporte **Provider name**, **API key** (la clé existante est
+  affichée masquée), **Base URL**, **Default model** et **Fast model**, avec
+  **Test key**, **Save** et **Remove key**.
+- **OpenAI-compatible endpoint** — **Add OpenAI-compatible provider** connecte
+  tout endpoint auto-hébergé ou proxy qui parle l'API OpenAI.
+
+Le garde-fou par espace est le plafond mensuel de tokens. Il s'affiche sous
+**Settings → Workspace → Syna → Usage** comme **Monthly token cap** —
+**Metered AI tokens used this calendar month against the workspace cap.** — avec
+**Tokens used** et **No cap set** s'il n'est pas défini. Le plafond est stocké
+sur l'espace sous `aiMonthlyTokenCap` et se définit via le chemin de mise à jour
+de l'espace sous la permission de réglages IA ; un plafond nul ou `0` signifie
+aucun plafond.
+
+Sans fournisseur configuré, il existe un état zéro-IA : les entrées Syna restent
+masquées et un administrateur voit un lien **Connect a provider** vers cette
+page.
+
+{/* TODO: E13 screenshot — Réglages → Syna → Providers avec une clé d'espace configurée */}
+
+## Sauvegardes et restauration
+
+Les sauvegardes relèvent du déploiement et sont couvertes dans
+[`DEPLOY.md`](https://github.com/maxx-abrt/A2E-Suite/blob/main/DEPLOY.md).
+L'essentiel à ne pas manquer :
+
+- Sauvegardez **PostgreSQL 16** (plancher dur : 14) et la configuration
+  **Redis 7** ; les fichiers compose épinglent `postgres:16` / `redis:7`.
+- Faites une sauvegarde logique cohérente avec la base (`pg_dump`/`pg_restore`) ;
+  ne tarrez jamais un répertoire de données PostgreSQL vivant.
+- Sauvegardez le volume des fichiers téléversés avec la base. Le stockage local
+  est indexé par `{workspaceId}/{applicationId}/…` ; une sauvegarde de la seule
+  base laisse les téléversements et les tarballs d'app manquants.
+- Gardez `ENCRYPTION_KEY` (et `FALLBACK_ENCRYPTION_KEY` si utilisé) dans le même
+  point de restauration — les lignes chiffrées au repos sont irrécupérables sans
+  elle.
+- Restaurez d'abord sur une instance isolée, puis vérifiez les enregistrements,
+  permissions, téléchargements de fichiers et jobs worker avant de faire
+  confiance à la sauvegarde.
+- `/healthz` n'est qu'un contrôle de vivacité ; `/readyz` vérifie la base et
+  Redis. Inspectez les logs serveur et worker après une mise à niveau si un
+  déploiement se comporte mal.
+
+## Étapes suivantes
+
+- [Prise en main](/fr/user-guide/a2e-suite/getting-started) — espaces, interface et navigation.
+- [Syna](/fr/user-guide/a2e-suite/syna) — utiliser l'assistant et ses outils.
+- [`DEPLOY.md`](https://github.com/maxx-abrt/A2E-Suite/blob/main/DEPLOY.md) — le runbook de déploiement Docker/Coolify.
+- [`docs/applications.md`](https://github.com/maxx-abrt/A2E-Suite/blob/main/docs/applications.md) — provisionnement, vérification et dépannage des apps.

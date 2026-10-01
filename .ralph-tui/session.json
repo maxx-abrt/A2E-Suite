@@ -3,10 +3,10 @@
   "sessionId": "6b30e8e0-f0b6-4aaa-aa47-219b2bae47b8",
   "status": "running",
   "startedAt": "2026-10-01T20:37:10.521Z",
-  "updatedAt": "2026-10-01T23:06:26.984Z",
-  "currentIteration": 12,
+  "updatedAt": "2026-10-01T23:32:33.371Z",
+  "currentIteration": 14,
   "maxIterations": 20,
-  "tasksCompleted": 10,
+  "tasksCompleted": 11,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -136,6 +136,26 @@
       "durationMs": 113821,
       "startedAt": "2026-10-01T22:54:04.348Z",
       "endedAt": "2026-10-01T22:55:58.169Z"
+    },
+    {
+      "iteration": 13,
+      "status": "completed",
+      "taskId": "US-160",
+      "taskTitle": "M12d: templates catalogue page generated from the M9 descriptors by a script",
+      "taskCompleted": true,
+      "durationMs": 623317,
+      "startedAt": "2026-10-01T22:56:03.666Z",
+      "endedAt": "2026-10-01T23:06:26.983Z"
+    },
+    {
+      "iteration": 14,
+      "status": "completed",
+      "taskId": "US-161",
+      "taskTitle": "M12f: Admin & self-host documentation — provisioning, app lifecycle data policy, roles, BYOK, backups",
+      "taskCompleted": false,
+      "durationMs": 1392978,
+      "startedAt": "2026-10-01T23:06:32.483Z",
+      "endedAt": "2026-10-01T23:29:45.461Z"
     }
   ],
   "skippedTaskIds": [],

@@ -164,3 +164,12 @@ after each iteration and it's included in prompts for context.
   - Order with code-unit `<`/`>` comparison, never `localeCompare`, so generated output cannot vary by machine locale.
   - Read-only generated pages need a shared `render()` used by both the writer and the drift test, and the writer must run Prettier (`format({ filepath })`) or `nx fmt` goes red on table alignment.
 ---
+
+## 2026-10-01 - US-161 M12f: Admin & self-host documentation
+- Wrote both `packages/twenty-docs/user-guide/a2e-suite/admin-and-self-host.mdx` (en) and `l/fr/…/admin-and-self-host.mdx` (fr) from the real surfaces: Settings IA + who-sees-what; M1 bundled provisioning (`app:provision-bundled`, `install-pre-installed-apps`, `BUNDLED_APPS_DIR`, `DISABLE_BUNDLED_APP_PROVISIONING`, idempotent/opt-out, entrypoint order); C3 install-later / hide (`Remove from sidebar`) / destructive uninstall preflight + server safety blocks / upgrade (npm+tarball button vs bundled image deploy); C4 roles (Team/Invite/Roles, system Admin + default Member, permission flags, applicability, delete confirmation); BYOK Syna (Settings → Syna → Providers, resolution order, source badges, `aiMonthlyTokenCap`); backups/restore. Links `DEPLOY.md` + `docs/applications.md` (GitHub blob URLs, both 200), Docker legs marked `Pending (environment)`.
+- This iteration resumed a stalled prior run: pages existed but the report/progress steps never ran. No page rewrite — verified with docs gates and label greps, then reported `done-for-review`.
+- **Learnings:**
+  - `rg` is NOT installed in this environment; the `grep` tool works but errors on huge records — restrict to `packages/twenty-front/src` + `*.tsx` to avoid the locales `.po` blowup.
+  - `npx nx build twenty-docs` does not exist (only `dev`/`validate`/`lint`/`fmt`/`test`); the M12 docs gate in practice is `check-docs.mjs` + `lint-mdx.ts` + prettier, and `validate` fails only on the pre-existing `l/ar/...implementation-services.mdx:10:18` acorn warning.
+  - GitHub blob links in docs are not resolvable by `check-docs.mjs` (it only covers local inline links), so verify them with `curl -L -w %{http_code}`.
+---

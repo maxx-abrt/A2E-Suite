@@ -101,3 +101,25 @@ CLAIMED — US-160/template-catalogue-script — deepseek-v4.1-flash — 2026-10
 **Do not redo:** the generator/renderer/spec, both generated `templates.mdx`, the vitest `@` alias, the root `docs:generate-template-catalogue` script. The deferred Syna recipe `syna-facture-depuis-temps` (DEFERRED, P7-gated) is intentionally absent because the catalogue mirrors the gallery's READY-only host group; do not add it as an available row.
 **Remaining:** M12c, M12e, M12f, M12g (4 other [ ] bullets in the M12 milestone)
 **Next:** orchestrator ticks M12d; next executor starts M12c (one page per app) or M12f (admin & self-host).
+
+CLAIMED — US-161/M12f-admin-self-host — deepseek-v4.1-flash — 2026-10-01T23:06:54Z — base 054a6203bfadbf83abdcf21ee4207a70fc1afc94
+
+## 2026-10-01 23:32 UTC — deepseek-v4.1-flash [executor] — contract v4 (resumed after stall)
+**Task:** US-161 M12f: Admin & self-host documentation — provisioning, app lifecycle data policy, roles, BYOK, backups · **Slice:** the M12f bullet — both `admin-and-self-host.mdx` pages (en + fr)
+**Claim:** done-for-review
+**Ready-to-tick:** yes — docs gates green, pages complete and label-verified. `npx nx build twenty-docs` has no build target (package documents `dev`/`validate`/`lint`), same situation recorded for M12a/M12d; `validate` fails only on the pre-existing unrelated `l/ar/...implementation-services.mdx:10:18` warning.
+**Base:** 054a6203bfadbf83abdcf21ee4207a70fc1afc94
+**Changed:** `packages/twenty-docs/user-guide/a2e-suite/admin-and-self-host.mdx`, `packages/twenty-docs/l/fr/user-guide/a2e-suite/admin-and-self-host.mdx`; this report; `.ralph-tui/progress.md`
+**Checks:**
+- `node docs/scripts/check-docs.mjs` → `PASS: 26 maintained documents, 219 local inline links, balanced code fences`
+- `cd packages/twenty-docs && npx tsx scripts/lint-mdx.ts` → `No angle bracket placeholders in 217 MDX files.`
+- `cd packages/twenty-docs && npx prettier --check user-guide/a2e-suite/admin-and-self-host.mdx l/fr/user-guide/a2e-suite/admin-and-self-host.mdx` → `All matched files use Prettier code style!`
+- `npx nx build twenty-docs` → `Cannot find configuration for task twenty-docs:build` (no build target; documented gate is check-docs + lint-mdx + vitest, as recorded for M12a/M12d)
+- `npx nx run twenty-docs:validate` → fails only on pre-existing `l/ar/user-guide/getting-started/capabilities/implementation-services.mdx:10:18`; no finding on either admin page
+- GitHub links resolve: `curl -L -o /dev/null -w %{http_code}` → `200` for `DEPLOY.md` and `docs/applications.md`
+- Label grep-verify vs source: `Part of A2E Suite` / `The all-in-one workspace modules built into this suite…` / `Not registered on this server` / `Incompatible server version` → `A2eSuiteApplicationCard.tsx`, `SettingsA2eSuiteSection.tsx`; `Uninstall Application?` / `Checking what will be deleted...` / `Will be deleted:` → `SettingsApplicationDetailAboutTab.tsx`; `Remove from sidebar` → `SidePanelEditOrganizeActions.tsx`; `Monthly token cap` / `Metered AI tokens used this calendar month…` / `No cap set` / `Add OpenAI-compatible provider` → `SettingsAi*`; `Connect a provider` → `SynaSlashMenuItem.tsx` / `SynaLanding.tsx`; `All roles` / `Create Role` / `Assign roles to specify access permissions` / `Delete Role Permanently` / `Confirm deletion of…` / applicability labels → `settings/roles/**`; `Manage Members` / `Invite by link` / `Invite by email` / `Approved Domains` → members tabs. Provisioning symbols `app:provision-bundled`, `install-pre-installed-apps`, `BUNDLED_APPS_DIR`, `DISABLE_BUNDLED_APP_PROVISIONING` → `database/commands/**`; `aiMonthlyTokenCap` → `workspace.entity.ts`; `canAccessFullAdminPanel` → user/admin-panel.
+- No AI attribution in either page; `git status` shows no `locales/**`.
+**Missing for tick:** Tier-2 E13 screenshots only (4 `{/* TODO: E13 screenshot … */}` placeholders per page); the `nx build twenty-docs` target does not exist, so the applicable docs gate is check-docs + lint-mdx (both green).
+**Do not redo:** both `admin-and-self-host.mdx` pages — complete and grep-verified; `docs.json` (lines 389/875) and `navigation/base-structure.json` (line 385) already wire the en/fr pages from M12a.
+**Remaining:** M12c, M12e, M12g (3 other [ ] bullets in the M12 milestone)
+**Next:** orchestrator ticks M12f; next executor starts M12c (one page per app) or M12g (in-app help wiring).

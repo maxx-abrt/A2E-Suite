@@ -237,9 +237,10 @@
         "Quality gates: packages/twenty-docs build/check green; no source changes outside twenty-docs (+docs links); no i18n catalog churn; no AI attribution"
       ],
       "priority": 12,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-DOCS. Depends only on M12a (done). D-M1's docker alternative stays out — document what ships.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-162",
@@ -406,6 +407,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T23:06:26.984Z"
+    "updatedAt": "2026-10-01T23:32:33.371Z"
   }
 }
