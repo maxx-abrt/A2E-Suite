@@ -1,0 +1,384 @@
+# Iteration 1 Log
+
+## Metadata
+
+- **Task ID**: US-131
+- **Task Title**: M9a-3: per-app template apply logic functions — the 'Use template' write path keyed by descriptor key
+- **Description**: As a user, I want 'Use template' in the gallery to actually apply a content template through the owning app so that gallery picks create real, fresh objects. Starting state: partial — US-117 shipped t...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-01T15:03:18.840Z
+- **Ended At**: 2026-10-01T15:21:11.239Z
+- **Duration**: 17m 52s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the clean-start check and context gathering.
+[94m[bash][0m $ ls -la && echo "---" && ls docs/plan/phases/ 2>/dev/null | tail -30
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+Dirty files are Ralph engine files — expected. Let me find the task details.
+[94m[bash][0m $ grep -n "US-131" PLAN.md | head -20
+[94m[bash][0m $ grep -rn "US-131\|M9a-3\|M9a" docs/plan/phases/*.md | head -40
+[94m[bash][0m $ grep -n "M9a-3\|per-app template\|apply-template\|Use template\|template apply" PLAN.md | head -30
+[94m[bash][0m $ grep -n "US-13[0-9]\|US-11[0-9]" PLAN.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/lib/ packages/twenty-apps/internal/a2e-documents/...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/lib/ packages/twenty-apps/internal/a2e-projects/sr...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-accounting/src/lib/ packages/twenty-apps/internal/a2e-accountin...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-drive/src/lib/ packages/twenty-apps/internal/a2e-drive/src/logi...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/document-template-descriptors.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/instantiate-template.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/save-document-as-template.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/logic-functions/post-install.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/logic-functions/handlers/ packages/twenty-apps/in...
+[94m[bash][0m $ grep -rn "buildTemplateCopyPayload\|instantiate-template\|readAuthorizedTemplateCopySource\|findAuth...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/starter-templates.ts
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts[0m pattern: [96mlistTemplateDescriptors|list-template-descriptors|LOGIC_FUNCTION_IDS[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src[0m pattern: [96mbuildTemplateCopyPayload|readAuthorizedTemplateCopySource|instantiate-template[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/logic-functions/post-install.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/starter-projects.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/project-template-descriptors.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/fiche-template-descriptors.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/lib/folder-structure-descriptors.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/logic-functions/post-install.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/fiche-templates.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/components/TemplateGallery.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/types/TemplateGalleryItem.ts
+[94m[bash][0m $ find packages/twenty-front/src/modules/template-gallery -type f | sort
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src[0m pattern: [96mtemplateKey|templateCorrelation|operationId[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages[0m pattern: [96moperationId|idempotenc|applyTemplateByKey|apply-template|applyTemplate[0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/hooks/useTemplateGalleryItems.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/lib/folder-structure-templates.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/logic-functions/post-install.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/save-project-as-template.ts
+[94m[read][0m
+[94m[bash][0m $ grep -rn "export.*defineLogicFunction\|LogicFunctionConfig\|inputSchema" packages/twenty-sdk/src/def...
+[94m[bash][0m $ ls packages/twenty-sdk/src
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/logic-functions/logic-function-config.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/logic-functions/define-logic-function.ts
+[94m[bash][0m $ grep -rn "payload\|params\|args" packages/twenty-server/src/engine/core-modules/logic-function/logic...
+[94m[bash][0m $ grep -rn "ExecuteOneLogicFunctionInput\|input: ExecuteOneLogicFunctionInput\|class ExecuteOneLogicFu...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/generated-metadata/graphql.ts
+[94m[bash][0m $ grep -rln "US-131\|US-132" tasks/ .ralph-tui/ 2>/dev/null | head
+[94m[bash][0m $ continue     items = data if isinstance(data,list) else data.get('userStories') or data.get('tasks')...
+[94m[bash][0m $ python3 -c " import json data=json.load(open('tasks/prd-batch-a.json')) items = data if isinstance(d...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/templateDescriptorType.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/templateDescriptorGuards.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/package.json
+[94m[read][0m
+[94m[bash][0m $ grep -rn "requiredApps" packages/twenty-apps/internal/*/src | grep -v "__tests__" | head -40
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/utils/buildTemplateGalleryItems.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/starter-books.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/fields/document-is-locked.field.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/fields/ packages/twenty-apps/internal/a2e-project...
+[94m[bash][0m $ grep -rn "isTemplate\|templateKey" packages/twenty-apps/internal/a2e-drive/src/objects/drive-folder....
+[94m[bash][0m $ ls packages/twenty-shared/scripts 2>/dev/null
+[94m[bash][0m $ ls packages/twenty-shared/src/application/
+[94m[bash][0m $ print(json.dumps(d.get('targets',{}).get('generateBarrels',d.get('targets',{}).get('barrel',{})),ind...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/objects/fiche.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/objects/drive-folder.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/appKeyValueType.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/appKeyValueScopeType.ts
+[94m[bash][0m $ grep -rln "keyValue\|KeyValue" packages/twenty-sdk/src 2>/dev/null | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/logic-function/key-value/kv.ts
+[94m[bash][0m $ grep -rn "from 'twenty-sdk'\|twenty-sdk/logic\|keyValue\|kv\." packages/twenty-apps/internal package...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-drive/src/constants/universal-identifiers.ts
+[94m[bash][0m $ grep -n "FIELD_IDS" -A 30 packages/twenty-apps/internal/a2e-accounting/src/constants/field-identifie...
+[94m[bash][0m $ grep -n "PROJECT_FIELD_IDS" -A 25 packages/twenty-apps/internal/a2e-projects/src/constants/universal...
+[94m[bash][0m $ sed -n '117,150p' packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[bash][0m $ grep -n "LOGIC_FUNCTION_IDS" -A 25 packages/twenty-apps/internal/a2e-accounting/src/constants/univer...
+[94m[bash][0m $ grep -rn "installedApp\|applicationUniversalIdentifier\|findManyApplications\|applications(" package...
+[94m[bash][0m $ grep -rn "applications:" packages/twenty-apps --include=*.ts 2>/dev/null | head -20
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps[0m pattern: [96mapplications\s*[:(][0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps[0m pattern: [96minstalledApp|findManyApplications|applicationUniversalIdentifier[0m
+[94m[read][0m
+[94m[bash][0m $ grep -rln "post-install\|postInstall\|createStarterProject\|findMissingStarterProjects" packages/twe...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/logic-functions/handlers/
+[94m[read][0m
+[94m[todowrite][0m
+Now I have enough context. Let me set up the task list and start implementing.
+[94m[write][0m "// C1 — the template-apply result contract (PLAN M9a / US-131).
+//
+// The gallery's "Use template" write path calls the owning app's apply logic
+// function keyed by the descriptor key. The app owns t... (2024 chars)"
+[94m[write][0m "import { type TemplateDescriptor } from './templateDescriptorType';
+import {
+  type TemplateApplyApplied,
+  type TemplateApplyCreatedRecord,
+  type TemplateApplyErrorCode,
+  type TemplateApplyInstalle... (4340 chars)"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/__tests__/template-descriptor.spec.ts
+[94m[write][0m "import {
+  isTemplateApplyResult,
+  resolveTemplateApplyRequestError,
+} from '@/application/templateApplyGuards';
+import { type TemplateDescriptor } from '@/application/templateDescriptorType';
+
+const... (3719 chars)"
+[94m[bash][0m $ npx nx build twenty-shared --skip-nx-cache 2>&1 | tail -20
+[94m[bash][0m $ grep -n "templateApply" packages/twenty-shared/src/application/index.ts
+[94m[bash][0m $ echo "TSGO_EXIT=$?"
+[94m[bash][0m $ cd packages/twenty-shared && npx jest src/application/__tests__/template-apply.spec.ts src/applicati...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal[0m pattern: [96mfrom 'twenty-shared/[0m
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/package.json
+[94m[bash][0m $ grep -n "twenty-shared" tsconfig.base.json
+[94m[bash][0m $ ls packages/twenty-sdk/src/cli/utilities/build/
+[94m[bash][0m $ grep -rn "external" packages/twenty-sdk/src/cli --include="*.ts" 2>/dev/null | grep -i "twenty\|depe...
+[94m[bash][0m $ grep -rln "rollupOptions\|esbuild\|external" packages/twenty-sdk/src/cli packages/twenty-sdk/src/fro...
+[94m[bash][0m $ grep -rn "LOGIC_FUNCTION_EXTERNAL_MODULES =" -A 15 packages/twenty-sdk/src/cli/utilities/build/commo...
+[94m[bash][0m $ grep -rn "LOGIC_FUNCTION_EXTERNAL_MODULES" packages/twenty-sdk/src | grep -v "__tests__"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/cli/utilities/build/common/esbuild-watcher.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/objects/document.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/index.ts
+[94m[write][0m "// The one well-known logic-function name every A2E content app exposes to
+// apply a template (US-131). The gallery's "Use template" callback resolves the
+// owning app's apply function by this name,... (361 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts
+[94m[write][0m "import { defineField, FieldType } from 'twenty-sdk/define';
+
+import {
+  DOCUMENT_TEMPLATE_FIELD_IDS,
+  OBJECT_IDS,
+} from '../constants/universal-identifiers.ts';
+
+// M9a-3 apply idempotency (US-131).... (820 chars)"
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import {
+  resolveTemplateApplyRequestError,
+  type TemplateApplyCreatedRecord,
+... (6929 chars)"
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { TEMPLATE_APPLY_LOGIC_FUNCTION_NAME } from 'twenty-shared/application';
+
+import... (1522 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { buildDocumentTemplateDescriptors } from '../../lib/document-template-descriptors.ts';
+import {
+  applyDocumentTempl... (4817 chars)"
+[94m[bash][0m $ npx nx build twenty-shared --skip-nx-cache 2>&1 | tail -5
+[94m[bash][0m $ echo "EXIT=$?"
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-documents && yarn test:unit 2>&1 | tail -25
+[94m[bash][0m $ ") open(p,'w').write(s) print("done") PY
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-documents && yarn test:unit 2>&1 | tail -18
+[94m[bash][0m $ grep -n "applyDocumentTemplateByKey\|runApply\|getInstalledApplications" packages/twenty-apps/intern...
+[94m[read][0m
+[94m[edit][0m
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-documents && yarn test:unit 2>&1 | tail -18
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-documents && yarn lint 2>&1 | tail -8
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-documents && yarn lint 2>&1 | head -80
+[94m[bash][0m $ print(json.dumps(d.get('exports',{}),indent=2))" 2>/dev/null | head -60
+[94m[bash][0m $ ls -a packages/twenty-apps/internal/a2e-documents | head -30
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/.oxlintrc.json
+The lint rule forbids `twenty-shared` imports inside `logic-functions/`. I'll move the apply logic into each app's `src/lib/` and keep the logic-function wrapper thin.
+[94m[bash][0m $ rm packages/twenty-apps/internal/a2e-documents/src/logic-functions/handlers/apply-template-handler.t...
+[94m[write][0m "import type { CoreApiClient } from 'twenty-client-sdk/core';
+import {
+  resolveTemplateApplyRequestError,
+  type TemplateApplyCreatedRecord,
+  type TemplateApplyInstalledApplications,
+  type TemplateA... (6244 chars)"
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { defineLogicFunction } from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTIO... (1966 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  applyDocumentTemplateByKey,
+  applyResolvedDocumentTemplate,
+  type ApplyTemplateClient,
+} from '../apply-templat... (4996 chars)"
+[94m[bash][0m $ rm packages/twenty-shared/src/application/constants/TemplateApplyLogicFunctionName.ts && npx nx buil...
+[94m[bash][0m $ echo "TC_EXIT=$?"
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-documents && yarn lint 2>&1 | tail -6 && yarn test:unit 2>&1 | ...
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-documents && npx twenty dev:build . 2>&1 | tail -20
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-documents && grep -o "apply-template\|templateApplyOperationId\...
+[94m[bash][0m $ grep -rho "apply-template\|templateApplyOperationId\|list-template-descriptors" .twenty/output 2>/de...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/package.json
+[94m[bash][0m $ grep -rho "c31b0200-0001-4000-8000-[0-9a-f]*" packages/twenty-apps/internal/a2e-projects/src | sort ...
+Documents app is green. Moving to a2e-projects.
+[94m[write][0m "import type { CoreApiClient } from 'twenty-client-sdk/core';
+
+import {
+  resolveMilestoneDueAt,
+  type StarterProjectTemplate,
+} from './starter-projects.ts';
+
+// Starter-project instantiation, extrac... (3489 chars)"
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+import { definePostInstallLogicFunction } from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';... (2696 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project.object.ts
+[94m[write][0m "import type { CoreApiClient } from 'twenty-client-sdk/core';
+import {
+  resolveTemplateApplyRequestError,
+  type TemplateApplyCreatedRecord,
+  type TemplateApplyInstalledApplications,
+  type TemplateA... (5109 chars)"
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { defineLogicFunction } from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTIO... (2008 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  applyProjectTemplateByKey,
+  applyResolvedProjectTemplate,
+  type ApplyTemplateClient,
+} from '../apply-template.... (5057 chars)"
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && python3 - <<'PY' import json p='package.json' d=jso...
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && git diff package.json
+[94m[bash][0m $ echo "TC=$?"
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && yarn lint 2>&1 | tail -6 && yarn test:unit 2>&1 | t...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/apply-template.test.ts
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && yarn test:unit 2>&1 | tail -10
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && npx twenty dev:build . 2>&1 | tail -8
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/objects/fiche.object.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/objects/fiche.object.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/constants/field-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/constants/universal-identifiers.ts
+[94m[write][0m "import type { CoreApiClient } from 'twenty-client-sdk/core';
+import {
+  resolveTemplateApplyRequestError,
+  type TemplateApplyCreatedRecord,
+  type TemplateApplyInstalledApplications,
+  type TemplateA... (5774 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/apply-template.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/apply-template.ts
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { defineLogicFunction } from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTIO... (1978 chars)"
+[94m[bash][0m $ print(json.load(open('packages/twenty-apps/internal/a2e-accounting/package.json'))['scripts']['test:...
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  applyFicheTemplateByKey,
+  applyResolvedFicheTemplate,
+  type ApplyTemplateClient,
+} from '../apply-template.ts';... (4724 chars)"
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-accounting && python3 - <<'PY' import json p='package.json' d=j...
+[94m[bash][0m $ echo "TC=$?"
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-accounting && yarn lint 2>&1 | tail -5 && yarn test:unit 2>&1 |...
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-accounting && npx twenty dev:build . 2>&1 | tail -8
+[94m[todowrite][0m
+
+
+[94m[write][0m "import type { CoreApiClient } from 'twenty-client-sdk/core';
+
+import {
+  flattenFolderStructureTemplate,
+  type FolderStructureFolderDraft,
+  type FolderStructureTemplate,
+} from './folder-structure-t... (3085 chars)"
+[94m[write][0m "import {
+  createFolderStructureTree,
+  type FolderStructureClient,
+} from '../../lib/create-folder-structure-tree.ts';
+import {
+  findMissingFolderStructureTemplates,
+} from '../../lib/folder-structu... (2375 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/objects/drive-folder.object.ts
+[94m[write][0m "import type { CoreApiClient } from 'twenty-client-sdk/core';
+import {
+  resolveTemplateApplyRequestError,
+  type TemplateApplyCreatedRecord,
+  type TemplateApplyInstalledApplications,
+  type TemplateA... (4767 chars)"
+ 
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { defineLogicFunction } from 'twenty-sdk/define';
+
+import { LOGIC_FUNCTIO... (2029 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  applyFolderStructureTemplateByKey,
+  applyResolvedFolderStructureTemplate,
+  type ApplyTemplateClient,
+} from '..... (5339 chars)"
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-drive && python3 - <<'PY' import json p='package.json' d=json.l...
+[94m[bash][0m $ echo "TC=$?"
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-drive && yarn lint 2>&1 | tail -5 && yarn test:unit 2>&1 | tail...
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-drive && yarn lint 2>&1 | head -20
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/lib/apply-template.ts
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-drive && yarn lint 2>&1 | tail -3 && npx twenty dev:build . 2>&...
+All four apps are green. Now the quality gates and a full status review.
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ npx jest src/application --config=jest.config.mjs 2>&1 | tail -8
+[94m[bash][0m $ npx nx show projects 2>/dev/null | grep -i "a2e\|twenty-shared" | head
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-shared 2>&1 | tail -15
+[94m[bash][0m $ print(list(d.get('targets',{}).keys()))"
+
+
+[94m[bash][0m $ print(list(d.get('targets',{}).keys()))"
+[94m[bash][0m $ npx nx lint twenty-shared --verbose 2>&1 | tail -40
+[94m[bash][0m $ echo "MINE=$?"
+
+
+[94m[bash][0m $ echo "restored"
+[94m[bash][0m $ cd packages/twenty-shared && npx oxfmt src/application/templateApplyType.ts src/application/template...
+[94m[bash][0m $ echo "HEAD_FILE=$?"
+[94m[bash][0m $ done
+[94m[bash][0m $ git diff --stat
+[94m[bash][0m $ git diff packages/twenty-apps/internal/a2e-drive/src/logic-functions/handlers/seed-folder-structures...
+[94m[bash][0m $ printf '\n' >> packages/twenty-apps/internal/a2e-drive/src/logic-functions/handlers/seed-folder-stru...
+[94m[bash][0m $ git diff packages/twenty-shared/src/application/index.ts
+[94m[bash][0m $ done
+Let me rebuild `twenty-shared` after the formatting fix and re-verify the app typechecks against the fresh dist.
+[94m[bash][0m $ npx nx build twenty-shared --skip-nx-cache 2>&1 | tail -3
+[94m[bash][0m $ echo "docs_TC=$?"
+[94m[bash][0m $ echo "drive_TC=$?"
+[94m[bash][0m $ echo "acct_TC=$?"
+[94m[bash][0m $ echo "proj_TC=$?"
+[94m[bash][0m $ git rev-parse HEAD
+[94m[bash][0m $ cd packages/twenty-shared && npx oxlint -c .oxlintrc.json src/application/templateApplyType.ts src/a...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+Now I'll append the claim line and the executor report to the phase-13 report.
+[94m[bash][0m $ tail -20 .ralph-tui/progress.md 2>/dev/null
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -25 docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ git status --porcelain
+[94m[todowrite][0m
+US-131 slice complete. Summary:
+
+- **Shared contract** (`twenty-shared/application`): `TemplateApplyResult` (applied/rejected), typed `TemplateApplyErrorCode`, structural guards, and a pure `resolveTemplateApplyRequestError` (required apps by name or universal id, required inputs).
+- **Four apply logic functions** named `apply-template`, keyed by the US-117 descriptor key, reusing each app's existing path: documents `buildTemplateCopyPayload`, projects an extracted `createStarterProject`, accounting `FICHE_TEMPLATES`/`withTemplateDefaults`, drive an extracted `createFolderStructureTree`. Fresh ids, no aliasing, no partial apply on a failed requirement.
+- **Idempotency**: nullable `templateApplyOperationId` provenance on document/project/fiche/driveFolder root; same operation id writes nothing on re-apply.
+- **Gates**: twenty-shared build/tsgo/jest green; all four apps `typecheck`/`lint`/`test:unit`/`dev:build` green (+5 tests each); manifests carry `apply-template` (non-tool). One pre-existing caveat recorded: `nx lint twenty-shared` is red on US-117's already-unformatted `template-descriptor.spec.ts`.
+- Report appended to `docs/plan/phases/phase-13-report.md`; pattern + entry added to `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

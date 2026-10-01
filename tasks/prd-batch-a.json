@@ -37,11 +37,12 @@
         "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean and npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest specs green with --config=packages/twenty-front/jest.config.mjs; npx nx build twenty-shared --skip-nx-cache if twenty-shared touched; Lingui fr+en via msg; no i18n catalog churn; no AI attribution"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-TPL front (twenty-front/src/modules/template-gallery/** + command-menu). Unlocks US-137, US-146, US-150–153, US-163, US-165. Phase-13-report line 215 defers entry-points 'so the next session lands them together with their command tests'.",
       "dependsOn": [
         "US-131"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-133",
@@ -368,6 +369,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T15:21:11.243Z"
+    "updatedAt": "2026-10-01T15:39:58.151Z"
   }
 }

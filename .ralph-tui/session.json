@@ -3,10 +3,10 @@
   "sessionId": "6881c00b-f739-4804-8118-8aa3fc38e243",
   "status": "running",
   "startedAt": "2026-10-01T15:03:12.006Z",
-  "updatedAt": "2026-10-01T15:21:11.244Z",
-  "currentIteration": 0,
+  "updatedAt": "2026-10-01T15:39:58.152Z",
+  "currentIteration": 1,
   "maxIterations": 20,
-  "tasksCompleted": 0,
+  "tasksCompleted": 1,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -16,7 +16,18 @@
     "totalTasks": 0,
     "tasks": []
   },
-  "iterations": [],
+  "iterations": [
+    {
+      "iteration": 1,
+      "status": "completed",
+      "taskId": "US-131",
+      "taskTitle": "M9a-3: per-app template apply logic functions — the 'Use template' write path keyed by descriptor key",
+      "taskCompleted": true,
+      "durationMs": 1072399,
+      "startedAt": "2026-10-01T15:03:18.840Z",
+      "endedAt": "2026-10-01T15:21:11.239Z"
+    }
+  ],
   "skippedTaskIds": [],
   "cwd": "/Users/maxaubert/Projets/A2E Suite",
   "activeTaskIds": [],

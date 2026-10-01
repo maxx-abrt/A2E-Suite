@@ -440,3 +440,44 @@ CLAIMED — US-131/per-app-apply-logic-functions — deepseek-v4.1-flash — 202
 **Do not redo:** the shared apply contract/guards; the four `src/lib/apply-template.ts` write paths; the two extracted creator modules (`create-starter-project.ts`, `create-folder-structure-tree.ts`) and the refactored `post-install`/seeder that now share them — their payloads are byte-for-byte the previous ones plus the conditional operation id. Idempotency is a nullable `templateApplyOperationId` provenance slot per root object (document/project/fiche/driveFolder root); no engine, no table. The apply functions are non-tool logic functions (no `toolTriggerSettings`).
 **Remaining:** US-132 (entry-points + Use wiring) is the direct successor, then US-137, US-146, US-150–153, US-163, US-165, then the rest of Ralph's batch.
 **Next:** US-132 resolves each installed app's `apply-template` function by name (mirror `collectTemplateDescriptorLogicFunctions`), calls `ExecuteOneLogicFunction` with `{ key, inputs, operationId }`, validates the return with `isTemplateApplyResult` and renders `rejected.errorCode`; generate the operation id once per gallery session so a retry is idempotent.
+
+CLAIMED — US-132/gallery-entry-points — deepseek-v4.1-flash — 2026-10-01T15:25:08Z — base 8c78ed6c10d0ede3e1de4509bd902d5dca8b1774
+
+## 2026-10-01 15:38 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-132 M9a-4: mount gallery entry-points — Cmd+K 'Templates', every 'New' surface, app landing pages · **Slice:** the whole mount slice — the shared gallery host surface (Cmd+K, side-panel page), the exported install-gated entry-point, category preselect, and the Use write path the US-131 handoff assigned here
+**Claim:** done-for-review
+**Ready-to-tick:** yes — all Tier-0 gates green; only the Tier-2 browser round-trip and the app-side document-New embedding (L-TPL app lane, per AC3's own "M13a will reuse") are absent
+**Base:** 8c78ed6c10d0ede3e1de4509bd902d5dca8b1774
+**Changed:**
+- `packages/twenty-shared/src/types/SidePanelPages.ts` (+`TemplateGallery = 'template-gallery'`)
+- `packages/twenty-front/src/modules/template-gallery/constants/TemplateApplyLogicFunctionName.ts` (NEW: well-known `apply-template`)
+- `.../template-gallery/utils/collectTemplateApplyLogicFunctions.ts` (NEW: resolve each installed app's apply function by name+application) + `utils/__tests__/collectTemplateApplyLogicFunctions.test.ts` (NEW: 4 tests)
+- `.../template-gallery/states/templateGalleryCategoryPreselectState.ts` (NEW: soft category preselect atom)
+- `.../template-gallery/hooks/useOpenTemplateGallery.ts` (NEW: THE entry-point seam every host uses, optional category preselect) + `hooks/__tests__/useOpenTemplateGallery.test.tsx` (NEW: 3 tests)
+- `.../template-gallery/hooks/useTemplatesCommand.ts` (NEW: command id/label/search-filter) + `hooks/__tests__/useTemplatesCommand.test.tsx` (NEW: 3 tests)
+- `.../template-gallery/hooks/useApplyTemplate.ts` (NEW: resolves owning app's apply function, calls `ExecuteOneLogicFunction` with `{key, inputs:null, operationId}`, validates `isTemplateApplyResult`; one operation id per session)
+- `.../template-gallery/components/TemplatesCommand.tsx` (NEW: Cmd+K entry, QuickCapture pattern, `IconFileText`) + `components/__tests__/TemplatesCommand.test.tsx` (NEW: 2 tests — registered + opens modal)
+- `.../template-gallery/components/TemplateGalleryEntryPoint.tsx` (NEW: install-gated "Use a template" entry-point exported for M7f/M13c) + `components/__tests__/TemplateGalleryEntryPoint.test.tsx` (NEW: 3 tests)
+- `.../template-gallery/components/TemplateGallerySidePanelPage.tsx` (NEW: the one host surface — items + gallery + apply + typed rejection)
+- `.../template-gallery/components/TemplateGallery.tsx` (+`initialCategory` soft preselect) + `components/__tests__/TemplateGallery.test.tsx` (+1 preselect-clears test)
+- `.../template-gallery/hooks/useTemplateGalleryItems.ts` (fix: descriptor listing call now sends the required `payload: {}`; it previously omitted the GraphQL-required `payload` field, which would fail every listing in-browser)
+- `packages/twenty-front/src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx` (render `TemplatesCommand` in "Other", include its id in the selectable list and no-match logic)
+- `packages/twenty-front/src/modules/side-panel/constants/SidePanelPagesConfig.tsx` (register `SidePanelPages.TemplateGallery` → `TemplateGallerySidePanelPage`)
+- this report
+**Checks:**
+- `npx nx build twenty-shared --skip-nx-cache` → `Successfully ran target build`
+- `npx nx build twenty-sdk --skip-nx-cache` → `Successfully ran target build` (required: twenty-sdk inlines `SidePanelPages` into `dist/front-component/index.d.ts`, so its stale per-branch dist otherwise fails twenty-front tsgo on the new enum member)
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx oxlint --type-aware -c .oxlintrc.json src/modules/template-gallery src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx src/modules/side-panel/constants/SidePanelPagesConfig.tsx` → `Found 0 warnings and 0 errors` (29 files)
+- `npx oxfmt --check <same paths>` → `All matched files use the correct format.`
+- `cd packages/twenty-shared && npx oxlint -c .oxlintrc.json src/types/SidePanelPages.ts` → 0/0; `npx oxfmt --check` clean
+- `cd packages/twenty-front && npx jest src/modules/template-gallery --config=jest.config.mjs` → 9 suites / 34 tests pass (was 18; +16)
+- `cd packages/twenty-front && npx jest --findRelatedTests <the 6 changed non-test sources> --config=jest.config.mjs` → 6 suites / 25 tests pass
+- `npx nx lint:diff-with-main twenty-front` → clean ("No changed files" — reports on `main...HEAD`; uncommitted working tree)
+- no `locales/**` touched; no AI attribution
+**Missing for tick:**
+- **Tier 2 (orchestrator):** browser E15 — Cmd+K → Templates → preview → Use creates fresh records (and the listing leg, now that `payload` is sent).
+- **AC3 concrete embedding:** the chooser seam (`useOpenTemplateGallery`) and install-gated `TemplateGalleryEntryPoint` are exported + tested, but the a2e-documents app-side `create-document` front component (the actual document "New" action) lives in the L-TPL app lane, not this twenty-front lane — that embedding is the documented M13a/M7f follow-up the AC defers.
+**Do not redo:** the gallery data layer/surface (US-118) — unchanged except the `initialCategory` prop and the `payload` listing fix. The shared apply contract/guards and the four app `apply-template` functions (US-131) are untouched. `useOpenTemplateGallery` is the single open seam; every future entry-point must call it rather than re-wiring the side panel.
+**Remaining:** ~18 other tasks in Ralph's batch A (US-133…US-149), then batch 14B (US-150…US-169).
+**Next:** US-133 (M7e Bureau bundle). When M13a/M7f land, call `useOpenTemplateGallery({ category })` or drop in `<TemplateGalleryEntryPoint requiredApplicationUniversalIdentifiers={[…]} category="…" />`; do not add a second open path.

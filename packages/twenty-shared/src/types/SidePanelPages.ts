@@ -45,4 +45,7 @@ export enum SidePanelPages {
   ChatChannel = 'chat-channel',
   // P10 quick capture: one Cmd+K action capturing a note or task from anywhere.
   QuickCapture = 'quick-capture',
+  // M9a-4: the one host surface for content templates across installed apps,
+  // opened from Cmd+K "Templates" and from every template entry-point.
+  TemplateGallery = 'template-gallery',
 }

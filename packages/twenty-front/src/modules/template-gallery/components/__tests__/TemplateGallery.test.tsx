@@ -204,4 +204,31 @@ describe('TemplateGallery', () => {
 
     expect(screen.getByText('No templates found')).toBeInTheDocument();
   });
+
+  it('starts filtered on the entry-point category without trapping the user', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <TemplateGallery
+        items={[meetingNotesItem, clientOnboardingItem]}
+        initialCategory="Projets"
+        onUseTemplate={jest.fn()}
+        onBlank={jest.fn()}
+      />,
+      { wrapper: Wrapper },
+    );
+
+    expect(
+      screen.getByRole('button', { name: /Client onboarding/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /Meeting notes/ }),
+    ).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Projects' }));
+
+    expect(
+      screen.getByRole('button', { name: /Meeting notes/ }),
+    ).toBeInTheDocument();
+  });
 });

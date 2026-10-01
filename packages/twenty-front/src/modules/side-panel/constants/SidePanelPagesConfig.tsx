@@ -6,6 +6,7 @@ import { SidePanelCoreWorkflowFiltersPage } from '@/object-core/workflows/compon
 import { SidePanelCoreWorkflowVersionPage } from '@/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionPage';
 import { SidePanelCoreWorkflowVersionsPage } from '@/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage';
 import { QuickCaptureSidePanelPage } from '@/quick-capture/components/QuickCaptureSidePanelPage';
+import { TemplateGallerySidePanelPage } from '@/template-gallery/components/TemplateGallerySidePanelPage';
 import { SidePanelSettingsMetadataTranslationsPage } from '@/settings/translations/components/SidePanelSettingsMetadataTranslationsPage';
 import { SidePanelRoutedPage } from '@/side-panel/routing/components/SidePanelRoutedPage';
 import { SidePanelNewSidebarItemPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemPage';
@@ -111,4 +112,5 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.WorkflowVersions, <SidePanelCoreWorkflowVersionsPage />],
   [SidePanelPages.WorkflowVersion, <SidePanelCoreWorkflowVersionPage />],
   [SidePanelPages.QuickCapture, <QuickCaptureSidePanelPage />],
+  [SidePanelPages.TemplateGallery, <TemplateGallerySidePanelPage />],
 ]);

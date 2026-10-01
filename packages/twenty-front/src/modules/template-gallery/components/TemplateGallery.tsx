@@ -175,6 +175,10 @@ export type TemplateGalleryProps = {
   items: TemplateGalleryItem[];
   isLoading?: boolean;
   isApplying?: boolean;
+  // A soft starting category, applied once from an entry-point's app context.
+  // The user can still clear or change it, so it narrows the landing view
+  // without becoming a filter they cannot escape (AC5).
+  initialCategory?: TemplateDescriptorCategory | null;
   onUseTemplate: (item: TemplateGalleryItem) => void;
   onBlank: (item: TemplateGalleryItem) => void;
 };
@@ -188,13 +192,14 @@ export const TemplateGallery = ({
   items,
   isLoading = false,
   isApplying = false,
+  initialCategory = null,
   onUseTemplate,
   onBlank,
 }: TemplateGalleryProps) => {
   const { i18n, t } = useLingui();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] =
-    useState<TemplateDescriptorCategory | null>(null);
+    useState<TemplateDescriptorCategory | null>(initialCategory);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
 
   // The descriptors ship both labels; render the one matching the active

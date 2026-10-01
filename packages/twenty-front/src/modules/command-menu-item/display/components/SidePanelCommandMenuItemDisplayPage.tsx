@@ -10,6 +10,8 @@ import { CoreObjectsCommands } from '@/object-core/commands/components/CoreObjec
 import { useCoreObjectsCommands } from '@/object-core/commands/hooks/useCoreObjectsCommands';
 import { QuickCaptureCommand } from '@/quick-capture/components/QuickCaptureCommand';
 import { useQuickCaptureCommand } from '@/quick-capture/hooks/useQuickCaptureCommand';
+import { TemplatesCommand } from '@/template-gallery/components/TemplatesCommand';
+import { useTemplatesCommand } from '@/template-gallery/hooks/useTemplatesCommand';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -36,6 +38,9 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const { quickCaptureCommandId, shouldDisplayQuickCaptureCommand } =
     useQuickCaptureCommand();
+
+  const { templatesCommandId, shouldDisplayTemplatesCommand } =
+    useTemplatesCommand();
 
   // The command menu list surfaces whatever overflowed out of the page header.
   const commandMenuPinnedInlineLayout = useAtomFamilyStateValue(
@@ -114,7 +119,8 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     !matchingOtherItems.length &&
     appActions.length === 0 &&
     coreObjectsCommandIds.length === 0 &&
-    !shouldDisplayQuickCaptureCommand;
+    !shouldDisplayQuickCaptureCommand &&
+    !shouldDisplayTemplatesCommand;
 
   const shouldDisplayFallbackItems =
     hasNoMatchingItems && fallbackCommandMenuItems.length > 0;
@@ -126,6 +132,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     ...matchingPinnedItems.map((item) => item.id),
     ...matchingOtherItems.map((item) => item.id),
     ...(shouldDisplayQuickCaptureCommand ? [quickCaptureCommandId] : []),
+    ...(shouldDisplayTemplatesCommand ? [templatesCommandId] : []),
     ...appActions.map((item) => item.id),
     ...coreObjectsCommandIds,
     ...(shouldDisplayFallbackItems
@@ -148,11 +155,13 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       {(matchingOtherItems.length > 0 ||
         appActions.length > 0 ||
         coreObjectsCommandIds.length > 0 ||
-        shouldDisplayQuickCaptureCommand) && (
+        shouldDisplayQuickCaptureCommand ||
+        shouldDisplayTemplatesCommand) && (
         <SidePanelGroup heading={t`Other`}>
           {matchingOtherItems.map((item) => (
             <CommandMenuItemRenderer item={item} key={item.id} />
           ))}
+          {shouldDisplayTemplatesCommand && <TemplatesCommand />}
           {shouldDisplayQuickCaptureCommand && <QuickCaptureCommand />}
           {appActions.map((item) => {
             const handleClick = () => {

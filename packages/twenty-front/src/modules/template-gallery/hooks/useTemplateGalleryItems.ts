@@ -57,7 +57,9 @@ export const useTemplateGalleryItems = (): {
       for (const target of targets) {
         try {
           const result = await executeOneLogicFunction({
-            variables: { input: { id: target.logicFunctionId } },
+            variables: {
+              input: { id: target.logicFunctionId, payload: {} },
+            },
           });
 
           const templates = extractTemplateDescriptors(
