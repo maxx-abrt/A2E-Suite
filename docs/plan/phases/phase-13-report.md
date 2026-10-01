@@ -533,3 +533,32 @@ CLAIMED — US-138/editable-record-view-embed — deepseek-v4.1-flash — 2026-1
 **Do not redo:** the `recordView` block + picker + safe stub + provider wrapping from US-123; the `RecordTableWidgetRendererContent`/`RecordTableWidgetProvider` edit pipeline (cell edits already route through `useUpdateOneRecord` once `isRecordTableCellsNonEditableComponentState` is false — `RecordTableWidgetStatesEffect` sets it from `isUIEditable`). Read-only remains the default; the denied stub is unchanged.
 **Remaining:** the rest of Ralph's batch A (US-139…US-149) and batch 14B.
 **Next:** orchestrator runs the E14 browser pass (embed Tasks board filtered by project → edit a cell → confirm on `/objects/tasks` → denied user sees the stub), then tick US-138 and M8b.
+
+CLAIMED — US-139/mention-index — deepseek-v4.1-flash — 2026-10-01T16:40:30Z — base e1847000adba5fc17ac1863362e514b89d71cc17
+
+## 2026-10-01 16:43 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-139 M8d: backlinks & mentions panel — 'Mentioned in' computed from mention nodes stored at save · **Slice:** the first unmet bullet — the save-time mention index plus the index-only read model (the widget/tab mount and Tier-2 are the remaining bullets)
+**Claim:** partial
+**Ready-to-tick:** no — the mention index and its read model are green and tested, but AC3 (the 'Mentioned in' page-layout tab/widget mounted on the record pages) and the Tier-2 browser leg are not landed.
+**Base:** e1847000adba5fc17ac1863362e514b89d71cc17
+**Changed:**
+- `packages/twenty-apps/internal/a2e-documents/src/objects/document-mention.object.ts` (NEW app-owned index object: polymorphic target by `targetObjectNameSingular`+`targetRecordId`, unique `mentionKey` `${documentId}:${objectName}:${recordId}`, CASCADE relation to document)
+- `.../src/objects/document.object.ts` (+`mentions` O2M inverse)
+- `.../src/constants/universal-identifiers.ts` (+ `documentMention` object / two relation ids / label id / `indexDocumentMentions` function id)
+- `.../src/lib/document-mentions.ts` (NEW: recursive mention extraction from the blocknote body, diff, `syncDocumentMentions` writer, `listMentionedInDocuments` index-only reader)
+- `.../src/logic-functions/index-document-mentions.ts` (NEW: DB-event trigger `document.updated` / `updatedFields: ['content']`, same shape as `guard-document-revision-save`; reuses `readDocumentRevisionBody`)
+- `.../src/lib/__tests__/document-mentions.test.ts` (NEW: 12 tests)
+- `.../package.json` 0.2.10→0.2.11
+- this report + `.ralph-tui/progress.md`
+**Checks:**
+- a2e-documents `yarn typecheck` → exit 0
+- a2e-documents `yarn lint` → `Found 0 warnings and 0 errors` (107 files)
+- a2e-documents `yarn test:unit` → `tests 273 / pass 273 / fail 0` (was 261; +12)
+- `npx twenty dev:build .` → `Build succeeded (36 files)`; `.twenty/output/manifest.json` parsed: object `documentMention` + fields `mentionKey`/`targetObjectNameSingular`, and `index-document-mentions` with `{"eventName":"document.updated","updatedFields":["content"]}`
+- no `twenty-front`/`twenty-shared`/`twenty-sdk` source touched → no dist rebuild needed; no `locales/**` touched; no AI attribution
+**Missing for tick:**
+- **AC3 — the 'Mentioned in' widget/tab:** not mounted. The read seam it consumes exists and is tested (`listMentionedInDocuments`); the next slice adds `front-components/mentioned-in.front-component.tsx` + the page-layout tab declarations.
+- **Tier 2 (orchestrator):** browser — mention a task in a doc → 'Mentioned in' appears on the task record page; backlink visible in the E14/E17 journeys.
+**Do not redo:** the extract/diff/sync writer, the index-only reader, the `document-mention` object/relation and the `document.updated`+`content` trigger (mirrors the guard's). The read path must never select `document.content`; the index is the contract (asserted in the test).
+**Remaining:** the rest of Ralph's batch A (US-140…US-149) and batch 14B.
+**Next:** mount the tab — a `front-components/mentioned-in.front-component.tsx` reading `useSelectedRecordIds()` and calling `listMentionedInDocuments(new CoreApiClient(), { objectNameSingular, recordId })`, then declare standalone page-layout tabs (document record page first, then the target standard objects) per the a2e-chat `company-discussions.page-layout-tab` pattern. US-149 reuses this read model.

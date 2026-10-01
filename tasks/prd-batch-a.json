@@ -178,9 +178,10 @@
         "Quality gates: touched packages: npx nx lint:diff-with-main <pkg> clean + npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; a2e-documents slice yarn typecheck && yarn lint && yarn test:unit && npx twenty dev:build . green; app-owned fields use the standalone defineField manifest path (no hand-created workspace tables) or a generated migration if server-side; bump touched app patch version once; no i18n catalog churn; no AI attribution"
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-EDITOR. UNLOCKS US-149 (M11a Related tab consumes the same read model) and US-156 (M11e mention notifications).",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-140",
@@ -375,6 +376,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T16:38:04.124Z"
+    "updatedAt": "2026-10-01T16:43:51.839Z"
   }
 }

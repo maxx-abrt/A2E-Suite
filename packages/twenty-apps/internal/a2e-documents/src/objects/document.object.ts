@@ -204,6 +204,19 @@ export default defineObject({
       universalSettings: oneToMany,
     },
     {
+      universalIdentifier: RELATION_IDS.documentMentions,
+      type: FieldType.RELATION,
+      name: 'mentions',
+      label: 'Mentions sortantes',
+      description:
+        'Index des enregistrements mentionnés dans le corps de ce document.',
+      icon: 'IconAt',
+      relationTargetObjectMetadataUniversalIdentifier: OBJECT_IDS.documentMention,
+      relationTargetFieldMetadataUniversalIdentifier:
+        RELATION_IDS.documentMentionDocument,
+      universalSettings: oneToMany,
+    },
+    {
       universalIdentifier: RELATION_IDS.documentCompany,
       type: FieldType.RELATION,
       name: 'company',

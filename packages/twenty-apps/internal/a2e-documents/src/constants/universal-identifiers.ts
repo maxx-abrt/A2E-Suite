@@ -16,6 +16,7 @@ export const OBJECT_IDS = {
   documentCommentThread: 'c31a0200-0000-4000-8000-000000000000',
   documentRevision: 'c31a0300-0000-4000-8000-000000000000',
   documentFavorite: 'c31a0400-0000-4000-8000-000000000000',
+  documentMention: 'c31a0500-0000-4000-8000-000000000000',
 } as const;
 
 // Both sides of every relation, grouped by the record that owns the foreign key.
@@ -32,6 +33,8 @@ export const RELATION_IDS = {
   documentRevisions: 'c31a0300-0002-4000-8000-000000000002',
   documentFavoriteDocument: 'c31a0400-0002-4000-8000-000000000001',
   documentFavorites: 'c31a0400-0002-4000-8000-000000000002',
+  documentMentionDocument: 'c31a0500-0002-4000-8000-000000000001',
+  documentMentions: 'c31a0500-0002-4000-8000-000000000002',
 } as const;
 
 export const LABEL_IDENTIFIER_IDS = {
@@ -39,6 +42,7 @@ export const LABEL_IDENTIFIER_IDS = {
   commentThreadId: 'c31a0200-0001-4000-8000-000000000001',
   revisionVersionId: 'c31a0300-0001-4000-8000-000000000001',
   documentFavoriteKey: 'c31a0400-0001-4000-8000-000000000001',
+  documentMentionKey: 'c31a0500-0001-4000-8000-000000000001',
 } as const;
 
 // M8c page-chrome fields. Standalone manifests on the app-owned `document`
@@ -74,6 +78,9 @@ export const LOGIC_FUNCTION_IDS = {
   listTemplateDescriptors: 'c31a0000-0012-4000-8000-000000000009',
   // C1 write path: applies a listed descriptor by key (M9a-3 / US-131).
   applyTemplate: 'c31a0000-0012-4000-8000-00000000000a',
+  // M8d save-time mention indexer (US-139): persists the body's mention nodes
+  // so "Mentioned in" reads the index, never the document body.
+  indexDocumentMentions: 'c31a0000-0012-4000-8000-00000000000b',
 } as const;
 
 export const COMMAND_MENU_ITEM_IDS = {
