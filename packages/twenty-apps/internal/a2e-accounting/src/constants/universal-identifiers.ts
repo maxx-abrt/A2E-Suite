@@ -121,6 +121,8 @@ export const FRONT_COMPONENT_IDS = {
   subventionExplorer: 'b11a0000-0013-4000-8000-000000000004',
   cerfaHelper: 'b11a0000-0013-4000-8000-000000000005',
   quickEntry: 'b11a0000-0013-4000-8000-000000000006',
+  // M9b save-as-template record action (US-137).
+  saveFicheAsTemplateCommand: 'b11a0000-0013-4000-8000-000000000007',
 } as const;
 
 export const COMMAND_MENU_ITEM_IDS = {
@@ -130,6 +132,8 @@ export const COMMAND_MENU_ITEM_IDS = {
   editFiche: 'b11a0000-0011-4000-8000-000000000004',
   findSubventions: 'b11a0000-0011-4000-8000-000000000005',
   fillCerfa: 'b11a0000-0011-4000-8000-000000000006',
+  // M9b save-as-template record action (US-137).
+  saveFicheAsTemplate: 'b11a0000-0011-4000-8000-000000000007',
 } as const;
 
 export const PAGE_LAYOUT_IDS = {

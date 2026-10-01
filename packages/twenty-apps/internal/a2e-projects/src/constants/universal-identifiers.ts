@@ -180,6 +180,8 @@ export const COMMAND_MENU_ITEM_IDS = {
   openTimeTracker: 'c31b0000-0011-4000-8000-000000000007',
   createTask: 'c31b0000-0011-4000-8000-000000000008',
   openDependencies: 'c31b0000-0011-4000-8000-000000000009',
+  // M9b save-as-template record action (US-137).
+  saveProjectAsTemplate: 'c31b0000-0011-4000-8000-00000000000a',
 } as const;
 
 export const NAVIGATION_MENU_ITEM_IDS = {
@@ -201,6 +203,8 @@ export const FRONT_COMPONENT_IDS = {
   createTaskCommand: 'c31b0000-0013-4000-8000-00000000000b',
   taskDependencies: 'c31b0000-0013-4000-8000-00000000000c',
   projectRetroplanning: 'c31b0000-0013-4000-8000-00000000000d',
+  // M9b save-as-template record action (US-137).
+  saveProjectAsTemplateCommand: 'c31b0000-0013-4000-8000-00000000000e',
 } as const;
 
 export const VIEW_IDS = {

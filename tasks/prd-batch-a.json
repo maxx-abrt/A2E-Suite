@@ -137,12 +137,13 @@
         "Quality gates: touched packages: npx nx lint:diff-with-main <pkg> clean + npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; a2e-* slices yarn typecheck && yarn lint && yarn test:unit && npx twenty dev:build . green; bump touched app patch versions once; no i18n catalog churn; no AI attribution"
       ],
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-TPL. Phase-13-report line 242: 'mount the save action (record surfaces + gallery) and the US-118 gallery entry-points together'. Depends on US-132 so the gallery surface it mounts into is reachable.",
       "dependsOn": [
         "US-131",
         "US-132"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-138",
@@ -373,6 +374,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T16:24:06.659Z"
+    "updatedAt": "2026-10-01T16:34:38.386Z"
   }
 }

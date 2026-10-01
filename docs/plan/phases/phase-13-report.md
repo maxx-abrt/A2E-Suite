@@ -481,3 +481,28 @@ CLAIMED — US-132/gallery-entry-points — deepseek-v4.1-flash — 2026-10-01T1
 **Do not redo:** the gallery data layer/surface (US-118) — unchanged except the `initialCategory` prop and the `payload` listing fix. The shared apply contract/guards and the four app `apply-template` functions (US-131) are untouched. `useOpenTemplateGallery` is the single open seam; every future entry-point must call it rather than re-wiring the side panel.
 **Remaining:** ~18 other tasks in Ralph's batch A (US-133…US-149), then batch 14B (US-150…US-169).
 **Next:** US-133 (M7e Bureau bundle). When M13a/M7f land, call `useOpenTemplateGallery({ category })` or drop in `<TemplateGalleryEntryPoint requiredApplicationUniversalIdentifiers={[…]} category="…" />`; do not add a second open path.
+
+CLAIMED — US-137/record-action-mount — deepseek-v4.1-flash — 2026-10-01T16:28:04Z — base 0655be0f252aba705f16f8bc34af957926c7c4fd
+
+## 2026-10-01 16:45 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-137 M9b-2: mount 'Save as template' on record surfaces and the gallery · **Slice:** AC2 record-action mount for the three app-owned record surfaces (document, project (+tasks), Bilan fiche) — calls the US-119 builders and persists a fresh template row; board-view menu + gallery mount left to the next slice
+**Claim:** partial
+**Ready-to-tick:** no — the record-action half of the mount is green and tested, but the AC's board-view menu mount and gallery mount (AC2 remainder / AC3) are not landed, and the Tier-2 round-trip is the orchestrator's.
+**Base:** 0655be0f252aba705f16f8bc34af957926c7c4fd
+**Changed:**
+- `a2e-documents`: NEW `src/lib/save-document-template-service.ts` (read source → `buildSaveAsTemplatePayload` → `createDocuments` with `kind: TEMPLATE`), NEW `src/front-components/save-document-as-template-command.front-component.tsx` (`<Command>` + `enqueueSnackbar`), NEW `src/command-menu-items/save-document-as-template.command-menu-item.ts` (`RECORD_SELECTION` on `OBJECT_IDS.document`, gated `targetObjectReadPermissions.document`), NEW `src/lib/__tests__/save-document-template-service.test.ts` (4 tests), `src/constants/universal-identifiers.ts` (+2 ids), `package.json` 0.2.9→0.2.10
+- `a2e-projects`: NEW `src/lib/save-project-template-service.ts` (read project+tasks → `buildSaveProjectAsTemplatePayload` → `createProjects` `isTemplate: true` + fresh `createTasks`), NEW front component, NEW command-menu item (`RECORD_SELECTION` on `OBJECT_IDS.project`), NEW test (5 tests incl. no-source-id / source-edit C1), uid (+2), `package.json` 0.1.19→0.1.20
+- `a2e-accounting`: NEW `src/lib/save-fiche-template-service.ts` (read fiche → `buildSaveFicheAsTemplatePayload` → `createFiches` `isTemplate: true`), NEW front component, NEW command-menu item (`RECORD_SELECTION` on `OBJECT_IDS.fiche`), NEW test (4 tests incl. layout-only + C1), uid (+2), `package.json` 0.1.4→0.1.5
+- this report + `.ralph-tui/progress.md`
+**Checks:**
+- a2e-documents: `yarn typecheck` exit 0 · `yarn lint` 0 warnings/0 errors (103 files) · `yarn test:unit` 261/261 pass (was 252; +9) · `npx twenty dev:build .` `Build succeeded (34 files)`, manifest carries `save-document-as-template-command` + `c31a0000-0011-4000-8000-000000000006`
+- a2e-projects: `yarn typecheck` exit 0 · `yarn lint` 0 errors / 1 pre-existing warning (`task-labels.field.ts` unused `OnDeleteAction`, present at HEAD) · `yarn test:unit` 372/372 pass (was 357; +5 +other) · `npx twenty dev:build .` `Build succeeded (54 files)`, manifest carries `save-project-as-template-command` + `c31b0000-0011-4000-8000-00000000000a`
+- a2e-accounting: `yarn typecheck` exit 0 · `yarn lint` 0/0 (119 files) · `yarn test:unit` 132/132 pass (was 123; +4 +other) · `npx twenty dev:build .` `Build succeeded (34 files)`, manifest carries `save-fiche-as-template-command` + `b11a0000-0011-4000-8000-000000000007`
+- no `twenty-shared`/`twenty-front`/`twenty-sdk` source touched → no dist rebuild needed; no `locales/**` touched; no AI attribution
+**Missing for tick:**
+- **AC2 remainder — board view menu:** `save-board-view-as-template.ts` (US-119) is still unmounted. There is no app-side view-availability primitive (`CommandMenuItemAvailabilityType` has no view/board member), so this needs a twenty-front core view-menu seam + a call to the board-view builder — deferred, not faked.
+- **AC3 — gallery mount:** the workspace templates saved here are `isTemplate` rows; the gallery's `useTemplateGalleryItems` still lists only lib-constant descriptors, so a saved template does not yet appear in the listing. Wiring the listing to also read `isTemplate` rows is the next slice.
+- **Tier 2 (orchestrator):** browser save → instantiate → edit copy → template untouched (E15 leg).
+**Do not redo:** the US-119 builders (`save-*-as-template.ts`) and their tests; the `isTemplate`/`templateApplyOperationId` fields; the US-131 `apply-template` functions and the US-132 gallery surface. The record-action mechanism is the standard `RECORD_SELECTION` command-menu item + headless `<Command>` front component (same as `save-record-as-document`); reuse it, do not invent a second record-action path.
+**Remaining:** the M9b mount legs (board view + gallery) and Tier-2, then the rest of Ralph's batch A (US-138…US-149) and batch 14B.
+**Next:** mount the board-view save from a twenty-front view-menu seam (call a projects `save-board-view` logic function with the current `ViewManifest`), then surface saved `isTemplate` records in `useTemplateGalleryItems`; do not add a core `view` column (board marker stays payload-side).

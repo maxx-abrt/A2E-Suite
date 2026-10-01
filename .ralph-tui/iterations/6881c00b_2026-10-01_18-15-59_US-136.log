@@ -1,0 +1,156 @@
+# Iteration 8 Log
+
+## Metadata
+
+- **Task ID**: US-136
+- **Task Title**: P4.2 defect: task-calendar GroupByTasks exceeds the GraphQL complexity cap (2001 > 2000) — reduce view group-by complexity
+- **Description**: As a user with a project's task-calendar view, I want the calendar grid to render my tasks instead of an empty grid so that the view is usable. Starting state: defective — PLAN P4.2 annotation 2026-09...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-01T16:15:59.153Z
+- **Ended At**: 2026-10-01T16:24:06.659Z
+- **Duration**: 8m 7s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the mandatory clean-start check and task confirmation.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-136" PLAN.md | head -50
+[94m[bash][0m $ ls docs/plan/phases/ | sort
+[94m[bash][0m $ grep -rn "US-135\|US-134" PLAN.md | head -20
+[94m[bash][0m $ grep -rn "US-136" PLAN.md docs/ .ralph-tui/ tasks/ 2>/dev/null | head -30
+[94m[bash][0m $ cat tasks/prd-batch-a.json
+[94m[bash][0m $ grep -n "GroupByTasks\|complexity cap\|2001\|task-calendar" PLAN.md | head -40
+[94m[bash][0m $ grep -rn "GroupByTasks\|task-calendar\|2001 > 2000\|complexity cap" docs/plan/ 2>/dev/null | head -4...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ grep -n "US-136\|CLAIMED" docs/plan/phases/phase-04-report.md | tail -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/ | sort
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/task-calendar.test.ts
+[94m[bash][0m $ grep -rln "TOO_COMPLEX_QUERY\|Maximum complexity" packages/twenty-server/src packages/twenty-shared/...
+[94m[bash][0m $ grep -rln "complexity" packages/twenty-server/src --include=*.ts | grep -iv spec | head -40
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96mTOO_COMPLEX_QUERY|Maximum complexity|complexity[0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "queryComplexity =" packages/twenty-server/src/engine/api/common --include="*.ts" | head
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96mcomputeQueryComplexity|hasAtLeastTwoNestedOneToManyRelations[0m
+[94m[read][0m
+[94m[read][0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96mgetGroupLimit|GROUP_LIMIT|relationFieldsCount[0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src[0m pattern: [96mDEFAULT_NUMBER_OF_GROUPS_LIMIT[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mtasksGroupBy|GroupByTasks|groupByRecords|includeRecords[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/hooks/useGroupByRecordsQuery.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/utils/generateGroupByRecordsQuery.ts
+[94m[read][0m
+[94m[bash][0m $ grep -rn "COMMON_QUERY_COMPLEXITY_LIMIT" packages/twenty-server/src/engine/core-modules/twenty-confi...
+[94m[bash][0m $ ls packages/twenty-front/src/modules/object-record/graphql/record-gql-fields/utils/ packages/twenty-...
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-server/src/engine/api/common/types/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/api/common/types/common-query-args.type.ts
+[94m[read][0m
+[94m[bash][0m $ git show a2a4932f --stat 2>/dev/null | head -40
+[94m[bash][0m $ git log --oneline -15 -- packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts
+[94m[bash][0m $ git show a2a4932f -- packages/twenty-apps/internal/a2e-projects/src/views/task-calendar.view.ts
+[94m[read][0m
+[94m[bash][0m $ grep -n "limit\|includeRecords" packages/twenty-server/src/engine/api/common/common-query-runners/co...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/api/graphql/workspace-resolver-builder[0m pattern: [96mincludeRecords|limit: 1000|GROUP_BY|groupBy[0m
+[94m[read][0m
+[94m[bash][0m $ git log -p -3 -- packages/twenty-shared/src/constants/DefaultNumberOfGroupsLimit.ts | head -60
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/api/graphql/workspace-schema-builder[0m pattern: [96mGroupBy|groupBy[0m
+[94m[read][0m
+[94m[bash][0m $ redis-cli ping 2>&1
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server[0m pattern: [96mcomputeQueryComplexity|TOO_COMPLEX_QUERY|Query complexity[0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "selectedFieldsResult\|validateQueryComplexity\|parseSelectedFields" packages/twenty-server/...
+[94m[read][0m
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-front/src/modules/object-record/record-calendar/hooks/useRecordCalen...
+[94m[bash][0m $ find packages/twenty-front/src/modules/object-record/record-calendar -name "*DateRange*"
+[94m[bash][0m $ grep -rn "GroupBy\|complexity\|2001" tasks/live-verify/ 2>/dev/null | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/live-verify/p4-verify.mjs
+[94m[read][0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages[0m pattern: [96mDEFAULT_NUMBER_OF_GROUPS_LIMIT|COMMON_QUERY_COMPLEXITY_LIMIT[0m
+[94m[bash][0m $ ls packages/twenty-server/test/integration/graphql/suites/query-complexity/
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "GroupBy\|limit" tasks/live-verify/*.mjs tasks/live-verify/*.graphql 2>/dev/null | head -30
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-front/src/modules/object-metadata -name "mapObjectMetadataToGraphQLQuery*"
+[94m[read][0m
+[94m[bash][0m $ grep -rn "groupByRecordsQuery\|GroupByRecords\|groupByRecords" packages/twenty-front/src --include=*...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96museGroupByRecordsQuery|groupByRecordsQuery[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-metadata/utils/shouldFieldBeQueried.ts
+[94m[bash][0m $ find packages/twenty-shared/src -iname "*task*" | head -20
+[94m[bash][0m $ grep -rln "20202020-b386-4cb7-aa5a-08d4a4d92680" packages/twenty-shared/src packages/twenty-server/s...
+[94m[bash][0m $ grep -n "task:" packages/twenty-shared/src/metadata/constants/standard-object-fields.constant.ts | h...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/metadata/constants/standard-object-fields.constant.ts
+[94m[bash][0m $ find packages/twenty-server/src/engine/api/common -iname "*group-by*limit*" -o -iname "*limit*proces...
+[94m[bash][0m $ done 2>/dev/null | head -120
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/package.json
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/tsconfig.json
+[94m[bash][0m $ grep -n "project\b\|projectStatus\|VIEW_IDS\|VIEW_FILTER_GROUP" packages/twenty-apps/internal/a2e-pr...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/.oxlintrc.json
+[94m[bash][0m $ grep -rn "twenty-shared/constants" packages/twenty-apps/internal/*/src/lib/*.ts 2>/dev/null | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[bash][0m $ cat packages/twenty-front/src/modules/object-record/record-field/states/visibleRecordFieldsComponent...
+[94m[bash][0m $ grep -n "\"./constants\"\|exports" packages/twenty-shared/package.json | head
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -20
+Baseline is green (362 tests). Now I'll write the complexity helper and its test.
+[94m[write][0m "import { DEFAULT_NUMBER_OF_GROUPS_LIMIT } from 'twenty-shared/constants';
+
+import { TASK_FIELD_IDS } from '../constants/universal-identifiers.ts';
+
+// The server refuses a Common API GroupBy query who... (3408 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  ViewFilterGroupLogicalOperator,
+  ViewFilterOperand,
+} from 'twenty-sdk/define';
+import { DEFAULT_NUMBER_OF_GROUP... (6122 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/package.json
+Now run the new test file first, then the full suite:
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/task-calendar-complexity.test.ts" 2>&1 | t...
+[94m[bash][0m $ yarn lint 2>&1 | tail -15
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -15
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -12
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -15
+[94m[bash][0m $ python3 - <<'EOF' import json m=json.load(open('.twenty/output/manifest.json')) def walk(o):     if ...
+[94m[bash][0m $ git status --porcelain
+All gates green. Let me record the result (claim + report) in the phase report and progress log.
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-04-report.md
+[94m[bash][0m $ tick the P4.2 calendar bullet if it does. EOF echo appended
+[94m[bash][0m $ tail -20 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ node resolves upward).   - The manifest read-back (`.twenty/output/manifest.json`) is the cheap proo...
+[94m[bash][0m $ tail -18 docs/plan/phases/phase-04-report.md
+Done. US-136 executed as a single slice.
+
+**Summary**
+- The `task-calendar.view.ts` compute-side repair (no `project` relation column, `a2a4932f`) was already in place; I kept it and added the missing complexity regression guard.
+- New `src/lib/task-calendar-complexity.ts` models the server's GroupBy formula `1 + (1 + relationFieldsCount) × getGroupLimit(limit)`, calibrated to the live 2001 defect: the repaired view computes **1951 ≤ 2000** (49 headroom); re-adding the project column reproduces **2001 > cap**.
+- New `task-calendar-complexity.test.ts` (5 tests) also asserts the US-059 OR completion group + project scope are unchanged.
+- Version bumped `0.1.18 → 0.1.19`.
+
+**Checks (all green):** targeted node test 5/5 · `yarn test:unit` 367/367 (+5) · `yarn typecheck` exit 0 · `yarn lint` 0 errors (1 pre-existing warning) · `npx twenty dev:build .` 52 files · manifest confirms no project column, `dueAt` calendarField, all three filters. No i18n churn, no AI attribution.
+
+**Missing for tick:** Tier-2 live install → calendar grid renders the matching due task (orchestrator). Reports appended to `docs/plan/phases/phase-04-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>
+
+--- STDERR ---
+error: Error starting FSEvents stream

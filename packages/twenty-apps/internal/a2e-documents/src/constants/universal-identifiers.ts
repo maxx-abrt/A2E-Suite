@@ -82,6 +82,8 @@ export const COMMAND_MENU_ITEM_IDS = {
   createDocumentAndOpen: 'c31a0000-0011-4000-8000-000000000003',
   saveCompanyAsDocument: 'c31a0000-0011-4000-8000-000000000004',
   savePersonAsDocument: 'c31a0000-0011-4000-8000-000000000005',
+  // M9b save-as-template record action (US-137).
+  saveDocumentAsTemplate: 'c31a0000-0011-4000-8000-000000000006',
 } as const;
 
 export const NAVIGATION_MENU_ITEM_IDS = {
@@ -99,6 +101,8 @@ export const FRONT_COMPONENT_IDS = {
   createDocumentCommand: 'c31a0000-0013-4000-8000-000000000003',
   saveCompanyAsDocumentCommand: 'c31a0000-0013-4000-8000-000000000004',
   savePersonAsDocumentCommand: 'c31a0000-0013-4000-8000-000000000005',
+  // M9b save-as-template record action (US-137).
+  saveDocumentAsTemplateCommand: 'c31a0000-0013-4000-8000-000000000006',
 } as const;
 
 export const VIEW_IDS = {
