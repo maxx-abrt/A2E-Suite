@@ -1,0 +1,361 @@
+{
+  "name": "A2E Suite — executor batch 14B (2026-10-01, base e952bf15): M7–M13 experience program, breadth half",
+  "branchName": "main",
+  "description": "Second half of the batch-14 extraction (see prd-batch-a.json for the full scan narrative, PRIORITY-0 finding and exclusions). 20 stories, US-150–US-169, covering: M7f per-app landing pages (incl. the Archive folder leg completing M7c), M8f/g polish, M11c–e interconnection, M12 documentation (b/d/f/g), and the full M13 guided-or-in-control set.\n\nRUN ORDER: execute batch 14A first — US-154/156/160/163/164/169 depend on batch-14A outputs (US-131/132/133/139/142/143/147 appear in their dependsOn; if the tracker runs files standalone, complete 14A before loading 14B).\n\nSame rules as batch 14A: executor-completable at Tier 0/1 only (no running app, no browser, no Tier-2 evidence claimed); acceptance criteria copied verbatim from PLAN.md or the cited phase-report line; starting state noted; Tier 0/1 quality-gate block appended; executors append phase reports and never tick (orchestrator verifies, ticks, commits); one slice touching an app bumps that app's patch version once per session; host strings via Lingui fr+en; never commit catalogs; no AI attribution.",
+  "userStories": [
+    {
+      "id": "US-150",
+      "title": "M7f-1: Bureau landing page — one primary action, recent items, template links",
+      "description": "As a user opening Bureau, I want one landing page with a primary action and starter templates so that Bureau has a home instead of scattered nav rows. Starting state: not started — PLAN M7f open.",
+      "acceptanceCriteria": [
+        "PLAN M7f verbatim: Per-app landing pages. Bureau home... Built with definePageLayout widgets or existing host pages; each has an empty state with 1 primary action + 3 templates from M9",
+        "Bureau landing: built with definePageLayout widgets or the existing host pages pattern — recent documents/pages, primary action (new page), 3 template links from the M9 gallery (deep-link into the gallery prefiltered to Bureau templates via the US-132 entry seam)",
+        "Empty state: 1 primary action + 3 templates (M13c will generalize — keep this slice to the Bureau landing itself)",
+        "Install-gated on a2e-documents; degrades safely without it (no broken widget)",
+        "Unit tests: landing renders install-gated; template links resolve to real descriptor keys (drift-guard style test); primary action creates/routes correctly",
+        "Missing for tick (Tier 2, orchestrator): browser render + empty state on a fresh workspace (E13 leg)",
+        "Quality gates: touched packages: npx nx lint:diff-with-main <pkg> clean + npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; a2e-* slice yarn typecheck && yarn lint && yarn test:unit && npx twenty dev:build . green (bump version once if touched); Lingui fr+en; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": "Lane L-NAV/L-LINK. Depends on the gallery being reachable (US-132) for template links. UNLOCKS US-165 (empty states), US-167 (customize in place).",
+      "dependsOn": ["US-132"]
+    },
+    {
+      "id": "US-151",
+      "title": "M7f-2: Agenda landing page — calendar week as the app home",
+      "description": "As a user opening Agenda, I want a landing that orients me on my week with quick actions so that Agenda feels like an app, not just a route. Starting state: not started — PLAN M7f open; Agenda is a host page (/calendar).",
+      "acceptanceCriteria": [
+        "PLAN M7f verbatim: Agenda (calendar week)... Built with definePageLayout widgets or existing host pages; each has an empty state with 1 primary action + 3 templates from M9",
+        "Agenda landing centers the existing calendar week view (host page — no new chrome per binding UX principle 1) with a primary action (new event) and a templates entry into the gallery (Agenda category)",
+        "No parallel sidebar/nav — the landing is the /calendar host page enriched, reachable from the US-116-seeded Agenda nav row",
+        "Unit tests: landing composition renders; primary action opens event creation; gallery entry passes the Agenda category",
+        "Missing for tick (Tier 2, orchestrator): browser render (E13 leg)",
+        "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; Lingui fr+en; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "Lane L-NAV (host calendar pages). Pairs naturally after US-142 (Agenda template family) so template links are real, but not hard-blocked on it.",
+      "dependsOn": ["US-132"]
+    },
+    {
+      "id": "US-152",
+      "title": "M7f-3: Syna landing page — chat + recent runs + actions library",
+      "description": "As a user opening Syna, I want a landing with the chat, recent runs and the actions library so that AI is discoverable in one place. Starting state: not started — PLAN M7f open.",
+      "acceptanceCriteria": [
+        "PLAN M7f verbatim: Syna (chat + recent runs + actions library)... each has an empty state with 1 primary action + 3 templates from M9",
+        "Syna landing surfaces the existing AI chat (host /chat surface), a recent-runs list (from existing usage/run data — no new table) and the actions/recipes library (Syna recipes from US-143 via the gallery, or the existing actions registry)",
+        "Zero-AI contract respected (US-141 gating): without a configured provider the landing shows the admin 'Connect a provider' link / hides AI-entries — the landing itself never dead-ends",
+        "Unit tests: landing renders gated on AI availability; recent-runs reads existing usage data; recipes entry resolves real descriptor keys",
+        "Missing for tick (Tier 2, orchestrator): browser render with and without a configured provider (E16 leg)",
+        "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; Lingui fr+en; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": "Lane L-AI/L-NAV. Pairs after US-141 (gating) and US-143 (recipes) for full content, not hard-blocked.",
+      "dependsOn": ["US-132"]
+    },
+    {
+      "id": "US-153",
+      "title": "M7f-4: Archive landing (/drive explorer + usage) + a2e-drive Archive folder nav row",
+      "description": "As a user opening Archive, I want the /drive explorer as the app home with usage info, and the Archive rows grouped under one folder so that Archive has identity in the sidebar. Starting state: not started — PLAN M7f open; phase-11-report line 64: 'a2e-drive needs its Archive folder once M7f rows exist'.",
+      "acceptanceCriteria": [
+        "PLAN M7f verbatim: Archive (/drive explorer + usage)... each has an empty state with 1 primary action + 3 templates from M9",
+        "Archive landing on the /drive host explorer (no new chrome) with a primary action (upload/new folder) and a templates entry (Archive folder-structure family, US-106 descriptors) + usage indicator from existing drive data",
+        "a2e-drive nav: Archive FOLDER row grouping the app's nav items (completes the M7c Archive leg) using the US-115 folder pattern",
+        "Install-gated; empty state with 1 primary action",
+        "Unit tests: landing renders install-gated; folder nav manifest nests Archive rows; template links resolve to real descriptor keys",
+        "Missing for tick (Tier 2, orchestrator): browser — /drive landing + Archive folder in sidebar (E13 leg)",
+        "Quality gates: a2e-drive: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds (bump patch version once); twenty-front tsgo clean if host pages touched; targeted npx jest green; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": "Lane L-NAV. Completes M7c's drive half + M7f's Archive leg together, per the phase-11 sequencing note.",
+      "dependsOn": ["US-132"]
+    },
+    {
+      "id": "US-154",
+      "title": "M11c: universal quick-create — Cmd+K 'Create…' with current record pre-linked",
+      "description": "As a user, I want one Cmd+K 'Create…' entry listing everything I can create (page, task, project, event, invoice, expense, file upload) with the current record pre-linked so that creation is uniform across the suite. Starting state: not started — PLAN M11c open.",
+      "acceptanceCriteria": [
+        "PLAN M11c verbatim: Cmd+K 'Create…' lists page, task, project, event, invoice, expense, file upload, with the current record pre-linked",
+        "One command-menu group 'Create…' with install-gated entries: page (a2e-documents), task/project (a2e-projects), event (host calendar), invoice/expense (a2e-accounting), file upload (a2e-drive) — each via its existing create primitive, no new mutation paths",
+        "Current record pre-linked: when created from a record context and a2e-links is installed, the new item is linked to the current record via the a2eLink junction (US-147/148 path); without a2e-links, creation still works unlinked",
+        "Keyboard: entry usable entirely from the keyboard per native command-menu behavior; Enter creates the selected item",
+        "Unit tests: group registers all entries with correct install-gating; pre-link writes the junction row when available; entries map to existing create primitives",
+        "Missing for tick (Tier 2, orchestrator): browser — Cmd+K → Create from a record → item created and linked (E17 leg)",
+        "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; Lingui fr+en; canonical icons; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": "Lane L-LINK (command-menu). Depends on US-147 (junction for pre-link). Invoice/expense entries are install-gated descriptors of existing a2e-accounting features — P7-gated *expansion* is untouched.",
+      "dependsOn": ["US-147"]
+    },
+    {
+      "id": "US-155",
+      "title": "M11d: cross-app events contract (C5) — one event payload convention for doc/task/event/invoice/file lifecycle",
+      "description": "As a developer integrating recipes and notifications, I want one event payload convention for object lifecycles so that M9c recipes and Inbox notifications consume the same events instead of per-pair wiring. Starting state: not started — PLAN M11d open (C5 contract: 'One task, calendar event, document and file across surfaces').",
+      "acceptanceCriteria": [
+        "PLAN M11d verbatim: Event payload conventions for doc/task/event/invoice/file lifecycle so M9c recipes and Inbox notifications consume the same events",
+        "One shared payload contract (types in twenty-shared or the existing server event layer — no parallel event system per house rule 'no duplicate or parallel systems'): stable event names (created/updated/completed/deleted per object family), payload carries workspaceId, object family, record id, actor, timestamps",
+        "Emit for document/task/calendarEvent/file lifecycle via the existing server hooks/workflow triggers; invoice emission typed and wired but dormant behind the a2e-accounting install (no live claim — P7 stays untouched)",
+        "Workflow recipes' trigger side consumes the contract (existing recipe engine), and the notification path can subscribe to the same events (US-156 consumes it)",
+        "Integration tests: each emitted lifecycle event matches the contract schema; recipes receive the events; no emission for objects of uninstalled apps",
+        "Quality gates: npx nx lint:diff-with-main twenty-server clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest + integration specs green; npx nx build twenty-shared --skip-nx-cache if touched; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": "Lane L-LINK server. UNLOCKS US-156 (M11e inbox) and upgrades M9c recipes to shared triggers. Additive only — deprecate, don't delete existing triggers.",
+      "dependsOn": []
+    },
+    {
+      "id": "US-156",
+      "title": "M11e: unified activity & inbox — mentions from pages, chat, tasks, Bilan approvals flow into the native Inbox with deep links",
+      "description": "As a user, I want all mentions and approval requests in one Inbox so that I never hunt for them across apps. Starting state: not started — PLAN M11e open; the native Inbox (P8) and its notification primitives exist.",
+      "acceptanceCriteria": [
+        "PLAN M11e verbatim: Mentions from pages, chat, tasks, Bilan approvals flow into the native Inbox (P8) with deep links",
+        "Document mentions: when a saved document's mention index (US-139) contains a record/user mention, a notification is created via the US-155 event contract with a deep link to the document",
+        "Chat and task mentions flow through their existing mention paths into the same Inbox notification primitives (no parallel notification system); Bilan approval events where the object exists (install-gated; no P7-gated expansion)",
+        "Deep links resolve to the right surface per the existing inbox deep-link patterns (US-092 precedent: label/icon/deep-link per event type)",
+        "Unit/integration tests: each mention source produces one inbox notification with a working deep-link payload; no duplicates for the same mention; permission-respected (only mentioned/notified users)",
+        "Missing for tick (Tier 2, orchestrator): live socket push/badge (P8 leg, stays deferred)",
+        "Quality gates: npx nx lint:diff-with-main twenty-server clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest + integration specs green; twenty-front tsgo clean if deep-link labels touched; Lingui fr+en for new labels; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": "Lane L-LINK/L-AI boundary. Depends on US-155 (event contract) and US-139 (mention index).",
+      "dependsOn": ["US-155", "US-139"]
+    },
+    {
+      "id": "US-157",
+      "title": "M8f: drag & drop tree polish — move pages, move-to dialog with search, duplicate, copy link, open in side panel, keyboard alternatives",
+      "description": "As a user organizing pages, I want drag & drop in the sidebar tree and in the page, plus a search-based move-to dialog and keyboard alternatives, so that the tree feels Notion-grade. Starting state: not started — PLAN M8f open.",
+      "acceptanceCriteria": [
+        "PLAN M8f verbatim: Drag pages in sidebar tree and in page, move-to dialog with search, duplicate page, copy link, open in side panel; keyboard alternatives (C7)",
+        "Sidebar tree + in-page drag reparent pages through the existing document tree mutation path (no parallel tree state)",
+        "Move-to dialog with search over the page tree; duplicate page (fresh IDs, copies content + child pages per the existing copy helper); copy link (deep link to the page); open in side panel (existing side-panel document surface)",
+        "Keyboard alternatives for every drag action (C7: keyboard-accessible equivalent documented in the component)",
+        "Unit tests: reparent persists via the existing mutation; duplicate produces fresh IDs; move-to search filters correctly; keyboard handlers trigger the same mutations",
+        "Missing for tick (Tier 2, orchestrator): browser — deep-tree drag journey (P3.3 leg)",
+        "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; Lingui fr+en; canonical icons; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": "Lane L-EDITOR. Reuses the document copy path (never forks it) — same rule US-131 applies to templates.",
+      "dependsOn": []
+    },
+    {
+      "id": "US-158",
+      "title": "M8g: Markdown & Notion import into Bureau + page-subtree zip export",
+      "description": "As a user coming from Notion or plain markdown, I want to import .md files and Notion export zips (pages + nested pages + images) into Bureau, and export a page subtree as a zip, so that switching in and out is possible. Starting state: not started — PLAN M8g open.",
+      "acceptanceCriteria": [
+        "PLAN M8g verbatim: Import .md / Notion export zip (pages + nested pages + images) into Bureau via existing import/ module; export page subtree as zip. No Notion API integration in this slice",
+        "Import .md → document with block conversion via the existing import/ module path (headings, lists, code, quotes, images where storage allows); Notion export zip → nested page tree with images re-attached via existing file storage",
+        "Export page subtree as a zip (markdown + images + nested structure) reusing the existing export utilities",
+        "No Notion API calls — zip parsing only; import respects the object's create permissions and lands in a chosen parent",
+        "Unit tests: .md conversion mapping per supported block; zip structure walk (nested pages, images); export round-trip (import the exported zip → equivalent tree); permission denial surfaces a typed error",
+        "Missing for tick (Tier 2, orchestrator): browser — import a real Notion export zip into a scratch workspace",
+        "Quality gates: touched packages: npx nx lint:diff-with-main <pkg> clean + npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; a2e-documents slice yarn typecheck && yarn lint && yarn test:unit && npx twenty dev:build . green (bump version once if touched); no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": "Lane L-EDITOR. Large utility surface — keep the conversion table explicit and test-driven; unsupported Notion block types degrade to markdown paragraphs honestly.",
+      "dependsOn": []
+    },
+    {
+      "id": "US-159",
+      "title": "M12b: Getting started documentation — workspace creation, personas, sidebar tour, Cmd+K, Home/Today",
+      "description": "As a new user reading the docs, I want a Getting started guide written from the real UI so that I can onboard myself. Starting state: M12a shipped the IA skeleton (11 en + 11 fr pages with stub content listing the screens they cover); PLAN M12b open.",
+      "acceptanceCriteria": [
+        "PLAN M12b verbatim: Create workspace → pick a starting point (each persona: what gets installed, what content is seeded, first action) or 'Start from scratch'; sidebar tour (sections, reorder, hide); Cmd+K; side panel vs full page; Home/Today",
+        "Tier-0 mode per the M12 header: written against component source + stories (surfaces verified by grep-matching real labels); every page states the version it documents ('Suite A2E 0.2.1 · Twenty 2.39.0' per M12a precedent)",
+        "Persona table matches the actual preset definitions (six presets, Bureau bundle per US-133 if landed — verify against source at write time, not from memory); sidebar tour matches M7a/c/d shipped reality; Home/Today matches US-126",
+        "fr + en pages in packages/twenty-docs/user-guide/a2e-suite/ (+ fr/ mirror) wired into the existing a2eSuite docs.json navigation",
+        "Screenshot placeholders where the E13 run's captures belong (screenshots themselves are Tier-2 per M12b) — no fabricated or stale screenshots",
+        "npx nx build twenty-docs (or the package's documented command) green; every UI label grep-matches source per the M12 acceptance",
+        "Quality gates: packages/twenty-docs build/check command green (npx nx build twenty-docs or node docs/scripts/check-docs.mjs); no source-code changes outside twenty-docs; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": "Lane L-DOCS. Depends only on M12a (done). Screenshots stay Tier-2 (live-verify captures).",
+      "dependsOn": []
+    },
+    {
+      "id": "US-160",
+      "title": "M12d: templates catalogue page generated from the M9 descriptors by a script",
+      "description": "As a user evaluating templates in the docs, I want a catalogue generated from the real descriptors so that it never drifts from the product. Starting state: not started — PLAN M12d open.",
+      "acceptanceCriteria": [
+        "PLAN M12d verbatim: Templates catalogue page generated from the M9 descriptors (script in packages/twenty-docs/scripts/, no hand-maintained list): name, app, what it creates, inputs, screenshot",
+        "Script reads the real per-app descriptor constants / host descriptor groups (US-117/142/143 sources of truth) and generates the en+fr catalogue pages into the a2e-suite docs group",
+        "No hand-maintained lists — re-running the script regenerates the page; CI-able check that the committed page matches regeneration (or the script is documented as the generation step)",
+        "Columns per PLAN: name, app, what it creates, inputs; screenshot placeholders where captures are pending (Tier-2)",
+        "Script + generated pages committed; npx nx build twenty-docs green; every descriptor key in the page resolves in source",
+        "Quality gates: packages/twenty-docs build/check green; script has its own minimal test or a deterministic-output assertion; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": "Lane L-DOCS. Best after US-142/US-143 so all families are covered; runs fine earlier with partial families.",
+      "dependsOn": ["US-142", "US-143"]
+    },
+    {
+      "id": "US-161",
+      "title": "M12f: Admin & self-host documentation — provisioning, app lifecycle data policy, roles, BYOK, backups",
+      "description": "As a self-hosting admin, I want an admin guide covering provisioning, install/upgrade/uninstall data policy, roles, BYOK keys and backups so that I can operate the suite. Starting state: not started — PLAN M12f open.",
+      "acceptanceCriteria": [
+        "PLAN M12f verbatim: Admin & self-host: provisioning (M1), app install/upgrade/uninstall data policy (C3), roles (C4), BYOK keys, backups; link DEPLOY.md, docs/applications.md",
+        "Provisioning section documents the SHIPPED mechanism (US-078/079 bundled provisioning: app:provision-bundled, BUNDLED source, pre-installed apps) and links DEPLOY.md — docker legs stay honestly marked as pending their environment (no invented claims)",
+        "C3 data policy (install later, hide, uninstall, data and upgrade lifecycle) and C4 roles written from the real settings surfaces + server constants; BYOK section from the shipped US-102/127/130 surfaces (Settings → Syna → Providers, monthly cap)",
+        "fr + en pages in the a2e-suite group (Admin & self-host page from M12a's IA), version-stamped, labels grep-matching source",
+        "npx nx build twenty-docs green; links to DEPLOY.md and docs/applications.md resolve",
+        "Quality gates: packages/twenty-docs build/check green; no source changes outside twenty-docs (+docs links); no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": "Lane L-DOCS. Depends only on M12a (done). D-M1's docker alternative stays out — document what ships.",
+      "dependsOn": []
+    },
+    {
+      "id": "US-162",
+      "title": "M12g: in-app help wiring — FirstOpenHelpWidget, empty states and Cmd+K 'Help: <topic>' link to the matching doc pages",
+      "description": "As a user in the product, I want contextual help links to the real doc pages so that help is one click from where I am. Starting state: not started — PLAN M12g open; M12a's doc pages exist.",
+      "acceptanceCriteria": [
+        "PLAN M12g verbatim: FirstOpenHelpWidget and each app's empty state link to the matching doc page; Cmd+K 'Help: <topic>'",
+        "FirstOpenHelpWidget links to the Getting started page (US-159 target); each app's existing empty state gains a 'Learn more' link to its matching doc page (Bureau, Agenda, Bilan, Syna, Archive) — the M13c 'Learn more' slot is seeded here for the apps this slice touches",
+        "Cmd+K 'Help: <topic>' entries for the shipped doc topics, deep-linking to the published user-guide pages",
+        "Links route to the docs URLs from the twenty-docs navigation (no invented URLs); install-gated per app where the empty state is app-owned",
+        "Unit tests: widget/empty-state links resolve to real doc routes; Cmd+K entries registered; hidden where the target page does not exist yet",
+        "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; npx nx build twenty-docs green (link targets exist); Lingui fr+en; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 13,
+      "passes": false,
+      "notes": "Lane L-DOCS/L-UX boundary. Depends on US-159 (Getting started) landing first; US-165/166 consume the same 'Learn more' slot pattern.",
+      "dependsOn": ["US-159"]
+    },
+    {
+      "id": "US-163",
+      "title": "M13a: dual entry on every 'New' — Blank · 3 suggested templates · 'Browse all', Enter = blank",
+      "description": "As a user clicking any 'New' action, I want a small chooser (blank / suggested templates / browse all) so that guided and in-control paths coexist on every surface. Starting state: not started — PLAN M13a open; depends on the gallery entry seam (M9a).",
+      "acceptanceCriteria": [
+        "PLAN M13a verbatim: Each create action opens a small chooser: Blank · 3 suggested templates (context-aware: current app, persona) · 'Browse all' (M9 gallery). Keyboard: Enter = blank",
+        "Chooser component in the template-gallery module (reusable per create surface): context-aware suggestions = top 3 descriptors for the current app category (persona weighting only where preset context exists — do not pre-empt D02 app-set expansion)",
+        "'Browse all' opens the gallery (US-132 seam) prefiltered to the current app; 'Blank' executes the original create action unchanged",
+        "Keyboard: Enter = blank (per PLAN); arrow-key navigation through the three suggestions",
+        "Mounted on the document New surface first (the seam US-132 shipped); other apps' New surfaces adopt it incrementally — record which surfaces are mounted in this slice",
+        "Unit tests: chooser renders 3 context-aware suggestions + Blank + Browse all; Enter triggers blank; suggestions come from the descriptor source of truth (drift-guard)",
+        "Missing for tick (Tier 2, orchestrator): browser — New on each mounted surface shows the chooser",
+        "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; Lingui fr+en; canonical icons; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 14,
+      "passes": false,
+      "notes": "Lane L-UX. Depends on US-131 (apply path) + US-132 (entry seam). Persona suggestions must not pre-empt D02.",
+      "dependsOn": ["US-131", "US-132"]
+    },
+    {
+      "id": "US-164",
+      "title": "M13b: onboarding 'Start from scratch' path — first-class next to personas, empty app catalogue",
+      "description": "As a new user who wants control, I want a 'Start from scratch' onboarding path that installs nothing and shows the app catalogue with one-line descriptions so that I can build my workspace my way. Starting state: not started — PLAN M13b open.",
+      "acceptanceCriteria": [
+        "PLAN M13b verbatim: Onboarding 'Start from scratch' path is first-class next to personas: installs nothing, shows the app catalogue with one-line descriptions (Bureau, Agenda, Bilan, Syna, Archive), each installable later from the landing page's empty state",
+        "Start-from-scratch option sits beside the persona choices (first-class visual parity, not a footnote); selecting it completes onboarding with no app installs and no seeded content beyond the standard workspace baseline",
+        "App catalogue step lists the five app names (D-N1 naming) with one-line descriptions from the shipped copy; each row links to 'installable later from the landing page's empty state' (M13c anchor — the copy may reference it even while M13c lands separately)",
+        "Existing onboarding flows unchanged (additive); reversible-step history/reward semantics respected (per the onboarding job's installed/already-installed/failed outcomes)",
+        "Unit tests: scratch path installs nothing and completes the step; catalogue lists exactly the five shipped app names; persona paths unaffected",
+        "Missing for tick (Tier 2, orchestrator): browser — scratch onboarding journey",
+        "Quality gates: touched packages: npx nx lint:diff-with-main <pkg> clean + npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green (twenty-front + twenty-server onboarding); Lingui fr+en; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 15,
+      "passes": false,
+      "notes": "Lane L-UX (onboarding front + server constants). Depends on US-133 so catalogue copy matches the Bureau bundle reality.",
+      "dependsOn": ["US-133"]
+    },
+    {
+      "id": "US-165",
+      "title": "M13c-1: contextual empty states — Bureau + Agenda surfaces",
+      "description": "As a user hitting an empty Bureau or Agenda view, I want one sentence, one primary button, one template link and one learn-more link so that empty states guide instead of dead-end. Starting state: not started — PLAN M13c open.",
+      "acceptanceCriteria": [
+        "PLAN M13c verbatim: Contextual empty states for every A2E view/page: one sentence, one primary button, one 'Use a template' link, one 'Learn more' (M12g). Reuse the host empty-state components",
+        "Bureau + Agenda surfaces (landings from US-150/151, document tree, task views, calendar) get contextual empty states built from the HOST empty-state components (no new empty-state system)",
+        "Each empty state: exactly one sentence, one primary button (the surface's create action), one 'Use a template' link (gallery, app category via US-132 seam), one 'Learn more' link (matching doc page via the US-162 pattern)",
+        "Install-gated degradation: without the owning app, no broken empty state (native surface or hidden)",
+        "Unit tests: each covered surface's empty state renders the four elements; links resolve to real gallery categories/doc routes; reuse assertion (host components, no forks)",
+        "Missing for tick (Tier 2, orchestrator): browser pass on fresh workspaces",
+        "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; Lingui fr+en; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 16,
+      "passes": false,
+      "notes": "Lane L-UX. Split from M13c by app groups for one-session sizing; Bilan/Archive/Syna in US-166.",
+      "dependsOn": ["US-150", "US-151", "US-162"]
+    },
+    {
+      "id": "US-166",
+      "title": "M13c-2: contextual empty states — Bilan, Archive + Syna surfaces",
+      "description": "As a user hitting an empty Bilan, Archive or Syna surface, I want the same guided empty states as Bureau/Agenda so that the whole suite feels consistent. Starting state: not started — second half of M13c.",
+      "acceptanceCriteria": [
+        "PLAN M13c verbatim (same as US-165) applied to Bilan (dashboard, invoices, quotes, budgets, categories), Archive (drive explorer/folders) and Syna (chat/landing) surfaces",
+        "Each empty state: one sentence, one primary button, one 'Use a template' link (Bilan/Archive descriptor families; Syna recipes), one 'Learn more' link — reusing the host empty-state components",
+        "Zero-AI contract for Syna empty states: without a provider, the primary action is the admin 'Connect a provider' link / member-safe fallback (US-141 gating)",
+        "Install-gated degradation per app (P7 stays untouched: no new Bilan features — empty states only describe shipped surfaces)",
+        "Unit tests: same four-element assertions per surface; Syna gating test; links resolve",
+        "Missing for tick (Tier 2, orchestrator): browser pass on fresh workspaces",
+        "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; a2e-* slices green if their empty states are app-owned (bump versions once); Lingui fr+en; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 17,
+      "passes": false,
+      "notes": "Lane L-UX. Depends on US-152/153 landings + US-162 help pattern.",
+      "dependsOn": ["US-152", "US-153", "US-162"]
+    },
+    {
+      "id": "US-167",
+      "title": "M13d: customize in place — 'Customize' opens native layout edit with per-managed-item 'Reset to template default'",
+      "description": "As a user on an app landing page, I want a 'Customize' action opening the native layout/view/field editors, with a reset per managed item, so that customization is in place and reversible. Starting state: not started — PLAN M13d open.",
+      "acceptanceCriteria": [
+        "PLAN M13d verbatim: From any app landing page: 'Customize' opens native layout edit (page-layout edit mode), views, fields — with a 'Reset to template default' per managed item (P1.7 provenance)",
+        "'Customize' action on the US-150/151/153 landing pages opens the native page-layout edit mode (existing primitive — no new editor), plus entry points to the surface's views and fields settings",
+        "'Reset to template default' per managed item: resolves the item's template provenance (P1.7 managed-provenance machinery) and restores the template's default for that item only",
+        "Never moves or resets user-created items (P1.7 rule: managed items only)",
+        "Unit tests: customize opens the native edit mode for the right page-layout; reset restores only the provenance-tagged item; user-created items have no reset affordance",
+        "Missing for tick (Tier 2, orchestrator): browser — customize + reset journey on a landing page",
+        "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; twenty-server tsgo clean if provenance read endpoints touched; Lingui fr+en; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 18,
+      "passes": false,
+      "notes": "Lane L-UX. Depends on landing pages existing (US-150, US-153; Agenda US-151 optional).",
+      "dependsOn": ["US-150", "US-153"]
+    },
+    {
+      "id": "US-168",
+      "title": "M13e: consistency pass — same verbs, same icons, no mixed-language labels + grep-based label-convention test",
+      "description": "As a user, I want the same verbs and icons everywhere with no mixed-language labels so that the suite feels like one product. Starting state: not started — PLAN M13e open.",
+      "acceptanceCriteria": [
+        "PLAN M13e verbatim: Same verbs everywhere (Créer/Create, Ouvrir/Open, Partager/Share), same icon per concept (icon dictionary), no mixed-language labels, app-name prefix only where ambiguous. Grep-based test that app command-menu-items labels follow '<App> : <verb> …'",
+        "Audit app command-menu-items labels across packages/twenty-apps/internal/*/src/command-menu-items/*.ts against the '<App> : <verb> …' convention; fix deviations (verbs from the canonical set; app-name prefix only where ambiguous)",
+        "Icon audit: action/status concepts use their canonical icons from packages/twenty-ui/src/icon/icon-dictionary.md (imports only from twenty-ui/icon); fix deviations found",
+        "No mixed-language labels within a single surface (the fr-only app content stays the documented deviation; the rule enforced is: one language per label context, per M9c/M8c precedents)",
+        "Grep-based test committed (per PLAN): fails if any app command-menu-item label violates the convention; runs in the app test suites it covers",
+        "Quality gates: each touched app: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds (bump versions once); the new grep test green; twenty-front tsgo clean if host labels touched; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 19,
+      "passes": false,
+      "notes": "Lane L-UX. Sweep-sized: keep the label fix list explicit in the phase report; do not rename universal IDs or object API names (D-N1 boundary).",
+      "dependsOn": []
+    },
+    {
+      "id": "US-169",
+      "title": "M13f: undo & safety — native undo snackbar/soft delete on destructive A2E actions + template-apply 'Undo'",
+      "description": "As a user, I want destructive actions from A2E surfaces to be undoable (native undo snackbar/soft delete) and template applies to offer an Undo that removes only what that operation created, so that experimentation is safe. Starting state: not started — PLAN M13f open.",
+      "acceptanceCriteria": [
+        "PLAN M13f verbatim: Destructive actions from A2E surfaces use the native undo snackbar/soft delete; template apply shows 'Undo' (removes only what that operation created)",
+        "Audit destructive actions reachable from A2E surfaces (delete page, delete task/project, delete folder, remove template content) — each uses the native undo snackbar / soft-delete path (no hard deletes from A2E UI)",
+        "Template apply 'Undo': after a successful apply (US-131 path), an Undo affordance removes exactly the objects that operation created (operation-id scoped — mirrors the 'removes only what that operation created' contract; idempotent, permission-checked)",
+        "Undo of an apply never touches pre-existing objects (C1 boundary) and degrades honestly when some created objects were already modified/deleted",
+        "Unit tests: each audited destructive action routes through soft-delete/undo; apply-undo removes exactly the operation's created IDs; already-deleted objects skipped with an honest report",
+        "Missing for tick (Tier 2, orchestrator): browser — apply → undo → workspace back to prior state",
+        "Quality gates: touched packages: npx nx lint:diff-with-main <pkg> clean + npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; a2e-* slices green where actions are app-owned (bump versions once); Lingui fr+en; no i18n catalog churn; no AI attribution"
+      ],
+      "priority": 20,
+      "passes": false,
+      "notes": "Lane L-UX. Depends on US-131 (apply path with operation ids). The audit list must be explicit in the phase report; anything not undoable natively is recorded as a gap, not forced.",
+      "dependsOn": ["US-131"]
+    }
+  ]
+}

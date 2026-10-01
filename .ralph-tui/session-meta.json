@@ -1,15 +1,14 @@
 {
-  "id": "c3d9d5b5-131c-4bed-9971-37e80fe99ea9",
-  "status": "completed",
-  "startedAt": "2026-09-29T18:49:46.094Z",
-  "updatedAt": "2026-10-01T09:29:41.549Z",
+  "id": "3b14df3d-af4f-4679-be37-33f118cf59e2",
+  "status": "running",
+  "startedAt": "2026-10-01T13:50:08.860Z",
+  "updatedAt": "2026-10-01T13:50:08.860Z",
   "agentPlugin": "opencode",
   "trackerPlugin": "json",
   "executionScopes": [],
-  "currentIteration": 35,
-  "maxIterations": 46,
+  "currentIteration": 0,
+  "maxIterations": 20,
   "totalTasks": 0,
-  "tasksCompleted": 31,
-  "cwd": "/Users/maxaubert/Projets/A2E Suite",
-  "endedAt": "2026-10-01T09:29:41.549Z"
+  "tasksCompleted": 0,
+  "cwd": "/Users/maxaubert/Projets/A2E Suite"
 }
