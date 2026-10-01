@@ -69,6 +69,24 @@ export class AgentChatResolver {
     private readonly threadRepository: WorkspaceScopedRepository<AgentChatThreadEntity>,
   ) {}
 
+  // Availability must be checked against the acting workspace so a workspace
+  // that only saved a BYOK key (no instance provider) is not rejected before
+  // generation reaches the workspace-aware registry.
+  private async assertWorkspaceHasModels(workspaceId: string): Promise<void> {
+    const hasModels =
+      await this.aiModelRegistryService.runWithWorkspaceRegistry(
+        workspaceId,
+        () => this.aiModelRegistryService.getAvailableModels().length > 0,
+      );
+
+    if (!hasModels) {
+      throw new AiException(
+        'No AI models are available. Configure at least one AI provider.',
+        AiExceptionCode.API_KEY_NOT_CONFIGURED,
+      );
+    }
+  }
+
   @Query(() => [AgentChatThreadDTO])
   async chatThreads(
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -174,12 +192,7 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
-    if (this.aiModelRegistryService.getAvailableModels().length === 0) {
-      throw new AiException(
-        'No AI models are available. Configure at least one AI provider.',
-        AiExceptionCode.API_KEY_NOT_CONFIGURED,
-      );
-    }
+    await this.assertWorkspaceHasModels(workspace.id);
 
     const resolvedModelId = modelId ?? workspace.smartModel;
 
@@ -292,12 +305,7 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
-    if (this.aiModelRegistryService.getAvailableModels().length === 0) {
-      throw new AiException(
-        'No AI models are available. Configure at least one AI provider.',
-        AiExceptionCode.API_KEY_NOT_CONFIGURED,
-      );
-    }
+    await this.assertWorkspaceHasModels(workspace.id);
 
     this.aiModelRegistryService.validateModelAvailability(
       modelId ?? workspace.smartModel,
@@ -347,12 +355,7 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
-    if (this.aiModelRegistryService.getAvailableModels().length === 0) {
-      throw new AiException(
-        'No AI models are available. Configure at least one AI provider.',
-        AiExceptionCode.API_KEY_NOT_CONFIGURED,
-      );
-    }
+    await this.assertWorkspaceHasModels(workspace.id);
 
     const resolvedModelId = modelId ?? workspace.smartModel;
 

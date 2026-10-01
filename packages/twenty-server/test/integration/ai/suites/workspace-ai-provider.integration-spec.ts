@@ -4,6 +4,7 @@ import { getAppProviderByName } from 'test/integration/utils/get-app-provider-by
 
 import { CreateWorkspaceAiProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1790711712877-create-workspace-ai-provider';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
+import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type ProviderConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-config.service';
 import { type WorkspaceAiProviderService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-provider.service';
 import {
@@ -18,6 +19,7 @@ const AI_MODELS_MODULE_NAME = 'AiModelsModule';
 describe('Workspace AI provider BYOK (integration)', () => {
   let providerConfigService: ProviderConfigService;
   let workspaceAiProviderService: WorkspaceAiProviderService;
+  let aiModelRegistryService: AiModelRegistryService;
   let queryRunner: QueryRunner;
   let createdTable = false;
 
@@ -37,6 +39,10 @@ describe('Workspace AI provider BYOK (integration)', () => {
         moduleName: AI_MODELS_MODULE_NAME,
         providerName: 'WorkspaceAiProviderService',
       });
+    aiModelRegistryService = getAppProviderByName<AiModelRegistryService>({
+      moduleName: AI_MODELS_MODULE_NAME,
+      providerName: 'AiModelRegistryService',
+    });
     queryRunner = global.testDataSource.createQueryRunner();
 
     const [{ tableExists }] = await global.testDataSource.query(
@@ -151,6 +157,56 @@ describe('Workspace AI provider BYOK (integration)', () => {
 
     expect(afterRemoval.openai?.apiKey).not.toBe(PLAINTEXT_API_KEY);
     expect(afterRemoval.openai?.apiKey).toBe(instanceResolution.openai?.apiKey);
+  });
+
+  it('consumes the workspace key at generation time and isolates workspaces', async () => {
+    await workspaceAiProviderService.upsertProvider({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      provider: 'openai-compatible',
+      npm: '@ai-sdk/openai-compatible',
+      apiKey: PLAINTEXT_API_KEY,
+      baseUrl: 'https://llm.example.com/v1',
+      defaultModel: 'byok-default-model',
+      fastModel: 'byok-fast-model',
+    });
+
+    // The model only exists because the acting workspace saved the provider;
+    // this is the registry read the generation path performs.
+    const modelForAppleWorkspace =
+      await aiModelRegistryService.runWithWorkspaceRegistry(
+        SEED_APPLE_WORKSPACE_ID,
+        () =>
+          aiModelRegistryService.getModel(
+            'openai-compatible/byok-default-model',
+          ),
+      );
+
+    expect(modelForAppleWorkspace).toBeDefined();
+    expect(modelForAppleWorkspace?.providerName).toBe('openai-compatible');
+
+    const modelForOtherWorkspace =
+      await aiModelRegistryService.runWithWorkspaceRegistry(
+        SEED_YCOMBINATOR_WORKSPACE_ID,
+        () =>
+          aiModelRegistryService.getModel(
+            'openai-compatible/byok-default-model',
+          ),
+      );
+
+    expect(modelForOtherWorkspace).toBeUndefined();
+
+    await workspaceAiProviderService.removeProvider({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      provider: 'openai-compatible',
+    });
+
+    const afterRemoval = await aiModelRegistryService.runWithWorkspaceRegistry(
+      SEED_APPLE_WORKSPACE_ID,
+      () =>
+        aiModelRegistryService.getModel('openai-compatible/byok-default-model'),
+    );
+
+    expect(afterRemoval).toBeUndefined();
   });
 
   it('keeps the workspace provider even when instance custom providers are disabled', async () => {

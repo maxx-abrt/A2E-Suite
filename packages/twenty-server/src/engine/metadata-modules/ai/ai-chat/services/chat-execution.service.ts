@@ -237,19 +237,30 @@ export class ChatExecutionService {
 
     const resolvedModelId = modelId ?? workspace.smartModel;
 
-    this.aiModelRegistryService.validateModelAvailability(
-      resolvedModelId,
-      workspace,
-    );
+    // Resolve through the acting workspace so a saved BYOK key is consumed for
+    // this generation; a workspace with no key takes the instance path.
+    const { registeredModel, modelConfig } =
+      await this.aiModelRegistryService.runWithWorkspaceRegistry(
+        workspace.id,
+        async () => {
+          this.aiModelRegistryService.validateModelAvailability(
+            resolvedModelId,
+            workspace,
+          );
 
-    const registeredModel =
-      await this.aiModelRegistryService.resolveModelForAgent({
-        modelId: resolvedModelId,
-      });
+          const registeredModel =
+            await this.aiModelRegistryService.resolveModelForAgent({
+              modelId: resolvedModelId,
+            });
 
-    const modelConfig = this.aiModelRegistryService.getEffectiveModelConfig(
-      registeredModel.modelId,
-    );
+          return {
+            registeredModel,
+            modelConfig: this.aiModelRegistryService.getEffectiveModelConfig(
+              registeredModel.modelId,
+            ),
+          };
+        },
+      );
 
     // Native and action search may both be bound here; the model picks at runtime.
     const nativeCapabilities = getNativeModelCapabilities(

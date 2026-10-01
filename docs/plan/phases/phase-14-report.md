@@ -162,3 +162,28 @@ CLAIMED — US-130/server-availability-and-cap-guardrail — deepseek-v4.1-flash
 - PLAN: M10a `[~]` (registry not yet workspace-scoped), M10b `[~]`, M10c `[x]`,
   M10d `[~]`; M10 milestone row `partial`. Zero-AI entry gating + cap display +
   E16 browser journey remain.
+
+CLAIMED — US-135/M10a-3 — deepseek-v4.1-flash — 2026-10-01T16:09:03Z — base 6f640573b202bdf14f7767cb279a16ebe7c61492
+
+## 2026-10-01 17:20 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-135 M10a-3: consume workspace BYOK keys at generation time — wire workspace resolution into AiModelRegistryService.buildModelRegistry · **Slice:** the server leg — registry resolves providers per acting workspace + generation call sites wired
+**Claim:** partial
+**Ready-to-tick:** no — Tier 1 integration spec not run (Postgres/Redis down); front workspace-scoped availability (US-130 M10d) still instance-wide
+**Base:** 6f640573b202bdf14f7767cb279a16ebe7c61492
+**Changed:**
+- server `ai-models/services/ai-model-registry.service.ts` — added `runWithWorkspaceRegistry(workspaceId, fn)` + an AsyncLocalStorage workspace view; `buildWorkspaceModelRegistry` registers the workspace-resolved providers with **transient** SDK instances; all read accessors (`getModel`/`getModelConfig`/`getAvailableModels`/`getEffectiveModelConfig`/`getAllModelsWithStatus`/transcription) consult the active view; `RegisteredAiModel.rawProvider` carried for native tools
+- server `ai-models/services/provider-config.service.ts` — new `getWorkspaceProviderResolution` returning `{ providers, hasWorkspaceOverrides }` (extracted from `getResolvedProvidersForWorkspace`, which now delegates)
+- server `ai-models/services/ai-model-config.service.ts` — native tools prefer `model.rawProvider` over the global provider-name cache
+- server wired at generation time: `chat-execution.service.ts`, `agent-async-executor.service.ts`, `ai-generate-text.controller.ts`, `agent-title-generation.service.ts`, `agent-turn-grader.service.ts`, `workspace-setup-chat.service.ts`, `agent-chat.resolver.ts` (workspace-scoped availability)
+- tests: new `ai-model-registry.service.spec.ts` (+4), `provider-config.service.spec.ts` (+2), `workspace-ai-provider.integration-spec.ts` (+1 integration); mock updates in 2 chat-execution specs
+**Checks:**
+- `npx tsgo -p tsconfig.json --noEmit` (packages/twenty-server) → exit 0
+- `npx jest ai-model-registry.service.spec.ts provider-config.service.spec.ts --config=jest.config.mjs` → 12 passed
+- `npx jest --findRelatedTests <10 changed source files> --config=jest.config.mjs` → 22 suites / 163 passed
+- `npx oxlint --type-aware -c .oxlintrc.json <15 touched>` → 0 warnings/0 errors; `npx oxfmt --check` clean; no `locales/**` touched; no AI attribution
+- `npx nx lint:diff-with-main twenty-server` → "No changed files." (working-tree changes are uncommitted; lint ran directly on the touched files instead)
+**Missing for tick:** Tier 1 — `workspace-ai-provider.integration-spec.ts` NOT run: `pg_isready -h localhost -p 5432` → exit 3, `redis-cli ping` → connection refused (services down). Re-run `NODE_ENV=test npx jest --config jest-integration.config.ts test/integration/ai/suites/workspace-ai-provider.integration-spec.ts --runInBand` with Postgres+Redis up. Front `ClientConfig.aiModels` is still instance-wide, so the US-130 zero-AI entry gate cannot yet see a BYOK-only workspace (workspace-scoped client-config read is the remaining leg). Tier-2 E16 browser journey is the orchestrator's.
+**Do not redo:** US-102 entity/migration/encrypted storage; `ProviderConfigService.getResolvedProvidersForWorkspace` resolution order (workspace → instance → catalog, no template resolution of workspace values); US-127 Settings UI; the global `buildModelRegistry`/`ensureFresh` instance cache (unchanged, still the no-BYOK path).
+**Why (design):** kept the instance cache and added a per-request AsyncLocalStorage view rather than mutating global maps — satisfies "no cross-workspace leakage". Workspace SDK instances are built with `createTransientProvider` because `createProvider` caches by providerName and would hand workspace A's key to workspace B. `getWorkspaceProviderResolution` reports `hasWorkspaceOverrides` so a key-less workspace keeps the exact old cached-instance/native-tool behavior.
+**Remaining:** US-130 remaining legs (zero-AI front gate + cap display) plus the US-128 selection-toolbar remainder; M10b/M10d partials.
+**Next:** make `ClientConfigService.getClientConfig` resolve `getAvailableModels`/defaults through `runWithWorkspaceRegistry` (needs a workspace id in that path) so the front offers BYOK models; then run the Tier 1 integration spec once services are up.

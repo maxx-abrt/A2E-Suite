@@ -289,21 +289,28 @@ export class AgentAsyncExecutorService {
     let executionSteps: StepResult<ToolSet>[] = [];
 
     try {
-      if (agent) {
-        const workspace = await this.workspaceRepository.findOneBy({
-          id: agent.workspaceId,
-        });
-
-        if (workspace) {
-          this.aiModelRegistryService.validateModelAvailability(
-            agent.modelId,
-            workspace,
-          );
-        }
-      }
-
+      // Resolve through the acting workspace so a saved BYOK key is consumed
+      // for this run; a workspace with no key takes the instance path.
       const registeredModel =
-        await this.aiModelRegistryService.resolveModelForAgent(agent);
+        await this.aiModelRegistryService.runWithWorkspaceRegistry(
+          workspaceId,
+          async () => {
+            if (agent) {
+              const workspace = await this.workspaceRepository.findOneBy({
+                id: agent.workspaceId,
+              });
+
+              if (workspace) {
+                this.aiModelRegistryService.validateModelAvailability(
+                  agent.modelId,
+                  workspace,
+                );
+              }
+            }
+
+            return this.aiModelRegistryService.resolveModelForAgent(agent);
+          },
+        );
 
       let tools: ToolSet = {};
       let toolCatalogSection = '';

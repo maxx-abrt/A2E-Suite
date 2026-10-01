@@ -183,6 +183,51 @@ describe('ProviderConfigService', () => {
     expect(providers['openai-compatible'].baseUrl).toBe('{{OPENAI_BASE_URL}}');
   });
 
+  it('reports no workspace override when the workspace saved no provider', async () => {
+    const service = buildProviderConfigService({
+      catalog: {
+        openai: { npm: '@ai-sdk/openai', apiKey: 'catalog-key', models: [] },
+      },
+      instanceProviders: {
+        openai: { npm: '@ai-sdk/openai', apiKey: 'instance-key' },
+      },
+    });
+
+    const resolution = await service.getWorkspaceProviderResolution({
+      workspaceId: WORKSPACE_ID,
+    });
+
+    expect(resolution.hasWorkspaceOverrides).toBe(false);
+    expect(resolution.providers.openai.apiKey).toBe('instance-key');
+  });
+
+  it('reports a workspace override when the workspace saved a provider', async () => {
+    const service = buildProviderConfigService({
+      catalog: {
+        openai: {
+          npm: '@ai-sdk/openai',
+          apiKey: 'catalog-key',
+          models: [{ name: 'gpt-4o', label: 'GPT-4o' }],
+        },
+      },
+      workspaceProviders: [
+        {
+          providerName: 'openai',
+          providerConfig: { npm: '@ai-sdk/openai', apiKey: 'workspace-key' },
+          defaultModel: null,
+          fastModel: null,
+        },
+      ],
+    });
+
+    const resolution = await service.getWorkspaceProviderResolution({
+      workspaceId: WORKSPACE_ID,
+    });
+
+    expect(resolution.hasWorkspaceOverrides).toBe(true);
+    expect(resolution.providers.openai.apiKey).toBe('workspace-key');
+  });
+
   it('resolves templates in the catalog but keeps custom instance providers literal', async () => {
     const service = buildProviderConfigService({
       catalog: {

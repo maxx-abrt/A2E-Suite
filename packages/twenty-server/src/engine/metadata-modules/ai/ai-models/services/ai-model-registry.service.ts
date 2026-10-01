@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { AsyncLocalStorage } from 'async_hooks';
+
 import { type LanguageModel, type TranscriptionModel } from 'ai';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type AiSdkPackage } from 'twenty-shared/ai';
@@ -50,6 +52,9 @@ export interface RegisteredAiModel {
   supportsReasoning?: boolean;
   providerName?: string;
   modelsDevName?: string;
+  // The instance the model was built from. Carried so native tool binding uses
+  // the same (possibly workspace BYOK) credentials rather than a global lookup.
+  rawProvider?: unknown;
 }
 
 export type RegisteredAiTranscriptionModel = {
@@ -57,6 +62,20 @@ export type RegisteredAiTranscriptionModel = {
   sdkPackage: AiSdkPackage;
   model: TranscriptionModel;
   providerName: string;
+};
+
+// A workspace-scoped cut of every registry map. Built fresh per request and
+// installed in an AsyncLocalStorage so a workspace's resolved providers are
+// never written into the instance-wide maps (no cross-workspace leakage).
+type AiModelRegistryView = {
+  modelRegistry: Map<string, RegisteredAiModel>;
+  modelConfigCache: Map<string, AiModelConfig>;
+  transcriptionRegistry: Map<string, RegisteredAiTranscriptionModel>;
+  transcriptionConfigCache: Map<string, AiTranscriptionModelConfig>;
+  providerModelDefCache: Map<
+    string,
+    { providerName: string; modelDef: AiProviderModelConfig }
+  >;
 };
 
 @Injectable()
@@ -76,6 +95,8 @@ export class AiModelRegistryService {
   > = new Map();
   private currentConfigHash: string | null = null;
   private areCustomProvidersRegistered = true;
+  private readonly workspaceRegistryStorage =
+    new AsyncLocalStorage<AiModelRegistryView>();
 
   constructor(
     private readonly providerConfigService: ProviderConfigService,
@@ -122,10 +143,92 @@ export class AiModelRegistryService {
       includeCustomProviders: areCustomProvidersAllowed,
     });
 
-    this.registerModelsFromProviders(providers);
+    this.registerModelsFromProviders(
+      providers,
+      this.getGlobalView(),
+      (providerKey, config) =>
+        this.sdkProviderFactory.createProvider(providerKey, config),
+    );
   }
 
-  private registerModelsFromProviders(providers: AiProvidersConfig): void {
+  private getGlobalView(): AiModelRegistryView {
+    return {
+      modelRegistry: this.modelRegistry,
+      modelConfigCache: this.modelConfigCache,
+      transcriptionRegistry: this.transcriptionRegistry,
+      transcriptionConfigCache: this.transcriptionConfigCache,
+      providerModelDefCache: this.providerModelDefCache,
+    };
+  }
+
+  private getActiveView(): AiModelRegistryView {
+    return this.workspaceRegistryStorage.getStore() ?? this.getGlobalView();
+  }
+
+  private createEmptyView(): AiModelRegistryView {
+    return {
+      modelRegistry: new Map(),
+      modelConfigCache: new Map(),
+      transcriptionRegistry: new Map(),
+      transcriptionConfigCache: new Map(),
+      providerModelDefCache: new Map(),
+    };
+  }
+
+  // Built per request from the workspace-resolved providers. Provider SDK
+  // instances are created transiently (never via the global provider-name
+  // cache) so one workspace's key can never be handed to another workspace.
+  private buildWorkspaceModelRegistry(
+    providers: AiProvidersConfig,
+  ): AiModelRegistryView {
+    const view = this.createEmptyView();
+
+    this.registerModelsFromProviders(providers, view, (_providerKey, config) =>
+      this.sdkProviderFactory.createTransientProvider(config),
+    );
+
+    return view;
+  }
+
+  // Runs `fn` with the acting workspace's resolved providers installed for the
+  // duration of the read. A workspace with no BYOK key takes the instance-wide
+  // path untouched (same cached instances and native raw providers as before);
+  // only a workspace that saved a key gets a workspace snapshot.
+  //
+  // Billing (D-N4): a BYOK workspace's own key is deliberately merged even when
+  // the instance-level custom-provider entitlement (`includeCustomProviders`)
+  // is off — the key is billed to that workspace's own provider account, so it
+  // is an explicit entitlement bypass, not a billing bypass. Tokens still flow
+  // through AiBillingService against the model config; there is no per-workspace
+  // BYOK metering yet (M10d follow-up), which is why the merge is unconditional.
+  async runWithWorkspaceRegistry<TResult>(
+    workspaceId: string,
+    fn: () => TResult,
+  ): Promise<TResult> {
+    const { providers, hasWorkspaceOverrides } =
+      await this.providerConfigService.getWorkspaceProviderResolution({
+        workspaceId,
+        includeCustomProviders:
+          this.customAiProviderAccessService.getCachedHasAccess(),
+      });
+
+    if (!hasWorkspaceOverrides) {
+      return fn();
+    }
+
+    const view = this.buildWorkspaceModelRegistry(providers);
+
+    return this.workspaceRegistryStorage.run(view, fn);
+  }
+
+  private registerModelsFromProviders(
+    providers: AiProvidersConfig,
+    view: AiModelRegistryView,
+    createProviderInstance: (
+      providerKey: string,
+      config: AiProviderConfig,
+    ) => AiSdkProviderInstance,
+  ): void {
     for (const [providerKey, config] of Object.entries(providers)) {
       if (!config.npm) {
         this.logger.warn(
@@ -141,7 +244,7 @@ export class AiModelRegistryService {
       }
 
       const sdkInstance = isProviderConfigured(config)
-        ? this.sdkProviderFactory.createProvider(providerKey, config)
+        ? createProviderInstance(providerKey, config)
         : undefined;
 
       for (const modelDef of models) {
@@ -149,6 +252,7 @@ export class AiModelRegistryService {
 
         if (modelDef.kind === 'transcription') {
           this.registerTranscriptionModel({
+            view,
             compositeId,
             providerKey,
             config,
@@ -159,24 +263,25 @@ export class AiModelRegistryService {
           continue;
         }
 
-        this.modelConfigCache.set(
+        view.modelConfigCache.set(
           compositeId,
           this.toAiModelConfig(compositeId, config, modelDef),
         );
 
-        this.providerModelDefCache.set(compositeId, {
+        view.providerModelDefCache.set(compositeId, {
           providerName: providerKey,
           modelDef,
         });
 
         if (sdkInstance) {
-          this.modelRegistry.set(compositeId, {
+          view.modelRegistry.set(compositeId, {
             modelId: compositeId,
             sdkPackage: config.npm,
             model: sdkInstance.createModel(modelDef.name),
             supportsReasoning: modelDef.supportsReasoning,
             providerName: providerKey,
             modelsDevName: config.name,
+            rawProvider: sdkInstance.rawProvider,
           });
         }
       }
@@ -184,12 +289,14 @@ export class AiModelRegistryService {
   }
 
   private registerTranscriptionModel({
+    view,
     compositeId,
     providerKey,
     config,
     modelDef,
     sdkInstance,
   }: {
+    view: AiModelRegistryView;
     compositeId: string;
     providerKey: string;
     config: AiProviderConfig;
@@ -206,7 +313,7 @@ export class AiModelRegistryService {
       return;
     }
 
-    this.transcriptionConfigCache.set(compositeId, {
+    view.transcriptionConfigCache.set(compositeId, {
       modelId: compositeId,
       sdkPackage: config.npm,
       label: modelDef.label,
@@ -230,7 +337,7 @@ export class AiModelRegistryService {
       return;
     }
 
-    this.transcriptionRegistry.set(compositeId, {
+    view.transcriptionRegistry.set(compositeId, {
       modelId: compositeId,
       sdkPackage: config.npm,
       model: createTranscriptionModel(modelDef.name),
@@ -243,13 +350,13 @@ export class AiModelRegistryService {
   ): RegisteredAiTranscriptionModel | undefined {
     this.ensureFresh();
 
-    return this.transcriptionRegistry.get(modelId);
+    return this.getActiveView().transcriptionRegistry.get(modelId);
   }
 
   getAvailableTranscriptionModels(): RegisteredAiTranscriptionModel[] {
     this.ensureFresh();
 
-    return Array.from(this.transcriptionRegistry.values());
+    return Array.from(this.getActiveView().transcriptionRegistry.values());
   }
 
   // Registration order follows the provider config, so the first entry is the
@@ -266,7 +373,7 @@ export class AiModelRegistryService {
   ): AiTranscriptionModelConfig | undefined {
     this.ensureFresh();
 
-    return this.transcriptionConfigCache.get(modelId);
+    return this.getActiveView().transcriptionConfigCache.get(modelId);
   }
 
   // Deliberately the same rule as getDefaultTranscriptionModel: a registry
@@ -313,19 +420,19 @@ export class AiModelRegistryService {
   getModel(modelId: string): RegisteredAiModel | undefined {
     this.ensureFresh();
 
-    return this.modelRegistry.get(modelId);
+    return this.getActiveView().modelRegistry.get(modelId);
   }
 
   getAvailableModels(): RegisteredAiModel[] {
     this.ensureFresh();
 
-    return Array.from(this.modelRegistry.values());
+    return Array.from(this.getActiveView().modelRegistry.values());
   }
 
   getModelConfig(modelId: string): AiModelConfig | undefined {
     this.ensureFresh();
 
-    return this.modelConfigCache.get(modelId);
+    return this.getActiveView().modelConfigCache.get(modelId);
   }
 
   getRecommendedModelIds(): Set<string> {
@@ -385,12 +492,12 @@ export class AiModelRegistryService {
           : this.getDefaultPerformanceModel();
 
       return (
-        this.modelConfigCache.get(defaultModel.modelId) ??
+        this.getActiveView().modelConfigCache.get(defaultModel.modelId) ??
         this.createDefaultConfigForCustomModel(defaultModel)
       );
     }
 
-    const config = this.modelConfigCache.get(modelId);
+    const config = this.getActiveView().modelConfigCache.get(modelId);
 
     if (config) {
       return config;
@@ -505,10 +612,11 @@ export class AiModelRegistryService {
   }> {
     this.ensureFresh();
     const recommended = this.getRecommendedModelIds();
+    const view = this.getActiveView();
 
-    return Array.from(this.modelConfigCache.values()).map((modelConfig) => {
-      const registered = this.modelRegistry.get(modelConfig.modelId);
-      const cached = this.providerModelDefCache.get(modelConfig.modelId);
+    return Array.from(view.modelConfigCache.values()).map((modelConfig) => {
+      const registered = view.modelRegistry.get(modelConfig.modelId);
+      const cached = view.providerModelDefCache.get(modelConfig.modelId);
 
       return {
         modelConfig,

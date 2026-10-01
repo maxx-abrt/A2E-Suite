@@ -48,30 +48,40 @@ export class AiGenerateTextController {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
-    if (this.aiModelRegistryService.getAvailableModels().length === 0) {
-      throw new AiException(
-        'No AI models are available. Please configure at least one AI provider API key.',
-        AiExceptionCode.API_KEY_NOT_CONFIGURED,
+    // Resolve through the acting workspace so a saved BYOK key is consumed for
+    // this request; a workspace with no key takes the instance path.
+    const { registeredModel, resolvedModelId } =
+      await this.aiModelRegistryService.runWithWorkspaceRegistry(
+        workspace.id,
+        async () => {
+          if (this.aiModelRegistryService.getAvailableModels().length === 0) {
+            throw new AiException(
+              'No AI models are available. Please configure at least one AI provider API key.',
+              AiExceptionCode.API_KEY_NOT_CONFIGURED,
+            );
+          }
+
+          await this.aiBillingService.assertAiExecutionAllowed({
+            workspaceId: workspace.id,
+            operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+            spenders: { userWorkspaceId },
+          });
+
+          const resolvedModelId = body.modelId ?? workspace.fastModel;
+
+          this.aiModelRegistryService.validateModelAvailability(
+            resolvedModelId,
+            workspace,
+          );
+
+          const registeredModel =
+            await this.aiModelRegistryService.resolveModelForAgent({
+              modelId: resolvedModelId,
+            });
+
+          return { registeredModel, resolvedModelId };
+        },
       );
-    }
-
-    await this.aiBillingService.assertAiExecutionAllowed({
-      workspaceId: workspace.id,
-      operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-      spenders: { userWorkspaceId },
-    });
-
-    const resolvedModelId = body.modelId ?? workspace.fastModel;
-
-    this.aiModelRegistryService.validateModelAvailability(
-      resolvedModelId,
-      workspace,
-    );
-
-    const registeredModel =
-      await this.aiModelRegistryService.resolveModelForAgent({
-        modelId: resolvedModelId,
-      });
 
     let result: Awaited<ReturnType<typeof generateText>> | undefined;
 

@@ -58,33 +58,62 @@ export class ProviderConfigService {
     workspaceId: string;
     includeCustomProviders?: boolean;
   }): Promise<AiProvidersConfig> {
+    const { providers } = await this.getWorkspaceProviderResolution({
+      workspaceId,
+      includeCustomProviders,
+    });
+
+    return providers;
+  }
+
+  // Registry callers need to know whether a workspace overrides anything at
+  // all: when it does not, the instance-cached registry can serve the request
+  // unchanged, so the workspace snapshot (and its transient SDK instances) is
+  // only built for the workspaces that actually saved a BYOK key.
+  async getWorkspaceProviderResolution({
+    workspaceId,
+    includeCustomProviders = true,
+  }: {
+    workspaceId: string;
+    includeCustomProviders?: boolean;
+  }): Promise<{
+    providers: AiProvidersConfig;
+    hasWorkspaceOverrides: boolean;
+  }> {
     const resolvedProviders = this.getResolvedProviders({
       includeCustomProviders,
     });
     const workspaceProviders =
       await this.workspaceAiProviderService.resolveProviders(workspaceId);
 
-    return workspaceProviders.reduce<AiProvidersConfig>(
-      (providers, workspaceProvider) => {
-        const baseProvider = providers[workspaceProvider.providerName];
+    if (workspaceProviders.length === 0) {
+      return { providers: resolvedProviders, hasWorkspaceOverrides: false };
+    }
 
-        return {
-          ...providers,
-          [workspaceProvider.providerName]: {
-            ...baseProvider,
-            ...workspaceProvider.providerConfig,
-            ...this.buildWorkspaceModelsForProvider({
-              baseProvider,
-              workspaceProviderModels: [
-                workspaceProvider.defaultModel,
-                workspaceProvider.fastModel,
-              ],
-            }),
-          },
-        };
-      },
-      resolvedProviders,
-    );
+    return {
+      providers: workspaceProviders.reduce<AiProvidersConfig>(
+        (providers, workspaceProvider) => {
+          const baseProvider = providers[workspaceProvider.providerName];
+
+          return {
+            ...providers,
+            [workspaceProvider.providerName]: {
+              ...baseProvider,
+              ...workspaceProvider.providerConfig,
+              ...this.buildWorkspaceModelsForProvider({
+                baseProvider,
+                workspaceProviderModels: [
+                  workspaceProvider.defaultModel,
+                  workspaceProvider.fastModel,
+                ],
+              }),
+            },
+          };
+        },
+        resolvedProviders,
+      ),
+      hasWorkspaceOverrides: true,
+    };
   }
 
   // A provider that only exists in the workspace entry (an OpenAI-compatible

@@ -87,7 +87,13 @@ export class WorkspaceSetupChatService {
       return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, thread: null };
     }
 
-    if (this.aiModelRegistryService.getAvailableModels().length === 0) {
+    const hasAvailableModels =
+      await this.aiModelRegistryService.runWithWorkspaceRegistry(
+        workspace.id,
+        () => this.aiModelRegistryService.getAvailableModels().length > 0,
+      );
+
+    if (!hasAvailableModels) {
       return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, thread: null };
     }
 

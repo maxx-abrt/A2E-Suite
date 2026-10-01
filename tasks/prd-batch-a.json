@@ -99,9 +99,10 @@
         "Quality gates: npx nx lint:diff-with-main twenty-server clean; npx tsgo -p tsconfig.json --noEmit exit 0 in packages/twenty-server (run directly, not nx typecheck); targeted npx jest specs green with --config=packages/twenty-server/jest.config.mjs incl. integration-spec for the resolver; no i18n catalog churn; no AI attribution"
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-AI (twenty-server/src/engine/metadata-modules/ai/**). Named in phase-14-report line 75 as 'the remaining M10a/M10b server leg'. Unlocks honest E16 and makes US-128/130's gates reflect reality.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-136",
@@ -371,6 +372,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T16:05:33.694Z"
+    "updatedAt": "2026-10-01T16:15:53.655Z"
   }
 }

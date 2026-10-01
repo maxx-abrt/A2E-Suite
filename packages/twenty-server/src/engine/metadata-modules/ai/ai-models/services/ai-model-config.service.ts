@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { type AnthropicProvider } from '@ai-sdk/anthropic';
+import { type OpenAIProvider } from '@ai-sdk/openai';
+import { type XaiProvider } from '@ai-sdk/xai';
 import { type ProviderOptions } from '@ai-sdk/provider-utils';
 import { type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
@@ -53,8 +56,13 @@ export class AiModelConfigService {
     switch (model.sdkPackage) {
       case AI_SDK_ANTHROPIC: {
         if (options.webSearch === true && isDefined(nativeTools.webSearch)) {
-          const anthropicProvider =
-            this.sdkProviderFactory.getRawAnthropicProvider(providerName);
+          // Prefer the instance the model was registered from: a workspace BYOK
+          // provider is not in the global cache, and the global one (if any)
+          // belongs to the instance key.
+          const anthropicProvider = (model.rawProvider ??
+            this.sdkProviderFactory.getRawAnthropicProvider(providerName)) as
+            | AnthropicProvider
+            | undefined;
 
           if (isDefined(anthropicProvider)) {
             tools[nativeTools.webSearch.directToolName] =
@@ -66,8 +74,10 @@ export class AiModelConfigService {
       }
       case AI_SDK_OPENAI: {
         if (options.webSearch === true && isDefined(nativeTools.webSearch)) {
-          const openaiProvider =
-            this.sdkProviderFactory.getRawOpenAIProvider(providerName);
+          const openaiProvider = (model.rawProvider ??
+            this.sdkProviderFactory.getRawOpenAIProvider(providerName)) as
+            | OpenAIProvider
+            | undefined;
 
           if (isDefined(openaiProvider)) {
             tools[nativeTools.webSearch.directToolName] =
@@ -78,8 +88,10 @@ export class AiModelConfigService {
         break;
       }
       case AI_SDK_XAI: {
-        const xaiProvider =
-          this.sdkProviderFactory.getRawXaiProvider(providerName);
+        const xaiProvider = (model.rawProvider ??
+          this.sdkProviderFactory.getRawXaiProvider(providerName)) as
+          | XaiProvider
+          | undefined;
 
         if (!isDefined(xaiProvider)) {
           break;

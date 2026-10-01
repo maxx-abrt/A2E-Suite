@@ -51,6 +51,9 @@ const buildService = () => {
   };
 
   const aiModelRegistryService = {
+    runWithWorkspaceRegistry: jest.fn(
+      (_workspaceId: string, fn: () => unknown) => fn(),
+    ),
     validateModelAvailability: jest.fn(),
     resolveModelForAgent: jest.fn().mockResolvedValue({
       modelId: 'openai/gpt-5',

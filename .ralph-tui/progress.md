@@ -11,6 +11,7 @@ after each iteration and it's included in prompts for context.
 - **Adding a member to a shared enum (e.g. `SidePanelPages`) needs `npx nx build twenty-sdk --skip-nx-cache` too, not just `twenty-shared`.** `twenty-sdk` inlines `SidePanelPages` (and `AppPath`) into `dist/front-component/index.d.ts` via rollup; a stale sdk dist makes `twenty-front` tsgo fail with `Property '<NewMember>' is missing in type 'SidePanelPages'`. Both dists are gitignored per-branch build state.
 - **The front `ExecuteOneLogicFunction` mutation requires `payload`** (`ExecuteOneLogicFunctionInput.payload: JSON!`). Even a read-only logic function must send `variables: { input: { id, payload: {} } }`; omitting it fails GraphQL validation in-browser. `useMutation<TData>` alone does not typecheck variables, so this bug is invisible to tsgo.
 - **Cross-app nav folder nesting (M7c):** an app nests a managed nav row under another app's FOLDER by duplicating the owner's folder UUID as `folderUniversalIdentifier` (works on LINK and VIEW rows). The parent must exist at install time — `FlatNavigationMenuItemValidatorService` errors `NAVIGATION_MENU_ITEM_NOT_FOUND` otherwise — and there is no manifest app-dependency field, so the child app needs a transitive hard reference to the owner (a field pinned on one of the owner's objects) or a preset bundle that installs the owner first. Positions are sibling-scoped inside the folder (owner's Pages 0, Projets 1, chat Discussions 2).
+- **Per-workspace config over an instance-cached singleton:** keep the instance cache and add a request-scoped `AsyncLocalStorage` view rather than mutating global maps (`AiModelRegistryService.runWithWorkspaceRegistry`). Two traps: (1) never populate a providerName-keyed cache with workspace secrets — use the uncached factory (`SdkProviderFactoryService.createTransientProvider`); (2) when the override set is empty, run the existing instance path untouched so cached instances and global-only lookups (e.g. `getRawProvider` for native tools) still work.
 
 ---
 
@@ -59,4 +60,16 @@ after each iteration and it's included in prompts for context.
   - At install the folder must already exist: `FlatNavigationMenuItemValidatorService.validateFlatNavigationMenuItemCreation` rejects a missing parent with `NAVIGATION_MENU_ITEM_NOT_FOUND`. There is no manifest-level app-dependency field, so cross-app folder nesting is order-dependent.
   - No new prerequisite needed for chat: it already pins `project.discussions` on projects' `project`, and projects pins `project` on documents' `document`, so documents (folder owner) is transitively always installed first; the US-133 bundle also orders documents→projects→chat.
   - Verify a manifest row cheaply by loading `.twenty/output/manifest.json` (gitignored) with python3 and printing the `navigationMenuItems` fields.
+---
+
+## 2026-10-01 - US-135 (M10a-3)
+- Wired workspace BYOK into `AiModelRegistryService` for generation time. New `runWithWorkspaceRegistry(workspaceId, fn)` installs a per-request AsyncLocalStorage view built from `ProviderConfigService.getWorkspaceProviderResolution`; all registry reads consult the active view.
+- Workspace SDK instances use `sdkProviderFactory.createTransientProvider` (never the providerName-keyed cache) and `RegisteredAiModel.rawProvider` is carried so `AiModelConfigService.getNativeModelTools` uses the same BYOK provider.
+- Wired chat (`ChatExecutionService`), `AgentAsyncExecutorService`, `AiGenerateTextController`, `AgentTitleGenerationService`, `AgentTurnGraderService`, `WorkspaceSetupChatService`, and `AgentChatResolver` availability.
+- Files changed: `ai-models/services/{ai-model-registry,provider-config,ai-model-config}.service.ts`; `ai-chat/services/{chat-execution,agent-title-generation,workspace-setup-chat}.service.ts`; `ai-chat/resolvers/agent-chat.resolver.ts`; `ai-agent-execution/services/agent-async-executor.service.ts`; `ai-agent-monitor/services/agent-turn-grader.service.ts`; `ai-generate-text/controllers/ai-generate-text.controller.ts`; 2 chat-execution specs; new `ai-model-registry.service.spec.ts`; `provider-config.service.spec.ts`; `test/integration/ai/suites/workspace-ai-provider.integration-spec.ts`.
+- **Learnings:**
+  - `SdkProviderFactoryService.createProvider` caches by providerName only, so it leaks a BYOK key across workspaces; workspace resolution must use `createTransientProvider` or carry the instance on the model.
+  - `ProviderConfigService` needed a `hasWorkspaceOverrides` signal so the registry can keep the exact instance path for key-less workspaces (preserves native raw-provider lookups).
+  - Tier 1 integration spec was not run: Postgres/Redis are down in this environment (`pg_isready` exit 3, `redis-cli ping` refused).
+  - The front `ClientConfig.aiModels` is still instance-wide — a BYOK-only workspace is invisible to the US-130 zero-AI gate until `getClientConfig` is workspace-scoped.
 ---
