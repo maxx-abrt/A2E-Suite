@@ -76,3 +76,19 @@ CLAIMED — US-116/M7d — deepseek-v4.1-flash — 2026-09-29T22:12:00Z — base
 **Do not redo:** US-101 internal-route pass-through (`getLinkNavigationMenuItemComputedLink`/`isAllowedNavigationMenuItemLink`) already handles `/calendar` — no front change needed; the standard nav row is app-owned by the twenty-standard application. Do not set `agendaEnabled: false` on CRM: `workspace-template.service.spec.ts`'s restore/CRM no-op tests encode "CRM hides nothing" (PLAN M7c), and the upgrade command seeds Agenda unconditionally, so a CRM hide would contradict it.
 **Remaining:** M7c remaining legs (chat nesting, drive Archive folder, Bilan reduction, CRM host folder), M7e (Bureau packaging), M7f (landing pages).
 **Next:** orchestrator tick + Tier-2 browser leg; if the `down` bullet is judged mandatory, the follow-up is an instance command or a documented waiver — workspace commands cannot express `down`.
+
+## 2026-10-01 — orchestrator verification (M7: US-100/101/115/116)
+- Verified at HEAD (no code changed): host display renames (US-100), internal-route
+  nav allow-list across twenty-shared/server/front/SDK + a2e-chat/drive repoint
+  (US-101), Bureau folder for Pages+Projets (US-115), and the host-seeded
+  `/calendar` Agenda row + preset flag + 2-39 upgrade command (US-116).
+- Checks run this pass: `npx nx build twenty-shared --skip-nx-cache` green;
+  twenty-front + twenty-server `npx tsgo -p tsconfig.json --noEmit` clean;
+  twenty-front `template-gallery`+`home-dashboard` 27 suites/101, `blocknote-editor`+`ai`
+  92 suites/643, twenty-server `ai`+`onboarding` 63 suites/429 all green;
+  a2e-documents 252 / projects 357 / accounting 123 / drive 91 (`yarn test:unit`).
+- PLAN: M7a/M7b/M7d `[x]`, M7c `[~]` (Bureau folder only), M7 milestone row
+  `partial`. D09 resolved at code level. Browser legs remain Tier-2.
+- Orchestrator fix: refreshed the stale `get-standard-object-metadata-related-entity-ids`
+  snapshot (standard `calendarEvent` reminder fields added by auto-commit
+  `a2a4932f` shifted the deterministic UUIDs; test was red at HEAD).

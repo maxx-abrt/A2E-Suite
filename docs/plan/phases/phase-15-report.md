@@ -53,3 +53,13 @@ CLAIMED — US-126/m11b-today-cards — deepseek-v4.1-flash — 2026-09-30T21:31
 **Do not redo:** the 7 pre-existing cards, the `HomeDashboardCard`/`HomeWidgetList` framing (reused, not forked), and the P2.6 deep-link pattern. `hasObjectMetadataItem` is the install-gate seam — do NOT fetch an app object without gating (unconditional `useFindManyRecords` throws `ObjectMetadataItemNotFoundError`).
 **Remaining:** US-126's optional Syna-digest leg; US-127…US-130 (4) in this execution order; plus the standing US-118/US-119 mount legs (2).
 **Next:** optional Syna digest card (hidden without the AI permission flag) or move to US-127; orchestrator ticks this slice after the Tier-2 browser pass.
+
+## 2026-10-01 — orchestrator verification (M11: US-125/126)
+- Verified at HEAD (no code changed): M11a universal-link spike decision
+  (`D-M11A-LINK`, app-owned `a2eLink` morph junction) and the Today view
+  (`RecentPagesWidget` + `PendingBilanWidget`, install-gated).
+- Checks run this pass: twenty-front `home-dashboard` 27 suites/101 green
+  (with template-gallery), tsgo clean.
+- PLAN: M11a `[~]` (spike done, implementation pending), M11b `[x]`; M11
+  milestone row `partial`. Only E17 link-picker/reload-removal proof remains for
+  the ticked half.

@@ -1238,3 +1238,14 @@ CLAIMED — US-113/verify-record-note-copy-and-version-bump — deepseek-v4.1-fl
 **Do not redo:** `record-note-copy.ts`/`buildRecordNoteCopyPayload` is the payload authority and `remapTemplateBlockIds` the single anchor re-key authority — do not fork a second copy path; the two-entry factory split is deliberate (`defineFrontComponent` renders with empty props, so the source object is closed over at build time); fail-closed rules (unreadable record ⇒ no document; unreadable notes ⇒ source link only, no bodies) and the `filter: { id: { eq } }` findOne form stay. `as never` casts on the generated client are existing precedent.
 **Remaining:** ~17 other tasks in the prd queue (US-114…US-130).
 **Next:** orchestrator — run the Tier-2 E04 open-from-search/relation/side-panel legs for both record types and tick US-113; executor — US-114 (P2.1 chat-channel ACL at subscribe) next in the queue.
+
+## 2026-10-01 — orchestrator verification (US-111/112/113, P3.2/P3.3)
+- Verified at HEAD (no code changed): durable revision history
+  (`documentRevision` object + persistence transport + retention/diff/restore),
+  atomic expected-revision save with typed conflict + preserved draft
+  (`document-revision-cas.ts` + `guard-document-revision-save.ts`,
+  `resolveOptimisticDocumentUpdate` single-caller), and real record→document
+  note-body copy with source link + fail-closed permission checks
+  (`record-note-copy.ts`). a2e-documents `yarn test:unit` 252/252 green on this
+  pass. PLAN P3.2/P3.3 bullets moved `[ ]`→`[x]` with Tier-2 (E04/E05
+  reload + second-session + browser) noted as the remainder.

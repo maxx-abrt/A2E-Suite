@@ -1438,3 +1438,13 @@ CLAIMED — US-110/retroplanning-screen-front-component — deepseek-v4.1-flash 
 **Do not redo:** `retroplanning.ts` engine, `reconcileRetroplanningDraft`, the handler's create/update/delete + provenance idempotency, and `retroplanning-screen.ts`'s existing helpers — all green and reused. The only handler change is the additive `pendingRemovals`; do not re-derive a second preview in the screen.
 **Remaining:** other P4.2 legacy legs (dependency-picker decision, gantt DOM/timer heartbeat Tier-2, calendar/project-page live proofs) plus P4C.2–P4C.5, P6.1 and the standing Tier-2 ledger.
 **Next:** orchestrator — Tier-2 install + E06 retroplanning journey on a running app, then tick P4.2's retroplanning bullet.
+
+## 2026-10-01 — orchestrator verification (US-110 P4.2, US-109 P4C.4)
+- Verified at HEAD (no code changed): the retroplanning screen
+  (`project-retroplanning.front-component.tsx` — recipe picker, deadline+timezone,
+  preview rows, stale guard, APPEND/REPLACE destructive confirmation, committed
+  `c31b` layout ids) and the inbox `CALENDAR_REMINDER` leg (label +
+  `IconCalendarEvent` + title/start/lead + native deep link + additive
+  `reminderMinutes` payload). a2e-projects `yarn test:unit` 357/357 green.
+  PLAN P4.2 retroplanning `[ ]`→`[~]` (E06 Tier-2), P4C.4 annotated (inbox leg
+  built; live idempotent delivery still Tier-2, stays `[ ]`).

@@ -151,3 +151,14 @@ CLAIMED — US-130/server-availability-and-cap-guardrail — deepseek-v4.1-flash
 **Cap design (WHY):** reused the workspace-metadata primitive (`aiMonthlyTokenCap` column) rather than the generic `core.usageLimit` quota, which is enterprise-gated (`USAGE_LIMIT`) and would leave self-hosted/BYOK workspaces uncapped — matching "no new billing backend". A null/0 cap is a fail-open no-op and a zero-usage month never trips, so ordinary (non-AI) work and unconfigured workspaces are unaffected; only the metered operations (`AI_CHAT_TOKEN`/`WEB_SEARCH`) are refused, so workflow tokens are not cross-blocked. ClickHouse reads fail open (`select` returns `[]` → 0).
 **Remaining:** US-130 (M10d) remaining legs — zero-AI gating (US-102 order + admin "Connect a provider" link) and the usage-view cap display — plus the standing US-128 selection-toolbar remainder.
 **Next:** add a workspace-scoped AI-availability read (resolve `ProviderConfigService.getResolvedProvidersForWorkspace` → `hasConfiguredAiProvider`) consumed by the front gate, show the cap in the Usage tab, then report the fr+en/front tests.
+
+## 2026-10-01 — orchestrator verification (M10: US-102/127/128/129/130)
+- Verified at HEAD (no code changed): workspace BYOK entity + resolution order +
+  key-safe resolver + Settings UI (US-102/127), editor `/syna` slash entry
+  (US-128), scoped context + house style (US-129), monthly token cap wired into
+  the AI billing choke point (US-130).
+- Checks run this pass: twenty-server `ai`+`onboarding` 63 suites/429 green;
+  twenty-server + twenty-front tsgo clean.
+- PLAN: M10a `[~]` (registry not yet workspace-scoped), M10b `[~]`, M10c `[x]`,
+  M10d `[~]`; M10 milestone row `partial`. Zero-AI entry gating + cap display +
+  E16 browser journey remain.

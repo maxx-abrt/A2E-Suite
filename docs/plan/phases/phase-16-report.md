@@ -26,3 +26,10 @@ CLAIMED — US-108/M12a — deepseek-v4.1-flash — 2026-09-29T23:05:00Z — bas
 **Do not redo:** the 11 en + 11 fr stubs, the `a2eSuite` base-structure group, the fr label and the regenerated `docs.json`. M12b+ only fills these pages in.
 **Remaining:** M12b–M12g (6 other [ ] bullets in the M12 milestone)
 **Next:** orchestrator ticks M12a; executor may then start M12b (Getting started) once its cited screens are confirmed, or M12d's descriptor-driven catalogue script.
+
+## 2026-10-01 — orchestrator verification (M12a: US-108)
+- Verified at HEAD (no code changed): 11 en + 11 fr `user-guide/a2e-suite/*.mdx`,
+  `a2eSuite` nav group, regenerated `docs.json`; report already stated "nothing
+  missing for tick". PLAN M12a `[ ]`→`[x]`; M12 milestone row `partial`.
+- Orchestrator pass also refreshed the stale standard-metadata snapshot (see
+  phase-11 entry) and ran the cross-package checks listed there.

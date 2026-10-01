@@ -769,3 +769,14 @@ CLAIMED — US-114/channel-acl-at-subscribe — deepseek-v4.1-flash — 2026-09-
 **Do not redo:** `assertTopicAuthorized` is the single topic-ACL seam and `RealtimeTopicAccessService.assertCanAccessChatChannel` the single channel decision — extend, never add a parallel path; `revalidateSocketAuthorizations` is the single heartbeat revocation path; heartbeat membership revalidation (`assertStillAMember`) is unchanged.
 **Remaining:** ~16 other tasks in the prd queue (US-115…US-130). The record (`object:`) half of PLAN P2.1 bullet 3 stays **deferred**: no `object:` publisher exists yet (only `chat-*` and `workspace`/`inbox`/`presence` publishers), so `assertCanAccessObjectRecord` is latent but unexercised in production — it remains implemented and unit-tested, awaiting an object publisher.
 **Next:** orchestrator — run the Tier-2 live revoked-member socket journey (socket 4403 / no further events) + multi-session handshake, then tick the channel half of P2.1 bullet 3; executor — US-115 (M7c family, per the queue) next.
+
+## 2026-10-01 — orchestrator verification (US-114, P2.1 channel ACLs)
+- Verified at HEAD (no code changed): `assertTopicAuthorized` delegates `chat:`
+  topics to the single `RealtimeTopicAccessService.assertCanAccessChatChannel`
+  seam (PUBLIC ⇒ any workspace member; else a `chatChannelMember` row keyed
+  `{membershipChannelId, membershipWorkspaceMemberId}`; unknown/uninstalled ⇒
+  deny); app-owned names matched against the real a2e-chat model
+  (`chatChannel.visibility`). Record (`object:`) half stays deferred (no
+  `object:` publisher). PLAN P2.1 bullet 3 moved `[ ]`→`[~]` with the annotation.
+- Checks run this pass: `npx tsgo -p tsconfig.json --noEmit` twenty-server clean.
+  Live revoked-member socket journey remains Tier-2.

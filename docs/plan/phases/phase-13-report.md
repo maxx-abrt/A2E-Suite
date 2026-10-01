@@ -392,3 +392,17 @@ CLAIMED — US-124/page-chrome — deepseek-v4.1-flash — 2026-09-30T21:09:24Z 
 **Do not redo:** the existing document-page furniture (cover strip, heading outline via `extractOutline`, child-page list, template instantiate) was preserved, not rebuilt. The favourite is the personal `documentFavorite` row (`buildDocumentFavoriteToggle`); never write the deprecated `document.isFavorite` boolean. Reuse `countDocumentWords` / `buildBreadcrumbTrail` / `buildDocumentChromeUpdatePayload` rather than re-deriving. App fields on app-owned objects use the standalone-manifest path (no generated server migration).
 **Remaining:** US-125…US-130 (6) plus the open US-118 entry-points / US-119 save-action mount legs (2)
 **Next:** orchestrator runs the Tier-2 browser pass (open a page → set icon/cover → toggle full-width/small-text → breadcrumb nav → lock → confirm favourite persists). Optional follow-up: cover-image `uploadFile` button and surfacing the same chrome on the browser rows.
+
+## 2026-10-01 — orchestrator verification (M8/M9: US-103…107, US-117…124)
+- Verified at HEAD (no code changed): C1 descriptor contract + per-app
+  `list-template-descriptors` (US-117), gallery data layer + surface (US-118),
+  save-as-template builders for project/board/fiche (US-119), persona preset
+  template keys + drift guards (US-120), slash-menu structural + interactive
+  blocks (US-121/122), read-only embedded views (US-123), page chrome (US-124),
+  and the four content families + cross-app recipes (US-103…107).
+- Checks run this pass: a2e-documents 252 / a2e-projects 357 / a2e-accounting 123 /
+  a2e-drive 91 `yarn test:unit` all green; twenty-front tsgo clean; blocknote-editor
+  + template-gallery jest suites green (see phase-11 entry for the batch totals).
+- PLAN: M8a `[~]`, M8b `[~]`, M8c `[x]`, M9a `[~]`, M9b `[~]`, M9c `[~]`, M9d `[~]`;
+  M8/M9 milestone rows `partial`. Entry-point/apply mounts, Agenda+Syna template
+  families, and the E14/E15 browser journeys remain.
