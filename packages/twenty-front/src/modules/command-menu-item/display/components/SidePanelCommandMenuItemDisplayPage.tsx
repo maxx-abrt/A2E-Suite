@@ -8,10 +8,12 @@ import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMen
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CoreObjectsCommands } from '@/object-core/commands/components/CoreObjectsCommands';
 import { useCoreObjectsCommands } from '@/object-core/commands/hooks/useCoreObjectsCommands';
-import { NewPageCommand } from '@/quick-capture/components/NewPageCommand';
 import { QuickCaptureCommand } from '@/quick-capture/components/QuickCaptureCommand';
-import { useNewPageCommand } from '@/quick-capture/hooks/useNewPageCommand';
 import { useQuickCaptureCommand } from '@/quick-capture/hooks/useQuickCaptureCommand';
+import { QuickCreateFileUploadCommand } from '@/quick-create/components/QuickCreateFileUploadCommand';
+import { QuickCreateRecordCommand } from '@/quick-create/components/QuickCreateRecordCommand';
+import { useQuickCreateCommands } from '@/quick-create/hooks/useQuickCreateCommands';
+import { resolveQuickCreateSourceRecord } from '@/quick-create/utils/resolveQuickCreateSourceRecord';
 import { TemplatesCommand } from '@/template-gallery/components/TemplatesCommand';
 import { useTemplatesCommand } from '@/template-gallery/hooks/useTemplatesCommand';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -41,10 +43,24 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const { quickCaptureCommandId, shouldDisplayQuickCaptureCommand } =
     useQuickCaptureCommand();
 
-  const { newPageCommandId, shouldDisplayNewPageCommand } = useNewPageCommand();
+  const { quickCreateCommands } = useQuickCreateCommands();
 
   const { templatesCommandId, shouldDisplayTemplatesCommand } =
     useTemplatesCommand();
+
+  // The record a "Create…" entry should pre-link to, when the surface has one.
+  const currentObjectNameSingular =
+    typeof commandMenuContextApi.objectMetadataItem.nameSingular === 'string'
+      ? commandMenuContextApi.objectMetadataItem.nameSingular
+      : undefined;
+
+  const quickCreateSourceRecord = resolveQuickCreateSourceRecord({
+    pageType: commandMenuContextApi.pageType,
+    objectNameSingular: currentObjectNameSingular,
+    selectedRecordIds: commandMenuContextApi.selectedRecords.map(
+      (record) => record.id,
+    ),
+  });
 
   // The command menu list surfaces whatever overflowed out of the page header.
   const commandMenuPinnedInlineLayout = useAtomFamilyStateValue(
@@ -124,7 +140,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     appActions.length === 0 &&
     coreObjectsCommandIds.length === 0 &&
     !shouldDisplayQuickCaptureCommand &&
-    !shouldDisplayNewPageCommand &&
+    quickCreateCommands.length === 0 &&
     !shouldDisplayTemplatesCommand;
 
   const shouldDisplayFallbackItems =
@@ -137,7 +153,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     ...matchingPinnedItems.map((item) => item.id),
     ...matchingOtherItems.map((item) => item.id),
     ...(shouldDisplayQuickCaptureCommand ? [quickCaptureCommandId] : []),
-    ...(shouldDisplayNewPageCommand ? [newPageCommandId] : []),
+    ...quickCreateCommands.map((command) => command.id),
     ...(shouldDisplayTemplatesCommand ? [templatesCommandId] : []),
     ...appActions.map((item) => item.id),
     ...coreObjectsCommandIds,
@@ -158,11 +174,28 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
           ))}
         </SidePanelGroup>
       )}
+      {quickCreateCommands.length > 0 && (
+        <SidePanelGroup heading={t`Create…`}>
+          {quickCreateCommands.map((command) =>
+            command.isFileUpload ? (
+              <QuickCreateFileUploadCommand
+                key={command.id}
+                command={command}
+              />
+            ) : (
+              <QuickCreateRecordCommand
+                key={command.id}
+                command={command}
+                sourceRecord={quickCreateSourceRecord}
+              />
+            ),
+          )}
+        </SidePanelGroup>
+      )}
       {(matchingOtherItems.length > 0 ||
         appActions.length > 0 ||
         coreObjectsCommandIds.length > 0 ||
         shouldDisplayQuickCaptureCommand ||
-        shouldDisplayNewPageCommand ||
         shouldDisplayTemplatesCommand) && (
         <SidePanelGroup heading={t`Other`}>
           {matchingOtherItems.map((item) => (
@@ -170,7 +203,6 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
           ))}
           {shouldDisplayTemplatesCommand && <TemplatesCommand />}
           {shouldDisplayQuickCaptureCommand && <QuickCaptureCommand />}
-          {shouldDisplayNewPageCommand && <NewPageCommand />}
           {appActions.map((item) => {
             const handleClick = () => {
               item.onClick();

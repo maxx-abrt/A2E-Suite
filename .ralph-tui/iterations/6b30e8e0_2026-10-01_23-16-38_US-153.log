@@ -1,0 +1,373 @@
+# Iteration 4 Log
+
+## Metadata
+
+- **Task ID**: US-153
+- **Task Title**: M7f-4: Archive landing (/drive explorer + usage) + a2e-drive Archive folder nav row
+- **Description**: As a user opening Archive, I want the /drive explorer as the app home with usage info, and the Archive rows grouped under one folder so that Archive has identity in the sidebar. Starting state: not st...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-01T21:16:38.745Z
+- **Ended At**: 2026-10-01T21:24:23.452Z
+- **Duration**: 7m 44s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-153" PLAN.md | head -20
+[94m[bash][0m $ grep -rn "US-153" PLAN.md tasks/ docs/ .ralph-tui/ 2>/dev/null | head -40
+[94m[bash][0m $ grep -n "M7f" PLAN.md | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd-batch-b.json
+[94m[bash][0m $ grep -n '"id": "US-132"' -A 40 tasks/prd-batch-b.json | grep -E '"id"|"passes"|"title"'
+[94m[bash][0m $ ls tasks/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd-batch-a.json
+[94m[bash][0m $ grep -n "US-150\|US-151\|US-152\|US-153\|CLAIMED" docs/plan/phases/phase-11-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-11-report.md
+[94m[bash][0m $ ls -R packages/twenty-apps/internal/a2e-drive 2>/dev/null | head -80
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-drive/package.json
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/lib/folder-structure-descriptors.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/lib/folder-structure-templates.ts
+[94m[bash][0m $ grep -rln "DrivePage\|/drive\|Drive" packages/twenty-front/src/pages packages/twenty-front/src/modul...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[bash][0m $ find packages/twenty-front/src/modules/template-gallery -type f | sort
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/AgendaLanding.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/constants/AgendaLandingTemplates.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/hooks/useOpenTemplateGallery.ts
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-front/src -iname "*[Ii]nstall*" -type f | grep -iv test | grep -i "hook\|isAppl...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "isDriveApplicationInstalled\|DRIVE_APPLICATION\|driveApplication" packages/twenty-front/sr...
+[94m[bash][0m $ cat packages/twenty-front/src/modules/drive/utils/driveUsage.ts
+[94m[bash][0m $ cat packages/twenty-front/src/modules/drive/components/DriveUsageWidget.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveUsageWidgetContent.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/BureauLanding.tsx
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-front/src/modules/bureau/components/__tests__/BureauLanding.test.tsx
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-apps/internal/a2e-documents/src/lib/__tests__/bureau-navigation.test....
+[94m[bash][0m $ grep -rln "bureauFolder\|folderUniversalIdentifier" packages/twenty-apps/internal/a2e-projects/src p...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/project-navigation.test.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[bash][0m $ grep -n "DRIVE_APP_PATH" packages/twenty-apps/internal/a2e-drive/src/lib/drive-file-search.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/lib/drive-file-search.ts
+Now let me look at how the descriptor keys are exposed and the folder-structure tests.
+
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-apps/internal/a2e-drive/src/lib/__tests__/folder-structure-templates....
+Now let me check the dev:build manifest output and current a2e-drive nav. Let me look at how the app nav row currently renders and whether I should add a folder + keep the existing row. Let me check the a2e-chat nav for reference and the SDK folder support.
+
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-chat/src/lib/__tests__/chat-navigation.test.ts
+Now let me check how `dev:build` works and inspect the manifest generation for nav. Also check the a2e-drive application.config and post-install. Let me look at the current build system.
+
+[94m[bash][0m $ grep -rn "FOLDER\|folderUniversalIdentifier" packages/twenty-apps/internal/real-estate/src packages/...
+[94m[bash][0m $ cat packages/twenty-apps/internal/twenty-partners/src/modules/shared/navigation-menu-items/partner-w...
+Now I have a clear picture. Let me check the phase-11 report line 64 mentioned and the M7c context to understand what "the app's nav items" means for a2e-drive. The a2e-drive app currently has one nav item (`drive` → `/drive` "Archive"). Let me check its views - all-drive-files and all-drive-folders were previously nav items? Let me check the M7c section and what rows the drive app exposes.
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-11-report.md
+Now I understand the full picture. Let me claim the slice first, then implement.
+
+**Slice:** The whole task — Archive landing on the `/drive` host explorer (primary action + 3 Archive folder-structure template links + usage indicator), plus the a2e-drive `Archive` FOLDER nav row grouping the app's nav items using the US-115 folder pattern.
+
+Let me check the Jotai/application installed state for drive and where to place the landing strip in DrivePage.
+
+[94m[bash][0m $ cat packages/twenty-front/src/modules/a2e-links/hooks/useIsA2eLinksApplicationInstalled.ts
+[94m[bash][0m $ tail -c 200 docs/plan/phases/phase-11-report.md | od -c | tail -5
+Now I'll claim the slice and start implementing. First, claim.
+
+[94m[bash][0m $ cat >> docs/plan/phases/phase-11-report.md << 'EOF'  CLAIMED — US-153/archive-landing-and-drive-fold...
+[94m[bash][0m $ tail -40 docs/plan/phases/phase-11-report.md | grep "CLAIMED"
+Claim is the only one for this slice. No file overlap with US-152 (ai module). Now implement.
+
+**Todo:**
+1. Host front: `ArchiveLanding` component + constants + install hook + tests.
+2. Wire landing strip into `DrivePage` (no new chrome/route).
+3. a2e-drive: `archive-folder` nav item, nest `drive` row under it, constants, tests, version bump.
+4. Run gates.
+
+Let me first look at DriveToolbar to reuse the upload/new-folder actions, and how primary action ties in.
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveToolbar.tsx
+Now the DrivePage already has `handleOpenUploadPicker` and `handleCreateFolder`. I'll add the ArchiveLanding strip that reuses these two host actions + gallery template links + usage indicator.
+
+Primary action: upload (the archive is about files). Templates entry: 3 Archive folder-structure descriptors. Usage: reuse `DriveUsageWidget`/`buildDriveUsageSummary`.
+
+The acceptance says "with a primary action (upload/new folder)". The landing should have one primary action. I'll make "Upload" the primary, and the folder templates. Empty state with 1 primary action: when there are no files/folders, show the landing emphasizing upload. Actually, the landing strip can always render at the top (title + primary + templates + usage) — that's the "app home" identity. Let me keep it as a header strip similar to AgendaLanding, always rendered above the toolbar, with usage.
+
+But the existing DrivePage already shows `DriveUsageWidget` in the sidebar. The acceptance says "usage indicator from existing drive data" — reuse the existing widget/summary, don't duplicate. I can add a compact usage line in the landing using `buildDriveUsageSummary` + `useDriveFiles`. But that would double-render. Better: the landing takes a `usage` prop computed from files the page already has. Hmm, the page already computes live files. I'll pass `totalFiles` count.
+
+Actually to keep pure/testable and avoid a second query, let me have `ArchiveLanding` accept props: `onUpload`, `onCreateFolder`, `totalFiles`, `hasContent`. It uses `useOpenTemplateGallery` directly (a hook, fine). Then tests can render it with props.
+
+Let me design:
+
+`ArchiveLandingProps`:
+- `primaryAction: 'upload' | ...` no. Simpler: `onUpload: () => void; onCreateFolder: () => void; totalFiles: number;`
+
+Empty state with 1 primary action: when `totalFiles === 0`, show landing with a single primary "Upload" button (and templates). When there is content, still show header (title + actions). Actually acceptance: "empty state with 1 primary action + 3 templates". The landing is always present. I'll render one primary action always — "Upload" — and a secondary "New folder". Hmm but "1 primary action" for empty state. Let me minimize: primary = Upload. Templates = 3 links. The "New folder" secondary only shown when not empty? Simpler and meets criteria: always show exactly one primary (Upload) plus 3 template links; when empty show a subtitle "No files yet — upload to start", when non-empty show usage. Let me include "New folder" as secondary always — criterion says "a primary action (upload/new folder)" meaning either. I'll make Upload primary, and keep New folder as a secondary to not lose existing behavior — but existing toolbar already has both. So the landing primary is Upload; toolbar remains below with upload/new folder. That's fine, no new chrome.
+
+Actually simpler & closer to AgendaLanding: landing strip = title/subtitle + 3 template links + primary Upload. Usage indicator shown in the strip too (compact). Since sidebar already has usage, showing again is duplication. Acceptance explicitly wants "usage indicator from existing drive data" on the landing. I'll show a compact usage summary in the strip (total files count), reusing `buildDriveUsageSummary`, but computed from the same `useDriveFiles` already used — if I call `useDriveFiles` in the landing it's a second Apollo subscription. The DrivePage already has `liveFiles`. So pass `usageSummary` prop.
+
+Let me make the landing pure-presentational with a hook only for the gallery:
+`ArchiveLandingProps = { onUpload, onCreateFolder, usageSummary }`.
+
+The usage indicator: compact text `{totalFiles} files`. 
+
+Let me create the files now.
+
+First the template category + links constants. The Archive descriptors keys: CLIENT, ASSOCIATION, ETUDIANT, ADMINISTRATION_ENTREPRISE. Pick 3: CLIENT, ASSOCIATION, ADMINISTRATION_ENTREPRISE (most universal). Labels fr+en.
+
+Let me create the constants.Now I'll implement the host landing. Create the category + template-link constants first.
+
+[94m[write][0m "import { type TemplateDescriptorCategory } from 'twenty-shared/application';
+
+// The M9c Archive family (a2e-drive folder structures) is published under this
+// category; the gallery groups and prefil... (400 chars)"
+[94m[write][0m "import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+
+// A named starter the Archive home features (M7f).
+export type ArchiveLandingTemplateLink = {
+  descr... (1045 chars)"
+Now the install hook + util for a2e-drive. Let me check if there's already a drive app identifier constant anywhere in the host.
+
+
+
+[94m[bash][0m $ grep -rn "b11cd01f-75de-4acd-8e67-0e9c484fde02\|A2E_DRIVE" packages/twenty-front/src packages/twenty...
+[94m[read][0m
+[94m[write][0m "// Mirrors a2e-drive/src/application.config.ts (committed forever there, and the
+// value also appears in A2eSuiteApplicationUniversalIdentifiers). Kept local
+// because that constants file allows a s... (861 chars)"
+I'll mirror the `newPageDocument.ts` pattern: a local util + hook. Create the drive install util.
+
+[94m[write][0m "import { applicationsSelector } from '@/applications/states/applicationsSelector';
+import { isDriveApplicationInstalled } from '@/drive/utils/isDriveApplicationInstalled';
+import { useAtomStateValue }... (811 chars)"
+Now the ArchiveLanding component. It reuses `buildDriveUsageSummary` shape. Let me design props to be pure and testable.
+
+[94m[write][0m "import { ARCHIVE_LANDING_TEMPLATE_CATEGORY } from '@/drive/constants/ArchiveLandingTemplateCategory';
+import { ARCHIVE_LANDING_TEMPLATE_LINKS } from '@/drive/constants/ArchiveLandingTemplates';
+import... (4207 chars)"
+Now wire into DrivePage. Need to gate on install, compute usage summary from live files, and render the landing above the toolbar (only when not in trash view).
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+Now add the usage summary import and compute. Let me add `buildDriveUsageSummary` import.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+That edit was a no-op essentially. Let me instead add the usage summary memo after `liveFiles`. Let me view around there.
+
+I broke formatting. Fix and add usage summary at once.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+Now add the `isDriveApplicationInstalled` hook call and render the landing. Let me find where the hook returns and render the strip. The landing should render in the non-trash branch above the StyledHeader.
+
+
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+Now render the landing in the non-trash branch. Let me view the render section.
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+The landing is the app home identity — render it at the top of the main content, once, above both branches (but not in trash). It should show only at the root (no selected folder / not trash), to preserve the explorer chrome. Acceptance says "Archive landing on the /drive host explorer (no new chrome)". Rendering it above the breadcrumb at root is reasonable, but showing it while navigating folders would be noisy. I'll render it when `!isTrashView && selectedFolderId === null` (the app home = root).
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+Now I need to make sure `usageSummary` doesn't need quota. `buildDriveUsageSummary({ files })` — quota optional, fine.
+
+Now the tests for the host. Create `ArchiveLanding.test.tsx` and `ArchiveLandingTemplates.test.ts`.
+
+[94m[write][0m "import { ArchiveLanding } from '@/drive/components/ArchiveLanding';
+import { type DriveUsageSummary } from '@/drive/utils/driveUsage';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from... (3900 chars)"
+Now the front constants test. Let me check how the Agenda one asserts descriptor keys — it reads the app descriptor file? Let me look at AgendaLandingTemplates.test.ts.
+
+
+
+[94m[read][0m
+[94m[write][0m "import { ARCHIVE_LANDING_TEMPLATE_CATEGORY } from '@/drive/constants/ArchiveLandingTemplateCategory';
+import { ARCHIVE_LANDING_TEMPLATE_LINKS } from '@/drive/constants/ArchiveLandingTemplates';
+
+// M7... (1006 chars)"
+The Agenda descriptor constants live host-side. For Archive, the descriptors live in a2e-drive, so the drift guard belongs in the a2e-drive package (reading the host constant file), like the Bureau one. So host-side test just checks 3 links + category. The a2e-drive drift guard reads `packages/twenty-front/src/modules/drive/constants/ArchiveLandingTemplates.ts`.
+
+Let me create the host constants test (3 links, category string).
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/constants/universal-identifiers.ts
+Now the a2e-drive side. First the nav folder + nesting. Add `archiveFolder` to `NAVIGATION_MENU_ITEM_IDS`, create the folder nav item, nest the drive row under it.
+
+
+
+[94m[write][0m "import {
+  defineNavigationMenuItem,
+  NavigationMenuItemType,
+} from 'twenty-sdk/define';
+
+import { NAVIGATION_MENU_ITEM_IDS } from '../constants/universal-identifiers.ts';
+
+// One folder holds the A... (861 chars)"
+[94m[edit][0m
+Now nest the drive row under the folder.
+
+Now the a2e-drive tests: repo nav manifest test (folder nests the row) + landing template drift guard. Let me check if there's an existing drive nav test.
+
+[94m[bash][0m $ grep -rln "NAVIGATION_MENU_ITEM_IDS" packages/twenty-apps/internal/a2e-drive/src --include=*.test.ts
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-drive/src -name "*.test.ts" | xargs grep -ln "navigation-menu...
+No existing drive nav test. I'll create one modeled on the a2e-chat/projects tests. Let me check how the drive `drive-folder-graph.test.ts` references repo files for the drift guard pattern.
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/lib/__tests__/drive-folder-graph.test.ts
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { NavigationMenuItemType } from 'twenty-sdk/define';
+
+import { NAVIGATION_MENU_ITEM_IDS } from '../../constants/unive... (2138 chars)"
+Now create the drive nav test and the drift guard test.
+
+Now the drift guard for the landing template keys against the host constant. Model on the Bureau one.
+
+
+
+[94m[write][0m "import assert from 'node:assert/strict';
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { test } from 'node:test';
+
+import {
+  ARCHIVE_TEMPLATE_C... (2423 chars)"
+Now bump the a2e-drive patch version and update README. Let me check the README nav section.
+
+
+
+[94m[bash][0m $ grep -n "Archive\|nav\|Navigation\|/drive\|Files\|position" packages/twenty-apps/internal/a2e-drive/...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/README.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/README.md
+Now bump version.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/package.json
+Now run the a2e-drive gates and front tests. First a2e-drive.
+
+[94m[bash][0m $ yarn typecheck && yarn lint
+[94m[bash][0m $ yarn test:unit 2>&1 | tail -20
+99 pass (was 91 + 2 new tests... actually 8 new? Let me not worry — includes the 2 new tests). Wait, 91 → 99 is +8. The new tests are 2 + 2? `archive-navigation` has 1 test, `archive-landing-template-links` has 2. That's +3. Hmm, maybe baseline moved. Anyway green.
+
+Now `npx twenty dev:build .`.
+
+
+
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -30
+[94m[bash][0m $ ls .twenty/output
+[94m[bash][0m $ console.log(JSON.stringify(nav,null,1))" 2>&1 | head -40
+Manifest shows the Archive FOLDER + Files nested row. Now run the front tests.
+
+First build twenty-shared (front depends on it) and typecheck front.
+
+[94m[bash][0m $ npx jest src/modules/drive/components/__tests__/ArchiveLanding.test.tsx src/modules/drive/constants/...
+2 suites / 7 pass (the stack trace is a React act warning from the Button, still passes). Now typecheck front.
+
+[94m[bash][0m $ npx nx build twenty-shared --skip-nx-cache 2>&1 | tail -5
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -20
+Typecheck clean. Now run findRelatedTests for changed front sources and lint/format touched files.
+
+
+
+[94m[bash][0m $ npx jest --findRelatedTests src/pages/drive/DrivePage.tsx src/modules/drive/components/ArchiveLandin...
+Need to run from within the package. Let me try there.
+
+[94m[bash][0m $ npx jest --findRelatedTests src/pages/drive/DrivePage.tsx src/modules/drive/components/ArchiveLandin...
+3 suites / 46 pass. Now lint/format touched front files and drive files.
+
+Let me use oxlint/oxfmt directly like prior reports, since the tree is uncommitted.
+
+[94m[bash][0m $ npx oxfmt --check src/pages/drive/DrivePage.tsx src/modules/drive/components/ArchiveLanding.tsx src/...
+[94m[bash][0m $ npx oxfmt --check src/pages/drive/DrivePage.tsx src/modules/drive/components/ArchiveLanding.tsx src/...
+Now lint/format the a2e-drive touched files (already ran yarn lint = 0/0). Let me run oxfmt on them since a2e-drive uses oxlint but formatting too. Let me check if a2e uses oxfmt.
+
+[94m[bash][0m $ npx oxfmt --check src/lib/__tests__/archive-landing-template-links.test.ts src/lib/__tests__/archive...
+Hmm, it only processed 3 files (maybe ignores some). Fine—all formatted. Now let me run the docs check and verify no locales were touched.
+
+Also run the front `lint:diff-with-main`? Tree uncommitted so it returns "No changed files" like prior reports. Let me verify git status.
+
+[94m[bash][0m $ git status --porcelain
+Clean — only my files plus the pre-existing ralph/prd files. No locales touched. Run docs check.
+
+
+
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -5
+Now let me double-check the DrivePage render is sound — `isDefined(selectedFolderId)` needs `isDefined` imported (it is). Let me review the final DrivePage diff region and verify no unused import.
+
+Also verify my `ArchiveLanding` uses `size="small"` on template buttons only — fine.
+
+Let me check `Button` supports `ariaLabel` + `dataTestId` (Agenda used them).
+
+Now run the broader drive module tests to ensure nothing regressed.
+
+[94m[bash][0m $ npx jest src/modules/drive --config=jest.config.mjs 2>&1 | tail -8
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/ArchiveLanding.tsx
+All 20 drive suites green. Now let me verify the front install-gating test requirement: "landing renders install-gated". The ArchiveLanding itself is presentational and gating is in DrivePage. Acceptance wants a unit test that "landing renders install-gated". The DrivePage gates it. But testing DrivePage requires heavy Apollo mocking. 
+
+The Bureau pattern had `BureauLanding` do the install-gate internally. Maybe better: make `ArchiveLanding` self-gated like `BureauLanding`, and DrivePage just renders `<ArchiveLanding ... />` without the external check. That gives a clean testable install-gated component matching the sibling pattern. Let me refactor: move the `useIsDriveApplicationInstalled` call into `ArchiveLanding`.
+
+This is more consistent with Bureau/Syna. Let me do it.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/ArchiveLanding.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+Now remove the external gating in DrivePage (keep the `useIsDriveApplicationInstalled` call? No—remove it since ArchiveLanding self-gates). Actually simpler: keep DrivePage rendering `<ArchiveLanding />` and let it self-gate. Remove the import and hook call from DrivePage.
+
+
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/drive/DrivePage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/__tests__/ArchiveLanding.test.tsx
+Now update the test: mock `useIsDriveApplicationInstalled` and add an install-gated test (like BureauLanding). Also add `wrapper` with JotaiProvider already present.
+
+Let me update the test file. It currently doesn't mock the install hook — rendering would call `useAtomStateValue(applicationsSelector)` which needs metadataStoreState; might work defaulting to []. But to be deterministic, mock it.
+
+
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/__tests__/ArchiveLanding.test.tsx
+[94m[bash][0m $ npx jest src/modules/drive/components/__tests__/ArchiveLanding.test.tsx --config=jest.config.mjs 2>&...
+Now `useIsDriveApplicationInstalled` is used only by ArchiveLanding — that's fine. Re-typecheck and re-lint/format the changed front files.
+
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -10
+[94m[bash][0m $ npx oxfmt --check src/pages/drive/DrivePage.tsx src/modules/drive/components/ArchiveLanding.tsx src/...
+All green. Let me re-run the broader drive + related tests after the refactor to confirm.
+
+[94m[bash][0m $ npx jest --findRelatedTests src/pages/drive/DrivePage.tsx src/modules/drive/components/ArchiveLandin...
+Now final self-verify: git status + confirm no stray files. Then append the phase report and progress entry.
+
+Let me also verify the `useIsDriveApplicationInstalled` util has a test? Not strictly required. Acceptance says "landing renders install-gated" — covered by ArchiveLanding.test. Good.
+
+Let me do a final git status.
+
+[94m[bash][0m $ git status --porcelain
+All changes are mine or pre-existing ralph/prd state. Now append the phase report and progress entry.
+
+[94m[bash][0m $ then the M7c Bilan reduction (needs M7f dashboard links) and CRM host folder legs. EOF tail -3 docs/...
+Now the progress.md entry. Let me check the file's top structure.
+
+[94m[bash][0m $ tail -20 .ralph-tui/progress.md
+[94m[bash][0m $ a cross-app folder ref only works when the owning app is a hard install prerequisite (Bureau). Prefe...
+Both reports appended. Final self-verify: claim is still the latest for this slice, git status only my files.
+
+[94m[bash][0m $ git status --porcelain | grep -v "ralph\|prd-batch-b\|phase-11-report"
+All within scope. Task complete.
+
+**US-153 done-for-review.** Implemented the whole task:
+
+- **Archive landing** (`/drive` host explorer, no new route/chrome): `ArchiveLanding` strip with primary `Upload`, `New folder`, 3 M9c folder-structure starter links (gallery deep-links) and a usage readout from existing drive data — install-gated on a2e-drive, root-only.
+- **a2e-drive nav**: self-owned `Archive` FOLDER row nesting the `Files` `/drive` row (completes M7c's drive half).
+
+**Gates green:** a2e-drive `yarn typecheck`/`yarn lint` 0/0/`yarn test:unit` 99 pass/`npx twenty dev:build .` success (manifest shows `Archive` FOLDER + nested `Files` row); twenty-front `tsgo` exit 0, drive tests 20 suites/111 pass, findRelatedTests 47 pass, oxlint/oxfmt clean; docs check PASS; no locales touched.
+
+**Remaining (Tier 2, orchestrator):** browser E13 leg — `/drive` landing strip + sidebar `Archive` folder.
+
+Reports appended to `docs/plan/phases/phase-11-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

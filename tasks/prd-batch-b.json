@@ -99,11 +99,12 @@
         "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; Lingui fr+en; canonical icons; no i18n catalog churn; no AI attribution"
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-LINK (command-menu). Depends on US-147 (junction for pre-link). Invoice/expense entries are install-gated descriptors of existing a2e-accounting features — P7-gated *expansion* is untouched.",
       "dependsOn": [
         "US-147"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-155",
@@ -399,6 +400,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T21:24:23.453Z"
+    "updatedAt": "2026-10-01T21:41:33.788Z"
   }
 }
