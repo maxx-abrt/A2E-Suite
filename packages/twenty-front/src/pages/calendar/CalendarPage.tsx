@@ -9,6 +9,7 @@ import { v4 } from 'uuid';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { AgendaLanding } from '@/calendar/components/AgendaLanding';
 import { CalendarAgendaView } from '@/calendar/components/CalendarAgendaView';
 import { CalendarDayView } from '@/calendar/components/CalendarDayView';
 import { CalendarEventComposer } from '@/calendar/components/CalendarEventComposer';
@@ -40,6 +41,7 @@ import {
   buildCalendarSeriesAnchorInputFromDraft,
   getCalendarSeriesTimeZone,
 } from '@/calendar/utils/buildCalendarSeriesAnchorInputFromDraft';
+import { buildDefaultCalendarEventDraft } from '@/calendar/utils/buildDefaultCalendarEventDraft';
 import { expandCalendarEventsForRange } from '@/calendar/utils/expandCalendarEventsForRange';
 import { getCalendarEventOccurrenceDay } from '@/calendar/utils/getCalendarEventOccurrenceDay';
 import { getCalendarSeriesEvents } from '@/calendar/utils/getCalendarSeriesEvents';
@@ -112,7 +114,7 @@ export const CalendarPage = () => {
     resetError,
   } = useCalendarEventMutations();
 
-  const [mode, setMode] = useState<CalendarViewMode>('month');
+  const [mode, setMode] = useState<CalendarViewMode>('week');
   const [anchorDate, setAnchorDate] = useState<Temporal.PlainDate>(() =>
     Temporal.Now.plainDateISO(timeZone),
   );
@@ -384,6 +386,18 @@ export const CalendarPage = () => {
 
   const handleToday = () => {
     setAnchorDate(Temporal.Now.plainDateISO(timeZone));
+  };
+
+  const handleCreateEvent = () => {
+    resetError();
+    setStatusMessage(null);
+    setComposer({
+      mode: 'create',
+      eventId: null,
+      editScope: null,
+      occurrenceDay: null,
+      draft: buildDefaultCalendarEventDraft({ timeZone }),
+    });
   };
 
   const handleCreateEventFromSlots = ({
@@ -857,6 +871,7 @@ export const CalendarPage = () => {
 
   return (
     <StyledPage data-testid="calendar-page">
+      <AgendaLanding onCreateEvent={handleCreateEvent} />
       <CalendarToolbar
         mode={mode}
         title={title}

@@ -3,10 +3,10 @@
   "sessionId": "6b30e8e0-f0b6-4aaa-aa47-219b2bae47b8",
   "status": "running",
   "startedAt": "2026-10-01T20:37:10.521Z",
-  "updatedAt": "2026-10-01T21:00:34.094Z",
-  "currentIteration": 0,
+  "updatedAt": "2026-10-01T21:06:57.758Z",
+  "currentIteration": 1,
   "maxIterations": 20,
-  "tasksCompleted": 0,
+  "tasksCompleted": 1,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -16,7 +16,18 @@
     "totalTasks": 0,
     "tasks": []
   },
-  "iterations": [],
+  "iterations": [
+    {
+      "iteration": 1,
+      "status": "completed",
+      "taskId": "US-150",
+      "taskTitle": "M7f-1: Bureau landing page — one primary action, recent items, template links",
+      "taskCompleted": true,
+      "durationMs": 1396848,
+      "startedAt": "2026-10-01T20:37:17.241Z",
+      "endedAt": "2026-10-01T21:00:34.089Z"
+    }
+  ],
   "skippedTaskIds": [],
   "cwd": "/Users/maxaubert/Projets/A2E Suite",
   "activeTaskIds": [],

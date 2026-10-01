@@ -37,11 +37,12 @@
         "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; Lingui fr+en; no i18n catalog churn; no AI attribution"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-NAV (host calendar pages). Pairs naturally after US-142 (Agenda template family) so template links are real, but not hard-blocked on it.",
       "dependsOn": [
         "US-132"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-152",
@@ -396,6 +397,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T21:00:34.093Z"
+    "updatedAt": "2026-10-01T21:06:57.758Z"
   }
 }

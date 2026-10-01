@@ -11,6 +11,7 @@ after each iteration and it's included in prompts for context.
 
 - **Host "app landing" pages** follow `HomeDashboard`/`InboxPage`: a `~/pages/<x>` component (`~` = `src`), registered in `createWorkspaceRouteObjects.tsx` with a new `AppPath`, a `title-utils.ts` case, and self-gating via `useIsDocumentApplicationInstalled` / `hasObjectMetadataItem`. The app-side nav row then points at it with a `NavigationMenuItemType.LINK` (VIEW→LINK like US-101); the link must be added to `INTERNAL_NAVIGATION_MENU_ITEM_ROUTE_PATHS` (twenty-shared) and both `twenty-shared` and `twenty-sdk` dist rebuilt.
 - **Template gallery entry seam**: every surface opens via `useOpenTemplateGallery({ category, templateKey })`; category + key are *soft* preselects in jotai atoms (`templateGallery*PreselectState`) read by `TemplateGallerySidePanelPage` → `TemplateGallery(initialCategory, initialTemplateKey)`. App front-components cannot use it (isolated runtime) — landing pages that deep-link the gallery must be host pages.
+- **Two shapes of "landing"**: (1) a *new* host route (`~/pages/<x>` + `createWorkspaceRouteObjects` + `AppPath` + `title-utils` + nav row repoint), as with Bureau `/bureau`; or (2) an *existing* host page enriched in place when a nav row already targets it (Agenda `/calendar`), as with US-151 — default the host to the intended surface and prepend a self-contained header component that takes the host's own action as a callback, so the host keeps a single write path and no second route/nav is added.
 - **`twenty(max-consts-per-file)`**: max one exported `const` per file. Split paired constants into separate files (see `BureauLandingTemplateCategory.ts` vs `BureauLandingTemplates.ts`); `styled` consts are exempt.
 - **Pre-existing red**: `usePageChangeEffectNavigateLocation.test.ts` "tests should be exhaustive" was red at HEAD because `AppPath.{Drive,Calendar,Discussions,Inbox}` lack matrix rows; `UNTESTED_APP_PATHS` is the exemption list.
 
@@ -26,5 +27,17 @@ after each iteration and it's included in prompts for context.
   - App front-components run isolated and cannot call host hooks — a landing that deep-links the host gallery must be a host page, not a `definePageLayout` FRONT_COMPONENT widget.
   - `twenty(max-consts-per-file)` forces one exported const per file; split constants.
   - The exhaustive page-change test was already red at HEAD (Drive/Calendar/Discussions/Inbox unexempted); added all native home pages to `UNTESTED_APP_PATHS`.
+---
+
+## 2026-10-01 - US-151 M7f-2: Agenda landing page
+- Enriched the existing `/calendar` host page instead of adding a route: `CalendarPage` now defaults to the **week** view and renders an `AgendaLanding` strip above the existing toolbar.
+- `AgendaLanding` (`modules/calendar/components/AgendaLanding.tsx`): title + subtitle, primary "New event" opening the host's existing composer (new `handleCreateEvent` using `buildDefaultCalendarEventDraft` = next full hour), and 3 featured M9c template links opening the shared gallery via `useOpenTemplateGallery({ category: 'Agenda', templateKey })`.
+- Constants `AgendaLandingTemplateCategory`/`AgendaLandingTemplates` (own files per `max-consts-per-file`); new util `buildDefaultCalendarEventDraft` reuses `buildCalendarEventDraftFromSlot`.
+- Tests: `AgendaLanding.test.tsx` (composition/primary/gallery category), `AgendaLandingTemplates.test.ts` (host-side drift guard: each featured key resolves to a shipped `Agenda` descriptor), `buildDefaultCalendarEventDraft.test.ts`. 27 calendar suites / 257 green; tsgo 0; oxlint/oxfmt clean.
+- Files: `twenty-front/src/pages/calendar/CalendarPage.tsx` + new `modules/calendar/{components/AgendaLanding,components/__tests__/AgendaLanding.test,constants/AgendaLandingTemplateCategory,constants/AgendaLandingTemplates,constants/__tests__/AgendaLandingTemplates.test,utils/buildDefaultCalendarEventDraft,utils/__tests__/buildDefaultCalendarEventDraft.test}.ts(x)`.
+- **Learnings:**
+  - The Agenda nav seed (`20202020-b00c-…-c0aba11c000c`, standard `NavigationMenuItemType.LINK`) already targets `/calendar`, so "no parallel nav" means *no route change at all* — just enrich the host page. Contrast US-150, which had to add/repoint a route.
+  - The week view is a read-only edit surface (`isCalendarLocalEditSurface` is day/agenda only), but **creation** is mode-independent: a global "New event" that opens the existing composer is additive and safe.
+  - Keep landing constants + their drift guard co-located in the host package when both the featured keys and the descriptors are host-side (US-142 Agenda), unlike Bureau whose descriptors ship in a2e-documents.
 ---
 

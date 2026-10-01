@@ -146,3 +146,29 @@ CLAIMED — US-150/bureau-landing — deepseek-v4.1-flash — 2026-10-01T20:44:3
 **Do not redo:** the US-132 `useOpenTemplateGallery` seam is extended, not forked (category + new optional `templateKey`); `RecentPagesWidget`/`useCreateNewPage`/`useIsDocumentApplicationInstalled` are reused, not rebuilt; the US-131 apply functions and gallery surface are untouched; the a2e-documents `allDocuments` view still exists (the landing's "All pages" links to the documents index).
 **Remaining:** M7f siblings US-151 (Agenda), US-152 (Syna), US-153 (Archive + drive folder); M7c drive/Bilan/CRM legs; then US-165/US-167 consume this landing.
 **Next:** US-151 reuses this exact pattern (host page + route + `TemplateGalleryEntryPoint`/`useOpenTemplateGallery`); when M13c lands, swap the landing's inline sections for the shared empty-state primitive rather than adding a second one.
+
+CLAIMED — US-151/agenda-landing — deepseek-v4.1-flash — 2026-10-01T21:04:00Z — base e5d2db849d5cb78b803ded75770a09b6ee24b812
+
+## 2026-10-01 21:15 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-151 M7f-2: Agenda landing page — calendar week as the app home · **Slice:** the whole task — enrich the existing `/calendar` host page with the Agenda landing header (primary "New event" + 3 featured Agenda gallery links) and open on the week view
+**Claim:** done-for-review
+**Ready-to-tick:** yes — every Tier 0 check I own is green; only the Tier-2 browser render (E13 leg) is the orchestrator's
+**Base:** e5d2db849d5cb78b803ded75770a09b6ee24b812
+**Changed:**
+- twenty-front `src/pages/calendar/CalendarPage.tsx` — no new route; defaults `mode` to `'week'`, renders `<AgendaLanding onCreateEvent={handleCreateEvent} />` above the existing toolbar, and adds `handleCreateEvent` that opens the existing composer in create mode with a `buildDefaultCalendarEventDraft` draft (single write path unchanged).
+- NEW `src/modules/calendar/components/AgendaLanding.tsx` — host landing strip: title + subtitle, primary "New event" (`agenda-new-event`), 3 featured M9c template links (`agenda-template-<key>`) that open the shared gallery via `useOpenTemplateGallery({ category: 'Agenda', templateKey })`. Props-typed `AgendaLandingProps { onCreateEvent }`; no calendar state.
+- NEW `src/modules/calendar/constants/AgendaLandingTemplateCategory.ts` (`'Agenda'`) and `AgendaLandingTemplates.ts` (3 keys: blocage-temps-semaine, rituels-equipe, calendrier-editorial + Lingui labels).
+- NEW `src/modules/calendar/utils/buildDefaultCalendarEventDraft.ts` — blank 1h event at the next full hour in the workspace time zone (never in the past), reusing `buildCalendarEventDraftFromSlot`.
+- NEW tests: `components/__tests__/AgendaLanding.test.tsx` (3: composition, primary action → `onCreateEvent`, gallery entry → `{category:'Agenda', templateKey}`), `constants/__tests__/AgendaLandingTemplates.test.ts` (2: exactly 3 links, each key resolves to a shipped `Agenda` descriptor), `utils/__tests__/buildDefaultCalendarEventDraft.test.ts` (2: next full hour 1h duration, never in the past).
+**Checks:**
+- `npx jest <3 new specs> --config=packages/twenty-front/jest.config.mjs` → 3 suites / 7 pass.
+- `npx jest src/modules/calendar --config=packages/twenty-front/jest.config.mjs` → 27 suites / 257 pass.
+- `cd packages/twenty-front && npx jest --findRelatedTests src/pages/calendar/CalendarPage.tsx src/modules/calendar/components/AgendaLanding.tsx src/modules/calendar/utils/buildDefaultCalendarEventDraft.ts` → 4 suites / 46 pass (incl. `createWorkspaceRouteObjects`).
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0.
+- `npx oxlint --type-aware -c .oxlintrc.json <8 touched>` → 0 warnings / 0 errors; `npx oxfmt --check <same>` → clean after formatting the test file.
+- `npx nx lint:diff-with-main twenty-front` → "No changed files." (tree uncommitted; direct oxlint/oxfmt is the real gate).
+- `node docs/scripts/check-docs.mjs` → PASS; no `locales/**` touched; no app package touched (host-only slice, no `package.json` bump); no AI attribution.
+**Missing for tick:** Tier 2 (orchestrator) browser E13 leg — fresh workspace: the `Agenda` nav row lands on `/calendar` which opens on the **week** view under the landing strip (title + "New event" + 3 starter links); "New event" opens the composer pre-filled at the next full hour; each starter opens the gallery on the **Agenda** category with its template preselected; no second sidebar/nav appears.
+**Do not redo:** the US-142 `AGENDA_TEMPLATE_DESCRIPTORS`/`applyAgendaTemplate`/host apply wiring, the US-132 `useOpenTemplateGallery({category,templateKey})` seam, the US-101/116 `/calendar` standard LINK nav row and its allow-list, and the calendar write path (`handleComposerSubmit`, `buildCalendarEventInputFromDraft`, `buildCalendarSeriesAnchorInputFromDraft`). Agenda reuses all of them — do not fork a second gallery or calendar-write path.
+**Remaining:** M7f siblings US-152 (Syna), US-153 (Archive + drive folder); M7c drive/Bilan/CRM legs; then US-165/US-167 consume this landing.
+**Next:** US-152 (Syna landing) reuses this exact host-enrichment shape; when M13c lands, swap the landing's inline strip for the shared empty-state primitive rather than adding a second one.
