@@ -22,8 +22,13 @@ not proven by their presence.
 - App-owned link metadata: `linkKey` (unique `${sourceObject}:${sourceId}:${targetObject}:${targetId}`
   dedup key), `label`, and `linkType` (`USER_LINK` vs a mention-derived link).
 
-The "Link…" picker (US-148) and the "Related" tab (US-149) are follow-up
-increments; this scaffold ships the metadata only.
+The "Link…" picker (US-148) is the host-side universal linker in
+`twenty-front` (`modules/a2e-links`): a record-page action gated on this app's
+universal identifier. It searches the declared linkable set through the core
+`search` federation (`SingleRecordPicker` → `useObjectRecordSearchRecords`) and
+writes one `a2eLink` row per pair through the record-create primitive, using
+`linkKey` as the duplicate guard. The "Related" tab (US-149) is the remaining
+follow-up increment.
 
 ## Install order
 

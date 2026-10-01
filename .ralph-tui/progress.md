@@ -102,3 +102,14 @@ after each iteration and it's included in prompts for context.
   - C3 uninstall-preflight (`computeCrossAppDependents`) keys only on `relationTargetObjectMetadataId`, so a `MORPH_RELATION` leg blocks provider removal exactly like a plain relation; the spec had no morph case, now it does (9/9).
   - The SDK `dev:build` reports "Build succeeded (2 files)" but still emits a full `manifest.json` (objects + fields + roles) — count the manifest contents, not the "files" number.
 ---
+
+## [2026-10-01] - US-148
+- What was implemented: the M11a-i2 universal "Link…" picker as a native host feature in twenty-front. A record-page header action (`LinkToRecordButton`, mounted in `RecordShowPage` for non-side-panel, non-edit mode) gated on the a2e-links app identifier AND on the source object having a declared morph leg. The dropdown renders `SingleRecordPicker` (which searches via `useObjectRecordSearchRecords`) over the linkable+readable set, and `onMorphItemSelected` writes one `a2eLink` row through `useCreateOneRecord` (fresh v4 id) with a deterministic `linkKey`; duplicates are rejected by the unique index and surfaced with an honest error snackbar. Bumped a2e-links 0.1.0 → 0.1.1.
+- Files changed: NEW `twenty-front/src/modules/a2e-links/**` (constants ×5, utils ×5, hooks ×2, `components/LinkToRecordButton.tsx`, 6 specs); `twenty-front/src/pages/object-record/RecordShowPage.tsx`; `twenty-apps/internal/a2e-links/{package.json,README.md}`; phase-15 report.
+- **Learnings:**
+  - The app-declared `defineCommandMenuItem` + front-component path cannot satisfy "reuse `SingleRecordPicker`/`useObjectRecordSearchRecords`" — app front components are sandboxed and only see `twenty-sdk/front-component` (`Command`, `openSidePanelPage`, `CoreApiClient`, …). So the universal linker is a host module gated on the app identifier (the `useNewPageCommand`/`useIsDocumentApplicationInstalled` pattern), not an app command item.
+  - `applicationsSelector` is typed `FlatApplication[]` but returns a non-array (uninitialized `metadataStoreState`) in page tests; a new reader of it must guard `Array.isArray(applications)` or it crashes every `RecordShowPage` test (`applications.map is not a function`).
+  - `twenty/max-consts-per-file` (max 1) applies to `**/constants/*.ts`; one const per file. `twenty/component-props-naming` requires the prop type to be named exactly `<ComponentName>Props` — an inner component needs its own alias type.
+  - The picker target set must be the DECLARED morph set (document, task), not every readable object: a link to an object with no leg cannot be persisted. Permission filtering reuses `filterReadableActiveObjectMetadataItems`.
+  - `useCreateOneRecord` is the app-object create path (`createDocuments({...})` precedent): morph FKs are `<joinColumnName>` fields (`sourceDocumentId`, `targetTaskId`), and the id is left to the caller so the hook mints a fresh v4.
+---

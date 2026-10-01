@@ -1,0 +1,174 @@
+# Iteration 6 Log
+
+## Metadata
+
+- **Task ID**: US-147
+- **Task Title**: M11a-i1: a2e-links app scaffold — a2eLink morph junction object + inverse fields on first consumer targets
+- **Description**: As a user, I want a generic way to link any record to any other so that cross-app links stop being per-pair (G13). Starting state: spike done (US-125) — decision D-M11A-LINK recorded: 'app-owned a2eLi...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-01T18:10:13.686Z
+- **Ended At**: 2026-10-01T18:20:06.835Z
+- **Duration**: 9m 53s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the mandatory clean-start checks and context gathering.
+[94m[bash][0m $ ls docs/plan/phases/ 2>/dev/null | head -50
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-147" PLAN.md
+[94m[bash][0m $ grep -rn "US-147" docs/plan/phases/*.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-15-report.md
+[94m[bash][0m $ grep -rn "M11a-i1\|M11a" PLAN.md | head -40
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-links -type f | head -100
+[94m[bash][0m $ ls -la .ralph-tui/iterations/ | tail -10
+[94m[bash][0m $ ls -la .ralph-tui/iterations/*US-147*
+[94m[bash][0m $ ls -la .ralph-tui/progress.md 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/iterations/20784e55_2026-10-01_19-59-55_US-147.log
+This is a resumed iteration: the prior US-147 run (Iteration 5) **failed at 18:10:03Z** mid-work, leaving untracked scaffold files and a stale claim. Per contract step 0, dirty files matching the active claim for the same task = expected; I'll resume. Let me inspect the leftover work and the real spec.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd-batch-a.json')) for us in d.get('userStories',[...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/application.config.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/package.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/tsconfig.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/application.config.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/constants/universal-identifiers.ts
+Now let me read all the leftover scaffold files.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/constants/field-vocabulary.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/README.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/.oxlintrc.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/objects/a2e-link.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/roles/default-function.role.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/lib/__tests__/a2e-links-integrity.test.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/fields/source-document.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/fields/source-task.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/fields/target-task.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/fields/document-outgoing-links.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/fields/target-document.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/fields/document-incoming-links.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/fields/task-outgoing-links.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/fields/task-incoming-links.field.ts
+Now let me compare against the reference app format and verify the SDK symbols exist.
+[94m[bash][0m $ done
+[94m[bash][0m $ done
+[94m[bash][0m $ grep -rn "defaultValue" packages/twenty-apps/internal/a2e-documents/src/objects/*.ts packages/twenty...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/.gitignore
+[94m[bash][0m $ find packages/twenty-server/src -iname "*uninstall-preflight*"
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-front/src/modules/a2e-workspace/constants/A2eSuiteApplicationGroupHeadings.ts 2>...
+[94m[bash][0m $ grep -rln "internal/a2e-documents\|a2e-documents\|a2e-projects\|a2e-chat" packages/twenty-server/src...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "a2e-documents\|a2e-projects\|a2e-chat\|c31a\|19126a9c\|4f759655\|e2dce399\|applicationUnive...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/README-A2E.md
+[94m[bash][0m $ ls packages/twenty-sdk/src/sdk/define/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/index.ts
+[94m[bash][0m $ grep -rn "morphId\|MORPH_RELATION\|isUIEditable\|isUnique\|joinColumnName\|isNullable" packages/twen...
+The scaffold is essentially complete from the prior run. Let me claim the slice (resuming after the failed iteration) and set up the task list.
+[94m[bash][0m $ cat >> docs/plan/phases/phase-15-report.md <<'EOF'  CLAIMED — US-147/m11a-i1-a2e-links-scaffold — de...
+[94m[bash][0m $ grep -n "US-147" .ralph-tui/progress.md
+[94m[todowrite][0m
+[94m[bash][0m $ ls ~/.yarn/berry/cache/ 2>/dev/null | grep -iE "twenty-sdk|oxlint|typescript-npm-5.9" | head
+[94m[bash][0m $ yarn install 2>&1 | tail -30
+[94m[bash][0m $ git status --porcelain .
+[94m[bash][0m $ echo "EXIT=${PIPESTATUS[0]}"
+[94m[bash][0m $ grep -rln "EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIERS\|LINK_MORPH_IDS\|a2e-link-" src/ 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/fields/a2e-link-source-task.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/src/fields/a2e-link-source-document.field.ts
+Confirmed: the `a2e-link-*.field.ts` files are orphaned drafts from the failed run (import removed constants). Removing them.
+[94m[bash][0m $ rm src/fields/a2e-link-source-document.field.ts src/fields/a2e-link-source-task.field.ts src/fields/...
+[94m[bash][0m $ echo "EXIT=${PIPESTATUS[0]}"
+[94m[bash][0m $ echo "EXIT=$?"
+[94m[bash][0m $ echo "EXIT=$pipestatus[1]"
+Typecheck and unit tests green. Now lint and `dev:build`.
+[94m[bash][0m $ echo "EXIT=$pipestatus[1]"
+[94m[bash][0m $ echo "EXIT=$pipestatus[1]"
+[94m[bash][0m $ grep -oE '"nameSingular":"[^"]*"|"name":"[^"]*"|"type":"[^"]*"|"morphId":"[^"]*"' .twenty/output/man...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-links/.twenty/output/manifest.json
+Manifest registers the `a2eLink` junction + 4 morph legs + 4 inverse O2M fields correctly. Let me check for field-name collisions on the consumer objects.
+[94m[bash][0m $ grep -rn "outgoingLinks\|incomingLinks" packages/twenty-apps/internal/a2e-documents/src 2>/dev/null ...
+[94m[bash][0m $ grep -rn "name: 'outgoingLinks'\|name: 'incomingLinks'\|'outgoingLinks'\|'incomingLinks'" packages/t...
+All gates pass. Now extend the C3 preflight spec to explicitly cover a MORPH_RELATION dependent.
+[94m[edit][0m
+[94m[bash][0m $ echo "EXIT=$pipestatus[1]"
+[94m[bash][0m $ grep -n "lint:diff-with-main" nx.json package.json 2>/dev/null | head
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ echo "EXIT=$pipestatus[1]"
+[94m[bash][0m $ echo "FMT_EXIT=$pipestatus[1]"
+[94m[bash][0m $ echo "FMT_EXIT=$pipestatus[1]"
+[94m[bash][0m $ git diff packages/twenty-server/src/engine/core-modules/application/application-manifest/services/__...
+[94m[bash][0m $ echo "EXIT=$pipestatus[1]"
+oxfmt reformatted pre-existing unrelated lines. Let me verify the repo-pinned oxfmt version rather than a stray npx-fetched one.
+[94m[bash][0m $ npx oxfmt --version 2>/dev/null || true
+Let me check whether apps are registered explicitly (Dockerfile/build loop) or auto-discovered, to satisfy the "manifest path" bullet.
+[94m[bash][0m $ grep -n "twenty-apps\|for app\|internal/" packages/twenty-docker/twenty/Dockerfile 2>/dev/null | hea...
+[94m[bash][0m $ grep -rn "a2e-documents\|internal/a2e\|twenty-apps/internal" packages/twenty-sdk/src packages/twenty...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docker/twenty/Dockerfile
+A front spec guards that every internal `a2e-*` app is in the front allowlist. Let me read it.
+[94m[read][0m
+[94m[read][0m
+The drift guard requires every internal `a2e-*` app to be in the front allowlist, onboarding list, and Dockerfile. Let me confirm the failure and read the server-side parity.
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-server/src/engine/core-modules/onboarding/constants/workspace-templat...
+[94m[bash][0m $ echo "EXIT=$pipestatus[1]"
+[94m[read][0m
+[94m[bash][0m $ grep -rn "six\|toHaveLength(6)\|length).toBe(6\|A2E_SUITE_APPLICATION_UNIVERSAL_IDENTIFIERS" package...
+[94m[bash][0m $ grep -n "a2e-links\|A2e links\|Liens\|a2eLink\|M11a" docs/plan/03-integration-blueprint.md docs/appl...
+The registration surface is broader than the app dir. Let me check the onboarding install-order behavior and docs before deciding scope.
+[94m[bash][0m $ grep -rln "installApps\|triggerInstallAppsOnboardingStep\|ONBOARDING_INSTALLABLE_APP" packages/twent...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/onboarding/onboarding.service.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/onboarding/onboarding.service.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/onboarding/InstallApps.tsx
+This is a required cross-package registration (the drift guard enforces it). Let me find all consumers/tests of the onboarding list before editing.
+[94m[bash][0m $ git log --oneline -5 -- packages/twenty-front/src/modules/a2e-workspace/constants/__tests__/A2eSuite...
+[94m[bash][0m $ grep -rln "ONBOARDING_INSTALLABLE_APPS\|ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS\|A2E_SUITE_...
+This is exactly the US-086 precedent. Let me see what that registration commit touched.
+[94m[bash][0m $ git show --stat fe3623a1 | head -60
+[94m[bash][0m $ git show fe3623a1 -- packages/twenty-front/src/modules/a2e-workspace/constants/A2eSuiteApplicationUn...
+[94m[bash][0m $ cat packages/twenty-front/src/modules/onboarding/hooks/useInstallOnboardingApps.ts 2>/dev/null
+Registration is required (matches the US-086 precedent). Applying the five registration edits.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docker/twenty/Dockerfile
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/onboarding/constants/OnboardingInstallableApps.ts
+[94m[edit][0m
+Now run the drift guards and parity specs.
+[94m[bash][0m $ echo "EXIT=$pipestatus[1]"
+[94m[bash][0m $ echo "EXIT=$pipestatus[1]"
+All registration guards green. Run related-test coverage for the changed files.
+[94m[bash][0m $ echo "EXIT=$pipestatus[1]"
+[94m[bash][0m $ echo "EXIT=$pipestatus[1]"
+All related tests green (front 69, server 175). Now lint/format the changed TS files.
+[94m[bash][0m $ echo "SFMT=$pipestatus[1]"
+oxfmt/oxlint ignored the front files. Let me check the front formatter/linter configuration.
+[94m[bash][0m $ grep -n "lint:diff-with-main" -A3 nx.json | head
+[94m[bash][0m $ cat packages/twenty-front/.oxlintrc.json
+zsh didn't word-split the list. Re-running explicitly per file.
+[94m[bash][0m $ echo "FFMT=$pipestatus[1]"
+All checks green. Final review of the working-tree scope.
+[94m[bash][0m $ git add -n packages/twenty-apps/internal/a2e-links/ 2>/dev/null | wc -l
+The Dockerfile uses `yarn install --immutable`; verify the committed lockfile is immutable-clean.
+[94m[bash][0m $ echo "EXIT=$pipestatus[1]"
+Final green run of the a2e-links gates on the frozen state.
+[94m[bash][0m $ npx twenty dev:build . 2>&1 | tail -8
+[94m[todowrite][0m
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ then executor — US-148 wiring `SingleRecordPicker` → `useObjectRecordSearchRecords` → create on `a2e...
+[94m[bash][0m $ head -20 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ the spec had no morph case, now it does (9/9).   - The SDK `dev:build` reports "Build succeeded (2 f...
+[94m[bash][0m $ grep -n "CLAIMED — US-147" docs/plan/phases/phase-15-report.md | tail -1
+[94m[todowrite][0m
+US-147 complete, `done-for-review`. Resumed after two failed iterations (leftover orphan `.field.ts` drafts removed), finished the `a2e-links` scaffold, registered it on all five drift-guard surfaces, and extended the C3 preflight spec for the morph case.
+
+**Evidence**
+- `a2e-links`: `yarn install --immutable` ✓ · `yarn typecheck` ✓ · `yarn lint` 0/0 · `yarn test:unit` 7/7 · `npx twenty dev:build .` ✓ (manifest: `a2eLink` + 4 morph legs / 2 morphIds + 4 inverse O2M on `document`/`task`)
+- Front drift guard 3 suites/19; server parity 3/3; related tests 8/69 + 25/175; preflight spec 9/9; oxlint/oxfmt clean
+- No `locales/**`, no AI attribution, no commit
+
+**Missing for tick (Tier 2, orchestrator):** live install with `a2e-documents` first + metadata codegen + E17. App anatomy (views/page-layout/nav/command-menu) is deferred to US-148/149 by design.
+
+<promise>COMPLETE</promise>

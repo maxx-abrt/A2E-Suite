@@ -3,6 +3,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
+import { LinkToRecordButton } from '@/a2e-links/components/LinkToRecordButton';
 import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
@@ -113,7 +114,13 @@ const RecordShowPageContent = ({
                 <>
                   <RecordShowCommandMenu />
                   {!isLayoutCustomizationModeEnabled && (
-                    <SidePanelToggleButton />
+                    <>
+                      <LinkToRecordButton
+                        sourceObjectNameSingular={objectNameSingular}
+                        sourceRecordId={objectRecordId}
+                      />
+                      <SidePanelToggleButton />
+                    </>
                   )}
                 </>
               )}
