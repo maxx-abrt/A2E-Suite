@@ -1,18 +1,18 @@
 import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { PageLinkView } from '@/blocknote-editor/blocks/views/PageLinkView';
 import { BlockEditorDocumentContext } from '@/blocknote-editor/contexts/BlockEditorDocumentContext';
 import { buildChildDocumentInput } from '@/blocknote-editor/utils/buildChildDocumentInput';
-import { MentionRecordChip } from '@/mention/components/MentionRecordChip';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { createReactBlockSpec } from '@blocknote/react';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useContext, useState } from 'react';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledPageLinkRow = styled.div`
+const StyledPageLinkInputRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
@@ -81,20 +81,11 @@ const PageLinkRender = ({
   };
 
   if (isNonEmptyString(documentId)) {
-    return (
-      <StyledPageLinkRow contentEditable={false}>
-        <MentionRecordChip
-          recordId={documentId}
-          objectNameSingular="document"
-          label={title}
-          imageUrl=""
-        />
-      </StyledPageLinkRow>
-    );
+    return <PageLinkView documentId={documentId} title={title} />;
   }
 
   return (
-    <StyledPageLinkRow contentEditable={false}>
+    <StyledPageLinkInputRow contentEditable={false}>
       <StyledPageLinkInput
         value={draftTitle}
         onChange={(event) => setDraftTitle(event.target.value)}
@@ -107,7 +98,7 @@ const PageLinkRender = ({
         disabled={isCreating || draftTitle.trim().length === 0}
         onClick={handleCreateSubPage}
       />
-    </StyledPageLinkRow>
+    </StyledPageLinkInputRow>
   );
 };
 

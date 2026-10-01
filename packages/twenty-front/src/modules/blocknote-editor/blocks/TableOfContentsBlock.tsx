@@ -1,49 +1,12 @@
 import { createReactBlockSpec, useBlockNoteEditor } from '@blocknote/react';
-import { useLingui } from '@lingui/react/macro';
-import { styled } from '@linaria/react';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
   type BlockOutlineEntry,
   getBlockOutline,
 } from '@/blocknote-editor/editor-status/utils/getBlockOutline';
-
-const StyledTableOfContents = styled.nav`
-  border-left: 2px solid ${themeCssVariables.border.color.medium};
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-  margin: ${themeCssVariables.spacing[2]} 0;
-  padding: ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[1]}
-    ${themeCssVariables.spacing[3]};
-`;
-
-const StyledEntry = styled.button<{ $level: number }>`
-  background: none;
-  border: none;
-  color: ${themeCssVariables.font.color.secondary};
-  cursor: pointer;
-  font-family: ${themeCssVariables.font.family};
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${({ $level }) =>
-    $level <= 1
-      ? themeCssVariables.font.weight.medium
-      : themeCssVariables.font.weight.regular};
-  padding-left: ${({ $level }) => `${(Math.min($level, 6) - 1) * 12}px`};
-  text-align: left;
-
-  &:hover {
-    color: ${themeCssVariables.font.color.primary};
-  }
-`;
-
-const StyledEmptyState = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-  font-style: italic;
-`;
+import { TableOfContentsView } from '@/blocknote-editor/blocks/views/TableOfContentsView';
 
 export const getTableOfContentsEntries = (editor: {
   document: unknown;
@@ -51,7 +14,6 @@ export const getTableOfContentsEntries = (editor: {
 
 const TableOfContentsRender = () => {
   const editor = useBlockNoteEditor();
-  const { t } = useLingui();
 
   const [entries, setEntries] = useState<BlockOutlineEntry[]>(() =>
     getTableOfContentsEntries(editor),
@@ -83,27 +45,8 @@ const TableOfContentsRender = () => {
       ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
-  if (entries.length === 0) {
-    return (
-      <StyledTableOfContents aria-label={t`Table of contents`}>
-        <StyledEmptyState>{t`No headings yet`}</StyledEmptyState>
-      </StyledTableOfContents>
-    );
-  }
-
   return (
-    <StyledTableOfContents aria-label={t`Table of contents`}>
-      {entries.map((entry) => (
-        <StyledEntry
-          key={entry.blockId}
-          type="button"
-          $level={entry.level}
-          onClick={() => handleEntryClick(entry.blockId)}
-        >
-          {entry.text.length > 0 ? entry.text : t`Untitled heading`}
-        </StyledEntry>
-      ))}
-    </StyledTableOfContents>
+    <TableOfContentsView entries={entries} onEntryClick={handleEntryClick} />
   );
 };
 

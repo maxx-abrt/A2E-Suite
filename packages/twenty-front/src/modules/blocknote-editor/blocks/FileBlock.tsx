@@ -7,8 +7,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
 import { getFileType } from '@/activities/files/utils/getFileType';
-import { FileIcon } from '@/file/components/FileIcon';
-import { getFileEmbedKind } from '@/blocknote-editor/utils/getFileEmbedKind';
+import { FileEmbedView } from '@/blocknote-editor/blocks/views/FileEmbedView';
 import { t } from '@lingui/core/macro';
 import { getSafeUrl, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
@@ -17,43 +16,10 @@ const StyledFileInput = styled.input`
   display: none;
 `;
 
-const StyledFileLine = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledLink = styled.a`
-  align-items: center;
-  color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  text-decoration: none;
-  :hover {
-    color: ${themeCssVariables.font.color.secondary};
-  }
-`;
-
 const StyledUploadFileContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledEmbedImage = styled.img`
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: block;
-  max-width: 100%;
-`;
-
-const StyledEmbedVideo = styled.video`
-  display: block;
-  max-width: 100%;
-`;
-
-const StyledEmbedAudio = styled.audio`
-  display: block;
-  width: 100%;
 `;
 
 export const FileBlock = createReactBlockSpec(
@@ -109,46 +75,12 @@ export const FileBlock = createReactBlockSpec(
       if (safeUrl) {
         // Media the browser can play inline is embedded; documents, PDF and
         // archives stay a download link so a page never inlines arbitrary HTML.
-        const embedKind = getFileEmbedKind(
-          block.props.fileCategory as AttachmentFileCategory,
-        );
-
-        if (embedKind === 'image') {
-          return (
-            <StyledEmbedImage
-              src={safeUrl}
-              alt={block.props.name}
-              contentEditable={false}
-            />
-          );
-        }
-
-        if (embedKind === 'video') {
-          return (
-            <StyledEmbedVideo src={safeUrl} controls contentEditable={false} />
-          );
-        }
-
-        if (embedKind === 'audio') {
-          return (
-            <StyledEmbedAudio src={safeUrl} controls contentEditable={false} />
-          );
-        }
-
         return (
-          <StyledFileLine>
-            <FileIcon
-              fileCategory={block.props.fileCategory as AttachmentFileCategory}
-              thumbnailUrl={safeUrl}
-            />
-            <StyledLink
-              href={safeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {block.props.name}
-            </StyledLink>
-          </StyledFileLine>
+          <FileEmbedView
+            url={safeUrl}
+            name={block.props.name}
+            fileCategory={block.props.fileCategory as AttachmentFileCategory}
+          />
         );
       }
 

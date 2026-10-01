@@ -1,9 +1,8 @@
-import { styled } from '@linaria/react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { isNonEmptyString } from '@sniptt/guards';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RecordViewEmbedStub } from '@/blocknote-editor/components/RecordViewEmbedStub';
+import { RecordViewEmbedFrameView } from '@/blocknote-editor/blocks/views/RecordViewEmbedFrameView';
 import {
   type RecordViewEmbedSelection,
   RecordViewEmbedViewPicker,
@@ -15,22 +14,6 @@ import { PageLayoutEditModeProviderContext } from '@/page-layout/contexts/PageLa
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { RecordTableWidgetRendererContent } from '@/page-layout/widgets/record-table/components/RecordTableWidgetRendererContent';
 import { useViewById } from '@/views/hooks/useViewById';
-
-const StyledEmbedContainer = styled.div`
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.md};
-  margin: ${themeCssVariables.spacing[2]} 0;
-  overflow: hidden;
-`;
-
-const StyledEmbedHeader = styled.div`
-  background: ${themeCssVariables.background.transparent.light};
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
-`;
 
 const RecordViewEmbedErrorFallback = () => (
   <RecordViewEmbedStub variant="unavailable" />
@@ -94,10 +77,7 @@ export const RecordViewEmbedHost = ({
   const displayName = isNonEmptyString(viewName) ? viewName : view?.name;
 
   return (
-    <StyledEmbedContainer contentEditable={false}>
-      {isNonEmptyString(displayName) && (
-        <StyledEmbedHeader>{displayName}</StyledEmbedHeader>
-      )}
+    <RecordViewEmbedFrameView title={displayName}>
       <PageLayoutEditModeProviderContext value={{ isInEditMode: false }}>
         <PageLayoutComponentInstanceContext.Provider
           value={{ instanceId: `record-view-embed-${blockId}` }}
@@ -115,6 +95,6 @@ export const RecordViewEmbedHost = ({
           </ErrorBoundary>
         </PageLayoutComponentInstanceContext.Provider>
       </PageLayoutEditModeProviderContext>
-    </StyledEmbedContainer>
+    </RecordViewEmbedFrameView>
   );
 };

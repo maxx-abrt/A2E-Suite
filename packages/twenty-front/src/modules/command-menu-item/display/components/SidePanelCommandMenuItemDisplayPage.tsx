@@ -8,7 +8,9 @@ import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMen
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CoreObjectsCommands } from '@/object-core/commands/components/CoreObjectsCommands';
 import { useCoreObjectsCommands } from '@/object-core/commands/hooks/useCoreObjectsCommands';
+import { NewPageCommand } from '@/quick-capture/components/NewPageCommand';
 import { QuickCaptureCommand } from '@/quick-capture/components/QuickCaptureCommand';
+import { useNewPageCommand } from '@/quick-capture/hooks/useNewPageCommand';
 import { useQuickCaptureCommand } from '@/quick-capture/hooks/useQuickCaptureCommand';
 import { TemplatesCommand } from '@/template-gallery/components/TemplatesCommand';
 import { useTemplatesCommand } from '@/template-gallery/hooks/useTemplatesCommand';
@@ -38,6 +40,8 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const { quickCaptureCommandId, shouldDisplayQuickCaptureCommand } =
     useQuickCaptureCommand();
+
+  const { newPageCommandId, shouldDisplayNewPageCommand } = useNewPageCommand();
 
   const { templatesCommandId, shouldDisplayTemplatesCommand } =
     useTemplatesCommand();
@@ -120,6 +124,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     appActions.length === 0 &&
     coreObjectsCommandIds.length === 0 &&
     !shouldDisplayQuickCaptureCommand &&
+    !shouldDisplayNewPageCommand &&
     !shouldDisplayTemplatesCommand;
 
   const shouldDisplayFallbackItems =
@@ -132,6 +137,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     ...matchingPinnedItems.map((item) => item.id),
     ...matchingOtherItems.map((item) => item.id),
     ...(shouldDisplayQuickCaptureCommand ? [quickCaptureCommandId] : []),
+    ...(shouldDisplayNewPageCommand ? [newPageCommandId] : []),
     ...(shouldDisplayTemplatesCommand ? [templatesCommandId] : []),
     ...appActions.map((item) => item.id),
     ...coreObjectsCommandIds,
@@ -156,6 +162,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
         appActions.length > 0 ||
         coreObjectsCommandIds.length > 0 ||
         shouldDisplayQuickCaptureCommand ||
+        shouldDisplayNewPageCommand ||
         shouldDisplayTemplatesCommand) && (
         <SidePanelGroup heading={t`Other`}>
           {matchingOtherItems.map((item) => (
@@ -163,6 +170,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
           ))}
           {shouldDisplayTemplatesCommand && <TemplatesCommand />}
           {shouldDisplayQuickCaptureCommand && <QuickCaptureCommand />}
+          {shouldDisplayNewPageCommand && <NewPageCommand />}
           {appActions.map((item) => {
             const handleClick = () => {
               item.onClick();

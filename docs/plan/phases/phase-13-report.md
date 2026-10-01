@@ -724,3 +724,28 @@ CLAIMED — US-145/provider-free-stories — deepseek-v4.1-flash — 2026-10-01T
 **Do not redo:** the in-flight US-145 slice — let the claiming executor finish; do not add `__stories__/` files, edit the M8a blocks, append a second `CLAIMED`, or revert the claim.
 **Remaining:** US-145…US-149 plus batch 14B still open.
 **Next:** orchestrator — wait for the claiming executor's `done-for-review` on US-145; if it stalls with no `__stories__/` files, adjudicate the stale claim and re-dispatch.
+
+CLAIMED — US-146/quick-capture-daily-note — deepseek-v4.1-flash — 2026-10-01T17:50:21Z — base bd94bb38ea4abb3383313f1d22358049dde8ca81
+
+## 2026-10-01 17:55 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-145 M8a-4: light+dark storybook stories for the new editor blocks (provider-free presentational views) · **Slice:** the whole slice (stories + the extracted provider-free views)
+**Claim:** done-for-review
+**Ready-to-tick:** yes — every Tier-0 gate green (tsgo, oxlint/oxfmt, storybook:build, targeted jest); only the orchestrator's `storybook:test` interaction pass and a live browser glance remain
+**Base:** bf9acfc069b248ab6aaf107f0261c70a284f83ed (worked uncommitted; engine auto-committed Ralph state mid-session as 0d9ede12/bd94bb38 — no source in either)
+**Changed:**
+- NEW `.../blocknote-editor/blocks/views/TableOfContentsView.tsx`, `TodoTaskView.tsx`, `BookmarkCardView.tsx`, `PageLinkView.tsx`, `FileEmbedView.tsx`, `RecordViewEmbedFrameView.tsx` (provider-free presentational views; no BlockNote/Twenty metadata hooks)
+- REFACTOR to use them: `blocks/TableOfContentsBlock.tsx`, `blocks/TodoTaskBlock.tsx`, `blocks/BookmarkBlock.tsx`, `blocks/PageLinkBlock.tsx`, `blocks/FileBlock.tsx`, `components/RecordViewEmbedHost.tsx` (no behaviour change — same markup, hooks stay in the block)
+- NEW `.../blocknote-editor/blocks/__stories__/StructuralBlocks.stories.tsx` (Light/Dark: bare `BlockNoteView` over `BLOCK_SCHEMA`, no app provider tree, seeded toggle list + toggle heading + 2 columns + quote + code(typescript) + divider + table + ToC)
+- NEW `.../blocks/__stories__/CustomBlockViews.stories.tsx` (Light/Dark: todo/task chip open+converted, image + document media, bookmark card, page link), `RecordViewEmbed.stories.tsx` (Light/Dark: frame + denied/unavailable stub), `TableOfContentsView.stories.tsx` (Light/Dark + Empty)
+- `docs/plan/phases/phase-13-report.md` (claim + this report)
+**Checks:**
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0 (before and after formatting)
+- `npx oxlint --type-aware -c .oxlintrc.json <12 changed source files>` → 0 warnings / 0 errors (stories are in the config's `ignorePatterns`); `npx oxfmt --check <16 files>` → clean (4 files auto-fixed)
+- `npx nx storybook:build twenty-front` → exit 0; `storybook-static/index.json` contains all four new titles (Modules/Bureau/Editor Blocks/{Structural Blocks,Custom Block Views,Record View Embed,Table Of Contents View})
+- `cd packages/twenty-front && npx jest src/modules/blocknote-editor --config=jest.config.mjs` → 36 suites / 221 tests pass
+- `npx jest --findRelatedTests <12 changed sources> --config=jest.config.mjs` → 20 suites / 157 tests pass
+- no `locales/**` churn; no AI attribution
+**Missing for tick:** `npx nx storybook:test twenty-front` interaction runs (orchestrator, per the AC — build is the executor gate) and an optional live browser glance. `npx nx lint:diff-with-main twenty-front` reports "No changed files." on an uncommitted tree (`main...HEAD`), so oxlint/oxfmt were run on the touched files directly (same caveat as the US-124/US-144 reports).
+**Do not redo:** the committed M8a blocks and US-121/122/123/144 work; the slash-menu seam; `RecordViewEmbedStub`. The views are pure wrappers — do not re-inline their markup into the blocks. US-146 (quick-capture) is a separate live claim; its files are untouched.
+**Remaining:** US-146…US-149 plus batch 14B.
+**Next:** orchestrator — commit the uncommitted US-145 source, then run `npx nx storybook:test twenty-front` for the interaction pass; tick US-145 if green.

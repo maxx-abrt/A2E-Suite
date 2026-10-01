@@ -1,53 +1,14 @@
 import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { BookmarkCardView } from '@/blocknote-editor/blocks/views/BookmarkCardView';
 import { buildBookmarkCardFromUrl } from '@/blocknote-editor/utils/buildBookmarkCardFromUrl';
 import { createReactBlockSpec } from '@blocknote/react';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLink } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledBookmarkCard = styled.a`
-  align-items: center;
-  background: ${themeCssVariables.background.transparent.light};
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.md};
-  color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  max-width: 100%;
-  padding: ${themeCssVariables.spacing[2]};
-  text-decoration: none;
-  width: fit-content;
-
-  &:hover {
-    border-color: ${themeCssVariables.border.color.medium};
-  }
-`;
-
-const StyledBookmarkBody = styled.div`
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-`;
-
-const StyledBookmarkTitle = styled.span`
-  font-weight: ${themeCssVariables.font.weight.medium};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledBookmarkHostname = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.xs};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
 
 const StyledBookmarkInputRow = styled.div`
   align-items: center;
@@ -104,20 +65,7 @@ const BookmarkRender = ({
   };
 
   if (isNonEmptyString(url)) {
-    return (
-      <StyledBookmarkCard
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        contentEditable={false}
-      >
-        <IconLink size={16} />
-        <StyledBookmarkBody>
-          <StyledBookmarkTitle>{title || hostname}</StyledBookmarkTitle>
-          <StyledBookmarkHostname>{hostname}</StyledBookmarkHostname>
-        </StyledBookmarkBody>
-      </StyledBookmarkCard>
-    );
+    return <BookmarkCardView url={url} title={title} hostname={hostname} />;
   }
 
   return (
