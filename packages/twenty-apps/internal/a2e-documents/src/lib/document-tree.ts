@@ -150,3 +150,65 @@ export const collectSiblingsByParentId = (
 
   return siblingsByParentId;
 };
+
+// Drop protocol shared by the sidebar tree and the in-page child list: dropping
+// onto a row appends under it, dropping beside a row inserts at that index under
+// the same parent — both through buildMoveDocumentPayload, so neither surface
+// owns a second reparent path.
+export type DocumentDropMode = 'on' | 'before' | 'after';
+
+export const buildDocumentDropPayload = (options: {
+  documentId: string;
+  targetNodeId: string;
+  mode: DocumentDropMode;
+  siblingsByParentId: Map<string | null, TreeDocument[]>;
+}): MoveDocumentPayload | null => {
+  const documentsById = collectDocumentsByIdFromSiblings(
+    options.siblingsByParentId,
+  );
+  const target = documentsById.get(options.targetNodeId);
+
+  if (target === undefined) {
+    return null;
+  }
+
+  const parentId = target.parentDocumentId ?? null;
+  const siblings = options.siblingsByParentId.get(parentId) ?? [];
+  const targetIndex = siblings.findIndex(
+    (sibling) => sibling.id === options.targetNodeId,
+  );
+
+  if (targetIndex === -1) {
+    return null;
+  }
+
+  if (options.mode === 'on') {
+    const children = options.siblingsByParentId.get(options.targetNodeId) ?? [];
+
+    try {
+      return buildMoveDocumentPayload({
+        documentId: options.documentId,
+        targetParentId: options.targetNodeId,
+        targetSiblings: children,
+        insertIndex: children.length,
+        documentsById,
+      });
+    } catch {
+      return null;
+    }
+  }
+
+  const insertIndex = options.mode === 'before' ? targetIndex : targetIndex + 1;
+
+  try {
+    return buildMoveDocumentPayload({
+      documentId: options.documentId,
+      targetParentId: parentId,
+      targetSiblings: siblings,
+      insertIndex,
+      documentsById,
+    });
+  } catch {
+    return null;
+  }
+};

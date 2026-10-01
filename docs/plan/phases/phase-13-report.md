@@ -797,3 +797,31 @@ CLAIMED — US-146/quick-capture-daily-note — deepseek-v4.1-flash — 2026-10-
 **Do not redo:** the whole quick-capture slice above — it is green and committed. Reuse `useCreateNewPage`/`newPageDocument` rather than adding a second create path; extend `useCreateNewPage` or add a sibling for the daily note. `useOpenRecordInSidePanel` is the open seam.
 **Remaining:** AC3 (daily note) for US-146, then US-147…US-149 plus batch 14B.
 **Next:** orchestrator — decide whether to resume US-146 for AC3 (daily note) or tick AC2/AC4/AC5 only. If resuming, implement the Agenda day-header daily-note affordance with a deterministic per-date operation id against `apply-template`. Tier-2 browser pass for Cmd+Shift+N is also open.
+
+CLAIMED — US-157/m8f-drag-drop-tree-polish — deepseek-v4.1-flash — 2026-10-01T22:17:30Z — base d280cdf047f122a016b98b4db4e465bbc17ccab0
+
+## 2026-10-01 22:28 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-157 M8f: drag & drop tree polish — move pages, move-to dialog with search, duplicate, copy link, open in side panel, keyboard alternatives · **Slice:** the whole M8f bullet (single coherent L-EDITOR slice).
+**Claim:** done-for-review
+**Ready-to-tick:** yes — every Tier-0/1 gate green; only the orchestrator's Tier-2 deep-tree drag browser journey remains.
+**Base:** d280cdf047f122a016b98b4db4e465bbc17ccab0
+**Changed:**
+- `packages/twenty-apps/internal/a2e-documents/src/lib/document-tree.ts` (+`buildDocumentDropPayload` — shared `on`/`before`/`after` drop protocol delegating to the existing `buildMoveDocumentPayload`)
+- NEW `.../src/lib/document-tree-move-to.ts` (flatten+indent candidates, exclude self+subtree, search filter, append payload)
+- NEW `.../src/lib/document-duplicate.ts` (`buildDocumentSubtreeDuplicatePlan` + `buildDocumentDuplicateTitle`; reuses `buildTemplateCopyPayload`/`remapTemplateBlockIds` for fresh block ids, `parentIndex` for child linking)
+- NEW `.../src/lib/document-deep-link.ts` (`buildDocumentDeepLink` → `/object/document/:id`)
+- `.../src/front-components/document-browser.front-component.tsx` (one `persistDocumentMove` write path; move-to dialog with search; duplicate; copy link; open in side panel; keyboard buttons; `DocumentMoveToDialog`)
+- `.../src/front-components/document-page.front-component.tsx` (in-page child drag reparent via `buildDocumentDropPayload`; page action bar duplicate / copy link / open in panel; documented C7 tooltip)
+- NEW specs `.../lib/__tests__/{document-tree-move-to,document-duplicate,document-deep-link}.test.ts`; extended `document-tree.test.ts` (drop payload)
+- `a2e-documents/package.json` 0.2.12 → 0.2.13 (one bump/session)
+**Checks:**
+- `cd packages/twenty-apps/internal/a2e-documents && yarn test:unit` → 292 tests / 292 pass
+- `yarn typecheck` (tsc --noEmit) → exit 0
+- `yarn lint` (oxlint) → 0 warnings / 0 errors (114 files)
+- `npx twenty dev:build .` → `✓ Build succeeded (36 files)`
+- no `locales/**` touched → no catalog churn; canonical icons (emoji/buttons, no direct `@tabler` import); no AI attribution
+**Missing for tick:** Tier 2 (orchestrator): browser deep-tree drag journey (P3.3 leg) — drag a deep page onto/beside another in the sidebar and in the page, confirm the reparent persists after reload; keyboard buttons do the same mutation; move-to search filters; duplicate produces fresh ids + child pages; copy link copies the deep link; open-in-panel.
+**Do not redo:** the `updateDocument { parentId, position }` mutation path, `buildMoveDocumentPayload`/`buildKeyboardMovePayload`, `collectSiblingsByParentId`, the lazy tree loader, and `buildTemplateCopyPayload`/`remapTemplateBlockIds`. The browser now routes every reparent (drag, keyboard, move-to) through `persistDocumentMove`; the page reuses `buildDocumentDropPayload` — do not add a second tree state or a second copy helper.
+**Remaining:** M8g is the last open M8 bullet; then batch 14B's remaining stories.
+**Next:** orchestrator Tier-2 drag journey, then tick US-157; no executor follow-up required.
+

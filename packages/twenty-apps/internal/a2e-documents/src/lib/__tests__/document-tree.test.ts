@@ -2,8 +2,10 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import {
+  buildDocumentDropPayload,
   buildMoveDocumentPayload,
   buildRestoreDocumentPayload,
+  collectSiblingsByParentId,
   isDescendantOf,
 } from '../document-tree.ts';
 
@@ -109,4 +111,71 @@ test('restore clears the archive flag via a root-level append payload', () => {
 
   assert.equal(payload.parentDocumentId, null);
   assert.ok(payload.position > 'a0');
+});
+
+test('buildDocumentDropPayload "on" reparents under the target row', () => {
+  const siblingsByParentId = collectSiblingsByParentId([
+    {
+      id: 'a1',
+      position: 'a0',
+      children: { edges: [{ node: { id: 'b1', position: 'a1' } }] },
+    },
+    { id: 'a2', position: 'a1' },
+  ]);
+
+  const payload = buildDocumentDropPayload({
+    documentId: 'a2',
+    targetNodeId: 'a1',
+    mode: 'on',
+    siblingsByParentId,
+  });
+
+  assert.equal(payload?.parentDocumentId, 'a1');
+  assert.ok(payload !== null && payload.position > 'a1');
+});
+
+test('buildDocumentDropPayload "before"/"after" reorder at the same level', () => {
+  const siblingsByParentId = collectSiblingsByParentId([
+    { id: 'a1', position: 'a0' },
+    { id: 'a2', position: 'a1' },
+    { id: 'a3', position: 'a2' },
+  ]);
+
+  const before = buildDocumentDropPayload({
+    documentId: 'a3',
+    targetNodeId: 'a1',
+    mode: 'before',
+    siblingsByParentId,
+  });
+  const after = buildDocumentDropPayload({
+    documentId: 'a1',
+    targetNodeId: 'a2',
+    mode: 'after',
+    siblingsByParentId,
+  });
+
+  assert.equal(before?.parentDocumentId, null);
+  assert.ok(before !== null && before.position < 'a0');
+  assert.equal(after?.parentDocumentId, null);
+  // After the last remaining sibling the fractional key appends past 'a1'.
+  assert.ok(after !== null && after.position > 'a1');
+});
+
+test('buildDocumentDropPayload refuses dropping a node onto its descendant', () => {
+  const siblingsByParentId = collectSiblingsByParentId([
+    {
+      id: 'a1',
+      position: 'a0',
+      children: { edges: [{ node: { id: 'b1', position: 'a0a' } }] },
+    },
+  ]);
+
+  const payload = buildDocumentDropPayload({
+    documentId: 'a1',
+    targetNodeId: 'b1',
+    mode: 'on',
+    siblingsByParentId,
+  });
+
+  assert.equal(payload, null);
 });

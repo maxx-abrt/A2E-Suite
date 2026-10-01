@@ -109,3 +109,14 @@ after each iteration and it's included in prompts for context.
   - US-139's index only triggers on `document.updated`+`content`, so a brand-new document's record mentions are not indexed (and not notified by this path); the existing `DocumentMentionListener` still covers created documents for **workspace-member** mentions.
   - Record mentions have no user target, so the recipient model had to be chosen: watchers of the mentioned record, permission-checked against the source document via the reused `MentionAccessService`. This keeps `run no duplicate path` intact while adding the index-driven source.
 ---
+
+## 2026-10-01 - US-157 M8f: drag & drop tree polish
+- Added the page-tree polish on the existing a2e-documents surfaces only: sidebar tree (`document-browser`) + in page (`document-page`). No host/twenty-front change and no second tree state.
+- One reparent write path: `persistDocumentMove(documentId, payload)` in the browser; drag, keyboard move buttons and the new move-to dialog all build a `MoveDocumentPayload` and call it. The page reuses a new shared `buildDocumentDropPayload` (`on`/`before`/`after`) over `collectSiblingsByParentId`.
+- Move-to dialog (searchable, indented, excludes self+subtree), duplicate (reuses `buildTemplateCopyPayload` for fresh block ids + `parentIndex` to link child pages), copy link (`/object/document/:id`), open in side panel (`openSidePanelPage`), keyboard buttons for every drag action; page gets the same action bar + child drag reparent.
+- Files: `a2e-documents/src/lib/{document-tree.ts,document-tree-move-to.ts,document-duplicate.ts,document-deep-link.ts}` + 3 new specs + extended `document-tree.test.ts`; `front-components/{document-browser,document-page}.front-component.tsx`; `package.json` 0.2.13.
+- Tests 292 pass; tsc 0; oxlint 0/0; `twenty dev:build` succeeded. Tier-2 browser drag journey left to the orchestrator.
+- **Learnings:**
+  - The document tree lives entirely in the sandboxed `a2e-documents` front components — it cannot import `twenty-front`, `twenty-shared` or `@dnd-kit`; DnD is native HTML5 `dataTransfer` (`text/a2e-document-id`). Port host helpers locally (fractional position already is).
+  - `createDocuments` mints ids server-side, so a recursive subtree copy must create parent-first and map `parentIndex` → the id returned by the previous mutation; it cannot reference a client-generated UUID for the parent link (the template copy path already sidesteps this by dropping relations).
+  - `Lingui`/po catalogs only exist in `twenty-front` + `twenty-server`; internal apps carry raw fr strings, so an app-only slice has no catalog to churn (still no locale files touched).

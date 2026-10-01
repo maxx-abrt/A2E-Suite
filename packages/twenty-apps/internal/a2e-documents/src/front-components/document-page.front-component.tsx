@@ -3,6 +3,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   AppPath,
+  copyToClipboard,
   navigate,
   openSidePanelPage,
   SidePanelPages,
@@ -38,6 +39,13 @@ import {
 import { buildFindOneByIdArgs } from '../lib/find-one-record-args.ts';
 import { buildAppendPosition } from '../lib/fractional-position.ts';
 import { extractOutline } from '../lib/document-outline.ts';
+import {
+  buildDocumentDropPayload,
+  collectSiblingsByParentId,
+  type TreeDocumentNode,
+} from '../lib/document-tree.ts';
+import { buildDocumentDeepLink } from '../lib/document-deep-link.ts';
+import { buildDocumentSubtreeDuplicatePlan } from '../lib/document-duplicate.ts';
 import {
   buildTemplateCopyPayload,
   readAuthorizedTemplateCopySource,
@@ -284,6 +292,7 @@ const DocumentPage = () => {
   >(new Map());
   const [favorites, setFavorites] = useState<DocumentFavoriteRecord[]>([]);
   const [coverDraft, setCoverDraft] = useState('');
+  const [draggedChildId, setDraggedChildId] = useState<string | null>(null);
 
   const loadRecord = useCallback(async () => {
     if (documentId === null) {
@@ -398,7 +407,126 @@ const DocumentPage = () => {
     await loadRecord();
   };
 
-  // First-open entrypoint: instantiating from the template's own page creates
+  // In-page reparent: the child cards are a drag surface, but the mutation is
+  // the same payload builder + updateDocument path the sidebar tree uses, so a
+  // drag here and a drag there converge on one document-tree shape.
+  const moveChildByDrop = async (options: {
+    documentId: string;
+    targetNodeId: string;
+    mode: 'on' | 'before' | 'after';
+  }): Promise<void> => {
+    if (record === null || options.documentId === options.targetNodeId) {
+      return;
+    }
+
+    const root: TreeDocumentNode = {
+      id: record.id,
+      children: {
+        edges: (record.children?.edges ?? []).map((edge) => ({
+          node: {
+            id: edge.node.id,
+            children: { edges: [] },
+          },
+        })),
+      },
+    };
+    const siblingsByParentId = collectSiblingsByParentId([root]);
+    const payload = buildDocumentDropPayload({
+      documentId: options.documentId,
+      targetNodeId: options.targetNodeId,
+      mode: options.mode,
+      siblingsByParentId,
+    });
+
+    if (payload === null) {
+      return;
+    }
+
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateDocument: {
+        __args: {
+          id: options.documentId,
+          data: {
+            parentId: payload.parentDocumentId,
+            position: payload.position,
+          },
+        },
+        id: true,
+      },
+    } as never);
+
+    await loadRecord();
+  };
+
+  const duplicatePage = async (): Promise<void> => {
+    if (record === null) {
+      return;
+    }
+
+    const client = new CoreApiClient();
+    const plan = buildDocumentSubtreeDuplicatePlan({
+      root: record,
+      childrenByParentId: new Map([
+        [
+          record.id,
+          (record.children?.edges ?? []).map((edge) => ({
+            id: edge.node.id,
+            title: edge.node.title,
+          })),
+        ],
+      ]),
+    });
+    const createdIds: string[] = [];
+    let duplicatedRootId: string | null = null;
+
+    for (const planNode of plan.nodes) {
+      const result = (await client.mutation({
+        createDocuments: {
+          __args: {
+            data: [
+              {
+                title: planNode.title,
+                kind: planNode.kind,
+                position: planNode.position,
+                content: planNode.content,
+                ...(planNode.parentIndex === null
+                  ? {}
+                  : { parentId: createdIds[planNode.parentIndex] }),
+              },
+            ],
+          },
+          id: true,
+        },
+      } as never)) as { createDocuments?: { id?: string }[] };
+
+      const createdId = result?.createDocuments?.[0]?.id ?? '';
+
+      if (planNode.parentIndex === null) {
+        duplicatedRootId = createdId;
+      }
+
+      createdIds.push(createdId);
+    }
+
+    if (duplicatedRootId === null || duplicatedRootId === '') {
+      return;
+    }
+
+    await navigate(AppPath.RecordShowPage, {
+      objectNameSingular: 'document',
+      objectRecordId: duplicatedRootId,
+    });
+  };
+
+  const copyPageLink = async (): Promise<void> => {
+    if (documentId === null) {
+      return;
+    }
+
+    await copyToClipboard(buildDocumentDeepLink(documentId));
+  };
   // the DOCUMENT copy and lands on it, so editing the copy can never mutate
   // the template (same contract as the browser's "utiliser" action).
   const instantiateTemplate = async (): Promise<void> => {
@@ -596,6 +724,31 @@ const DocumentPage = () => {
           >
             {chrome.isLocked ? '🔒' : '🔓'}
           </button>
+          <button
+            type="button"
+            onClick={() => void duplicatePage()}
+            disabled={chrome.isLocked}
+            style={{ ...ghostButtonStyle, color: appTheme.textSecondary }}
+            aria-label="Dupliquer la page"
+          >
+            dupliquer
+          </button>
+          <button
+            type="button"
+            onClick={() => void copyPageLink()}
+            style={{ ...ghostButtonStyle, color: appTheme.textSecondary }}
+            aria-label="Copier le lien de la page"
+          >
+            copier le lien
+          </button>
+          <button
+            type="button"
+            onClick={() => openDocumentInSidePanel(documentId)}
+            style={{ ...ghostButtonStyle, color: appTheme.textSecondary }}
+            aria-label="Ouvrir la page dans le panneau latéral"
+          >
+            panneau
+          </button>
         </div>
 
         <div style={{ display: 'flex', gap: appTheme.spacing2, flexWrap: 'wrap' }}>
@@ -780,13 +933,18 @@ const DocumentPage = () => {
         >
           <span>Sous-pages</span>
           {!chrome.isLocked && (
-            <button
-              type="button"
-              onClick={() => void createChildPage()}
-              style={{ ...ghostButtonStyle, color: appTheme.blue }}
+            <span
+              style={{ display: 'flex', gap: appTheme.spacing1 }}
+              title="Glissez une sous-page sur une autre pour la reparenter ; la duplication et l’ouverture dans le panneau restent accessibles au clavier."
             >
-              + Ajouter
-            </button>
+              <button
+                type="button"
+                onClick={() => void createChildPage()}
+                style={{ ...ghostButtonStyle, color: appTheme.blue }}
+              >
+                + Ajouter
+              </button>
+            </span>
           )}
         </div>
         {childNodes.length === 0 ? (
@@ -797,6 +955,36 @@ const DocumentPage = () => {
           childNodes.map((edge) => (
             <div
               key={edge.node.id}
+              draggable
+              onDragStart={(event) => {
+                event.dataTransfer.setData(
+                  'text/a2e-document-id',
+                  edge.node.id,
+                );
+                setDraggedChildId(edge.node.id);
+              }}
+              onDragEnd={() => setDraggedChildId(null)}
+              onDragOver={(event) => event.preventDefault()}
+              onDrop={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+
+                const droppedId =
+                  draggedChildId ??
+                  event.dataTransfer.getData('text/a2e-document-id');
+
+                setDraggedChildId(null);
+
+                if (droppedId === '' || droppedId === edge.node.id) {
+                  return;
+                }
+
+                void moveChildByDrop({
+                  documentId: droppedId,
+                  targetNodeId: edge.node.id,
+                  mode: 'on',
+                });
+              }}
               style={{ display: 'flex', gap: appTheme.spacing1 }}
             >
               <button

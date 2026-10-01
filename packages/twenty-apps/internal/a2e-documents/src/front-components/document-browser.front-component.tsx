@@ -12,6 +12,8 @@ import {
   AppPath,
   copyToClipboard,
   navigate,
+  openSidePanelPage,
+  SidePanelPages,
   useUserId,
 } from 'twenty-sdk/front-component';
 
@@ -39,12 +41,21 @@ import {
   buildMoveDocumentPayload,
   collectDocumentsByIdFromSiblings,
   collectSiblingsByParentId,
+  type MoveDocumentPayload,
   type TreeDocument,
 } from '../lib/document-tree.ts';
 import {
   buildKeyboardMovePayload,
   type TreeMoveDirection,
 } from '../lib/document-tree-keyboard.ts';
+import {
+  buildMoveToDocumentPayload,
+  collectMoveToCandidates,
+  collectMoveToExcludedIds,
+  filterMoveToCandidates,
+} from '../lib/document-tree-move-to.ts';
+import { buildDocumentDeepLink } from '../lib/document-deep-link.ts';
+import { buildDocumentSubtreeDuplicatePlan } from '../lib/document-duplicate.ts';
 import {
   hasNextChildrenPage,
   mergeTreeChildrenPage,
@@ -122,6 +133,16 @@ const openDocument = (documentId: string): void => {
   void navigate(AppPath.RecordShowPage, {
     objectNameSingular: 'document',
     objectRecordId: documentId,
+  });
+};
+
+// The host's existing side-panel document surface; the page widget uses the
+// same call, so a page opened from the tree lands in the same panel.
+const openDocumentInSidePanel = (documentId: string): void => {
+  void openSidePanelPage({
+    page: SidePanelPages.ViewRecord,
+    recordId: documentId,
+    objectNameSingular: 'document',
   });
 };
 
@@ -250,6 +271,8 @@ const DocumentBrowser = () => {
     null,
   );
   const [shareTarget, setShareTarget] = useState<DocumentNode | null>(null);
+  const [moveTarget, setMoveTarget] = useState<DocumentNode | null>(null);
+  const [moveQuery, setMoveQuery] = useState('');
   const userId = useUserId();
   const [favorites, setFavorites] = useState<DocumentFavoriteRecord[]>([]);
 
@@ -557,36 +580,18 @@ const DocumentBrowser = () => {
     await reloadTree();
   };
 
-  // Drop semantics: dropping ON a node makes it a child (append last);
-  // dropping BESIDE a node inserts at that index under the same parent.
-  const moveDocument = async (options: {
-    documentId: string;
-    targetParentId: string | null;
-    targetSiblings: TreeDocument[];
-    insertIndex: number;
-  }): Promise<void> => {
-    const documentsById = collectDocumentsByIdFromSiblings(siblingsByParentId);
-
-    let payload;
-
-    try {
-      payload = buildMoveDocumentPayload({
-        documentId: options.documentId,
-        targetParentId: options.targetParentId,
-        targetSiblings: options.targetSiblings,
-        insertIndex: options.insertIndex,
-        documentsById,
-      });
-    } catch {
-      return;
-    }
-
+  // The one write path for every reparent/reorder: drag/drop, keyboard and the
+  // move-to dialog all build a MoveDocumentPayload then call this.
+  const persistDocumentMove = async (
+    documentId: string,
+    payload: MoveDocumentPayload,
+  ): Promise<void> => {
     const client = new CoreApiClient();
 
     await client.mutation({
       updateDocument: {
         __args: {
-          id: options.documentId,
+          id: documentId,
           data: {
             parentId: payload.parentDocumentId,
             position: payload.position,
@@ -597,6 +602,54 @@ const DocumentBrowser = () => {
     } as never);
 
     await reloadTree();
+  };
+
+  // Drop semantics: dropping ON a node makes it a child (append last);
+  // dropping BESIDE a node inserts at that index under the same parent.
+  const moveDocument = async (options: {
+    documentId: string;
+    targetParentId: string | null;
+    targetSiblings: TreeDocument[];
+    insertIndex: number;
+  }): Promise<void> => {
+    const documentsById = collectDocumentsByIdFromSiblings(siblingsByParentId);
+
+    try {
+      await persistDocumentMove(
+        options.documentId,
+        buildMoveDocumentPayload({
+          documentId: options.documentId,
+          targetParentId: options.targetParentId,
+          targetSiblings: options.targetSiblings,
+          insertIndex: options.insertIndex,
+          documentsById,
+        }),
+      );
+    } catch {
+      // A self/descendant destination is a no-op, not an error.
+    }
+  };
+
+  // The move-to dialog appends under the chosen parent through the same payload
+  // builder; only the loaded siblings are used for the fractional position.
+  const moveDocumentToParent = async (
+    documentNode: DocumentNode,
+    targetParentId: string | null,
+  ): Promise<void> => {
+    const payload = buildMoveToDocumentPayload({
+      documentId: documentNode.id,
+      targetParentId,
+      targetSiblings: siblingsByParentId.get(targetParentId) ?? [],
+      documentsById: collectDocumentsByIdFromSiblings(siblingsByParentId),
+    });
+
+    if (payload === null) {
+      return;
+    }
+
+    await persistDocumentMove(documentNode.id, payload);
+    setMoveTarget(null);
+    setMoveQuery('');
   };
 
   // Non-drag equivalent of the drop handlers, for keyboard users (C7). The
@@ -617,22 +670,53 @@ const DocumentBrowser = () => {
       return;
     }
 
-    const client = new CoreApiClient();
+    await persistDocumentMove(documentNode.id, payload);
+  };
 
-    await client.mutation({
-      updateDocument: {
-        __args: {
-          id: documentNode.id,
-          data: {
-            parentId: payload.parentDocumentId,
-            position: payload.position,
+  // Duplicate a page and its loaded sub-pages. buildDocumentSubtreeDuplicatePlan
+  // reuses the template copy helper for fresh block anchors; parentIndex is
+  // resolved against the ids minted as each node is created, so children link
+  // to their new parent without a second tree state.
+  const duplicateDocument = async (
+    documentNode: DocumentNode,
+  ): Promise<void> => {
+    const client = new CoreApiClient();
+    const plan = buildDocumentSubtreeDuplicatePlan({
+      root: documentNode,
+      childrenByParentId,
+    });
+    const createdIds: string[] = [];
+
+    for (const planNode of plan.nodes) {
+      const result = (await client.mutation({
+        createDocuments: {
+          __args: {
+            data: [
+              {
+                title: planNode.title,
+                kind: planNode.kind,
+                position: planNode.position,
+                content: planNode.content,
+                ...(planNode.parentIndex === null
+                  ? {}
+                  : { parentId: createdIds[planNode.parentIndex] }),
+              },
+            ],
           },
+          id: true,
         },
-        id: true,
-      },
-    } as never);
+      } as never)) as { createDocuments?: { id?: string }[] };
+
+      createdIds.push(result?.createDocuments?.[0]?.id ?? '');
+    }
 
     await reloadTree();
+  };
+
+  const copyDocumentLink = async (
+    documentNode: DocumentNode,
+  ): Promise<void> => {
+    await copyToClipboard(buildDocumentDeepLink(documentNode.id));
   };
 
   // Personal favorite toggle: create this member's own row, or remove exactly
@@ -737,6 +821,25 @@ const DocumentBrowser = () => {
     [searchableNodes],
   );
 
+  // The dialog is the keyboard-accessible alternative to dragging a page onto a
+  // destination: the same tree, flattened and searchable, with the moved page
+  // and its subtree removed from the choices.
+  const moveToCandidates = useMemo(() => {
+    if (moveTarget === null) {
+      return [];
+    }
+
+    const documentsById = collectDocumentsByIdFromSiblings(siblingsByParentId);
+
+    return filterMoveToCandidates(collectMoveToCandidates(documents), {
+      query: moveQuery,
+      excludedIds: collectMoveToExcludedIds({
+        documentId: moveTarget.id,
+        documentsById,
+      }),
+    });
+  }, [documents, siblingsByParentId, moveTarget, moveQuery]);
+
   const matchingSearch = searchInput.trim().toLowerCase();
   const isLoadingRoots = rootNodes.length === 0 && loadingParentIds.has(null);
 
@@ -773,6 +876,21 @@ const DocumentBrowser = () => {
         <DocumentSharePanel
           documentNode={shareTarget}
           onClose={() => setShareTarget(null)}
+        />
+      )}
+      {moveTarget !== null && (
+        <DocumentMoveToDialog
+          documentNode={moveTarget}
+          candidates={moveToCandidates}
+          query={moveQuery}
+          onQueryChange={setMoveQuery}
+          onSelect={(targetParentId) => {
+            void moveDocumentToParent(moveTarget, targetParentId);
+          }}
+          onClose={() => {
+            setMoveTarget(null);
+            setMoveQuery('');
+          }}
         />
       )}
       {isLoadingRoots ? (
@@ -850,6 +968,10 @@ const DocumentBrowser = () => {
                 onShare={setShareTarget}
                 onArchive={archiveDocument}
                 onMove={moveDocument}
+                onMoveTo={setMoveTarget}
+                onCopyLink={copyDocumentLink}
+                onOpenInSidePanel={openDocumentInSidePanel}
+                onDuplicate={duplicateDocument}
                 onKeyboardMove={moveDocumentByKeyboard}
                 onToggleFavorite={toggleFavorite}
               />
@@ -1180,11 +1302,80 @@ const DocumentSharePanel = ({
   );
 };
 
+type DocumentMoveToDialogProps = {
+  documentNode: DocumentNode;
+  candidates: { id: string; title: string; depth: number }[];
+  query: string;
+  onQueryChange: (query: string) => void;
+  onSelect: (targetParentId: string | null) => void;
+  onClose: () => void;
+};
+
+// The searchable "move to" dialog: the keyboard-equivalent of dragging a page
+// onto a destination. The root row is the way back to the top level.
+const DocumentMoveToDialog = ({
+  documentNode,
+  candidates,
+  query,
+  onQueryChange,
+  onSelect,
+  onClose,
+}: DocumentMoveToDialogProps) => (
+  <section style={sharePanelStyle} aria-label="Déplacer le document">
+    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <strong>Déplacer « {documentNode.title} »</strong>
+      <button type="button" onClick={onClose} style={ghostButtonStyle}>
+        fermer
+      </button>
+    </div>
+    <input
+      type="search"
+      placeholder="Rechercher une page…"
+      aria-label="Rechercher une page"
+      value={query}
+      onChange={(event) => onQueryChange(event.target.value)}
+      style={searchInputStyle}
+    />
+    <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+      <li style={{ padding: appTheme.spacing1 }}>
+        <button
+          type="button"
+          onClick={() => onSelect(null)}
+          style={ghostButtonStyle}
+        >
+          Racine
+        </button>
+      </li>
+      {candidates.map((candidate) => (
+        <li
+          key={candidate.id}
+          style={{
+            padding: appTheme.spacing1,
+            paddingLeft: `calc(${appTheme.spacing1} + ${candidate.depth * 16}px)`,
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => onSelect(candidate.id)}
+            style={ghostButtonStyle}
+          >
+            {candidate.title}
+          </button>
+        </li>
+      ))}
+      {candidates.length === 0 && (
+        <li style={{ color: appTheme.textSecondary, padding: appTheme.spacing1 }}>
+          Aucune destination
+        </li>
+      )}
+    </ul>
+  </section>
+);
+
 type DocumentSectionProps = {
   title: string;
   children: React.ReactNode;
 };
-
 const DocumentSection = ({ title, children }: DocumentSectionProps) => (
   <section
     style={{ display: 'flex', flexDirection: 'column', gap: appTheme.spacing1 }}
@@ -1274,6 +1465,10 @@ type DocumentTreeItemProps = {
     targetSiblings: TreeDocument[];
     insertIndex: number;
   }) => Promise<void>;
+  onMoveTo: (documentNode: DocumentNode) => void;
+  onCopyLink: (documentNode: DocumentNode) => Promise<void>;
+  onOpenInSidePanel: (documentId: string) => void;
+  onDuplicate: (documentNode: DocumentNode) => Promise<void>;
   onKeyboardMove: (
     documentNode: DocumentNode,
     parentId: string | null,
@@ -1299,6 +1494,10 @@ const DocumentTreeItem = ({
   onShare,
   onArchive,
   onMove,
+  onMoveTo,
+  onCopyLink,
+  onOpenInSidePanel,
+  onDuplicate,
   onKeyboardMove,
   onToggleFavorite,
 }: DocumentTreeItemProps) => {
@@ -1442,6 +1641,14 @@ const DocumentTreeItem = ({
             </button>
             <button
               type="button"
+              onClick={() => void onDuplicate(documentNode)}
+              style={ghostButtonStyle}
+              aria-label={`Dupliquer ${documentNode.title}`}
+            >
+              dupliquer
+            </button>
+            <button
+              type="button"
               onClick={() => onShare(documentNode)}
               style={ghostButtonStyle}
             >
@@ -1449,6 +1656,33 @@ const DocumentTreeItem = ({
             </button>
           </>
         )}
+        {/* Keyboard-accessible equivalents of every drag action (C7): move-to
+            repositions without a pointer, copy/open/duplicate round out the
+            page actions. */}
+        <button
+          type="button"
+          onClick={() => onMoveTo(documentNode)}
+          style={ghostButtonStyle}
+          aria-label={`Déplacer ${documentNode.title} vers…`}
+        >
+          déplacer
+        </button>
+        <button
+          type="button"
+          onClick={() => void onCopyLink(documentNode)}
+          style={ghostButtonStyle}
+          aria-label={`Copier le lien de ${documentNode.title}`}
+        >
+          copier le lien
+        </button>
+        <button
+          type="button"
+          onClick={() => onOpenInSidePanel(documentNode.id)}
+          style={ghostButtonStyle}
+          aria-label={`Ouvrir ${documentNode.title} dans le panneau latéral`}
+        >
+          panneau
+        </button>
         <button
           type="button"
           onClick={() => onArchive(documentNode)}
@@ -1508,6 +1742,10 @@ const DocumentTreeItem = ({
                 onShare={onShare}
                 onArchive={onArchive}
                 onMove={onMove}
+                onMoveTo={onMoveTo}
+                onCopyLink={onCopyLink}
+                onOpenInSidePanel={onOpenInSidePanel}
+                onDuplicate={onDuplicate}
                 onKeyboardMove={onKeyboardMove}
                 onToggleFavorite={onToggleFavorite}
               />
