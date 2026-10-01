@@ -1,0 +1,200 @@
+# Iteration 16 Log
+
+## Metadata
+
+- **Task ID**: US-143
+- **Task Title**: M9c family: 8+ Syna prompt/action recipes (summarize page, meeting→tasks, weekly digest, grant eligibility, email reply, translate page, clean up notes, draft invoice from time entries)
+- **Description**: As a user, I want a Syna recipe family in the gallery so that common AI workflows are one pick away. Starting state: partial — 6 cross-app workflow recipes exist (US-107, 3 built end-to-end, invoice-p...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-01T17:26:09.232Z
+- **Ended At**: 2026-10-01T17:38:13.987Z
+- **Duration**: 12m 4s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-143" PLAN.md
+[94m[bash][0m $ ls docs/plan/phases/ 2>/dev/null | tail -30
+[94m[bash][0m $ grep -rn "M9c" --include="*.md" . 2>/dev/null | grep -v node_modules | head -30
+[94m[bash][0m $ grep -rn "US-143" --include="*.md" --include="*.json" . 2>/dev/null | grep -v node_modules | head -3...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd-batch-a.json
+[94m[bash][0m $ grep -n "US-143\|US-142" docs/plan/phases/phase-13-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ grep -rln "workflow-recipes\|workflowRecipe\|WorkflowRecipe" packages --include="*.ts" --include="*....
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/workflow-recipes.ts
+[94m[bash][0m $ ls packages/twenty-front/src/modules/template-gallery/ 2>/dev/null && echo "---" && find packages/tw...
+[94m[bash][0m $ grep -rln "HOST_TEMPLATE_DESCRIPTOR_GROUPS\|a2e-host-agenda\|applyAgendaTemplate" packages --include...
+[94m[bash][0m $ ls packages/twenty-apps/internal/ && echo "---" && ls packages/twenty-apps/internal/a2e-projects/src...
+[94m[bash][0m $ grep -rln "syna\|Syna" packages/twenty-apps packages/twenty-front/src/modules --include="*.ts" --inc...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/constants/synaDocumentAiActions.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/types/SynaAiAction.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/utils/getOfferedSynaActions.ts
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "TemplateDescriptor" packages/twenty-shared/src --include="*.ts" | grep -v __tests__ | head...
+[94m[bash][0m $ grep -rln "list-template-descriptors\|workflow-recipes" packages/twenty-apps/internal --include="*.t...
+[94m[bash][0m $ grep -rn "US-118\|US-119\|US-120\|US-160" docs/plan/phases/phase-13-report.md | head -20
+[94m[bash][0m $ grep -rn "Syna\|syna\|prompt/action\|AI recipe\|ai-recipe" docs/plan/phases/*.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ grep -rn "workflow-recipes\|WORKFLOW_RECIPE_DESCRIPTORS\|WorkflowRecipeDescriptor" packages/twenty-a...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/constants/AgendaTemplateDescriptors.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/workflow-templates/ && echo "---logic-functions---...
+[94m[bash][0m $ grep -rln "summarize-document\|translate-document\|improve-document-writing\|toolTriggerSettings" pa...
+[94m[bash][0m $ grep -rn "defineLogicFunction\|toolTriggerSettings\|name:" packages/twenty-apps/internal/a2e-project...
+[94m[bash][0m $ grep -rn "toolTriggerSettings" packages/twenty-apps/internal/a2e-projects/src packages/twenty-apps/i...
+[94m[bash][0m $ grep -rln "US-143\|Syna recipe\|syna-recipe\|syna recipe" docs/tasks/ 2>/dev/null
+[94m[bash][0m $ grep -rn "US-160" tasks/*.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd-batch-b.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd-batch-b.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/templateDescriptorType.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/workflow-recipes.test.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/templateApplyType.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/hooks/useApplyTemplate.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/hooks/useTemplateGalleryItems.ts
+[94m[bash][0m $ grep -n "Syna\|8+\|prompt/action\|synthes" PLAN.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/utils/buildTemplateGalleryItems.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/types/TemplateGalleryItem.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/side-panel/hooks/useOpenAskAiPageInSidePanel.ts
+[94m[bash][0m $ grep -rn "openAskAiPageWithPreprompt\|WithPreprompt\|preprompt\|prePrompt" packages/twenty-front/src...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/hooks/useOpenAskAiPageWithPreprompt.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/hooks/useStageAiChatPreprompt.ts
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-accounting/src/logic-functions/ && echo "---tools---" && grep -...
+[94m[bash][0m $ git log --oneline -15 && echo "---stash---" && git stash list && echo "---branches---" && git branch...
+[94m[bash][0m $ grep -rln "SynaRecipe\|syna-recipe\|SYNA_RECIPE\|recipeDescriptors" packages/twenty-front/src packag...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/components/TemplateGallery.tsx
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "name:\|toolTriggerSettings\|description:" packages/twenty-apps/internal/a2e-crm/src/logic-f...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/utils/getContextToolButtons.ts
+[94m[bash][0m $ sed -n '250,290p' packages/twenty-apps/internal/a2e-accounting/src/logic-functions/score-subventions...
+[94m[bash][0m $ grep -rln "toolTriggerSettings" packages/twenty-apps/internal --include="*.ts" | grep -v "\.twenty" ...
+[94m[bash][0m $ grep -rn "name:" packages/twenty-apps/internal/a2e-chat/src/logic-functions/summarize-channel.logic-...
+[94m[bash][0m $ grep -rln "subvention\|grant" packages/twenty-apps/internal --include="*.ts" | grep -v "\.twenty" | ...
+[94m[bash][0m $ ls packages/twenty-shared/src/application/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/templateDescriptorGuards.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/templateApplyGuards.ts
+[94m[bash][0m $ grep -rn "TemplateApplyResult\|isTemplateApplyRejected\|isTemplateApplyApplied\|status: 'applied'\|s...
+[94m[bash][0m $ grep -rn "TemplateDescriptorCategory\|TEMPLATE_GALLERY_CATEGORY_CONFIG" packages --include="*.ts" --...
+I've gathered enough context. Let me verify the phase report tail and dependencies, then claim the slice.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-crm/src/application.config.ts | head -30
+[94m[bash][0m $ grep -rn "APPLICATION_UNIVERSAL_IDENTIFIER" packages/twenty-apps/internal/a2e-documents/src/constant...
+[94m[bash][0m $ sed -n '1,20p' packages/twenty-apps/internal/a2e-accounting/src/constants/universal-identifiers.ts
+[94m[bash][0m $ grep -rn "APPLICATION_UNIVERSAL_IDENTIFIER =" packages/twenty-apps/internal/a2e-*/src/constants/univ...
+[94m[bash][0m $ grep -rn "APPLICATION_UNIVERSAL_IDENTIFIER" packages/twenty-apps/internal/a2e-documents/src/constant...
+[94m[bash][0m $ sed -n '8,20p' packages/twenty-apps/internal/a2e-crm/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/hooks/useAgendaTemplateApply.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/utils/findAgendaTemplateDescriptor.ts
+[94m[bash][0m $ ls packages/twenty-front/src/modules/ai/
+[94m[bash][0m $ sed -n '130,160p' packages/twenty-front/.oxlintrc.json
+[94m[read][0m
+[94m[bash][0m $ grep -rn "nameSingular" packages/twenty-apps/internal/a2e-accounting/src/objects/subvention.object.t...
+[94m[todowrite][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/templateDescriptorType.ts
+[94m[edit][0m
+[94m[edit][0m
+[94m[write][0m "import { type TemplateDescriptor } from 'twenty-shared/application';
+
+// M9c — the Syna prompt/action recipe family (US-143).
+//
+// A recipe is a C1 descriptor (so the gallery and the M12d catalogue r... (1574 chars)"
+[94m[write][0m "import { type SynaRecipeDescriptor } from '@/ai/types/SynaRecipeDescriptor';
+import { buildLogicFunctionToolName } from '@/ai/utils/getContextToolButtons';
+
+// M9c — la famille de recettes Syna (US-14... (7143 chars)"
+[94m[write][0m "import { SYNA_RECIPE_DESCRIPTORS } from '@/ai/constants/SynaRecipeDescriptors';
+import { type SynaRecipeDescriptor } from '@/ai/types/SynaRecipeDescriptor';
+
+// The finder lives outside `constants/` b... (527 chars)"
+[94m[write][0m "import { findSynaRecipeDescriptor } from '@/ai/utils/findSynaRecipeDescriptor';
+import {
+  type SynaRecipeExecution,
+  type SynaRecipePreview,
+} from '@/ai/types/SynaRecipeDescriptor';
+import { isDefi... (1530 chars)"
+[94m[write][0m "import { findSynaRecipeDescriptor } from '@/ai/utils/findSynaRecipeDescriptor';
+import { type SynaRecipePreview } from '@/ai/types/SynaRecipeDescriptor';
+import { isDefined } from 'twenty-shared/utils... (818 chars)"
+[94m[write][0m "import { findSynaRecipeDescriptor } from '@/ai/utils/findSynaRecipeDescriptor';
+import { type SynaRecipeExecution } from '@/ai/types/SynaRecipeDescriptor';
+import { isDefined } from 'twenty-shared/uti... (886 chars)"
+[94m[write][0m "import { SYNA_RECIPE_DESCRIPTORS } from '@/ai/constants/SynaRecipeDescriptors';
+import { type SynaRecipeDescriptor } from '@/ai/types/SynaRecipeDescriptor';
+import { isTemplateDescriptor } from 'twent... (2979 chars)"
+[94m[edit][0m
+[94m[write][0m "import { useCallback, useState } from 'react';
+import { type TemplateApplyResult } from 'twenty-shared/application';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
+
+import { useLin... (2171 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/hooks/useApplyTemplate.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/hooks/useApplyTemplate.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/hooks/useApplyTemplate.ts
+[94m[write][0m "import { SYNA_RECIPE_DESCRIPTORS } from '@/ai/constants/SynaRecipeDescriptors';
+import { findSynaRecipeDescriptor } from '@/ai/utils/findSynaRecipeDescriptor';
+import { validateSynaRecipeDescriptors }... (3837 chars)"
+[94m[write][0m "import { buildSynaRecipePreview } from '@/ai/utils/buildSynaRecipePreview';
+import { resolveSynaRecipeExecution } from '@/ai/utils/resolveSynaRecipeExecution';
+
+describe('Syna recipe preview and execu... (1197 chars)"
+[94m[edit][0m
+[94m[bash][0m $ grep -rn "export" packages/twenty-shared/src/utils/index.ts | grep -i "isnonempty" | head
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/hooks/useSynaRecipeApply.ts
+[94m[bash][0m $ npx nx build twenty-shared --skip-nx-cache 2>&1 | tail -20
+[94m[bash][0m $ npx nx build twenty-sdk --skip-nx-cache 2>&1 | tail -20
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -40
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/utils/validateSynaRecipeDescriptors.ts
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -40
+[94m[bash][0m $ npx jest src/modules/ai/constants/__tests__/SynaRecipeDescriptors.test.ts src/modules/ai/utils/__tes...
+[94m[bash][0m $ npx jest src/modules/ai src/modules/template-gallery --config=jest.config.mjs 2>&1 | tail -40
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/ai/types/SynaRecipeDescriptor.ts src/modules/a...
+[94m[bash][0m $ npx oxfmt --check src/modules/ai/types/SynaRecipeDescriptor.ts src/modules/ai/constants/SynaRecipeDe...
+[94m[bash][0m $ npx oxfmt src/modules/ai/constants/SynaRecipeDescriptors.ts src/modules/ai/constants/__tests__/SynaR...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/hooks/useApplyTemplate.ts
+[94m[bash][0m $ npx oxfmt --check src/modules/ai/types/SynaRecipeDescriptor.ts src/modules/ai/constants/SynaRecipeDe...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -20 && echo "---TSC-DONE---" && npx jest src/modules/...
+[94m[bash][0m $ grep -rn "Agenda\|Automatisations\|Category" packages/twenty-shared/src/application/__tests__/*.ts |...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -10 && echo "---LINT---" && npx oxlint -c .oxlintrc.j...
+[94m[bash][0m $ npx jest src/application --config=jest.config.mjs 2>&1 | tail -10
+[94m[bash][0m $ git status --porcelain
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/constants/SynaRecipeDescriptors.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/utils/validateSynaRecipeDescriptors.ts
+All gates green. Now let me write the phase report and progress entry.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ wc -l .ralph-tui/progress.md && git diff --stat .ralph-tui/progress.md && git log --oneline -3 -- .r...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain | grep -i "locales\|package.json" || echo "none"
+Completed US-143 — the M9c Syna recipe family, host-side (Syna has no app), following the US-142 Agenda host-group pattern.
+
+**Implemented**
+- 8 recipes registered in `modules/ai/constants/SynaRecipeDescriptors.ts` (summarize page, meeting→tasks, weekly digest, grant eligibility, email reply, translate page, clean up notes READY; `draft invoice from time entries` DEFERRED behind P7, registry-only). Each AI recipe maps to the real registry tool via `buildLogicFunctionToolName` and install-gates on its owning app's universal identifier.
+- `SynaRecipeDescriptor` type (C1 `TemplateDescriptor` + `status`/`requiredToolName`/`prompt fr+en`/`deferral`), plus `findSynaRecipeDescriptor`, `buildSynaRecipePreview` (trigger→preview), `resolveSynaRecipeExecution` (P7 gate → DEFERRED), `validateSynaRecipeDescriptors`.
+- Gallery: `a2e-host-syna` host group (7 READY recipes only), `Syna` category added to the shared closed union + `IconSparkles` config, confirm-first apply (`useSynaRecipeApply` stages the prompt as a Syna draft, writes nothing) delegated from `useApplyTemplate`.
+
+**Checks (all green)**
+- `npx nx build twenty-shared --skip-nx-cache` / `twenty-sdk` → success
+- twenty-shared + twenty-front `npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx oxlint --type-aware` + `npx oxfmt --check` on all 13 touched files → clean
+- `npx jest src/modules/ai src/modules/template-gallery` → 74 suites / 495 pass (13 new)
+
+Host-only slice → no app `package.json` bump, no `locales/**` churn, no AI attribution. Tier-2 browser/preview + P9.3 live firing listed under *Missing for tick*. Reports appended to `phase-13-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>
+
+--- STDERR ---
+error: Error starting FSEvents stream

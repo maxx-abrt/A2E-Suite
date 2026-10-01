@@ -643,3 +643,22 @@ CLAIMED — US-143/syna-recipe-family — deepseek-v4.1-flash — 2026-10-01T19:
 **Do not redo:** the US-117 C1 contract, US-131 per-app apply functions, US-132 gallery surface, US-142 host group/apply path. The Syna registry, validator, preview/execution resolvers and `useSynaRecipeApply` are new — leave them and add consumers (US-152 Syna landing, US-160 catalogue) on top.
 **Remaining:** the rest of Ralph's batch A (US-144…US-149) and batch 14B.
 **Next:** orchestrator Tier-2 gallery pass; then US-144 (M8a-3 date/reminder mention) per Ralph's queue.
+
+CLAIMED — US-144/date-reminder-mention — deepseek-v4.1-flash — 2026-10-01T19:38:50Z — base 953a7a893d04edee7ebb6d0231864890e08f9ecb
+
+## 2026-10-01 17:39 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-143 M9c family: 8+ Syna prompt/action recipes (summarize page, meeting→tasks, weekly digest, grant eligibility, email reply, translate page, clean up notes, draft invoice from time entries) · **Slice:** verification-only resume — the whole slice was already implemented and committed by the 19:26 run while this session was starting
+**Claim:** done-for-review
+**Ready-to-tick:** yes — independent re-verification from HEAD is green; only the AC's own Tier-2 browser leg and the P9.3 live firing/replay leg remain absent by design
+**Base:** 232b7debc5ee984757c59dac7b192873d61c26d4 — verified against HEAD 953a7a893d04edee7ebb6d0231864890e08f9ecb
+**Changed:** none — zero new changes. The 8 descriptors, registry, resolvers, apply hook, gallery group/category edits and the three tests are already committed at 953a7a89.
+**Checks:**
+- `npx jest src/modules/ai/constants/__tests__/SynaRecipeDescriptors.test.ts src/modules/ai/utils/__tests__/buildSynaRecipePreview.test.ts src/modules/template-gallery/constants/__tests__/HostTemplateDescriptorGroups.test.ts --config=jest.config.mjs` (packages/twenty-front) → 3 suites / 13 passed
+- `npx jest --findRelatedTests <10 changed sources> --config=jest.config.mjs` (packages/twenty-front) → 7 suites / 33 passed
+- `npx nx build twenty-shared --skip-nx-cache` → success (shared category union rebuilt before dependent tsgo)
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx oxlint --type-aware -c .oxlintrc.json <13 touched>` → 0 warnings / 0 errors; `npx oxfmt --check <same>` → clean (twenty-shared file too)
+**Missing for tick:** Tier 2 (orchestrator): on a running workspace the gallery lists the seven READY Syna recipes, the preview renders, and "Use template" stages the prompt as a Syna draft; P9.3 live recipe firing/replay stays deferred. The P7 invoice recipe is registry-only and intentionally absent from the gallery.
+**Do not redo:** the committed US-143 source — `SynaRecipeDescriptor` type, `SYNA_RECIPE_DESCRIPTORS` (8), `findSynaRecipeDescriptor`/`buildSynaRecipePreview`/`resolveSynaRecipeExecution`/`validateSynaRecipeDescriptors`, `useSynaRecipeApply`, the `a2e-host-syna` group in `HostTemplateDescriptorGroups`, the `Syna` category in `TemplateGalleryCategoryConfig` + shared `TemplateDescriptorCategory` union, the `useApplyTemplate` delegation, and the three tests. Re-verified green from HEAD 953a7a89; do not rebuild or refactor.
+**Remaining:** the rest of Ralph's batch A (US-144…US-149) and batch 14B.
+**Next:** orchestrator Tier-2 gallery pass; then US-144 (already claimed at 19:38:50 by the prior iteration) per Ralph's queue.
