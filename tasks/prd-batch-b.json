@@ -198,9 +198,10 @@
         "Quality gates: packages/twenty-docs build/check command green (npx nx build twenty-docs or node docs/scripts/check-docs.mjs); no source-code changes outside twenty-docs; no i18n catalog churn; no AI attribution"
       ],
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-DOCS. Depends only on M12a (done). Screenshots stay Tier-2 (live-verify captures).",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-160",
@@ -404,6 +405,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T22:41:22.305Z"
+    "updatedAt": "2026-10-01T22:55:58.169Z"
   }
 }

@@ -33,3 +33,43 @@ CLAIMED — US-108/M12a — deepseek-v4.1-flash — 2026-09-29T23:05:00Z — bas
   missing for tick". PLAN M12a `[ ]`→`[x]`; M12 milestone row `partial`.
 - Orchestrator pass also refreshed the stale standard-metadata snapshot (see
   phase-11 entry) and ran the cross-package checks listed there.
+
+CLAIMED — US-159/M12b — deepseek-v4.1-flash — 2026-10-01T22:42:01Z — base a75536e7e8f6400d89259c571dcaa83dc44abd40
+
+## 2026-10-01 22:5x UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-159 M12b: Getting started documentation — workspace creation, personas, sidebar tour, Cmd+K, Home/Today · **Slice:** fill the `getting-started` page (en + fr) with the real walkthrough + screenshot placeholders
+**Claim:** done-for-review
+**Ready-to-tick:** yes — docs gates green; the only `twenty-docs:validate` failure is the pre-existing unrelated `l/ar/.../implementation-services.mdx:10:18` warning already recorded under M12a; no code/schema/spec touched
+**Base:** a75536e7e8f6400d89259c571dcaa83dc44abd40
+**Changed:**
+- `packages/twenty-docs/user-guide/a2e-suite/getting-started.mdx` (en, stub → full page)
+- `packages/twenty-docs/l/fr/user-guide/a2e-suite/getting-started.mdx` (fr mirror)
+- this report; `.ralph-tui/progress.md`
+**Checks:**
+- `cd packages/twenty-docs && npx prettier --check user-guide/a2e-suite/getting-started.mdx l/fr/user-guide/a2e-suite/getting-started.mdx` → `All matched files use Prettier code style!`
+- `cd packages/twenty-docs && npx tsx scripts/lint-mdx.ts` → `No angle bracket placeholders in 217 MDX files.`
+- `node docs/scripts/check-docs.mjs` → `PASS: 26 maintained documents, 219 local inline links, balanced code fences`
+- `npx nx run twenty-docs:lint` → `Successfully ran target lint` (16 pre-existing `scripts/` oxlint warnings, 0 errors)
+- `npx nx run twenty-docs:validate` → fails on the single pre-existing ar-locale warning (`l/ar/...:10:18`), untouched; no warning from any a2e-suite page. `twenty-docs` has no `build` target (project.json exposes dev/validate/lint/fmt/test), so the documented check wins.
+- Label grep-verify (`grep -rIlF` over twenty-front/twenty-apps/twenty-server, excluding node_modules/locales): every quoted UI label matched source — sign-in (`Continue with Email`), workspace form (`Name`/`Subdomain`/`Upload logo`/`Create workspace`), persona picker (`Install your first apps`, `Beta`, `Apply template`, `Navigation customization`, `Add sample content`, `Deferred content`, six preset labels + descriptions, Bureau bundle names, seeded French labels), sidebar (`Workspace`/`Favorites`, folders `Bureau`/`Bilan`/`Archive`, standard rows, `Move up`/`Move down`/`Remove from sidebar`/`Rename`/`Delete`, `Add menu item`/`New menu item`, `Collapse sidebar`/`Expand sidebar`), Cmd+K (`Command Menu`, `Type anything...`, `Pinned`/`Create…`/`Other`/`Fallback`, `No results found`, app commands), side panel (`Side panel`/`Full page` + descriptions, `Member preference`, `Close side panel`/`Open in full page`/`Open in tab`/`Back`), Home (`Today`, all nine card titles + deep links). The only non-matching term is the planned `Start from scratch` (0 source hits) — documented explicitly as not-yet-shipped (M13b).
+**Missing for tick:** Tier-2 screenshots only — the E13 captures are represented by `{/* TODO: E13 screenshot … */}` placeholders (per M12b: screenshots stay Tier-2), no fabricated images.
+**Do not redo:** both `getting-started.mdx` pages; the six-preset table derives from `A2eWorkspaceTemplates.ts` + `workspace-template-definitions.constant.ts`, the sidebar from `navigation-menu-item/**`, Cmd+K from `useCommandMenuHotKeys.ts`/`command-menu-item/**`, side-panel from `OpenRecordInPreferencePicker.tsx`, Today from `HomeDashboard.tsx`. Do not add a nav entry (already wired in M12a).
+**Remaining:** M12c–M12g (5 other [ ] bullets in the M12 milestone)
+**Next:** orchestrator ticks M12b; next executor can start M12c (one page per app) or M12d (descriptor-generated catalogue).
+
+## 2026-10-02 UTC — deepseek-v4.1-flash [executor] — contract v4 (re-verification)
+**Task:** US-159 M12b · **Slice:** fill the `getting-started` page (en + fr) — already `done-for-review`
+**Claim:** done-for-review
+**Ready-to-tick:** yes — no new changes; re-ran the docs gates on the existing uncommitted pages
+**Base:** a75536e7e8f6400d89259c571dcaa83dc44abd40
+**Changed:** none in code; this report + `.ralph-tui/progress.md` only
+**Checks:**
+- `node docs/scripts/check-docs.mjs` → `PASS: 26 maintained documents, 219 local inline links, balanced code fences`
+- `cd packages/twenty-docs && npx prettier --check user-guide/a2e-suite/getting-started.mdx l/fr/user-guide/a2e-suite/getting-started.mdx` → `All matched files use Prettier code style!`
+- `cd packages/twenty-docs && npx tsx scripts/lint-mdx.ts` → `No angle bracket placeholders in 217 MDX files.`
+- Spot label grep-verify (10 labels over twenty-front/server/apps): all match source except planned `Start from scratch` (0 hits, documented as M13b)
+- Wiring: `docs.json` lines 381 (en) / 867 (fr); 5 `{/* TODO: E13 screenshot … */}` placeholders per page
+**Missing for tick:** Tier-2 screenshots only (E13 captures), as before
+**Do not redo:** both `getting-started.mdx` pages and their prior report entry; nav already wired
+**Remaining:** M12c–M12g (5 other [ ] bullets in the M12 milestone)
+**Next:** orchestrator ticks M12b; next executor starts M12c or M12d.

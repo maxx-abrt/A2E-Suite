@@ -5,36 +5,169 @@ description: Create a workspace, pick a starting point and learn the shell.
 
 > **Version documented:** A2E Suite 0.2.1 · Twenty 2.39.0.
 >
-> This is the M12a skeleton. The walkthrough ships in **M12b**.
+> Labels on this page are taken from the shipped UI. Figure placeholders mark
+> where the E13 run's captures belong; the screenshots themselves ship later.
 
-## Scope
+## Create your workspace
 
-How a new user reaches a working A2E workspace: create the workspace, choose a
-persona starting point (what installs, what is seeded, the first action) or
-**Start from scratch**, then learn the shell (sidebar sections, reorder and
-hide, `Cmd+K`, side panel vs full page, Home).
+A2E Suite runs on top of Twenty, so the first screen you see is the Twenty
+sign-in. Click **Continue with Email**, then create the account.
 
-## Screens this page will cover
+On the workspace step you name the workspace and choose its address:
 
-- Workspace onboarding / **Continue with Email** entry.
-- Persona picker and the **Start from scratch** path (M13b).
-- Sidebar sections, app rows and the navigation reorder/hide controls.
-- Command menu, `Cmd+K`.
-- **Home** / Today landing.
-- Settings — `User` (`Profile`, `Experience`) and `Workspace` (`General`,
-  `Data model`, `Layout`, `Members`).
+- **Name** — the workspace display name (placeholder `Apple`).
+- **Subdomain** — the address used to reach it (placeholder `apple`). If it is
+  already taken you will see **Subdomain already in use, here are some
+  alternatives:**.
+- **Upload logo** — optional.
+- **Create workspace** — the primary button that creates it.
 
-## Planned sections
+{/* TODO: E13 screenshot — workspace creation form (Name, Subdomain, Create workspace) */}
 
-1. Create your workspace.
-2. Pick a starting point per persona (Individual, Student, Team, Non-profit,
-   Small business).
-3. Start from scratch and install apps later.
-4. Tour the sidebar and `Cmd+K`.
-5. Side panel vs full page.
-6. Go to Home / Today.
+After creation, onboarding walks the workspace steps; your starting point is
+chosen at **Install your first apps**.
 
-## Status
+## Pick a starting point
 
-Skeleton only. Screen labels will be captured from the E13 run
-(`tasks/live-verify/*.mjs`).
+At the **Install your first apps** step (tagged **Beta**) the header reads
+**Get the most out of your CRM by installing some apps**. Below it, the persona
+picker offers six presets. Selecting one opens a preview of exactly what it
+installs and seeds _before_ anything is applied — nothing is installed until you
+click **Apply template**.
+
+The preview also lists the navigation rows the preset will hide under
+**Navigation customization** and the starter content it proposes under
+**Add sample content (N)**, each resolved as **will install**, **already
+installed** or **unavailable**. Content deferred behind an upstream gate is
+shown under **Deferred content** rather than silently dropped.
+
+| Preset             | What gets installed                                                   | Navigation tuned | Starter content proposed                                                                                          | First action                           |
+| ------------------ | --------------------------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| **CRM**            | No A2E apps — the default CRM workspace                               | Unchanged        | None                                                                                                              | Open **Companies** and add a record    |
+| **Individual**     | Bureau bundle: **Bureau**, **Bureau Projets**, **Bureau Discussions** | CRM rows hidden  | `Notes de réunion`, `Entretien individuel`                                                                        | Open **Bureau** → **Pages**            |
+| **Student**        | Bureau bundle: **Bureau**, **Bureau Projets**, **Bureau Discussions** | CRM rows hidden  | `Notes de réunion`, `Brief de projet`, `Spécifications produit (PRD)`                                             | Open **Bureau** → **Pages**            |
+| **Team**           | Bureau bundle: **Bureau**, **Bureau Projets**, **Bureau Discussions** | Unchanged        | `Notes de réunion`, `Brief de projet`, `Spécifications produit (PRD)`, `Entretien individuel`                     | Open **Bureau** → **Projets**          |
+| **Non-profit**     | Bureau bundle plus **Bilan**                                          | Unchanged        | `Notes de réunion`; deferred: `Dons`, `Subventions`, `Budget prévisionnel à l’équilibre`, `Demande de subvention` | Open **Bilan** → **Trouver des aides** |
+| **Small business** | Bureau bundle plus **Bilan**                                          | Unchanged        | `Brief de projet`, `Spécifications produit (PRD)`; deferred: `Trésorerie`, `Budget prévisionnel à l’équilibre`    | Open **Bilan** → **Factures**          |
+
+<Note>
+  The **Bureau bundle** is a preset of three first-party apps — **Bureau**
+  (knowledge and pages), **Bureau Projets** (boards, tasks, time tracking) and
+  **Bureau Discussions** (channels). They install in that order because projects
+  and discussions both build on Bureau. **Bilan** is the separate finance app.
+  The Bilan starter items listed as deferred are behind the Bilan safety gate
+  and are not seeded until it clears.
+</Note>
+
+Because the picker is re-runnable, you can change the starting point later from
+**Settings → Workspace template** (**Pre-installs A2E apps and tunes the
+navigation for how you work. Re-runnable at any time.**).
+
+### Start from scratch
+
+There is no dedicated "Start from scratch" card in the shipped picker yet.
+Choosing **CRM** is today's from-scratch path: it installs no A2E apps and
+leaves the default CRM navigation, so you can install apps one by one afterwards
+from the app catalogue. A first-class from-scratch entry that shows the
+catalogue with a one-line description per app is planned (M13b).
+
+{/* TODO: E13 screenshot — persona picker with a preset selected and its preview */}
+
+## Tour the sidebar
+
+The left sidebar has two sections, titled **Workspace** and **Favorites**.
+App rows appear inside **Workspace** once their app is installed; only installed
+apps show, so a CRM-only workspace has just the standard rows.
+
+- First-party app folders: **Bureau** (with **Pages**, **Projets**,
+  **Discussions**), **Bilan** (with **Tableau de bord**, **Factures**,
+  **Devis**, **Dépenses et recettes**, **Livre**, **Budgets**, **Fiches**,
+  **Trouver des aides**, **Subventions**, **Mes dossiers**, **Catégories**,
+  **Ma structure**, **Sources du catalogue**) and **Archive** (with **Files**).
+- **Mes tâches** (with **Assignées à moi**, **Créées par moi**, **En retard**).
+- Standard rows: **Companies**, **People**, **Opportunities**, **Tasks**,
+  **Notes**, **Dashboards**, message campaigns, **Agenda** (a link to the host
+  `/calendar` page) and the **Workflows** folder.
+
+### Reorder, hide and add rows
+
+Hover the workspace section header for the layout tool (icon only) to start
+customizing. While customizing you can drag rows to reorder them, or open a
+row's edit side panel and use:
+
+- **Organize** — **Move up**, **Move down**, **Move to folder**,
+  **Add menu item before**, **Add menu item after**, **Remove from sidebar**.
+
+**Remove from sidebar** is how a row is hidden; a folder's own menu offers
+**Rename** and **Delete**. To add rows, use **Add menu item** on the section or
+**New menu item** in the edit side panel (categories **Data** and **Other**,
+with **Object**, **View**, **Record**, **Folder** and **Link**).
+
+Use **Collapse sidebar** / **Expand sidebar** to change the sidebar width.
+
+{/* TODO: E13 screenshot — sidebar with the Workspace section and app folders */}
+
+## Open the command menu with Cmd+K
+
+Press `Ctrl+K` (Windows/Linux) or `Cmd+K` (macOS) to open the command menu. It
+opens as a side panel titled **Command Menu** with the search field placeholder
+**Type anything...**. Results are grouped under **Pinned**, **Create…**,
+**Other** and **Fallback**; when nothing matches you see **No results found**.
+
+Two more shortcuts open directly from the keyboard: `/` opens record search and
+`@` opens **Ask AI**.
+
+Installed apps add their own commands, for example **Bureau : créer un
+document**, **Bureau : créer un projet**, **Bilan : saisie rapide** and
+**Bilan : trouver des aides**. The same panel also hosts the native per-object
+commands generated for each object — open, create, export and delete actions
+that apply to the record you are viewing.
+
+{/* TODO: E13 screenshot — Cmd+K command menu with app commands */}
+
+## Side panel vs full page
+
+Records open in a side panel by default, alongside whatever you are already
+looking at. You choose the default in **Settings → User → Experience**, in the
+**Navigation** section:
+
+- **Side panel** — **Open records alongside the current page**.
+- **Full page** — **Open records on a dedicated page**.
+
+Each object can override this in **Settings → Data model → object → Layout**,
+**Navigation** section: **Member preference** (let each member decide),
+**Side panel** or **Full page**.
+
+In the side panel itself, use **Close side panel** to dismiss it, **Open in
+full page** to expand the current record, **Open in tab** to open it in a
+browser tab, or **Back** to return to the previous panel page.
+
+## Go to Home / Today
+
+The first drawer mode is **Home**. It opens a **Today** view: a **Today**
+eyebrow, a greeting and today's date above a grid of cards. Each card deep-links
+to the native page:
+
+| Card                         | What it shows                                       | Link              |
+| ---------------------------- | --------------------------------------------------- | ----------------- |
+| **Needs attention**          | Suggested next actions                              | —                 |
+| **My tasks**                 | Tasks assigned to you, due and overdue              | **See all tasks** |
+| **Upcoming events**          | Today's Agenda events                               | **Open Agenda**   |
+| **Recent activity**          | Latest activity across the workspace                | —                 |
+| **Recent pages**             | Newest Bureau pages (install-gated)                 | **See all pages** |
+| **Pending in Bilan**         | Unpaid invoices and grant deadlines (install-gated) | **Open Bilan**    |
+| **Focus**                    | Pomodoro timer                                      | —                 |
+| **Contributions**            | Activity grid                                       | —                 |
+| **Help and getting started** | Links into this guide and first-open help           | —                 |
+
+**Recent pages** and **Pending in Bilan** only show data once **Bureau** and
+**Bilan** are installed.
+
+{/* TODO: E13 screenshot — Home/Today with the card grid */}
+
+## Next steps
+
+- [Bureau](/user-guide/a2e-suite/bureau) — documents, projects, tasks and discussions.
+- [Bilan](/user-guide/a2e-suite/bilan) — quotes, invoices, ledger and funding.
+- [Agenda](/user-guide/a2e-suite/agenda) — events, recurrence and reminders.
+- [Working across apps](/user-guide/a2e-suite/working-across-apps) — linking records and the Related panel.

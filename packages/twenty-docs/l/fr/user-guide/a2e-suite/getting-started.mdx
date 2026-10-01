@@ -5,35 +5,178 @@ description: Créer un espace, choisir un point de départ et apprendre l'interf
 
 > **Version documentée :** Suite A2E 0.2.1 · Twenty 2.39.0.
 >
-> Ceci est l'ébauche M12a. Le parcours est livré en **M12b**.
+> Les libellés de cette page sont repris de l'interface livrée. Des
+> emplacements marquent où vont les captures de la passe E13 ; les captures
+> elles-mêmes arriveront plus tard.
 
-## Périmètre
+## Créer votre espace
 
-Comment un nouvel utilisateur arrive à un espace A2E fonctionnel : créer
-l'espace, choisir un point de départ par persona (ce qui s'installe, ce qui est
-amorcé, la première action) ou **Partir de zéro**, puis apprendre l'interface
-(sections, réordonner et masquer, `Cmd+K`, panneau latéral vs page, Accueil).
+La Suite A2E s'appuie sur Twenty : le premier écran est donc la connexion
+Twenty. Cliquez sur **Continue with Email**, puis créez le compte.
 
-## Écrans couverts par cette page
+À l'étape de création de l'espace, vous nommez l'espace et choisissez son
+adresse :
 
-- Onboarding de l'espace / entrée **Continue with Email**.
-- Sélecteur de persona et chemin **Partir de zéro** (M13b).
-- Sections, lignes d'apps et commandes de réorganisation/masquage.
-- Menu de commandes, `Cmd+K`.
-- Accueil / Aujourd'hui.
-- Réglages — `User` (`Profile`, `Experience`) et `Workspace` (`General`,
-  `Data model`, `Layout`, `Members`).
+- **Name** — le nom affiché de l'espace (exemple `Apple`).
+- **Subdomain** — l'adresse pour y accéder (exemple `apple`). S'il est déjà
+  pris, vous verrez **Subdomain already in use, here are some alternatives:**.
+- **Upload logo** — facultatif.
+- **Create workspace** — le bouton principal qui crée l'espace.
 
-## Sections prévues
+{/* TODO: E13 screenshot — formulaire de création d'espace (Name, Subdomain, Create workspace) */}
 
-1. Créer votre espace.
-2. Choisir un point de départ par persona (Individual, Student, Team,
-   Non-profit, Small business).
-3. Partir de zéro et installer des apps plus tard.
-4. Parcourir la barre latérale et `Cmd+K`.
-5. Panneau latéral vs page.
-6. Aller à Accueil / Aujourd'hui.
+Une fois l'espace créé, l'onboarding déroule les étapes ; votre point de départ
+se choisit à l'étape **Install your first apps**.
 
-## Statut
+## Choisir un point de départ
 
-Charpente uniquement.
+À l'étape **Install your first apps** (marquée **Beta**), l'en-tête indique
+**Get the most out of your CRM by installing some apps**. En dessous, le
+sélecteur de persona propose six presets. En choisir un ouvre un aperçu exact de
+ce qui sera installé et amorcé _avant_ toute application — rien n'est installé
+tant que vous n'avez pas cliqué sur **Apply template**.
+
+L'aperçu liste aussi les lignes de navigation que le preset va masquer sous
+**Navigation customization** et le contenu d'amorçage proposé sous
+**Add sample content (N)**, chacune résolue en **will install**, **already
+installed** ou **unavailable**. Le contenu différé par une barrière amont
+apparaît sous **Deferred content** au lieu d'être silencieusement ignoré.
+
+| Preset             | Ce qui est installé                                                    | Navigation ajustée  | Contenu d'amorçage proposé                                                                                          | Première action                          |
+| ------------------ | ---------------------------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| **CRM**            | Aucune app A2E — l'espace CRM par défaut                               | Inchangée           | Aucun                                                                                                               | Ouvrir **Companies** et créer une fiche  |
+| **Individual**     | Bundle Bureau : **Bureau**, **Bureau Projets**, **Bureau Discussions** | Lignes CRM masquées | `Notes de réunion`, `Entretien individuel`                                                                          | Ouvrir **Bureau** → **Pages**            |
+| **Student**        | Bundle Bureau : **Bureau**, **Bureau Projets**, **Bureau Discussions** | Lignes CRM masquées | `Notes de réunion`, `Brief de projet`, `Spécifications produit (PRD)`                                               | Ouvrir **Bureau** → **Pages**            |
+| **Team**           | Bundle Bureau : **Bureau**, **Bureau Projets**, **Bureau Discussions** | Inchangée           | `Notes de réunion`, `Brief de projet`, `Spécifications produit (PRD)`, `Entretien individuel`                       | Ouvrir **Bureau** → **Projets**          |
+| **Non-profit**     | Bundle Bureau plus **Bilan**                                           | Inchangée           | `Notes de réunion` ; différés : `Dons`, `Subventions`, `Budget prévisionnel à l’équilibre`, `Demande de subvention` | Ouvrir **Bilan** → **Trouver des aides** |
+| **Small business** | Bundle Bureau plus **Bilan**                                           | Inchangée           | `Brief de projet`, `Spécifications produit (PRD)` ; différés : `Trésorerie`, `Budget prévisionnel à l’équilibre`    | Ouvrir **Bilan** → **Factures**          |
+
+<Note>
+  Le **bundle Bureau** est un preset de trois apps first-party — **Bureau**
+  (connaissance et pages), **Bureau Projets** (tableaux, tâches, suivi du temps)
+  et **Bureau Discussions** (canaux). Elles s'installent dans cet ordre, car
+  projets et discussions reposent sur Bureau. **Bilan** est l'app finance, à
+  part. Les éléments Bilan marqués comme différés sont derrière la barrière de
+  sécurité Bilan et ne sont pas amorcés tant qu'elle n'est pas levée.
+</Note>
+
+Comme le sélecteur est réexécutable, vous pouvez changer de point de départ plus
+tard depuis **Settings → Workspace template** (**Pre-installs A2E apps and
+tunes the navigation for how you work. Re-runnable at any time.**).
+
+### Partir de zéro
+
+Il n'existe pas encore de carte « Partir de zéro » dédiée dans le sélecteur
+livré. Choisir **CRM** est le chemin actuel pour partir de zéro : aucune app A2E
+n'est installée et la navigation CRM par défaut est conservée, vous pouvez donc
+installer les apps une à une ensuite depuis le catalogue. Une entrée « Partir de
+zéro » de premier rang, affichant le catalogue avec une description par app, est
+prévue (M13b).
+
+{/* TODO: E13 screenshot — sélecteur de persona avec un preset sélectionné et son aperçu */}
+
+## Parcourir la barre latérale
+
+La barre latérale gauche comporte deux sections, intitulées **Workspace** et
+**Favorites**. Les lignes d'apps apparaissent dans **Workspace** dès que leur
+app est installée ; seules les apps installées s'affichent, donc un espace
+CRM-seul n'a que les lignes standard.
+
+- Dossiers d'apps first-party : **Bureau** (avec **Pages**, **Projets**,
+  **Discussions**), **Bilan** (avec **Tableau de bord**, **Factures**,
+  **Devis**, **Dépenses et recettes**, **Livre**, **Budgets**, **Fiches**,
+  **Trouver des aides**, **Subventions**, **Mes dossiers**, **Catégories**,
+  **Ma structure**, **Sources du catalogue**) et **Archive** (avec **Files**).
+- **Mes tâches** (avec **Assignées à moi**, **Créées par moi**, **En retard**).
+- Lignes standard : **Companies**, **People**, **Opportunities**, **Tasks**,
+  **Notes**, **Dashboards**, campagnes de messages, **Agenda** (un lien vers la
+  page hôte `/calendar`) et le dossier **Workflows**.
+
+### Réordonner, masquer et ajouter des lignes
+
+Survolez l'en-tête de la section workspace pour l'outil de mise en page (icône
+seule) et entrer en personnalisation. Pendant la personnalisation, vous pouvez
+glisser les lignes pour les réordonner, ou ouvrir le panneau latéral d'édition
+d'une ligne et utiliser :
+
+- **Organize** — **Move up**, **Move down**, **Move to folder**,
+  **Add menu item before**, **Add menu item after**, **Remove from sidebar**.
+
+**Remove from sidebar** est la façon de masquer une ligne ; le menu propre d'un
+dossier propose **Rename** et **Delete**. Pour ajouter des lignes, utilisez
+**Add menu item** sur la section ou **New menu item** dans le panneau latéral
+d'édition (catégories **Data** et **Other**, avec **Object**, **View**,
+**Record**, **Folder** et **Link**).
+
+Utilisez **Collapse sidebar** / **Expand sidebar** pour changer la largeur de la
+barre latérale.
+
+{/* TODO: E13 screenshot — barre latérale avec la section Workspace et les dossiers d'apps */}
+
+## Ouvrir le menu de commandes avec Cmd+K
+
+Appuyez sur `Ctrl+K` (Windows/Linux) ou `Cmd+K` (macOS) pour ouvrir le menu de
+commandes. Il s'ouvre en panneau latéral intitulé **Command Menu**, avec le
+champ de recherche en placeholder **Type anything...**. Les résultats sont
+groupés sous **Pinned**, **Create…**, **Other** et **Fallback** ; quand rien ne
+correspond, vous voyez **No results found**.
+
+Deux autres raccourcis s'ouvrent directement au clavier : `/` ouvre la recherche
+d'enregistrements et `@` ouvre **Ask AI**.
+
+Les apps installées ajoutent leurs propres commandes, par exemple **Bureau :
+créer un document**, **Bureau : créer un projet**, **Bilan : saisie rapide** et
+**Bilan : trouver des aides**. Le même panneau héberge aussi les commandes
+natives par objet, générées pour chaque objet — actions d'ouverture, de
+création, d'export et de suppression qui s'appliquent à l'enregistrement
+consulté.
+
+{/* TODO: E13 screenshot — menu de commandes Cmd+K avec les commandes d'app */}
+
+## Panneau latéral vs page complète
+
+Les enregistrements s'ouvrent par défaut dans un panneau latéral, à côté de ce
+que vous consultez déjà. Vous choisissez le défaut dans **Settings → User →
+Experience**, section **Navigation** :
+
+- **Side panel** — **Open records alongside the current page**.
+- **Full page** — **Open records on a dedicated page**.
+
+Chaque objet peut remplacer ce réglage dans **Settings → Data model → objet →
+Layout**, section **Navigation** : **Member preference** (chaque membre décide),
+**Side panel** ou **Full page**.
+
+Dans le panneau latéral, utilisez **Close side panel** pour le fermer, **Open in
+full page** pour agrandir l'enregistrement courant, **Open in tab** pour
+l'ouvrir dans un onglet du navigateur, ou **Back** pour revenir à la page
+précédente du panneau.
+
+## Aller à Accueil / Aujourd'hui
+
+Le premier mode du tiroir est **Home**. Il ouvre une vue **Today** : un
+surtitre **Today**, un message d'accueil et la date du jour au-dessus d'une
+grille de cartes. Chaque carte pointe vers la page native :
+
+| Carte                        | Ce qu'elle affiche                                         | Lien              |
+| ---------------------------- | ---------------------------------------------------------- | ----------------- |
+| **Needs attention**          | Actions suggérées                                          | —                 |
+| **My tasks**                 | Vos tâches attribuées, à échéance et en retard             | **See all tasks** |
+| **Upcoming events**          | Les événements Agenda du jour                              | **Open Agenda**   |
+| **Recent activity**          | Dernière activité dans l'espace                            | —                 |
+| **Recent pages**             | Pages Bureau les plus récentes (selon apps installées)     | **See all pages** |
+| **Pending in Bilan**         | Factures impayées et échéances de subventions (selon apps) | **Open Bilan**    |
+| **Focus**                    | Minuteur Pomodoro                                          | —                 |
+| **Contributions**            | Grille d'activité                                          | —                 |
+| **Help and getting started** | Liens vers ce guide et l'aide de premier lancement         | —                 |
+
+**Recent pages** et **Pending in Bilan** n'affichent des données qu'une fois
+**Bureau** et **Bilan** installées.
+
+{/* TODO: E13 screenshot — Accueil/Aujourd'hui avec la grille de cartes */}
+
+## Étapes suivantes
+
+- [Bureau](/l/fr/user-guide/a2e-suite/bureau) — documents, projets, tâches et discussions.
+- [Bilan](/l/fr/user-guide/a2e-suite/bilan) — devis, factures, livre et financements.
+- [Agenda](/l/fr/user-guide/a2e-suite/agenda) — événements, récurrence et rappels.
+- [Travail entre apps](/l/fr/user-guide/a2e-suite/working-across-apps) — liaison d'enregistrements et panneau Liés.

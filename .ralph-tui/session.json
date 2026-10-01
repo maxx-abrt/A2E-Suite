@@ -3,10 +3,10 @@
   "sessionId": "6b30e8e0-f0b6-4aaa-aa47-219b2bae47b8",
   "status": "running",
   "startedAt": "2026-10-01T20:37:10.521Z",
-  "updatedAt": "2026-10-01T22:41:22.306Z",
-  "currentIteration": 9,
+  "updatedAt": "2026-10-01T22:55:58.169Z",
+  "currentIteration": 11,
   "maxIterations": 20,
-  "tasksCompleted": 8,
+  "tasksCompleted": 9,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -106,6 +106,26 @@
       "durationMs": 471404,
       "startedAt": "2026-10-01T22:29:31.271Z",
       "endedAt": "2026-10-01T22:37:22.675Z"
+    },
+    {
+      "iteration": 10,
+      "status": "completed",
+      "taskId": "US-158",
+      "taskTitle": "M8g: Markdown & Notion import into Bureau + page-subtree zip export",
+      "taskCompleted": true,
+      "durationMs": 229621,
+      "startedAt": "2026-10-01T22:37:32.684Z",
+      "endedAt": "2026-10-01T22:41:22.305Z"
+    },
+    {
+      "iteration": 11,
+      "status": "completed",
+      "taskId": "US-159",
+      "taskTitle": "M12b: Getting started documentation — workspace creation, personas, sidebar tour, Cmd+K, Home/Today",
+      "taskCompleted": false,
+      "durationMs": 751519,
+      "startedAt": "2026-10-01T22:41:27.819Z",
+      "endedAt": "2026-10-01T22:53:59.338Z"
     }
   ],
   "skippedTaskIds": [],
