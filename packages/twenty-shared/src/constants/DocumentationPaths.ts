@@ -125,6 +125,20 @@ export const DOCUMENTATION_PATHS = {
   GETTING_STARTED_INTRODUCTION: '/getting-started/introduction',
   GETTING_STARTED_KEY_FEATURES: '/getting-started/key-features',
   GETTING_STARTED_QUICKSTART: '/getting-started/quickstart',
+  USER_GUIDE_A2E_SUITE_ADMIN_AND_SELF_HOST:
+    '/user-guide/a2e-suite/admin-and-self-host',
+  USER_GUIDE_A2E_SUITE_AGENDA: '/user-guide/a2e-suite/agenda',
+  USER_GUIDE_A2E_SUITE_ARCHIVE: '/user-guide/a2e-suite/archive',
+  USER_GUIDE_A2E_SUITE_BILAN: '/user-guide/a2e-suite/bilan',
+  USER_GUIDE_A2E_SUITE_BUREAU: '/user-guide/a2e-suite/bureau',
+  USER_GUIDE_A2E_SUITE_FAQ_TROUBLESHOOTING:
+    '/user-guide/a2e-suite/faq-troubleshooting',
+  USER_GUIDE_A2E_SUITE_GETTING_STARTED: '/user-guide/a2e-suite/getting-started',
+  USER_GUIDE_A2E_SUITE_OVERVIEW: '/user-guide/a2e-suite/overview',
+  USER_GUIDE_A2E_SUITE_SYNA: '/user-guide/a2e-suite/syna',
+  USER_GUIDE_A2E_SUITE_TEMPLATES: '/user-guide/a2e-suite/templates',
+  USER_GUIDE_A2E_SUITE_WORKING_ACROSS_APPS:
+    '/user-guide/a2e-suite/working-across-apps',
   USER_GUIDE_AI_CAPABILITIES_AI_AGENTS: '/user-guide/ai/capabilities/ai-agents',
   USER_GUIDE_AI_CAPABILITIES_AI_CHATBOT:
     '/user-guide/ai/capabilities/ai-chatbot',
