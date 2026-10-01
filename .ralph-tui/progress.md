@@ -10,6 +10,7 @@ after each iteration and it's included in prompts for context.
 - **Idempotent app apply = nullable provenance text field on the root record** (`templateApplyOperationId`), queried `filter: { field: { eq: operationId } }` before any write; the same pattern as `recipeCorrelationKey`/`templateKey`. App-owned fields can be inline in the object or a standalone `fields/*.field.ts` manifest — no server migration.
 - **Adding a member to a shared enum (e.g. `SidePanelPages`) needs `npx nx build twenty-sdk --skip-nx-cache` too, not just `twenty-shared`.** `twenty-sdk` inlines `SidePanelPages` (and `AppPath`) into `dist/front-component/index.d.ts` via rollup; a stale sdk dist makes `twenty-front` tsgo fail with `Property '<NewMember>' is missing in type 'SidePanelPages'`. Both dists are gitignored per-branch build state.
 - **The front `ExecuteOneLogicFunction` mutation requires `payload`** (`ExecuteOneLogicFunctionInput.payload: JSON!`). Even a read-only logic function must send `variables: { input: { id, payload: {} } }`; omitting it fails GraphQL validation in-browser. `useMutation<TData>` alone does not typecheck variables, so this bug is invisible to tsgo.
+- **Cross-app nav folder nesting (M7c):** an app nests a managed nav row under another app's FOLDER by duplicating the owner's folder UUID as `folderUniversalIdentifier` (works on LINK and VIEW rows). The parent must exist at install time — `FlatNavigationMenuItemValidatorService` errors `NAVIGATION_MENU_ITEM_NOT_FOUND` otherwise — and there is no manifest app-dependency field, so the child app needs a transitive hard reference to the owner (a field pinned on one of the owner's objects) or a preset bundle that installs the owner first. Positions are sibling-scoped inside the folder (owner's Pages 0, Projets 1, chat Discussions 2).
 
 ---
 
@@ -47,4 +48,15 @@ after each iteration and it's included in prompts for context.
 - **Learnings:**
   - A preset's `applicationUniversalIdentifiers` may now reference a spread bundle constant; the front truthfulness spec is source-text based, so it must expand `export const X = [...]` bundle constants one level or it checks the constant name instead of real UUIDs.
   - Three install steps shift every onboarding call-count assertion (`installApplication` once → 3) and the step-status arrays; the incompatible-app case now has only the first app flagged so the other two still install.
+---
+
+## 2026-10-01 - US-134
+- M7c-2 complete: a2e-chat's `Discussions` nav row (LINK `/discussions`) now nests under a2e-documents' `Bureau` FOLDER via the duplicated external UUID `c31a0000-0010-4000-8000-000000000002`, position 2 (after Pages 0, Projets 1). `Mes tâches` stays excluded (2-level depth cap).
+- New `EXTERNAL_NAVIGATION_FOLDER_UNIVERSAL_IDENTIFIERS.bureau` in a2e-chat constants; nav item reparented; `chat-navigation.test.ts` asserts nesting/position; `chat-object-integrity.test.ts` nav walk accepts the external folder. `package.json` 0.1.1→0.1.2; README documents the Documents→Projects→Chat install order (fixed the stale "not part of any workspace preset").
+- Files changed: `packages/twenty-apps/internal/a2e-chat/src/constants/universal-identifiers.ts`, `src/navigation-menu-items/channels.navigation-menu-item.ts`, `src/lib/__tests__/chat-navigation.test.ts`, `src/lib/__tests__/chat-object-integrity.test.ts`, `package.json`, `README.md`.
+- **Learnings:**
+  - `defineNavigationMenuItem` accepts `folderUniversalIdentifier` on LINK rows too (not just VIEW); the manifest build passes it through (`from-navigation-menu-item-manifest-to-universal-flat-navigation-menu-item.util.ts`).
+  - At install the folder must already exist: `FlatNavigationMenuItemValidatorService.validateFlatNavigationMenuItemCreation` rejects a missing parent with `NAVIGATION_MENU_ITEM_NOT_FOUND`. There is no manifest-level app-dependency field, so cross-app folder nesting is order-dependent.
+  - No new prerequisite needed for chat: it already pins `project.discussions` on projects' `project`, and projects pins `project` on documents' `document`, so documents (folder owner) is transitively always installed first; the US-133 bundle also orders documents→projects→chat.
+  - Verify a manifest row cheaply by loading `.twenty/output/manifest.json` (gitignored) with python3 and printing the `navigationMenuItems` fields.
 ---

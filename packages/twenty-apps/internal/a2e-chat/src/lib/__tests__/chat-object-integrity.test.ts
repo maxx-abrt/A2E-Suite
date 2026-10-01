@@ -7,6 +7,7 @@ import {
 } from 'twenty-sdk/define';
 
 import {
+  EXTERNAL_NAVIGATION_FOLDER_UNIVERSAL_IDENTIFIERS,
   EXTERNAL_OBJECT_IDS,
   FRONT_COMPONENT_IDS,
   OBJECT_IDS,
@@ -92,6 +93,7 @@ type NavigationMenuItemDefinition = {
   name?: string;
   type: string;
   viewUniversalIdentifier?: string;
+  folderUniversalIdentifier?: string;
 };
 
 type CommandMenuItemDefinition = {
@@ -590,6 +592,16 @@ test('the company discussions tab attaches additively to the standard company la
 test('the navigation item resolves to a declared view and commands resolve to front components', async () => {
   const graph = await loadGraph();
   const viewIds = new Set(graph.views.map((view) => view.universalIdentifier));
+  const folderIds = new Set(
+    graph.navigationMenuItems
+      .filter((item) => item.type === 'FOLDER')
+      .map((item) => item.universalIdentifier),
+  );
+
+  // The Bureau folder is declared by A2E Documents, a hard install prerequisite
+  // (transitively through A2E Projects' `project` object), so the nested row
+  // resolves at install time.
+  folderIds.add(EXTERNAL_NAVIGATION_FOLDER_UNIVERSAL_IDENTIFIERS.bureau);
   const unresolved: string[] = [];
 
   for (const item of graph.navigationMenuItems) {
@@ -600,6 +612,15 @@ test('the navigation item resolves to a declared view and commands resolve to fr
     ) {
       unresolved.push(
         `${item.name ?? ''} -> view ${item.viewUniversalIdentifier ?? 'missing'}`,
+      );
+    }
+
+    if (
+      item.folderUniversalIdentifier !== undefined &&
+      !folderIds.has(item.folderUniversalIdentifier)
+    ) {
+      unresolved.push(
+        `${item.name ?? ''} -> folder ${item.folderUniversalIdentifier}`,
       );
     }
   }

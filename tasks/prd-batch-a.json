@@ -78,11 +78,12 @@
         "Quality gates: a2e-chat (and a2e-documents if touched): yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; twenty-server tsgo clean if template/nav constants touched; targeted jest green; no i18n catalog churn; no AI attribution"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-NAV. Completes the Bureau half of M7c (Mes tâches nesting stays excluded — 2-level depth cap). Phase-11-report line 64 names this as the next M7c leg.",
       "dependsOn": [
         "US-133"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-135",
@@ -370,6 +371,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T15:55:49.452Z"
+    "updatedAt": "2026-10-01T16:05:33.694Z"
   }
 }

@@ -3,10 +3,10 @@
   "sessionId": "6881c00b-f739-4804-8118-8aa3fc38e243",
   "status": "running",
   "startedAt": "2026-10-01T15:03:12.006Z",
-  "updatedAt": "2026-10-01T15:55:49.453Z",
-  "currentIteration": 3,
+  "updatedAt": "2026-10-01T16:05:33.694Z",
+  "currentIteration": 5,
   "maxIterations": 20,
-  "tasksCompleted": 2,
+  "tasksCompleted": 3,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -46,6 +46,26 @@
       "durationMs": 826430,
       "startedAt": "2026-10-01T15:40:03.668Z",
       "endedAt": "2026-10-01T15:53:50.098Z"
+    },
+    {
+      "iteration": 4,
+      "status": "completed",
+      "taskId": "US-133",
+      "taskTitle": "M7e: Bureau packaging decision executed (D-B1) — preset bundle 'Bureau' installing all three Bureau apps",
+      "taskCompleted": true,
+      "durationMs": 108802,
+      "startedAt": "2026-10-01T15:54:00.650Z",
+      "endedAt": "2026-10-01T15:55:49.452Z"
+    },
+    {
+      "iteration": 5,
+      "status": "completed",
+      "taskId": "US-134",
+      "taskTitle": "M7c-2: a2e-chat Discussions nested under the Bureau folder",
+      "taskCompleted": false,
+      "durationMs": 70596,
+      "startedAt": "2026-10-01T15:55:54.936Z",
+      "endedAt": "2026-10-01T15:57:05.532Z"
     }
   ],
   "skippedTaskIds": [],

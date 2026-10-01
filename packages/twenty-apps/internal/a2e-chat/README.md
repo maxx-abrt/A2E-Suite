@@ -15,15 +15,24 @@ live updates depend on.
 Discussions page and the realtime topics described below exist in this
 repository; installation and every collaborative journey are not proven by
 their presence. Chat is listed in the A2E section allowlist (Settings →
-Applications → A2E Suite) and ships in the bundled image, but it is not part
-of any workspace preset.
+Applications → A2E Suite) and ships in the bundled image; the five Bureau
+personas install it as part of the "Bureau" preset bundle (US-133), alongside
+A2E Documents and A2E Projects.
+
+Install order: **A2E Documents → A2E Projects → A2E Chat**. There is no
+manifest-level app-dependency field, so the caller owns the order. Chat
+already pins a `discussions` field on A2E Projects' `project` object and
+Projects already pins a `project` relation on A2E Documents' `document`
+object, so Documents is a hard install prerequisite; its `Bureau` folder is
+therefore present when Chat's Discussions row nests under it.
 
 Follow the [applications runbook](../../../../docs/applications.md) to
 register, publish and install the app on a disposable workspace.
 
 ## Where users find it
 
-- Sidebar entry **Discussions** → the native `/discussions` page (the nav item
+- Sidebar entry **Discussions**, nested under the shared **Bureau** folder
+  (owned by A2E Documents, M7c) → the native `/discussions` page (the nav item
   is an in-app LINK target, US-101)
   ([channels.navigation-menu-item.ts](./src/navigation-menu-items/channels.navigation-menu-item.ts)).
 - Native page at route `/discussions` (`AppPath.Discussions`,

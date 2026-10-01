@@ -25,6 +25,15 @@ export const EXTERNAL_OBJECT_IDS = {
   project: 'c31b0200-0000-4000-8000-000000000000',
 } as const;
 
+// Bureau suite folder owned by A2E Documents (M7c). Nesting is safe without a
+// new prerequisite: this app already hard-requires A2E Projects (the
+// `project.discussions` field below), and A2E Projects hard-requires A2E
+// Documents (the `document` relation), so Documents is always installed first
+// and its Bureau folder is present when the Discussions row nests under it.
+export const EXTERNAL_NAVIGATION_FOLDER_UNIVERSAL_IDENTIFIERS = {
+  bureau: 'c31a0000-0010-4000-8000-000000000002',
+} as const;
+
 export const OBJECT_IDS = {
   channel: 'c31c0100-0000-4000-8000-000000000000',
   channelMember: 'c31c0200-0000-4000-8000-000000000000',

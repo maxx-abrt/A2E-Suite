@@ -107,3 +107,18 @@ CLAIMED — US-133/bureau-bundle — deepseek-v4.1-flash — 2026-10-01T15:44:00
 **Do not redo:** bundle constant, persona version bump, front copy, fixtures, and all onboarding specs — green as listed.
 **Remaining:** US-134 (chat Discussions row nests into the Bureau folder) unlocked by this; US-164 M13b catalogue copy; M7f landing pages.
 **Next:** a2e-chat Bureau nesting (US-134) now that the bundle fixes the install-order dependency.
+
+CLAIMED — US-134/M7c-chat-bureau-folder — deepseek-v4.1-flash — 2026-10-01T16:01:23Z — base 6a29449c514947be8735ccfcbf5702dc9309375a
+
+## 2026-10-01 16:20 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-134 M7c-2: a2e-chat Discussions nested under the Bureau folder · **Slice:** nest the app-managed Discussions nav row under a2e-documents' Bureau folder (duplicated external UUID), position 2
+**Claim:** done-for-review
+**Ready-to-tick:** yes — Tier 0 all green; the sidebar browser leg is explicitly the Tier-2 remainder
+**Base:** 6a29449c514947be8735ccfcbf5702dc9309375a
+**Changed:** `a2e-chat` `src/constants/universal-identifiers.ts` (new `EXTERNAL_NAVIGATION_FOLDER_UNIVERSAL_IDENTIFIERS.bureau` = `c31a0000-0010-4000-8000-000000000002`), `src/navigation-menu-items/channels.navigation-menu-item.ts` (pos 130→2, +`folderUniversalIdentifier`=Bureau, LINK `/discussions` kept), `src/lib/__tests__/chat-navigation.test.ts` (new nesting test), `src/lib/__tests__/chat-object-integrity.test.ts` (nav walk resolves the external folder), `package.json` 0.1.1→0.1.2, `README.md` (nesting + install-order prerequisite; fixed stale "not part of any workspace preset"). a2e-documents untouched → no version bump.
+**Checks:** `yarn typecheck && yarn lint && yarn test:unit` → clean, oxlint 0/0, `ℹ tests 61 / pass 61 / fail 0`; `npx twenty dev:build .` → success (12 files), manifest row `{name: Discussions, type: LINK, position: 2, link: /discussions, folderUniversalIdentifier: c31a0000-0010-4000-8000-000000000002}`; `node docs/scripts/check-docs.mjs` → PASS.
+**Missing for tick:** Tier 2 (orchestrator): after (re)installing a2e-chat the sidebar shows `Discussions` inside the single `Bureau` folder (after Pages/Projets), and an upgrade of an already-installed workspace reparents only the app-managed row (user-created rows untouched). No Tier-0 browser/upgrade proof.
+**Prerequisite reasoning:** no new dependency is introduced — a2e-chat already pins `project.discussions` on A2E Projects' `project` (chat→projects) and projects pins `project` on documents' `document` (projects→documents), so documents is a hard prerequisite and its Bureau folder exists before chat installs. The US-133 bundle already orders documents→projects→chat.
+**Do not redo:** the a2e-documents `Bureau` folder (US-115), a2e-projects nesting, and the a2e-chat `go-to-chat` command/LINK target are unchanged and green. Do not add a documents relation to chat, and do not nest `Mes tâches` (2-level depth cap).
+**Remaining:** M7c drive Archive folder + Bilan reduction + CRM host folder are open; M7f landing pages; US-164 M13b catalogue copy.
+**Next:** orchestrator tick + Tier-2 browser/upgrade leg; then the drive/Bilan/CRM M7c legs.
