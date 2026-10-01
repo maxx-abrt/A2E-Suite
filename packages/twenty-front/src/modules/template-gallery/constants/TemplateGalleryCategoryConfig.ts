@@ -8,6 +8,7 @@ import {
   IconCoins,
   IconFileText,
   IconSettingsAutomation,
+  IconSparkles,
   type IconComponent,
 } from 'twenty-ui/icon';
 
@@ -29,5 +30,6 @@ export const TEMPLATE_GALLERY_CATEGORY_CONFIG: Record<
   Bilan: { label: msg`Bilan`, Icon: IconCoins },
   Archive: { label: msg`Archive`, Icon: IconArchive },
   Agenda: { label: msg`Agenda`, Icon: IconCalendarEvent },
+  Syna: { label: msg`Syna`, Icon: IconSparkles },
   Automatisations: { label: msg`Automations`, Icon: IconSettingsAutomation },
 };

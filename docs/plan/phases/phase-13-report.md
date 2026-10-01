@@ -611,3 +611,35 @@ CLAIMED — US-142/agenda-template-family — deepseek-v4.1-flash — 2026-10-01
 **Do not redo:** everything in the 17:23 US-142 report — the definitions, descriptors, `applyAgendaTemplate` apply path, `useAgendaTemplateApply` host wiring, `HOST_TEMPLATE_DESCRIPTOR_GROUPS` registration, the two gallery hook edits and the three test files. Re-verified green; do not rebuild or refactor.
 **Remaining:** US-143 (Syna 8+ recipes) is the last unbuilt M9c family, then the rest of Ralph's batch A (US-144…US-149) and batch 14B.
 **Next:** orchestrator Tier-2 gallery pass; then US-143 per Ralph's queue.
+
+CLAIMED — US-143/syna-recipe-family — deepseek-v4.1-flash — 2026-10-01T19:30:00Z — base 232b7debc5ee984757c59dac7b192873d61c26d4
+
+## 2026-10-01 19:48 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-143 M9c family: 8+ Syna prompt/action recipes · **Slice:** the whole task — host-side recipe registry + gallery group + apply delegation + tests (Syna is a host surface with no app, so one host slice)
+**Claim:** done-for-review
+**Ready-to-tick:** yes — all Tier-0 gates green; only the AC's own Tier-2 browser leg is absent, and P9.3 live firing/replay stays deferred by design
+**Base:** 232b7debc5ee984757c59dac7b192873d61c26d4
+**Changed:**
+- `twenty-shared/src/application/templateDescriptorType.ts` (+`'Syna'` in `TemplateDescriptorCategory`; type-only, no runtime guard change)
+- `twenty-front/src/modules/ai/types/SynaRecipeDescriptor.ts` (NEW: `SynaRecipeDescriptor = TemplateDescriptor & {status, requiredToolName, prompt fr/en, deferral?, source…}` + `SynaRecipeExecution` / `SynaRecipePreview`)
+- `.../modules/ai/constants/SynaRecipeDescriptors.ts` (NEW: the 8 PLAN M9c recipes — summarize page, meeting→tasks, weekly digest, grant eligibility, email reply, translate page, clean up notes READY; draft-invoice-from-time-entries `DEFERRED` gatedBy P7; each AI recipe names its registry tool via `buildLogicFunctionToolName`, non-AI Bilan grant step is a native primitive)
+- `.../modules/ai/utils/{findSynaRecipeDescriptor,buildSynaRecipePreview,resolveSynaRecipeExecution,validateSynaRecipeDescriptors}.ts` (NEW: lookup, trigger→preview, P7-gate execution resolver, family validator ≥ 8 / bilingual / DEFERRED rules / no accounting writes while P7)
+- `.../modules/ai/hooks/useSynaRecipeApply.ts` (NEW: confirm-first apply — stages the recipe prompt as a Syna chat draft, writes nothing; returns null for an unknown or DEFERRED recipe, never half-runs)
+- `.../modules/template-gallery/constants/HostTemplateDescriptorGroups.ts` (edit: register `a2e-host-syna`, project only READY recipes to the gallery; the P7 recipe stays registry-only)
+- `.../modules/template-gallery/constants/TemplateGalleryCategoryConfig.ts` (edit: Syna category → `IconSparkles`)
+- `.../modules/template-gallery/hooks/useApplyTemplate.ts` (edit: delegate Syna keys to `useSynaRecipeApply`, before the app logic-function path)
+- tests: `SynaRecipeDescriptors.test.ts` (NEW +6), `buildSynaRecipePreview.test.ts` (NEW +4), `HostTemplateDescriptorGroups.test.ts` (edit: 6 Agenda + 7 Syna + P7 excluded)
+**Checks:**
+- `npx nx build twenty-shared --skip-nx-cache` → `Successfully ran target build`
+- `npx nx build twenty-sdk --skip-nx-cache` → `Successfully ran target build`
+- `cd packages/twenty-shared && npx tsgo -p tsconfig.json --noEmit` → exit 0; `npx jest src/application` → 33 suites / 55 pass; oxlint+oxfmt clean on the shared file
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx oxlint --type-aware -c .oxlintrc.json <13 touched>` → 0 warnings / 0 errors; `npx oxfmt --check <same>` → clean after formatting
+- `npx jest src/modules/ai src/modules/template-gallery` → 74 suites / 495 pass; the 3 new/edited suites → 13 pass
+- no `a2e-*` app touched → no `package.json` bump (host-only slice, same as US-142); no `locales/**` touched; no AI attribution
+**Missing for tick:**
+- **Tier 2 (orchestrator):** on a running workspace, open Cmd+K → Templates; the Syna category lists the seven READY recipes install-gated on their owning app, the preview pane renders each, and "Use template" stages the prompt as a Syna draft (nothing written until the user confirms). Live recipe firing/replay is the P9.3 leg and stays deferred; the P7 invoice recipe is intentionally absent from the gallery.
+- **Recorded deviation (unchanged convention):** recipe `labels`/`prompt` ship fr+en as plain strings (C1 shape), French-first content — same as every other family; no `locales/**` touched.
+**Do not redo:** the US-117 C1 contract, US-131 per-app apply functions, US-132 gallery surface, US-142 host group/apply path. The Syna registry, validator, preview/execution resolvers and `useSynaRecipeApply` are new — leave them and add consumers (US-152 Syna landing, US-160 catalogue) on top.
+**Remaining:** the rest of Ralph's batch A (US-144…US-149) and batch 14B.
+**Next:** orchestrator Tier-2 gallery pass; then US-144 (M8a-3 date/reminder mention) per Ralph's queue.

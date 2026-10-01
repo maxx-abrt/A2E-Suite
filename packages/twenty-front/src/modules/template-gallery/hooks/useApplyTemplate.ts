@@ -1,4 +1,6 @@
 import { applicationsSelector } from '@/applications/states/applicationsSelector';
+import { useSynaRecipeApply } from '@/ai/hooks/useSynaRecipeApply';
+import { findSynaRecipeDescriptor } from '@/ai/utils/findSynaRecipeDescriptor';
 import { useAgendaTemplateApply } from '@/calendar/hooks/useAgendaTemplateApply';
 import { findAgendaTemplateDescriptor } from '@/calendar/utils/findAgendaTemplateDescriptor';
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
@@ -36,6 +38,8 @@ export const useApplyTemplate = () => {
     );
   const { applyAgendaTemplateItem, isApplying: isApplyingAgendaTemplate } =
     useAgendaTemplateApply();
+  const { applySynaRecipeItem, isApplying: isApplyingSynaRecipe } =
+    useSynaRecipeApply();
   const [isApplying, setIsApplying] = useState(false);
   const [operationId] = useState(() => uuidv4());
 
@@ -46,6 +50,10 @@ export const useApplyTemplate = () => {
 
   const applyTemplate = useCallback(
     async (item: TemplateGalleryItem): Promise<TemplateApplyResult | null> => {
+      if (isDefined(findSynaRecipeDescriptor(item.descriptor.key))) {
+        return applySynaRecipeItem(item.descriptor.key, operationId);
+      }
+
       if (isDefined(findAgendaTemplateDescriptor(item.descriptor.key))) {
         return applyAgendaTemplateItem(item.descriptor.key, operationId);
       }
@@ -85,11 +93,17 @@ export const useApplyTemplate = () => {
         setIsApplying(false);
       }
     },
-    [applyAgendaTemplateItem, executeOneLogicFunction, operationId, targets],
+    [
+      applyAgendaTemplateItem,
+      applySynaRecipeItem,
+      executeOneLogicFunction,
+      operationId,
+      targets,
+    ],
   );
 
   return {
     applyTemplate,
-    isApplying: isApplying || isApplyingAgendaTemplate,
+    isApplying: isApplying || isApplyingAgendaTemplate || isApplyingSynaRecipe,
   };
 };

@@ -24,6 +24,7 @@ export type TemplateDescriptorCategory =
   | 'Bilan'
   | 'Archive'
   | 'Agenda'
+  | 'Syna'
   | 'Automatisations';
 
 // A user-fillable field the gallery renders before applying the template. The

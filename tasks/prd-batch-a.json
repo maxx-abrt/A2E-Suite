@@ -257,9 +257,10 @@
         "Quality gates: touched a2e-* app: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; twenty-server tsgo clean if recipe engine touched; targeted npx jest green; bump touched app patch version once; no i18n catalog churn; no AI attribution"
       ],
       "priority": 13,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-TPL. Completes the last unbuilt M9c family. UNLOCKS US-160 (catalogue completeness).",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-144",
@@ -379,6 +380,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T17:26:03.742Z"
+    "updatedAt": "2026-10-01T17:38:13.990Z"
   }
 }
