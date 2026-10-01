@@ -5,6 +5,7 @@ after each iteration and it's included in prompts for context.
 
 ## Codebase Patterns (Study These First)
 
+- **Host-side gallery template family (no app, e.g. Agenda M9c):** a host surface with no app ships its template family as a static `TemplateGalleryDescriptorGroup` constant (synthetic `applicationUniversalIdentifier`, e.g. `a2e-host-agenda`) merged into `useTemplateGalleryItems` BEFORE the per-app logic-function groups. The gallery install-gates it identically (`requiredApps: []` → always available). The apply path is a pure client-injected util reusing the host primitives; `useApplyTemplate` delegates those keys to a host hook before the app logic-function lookup. Idempotency with no app-owned field: deterministic per-operation `iCalUid` + uuid-v5 ids, pre-query by `iCalUid in [...]`, skip existing. `twenty/max-consts-per-file` (max 1, `**/constants/*.ts`) is NOT scope-aware — put finders in `utils/` and prefer literal expectations over extra module-level consts in `constants/__tests__`.
 - **A2E app logic-function lint wall:** `**/logic-functions/**` and `**/*.logic-function.ts` may NOT import `twenty-shared/*` (oxlint `no-restricted-imports`; message: import runtime types/helpers from `twenty-sdk/logic-function` instead). Any code needing twenty-shared types/helpers must live in `src/lib/<name>.ts` (lib imports twenty-shared freely; the logic function imports the lib relatively). Business logic + an injectable client also belongs there so the `node --test` runner can exercise it without `twenty-sdk/define`.
 - **A2E app per-app observability:** each app has its own `tsconfig`/oxlint config/test glob; `test:unit` globs differ (accounting only `src/lib/__tests__/*.test.ts`, others also `src/logic-functions/__tests__/*.test.ts`). `twenty dev:build .` writes `.twenty/output/manifest.json` (gitignored) — grep it to prove a function/field shipped.
 - **Idempotent app apply = nullable provenance text field on the root record** (`templateApplyOperationId`), queried `filter: { field: { eq: operationId } }` before any write; the same pattern as `recipeCorrelationKey`/`templateKey`. App-owned fields can be inline in the object or a standalone `fields/*.field.ts` manifest — no server migration.
@@ -152,4 +153,23 @@ after each iteration and it's included in prompts for context.
   - Cmd+K "Ask AI" is a seeded command-menu item (`standard-command-menu-item.constant.ts`, `conditionalAvailabilityExpression: 'permissionFlags.AI and not isInSidePanel'`); gating it needs a new availability variable + an upgrade command, so it (and the record-page context buttons) remain ungated.
   - `SettingsAiUsageTab` was split into `SettingsAiUsageTab` (cap section + analytics) and `SettingsAiUsageAnalytics` to keep the cap visible without the enterprise/ClickHouse gate.
   - Pre-existing (untouched) failing test: `usePageChangeEffectNavigateLocation.test.ts` (stale `AppPath` count; AppPath changed after the test).
+---
+
+## 2026-10-01 - US-142
+- Implemented the M9c Agenda template family (6 skeleton templates): a host-side C1 descriptor group (no app), a pure client-injected apply path writing `calendarEvent` rows through the host calendar primitives, and gallery registration + apply delegation.
+- Files changed: `modules/calendar/constants/AgendaTemplateDefinitions.ts`, `.../AgendaTemplateDescriptors.ts`, `.../calendar/utils/applyAgendaTemplate.ts`, `.../calendar/utils/findAgendaTemplateDefinition.ts`, `.../calendar/utils/findAgendaTemplateDescriptor.ts`, `.../calendar/hooks/useAgendaTemplateApply.ts`, `.../template-gallery/constants/HostTemplateDescriptorGroups.ts`, `.../template-gallery/hooks/useTemplateGalleryItems.ts`, `.../template-gallery/hooks/useApplyTemplate.ts` + 3 test files.
+- **Learnings:**
+  - `twenty/max-consts-per-file` (max 1) applies to `**/constants/*.ts` AND `**/*.constants.ts`; an override there is most-specific-wins, so nothing else in `.oxlintrc.json` can raise the cap in that glob. Data + a finder in one constants file fails → put the finder in `utils/`.
+  - The rule is **not** scope-aware: it flags its own closes/opens/reopens and even one const owned by a nested `describe` in a test file under `constants/__tests__`. So a test that asserts over `AGENDA_TEMPLATE_DESCRIPTORS.map((x) => x.key)` must use `expect(...).toEqual([...literals])` instead of a second module-level `const EXPECTED = [...]`.
+  - Jest here does NOT auto-load the sibling `jest.setup.ts` → a test that renders/hooks dies on `jest is not defined`; tests importing only pure utils are fine, which is why `useAgendaTemplateApply` stays exercised through the pure `applyAgendaTemplate` module.
+  - The recurring-series convention: anchor event carries `recurrenceRule` (e.g. `FREQ=DAILY`, `FREQ=WEEKLY;BYDAY=FR`) + `recurrenceTimezone` + `recurrenceSeriesId = calendar-series#<anchorId>`; `buildCalendarEventInputFromDraft` + `buildCalendarSeriesAnchorInputFromDraft` are the front primitives to reuse.
+  - Agenda idempotency without an app-owned field: use a deterministic per-operation `iCalUid` (`a2e-agenda-template:<key>:<operationId>:<index>`) plus deterministic uuid-v5 event ids, then pre-query `calendarEvent` by `iCalUid in [...]` and skip existing rows. A host descriptor group merged into `useTemplateGalleryItems` is the pattern for any future no-app family.
+---
+
+## [2026-10-01] - US-142 (verification resume)
+- Re-ran US-142 after a fresh Ralph iteration re-entered it: the 17:23 `done-for-review` artifacts were already present and uncommitted on base `d3c8f97`. Verified only — zero new changes.
+- Re-ran checks, all green: calendar/template-gallery jest → 12 suites / 51 passed; `twenty-front` tsgo → exit 0; oxlint 0/0; oxfmt clean.
+- Reported `done-for-review` again (no CLAIMED appended — the 17:11 claim and 17:23 report already own this slice).
+- **Learnings:**
+  - When a fresh iteration re-enters a task whose `done-for-review` report already exists and the working tree matches its `Changed` list, the contract is verify-then-report, not rebuild: no new `CLAIMED` line (an earlier one would win the race anyway).
 ---

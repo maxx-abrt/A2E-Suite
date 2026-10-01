@@ -2,6 +2,7 @@ import { applicationsSelector } from '@/applications/states/applicationsSelector
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
 import { buildTemplateGalleryItems } from '@/template-gallery/utils/buildTemplateGalleryItems';
 import { collectTemplateDescriptorLogicFunctions } from '@/template-gallery/utils/collectTemplateDescriptorLogicFunctions';
+import { HOST_TEMPLATE_DESCRIPTOR_GROUPS } from '@/template-gallery/constants/HostTemplateDescriptorGroups';
 import { type TemplateGalleryDescriptorGroup } from '@/template-gallery/types/TemplateGalleryDescriptorGroup';
 import { useEffect, useMemo, useState } from 'react';
 import {
@@ -94,7 +95,10 @@ export const useTemplateGalleryItems = (): {
   const items = useMemo(
     () =>
       buildTemplateGalleryItems({
-        descriptorGroups,
+        descriptorGroups: [
+          ...HOST_TEMPLATE_DESCRIPTOR_GROUPS,
+          ...descriptorGroups,
+        ],
         installedApplicationUniversalIdentifiers: applications.map(
           (application) => application.universalIdentifier,
         ),

@@ -1,0 +1,266 @@
+# Iteration 13 Log
+
+## Metadata
+
+- **Task ID**: US-141
+- **Task Title**: M10d-2: zero-AI entry gating through the workspace resolution + monthly cap surfaced in the Usage tab
+- **Description**: As a workspace member with no provider configured, I should see no dead Syna entries (admins see a 'Connect a provider' link), and as an admin I want the token cap visible in the Usage tab. Starting s...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-01T16:49:55.083Z
+- **Ended At**: 2026-10-01T17:06:51.271Z
+- **Duration**: 16m 56s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the clean-start check and then read the task's real ledger entry.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ ls docs/plan/phases/ 2>/dev/null
+[94m[bash][0m $ grep -rn "US-141" PLAN.md docs/ 2>/dev/null | head -50
+[94m[bash][0m $ grep -n "US-141\|M10d\|US-130\|US-102\|P9.1\|Usage tab\|aiMonthlyTokenCap" PLAN.md | head -60
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ sed -n '140,220p' docs/plan/phases/phase-14-report.md
+[94m[bash][0m $ grep -n "US-141\|US-130\|US-102\|US-128\|US-140" docs/plan/phases/phase-14-report.md | head -40
+[94m[bash][0m $ grep -n "M10d-2\|US-141\|hasConfiguredAiProvider\|getResolvedProvidersForWorkspace" PLAN.md | head -...
+[94m[bash][0m $ grep -rn "hasConfiguredAiProvider\|getResolvedProvidersForWorkspace\|getWorkspaceProviderResolution"...
+[94m[grep][0m [95mpackages/twenty-front/src/modules/ai[0m pattern: [96maiModels|enabledModels[0m
+[94m[grep][0m [95mpackages/twenty-server/src[0m pattern: [96mhasConfiguredAiProvider|getResolvedProvidersForWorkspace|getWorkspaceProviderResolution[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/hooks/useWorkspaceAiModelAvailability.ts
+[94m[read][0m
+[94m[grep][0m [95mpackages/twenty-shared/src[0m pattern: [96maiModels|AiModels[0m
+[94m[grep][0m [95mpackages/twenty-server/src[0m pattern: [96maiModels[0m
+[94m[read][0m
+[94m[grep][0m [95mpackages/twenty-front/src[0m pattern: [96mSettingsAiUsageTab|SettingsAi[0m
+[94m[grep][0m [95mpackages/twenty-server/src[0m pattern: [96menabledAiModelIds|useRecommendedModels|aiMonthlyTokenCap[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/workspace/workspace.resolver.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+[94m[bash][0m $ ls packages/twenty-server/src/engine/core-modules/client-config/ packages/twenty-server/src/engine/c...
+[94m[grep][0m [95mpackages/twenty-server/src/engine/core-modules/client-config[0m pattern: [96mgetClientConfig|clientConfig[0m
+[94m[grep][0m [95mpackages/twenty-front/src[0m pattern: [96museRecommendedModels|enabledAiModelIds|aiMonthlyTokenCap[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/workspace/workspace.resolver.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/workspace/workspace.module.ts
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-server/src/engine/metadata-modules/ai -name "*.module.ts" | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/ai/ai-models/ai-models.module.ts
+[94m[bash][0m $ grep -n "exports" packages/twenty-server/src/engine/metadata-modules/ai/ai-agent/ai-agent.module.ts
+[94m[bash][0m $ grep -rn "apiKey\|accessKeyId\|secretAccessKey\|isProviderConfigured\|hasApiKey" packages/twenty-ser...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "isProviderConfigured" packages/twenty-server/src
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-front/src/modules/ai -type f | sort
+[94m[bash][0m $ grep -n "US-141" -A 20 tasks/prd-batch-a.json | head -60
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/auth/states/currentWorkspaceState.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/users/graphql/fragments/userQueryFragment.ts
+[94m[bash][0m $ grep -rn "PermissionFlagType.AI\|enabledModels.length === 0\|hasNoEnabledModels\|useWorkspaceAiModel...
+[94m[grep][0m [95mpackages/twenty-front/src[0m pattern: [96mPermissionFlagType.AI|enabledModels.length === 0|hasNoEnabledModels|useWorkspaceAiModelAvailability[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/SynaSlashMenuItem.tsx
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/utils/getOfferedSynaActions.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/constants/synaDocumentAiActions.ts
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ tail -20 docs/plan/phases/phase-14-report.md
+[94m[bash][0m $ cat >> docs/plan/phases/phase-14-report.md <<'EOF'  CLAIMED — US-141/M10d-2 — deepseek-v4.1-flash — ...
+[94m[todowrite][0m
+[94m[grep][0m [95mpackages/twenty-front/src/modules/command-menu[0m pattern: [96mAsk Syna|Ask AI|AskAi|syna|Syna[0m
+[94m[bash][0m $ find packages/twenty-front/src -iname "*syna*" -o -iname "*askai*" | sort
+[94m[grep][0m [95mpackages/twenty-front/src/modules/command-menu[0m pattern: [96mIconSparkles|Ask AI|Ask Syna|useOpenAskAiPage[0m
+[94m[grep][0m [95mpackages/twenty-front/src[0m pattern: [96mIconSparkles[0m
+[94m[read][0m
+[94m[grep][0m [95mpackages/twenty-front/src[0m pattern: [96museContextToolButtons[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/components/AiChatEditorSection.tsx
+[94m[grep][0m [95mpackages/twenty-front/src[0m pattern: [96mASK_AI[0m
+[94m[grep][0m [95mpackages/twenty-server/src[0m pattern: [96mASK_AI|ask_ai|Ask AI|askAi[0m
+[94m[bash][0m $ grep -rln "ASK_AI" packages/twenty-server packages/twenty-shared 2>/dev/null | head
+[94m[bash][0m $ ls packages/twenty-server/src/engine/core-modules/workspace/ && echo "---" && ls packages/twenty-ser...
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-server/src/engine/metadata-modules/ai -name "*resolver*"
+[94m[read][0m
+[94m[bash][0m $ grep -n "graphql:generate" -A 15 packages/twenty-front/project.json
+[94m[bash][0m $ cat packages/twenty-front/codegen-metadata.cjs
+[94m[bash][0m $ grep -rn "hasConfigured\|hasAiProvider\|hasModels\|isAiEnabled" packages/twenty-front/src/generated-...
+[94m[bash][0m $ lsof -iTCP:3001 -sTCP:LISTEN -n 2>/dev/null | head -3
+[94m[bash][0m $ grep -n "aiProviders\|AiProvider\|WorkspaceAi\|availableModels\|AiModel" packages/twenty-front/src/g...
+[94m[bash][0m $ find packages/twenty-front/src/modules/client-config -type f | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/client-config/utils/getClientConfig.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/client-config/types/ClientConfig.ts
+[94m[bash][0m $ find . -maxdepth 3 -name "schema.graphql" -not -path "*/node_modules/*" | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/project.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/settings/roles/hooks/useHasPermissionFlag.ts
+[94m[bash][0m $ grep -rn "AiProviders\|AiModels\|AiUsage" packages/twenty-shared/src --include=*.ts 2>/dev/null | he...
+[94m[bash][0m $ grep -rn "getSettingsPath" packages/twenty-front/src/pages/settings/ai packages/twenty-front/src/mod...
+[94m[edit][0m
+Now implementing. Server first:
+[94m[edit][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/workspace/workspace.resolver.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/workspace/workspace.resolver.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/workspace/workspace.resolver.ts
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai/ai-models/services/__tests__/provider-config.service.spec.ts...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/generated-metadata/graphql.ts
+[94m[bash][0m $ rg -o '\{"kind":"Field","name":\{"kind":"Name","value":"useRecommendedModels"\}\}' packages/twenty-f...
+[94m[bash][0m $ grep -o '{"kind":"Field","name":{"kind":"Name","value":"useRecommendedModels"}}' packages/twenty-fro...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/users/graphql/fragments/userQueryFragment.ts
+Now the generated bridge (server field + document node) so the feature resolves at runtime before codegen runs:
+[94m[bash][0m $ \n$1/' packages/twenty-front/src/generated-metadata/graphql.ts && grep -c "hasConfiguredAiProvider" ...
+[94m[bash][0m $ grep -n "hasConfiguredAiProvider" packages/twenty-front/src/generated-metadata/graphql.ts | cut -c1-...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/generated-metadata/graphql.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/generated-metadata/graphql.ts
+[94m[bash][0m $ grep -o '{"kind":"Field","name":{"kind":"Name","value":"useRecommendedModels"}},{"kind":"Field","nam...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/auth/states/currentWorkspaceState.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/workspace/workspace.entity.ts
+[94m[bash][0m $ grep -c "aiMonthlyTokenCap" packages/twenty-front/src/generated-metadata/graphql.ts
+[94m[bash][0m $ grep -n "aiAdditionalInstructions" packages/twenty-front/src/generated-metadata/graphql.ts | head
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/generated-metadata/graphql.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/users/graphql/fragments/userQueryFragment.ts
+[94m[bash][0m $ grep -o '{"kind":"Field","name":{"kind":"Name","value":"aiAdditionalInstructions"}}' packages/twenty...
+[94m[bash][0m $ s/\{"kind":"Field","name":\{"kind":"Name","value":"aiAdditionalInstructions"\}\}/{"kind":"Field","na...
+[94m[bash][0m $ grep -o '{"kind":"Field","name":{"kind":"Name","value":"aiMonthlyTokenCap"}}' packages/twenty-front/...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/auth/states/currentWorkspaceState.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/auth/states/currentWorkspaceState.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/hooks/useWorkspaceAiModelAvailability.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/types/types.ts
+[94m[bash][0m $ grep -rn "Plug" packages/twenty-ui/src/icon/icon-dictionary.md 2>/dev/null | head
+[94m[write][0m "// The zero-AI gate shared by every Syna entry. Provider availability is
+// workspace-scoped (it includes the workspace's own BYOK keys), so a
+// workspace whose `ClientConfig.aiModels` list is empty ... (496 chars)"
+Now update `SynaSlashMenuItem`:
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getSettingsPath } from 'twenty-... (3534 chars)"
+[94m[bash][0m $ grep -n "useNavigate\|react-router\|getSettingsPath\|SettingsPath" packages/twenty-front/src/pages/s...
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/settings/usage/hooks/useUsageAnalyticsData.ts
+[94m[bash][0m $ find packages/twenty-front/src/modules/settings/usage -type f | sort
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/settings/usage/constants/AiOperationTypes.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/settings/usage/graphql/queries/getUsageAnalytics.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/ai/ai-billing/ai-billing.module.ts
+[94m[read][0m
+[94m[write][0m "import { isSynaAvailable } from '@/ai/utils/isSynaAvailable';
+
+describe('isSynaAvailable', () => {
+  it.each([
+    {
+      hasAiPermissionFlag: true,
+      hasConfiguredAiProvider: true,
+      expecte... (833 chars)"
+[94m[write][0m "import { render } from '@testing-library/react';
+
+import { type ContextToolButton } from '@/ai/types/ContextToolButton';
+import { SynaSlashMenuItem } from '@/blocknote-editor/components/SynaSlashMenuI... (3735 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/modules/blocknote-editor/components/__tests__/SynaSlashMenuItem.test.tsx src/modules/bl...
+[94m[bash][0m $ cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/testing/mock-data/users.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/testing/mock-data/users.ts
+[94m[bash][0m $ cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -20
+[94m[bash][0m $ cd packages/twenty-server && npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -20
+Now the cap display. Server side first:
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/ai/ai-billing/ai-billing.module.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/workspace/workspace.module.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/workspace/workspace.module.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/workspace/workspace.resolver.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/workspace/workspace.resolver.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/workspace/workspace.resolver.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/core-modules/workspace/workspace.resolver.ts
+[94m[bash][0m $ cd packages/twenty-server && npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -20
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/generated-metadata/graphql.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/users/graphql/fragments/userQueryFragment.ts
+[94m[bash][0m $ s/\{"kind":"Field","name":\{"kind":"Name","value":"aiMonthlyTokenCap"\}\}/{"kind":"Field","name":{"k...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/auth/states/currentWorkspaceState.ts
+[94m[bash][0m $ ls packages/twenty-front/src/locales/ | grep -i "en" | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/settings/usage/hooks/useUsageValueFormatter.ts
+[94m[bash][0m $ sed -n '1,40p' packages/twenty-front/src/pages/settings/billing/components/internal/SettingsBillingL...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/localization/hooks/useNumberFormat.ts
+[94m[write][0m "import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/typography';
+
+import { ... (1749 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+[94m[bash][0m $ grep -rn "useLingui" packages/twenty-front/src/modules/ai/components/AiChatEditorSection.tsx | head ...
+[94m[bash][0m $ cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -20
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+[94m[bash][0m $ cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -20
+[94m[bash][0m $ grep -rln "useLingui" packages/twenty-front/src/pages/settings/**/__tests__ 2>/dev/null | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/components/__tests__/AiChatEmptyState.test.tsx
+[94m[write][0m "import { render, screen } from '@testing-library/react';
+
+import { SettingsAiMonthlyTokenCapSection } from '@/pages/settings/ai/components/SettingsAiMonthlyTokenCapSection';
+
+jest.mock('@/localization... (1508 chars)"
+[94m[bash][0m $ npx jest src/pages/settings/ai/components/__tests__/SettingsAiMonthlyTokenCapSection.test.tsx src/mo...
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/pages/settings/ai/components/__tests__/SettingsAiMonthlyTokenCapSection.test.tsx --conf...
+[94m[bash][0m $ npx jest src/pages/settings/ai/components/__tests__/SettingsAiMonthlyTokenCapSection.test.tsx --conf...
+[94m[bash][0m $ grep -rn "I18nProvider" packages/twenty-front/src/testing/*.tsx packages/twenty-front/src/testing/**...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/testing/decorators/PageDecorator.tsx
+[94m[bash][0m $ grep -n "dynamicActivate\|SOURCE_LOCALE\|from '@lingui/core'\|from '@lingui/react'" packages/twenty-...
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+import { type ReactNode } from 'react';
+
+import { SettingsAi... (1812 chars)"
+[94m[bash][0m $ npx jest src/pages/settings/ai/components/__tests__/SettingsAiMonthlyTokenCapSection.test.tsx --conf...
+[94m[bash][0m $ find packages/twenty-front/src/modules/command-menu-item -type f | grep -i "hook\|effect" | head -30
+[94m[grep][0m [95mpackages/twenty-shared/src[0m pattern: [96mASK_AI|Ask AI[0m
+[94m[grep][0m [95mpackages/twenty-server/src[0m pattern: [96mASK_AI[0m
+[94m[read][0m
+[94m[grep][0m [95mpackages/twenty-front/src[0m pattern: [96mconditionalAvailabilityExpression[0m
+[94m[bash][0m $ npx jest src/modules/blocknote-editor/components/__tests__ src/modules/ai/hooks/__tests__ src/pages/...
+[94m[bash][0m $ npx jest src/engine/metadata-modules/ai/ai-billing src/engine/metadata-modules/ai/ai-models/services...
+[94m[bash][0m $ npx oxfmt --check src/engine/metadata-modules/ai/ai-models/services/provider-config.service.ts src/e...
+[94m[bash][0m $ cd packages/twenty-front && npx oxlint --type-aware -c .oxlintrc.json src/modules/users/graphql/frag...
+[94m[bash][0m $ find packages/twenty-front/src/pages -path "*__tests__*" -name "*.test.tsx" | head
+[94m[bash][0m $ grep -rn "SettingsAiMonthlyTokenCapSection" packages/twenty-front/src | head
+[94m[edit][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+[94m[bash][0m $ cd packages/twenty-front && npx oxlint --type-aware -c .oxlintrc.json src/pages/settings/ai/componen...
+[94m[bash][0m $ cd packages/twenty-front && npx oxfmt --check src/modules/users/graphql/fragments/userQueryFragment....
+[94m[bash][0m $ cd packages/twenty-front && npx oxfmt src/modules/blocknote-editor/components/SynaSlashMenuItem.tsx ...
+[94m[bash][0m $ npx jest src/modules/blocknote-editor/components/__tests__/SynaSlashMenuItem.test.tsx src/pages/sett...
+[94m[bash][0m $ grep -n "WorkspaceModule\|forwardRef" packages/twenty-server/src/engine/core-modules/billing/billing...
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-server/src/engine/core-modules/billing/billing.module.ts | grep -n "i...
+[94m[bash][0m $ npx jest --findRelatedTests src/modules/ai/hooks/useWorkspaceAiModelAvailability.ts src/modules/ai/u...
+[94m[bash][0m $ cd packages/twenty-front && npx jest --findRelatedTests src/modules/ai/hooks/useWorkspaceAiModelAvai...
+[94m[bash][0m $ echo "(empty = untouched)"
+[94m[bash][0m $ cd packages/twenty-server && npx jest --findRelatedTests src/engine/metadata-modules/ai/ai-models/se...
+[94m[bash][0m $ git log -1 --format="%h %ad %s" --date=short -- packages/twenty-front/src/hooks/__tests__/usePageCha...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ plus US-142+ in Ralph's batch. **Next:** make `ClientConfigService.getClientConfig` resolve `getAvai...
+[94m[bash][0m $ tail -30 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ AppPath changed after the test). --- EOF echo done
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+Done. Summary of this executor session (US-141 / M10d-2, slice = AC bullets 2–4):
+
+- **Server:** `ProviderConfigService.hasConfiguredAiProvider(workspaceId)` (resolves the US-102 order → `isProviderConfigured`, so workspace BYOK counts) exposed as `Workspace.hasConfiguredAiProvider`; new `Workspace.aiMonthlyTokenUsage` (null when no cap, else `AiMonthlyTokenCapService`).
+- **Front:** `useWorkspaceAiModelAvailability` now returns `hasConfiguredAiProvider`; new pure gate `isSynaAvailable`; `/syna` slash menu + selection toolbar consume it; admins get a single "Connect a provider" entry to Settings → Syna → Providers, members get nothing; new `SettingsAiMonthlyTokenCapSection` surfaces cap + month-to-date usage in the Usage tab.
+- **Tests:** server 4+22 suites green; front 43 suites/288 green incl. new `isSynaAvailable` (mapping), admin-vs-member slash, and cap set/null renders. Both packages tsgo + oxlint/oxfmt clean.
+- **Not done (documented in the report):** Cmd+K seeded `ASK_AI` item and record-page/chat-surface gates; workspace-scoped `ClientConfig.aiModels` (US-135 leg). Metadata codegen is the orchestrator's; I hand-bridged the 3 new fields in `generated-metadata/graphql.ts` and updated the fragment sources so codegen reproduces them. Pre-existing unrelated failure `usePageChangeEffectNavigateLocation.test.ts` (stale `AppPath` count).
+
+Report appended to `docs/plan/phases/phase-14-report.md`; memory appended to `.ralph-tui/progress.md` (plus 3 new Codebase Patterns).
+
+<promise>COMPLETE</promise>
+
+--- STDERR ---
+error: Error starting FSEvents stream

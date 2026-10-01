@@ -1,4 +1,6 @@
 import { applicationsSelector } from '@/applications/states/applicationsSelector';
+import { useAgendaTemplateApply } from '@/calendar/hooks/useAgendaTemplateApply';
+import { findAgendaTemplateDescriptor } from '@/calendar/utils/findAgendaTemplateDescriptor';
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
 import { collectTemplateApplyLogicFunctions } from '@/template-gallery/utils/collectTemplateApplyLogicFunctions';
 import { type TemplateGalleryItem } from '@/template-gallery/types/TemplateGalleryItem';
@@ -21,6 +23,10 @@ import { v4 as uuidv4 } from 'uuid';
 // key keeps the write in the app that owns the descriptor, so the gallery never
 // forks a template-copy implementation. One operation id per gallery session
 // makes a retried apply idempotent inside the app.
+//
+// Agenda descriptors are host-side (no app, no apply logic function); those
+// keys are delegated to the host calendar apply, which writes calendarEvent
+// rows through the same operation id.
 export const useApplyTemplate = () => {
   const applications = useAtomStateValue(applicationsSelector);
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
@@ -28,6 +34,8 @@ export const useApplyTemplate = () => {
     useMutation<ExecuteOneLogicFunctionMutation>(
       ExecuteOneLogicFunctionDocument,
     );
+  const { applyAgendaTemplateItem, isApplying: isApplyingAgendaTemplate } =
+    useAgendaTemplateApply();
   const [isApplying, setIsApplying] = useState(false);
   const [operationId] = useState(() => uuidv4());
 
@@ -38,6 +46,10 @@ export const useApplyTemplate = () => {
 
   const applyTemplate = useCallback(
     async (item: TemplateGalleryItem): Promise<TemplateApplyResult | null> => {
+      if (isDefined(findAgendaTemplateDescriptor(item.descriptor.key))) {
+        return applyAgendaTemplateItem(item.descriptor.key, operationId);
+      }
+
       const target = targets.find(
         (candidate) =>
           candidate.application.universalIdentifier ===
@@ -73,8 +85,11 @@ export const useApplyTemplate = () => {
         setIsApplying(false);
       }
     },
-    [executeOneLogicFunction, operationId, targets],
+    [applyAgendaTemplateItem, executeOneLogicFunction, operationId, targets],
   );
 
-  return { applyTemplate, isApplying };
+  return {
+    applyTemplate,
+    isApplying: isApplying || isApplyingAgendaTemplate,
+  };
 };

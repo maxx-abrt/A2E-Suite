@@ -562,3 +562,52 @@ CLAIMED — US-139/mention-index — deepseek-v4.1-flash — 2026-10-01T16:40:30
 **Do not redo:** the extract/diff/sync writer, the index-only reader, the `document-mention` object/relation and the `document.updated`+`content` trigger (mirrors the guard's). The read path must never select `document.content`; the index is the contract (asserted in the test).
 **Remaining:** the rest of Ralph's batch A (US-140…US-149) and batch 14B.
 **Next:** mount the tab — a `front-components/mentioned-in.front-component.tsx` reading `useSelectedRecordIds()` and calling `listMentionedInDocuments(new CoreApiClient(), { objectNameSingular, recordId })`, then declare standalone page-layout tabs (document record page first, then the target standard objects) per the a2e-chat `company-discussions.page-layout-tab` pattern. US-149 reuses this read model.
+
+CLAIMED — US-142/agenda-template-family — deepseek-v4.1-flash — 2026-10-01T17:11:13Z — base d3c8f97eed6cf1157f98f4e702207cf98282cde4
+
+## 2026-10-01 17:23 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-142 M9c family: 6 Agenda templates (weekly time-block, team rituals, editorial calendar, exam revision, event run-sheet, shift roster) · **Slice:** the whole task — host-side descriptor group + apply path + gallery registration + tests (Agenda has no app; one host slice)
+**Claim:** done-for-review
+**Ready-to-tick:** yes — all Tier-0 gates green; only the AC's own Tier-2 browser leg (preview renders + apply, E15) is absent
+**Base:** d3c8f97eed6cf1157f98f4e702207cf98282cde4
+**Changed:**
+- `twenty-front/src/modules/calendar/constants/AgendaTemplateDefinitions.ts` (NEW: the 6 skeletons as `calendarEvent` specs — 5 time-blocks / 2 rituals / 4 editorial / 6 revision / 6 run-sheet / 10 shifts; `dayOfWeek` pins weekly rituals, `dayOffset` one-offs; `AgendaTemplateKey` closed union)
+- `.../calendar/constants/AgendaTemplateDescriptors.ts` (NEW: the 6 C1 descriptors, `category: 'Agenda'`, per-template fr+en labels + preview summary, `requiredApps: []`, inline `sourceUniversalIdentifier`/`sourceName`; preview counts kept in step with the definitions by a test)
+- `.../calendar/utils/applyAgendaTemplate.ts` (NEW: pure apply path; client-injected `createCalendarEvent` + `findCalendarEventIdsByICalUid`; resolves each spec to a fresh event via `buildCalendarEventInputFromDraft` + `buildCalendarSeriesAnchorInputFromDraft`; operation id → deterministic uuid-v5 ids + deterministic `iCalUid` so a re-apply is a no-op; no operation id → fresh ids each time)
+- `.../calendar/utils/findAgendaTemplateDefinition.ts`, `.../calendar/utils/findAgendaTemplateDescriptor.ts` (NEW: lookups live outside `constants/` — `twenty/max-consts-per-file` allows one const per `**/constants/*.ts`)
+- `.../calendar/hooks/useAgendaTemplateApply.ts` (NEW: host wiring — real `createOneRecord` + `useFindManyRecordsQuery` iCalUid lookup; a `calendarEvent` create, never a provider mutation)
+- `.../template-gallery/constants/HostTemplateDescriptorGroups.ts` (NEW: host group registered with the synthetic `a2e-host-agenda` source, registrable identically to a per-app descriptor group)
+- `.../template-gallery/hooks/useTemplateGalleryItems.ts` (edits: merge `HOST_TEMPLATE_DESCRIPTOR_GROUPS` before the per-app groups)
+- `.../template-gallery/hooks/useApplyTemplate.ts` (edits: delegate Agenda keys to `useAgendaTemplateApply`; app keys keep the logic-function path)
+- new tests: `AgendaTemplateDescriptors.test.ts` (+4), `applyAgendaTemplate.test.ts` (+17 incl. one apply per template, recurrence anchors, idempotency/no-operation-id/unknown-key), `HostTemplateDescriptorGroups.test.ts` (+1)
+- this report + `.ralph-tui/progress.md`
+**Checks:**
+- `npx jest src/modules/calendar/constants/__tests__/AgendaTemplateDescriptors.test.ts src/modules/calendar/utils/__tests__/applyAgendaTemplate.test.ts src/modules/template-gallery --config=packages/twenty-front/jest.config.mjs` → 12 suites / 51 passed (incl. `validateTemplateDescriptors` green)
+- `npx jest --findRelatedTests <6 changed sources> --config=jest.config.mjs` (packages/twenty-front) → 6 suites / 29 passed
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx oxlint --type-aware -c .oxlintrc.json <11 touched>` → 0 warnings / 0 errors; `npx oxfmt --check <same>` clean after formatting
+- `npx nx lint:diff-with-main twenty-front` → "No changed files." (working-tree changes uncommitted; lint ran directly on the touched files instead)
+- no `twenty-shared`/`twenty-sdk` source touched → no dist rebuild needed; no app touched → no `package.json` bump (host-only slice); no `locales/**` touched; no AI attribution
+**Missing for tick:**
+- **Tier 2 (orchestrator):** browser — the gallery lists the six Agenda templates under the Agenda category, the preview pane renders each (labels + "What it creates" 1 write), and Apply creates the declared number of `calendarEvent` rows (recurring rituals as series anchors; re-apply with the same session operation id adds nothing).
+- **Deviation (documented, unchanged convention):** the C1 contract's `labels` is fr+en, but the app families keep fr-only content with fr+en labels as US-117's surface; US-106/US-107/US-131 recorded the same. Here the member-facing titles are French and the descriptor labels are fr+en — matching every other family. No `locales/**` touched.
+- **Legacy extenders not rewritten:** the pre-existing per-app `apply-template` logic functions are unchanged; only the gallery host gained Agenda. No app manifest or `apply-template` function was added for Agenda (there is no Agenda app).
+**Do not redo:** the US-117 C1 contract and `validateTemplateDescriptors`; the US-131 per-app apply functions; the US-132/137 gallery surface + record-action mount; the host calendar primitives (`buildCalendarEventInputFromDraft`, `buildCalendarSeriesAnchorInputFromDraft`). Agenda reuses all of them — do not fork a second calendar write path.
+**Remaining:** US-143 (Syna 8+ recipes) is the last unbuilt M9c family, then the rest of Ralph's batch A (US-144…US-149) and batch 14B.
+**Next:** orchestrator Tier-2 gallery pass; then US-143 (Syna recipes family) per Ralph's queue.
+
+## 2026-10-01 17:25 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-142 M9c family: 6 Agenda templates (weekly time-block, team rituals, editorial calendar, exam revision, event run-sheet, shift roster) · **Slice:** whole task (already implemented by the 17:23 run — re-verified, zero new changes)
+**Claim:** done-for-review
+**Ready-to-tick:** yes — the six descriptors, host apply path, gallery registration and tests all exist unchanged and re-pass; only the AC's Tier-2 browser leg (E15) is absent
+**Base:** d3c8f97eed6cf1157f98f4e702207cf98282cde4
+**Changed:** none (verification-only resume; source files were already present at HEAD base from the 17:23 report — no edit made this run)
+**Checks:**
+- `npx jest src/modules/calendar/constants/__tests__/AgendaTemplateDescriptors.test.ts src/modules/calendar/utils/__tests__/applyAgendaTemplate.test.ts src/modules/template-gallery --config=packages/twenty-front/jest.config.mjs` → 12 suites / 51 passed
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx oxlint --type-aware -c .oxlintrc.json <12 touched files>` → 0 warnings / 0 errors
+- `npx oxfmt --check <7 touched source files>` → all correct
+**Missing for tick:** Tier 2 (orchestrator): browser E15 leg — gallery lists the six Agenda templates under Agenda, preview renders, Apply writes the declared `calendarEvent` count, re-apply with the same session operation id adds nothing.
+**Do not redo:** everything in the 17:23 US-142 report — the definitions, descriptors, `applyAgendaTemplate` apply path, `useAgendaTemplateApply` host wiring, `HOST_TEMPLATE_DESCRIPTOR_GROUPS` registration, the two gallery hook edits and the three test files. Re-verified green; do not rebuild or refactor.
+**Remaining:** US-143 (Syna 8+ recipes) is the last unbuilt M9c family, then the rest of Ralph's batch A (US-144…US-149) and batch 14B.
+**Next:** orchestrator Tier-2 gallery pass; then US-143 per Ralph's queue.
