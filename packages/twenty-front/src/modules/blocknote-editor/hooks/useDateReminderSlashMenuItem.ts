@@ -66,13 +66,7 @@ export const useDateReminderSlashMenuItem = (
       },
       ' ',
     ]);
-  }, [
-    accounts,
-    createCalendarEvent,
-    editor,
-    enqueueWarningSnackBar,
-    timeZone,
-  ]);
+  }, [accounts, createCalendarEvent, editor, enqueueWarningSnackBar, timeZone]);
 
   return {
     title: i18n._(msg`Date/reminder`),

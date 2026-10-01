@@ -1,12 +1,12 @@
 {
   "version": 1,
-  "sessionId": "20784e55-938f-43af-9035-82514fa8f305",
+  "sessionId": "6881c00b-f739-4804-8118-8aa3fc38e243",
   "status": "running",
-  "startedAt": "2026-10-01T17:35:39.318Z",
-  "updatedAt": "2026-10-01T17:45:45.339Z",
-  "currentIteration": 1,
+  "startedAt": "2026-10-01T15:03:12.006Z",
+  "updatedAt": "2026-10-01T17:47:54.237Z",
+  "currentIteration": 16,
   "maxIterations": 20,
-  "tasksCompleted": 1,
+  "tasksCompleted": 13,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -20,12 +20,162 @@
     {
       "iteration": 1,
       "status": "completed",
+      "taskId": "US-131",
+      "taskTitle": "M9a-3: per-app template apply logic functions — the 'Use template' write path keyed by descriptor key",
+      "taskCompleted": true,
+      "durationMs": 1072399,
+      "startedAt": "2026-10-01T15:03:18.840Z",
+      "endedAt": "2026-10-01T15:21:11.239Z"
+    },
+    {
+      "iteration": 2,
+      "status": "completed",
+      "taskId": "US-132",
+      "taskTitle": "M9a-4: mount gallery entry-points — Cmd+K 'Templates', every 'New' surface, app landing pages",
+      "taskCompleted": true,
+      "durationMs": 1121319,
+      "startedAt": "2026-10-01T15:21:16.825Z",
+      "endedAt": "2026-10-01T15:39:58.144Z"
+    },
+    {
+      "iteration": 3,
+      "status": "failed",
+      "taskId": "US-133",
+      "taskTitle": "M7e: Bureau packaging decision executed (D-B1) — preset bundle 'Bureau' installing all three Bureau apps",
+      "taskCompleted": false,
+      "durationMs": 826430,
+      "startedAt": "2026-10-01T15:40:03.668Z",
+      "endedAt": "2026-10-01T15:53:50.098Z"
+    },
+    {
+      "iteration": 4,
+      "status": "completed",
+      "taskId": "US-133",
+      "taskTitle": "M7e: Bureau packaging decision executed (D-B1) — preset bundle 'Bureau' installing all three Bureau apps",
+      "taskCompleted": true,
+      "durationMs": 108802,
+      "startedAt": "2026-10-01T15:54:00.650Z",
+      "endedAt": "2026-10-01T15:55:49.452Z"
+    },
+    {
+      "iteration": 5,
+      "status": "completed",
+      "taskId": "US-134",
+      "taskTitle": "M7c-2: a2e-chat Discussions nested under the Bureau folder",
+      "taskCompleted": false,
+      "durationMs": 70596,
+      "startedAt": "2026-10-01T15:55:54.936Z",
+      "endedAt": "2026-10-01T15:57:05.532Z"
+    },
+    {
+      "iteration": 6,
+      "status": "completed",
+      "taskId": "US-134",
+      "taskTitle": "M7c-2: a2e-chat Discussions nested under the Bureau folder",
+      "taskCompleted": true,
+      "durationMs": 503157,
+      "startedAt": "2026-10-01T15:57:10.537Z",
+      "endedAt": "2026-10-01T16:05:33.694Z"
+    },
+    {
+      "iteration": 7,
+      "status": "completed",
+      "taskId": "US-135",
+      "taskTitle": "M10a-3: consume workspace BYOK keys at generation time — wire workspace resolution into AiModelRegistryService.buildModelRegistry",
+      "taskCompleted": true,
+      "durationMs": 614476,
+      "startedAt": "2026-10-01T16:05:39.175Z",
+      "endedAt": "2026-10-01T16:15:53.651Z"
+    },
+    {
+      "iteration": 8,
+      "status": "completed",
+      "taskId": "US-136",
+      "taskTitle": "P4.2 defect: task-calendar GroupByTasks exceeds the GraphQL complexity cap (2001 > 2000) — reduce view group-by complexity",
+      "taskCompleted": true,
+      "durationMs": 487506,
+      "startedAt": "2026-10-01T16:15:59.153Z",
+      "endedAt": "2026-10-01T16:24:06.659Z"
+    },
+    {
+      "iteration": 9,
+      "status": "completed",
+      "taskId": "US-137",
+      "taskTitle": "M9b-2: mount 'Save as template' on record surfaces and the gallery",
+      "taskCompleted": true,
+      "durationMs": 626246,
+      "startedAt": "2026-10-01T16:24:12.140Z",
+      "endedAt": "2026-10-01T16:34:38.386Z"
+    },
+    {
+      "iteration": 10,
+      "status": "completed",
+      "taskId": "US-138",
+      "taskTitle": "M8b-2: editable inline views — flip the embedded record view to isUIEditable with a working persist path",
+      "taskCompleted": true,
+      "durationMs": 200243,
+      "startedAt": "2026-10-01T16:34:43.880Z",
+      "endedAt": "2026-10-01T16:38:04.123Z"
+    },
+    {
+      "iteration": 11,
+      "status": "completed",
+      "taskId": "US-139",
+      "taskTitle": "M8d: backlinks & mentions panel — 'Mentioned in' computed from mention nodes stored at save",
+      "taskCompleted": true,
+      "durationMs": 342232,
+      "startedAt": "2026-10-01T16:38:09.606Z",
+      "endedAt": "2026-10-01T16:43:51.838Z"
+    },
+    {
+      "iteration": 12,
+      "status": "completed",
+      "taskId": "US-140",
+      "taskTitle": "M10b-2: editor selection toolbar — custom FormattingToolbarController appending the Syna actions",
+      "taskCompleted": true,
+      "durationMs": 352291,
+      "startedAt": "2026-10-01T16:43:57.315Z",
+      "endedAt": "2026-10-01T16:49:49.606Z"
+    },
+    {
+      "iteration": 13,
+      "status": "completed",
+      "taskId": "US-141",
+      "taskTitle": "M10d-2: zero-AI entry gating through the workspace resolution + monthly cap surfaced in the Usage tab",
+      "taskCompleted": true,
+      "durationMs": 1016188,
+      "startedAt": "2026-10-01T16:49:55.083Z",
+      "endedAt": "2026-10-01T17:06:51.271Z"
+    },
+    {
+      "iteration": 14,
+      "status": "completed",
+      "taskId": "US-142",
+      "taskTitle": "M9c family: 6 Agenda templates (weekly time-block, team rituals, editorial calendar, exam revision, event run-sheet, shift roster)",
+      "taskCompleted": false,
+      "durationMs": 1052873,
+      "startedAt": "2026-10-01T17:06:56.797Z",
+      "endedAt": "2026-10-01T17:24:29.670Z"
+    },
+    {
+      "iteration": 15,
+      "status": "completed",
+      "taskId": "US-142",
+      "taskTitle": "M9c family: 6 Agenda templates (weekly time-block, team rituals, editorial calendar, exam revision, event run-sheet, shift roster)",
+      "taskCompleted": true,
+      "durationMs": 89063,
+      "startedAt": "2026-10-01T17:24:34.679Z",
+      "endedAt": "2026-10-01T17:26:03.742Z"
+    },
+    {
+      "iteration": 16,
+      "status": "completed",
       "taskId": "US-143",
       "taskTitle": "M9c family: 8+ Syna prompt/action recipes (summarize page, meeting→tasks, weekly digest, grant eligibility, email reply, translate page, clean up notes, draft invoice from time entries)",
       "taskCompleted": true,
-      "durationMs": 270509,
-      "startedAt": "2026-10-01T17:35:47.841Z",
-      "endedAt": "2026-10-01T17:40:18.350Z"
+      "durationMs": 724755,
+      "startedAt": "2026-10-01T17:26:09.232Z",
+      "endedAt": "2026-10-01T17:38:13.987Z"
     }
   ],
   "skippedTaskIds": [],

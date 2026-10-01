@@ -678,3 +678,32 @@ CLAIMED — US-144/date-reminder-mention — deepseek-v4.1-flash — 2026-10-01T
 **Do not redo:** the in-flight slice files listed above — let the claiming executor finish; do not edit, revert, lint-clean, or build on them.
 **Remaining:** US-143 committed; US-144 in-flight; US-145…US-149 plus batch 14B still open.
 **Next:** orchestrator — wait for the live US-144 executor to append its report (or adjudicate the stale/in-flight claim if it stalls with those files present) before re-dispatching US-144.
+
+CLAIMED — US-145/provider-free-stories — deepseek-v4.1-flash — 2026-10-01T17:47:00Z — base bf9acfc069b248ab6aaf107f0261c70a284f83ed
+
+## 2026-10-01 17:52 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-144 M8a-3: date/reminder mention block — dateReminder inline content creating an Agenda reminder · **Slice:** the whole slice (single coherent inline-content slice)
+**Claim:** done-for-review
+**Ready-to-tick:** yes — every Tier-0 gate green; only the AC's own Tier-2 browser leg is absent
+**Base:** 953a7a893d04edee7ebb6d0231864890e08f9ecb (Ralph's engine auto-committed the slice mid-session as bf9acfc0; two post-commit lint/format fixes remain in the working tree, listed under Changed)
+**Changed:**
+- `twenty-front/.../blocknote-editor/blocks/DateReminderInlineContent.tsx` (NEW `dateReminder` inline content: `calendarEventId`/`startsAt`/`label` props, read-only `Chip` + `IconCalendarEvent`; `toExternalHTML` degrades to the label span, never a broken node)
+- `twenty-front/.../blocknote-editor/utils/buildDateReminderMention.ts` (NEW pure builder: next half-hour slot via `getCalendarEventComposerDefaultDates`, `sendInvitations:false`/`addConferencing:false`, localized label; returns `calendarEventInput` minus `connectedAccountId` + chip `mention`)
+- `twenty-front/.../blocknote-editor/utils/getDateReminderMentionExportText.ts` (NEW pure export-text fallback)
+- `twenty-front/.../blocknote-editor/hooks/useDateReminderSlashMenuItem.ts` (NEW: resolves a calendar-capable account with `isCalendarCreationEnabledForAccount`, calls `useCreateCalendarEvent`, inserts the chip; no account → `enqueueWarningSnackBar` and no insert)
+- `twenty-front/.../blocknote-editor/blocks/Schema.ts` (register `dateReminder` in `inlineContentSpecs`)
+- `twenty-front/.../blocknote-editor/components/BlockEditor.tsx` (append the item to `slashMenuItems()`)
+- tests: `.../utils/__tests__/buildDateReminderMention.test.ts` (round-trip save→reload→markdown-export), `.../utils/__tests__/getDateReminderMentionExportText.test.ts`, `.../hooks/__tests__/useDateReminderSlashMenuItem.test.tsx` (fr aliases; no-account snackbar+no insert; account→create→chip; creation-failure→no broken node)
+- working-tree-only fixes not in bf9acfc0: `buildDateReminderMention.ts` `import type { Temporal }`, `useDateReminderSlashMenuItem.ts` oxfmt
+**Checks:**
+- `cd packages/twenty-front && npx jest src/modules/blocknote-editor --config=jest.config.mjs` → 36 suites / 221 tests pass (was 28/183 after US-122; +3 new suites / +11 tests)
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx oxlint --type-aware -c .oxlintrc.json <9 touched files>` → 0 warnings / 0 errors; `npx oxfmt --check <same>` → clean (after formatting the hook)
+- no `locales/**` touched; no AI attribution; host-only slice → no app version bump
+- note: `npx nx lint:diff-with-main twenty-front` reports "No changed files" on an uncommitted tree (`main...HEAD`); ran oxlint/oxfmt on the touched files directly
+**Missing for tick:**
+- **Tier 2 (orchestrator):** on a running workspace, `/date-reminder` creates a `calendarEvent` on the connected calendar and inserts a read-only date chip; with no calendar account it warns and inserts nothing; then the E14 save→reload→export (markdown/PDF) round-trip leg. The chip's `toExternalHTML` cover the Markdown/DOCX legs, PDF prints the live chip.
+- **Recorded deviation (unchanged convention):** all new user-facing strings use `msg`/`t` macros (fr aliases added), catalogs left to the i18n pipeline — no `locales/**` churn.
+**Do not redo:** the `mention` inline content / `useMentionMenu` / `MentionInlineContent` (untouched); the US-122 interactive blocks; the calendar composer (`useCreateCalendarEvent`, `isCalendarCreationEnabledForAccount`). US-143 is committed; the parallel iteration's `blocked — already claimed` entry above is historical (this claiming executor finished the slice).
+**Remaining:** US-145…US-149 plus batch 14B.
+**Next:** orchestrator Tier-2 browser pass (insert date mention → event in Agenda) + E14 round-trip; then US-145 (light/dark storybook stories for the M8a blocks).

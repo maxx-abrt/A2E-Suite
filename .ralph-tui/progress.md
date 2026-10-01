@@ -7,6 +7,7 @@ after each iteration and it's included in prompts for context.
 
 *Add reusable patterns discovered during development here.*
 
+- **Inline-content mention block (US-144, dateReminder):** a custom inline content is registered in `blocknote-editor/blocks/Schema.ts` `inlineContentSpecs` via `createReactInlineContentSpec` (`propSchema` + `content: 'none'`, plus `toExternalHTML` so Markdown/DOCX degrades to a label instead of a missing node). Unlike block-inserting slash items, an inline-content slash entry that needs hooks (record creation, snackbar, account resolution) ships as a hook called in `BlockEditor.tsx` (`useDateReminderSlashMenuItem(editor)`) and is appended to the `slashMenuItems()` array — the hook returns a `SuggestionItem` whose `onItemClick` uses `editor.insertInlineContent([{ type, props }, ' '])`. Keep the builder (`buildDateReminderMention`) pure and locale/timeZone-injected so it is Jest-loadable (the real `@blocknote/*` dist cannot be imported under Jest).
 - **Host-side Syna recipe family (no app, US-143):** prompt/action recipes ship as a host `SynaRecipeDescriptor` registry in `twenty-front/src/modules/ai/` (`TemplateDescriptor` + `status`/`requiredToolName`/`prompt fr+en`/`deferral`/source), projected to the gallery via `HOST_TEMPLATE_DESCRIPTOR_GROUPS` as a synthetic `a2e-host-syna` group containing only READY recipes. Each AI recipe names its registry tool through `buildLogicFunctionToolName` and install-gates on the owning app's universal identifier; the P7 invoice recipe stays registry-only `DEFERRED`. Apply is confirm-first (`useSynaRecipeApply` stages the prompt as a Syna draft, writes nothing). A new gallery category must be added to the shared closed `TemplateDescriptorCategory` union, then `npx nx build twenty-shared --skip-nx-cache` (and twenty-sdk) before twenty-front tsgo.
 
 ---
@@ -37,4 +38,14 @@ after each iteration and it's included in prompts for context.
   - `[parallel] mode = "never"` in `.ralph-tui/config.toml` is NOT enforced across separate `ralph-tui run` invocations: `ps aux` showed three live processes (PIDs 24782/74194/68648) on the same checkout. A clean `git status` can turn dirty mid-session while you are only reading — always re-check `git status` + target-file mtimes right before editing, not just at session start.
   - To detect a live writer, compare `git status --porcelain` and `stat` mtimes across two reads a few minutes apart; a task that looked unclaimed can be mid-flight.
   - Do not append `CLAIMED` or resume when a same-slice claim is unexpired and files are actively changing — report `blocked — already claimed` with the file/mtime evidence and stop.
+---
+
+## [2026-10-01] - US-144
+- What was implemented: the M8a-3 date/reminder mention. A `dateReminder` inline content chip (`DateReminderInlineContent`) backed by a real Agenda `calendarEvent`; a pure `buildDateReminderMention` (next half-hour slot, no guest invitations, localized label that doubles as the event title) + `getDateReminderMentionExportText`; a `useDateReminderSlashMenuItem` hook that resolves a calendar-capable connected account, creates the event through the existing `useCreateCalendarEvent` composer primitive, then inserts the chip — and degrades with a warning snackbar + no inserted node when no account exists.
+- Files changed: `twenty-front/src/modules/blocknote-editor/blocks/{DateReminderInlineContent.tsx,Schema.ts}`; `.../hooks/{useDateReminderSlashMenuItem.ts,__tests__/useDateReminderSlashMenuItem.test.tsx}`; `.../utils/{buildDateReminderMention.ts,getDateReminderMentionExportText.ts,__tests__/...}`; `.../components/BlockEditor.tsx`; phase report.
+- **Learnings:**
+  - `useCreateCalendarEvent` (provider mutation, requires `connectedAccountId`) is the "Agenda reminder" primitive; `isCalendarCreationEnabledForAccount` is the readiness gate (provider + enabled calendar channel). The local `useCalendarEventMutations` path needs no account, so it does not satisfy the AC's connected-account gate.
+  - `oxlint`'s `consistent-type-imports` flags `import { Temporal }` when only used as a type (use `import type`) — but keep the value import where `Temporal.Now`/`Temporal.Instant.from` run.
+  - zsh does not word-split unquoted `$FILES`; pass lint file lists explicitly (or `${=FILES}`) or oxlint sees one non-existent filename and reports "0 files".
+  - Reusable pattern added to the Codebase Patterns section above.
 ---

@@ -1,4 +1,4 @@
-import { Temporal } from 'temporal-polyfill';
+import type { Temporal } from 'temporal-polyfill';
 
 import { getCalendarEventComposerDefaultDates } from '@/activities/calendar/utils/getCalendarEventComposerDefaultDates';
 import { type CreateCalendarEventInput } from '~/generated-metadata/graphql';
