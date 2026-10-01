@@ -13,6 +13,7 @@ export const SYNA_DOCUMENT_AI_ACTIONS: SynaAiAction[] = [
     key: 'SUMMARIZE',
     label: msg`Summarize`,
     prompt: msg`Summarize this document.`,
+    selectionPrompt: msg`Summarize the following selection:`,
     aliases: ['summarize', 'summary', 'résumer', 'résumé'],
     readOnly: true,
     requiredToolNames: [buildLogicFunctionToolName('summarize-document')],
@@ -21,6 +22,7 @@ export const SYNA_DOCUMENT_AI_ACTIONS: SynaAiAction[] = [
     key: 'TRANSLATE',
     label: msg`Translate`,
     prompt: msg`Translate this document.`,
+    selectionPrompt: msg`Translate the following selection:`,
     aliases: ['translate', 'translation', 'traduire', 'traduction'],
     readOnly: true,
     requiredToolNames: [buildLogicFunctionToolName('translate-document')],
@@ -29,6 +31,7 @@ export const SYNA_DOCUMENT_AI_ACTIONS: SynaAiAction[] = [
     key: 'IMPROVE_WRITING',
     label: msg`Improve writing`,
     prompt: msg`Improve the writing of this document.`,
+    selectionPrompt: msg`Improve the writing of the following selection:`,
     aliases: [
       'improve writing',
       'rewrite',

@@ -187,3 +187,28 @@ CLAIMED — US-135/M10a-3 — deepseek-v4.1-flash — 2026-10-01T16:09:03Z — b
 **Why (design):** kept the instance cache and added a per-request AsyncLocalStorage view rather than mutating global maps — satisfies "no cross-workspace leakage". Workspace SDK instances are built with `createTransientProvider` because `createProvider` caches by providerName and would hand workspace A's key to workspace B. `getWorkspaceProviderResolution` reports `hasWorkspaceOverrides` so a key-less workspace keeps the exact old cached-instance/native-tool behavior.
 **Remaining:** US-130 remaining legs (zero-AI front gate + cap display) plus the US-128 selection-toolbar remainder; M10b/M10d partials.
 **Next:** make `ClientConfigService.getClientConfig` resolve `getAvailableModels`/defaults through `runWithWorkspaceRegistry` (needs a workspace id in that path) so the front offers BYOK models; then run the Tier 1 integration spec once services are up.
+
+CLAIMED — US-140/M10b-e2 — deepseek-v4.1-flash — 2026-10-01T18:45:00Z — base 12d5b24ed742cfea9bea59770a77c4fd70a33e29
+
+## 2026-10-01 19:05 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-140 M10b-2: editor selection toolbar — custom FormattingToolbarController appending the Syna actions · **Slice:** the whole task — replace BlockNote's default formatting toolbar with a custom controller that preserves the defaults and appends the Syna selection entries
+**Claim:** done-for-review
+**Ready-to-tick:** yes — Tier 0/1 gates green on the working tree; only the AC's own Tier-2 browser journey (select → Syna action → draft → confirm-first) is absent
+**Base:** 12d5b24ed742cfea9bea59770a77c4fd70a33e29
+**Changed:**
+- new `twenty-front/src/modules/blocknote-editor/components/SynaFormattingToolbar.tsx` (`FormattingToolbarController` wrapping `FormattingToolbar` + `getFormattingToolbarItems()` + the Syna buttons; outer AI-flag/enabledModels gate, inner maps `getOfferedSynaActions` to `Components.FormattingToolbar.Button`)
+- edit `.../blocknote-editor/components/BlockEditor.tsx` (`formattingToolbar={false}` on `BlockNoteView`; renders `<SynaFormattingToolbar />` when `!readonly`)
+- edit `.../ai/types/SynaAiAction.ts` (+`selectionPrompt` descriptor), `.../ai/constants/synaDocumentAiActions.ts` (+selectionPrompt per action)
+- new `.../ai/utils/buildSynaSelectionPrompt.ts` (quotes the selection; empty selection degrades to the document prompt)
+- new specs `.../blocknote-editor/components/__tests__/SynaFormattingToolbar.test.tsx` (+5), `.../ai/utils/__tests__/buildSynaSelectionPrompt.test.ts` (+2); edit `.../ai/utils/__tests__/getOfferedSynaActions.test.ts` (fixtures gain `selectionPrompt`)
+- this report; `.ralph-tui/progress.md`
+**Checks:**
+- `npx jest src/modules/ai/utils/__tests__ src/modules/blocknote-editor/components/__tests__ src/modules/blocknote-editor/utils/__tests__/getSlashMenu.test.ts --config=packages/twenty-front/jest.config.mjs` → 27 suites / 218 passed
+- `npx jest --findRelatedTests <BlockEditor + SynaFormattingToolbar + buildSynaSelectionPrompt + synaDocumentAiActions> --config=jest.config.mjs` (packages/twenty-front) → 23 suites / 172 passed
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx oxlint --type-aware -c .oxlintrc.json <8 touched>` → 0 warnings / 0 errors; `npx oxfmt --check <8>` → clean (formatted 1 test file); no `locales/**` touched; no AI attribution
+- `npx nx lint:diff-with-main twenty-front` → "No changed files." (working-tree changes uncommitted; lint ran directly on the touched files instead)
+**Missing for tick:** Tier 2 only — on a running workspace select text in a document and confirm the default formatting controls still render, the Syna actions appear after them, clicking one opens the assistant with a PREFILL draft quoting the selection, and nothing executes until confirmed. The `continue` action named verbatim in PLAN M10b is **not** added: it has no backing native-registry tool, so `getOfferedSynaActions` (fail-closed) would filter it — the US-128 deferral stands. Provider gating reuses the US-128 `enabledModels` proxy; the workspace-resolution gate (US-130/US-141) is a separate story and the front `ClientConfig.aiModels` is still instance-wide.
+**Do not redo:** the US-128 `/syna` slash entries (`SynaSlashMenuItem`, `SYNA_DOCUMENT_AI_ACTIONS`, `getOfferedSynaActions`, `useOpenAskAiPageWithPreprompt` confirm-first) — the toolbar reuses them verbatim; the Cmd+K "Ask Syna" and record-page context buttons; the `DashboardFormattingToolbar` in `standalone-rich-text` (different editor, context-specific subset — left untouched).
+**Remaining:** US-140 was the last batch-A item; US-141 (M10d-2 zero-AI gating + cap display) and US-142+ remain in Ralph's batch.
+**Next:** orchestrator Tier-2 browser journey (select → Syna action → draft → confirm-first); separately, land US-130/US-141's workspace-scoped availability read to swap the `enabledModels` proxy for the US-102 resolution order.

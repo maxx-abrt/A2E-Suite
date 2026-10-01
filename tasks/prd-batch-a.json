@@ -198,9 +198,10 @@
         "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; Lingui fr+en; no i18n catalog churn; no AI attribution"
       ],
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-EDITOR/L-AI boundary (blocknote-editor + ai modules). Phase-14-report line 104 names exactly this next step.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-141",
@@ -376,6 +377,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T16:43:51.839Z"
+    "updatedAt": "2026-10-01T16:49:49.607Z"
   }
 }
