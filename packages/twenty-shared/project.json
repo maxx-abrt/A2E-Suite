@@ -18,6 +18,8 @@
         "{projectRoot}/application/dist",
         "{projectRoot}/constants/package.json",
         "{projectRoot}/constants/dist",
+        "{projectRoot}/cross-app-events/package.json",
+        "{projectRoot}/cross-app-events/dist",
         "{projectRoot}/database-events/package.json",
         "{projectRoot}/database-events/dist",
         "{projectRoot}/i18n/package.json",
