@@ -1448,3 +1448,17 @@ CLAIMED — US-110/retroplanning-screen-front-component — deepseek-v4.1-flash 
   `reminderMinutes` payload). a2e-projects `yarn test:unit` 357/357 green.
   PLAN P4.2 retroplanning `[ ]`→`[~]` (E06 Tier-2), P4C.4 annotated (inbox leg
   built; live idempotent delivery still Tier-2, stays `[ ]`).
+
+CLAIMED — US-136/task-calendar-complexity — deepseek-v4.1-flash — 2026-10-01T16:23:30Z — base 92c7b41659c6b5034fac1c0c3437e66326634aa6
+
+## 2026-10-01 16:23 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-136 P4.2 defect: task-calendar GroupByTasks exceeds the GraphQL complexity cap (2001 > 2000) — reduce view group-by complexity · **Slice:** the remaining bullets — keep the compute-side repair, add the complexity assertion test, preserve US-059 NULL semantics, bump the patch version. (The view repair itself already landed at `a2a4932f`; no source fix was needed beyond asserting it.)
+**Claim:** done-for-review
+**Ready-to-tick:** yes (Tier-0) — the live calendar render below is the orchestrator's Tier-2 leg.
+**Base:** 92c7b41659c6b5034fac1c0c3437e66326634aa6
+**Changed:** NEW `a2e-projects/src/lib/task-calendar-complexity.ts` (server GroupBy formula `1 + (1 + relationFieldsCount) * getGroupLimit(limit)` modelled; `GROUP_BY_QUERY_COMPLEXITY_LIMIT = 2000`, `OBSERVED_DEFECT_COMPLEXITY = 2001`, `NON_VIEW_RELATION_FIELD_COUNT = 38` calibrated from the live defect, `countTaskCalendarRelationFields` using the app `project` relation id as the only relation-typed task field a view can select); NEW `src/lib/__tests__/task-calendar-complexity.test.ts` (5 tests: no relation column, scalar dueAt group-by target, complexity 1951 ≤ 2000 with headroom, re-adding the project column reproduces 2001 > cap, US-059 OR completion group + project scope untouched); `package.json` 0.1.18→0.1.19; `docs/plan/phases/phase-04-report.md`.
+**Checks:** `node --test --experimental-strip-types "src/lib/__tests__/task-calendar-complexity.test.ts"` → 5/5; `yarn test:unit` → 367/367 (was 362, +5); `yarn typecheck` (`tsc --noEmit`) → exit 0; `yarn lint` (oxlint 0.16.12) → 0 errors, 1 pre-existing warning (`fields/task-labels.field.ts`, untouched); `npx twenty dev:build .` → `Build succeeded (52 files)`. Manifest read-back: view `c31b0100-0003-…0002` fields = title + `projectStatus` (no `project` column), `calendarField` `20202020-fd99-…` (native dueAt), filters = `projectStatus IS_NOT ["DONE"]` + `projectStatus IS_EMPTY` (OR group) + `project IS_NOT_EMPTY`. No `locales/**` or i18n catalog touched; no AI attribution.
+**Missing for tick (Tier 2, orchestrator):** live install → the project task-calendar view's month grid renders the matching due task (the exact empty render of 2026-09-24). The compute-side model cannot see the front's junction-leg expansion, so this live leg is the only proof the calibrated 1951 holds against the real query.
+**Do not redo:** the `task-calendar.view.ts` repair (no `project` relation column — `a2a4932f`); the US-059 OR completion group and the `project IS_NOT_EMPTY` scope filter; the `task-calendar.test.ts` graph tests. Never raise `COMMON_QUERY_COMPLEXITY_LIMIT`; reduce the view's selection instead.
+**Remaining:** other P4.2/P4C legacy legs and the standing Tier-2 ledger (unchanged).
+**Next:** orchestrator — Tier-2: reinstall a2e-projects, open the task-calendar view, confirm the due task renders; tick the P4.2 calendar bullet if it does.

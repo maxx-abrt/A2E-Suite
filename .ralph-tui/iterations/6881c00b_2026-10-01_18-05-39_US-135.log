@@ -1,0 +1,171 @@
+# Iteration 7 Log
+
+## Metadata
+
+- **Task ID**: US-135
+- **Task Title**: M10a-3: consume workspace BYOK keys at generation time — wire workspace resolution into AiModelRegistryService.buildModelRegistry
+- **Description**: As a workspace admin who saved a provider key in Settings → Syna, I want Syna to actually use that key when generating so that BYOK works end-to-end. Starting state: partial — US-102/127 shipped Works...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-01T16:05:39.175Z
+- **Ended At**: 2026-10-01T16:15:53.651Z
+- **Duration**: 10m 14s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the clean-start check and gather context.
+[94m[bash][0m $ grep -n "US-135" PLAN.md | head -50
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+Dirty files are only Ralph's own session files (expected). Now let me find the task in PLAN.md.
+[94m[bash][0m $ ls docs/plan/ 2>/dev/null
+[94m[bash][0m $ grep -rn "US-135\|M10a-3\|M10a" PLAN.md docs/plan/ 2>/dev/null | head -50
+Task ID not in PLAN; it maps to M10a. Let me read that section and the phase report.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-14-report.md
+Now let me examine the AI model registry and provider config services.
+[94m[bash][0m $ find packages/twenty-server/src/engine/metadata-modules/ai -type f -name "*.ts" | grep -v spec | gre...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cd packages/twenty-server && rg -n "AiModelRegistryService" src --glob '!*.spec.ts' | head -60
+[94m[bash][0m $ cd packages/twenty-server && rg -n "resolveModelForAgent|getEffectiveModelConfig|getDefaultSpeedMode...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96mAiModelRegistryService[0m
+[94m[read][0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96mAsyncLocalStorage[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/twenty-orm/storage/orm-workspace-context.storage.ts
+[94m[read][0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96maiModelRegistryService\.[0m
+[94m[read][0m
+[94m[bash][0m $ cd packages/twenty-server && ls src/engine/metadata-modules/ai/ai-models/services/__tests__/ test/in...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git log --oneline -15
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96mgetRawAnthropicProvider|getRawOpenAIProvider|getRawXaiProvider|getRawProvider[0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/ai/ai-models/ai-models.module.ts
+[94m[read][0m
+[94m[read][0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96mAgentTitleGenerationService|generateTitle|agentTitleGeneration[0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[todowrite][0m
+This is a substantial server change. Let me set up a task list and start implementing.
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && date -u +%Y-%m-%dT%H:%M:%SZ
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && printf '\nCLAIMED — US-135/M10a-3 — deepseek-v4.1-flash —...
+Now let me implement. First, `ProviderConfigService`:
+[94m[edit][0m
+Now the registry. First imports and the view type:
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+Now update `AiModelConfigService` to prefer the model's own raw provider:
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+Now wire the generation call sites. Chat execution:
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[read][0m
+[94m[read][0m
+[94m[edit][0m
+Now let me typecheck the server package.
+[94m[bash][0m $ cd packages/twenty-server && npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -40
+Now let me add tests. First check the provider config schema shape:
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[write][0m "import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
+import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/a... (6894 chars)"
+[94m[edit][0m
+Now add an integration test to the BYOK integration spec:
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+Let me run the new/updated unit specs.
+[94m[bash][0m $ cd packages/twenty-server && npx jest src/engine/metadata-modules/ai/ai-models/services/__tests__/ai...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && npx nx lint:diff-with-main twenty-server 2>&1 | tail -40
+[94m[bash][0m $ cd packages/twenty-server && npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -30
+Lint-diff uses committed diff only; let me lint the touched files directly.
+[94m[bash][0m $ cd packages/twenty-server && npx oxlint --type-aware -c .oxlintrc.json \   src/engine/metadata-modul...
+[94m[bash][0m $ cd packages/twenty-server && npx oxfmt --check \   src/engine/metadata-modules/ai/ai-models/services...
+[94m[bash][0m $ cd packages/twenty-server && npx oxfmt \   src/engine/metadata-modules/ai/ai-models/services/provide...
+[94m[bash][0m $ cd packages/twenty-server && npx oxfmt --check \   src/engine/metadata-modules/ai/ai-models/services...
+Now run related unit tests to catch regressions.
+[94m[bash][0m $ cd packages/twenty-server && npx jest --findRelatedTests \   src/engine/metadata-modules/ai/ai-model...
+[94m[bash][0m $ cd packages/twenty-server && npx jest --findRelatedTests \   src/engine/metadata-modules/ai/ai-chat/...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src/engine/metadata-modules/ai/ai-chat/services/__tests__[0m pattern: [96mresolveModelForAgent|getEffectiveModelConfig|validateModelAvailability[0m
+[94m[read][0m
+[94m[read][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ cd packages/twenty-server && npx jest --findRelatedTests \   src/engine/metadata-modules/ai/ai-model...
+[94m[bash][0m $ cd packages/twenty-server && npx oxlint --type-aware -c .oxlintrc.json src/engine/metadata-modules/a...
+[94m[bash][0m $ cd packages/twenty-server && npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -20
+[94m[bash][0m $ cd packages/twenty-server && npx oxfmt src/engine/metadata-modules/ai/ai-chat/services/__tests__/cha...
+Let me strengthen the billing-gating documentation on the new registry entry point.
+[94m[edit][0m
+Now let me review the final diff and status.
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git status --porcelain && echo "---STAT---" && git diff -...
+Let me check whether the Tier 1 integration service is available.
+[94m[bash][0m $ redis-cli ping 2>&1
+[94m[bash][0m $ nc -z localhost 6379 && echo "redis open" || echo "redis closed"
+Services are down, so the Tier 1 integration spec can't run. Let me write the phase report and progress entry.
+[94m[bash][0m $ then run the Tier 1 integration spec once services are up. EOF tail -20 docs/plan/phases/phase-14-re...
+[94m[bash][0m $ workspace resolution must use `createTransientProvider` or carry the instance on the model.   - `Pro...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+Final verification of the working tree:
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git status --porcelain | grep -v -E '\.ralph-tui/(session...
+Done. Summary of this executor slice (US-135, M10a-3, `partial`):
+
+**Implemented** — workspace BYOK is now consumed at generation time:
+- `AiModelRegistryService.runWithWorkspaceRegistry(workspaceId, fn)` installs a request-scoped `AsyncLocalStorage` view built from the workspace-resolved providers; all read accessors use the active view. No global maps are mutated.
+- Workspace SDK instances are built with `createTransientProvider` (the providerName-keyed cache would leak workspace A's key to B), and `RegisteredAiModel.rawProvider` is carried so native tools bind to the same BYOK provider.
+- `ProviderConfigService.getWorkspaceProviderResolution` returns `{ providers, hasWorkspaceOverrides }`; key-less workspaces keep the exact prior instance path.
+- Wired generation call sites: chat, agent executor, generate-text REST, title generation, turn grader, setup-chat, and chat-resolver availability.
+
+**Checks (all green, Tier 0):** `tsgo --noEmit` exit 0; new registry + provider-config specs 12 passed; `--findRelatedTests` 22 suites / 163 passed; oxlint 0/0; oxfmt clean; no `locales/**` churn; no AI attribution.
+
+**Not run / remaining:** Tier 1 `workspace-ai-provider.integration-spec.ts` (Postgres + Redis are down — `pg_isready` exit 3, `redis-cli ping` refused); front `ClientConfig.aiModels` is still instance-wide, so a BYOK-only workspace is invisible to the US-130 zero-AI gate; Tier-2 E16 is the orchestrator's. `Ready-to-tick: no` (partial).
+
+Reports appended to `docs/plan/phases/phase-14-report.md` and `.ralph-tui/progress.md`. No commit made.
+
+<promise>COMPLETE</promise>
+
+--- STDERR ---
+error: Error starting FSEvents stream

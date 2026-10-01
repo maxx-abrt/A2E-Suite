@@ -12,6 +12,7 @@ after each iteration and it's included in prompts for context.
 - **The front `ExecuteOneLogicFunction` mutation requires `payload`** (`ExecuteOneLogicFunctionInput.payload: JSON!`). Even a read-only logic function must send `variables: { input: { id, payload: {} } }`; omitting it fails GraphQL validation in-browser. `useMutation<TData>` alone does not typecheck variables, so this bug is invisible to tsgo.
 - **Cross-app nav folder nesting (M7c):** an app nests a managed nav row under another app's FOLDER by duplicating the owner's folder UUID as `folderUniversalIdentifier` (works on LINK and VIEW rows). The parent must exist at install time — `FlatNavigationMenuItemValidatorService` errors `NAVIGATION_MENU_ITEM_NOT_FOUND` otherwise — and there is no manifest app-dependency field, so the child app needs a transitive hard reference to the owner (a field pinned on one of the owner's objects) or a preset bundle that installs the owner first. Positions are sibling-scoped inside the folder (owner's Pages 0, Projets 1, chat Discussions 2).
 - **Per-workspace config over an instance-cached singleton:** keep the instance cache and add a request-scoped `AsyncLocalStorage` view rather than mutating global maps (`AiModelRegistryService.runWithWorkspaceRegistry`). Two traps: (1) never populate a providerName-keyed cache with workspace secrets — use the uncached factory (`SdkProviderFactoryService.createTransientProvider`); (2) when the override set is empty, run the existing instance path untouched so cached instances and global-only lookups (e.g. `getRawProvider` for native tools) still work.
+- **A view's GroupBy query complexity is app-modelable:** the server (common-group-by-query-runner) computes `1 + (1 + relationFieldsCount) * getGroupLimit(limit)` with `COMMON_QUERY_COMPLEXITY_LIMIT = 2000` and `DEFAULT_NUMBER_OF_GROUPS_LIMIT = 50`. A relation *column* on a calendar/table view adds exactly one relation field (the front's `useRelevantRecordsGqlFields` selects visible columns; the junction-leg expansions it always fetches are the constant baseline). At the default limit each relation field costs a full 50 complexity points, so a view whose baseline is already ~1950 can be tipped over by one relation column — remove the column, never raise the cap.
 
 ---
 
@@ -72,4 +73,16 @@ after each iteration and it's included in prompts for context.
   - `ProviderConfigService` needed a `hasWorkspaceOverrides` signal so the registry can keep the exact instance path for key-less workspaces (preserves native raw-provider lookups).
   - Tier 1 integration spec was not run: Postgres/Redis are down in this environment (`pg_isready` exit 3, `redis-cli ping` refused).
   - The front `ClientConfig.aiModels` is still instance-wide — a BYOK-only workspace is invisible to the US-130 zero-AI gate until `getClientConfig` is workspace-scoped.
+---
+
+## 2026-10-01 - US-136 (P4.2 task-calendar complexity defect)
+- Kept the a2a4932f compute-side repair (no `project` relation column in `task-calendar.view.ts`) and added the missing regression guard: a pure complexity model + test.
+- New `a2e-projects/src/lib/task-calendar-complexity.ts` mirrors the server formula `1 + (1 + relationFieldsCount) * getGroupLimit(limit)`. Calibrated to the live 2026-09-24 defect: `OBSERVED_DEFECT_COMPLEXITY = 2001`, `NON_VIEW_RELATION_FIELD_COUNT = 38`, so the repaired view computes 1951 (≤ cap, headroom 49); re-adding the project column reproduces 2001 > cap.
+- New `src/lib/__tests__/task-calendar-complexity.test.ts` (5 tests): no relation column, scalar `dueAt` group-by target, complexity ≤ 2000 with headroom, regression witness, and the US-059 OR completion group + `project IS_NOT_EMPTY` scope unchanged. `package.json` 0.1.18→0.1.19.
+- Files changed: `packages/twenty-apps/internal/a2e-projects/src/lib/task-calendar-complexity.ts`, `src/lib/__tests__/task-calendar-complexity.test.ts`, `package.json`, `docs/plan/phases/phase-04-report.md`.
+- **Learnings:**
+  - The GroupBy error `Query complexity: 2001. Maximum complexity: 2000.` comes from `CommonGroupByQueryRunnerService.computeQueryComplexity` (not the graphql-query-complexity hook, whose messages differ), so a view's selected relation columns are the controllable input.
+  - `DEFAULT_NUMBER_OF_GROUPS_LIMIT` is 50 and `COMMON_QUERY_COMPLEXITY_LIMIT` is 2000; the app can import the former from `twenty-shared/constants` in `src/lib/` (twenty-shared is only in the root `node_modules`; node resolves upward).
+  - The manifest read-back (`.twenty/output/manifest.json`) is the cheap proof the view still ships title+projectStatus fields, dueAt calendarField, and the three filters.
+  - Tier-2 gap: the calibration cannot see the front's junction-leg expansion, so only a live task-calendar render proves the real query stays under the cap.
 ---
