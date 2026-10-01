@@ -1,0 +1,481 @@
+# Iteration 16 Log
+
+## Metadata
+
+- **Task ID**: US-162
+- **Task Title**: M12g: in-app help wiring — FirstOpenHelpWidget, empty states and Cmd+K 'Help: <topic>' link to the matching doc pages
+- **Description**: As a user in the product, I want contextual help links to the real doc pages so that help is one click from where I am. Starting state: not started — PLAN M12g open; M12a's doc pages exist.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-01T23:32:38.917Z
+- **Ended At**: 2026-10-01T23:46:01.812Z
+- **Duration**: 13m 22s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[grep][0m pattern: [96mUS-162[0m
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ ls docs/plan/phases/ 2>/dev/null | head -50
+[94m[grep][0m pattern: [96mUS-162[0m
+[94m[bash][0m $ grep -n "US-162\|US-159" PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd-batch-b.json
+[94m[bash][0m $ grep -n "M12g\|US-162\|US-159\|M12a" PLAN.md | head -40
+[94m[bash][0m $ grep -n "US-161\|US-162\|US-159" docs/plan/phases/phase-13-report.md docs/plan/phases/phase-14-repor...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-16-report.md
+[94m[bash][0m $ grep -n "\"id\": \"US-159\"" -A8 tasks/prd-batch-b.json
+[94m[bash][0m $ ls packages/twenty-docs/l/fr/user-guide/a2e-suite/
+[94m[bash][0m $ grep -rn "FirstOpenHelp" packages/twenty-front/src --include=*.tsx -l | head
+Dependency US-159 is `passes: true`. Now let me claim and explore the codebase.
+
+[94m[bash][0m $ find packages/twenty-front/src -path "*command-menu-item*" -name "*.ts" | head -40
+[94m[bash][0m $ find packages/twenty-front/src -type d -name "command-menu-item" | head
+[94m[bash][0m $ grep -rn "FirstOpenHelpWidget" packages/ -l 2>/dev/null | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/components/FirstOpenHelpWidget.tsx
+[94m[bash][0m $ ls -R packages/twenty-front/src/modules/first-open-help/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/components/FirstOpenHelpPanel.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/constants/FirstOpenHelpTopics.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/hooks/useHelpSearchResultItems.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/types/FirstOpenHelpTopic.ts
+[94m[bash][0m $ grep -rn "FirstOpenHelpWidget\|useHelpSearchResultItems" packages/twenty-front/src --include="*.tsx"...
+[94m[bash][0m $ grep -rn "helpSearchResultItems" packages/twenty-front/src --include="*.ts" --include="*.tsx" | grep...
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-front/src/modules/side-panel/pages/search/utils/groupSearchResultItems.ts 2>/dev...
+[94m[bash][0m $ cat packages/twenty-front/src/components/AppPath.ts 2>/dev/null | head
+[94m[bash][0m $ grep -rn "export enum AppPath\|AppPath =" packages/twenty-shared/src/types/AppPath.ts 2>/dev/null | ...
+[94m[bash][0m $ grep -rn "externalLink\|window.open\|href" packages/twenty-front/src/modules/first-open-help/ 2>/dev...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/AppPath.ts
+[94m[bash][0m $ grep -rn "externalUrl\|isExternal\|ExternalLink\|target=\"_blank\"" packages/twenty-front/src/module...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "docs\.\|/user-guide/\|mintlify\|docs.a2e\|supportCentered\|helpUrl\|documentation" package...
+[94m[bash][0m $ grep -rn "docs.twenty.com\|docsUrl\|DOCS_URL\|documentationUrl\|Help\b" packages/twenty-front/src/mo...
+[94m[bash][0m $ find packages/twenty-front/src -iname "*help*" -type f | grep -v first-open-help | head -30
+[94m[bash][0m $ head -60 packages/twenty-docs/docs.json
+[94m[bash][0m $ grep -rn "url\|baseUrl\|domain" packages/twenty-docs/docs.json | head
+Let me look at the docs package to find the real URL scheme, and the empty states.
+
+[94m[bash][0m $ grep -n "a2e-suite" packages/twenty-docs/docs.json | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docs/navigation/base-structure.json
+[94m[bash][0m $ grep -n "a2eSuite" -A20 packages/twenty-docs/navigation/base-structure.json
+[94m[bash][0m $ grep -rn "docs.twenty.com/user-guide" packages/twenty-front/src --include="*.ts" --include="*.tsx" |...
+[94m[bash][0m $ grep -rln "EmptyState" packages/twenty-front/src/modules --include="*.tsx" | grep -iv test | head -3...
+[94m[bash][0m $ ls packages/twenty-front/src/modules/object-record/record-table/empty-state/ packages/twenty-front/s...
+[94m[bash][0m $ grep -rln "a2e\|Bureau\|Agenda\|Bilan\|Syna\|Archive" packages/twenty-front/src/modules --include="*...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/BureauLanding.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/AgendaLanding.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/ArchiveLanding.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/components/SynaLanding.tsx
+[94m[bash][0m $ find packages/twenty-apps -maxdepth 3 -type d -iname "*bilan*" 2>/dev/null | head
+[94m[bash][0m $ find packages/twenty-apps -maxdepth 2 -type d | grep -i bilan
+[94m[bash][0m $ grep -rln "Bilan" packages/twenty-front/src/modules --include="*.tsx" | grep -iv test | head -30
+[94m[bash][0m $ grep -rln "Empty\|empty\|Landing\|landing" packages/twenty-apps/internal/a2e-accounting/src 2>/dev/n...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-accounting/src/front-components/
+[94m[bash][0m $ grep -rn "empty\|Empty\|widget" packages/twenty-apps/internal/a2e-accounting/src/page-layouts/dashbo...
+[94m[bash][0m $ cat packages/twenty-front/src/modules/home-dashboard/components/PendingBilanWidgetContent.tsx | head...
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-accounting/package.json 2>/dev/null | head -30
+[94m[bash][0m $ cat packages/twenty-front/src/modules/object-record/record-table/empty-state/components/RecordTableE...
+[94m[bash][0m $ grep -rn "AccountingApplicationInstalled\|isAccountingApplicationInstalled\|useIsA2e" packages/twent...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-accounting/src -maxdepth 1 -name "*.ts"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/application.config.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/quick-create/utils/quickCreateInstallGates.ts
+[94m[bash][0m $ grep -rn "subvention-explorer\|SubventionExplorer" packages/twenty-apps/internal/a2e-accounting/src ...
+[94m[bash][0m $ grep -rln "front-component" packages/twenty-apps/internal/a2e-accounting/src --include="*.ts" | grep...
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-projects/src -name "*.front-component.tsx" | head
+[94m[read][0m
+[94m[read][0m
+I now have a good picture. Let me claim the slice before proceeding.
+
+[94m[bash][0m $ cat >> docs/plan/phases/phase-16-report.md << 'EOF'  CLAIMED — US-162/M12g-in-app-help-wiring — deep...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-16-report.md
+[94m[bash][0m $ cat >> docs/plan/phases/phase-16-report.md << 'EOF' CLAIMED — US-162/M12g-in-app-help-wiring — deeps...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-16-report.md
+[94m[bash][0m $ grep -c "US-162/M12g-in-app-help-wiring" docs/plan/phases/phase-16-report.md
+Claim secured. Now let me design the solution. Let me look at how docs URLs might be centralized and check the app path for each app landing.
+
+[94m[bash][0m $ cat packages/twenty-front/src/modules/drive/hooks/useIsDriveApplicationInstalled.ts
+[94m[bash][0m $ find packages/twenty-front/src -iname "*A2e*Identifier*" | head
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-front/src/modules/a2e-workspace/constants/A2eSuiteApplicationGroupHeadings.ts
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-apps/internal/a2e-accounting/src/page-layouts/dashboard.page-layout.t...
+[94m[bash][0m $ grep -rn "PageLayoutPage\|/page/" packages/twenty-apps/internal/a2e-accounting/src/navigation-menu-i...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-accounting/src/navigation-menu-items/*.ts 2>/dev/null | head -...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-accounting/src/navigation-menu-items/dashboard.navigation-menu...
+[94m[bash][0m $ grep -rn "PageLayoutPage\|pageLayoutId" packages/twenty-front/src/modules/navigation/hooks packages/...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/constants[0m pattern: [96mPAGE_LAYOUT_IDS.dashboard[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/constants/universal-identifiers.ts
+[94m[read][0m
+Now let me start writing the files. First the doc pages constant:
+
+[94m[write][0m "import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+
+// Canonical doc destinations for in-app help. Slugs mirror
+// `packages/twenty-docs/navigation/base-s... (1531 chars)"
+[94m[write][0m "import { useLingui } from '@lingui/react/macro';
+import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
+import { IconHelp } from 'twenty-ui/icon';
+import { themeCssV... (1624 chars)"
+[94m[bash][0m $ grep -rn "Help" packages/twenty-ui/src/icon/index.ts 2>/dev/null | head
+[94m[bash][0m $ grep -in "help\|book\|external" packages/twenty-ui/src/icon/icon-dictionary.md | head -20
+[94m[bash][0m $ sed -n '75,130p' packages/twenty-ui/src/icon/icon-dictionary.md
+[94m[bash][0m $ grep -in "documentation\|help\|external link\|link" packages/twenty-ui/src/icon/icon-dictionary.md |...
+[94m[bash][0m $ fgrep -in "IconHelp" packages/twenty-ui/src/icon/icon-dictionary.md
+[94m[bash][0m $ grep -n "IconHelp\|IconBook\|IconExternalLink\|IconFileText" packages/twenty-ui/src/icon/constants/T...
+[94m[bash][0m $ grep -rn "IconHelp" packages/twenty-front/src --include="*.tsx" | head
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-help/components/A2eLearnMoreLink.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-help/components/A2eLearnMoreLink.tsx
+`IconHelpCircle` is the established help icon. Let me use that.
+
+Now add the docs-page field to the topic type and constants:
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/types/FirstOpenHelpTopic.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-help/constants/A2eHelpDocPages.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/types/FirstOpenHelpTopic.ts
+Now update the topic type to import from the single source:
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/constants/FirstOpenHelpTopics.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/constants/FirstOpenHelpTopics.ts
+Now add `docPageKey` to each topic in FirstOpenHelpTopics.ts:
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/constants/FirstOpenHelpTopics.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/constants/FirstOpenHelpTopics.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/constants/FirstOpenHelpTopics.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/constants/FirstOpenHelpTopics.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/constants/FirstOpenHelpTopics.ts
+Now update the panel to render the doc link per topic and add a "Getting started" action linking to the doc page. Let me add a topic doc link section:
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/components/FirstOpenHelpPanel.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/components/FirstOpenHelpPanel.tsx
+Now add a styled link and render it inside each topic card:
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/components/FirstOpenHelpPanel.tsx
+I need to import IconBook. Let me update the icon import:
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/components/FirstOpenHelpPanel.tsx
+Now the launch-action "Getting started" doc link. The widget's launch actions navigate internally. I need FirstOpenHelpWidget to link to the Getting started doc page. Let me add a "Getting started guide" action that is an external link. Better approach: add doc link(s) in the panel from the launch actions section. Let me look at what simplest fits the acceptance: "FirstOpenHelpWidget links to the Getting started page". Let me add an external doc link into the launch actions list in the widget. I'll extend `FirstOpenHelpLaunchAction` with an optional `externalUrl` and have the panel render it.
+
+Actually the launch actions are per-context and internal paths. Adding a dedicated "Getting started" docs action into the panel is cleaner. Let me update FirstOpenHelpWidget to pass a docs action.
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/components/FirstOpenHelpPanel.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/components/FirstOpenHelpPanel.tsx
+I'll add an external links section driven by a `docLinks` prop. Let me add it to the panel and wire the widget:
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/components/FirstOpenHelpPanel.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/components/FirstOpenHelpPanel.tsx
+The `slugLabel` field is unused; let me simplify that constant and remove the unused field. Also, using a module-level constant avoids re-render churn. Let me clean up:
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/components/FirstOpenHelpPanel.tsx
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-front/src/modules/side-panel/pages/search/hooks/useSidePanelSearchRec...
+Now, the Cmd+K "Help: <topic>" entries. Update `useHelpSearchResultItems` to register one entry per shipped doc topic (deep-linking to published doc pages), plus keep the existing "Help and getting started". Let me check the `GroupableSearchResultItem` type and `SearchResultItem`.
+
+
+
+[94m[bash][0m $ grep -n "SearchResultItem" packages/twenty-front/src/modules/side-panel/pages/search/hooks/useSidePa...
+[94m[bash][0m $ grep -rn "export type SearchResultItem" packages/twenty-front/src
+[94m[read][0m
+Now update `useHelpSearchResultItems` to register "Help: <topic>" entries for shipped doc topics. Let me look at how app search result items build their entries for reference, and how paths are handled externally — currently only internal `path` deep links are supported via the router. For external URLs I need `window.open`. Let me check how the side panel handles external paths.
+
+
+
+[94m[read][0m
+[94m[bash][0m $ grep -n "export type\|GroupableSearchResultItem\|path" packages/twenty-front/src/modules/side-panel/...
+[94m[edit][0m
+I need to support external URLs. The `path` handling routes internally; a docs URL like `https://docs.twenty.com/...` would break `openRoutedPageInSidePanel`/`navigate`. I'll add an `externalUrl` field to `GroupableSearchResultItem` and handle it in the click handler.
+
+Let me update `groupSearchResultItems.ts`:
+
+Now update the click handler to handle `externalUrl` before `path`:
+
+
+
+[94m[edit][0m
+[94m[write][0m "import { useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
+import { t } from '@lingui/core/macro';
+import { AppPath } from 'twenty-shared/types';
+
+import {
+  A2E_HELP_DOC_PAGES,
+... (2929 chars)"
+Now rewrite `useHelpSearchResultItems` to register "Help: <topic>" entries for shipped doc topics plus the Getting started entry. It must be hidden where the target page does not exist — all a2e-suite pages now exist (M12a-M12f landed). Let me make it derive entries from the shipped doc pages constant.
+
+The acceptance says: Cmd+K 'Help: <topic>' entries for the shipped doc topics, deep-linking to the published user-guide pages. Topics = the doc pages. Let me design: each shipped doc page becomes a "Help: <label>" entry. But we want them filtered by search relevance and not spammy. Let me build:
+
+Wait — the acceptance says "hidden where the target page does not exist yet". The `docPageKey` label is a `MessageDescriptor`, and `t` from macro with interpolation of a descriptor won't work as a macro template. Lingui `t` cannot interpolate a MessageDescriptor inside a template literal. I need to compose the label differently. Let me check Lingui usage for dynamic labels — typically use `i18n._()` or `t` with a plain string. Since doc page labels are already translated descriptors, I can prefix with the translated "Help:" word.
+
+Let me use the `msg` macro with interpolation of a translated string. Simplest: `t\`${'Help'}: ${label}\`` won't translate well. Let me use two descriptors and `i18n._`:
+
+[94m[bash][0m $ grep -rn "i18n._(" packages/twenty-front/src/modules --include="*.ts" --include="*.tsx" | grep -v te...
+[94m[bash][0m $ grep -rn "t\`Help:\|msg\`Help" packages/twenty-front/src --include="*.ts" --include="*.tsx" | head
+`useHelpSearchResultItems` currently uses the global `t` macro. Let me check how it's imported and whether it can access a translation function. It imports `t` from `@lingui/core/macro` (global at module load) — that returns a string for a static template. Interpolating a MessageDescriptor would produce `[object Object]`. I need `i18n._`. Let me use `useLingui` hook to get `i18n` and compose the label with a dedicated `msg` "Help:" prefix descriptor.
+
+Let me define a static prefix descriptor and use `i18n._` for both. Actually simplest: use `i18n._(docPage.label)` for the topic name and a `msg\`Help: ...\`` descriptor? Lingui doesn't support nested descriptors in macros.
+
+Approach: create a `msg\`Help\`` label descriptor and format as `${helpWord}: ${topicLabel}`. That's linguistically fine for both en/fr ("Aide : Bureau"). Let me update.
+
+
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/hooks/useHelpSearchResultItems.ts
+[94m[bash][0m $ cat packages/twenty-front/src/modules/home-dashboard/components/HomeWidgetList.tsx 2>/dev/null | hea...
+[94m[bash][0m $ grep -rln "isEmpty\|emptyLabel\|Empty\b" packages/twenty-apps/internal/a2e-accounting/src --include=...
+Now wire the "Learn more" link into the app empty states. Let me check how each landing knows its installed app and add the link. For Bureau/Archive it's clear. For Agenda, there's no install gate (host calendar). For Bilan and Syna, let me check the surfaces.
+
+Bureau → A2eLearnMoreLink appKey="bureau"; Agenda → "agenda"; Archive → "archive"; Bilan → the Bilan landing doesn't exist as a twenty-front component. Let me find where Bilan surfaces render their empty/home. Let me check the dashboard page layout or a Bilan front component.
+
+The acceptance: "each app's existing empty state gains a 'Learn more' link to its matching doc page (Bureau, Agenda, Bilan, Syna, Archive)". Let me identify each app's empty state:
+
+- Bureau: `BureauLanding` (empty state when no pages)
+- Agenda: `AgendaLanding`
+- Archive: `ArchiveLanding` (has `isEmpty`)
+- Syna: `SynaLanding` (empty recent runs / connect provider)
+- Bilan: need to find. Perhaps `PendingBilanWidgetContent` empty or a front component.
+
+Let me search for Bilan empty states more thoroughly.
+
+Bilan's front components use French literal empty states (subvention explorer). But the acceptance is about empty states in the product. Let me focus on where the app landing empties are in twenty-front. Bilan appears to have no dedicated landing in twenty-front; its surfaces are page-layouts rendered by the host, plus the Home "Pending in Bilan" widget. 
+
+Let me check the HomeBilan widget — `PendingBilanWidgetContent` has `emptyLabel`. That's the best existing Bilan empty state in twenty-front. Let me look at it and HomeWidgetList end.
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/HomeWidgetList.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/PendingBilanWidget.tsx
+Rather than modifying the shared `HomeWidgetList` (used by many widgets, out of scope), I'll add the Bilan learn-more link to `PendingBilanWidgetContent` empty area. But HomeWidgetList renders its own empty state. Let me check `PendingBilanWidget.tsx` and where it's mounted.
+
+Actually, let me keep scope tight and add `A2eLearnMoreLink` to the four app landings that clearly own empty states, plus the Bilan home widget. Let me check `PendingBilanWidgetContent` empty behavior and add the link there via a wrapper.
+
+Actually the cleanest approach that satisfies "install-gated per app where the empty state is app-owned": add to `BureauLanding` (gated), `ArchiveLanding` (gated), `SynaLanding` (gated), `AgendaLanding` (host, but app name), and Bilan via `PendingBilanWidgetContent`. Let me check the widget mounting/install gate.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/BureauLanding.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/BureauLanding.tsx
+`PendingBilanWidgetContent` is the Bilan app-owned surface in twenty-front, install-gated (empty when invoice object absent). I'll add the Bilan `A2eLearnMoreLink` there. But note: when the app is NOT installed, the widget shows empty state too — we want the link hidden/absent then. The `PendingBilanWidget` knows install state via `hasObjectMetadataItem`. Let me pass an `isBilanInstalled` prop to the content so the link is install-gated.
+
+Let me now make the edits. Start with the landings: add the A2eLearnMoreLink.
+
+Bureau landing:
+- After the subtitle or in header. Let me add below the Recent pages section / at end.
+
+Let me add consistently: for each landing, include the link in the header title group (under the subtitle).
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/AgendaLanding.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/AgendaLanding.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/ArchiveLanding.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/ArchiveLanding.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/components/SynaLanding.tsx
+Now Syna — add link in the title group of the main landing, and in the connect-provider state (that's a special empty state). Add to main title group:
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/components/SynaLanding.tsx
+Add the Syna link to the connect-provider state too (it's an empty state):
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ai/components/SynaLanding.tsx
+[94m[edit][0m
+Now Bilan. Add the link to `PendingBilanWidgetContent` and pass install state from `PendingBilanWidget`. Also add to the Syna recent-runs empty area perhaps. Let me keep focused: Bilan via the widget.
+
+Update `PendingBilanWidgetContent` to accept an `isBilanInstalled` prop controlling the link, and render link only when installed (the app-owned empty state is install-gated).
+
+Wait, but when installed with no pending records, HomeWidgetList shows its own empty state. I want the link visible in the empty case. HomeWidgetList doesn't accept a link slot. Let me add the link below the list unconditionally when installed. That works for both empty and populated.
+
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/PendingBilanWidget.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/home-dashboard/components/PendingBilanWidget.tsx
+[94m[bash][0m $ grep -n "isBilanInstalled" packages/twenty-front/src/modules/home-dashboard/components/PendingBilanW...
+[94m[bash][0m $ grep -n "IconBook" packages/twenty-ui/src/icon/index.ts | head
+Now let me add the A2eLearnMoreLink to the `A2E_HELP_DOC_PAGES` import that I need to check for A2eLearnMoreLink — it imports `A2eHelpAppKey`, fine. Let me run a typecheck now to catch issues early.
+
+
+
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-help/components/A2eLearnMoreLink.tsx
+Now let me run typecheck on twenty-front to catch errors.
+
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | head -60
+[94m[read][0m
+Typecheck passes. Now let me add unit tests. Let me look at the existing panel test and hook test patterns.
+
+
+
+[94m[write][0m "import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+import {
+  A2E_HELP_DOC_PAGES,
+  A2E_HELP_DOCS_BASE_URL,
+  getA2eHelpDocUrl,
+} from '@/a2e-help/constants/A2eHelpDocPages';
+
+... (1421 chars)"
+Now I'll write tests. First a test for A2eHelpDocPages that asserts slugs resolve to real nav entries (guards "no invented URLs"). This reads base-structure.json.
+
+Now a test for `A2eLearnMoreLink` and panel doc-link rendering:
+
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+
+import { A2eLearnMoreLink } from '@/a2e-help/components/A2e... (1017 chars)"
+Now add a panel test that asserts topic doc links resolve to real doc routes and hidden when no docPageKey. Add to existing panel test file. The existing `topics` have no docPageKey, so no doc links. Let me add a test with a topic that has one and one that doesn't.
+
+Let me add to the panel test file:
+
+[94m[edit][0m
+The `renderPanel` helper hardcodes `topics`, but I'm passing `topics` to it. Let me update the helper to accept topics.
+
+[94m[edit][0m
+Now add a test for the `useHelpSearchResultItems` hook (Cmd+K entries registered). Let me check the existing hook test to match the harness.
+
+[94m[read][0m
+`useHelpSearchResultItems` uses `useLocation` and `useLingui`. Let me write a test wrapping with MemoryRouter and I18nProvider. Check test setup for i18n initialization. The panel test just uses `i18n` from `@lingui/core` without loading messages. Let me follow that. Let me write the hook test.
+
+[94m[write][0m "import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { renderHook } from '@testing-library/react';
+import { type ReactNode } from 'react';
+import { MemoryRouter } ... (1695 chars)"
+Now let me run the targeted tests.
+
+[94m[bash][0m $ npx jest src/modules/a2e-help src/modules/first-open-help --config=packages/twenty-front/jest.config...
+[94m[edit][0m
+Two issues:
+1. Path to base-structure.json is wrong. From `src/modules/a2e-help/constants/__tests__/`, need `../../../../../twenty-docs/...` (up 5: __tests__→constants→a2e-help→modules→src→twenty-front).
+2. The hook test warns but seems to pass (the warning is React Router). Let me check whether the hook test passed — it says 7 passed, only 1 failed (the doc pages test). Good.
+
+Let me fix the path. From __dirname = `packages/twenty-front/src/modules/a2e-help/constants/__tests__`:
+- ../ = constants
+- ../../ = a2e-help
+- ../../../ = modules
+- ../../../../ = src
+- ../../../../../ = twenty-front
+- ../../../../../../ = packages
+
+So need `../../../../../../twenty-docs/navigation/base-structure.json`.
+
+
+
+[94m[bash][0m $ npx jest src/modules/a2e-help --config=packages/twenty-front/jest.config.mjs 2>&1 | tail -25
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -10
+All passing. Now let me verify the docs pages actually exist as files (link targets exist). The `check-docs.mjs` is the docs gate. Let me run it plus confirm every slug maps to a real `.mdx` (en + fr).
+
+
+
+[94m[bash][0m $ done
+All link targets exist en+fr. Now let me run lint on the changed files.
+
+
+
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-front 2>&1 | tail -40
+It compares against `main...HEAD`, but my changes are uncommitted, so it sees no changed files. I need to lint the actual working-tree changes. Let me run oxlint directly on my changed files.
+
+[94m[bash][0m $ echo "$FILES"
+[94m[bash][0m $ git ls-files --others --exclude-standard --relative -- 'src/*.ts' 'src/*.tsx') 2>&1 | tail -40
+oxlint passed (0 warnings/0 errors) on the 13 tracked modified files. Let me run it including untracked files properly.
+
+
+
+[94m[bash][0m $ cd packages/twenty-front && FILES=$(git diff --name-only --diff-filter=d --relative -- 'src/*.ts' 's...
+The untracked glob didn't expand because zsh. Let me be explicit.
+
+[94m[bash][0m $ npx oxfmt --check src/modules/a2e-help/components/A2eLearnMoreLink.tsx src/modules/a2e-help/constant...
+Format issues. Let me run oxfmt to fix my files (the repo formats with oxfmt per lint:diff-with-main).
+
+
+
+[94m[bash][0m $ npx oxfmt --check $(git diff --name-only --diff-filter=d --relative -- 'src/*.ts' 'src/*.tsx') src/m...
+[94m[bash][0m $ npx oxfmt --check $(git diff --name-only --diff-filter=d --relative -- 'src/*.ts' 'src/*.tsx') src/m...
+Now let me re-run the affected tests after formatting, plus the PendingBilanWidgetContent test which may now have a changed render structure.
+
+[94m[bash][0m $ npx jest src/modules/a2e-help src/modules/first-open-help src/modules/home-dashboard/components/__te...
+All 32 pass. The React Router warning is pre-existing (v6 deprecation). Now unit tests for the landings may exist and could break due to the added link. Let me find and run tests related to the changed landings and side-panel search.
+
+[94m[bash][0m $ npx jest --findRelatedTests packages/twenty-front/src/modules/bureau/components/BureauLanding.tsx pa...
+All 242 pass. Now let me check Lingui fr+en — I added new translatable strings. The AGENTS says do not commit catalogs, but fr+en translations should be present. Let me check the i18n setup: the repo may only require msg ids to be extracted; actual translations live in `.po`. The task says "Lingui fr+en". Let me check if there are fr catalogs in twenty-front and how other MSG strings are handled.
+
+Let me verify the new strings appear in the fr catalog or whether extraction is needed (but not committed). Let me check the existing catalog for similar recent strings.
+
+[94m[bash][0m $ find packages/twenty-front -name "*.po" -path "*fr*" 2>/dev/null | head
+The `.po` catalogs are auto-generated by `lingui extract` and AGENTS explicitly says not to commit them (they create churn). The acceptance "Lingui fr+en" means using `msg`/`t` macros for user-facing strings (which I did) rather than hardcoded strings. The catalogs will be regenerated by the i18n pipeline.
+
+But let me double-check: the task's quality gate says "no i18n catalog churn". So I should NOT run extract/compile. The source strings using `msg`/`t` is what's required. Let me verify all my user-facing strings use macros. In `A2eLearnMoreLink` I use `t\`Learn more\`` and `t(label)`. In the panel `t\`Getting started guide\``, `t\`Read the ... guide\``. In useHelpSearchResultItems, `msg` descriptors + `i18n._`. Good.
+
+However, the `${helpLabel}: ${...}` composition isn't a translatable string - "Help:" prefix. That's acceptable as a label prefix but ideally translatable. Since `helpLabel` is translated, the colon is a separator. Fine.
+
+Now let me check if `lingui extract` would be needed for the test setup. Tests use the global `i18n` with no messages loaded, so `i18n._(descriptor)` returns the descriptor's message (source). The panel test passed. Good.
+
+Now, "install-gated per app where the empty state is app-owned" — I gated Bureau/Archive already (they return null when not installed), Bilan via `isBilanInstalled`, Syna via `isSynaAvailable`. Agenda is host-owned (no install gate). Good.
+
+Let me verify `SynaLanding`'s `A2eLearnMoreLink` in connect state renders within the `StyledConnectContainer` which is fine (flex row). Let me check the styled container allows two children.
+
+Now let me verify there are no other consumers of `GroupableSearchResultItem` type or `useHelpSearchResultItems` that need updating, e.g. a test asserting exact items. Let me search.
+
+[94m[bash][0m $ grep -rn "SidePanelSearchRecordsPage" packages/twenty-front/src --include="*.test.tsx" -l | head
+[94m[bash][0m $ grep -rn "GroupableSearchResultItem\|helpSearchResultItems\|a2e-help-open" packages/twenty-front/src...
+Now let me run the SidePanelSearchRecordsPage related tests and groupSearchResultItems tests, plus typecheck once more after formatting.
+
+
+
+[94m[bash][0m $ npx jest src/modules/side-panel/pages/search --config=packages/twenty-front/jest.config.mjs 2>&1 | t...
+Now final typecheck after all edits, and check git status.
+
+[94m[bash][0m $ git status --porcelain | grep locales || echo "no locale changes"
+[94m[bash][0m $ echo "EXIT=$?"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/first-open-help/components/FirstOpenHelpPanel.tsx
+`tasks/prd-batch-b.json` was already dirty before I started (pre-existing), and `.ralph-tui/*` are Ralph's. My changes are all in the declared scope. 
+
+Let me double check `tasks/prd-batch-b.json` wasn't touched by me — it was in the initial dirty list. Yes, initial `git status` showed ` M tasks/prd-batch-b.json`. Good.
+
+Now let me verify the `A2eLearnMoreLink` renders `Learn more` and app label. Also, let me reconsider whether the panel's "Getting started guide" link might duplicate the topic links. That's fine — it's the FirstOpenHelpWidget's direct link to Getting started.
+
+Let me verify the FirstOpenHelpPanel file after formatting looks right, and check the doc link conditional renders correctly.
+
+Looks correct. Now, one concern: `A2E_HELP_DOC_PAGES[topic.docPageKey]` indexing with a union key that's always valid makes `isDefined` always true and may trigger a lint/TS "always truthy" — but typecheck passed. It's a cheap runtime guard for the "hidden where target page does not exist" requirement. Fine.
+
+Let me verify the docs URL canonical base. The task says "links route to the docs URLs from the twenty-docs navigation (no invented URLs)". I used `https://docs.twenty.com` which is the SEO canonical in docs.json. Let me double-check whether Mintlify sub-path uses `.mdx`-less paths (yes) and whether there's a language prefix needed for fr. The docs site serves fr at `/fr/...` maybe. Let me check how Mintlify handles `l/fr` navigation — the slug is `l/fr/user-guide/...` in nav, but the public URL is likely `/fr/user-guide/...`. However, in-app users get their locale at runtime; inventing a locale-specific URL would be the very "invented URL" risk the task warns about. Using the canonical English path is safest and matches the single navigation base. 
+
+Actually, let me reconsider: the acceptance says "deep-linking to the published user-guide pages". The canonical en slug is `user-guide/a2e-suite/<page>`. Good.
+
+Now let me verify the `check-docs.mjs` counts my front-end constants don't affect docs. Fine.
+
+Let me also run the broader first-open-help + a2e-workspace tests once more and the `A2eLearnMoreLink` test already passed. Now let me write the phase report and progress entry.
+
+First, let me get the full diff summary for the report.
+
+[94m[bash][0m $ git status --porcelain -- packages/twenty-front/src/modules/a2e-help packages/twenty-front/src/modul...
+Now let me run the full a2e-help + first-open-help + home-dashboard test group once more to be safe, then write the report.
+
+[94m[bash][0m $ npx jest src/modules/a2e-help src/modules/first-open-help src/modules/home-dashboard --config=packag...
+All green. Now let me also verify `npx nx build twenty-docs` behavior (task says "npx nx build twenty-docs green (link targets exist)"). Prior reports say there's no build target. Let me confirm and use the documented gate.
+
+
+
+[94m[bash][0m $ npx nx build twenty-docs 2>&1 | tail -8
+Confirmed no build target — the documented gate is `check-docs.mjs` + `lint-mdx` which are green. Let me run lint-mdx too.
+
+[94m[bash][0m $ cd packages/twenty-docs && npx tsx scripts/lint-mdx.ts 2>&1 | tail -5
+All gates green. Now write the phase report and progress entry.
+
+[94m[bash][0m $ head -30 .ralph-tui/progress.md 2>/dev/null
+[94m[bash][0m $ lint the working tree directly with `cd packages/twenty-front && npx oxlint --type-aware -c .oxlintr...
+Now the phase report. Let me append the final report replacing/after the claim line.
+
+[94m[bash][0m $ then M12c (one page per app) / M12e (cross-app recipes). EOF echo done
+Let me verify the report and final git status.
+
+[94m[bash][0m $ git status --porcelain | grep -v "^ M \.ralph-tui"
+All my changes are within the declared scope. `tasks/prd-batch-b.json` and `.ralph-tui/iterations/*` were dirty before I started (Ralph's own state). Locales untouched.
+
+US-162 M12g complete and self-verified.
+
+**Summary**
+- New `a2e-help` module: `A2E_HELP_DOC_PAGES` (slugs mirror the real `twenty-docs` `a2eSuite` nav; unit test reads `base-structure.json`) and `A2eLearnMoreLink` (the M12g 'Learn more' slot).
+- `FirstOpenHelpWidget`: links to the Getting started doc page; each help topic now deep-links to its matching doc page (hidden when no target).
+- Empty states: `A2eLearnMoreLink` added to Bureau, Agenda, Archive, Syna (main + connect-provider) and the Home Pending-in-Bilan widget (install-gated per app).
+- Cmd+K: `useHelpSearchResultItems` registers a `Help: <topic>` entry per shipped page, opened externally via new `externalUrl` plumbing.
+- Gates: tsgo exit 0, 113 + 242 + 14 targeted tests pass, oxlint/oxfmt clean, `check-docs.mjs` and `lint-mdx` green, no locale churn, no AI attribution. Tier-2 browser check remains for the orchestrator.
+
+<promise>COMPLETE</promise>

@@ -277,12 +277,13 @@
         "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; Lingui fr+en; canonical icons; no i18n catalog churn; no AI attribution"
       ],
       "priority": 14,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-UX. Depends on US-131 (apply path) + US-132 (entry seam). Persona suggestions must not pre-empt D02.",
       "dependsOn": [
         "US-131",
         "US-132"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-164",
@@ -408,6 +409,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T23:46:01.813Z"
+    "updatedAt": "2026-10-01T23:58:00.031Z"
   }
 }
