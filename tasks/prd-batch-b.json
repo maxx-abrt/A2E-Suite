@@ -255,11 +255,12 @@
         "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; npx nx build twenty-docs green (link targets exist); Lingui fr+en; no i18n catalog churn; no AI attribution"
       ],
       "priority": 13,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-DOCS/L-UX boundary. Depends on US-159 (Getting started) landing first; US-165/166 consume the same 'Learn more' slot pattern.",
       "dependsOn": [
         "US-159"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-163",
@@ -407,6 +408,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T23:32:33.371Z"
+    "updatedAt": "2026-10-01T23:46:01.813Z"
   }
 }

@@ -1,5 +1,6 @@
 import { AGENDA_LANDING_TEMPLATE_CATEGORY } from '@/calendar/constants/AgendaLandingTemplateCategory';
 import { AGENDA_LANDING_TEMPLATE_LINKS } from '@/calendar/constants/AgendaLandingTemplates';
+import { A2eLearnMoreLink } from '@/a2e-help/components/A2eLearnMoreLink';
 import { useOpenTemplateGallery } from '@/template-gallery/hooks/useOpenTemplateGallery';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -65,6 +66,7 @@ export const AgendaLanding = ({ onCreateEvent }: AgendaLandingProps) => {
         <StyledSubtitle>
           {t`Your week at a glance, with starters to shape it.`}
         </StyledSubtitle>
+        <A2eLearnMoreLink appKey="agenda" />
       </StyledTitleGroup>
       <StyledActions>
         {AGENDA_LANDING_TEMPLATE_LINKS.map((templateLink) => (

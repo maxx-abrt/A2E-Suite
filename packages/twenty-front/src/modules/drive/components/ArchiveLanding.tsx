@@ -1,5 +1,6 @@
 import { ARCHIVE_LANDING_TEMPLATE_CATEGORY } from '@/drive/constants/ArchiveLandingTemplateCategory';
 import { ARCHIVE_LANDING_TEMPLATE_LINKS } from '@/drive/constants/ArchiveLandingTemplates';
+import { A2eLearnMoreLink } from '@/a2e-help/components/A2eLearnMoreLink';
 import { useIsDriveApplicationInstalled } from '@/drive/hooks/useIsDriveApplicationInstalled';
 import { type DriveUsageSummary } from '@/drive/utils/driveUsage';
 import { useOpenTemplateGallery } from '@/template-gallery/hooks/useOpenTemplateGallery';
@@ -96,6 +97,7 @@ export const ArchiveLanding = ({
             {t`${usageSummary.totalFiles} files`}
           </StyledUsage>
         )}
+        <A2eLearnMoreLink appKey="archive" />
       </StyledTitleGroup>
       <StyledActions>
         {ARCHIVE_LANDING_TEMPLATE_LINKS.map((templateLink) => (

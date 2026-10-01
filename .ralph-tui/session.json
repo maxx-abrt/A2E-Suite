@@ -3,10 +3,10 @@
   "sessionId": "6b30e8e0-f0b6-4aaa-aa47-219b2bae47b8",
   "status": "running",
   "startedAt": "2026-10-01T20:37:10.521Z",
-  "updatedAt": "2026-10-01T23:32:33.371Z",
-  "currentIteration": 14,
+  "updatedAt": "2026-10-01T23:46:01.813Z",
+  "currentIteration": 15,
   "maxIterations": 20,
-  "tasksCompleted": 11,
+  "tasksCompleted": 12,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -156,6 +156,16 @@
       "durationMs": 1392978,
       "startedAt": "2026-10-01T23:06:32.483Z",
       "endedAt": "2026-10-01T23:29:45.461Z"
+    },
+    {
+      "iteration": 15,
+      "status": "completed",
+      "taskId": "US-161",
+      "taskTitle": "M12f: Admin & self-host documentation — provisioning, app lifecycle data policy, roles, BYOK, backups",
+      "taskCompleted": true,
+      "durationMs": 162894,
+      "startedAt": "2026-10-01T23:29:50.476Z",
+      "endedAt": "2026-10-01T23:32:33.370Z"
     }
   ],
   "skippedTaskIds": [],

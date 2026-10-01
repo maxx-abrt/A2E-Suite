@@ -1,10 +1,15 @@
 import { useMemo, useState } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { IconRestore, IconX } from 'twenty-ui/icon';
+import { isDefined } from 'twenty-shared/utils';
+import { IconBook, IconRestore, IconX } from 'twenty-ui/icon';
 import { Button, IconButton, SearchInput } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import {
+  A2E_HELP_DOC_PAGES,
+  getA2eHelpDocUrl,
+} from '@/a2e-help/constants/A2eHelpDocPages';
 import {
   type FirstOpenHelpLaunchAction,
   type FirstOpenHelpContext,
@@ -138,6 +143,21 @@ const StyledTopicBody = styled.p`
   margin: 0;
 `;
 
+const StyledTopicDocLink = styled.a`
+  align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
+  display: inline-flex;
+  font-size: ${themeCssVariables.font.size.xs};
+  gap: ${themeCssVariables.spacing[1]};
+  margin-top: ${themeCssVariables.spacing[1]};
+  text-decoration: none;
+
+  &:hover {
+    color: ${themeCssVariables.font.color.secondary};
+    text-decoration: underline;
+  }
+`;
+
 const StyledEmptyState = styled.p`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
@@ -154,6 +174,8 @@ export type FirstOpenHelpPanelProps = {
   onRestoreAllTopics: () => void;
   onSelectLaunchAction: (action: FirstOpenHelpLaunchAction) => void;
 };
+
+const FIRST_OPEN_HELP_DOC_LINKS = ['gettingStarted'] as const;
 
 export const FirstOpenHelpPanel = ({
   context,
@@ -225,6 +247,18 @@ export const FirstOpenHelpPanel = ({
           placeholder={t`Search help`}
           aria-label={t`Search help`}
         />
+        {FIRST_OPEN_HELP_DOC_LINKS.map((docPageKey) => (
+          <StyledTopicDocLink
+            key={docPageKey}
+            href={getA2eHelpDocUrl(docPageKey)}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-testid={`first-open-help-doc-${docPageKey}`}
+          >
+            <IconBook size={12} />
+            {t`Getting started guide`}
+          </StyledTopicDocLink>
+        ))}
         {visibleTopics.length === 0 ? (
           <StyledEmptyState data-testid="first-open-help-empty">
             {isSearching
@@ -269,6 +303,18 @@ export const FirstOpenHelpPanel = ({
                   </StyledTopicHeader>
                   <StyledTopicTitle>{t(topic.title)}</StyledTopicTitle>
                   <StyledTopicBody>{t(topic.body)}</StyledTopicBody>
+                  {isDefined(topic.docPageKey) &&
+                    isDefined(A2E_HELP_DOC_PAGES[topic.docPageKey]) && (
+                      <StyledTopicDocLink
+                        href={getA2eHelpDocUrl(topic.docPageKey)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-testid={`first-open-help-topic-doc-${topic.id}`}
+                      >
+                        <IconBook size={12} />
+                        {t`Read the ${t(A2E_HELP_DOC_PAGES[topic.docPageKey].label)} guide`}
+                      </StyledTopicDocLink>
+                    )}
                 </StyledTopicCard>
               );
             })}

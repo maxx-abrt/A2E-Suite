@@ -123,3 +123,40 @@ CLAIMED — US-161/M12f-admin-self-host — deepseek-v4.1-flash — 2026-10-01T2
 **Do not redo:** both `admin-and-self-host.mdx` pages — complete and grep-verified; `docs.json` (lines 389/875) and `navigation/base-structure.json` (line 385) already wire the en/fr pages from M12a.
 **Remaining:** M12c, M12e, M12g (3 other [ ] bullets in the M12 milestone)
 **Next:** orchestrator ticks M12f; next executor starts M12c (one page per app) or M12g (in-app help wiring).
+
+CLAIMED — US-162/M12g-in-app-help-wiring — deepseek-v4.1-flash — 2026-10-02T02:01:00Z — base 16d37da2deac676df6c43c8300c430f0043f7b78
+
+## 2026-10-02 02:45 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-162 M12g: in-app help wiring — FirstOpenHelpWidget, empty states and Cmd+K 'Help: <topic>' link to the matching doc pages · **Slice:** the M12g bullet — reusable 'Learn more' slot on the app empty states, FirstOpenHelpWidget Getting-started link + per-topic doc links, Cmd+K 'Help: <topic>' entries
+**Claim:** done-for-review
+**Ready-to-tick:** yes — typecheck/lint/tests/docs gates green; link targets verified to exist (en+fr) by reading the shipped docs nav
+**Base:** 16d37da2deac676df6c43c8300c430f0043f7b78
+**Changed:**
+- new `packages/twenty-front/src/modules/a2e-help/constants/A2eHelpDocPages.ts` (single source of doc slugs, mirrors `twenty-docs` `a2eSuite` nav; `A2eHelpAppKey`, `A2eHelpDocPageKey`, `getA2eHelpDocUrl`)
+- new `packages/twenty-front/src/modules/a2e-help/components/A2eLearnMoreLink.tsx` (the M12g 'Learn more' slot; `appKey` undefined → renders nothing)
+- new tests `a2e-help/components/__tests__/A2eLearnMoreLink.test.tsx` + `a2e-help/constants/__tests__/A2eHelpDocPages.test.ts` (reads real `base-structure.json`)
+- `first-open-help/constants/FirstOpenHelpTopics.ts` (each topic gains a real `docPageKey`)
+- `first-open-help/types/FirstOpenHelpTopic.ts` (optional `docPageKey`)
+- `first-open-help/components/FirstOpenHelpPanel.tsx` (Getting-started doc link + per-topic "Read the <app> guide" link, hidden without a key)
+- `first-open-help/hooks/useHelpSearchResultItems.ts` (Cmd+K 'Help: <topic>' per shipped page via `i18n._`, deep-linked to published URLs)
+- `first-open-help/components/__tests__/FirstOpenHelpPanel.test.tsx` (+2 doc-link tests), new `hooks/__tests__/useHelpSearchResultItems.test.tsx`
+- `bureau/components/BureauLanding.tsx`, `calendar/components/AgendaLanding.tsx`, `drive/components/ArchiveLanding.tsx`, `ai/components/SynaLanding.tsx` (A2eLearnMoreLink in the app empty/home state; Syna connect-provider state too)
+- `home-dashboard/components/PendingBilanWidget{,Content}.tsx` (Bilan link, install-gated on `isBilanInstalled`)
+- `side-panel/pages/search/utils/groupSearchResultItems.ts` (+`externalUrl`), `side-panel/pages/search/components/SidePanelSearchRecordsPage.tsx` (`window.open` for external results)
+- this report; `.ralph-tui/progress.md`
+**Checks:**
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx jest src/modules/a2e-help src/modules/first-open-help src/modules/home-dashboard --config=packages/twenty-front/jest.config.mjs` → 31 suites / 113 tests pass
+- `npx jest --findRelatedTests <6 changed landing/widget/search files> --config=packages/twenty-front/jest.config.mjs` → 40 suites / 242 tests pass
+- `npx jest src/modules/side-panel/pages/search --config=...` → 5 suites / 14 tests pass
+- `cd packages/twenty-front && npx oxlint --type-aware -c .oxlintrc.json <18 changed/new files>` → 0 warnings, 0 errors; `npx oxfmt --check <same>` → all formatted
+- `node docs/scripts/check-docs.mjs` → `PASS: 26 maintained documents, 219 local inline links, balanced code fences`
+- `cd packages/twenty-docs && npx tsx scripts/lint-mdx.ts` → `No angle bracket placeholders in 217 MDX files.`
+- Link targets exist: all 9 slugs present as `twenty-docs/user-guide/a2e-suite/*.mdx` **and** `l/fr/user-guide/a2e-suite/*.mdx` (checked individually); the doc-pages unit test asserts each slug is in the real `a2eSuite` nav group
+- `npx nx build twenty-docs` → `Cannot find configuration for task twenty-docs:build` (no build target; documented gate is check-docs + lint-mdx, same as recorded for M12a/M12b/M12d/M12f)
+- `npx nx lint:diff-with-main twenty-front` → "No changed files." (compares `main...HEAD`; uncommitted work invisible) — linted the working tree directly with oxlint/oxfmt instead
+- no `locales/**` in `git status`; no AI attribution in any page/comment
+**Missing for tick:** Tier-2 browser check only (widget/empty-state links render and open the docs tab; Cmd+K shows the Help group) — orchestrator runs it. `npx nx build twenty-docs` has no target, so the applicable docs gate is check-docs + lint-mdx (both green).
+**Do not redo:** the `a2e-help` module (doc-slug source + `A2eLearnMoreLink`), the topic `docPageKey`s, the panel doc links, the Cmd+K Help entries + `externalUrl` plumbing, and the five app-surface link insertions. US-165/166 must reuse `A2eLearnMoreLink` (M13c slot) rather than adding another.
+**Remaining:** M12c, M12e (2 other [ ] bullets in the M12 milestone)
+**Next:** orchestrator ticks M12g; then M12c (one page per app) / M12e (cross-app recipes).

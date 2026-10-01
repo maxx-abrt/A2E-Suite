@@ -148,7 +148,14 @@ export const SidePanelSearchRecordsPage = () => {
               const handleClick = () => {
                 recordSearchObjectUsage(item.groupKey);
 
-                if (isDefined(item.path)) {
+                if (isDefined(item.externalUrl)) {
+                  closeCommandMenu();
+                  window.open(
+                    item.externalUrl,
+                    '_blank',
+                    'noopener,noreferrer',
+                  );
+                } else if (isDefined(item.path)) {
                   closeCommandMenu();
 
                   // Deep links stay inside the workbench: the app result

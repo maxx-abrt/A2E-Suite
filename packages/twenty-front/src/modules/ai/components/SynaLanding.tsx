@@ -9,6 +9,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SYNA_LANDING_TEMPLATE_CATEGORY } from '@/ai/constants/SynaLandingTemplateCategory';
 import { SYNA_LANDING_TEMPLATE_LINKS } from '@/ai/constants/SynaLandingTemplates';
 import { SYNA_RECIPE_DESCRIPTORS } from '@/ai/constants/SynaRecipeDescriptors';
+import { A2eLearnMoreLink } from '@/a2e-help/components/A2eLearnMoreLink';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
@@ -133,6 +134,7 @@ export const SynaLanding = () => {
             to={getSettingsPath(SettingsPath.AiProviders)}
             dataTestId="syna-connect-provider"
           />
+          <A2eLearnMoreLink appKey="syna" />
         </StyledConnectContainer>
       );
     }
@@ -151,6 +153,7 @@ export const SynaLanding = () => {
           <StyledSubtitle>
             {t`Your assistant, its recent runs and every action in one place.`}
           </StyledSubtitle>
+          <A2eLearnMoreLink appKey="syna" />
         </StyledTitleGroup>
         <Button
           Icon={IconPlus}

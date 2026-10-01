@@ -173,3 +173,16 @@ after each iteration and it's included in prompts for context.
   - `npx nx build twenty-docs` does not exist (only `dev`/`validate`/`lint`/`fmt`/`test`); the M12 docs gate in practice is `check-docs.mjs` + `lint-mdx.ts` + prettier, and `validate` fails only on the pre-existing `l/ar/...implementation-services.mdx:10:18` acorn warning.
   - GitHub blob links in docs are not resolvable by `check-docs.mjs` (it only covers local inline links), so verify them with `curl -L -w %{http_code}`.
 ---
+
+## 2026-10-02 - US-162 M12g: in-app help wiring
+- Added the single `A2eLearnMoreLink` help-slot component (M12g) in a new `a2e-help` module and wired it into every app's existing empty/home state: Bureau, Agenda, Archive landings, Syna (main + connect-provider state) and the Home "Pending in Bilan" widget (install-gated via `isBilanInstalled`).
+- `A2E_HELP_DOC_PAGES` is the one source of doc URLs: slugs mirror `twenty-docs/navigation/base-structure.json`'s `a2eSuite` group; a unit test reads that file and asserts every slug exists (drift guard against invented URLs).
+- `FirstOpenHelpWidget` now links to the Getting started doc page, and each topic gained an optional `docPageKey` rendered as a per-topic "Read the <app> guide" doc link (hidden when the key is absent).
+- Cmd+K `useHelpSearchResultItems` registers a "Help: <topic>" entry per shipped a2e-suite page, deep-linking to `https://docs.twenty.com/user-guide/a2e-suite/<slug>`; external URLs travel on a new `GroupableSearchResultItem.externalUrl` field opened with `window.open` (kept separate from the router `path`).
+- Files changed: new `modules/a2e-help/{components/A2eLearnMoreLink.tsx,constants/A2eHelpDocPages.ts}` + tests; `first-open-help/{components/FirstOpenHelpPanel.tsx,constants/FirstOpenHelpTopics.ts,types/FirstOpenHelpTopic.ts,hooks/useHelpSearchResultItems.ts}`; the four landings + `PendingBilanWidget{,Content}.tsx`; `side-panel/.../{SidePanelSearchRecordsPage.tsx,groupSearchResultItems.ts}`.
+- **Learnings:**
+  - The M13c "Learn more" slot pattern is now `A2eLearnMoreLink appKey="<app>"` — US-165/166 should reuse it, not invent another link.
+  - Lingui `t` (global macro) cannot interpolate a `MessageDescriptor`; compose dynamic labels with `i18n._(descriptor)` from `useLingui`, or the label becomes `[object Object]`.
+  - Cmd+K external results need their own field (`externalUrl`) — the existing `path` is always handed to `openRoutedPageInSidePanel`/`navigate` and would break on an absolute URL.
+  - `npx nx lint:diff-with-main twenty-front` compares `main...HEAD`, so it sees **no** changed files for uncommitted work; lint the working tree directly with `cd packages/twenty-front && npx oxlint --type-aware -c .oxlintrc.json <files>` + `npx oxfmt --check <files>`.
+---

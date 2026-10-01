@@ -1,5 +1,6 @@
 import { BUREAU_LANDING_TEMPLATE_CATEGORY } from '@/bureau/constants/BureauLandingTemplateCategory';
 import { BUREAU_LANDING_TEMPLATE_LINKS } from '@/bureau/constants/BureauLandingTemplates';
+import { A2eLearnMoreLink } from '@/a2e-help/components/A2eLearnMoreLink';
 import { RecentPagesWidget } from '@/home-dashboard/components/RecentPagesWidget';
 import { useCreateNewPage } from '@/quick-capture/hooks/useCreateNewPage';
 import { useIsDocumentApplicationInstalled } from '@/quick-capture/hooks/useIsDocumentApplicationInstalled';
@@ -100,6 +101,7 @@ export const BureauLanding = () => {
           <StyledSubtitle>
             {t`Your pages, templates and recent work in one place.`}
           </StyledSubtitle>
+          <A2eLearnMoreLink appKey="bureau" />
         </StyledTitleGroup>
         <Button
           Icon={IconPlus}

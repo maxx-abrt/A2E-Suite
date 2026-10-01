@@ -24,20 +24,23 @@ const BILAN_SAVED_SUBVENTION_OBJECT_NAME_SINGULAR = 'savedSubvention';
 // invoices and the grant-deadline leg. An absent app renders the empty state.
 export const PendingBilanWidget = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
+  const isBilanInstalled = hasObjectMetadataItem(
+    objectMetadataItems,
+    BILAN_INVOICE_OBJECT_NAME_SINGULAR,
+  );
 
-  if (
-    !hasObjectMetadataItem(
-      objectMetadataItems,
-      BILAN_INVOICE_OBJECT_NAME_SINGULAR,
-    )
-  ) {
+  if (!isBilanInstalled) {
     return <PendingBilanWidgetContent entries={[]} />;
   }
 
-  return <PendingBilanRecords />;
+  return <PendingBilanRecords isBilanInstalled />;
 };
 
-const PendingBilanRecords = () => {
+const PendingBilanRecords = ({
+  isBilanInstalled,
+}: {
+  isBilanInstalled: boolean;
+}) => {
   const { t } = useLingui();
   const now = useMemo(() => new Date(), []);
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
@@ -108,6 +111,7 @@ const PendingBilanRecords = () => {
     <PendingBilanWidgetContent
       entries={entries}
       onSelectEntry={handleSelectItem}
+      isBilanInstalled={isBilanInstalled}
     />
   );
 };

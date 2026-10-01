@@ -1,0 +1,73 @@
+# Iteration 15 Log
+
+## Metadata
+
+- **Task ID**: US-161
+- **Task Title**: M12f: Admin & self-host documentation — provisioning, app lifecycle data policy, roles, BYOK, backups
+- **Description**: As a self-hosting admin, I want an admin guide covering provisioning, install/upgrade/uninstall data policy, roles, BYOK keys and backups so that I can operate the suite. Starting state: not started —...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-01T23:29:50.476Z
+- **Ended At**: 2026-10-01T23:32:33.370Z
+- **Duration**: 2m 42s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-161\|US-160" docs/plan/phases/phase-16-report.md | tail -40
+[94m[bash][0m $ git diff --stat
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-16-report.md
+[94m[bash][0m $ date -u +%Y-%m-%dT%H:%M:%SZ && ls -la .ralph-tui/iterations/ | tail -5
+[94m[bash][0m $ git diff docs/plan/phases/phase-16-report.md
+[94m[bash][0m $ wc -l .ralph-tui/iterations/6b30e8e0_2026-10-02_01-06-32_US-161.log
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/iterations/6b30e8e0_2026-10-02_01-06-32_US-161.log
+The previous run stalled after writing the pages (log confirms it). Resuming to verify and finish. Let me inspect the current pages.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docs/user-guide/a2e-suite/admin-and-self-host.mdx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-docs/l/fr/user-guide/a2e-suite/admin-and-self-host.mdx
+[94m[bash][0m $ grep -n "US-161\|M12f" PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "M12a" PLAN.md | head
+[94m[bash][0m $ grep -rn "admin-and-self-host" packages/twenty-docs/ --include="*.json" --include="*.mdx" --include=...
+[94m[bash][0m $ grep -n "twenty-docs" package.json | head
+Pages look complete. Running the docs gates now.
+[94m[bash][0m $ node docs/scripts/check-docs.mjs 2>&1 | tail -5
+[94m[bash][0m $ npx prettier --check user-guide/a2e-suite/admin-and-self-host.mdx l/fr/user-guide/a2e-suite/admin-an...
+[94m[bash][0m $ npx tsx scripts/lint-mdx.ts 2>&1 | tail -5
+[94m[bash][0m $ npx nx build twenty-docs 2>&1 | tail -15
+[94m[bash][0m $ done
+[94m[bash][0m $ npx nx run twenty-docs:validate 2>&1 | tail -20
+[94m[bash][0m $ npx mintlify validate 2>&1 | grep -v "validating build" | grep -iv "^\s*$" | tail -25
+[94m[bash][0m $ done
+[94m[bash][0m $ rg -F "Uninstall Application" packages/ 2>/dev/null | head
+[94m[bash][0m $ rg -F "Settings" packages/twenty-front/src/pages/settings/applications/SettingsApplications.tsx 2>&1...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages[0m pattern: [96mAssign roles to specify access permissions|Delete Role Permanently|Connect a provider|Monthly token cap|Add OpenAI-compatible provider[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages[0m pattern: [96mManage Members|Approved Domains|Invite by link|Invite by email|No cap set|Metered AI tokens used this calendar month[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages[0m pattern: [96mChecking what will be deleted|Will be deleted:|Uninstall Application|Remove from sidebar[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages[0m pattern: [96mThe all-in-one workspace modules built into this suite|Part of A2E Suite|Not registered on this server|Incompatible server version[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mManage Members|Approved Domains|Invite by link|Invite by email|No cap set|Metered AI tokens used this calendar month[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mChecking what will be deleted|Will be deleted:|Uninstall Application|Remove from sidebar[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mAssign roles to specify access permissions|Delete Role Permanently|Connect a provider|Monthly token cap|Add OpenAI-compatible provider[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96maiMonthlyTokenCap|canAccessFullAdminPanel[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-server/src[0m pattern: [96mprovision-bundled|install-pre-installed-apps|DISABLE_BUNDLED_APP_PROVISIONING|BUNDLED_APPS_DIR[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/settings/roles[0m pattern: [96mMCP & APIs|SSO Bypass|Impersonate|Data Model|Assignable to Workspace Members|Assignable to Agents|Assignable to API Keys[0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/settings/roles[0m pattern: [96mAll roles|Create Role|Confirm deletion of|Delete role[0m
+[94m[bash][0m $ git status --porcelain | grep -i "locales" || echo "none"
+[94m[bash][0m $ tail -30 "/Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md"
+All gates green and labels verified against source. Appending the report.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-16-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain
+Resumed the stalled US-161 run and verified the already-written pages rather than redoing them.
+
+**Outcome: `done-for-review`**
+- Both en/fr `admin-and-self-host.mdx` pages cover M12f: provisioning (M1 bundled), C3 install/hide/uninstall/upgrade policy, C4 roles, BYOK Syna + monthly cap, backups; links to `DEPLOY.md` and `docs/applications.md` (HTTP 200).
+- Gates green: `check-docs.mjs` PASS, `lint-mdx.ts` clean, prettier clean; `nx run twenty-docs:validate` fails only on the pre-existing `l/ar/...implementation-services.mdx:10:18` warning.
+- Every documented label and server symbol grep-matches source; no locales churn, no AI attribution.
+- `npx nx build twenty-docs` has no build target (documented for M12a/M12d) → recorded under Missing for tick; also Tier-2 E13 screenshots pending.
+
+Report appended to `docs/plan/phases/phase-16-report.md` and memory to `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

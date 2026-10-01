@@ -10,6 +10,7 @@ export const FIRST_OPEN_HELP_TOPICS: FirstOpenHelpTopic[] = [
     kind: 'FEATURE_EXPLANATION',
     title: msg`Start from the empty state`,
     body: msg`Lists open on an empty state with two choices: reuse a saved template or start blank. Blank is fastest for one record; a template is worth it when the same structure repeats.`,
+    docPageKey: 'gettingStarted',
     keywords: [
       'empty',
       'blank',
@@ -26,6 +27,7 @@ export const FIRST_OPEN_HELP_TOPICS: FirstOpenHelpTopic[] = [
     kind: 'COMPARISON',
     title: msg`Template or blank?`,
     body: msg`A template copies its shape and starter content into a new record, so the original is never changed. Blank creates an empty record with only the defaults. Choose a template when you will repeat the same setup.`,
+    docPageKey: 'templates',
     keywords: [
       'template',
       'blank',
@@ -42,6 +44,7 @@ export const FIRST_OPEN_HELP_TOPICS: FirstOpenHelpTopic[] = [
     kind: 'FEATURE_EXPLANATION',
     title: msg`Save a document as a template`,
     body: msg`Open a document you are happy with and save it as a template. It then appears in the document browser's template list, and using it creates an independent copy you can edit freely.`,
+    docPageKey: 'bureau',
     keywords: [
       'document',
       'template',
@@ -57,6 +60,7 @@ export const FIRST_OPEN_HELP_TOPICS: FirstOpenHelpTopic[] = [
     kind: 'FEATURE_EXPLANATION',
     title: msg`Find anything from one place`,
     body: msg`Press Cmd+K (Ctrl+K on Windows) to search records, documents, channels and actions together. Type a few letters and the list narrows as you go, then press Enter to open the highlighted result.`,
+    docPageKey: 'gettingStarted',
     keywords: [
       'search',
       'recherche',
@@ -75,6 +79,7 @@ export const FIRST_OPEN_HELP_TOPICS: FirstOpenHelpTopic[] = [
     kind: 'COMPARISON',
     title: msg`Solo or team workspace`,
     body: msg`A workspace with a single member hides team-only surfaces such as presence and shared widgets. Inviting a second member brings them back; nothing created while solo is lost.`,
+    docPageKey: 'gettingStarted',
     keywords: [
       'solo',
       'team',
@@ -92,6 +97,7 @@ export const FIRST_OPEN_HELP_TOPICS: FirstOpenHelpTopic[] = [
     kind: 'FAQ',
     title: msg`Why don't I see a feature?`,
     body: msg`Apps are installed per workspace. If a surface is missing, open Settings then Applications to install it, then reload. Installation adds views and objects without changing the data you already have.`,
+    docPageKey: 'faqTroubleshooting',
     keywords: [
       'app',
       'application',
@@ -110,6 +116,7 @@ export const FIRST_OPEN_HELP_TOPICS: FirstOpenHelpTopic[] = [
     kind: 'FAQ',
     title: msg`Keyboard basics`,
     body: msg`Cmd+K opens search, Esc closes the current panel, and Tab moves focus through the visible controls. Every explanation you dismiss here can be restored from this same panel.`,
+    docPageKey: 'gettingStarted',
     keywords: [
       'keyboard',
       'clavier',

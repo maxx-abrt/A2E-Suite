@@ -25,12 +25,14 @@ const topics: FirstOpenHelpTopic[] = [
 ];
 
 const renderPanel = ({
+  topics: panelTopics = topics,
   dismissedTopicIds = [],
   onDismissTopic = jest.fn(),
   onRestoreTopic = jest.fn(),
   onRestoreAllTopics = jest.fn(),
   onSelectLaunchAction = jest.fn(),
 }: {
+  topics?: FirstOpenHelpTopic[];
   dismissedTopicIds?: string[];
   onDismissTopic?: jest.Mock;
   onRestoreTopic?: jest.Mock;
@@ -42,7 +44,7 @@ const renderPanel = ({
       <FirstOpenHelpPanel
         context="DOCUMENTS"
         launchActions={FIRST_OPEN_HELP_LAUNCH_ACTIONS.DOCUMENTS}
-        topics={topics}
+        topics={panelTopics}
         dismissedTopicIds={dismissedTopicIds}
         onDismissTopic={onDismissTopic}
         onRestoreTopic={onRestoreTopic}
@@ -155,5 +157,36 @@ describe('FirstOpenHelpPanel', () => {
     expect(dismiss).toHaveFocus();
     await userEvent.keyboard('{Enter}');
     expect(onDismissTopic).toHaveBeenCalledWith('templates');
+  });
+
+  it('deep-links a topic to its matching doc page', () => {
+    renderPanel({
+      topics: [
+        {
+          id: 'bureau-doc',
+          kind: 'FEATURE_EXPLANATION',
+          title: { message: 'Bureau' } as MessageDescriptor,
+          body: { message: 'Pages.' } as MessageDescriptor,
+          keywords: [],
+          docPageKey: 'bureau',
+        },
+      ],
+    });
+
+    expect(
+      screen.getByTestId('first-open-help-topic-doc-bureau-doc'),
+    ).toHaveAttribute(
+      'href',
+      'https://docs.twenty.com/user-guide/a2e-suite/bureau',
+    );
+  });
+
+  it('hides the doc link when the target page does not exist yet', () => {
+    renderPanel();
+
+    expect(
+      screen.queryByTestId('first-open-help-topic-doc-templates'),
+    ).toBeNull();
+    expect(screen.queryByTestId('first-open-help-topic-doc-find')).toBeNull();
   });
 });

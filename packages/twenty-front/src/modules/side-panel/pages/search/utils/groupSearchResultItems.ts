@@ -14,6 +14,9 @@ export type GroupableSearchResultItem = SearchResultItem & {
   // Present on app-provider results only: server-resolved deep link opened
   // through the router instead of the standard record page navigation.
   path?: string;
+  // Present on help results only: absolute doc URL opened in a new tab, kept
+  // separate from `path` so the router is never handed an external address.
+  externalUrl?: string;
 };
 
 // Sorts by frecency rank (stable: equal ranks keep the server's relevance
