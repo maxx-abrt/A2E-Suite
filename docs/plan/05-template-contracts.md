@@ -310,15 +310,22 @@ apply will use, so preview cannot lie.
 > or from the onboarding/template constants. Edit the fixture first, then mirror
 > the JSON here; the conformance spec is what makes the two unable to diverge.
 
-Preview, `individual` on a fresh workspace with a2e-accounting unregistered
-(optional there), a2e-documents 0.2.0 compatible:
+Preview, `individual` on a fresh workspace with the D-B1 Bureau bundle
+(documents + projects + chat, M7e option (a)) all compatible and not yet
+installed:
 
 ```json
 {
-  "templateKey": "individual", "version": 1,
+  "templateKey": "individual", "version": 2,
   "apps": [
     { "universalIdentifier": "19126a9c-7cc0-4368-aaba-c7e5a87b0c48",
       "displayName": "A2E Documents", "registered": true,
+      "versionCompatible": true, "required": true, "currentlyInstalled": false },
+    { "universalIdentifier": "4f759655-84f8-434d-9c76-ee1850e8c1a4",
+      "displayName": "A2E Projects", "registered": true,
+      "versionCompatible": true, "required": true, "currentlyInstalled": false },
+    { "universalIdentifier": "e2dce399-87f1-4548-b307-5f368b4d5dd4",
+      "displayName": "A2E Chat", "registered": true,
       "versionCompatible": true, "required": true, "currentlyInstalled": false }
   ],
   "navigationChanges": [
@@ -326,7 +333,11 @@ Preview, `individual` on a fresh workspace with a2e-accounting unregistered
     { "universalIdentifier": "20202020-b005-4b05-8b05-c0aba11c0005", "action": "hide" },
     { "universalIdentifier": "20202020-b004-4b04-8b04-c0aba11c0004", "action": "hide" }
   ],
-  "samples": [], "blockedSamples": [], "blocked": false
+  "samples": [
+    { "label": "Notes de réunion", "locale": "fr" },
+    { "label": "Entretien individuel", "locale": "fr" }
+  ],
+  "blockedSamples": [], "blocked": false
 }
 ```
 
@@ -335,10 +346,14 @@ Result after a required-app install failure and successful retry of the rest:
 ```json
 {
   "operationId": "9f1c3a20-8f4e-4d9a-9c1e-2b6a7d8e9f01",
-  "requestedTemplateKeyVersion": { "key": "individual", "version": 1 },
-  "appliedTemplateKeyVersion": { "key": "individual", "version": 1 },
+  "requestedTemplateKeyVersion": { "key": "individual", "version": 2 },
+  "appliedTemplateKeyVersion": { "key": "individual", "version": 2 },
   "steps": [
     { "kind": "install-app", "targetUniversalIdentifier": "19126a9c-7cc0-4368-aaba-c7e5a87b0c48",
+      "status": "succeeded" },
+    { "kind": "install-app", "targetUniversalIdentifier": "4f759655-84f8-434d-9c76-ee1850e8c1a4",
+      "status": "succeeded" },
+    { "kind": "install-app", "targetUniversalIdentifier": "e2dce399-87f1-4548-b307-5f368b4d5dd4",
       "status": "succeeded" },
     { "kind": "navigation-visibility", "status": "succeeded" },
     { "kind": "seed-samples", "status": "skipped" },

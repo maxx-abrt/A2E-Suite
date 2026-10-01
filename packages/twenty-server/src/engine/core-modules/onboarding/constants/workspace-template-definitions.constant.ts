@@ -6,11 +6,30 @@ import { AGENDA_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER } from 'src/engine/wor
 const A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER =
   '19126a9c-7cc0-4368-aaba-c7e5a87b0c48';
 
+// a2e-projects application (packages/twenty-apps/internal/a2e-projects).
+const A2E_PROJECTS_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '4f759655-84f8-434d-9c76-ee1850e8c1a4';
+
+// a2e-chat application (packages/twenty-apps/internal/a2e-chat).
+const A2E_CHAT_APPLICATION_UNIVERSAL_IDENTIFIER =
+  'e2dce399-87f1-4548-b307-5f368b4d5dd4';
+
 // a2e-accounting application, "Bilan"
 // (packages/twenty-apps/internal/a2e-accounting) — append future app UUIDs
 // here as they land.
 const A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER =
   'b11a0000-0000-4000-8000-000000000001';
+
+// D-B1 (executed by M7e option (a)): "Bureau" is not a distinct application
+// registration. It is a preset bundle of the three first-party Bureau apps.
+// The order is the install prerequisite order: a2e-projects and a2e-chat both
+// build on a2e-documents (the Bureau folder owner and the `document` relation
+// target), so documents must install first.
+export const A2E_BUREAU_BUNDLE_APPLICATION_UNIVERSAL_IDENTIFIERS = [
+  A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER,
+  A2E_PROJECTS_APPLICATION_UNIVERSAL_IDENTIFIER,
+  A2E_CHAT_APPLICATION_UNIVERSAL_IDENTIFIER,
+];
 
 // Proposed starter content previewed per persona (P1.6d). Labels mirror the
 // app-owned starter payload descriptors (a2e-documents starter-templates.ts,
@@ -18,8 +37,11 @@ const A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER =
 // seeds. Each item also names the US-117 gallery descriptor key it references
 // (M9d/G14) where the app ships one. These are proposals, not the seed source
 // of truth: the rows are still created only by each app's post-install hook
-// (D02 owns the final contents). Adding Agenda, Archive, Projects or Syna to a
-// preset is a D02-gated app-set change, deliberately out of M9d's scope.
+// (D02 owns the final contents). M7e executed D-B1 option (a): every
+// Bureau-installing persona now installs the Bureau bundle
+// (A2E_BUREAU_BUNDLE_APPLICATION_UNIVERSAL_IDENTIFIERS). Adding Agenda,
+// Archive or Syna to a preset remains a D02-gated app-set change, deliberately
+// out of M9d's scope.
 export type WorkspaceTemplateBundleContent = TemplatePreviewSample & {
   applicationUniversalIdentifier: string;
   // US-117 gallery descriptor key (C1) this proposal instantiates, when the app
@@ -170,9 +192,9 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
     blockedStarterBundleContents: [],
   },
   [WorkspaceTemplate.INDIVIDUAL]: {
-    version: 1,
+    version: 2,
     applicationUniversalIdentifiers: [
-      A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER,
+      ...A2E_BUREAU_BUNDLE_APPLICATION_UNIVERSAL_IDENTIFIERS,
     ],
     optionalApplicationUniversalIdentifiers: [],
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [
@@ -189,9 +211,9 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
     blockedStarterBundleContents: [],
   },
   [WorkspaceTemplate.STUDENT]: {
-    version: 1,
+    version: 2,
     applicationUniversalIdentifiers: [
-      A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER,
+      ...A2E_BUREAU_BUNDLE_APPLICATION_UNIVERSAL_IDENTIFIERS,
     ],
     optionalApplicationUniversalIdentifiers: [],
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [
@@ -209,9 +231,9 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
     blockedStarterBundleContents: [],
   },
   [WorkspaceTemplate.TEAM]: {
-    version: 1,
+    version: 2,
     applicationUniversalIdentifiers: [
-      A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER,
+      ...A2E_BUREAU_BUNDLE_APPLICATION_UNIVERSAL_IDENTIFIERS,
     ],
     optionalApplicationUniversalIdentifiers: [],
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [],
@@ -226,9 +248,9 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
     blockedStarterBundleContents: [],
   },
   [WorkspaceTemplate.NON_PROFIT]: {
-    version: 1,
+    version: 2,
     applicationUniversalIdentifiers: [
-      A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER,
+      ...A2E_BUREAU_BUNDLE_APPLICATION_UNIVERSAL_IDENTIFIERS,
       A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER,
     ],
     optionalApplicationUniversalIdentifiers: [],
@@ -244,9 +266,9 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
     ],
   },
   [WorkspaceTemplate.SMALL_BUSINESS]: {
-    version: 1,
+    version: 2,
     applicationUniversalIdentifiers: [
-      A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER,
+      ...A2E_BUREAU_BUNDLE_APPLICATION_UNIVERSAL_IDENTIFIERS,
       A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER,
     ],
     optionalApplicationUniversalIdentifiers: [],

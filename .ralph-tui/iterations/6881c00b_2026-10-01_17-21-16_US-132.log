@@ -1,0 +1,241 @@
+# Iteration 2 Log
+
+## Metadata
+
+- **Task ID**: US-132
+- **Task Title**: M9a-4: mount gallery entry-points — Cmd+K 'Templates', every 'New' surface, app landing pages
+- **Description**: As a user, I want the template gallery reachable from everywhere templates matter (command menu, New buttons, app surfaces) so that I never have to hunt for it. Starting state: partial — the gallery m...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-01T15:21:16.825Z
+- **Ended At**: 2026-10-01T15:39:58.144Z
+- **Duration**: 18m 41s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the mandatory clean-start check and orientation.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ ls docs/plan/phases/ | head -50
+[94m[bash][0m $ grep -n "US-132" PLAN.md
+[94m[bash][0m $ grep -rln "template-gallery\|US-131\|US-118" docs/plan/phases/ 2>/dev/null
+[94m[bash][0m $ grep -rn "US-132\|M9a-4\|M9a" PLAN.md docs/plan/ 2>/dev/null | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "132\|131\|118\|117" PLAN.md
+[94m[bash][0m $ grep -n "US-132\|CLAIMED\|M9a-4\|M9a-3\|M9a-2" docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ sed -n '400,460p' docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ sed -n '182,216p' docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ ls -R packages/twenty-front/src/modules/template-gallery/ 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/components/TemplateGallery.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/hooks/useTemplateGalleryItems.ts
+[94m[bash][0m $ ls packages/twenty-front/src/modules/command-menu/components/ 2>/dev/null | head -40
+[94m[bash][0m $ grep -rln "SidePanelPages" packages/twenty-front/src packages/twenty-shared/src packages/twenty-ui/s...
+[94m[bash][0m $ grep -rn "enum CommandMenuPages\|CommandMenuPages =" packages/twenty-front/src --include=*.ts | head
+[94m[bash][0m $ grep -rn "enum SidePanelPages\|SidePanelPages =" packages --include=*.ts -l | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/SidePanelPages.ts
+[94m[bash][0m $ grep -rln "CommandMenuPages" packages/twenty-front/src/modules/ui packages/twenty-front/src/modules/...
+[94m[bash][0m $ grep -rln "QuickCapture" packages/twenty-front/src 2>/dev/null | head -30
+[94m[bash][0m $ grep -rln "CommandMenuPages" packages/twenty-front/src 2>/dev/null | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/quick-capture/components/QuickCaptureCommand.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/quick-capture/hooks/useQuickCaptureCommand.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/quick-capture/hooks/useOpenQuickCaptureSidePanel.ts
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/side-panel/constants/SidePanelPagesConfig.tsx
+[94m[bash][0m $ grep -rln "QuickCaptureSidePanelPage" packages/twenty-front/src 2>/dev/null
+[94m[read][0m
+[94m[bash][0m $ grep -n "M13a\|M13c\|M13b\|M13d" PLAN.md
+[94m[bash][0m $ grep -rln "New document\|new-document\|NewNote\|new-note" packages/twenty-front/src 2>/dev/null | he...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -rln "template" packages/twenty-front/src/modules --include='*.tsx' 2>/dev/null | grep -iv "tem...
+[94m[bash][0m $ grep -rln "Browse all\|browse-all\|browseAll" packages/twenty-front/src 2>/dev/null | head
+[94m[bash][0m $ grep -rln "document" packages/twenty-front/src/modules/command-menu packages/twenty-front/src/module...
+[94m[bash][0m $ find packages -type d -name "a2e-documents" 2>/dev/null | head
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/command-menu-items/ 2>/dev/null
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/command-menu-items/ 2>/dev/null | head -40
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts
+[94m[bash][0m $ ls -R packages/twenty-apps/internal/a2e-documents/src/front-components/ 2>/dev/null | head -60
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rln "TemplateGallery\|template-gallery" packages/twenty-front/src 2>/dev/null
+[94m[bash][0m $ grep -rn "US-132\|US-133\|M13a" tasks/prd-batch-a.json 2>/dev/null | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd-batch-a.json
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/types/TemplateGalleryItem.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/templateApplyGuards.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/templateApplyType.ts
+[94m[bash][0m $ cat packages/twenty-front/src/modules/side-panel/hooks/useSidePanelMenu.ts 2>/dev/null
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/logic-functions/apply-template.ts
+[94m[bash][0m $ grep -rn "ExecuteOneLogicFunctionInput\|payload" packages/twenty-front/src/generated-metadata/graphq...
+[94m[bash][0m $ grep -rn "executeOneLogicFunction\|ExecuteOneLogicFunctionInput\|LogicFunctionExecutionResult" packa...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/generated-metadata/graphql.ts
+[94m[bash][0m $ cat packages/twenty-server/src/engine/metadata-modules/logic-function/dtos/execute-logic-function.in...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/utils/buildTemplateGalleryItems.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/applications/states/applicationsSelector.ts
+[94m[bash][0m $ grep -in "template\|modèle\|gallery\|galerie" "packages/twenty-ui/src/icon/icon-dictionary.md" | hea...
+[94m[bash][0m $ grep -rn "Icon" "packages/twenty-ui/src/icon/icon-dictionary.md" | grep -i "command\|new\|add\|creat...
+[94m[bash][0m $ grep -rn "IconLayoutGrid\|IconBoxMultiple\|IconFileText\b" packages/twenty-ui/src/icon/index.ts 2>/d...
+[94m[bash][0m $ grep -rn "IconTemplate\b" packages/twenty-ui/src/icon/index.ts packages/twenty-ui/src/icon/component...
+[94m[bash][0m $ grep -rn "IconTemplate" packages/twenty-ui/src/icon/providers/internal/AllIcons.ts | head
+[94m[bash][0m $ sed -n '1,30p' packages/twenty-ui/src/icon/icon-dictionary.md
+[94m[bash][0m $ grep -rn "AllIcons\|export \*" packages/twenty-ui/src/icon/index.ts | head
+[94m[bash][0m $ grep -n "export { Icon.*File\|export { Icon.*Copy\|export { Icon.*LayoutGrid\|export { Icon.*BoxMult...
+[94m[bash][0m $ grep -n "IconFileText\|IconCopy\|IconLayoutGrid\|IconBoxMultiple\|IconFiles\|IconFilePlus\|IconFileI...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-ui/src/icon/index.ts
+[94m[bash][0m $ sed -n '1,30p' packages/twenty-front/src/modules/side-panel/states/sidePanelSearchState.ts
+[94m[bash][0m $ find packages/twenty-front/src -name "AppPath.ts" | head
+[94m[bash][0m $ grep -rn "RecordNewPage\|RecordShowPage" packages/twenty-shared/src --include=*.ts 2>/dev/null | hea...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/AppPath.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/logic-functions/types/LogicFunction.ts
+[94m[bash][0m $ cat packages/twenty-front/src/modules/metadata-store/types/FlatApplication.ts 2>/dev/null
+[94m[bash][0m $ sed -n "$(grep -n 'export type FindManyLogicFunctionsQuery' packages/twenty-front/src/generated-meta...
+[94m[bash][0m $ tail -5 docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ cat >> docs/plan/phases/phase-13-report.md <<'EOF'  CLAIMED — US-132/gallery-entry-points — deepseek...
+[94m[bash][0m $ ls packages/twenty-shared/dist/application/ 2>/dev/null | head
+[94m[bash][0m $ grep -rn "export const.*[Uu]uid" packages/twenty-shared/src/utils/index.ts 2>/dev/null | head
+[94m[bash][0m $ grep -rn "crypto.randomUUID\|nanoid" packages/twenty-front/src/modules | head -5
+[94m[bash][0m $ ls packages/twenty-front/src/modules/quick-capture/components/__tests__/ 2>/dev/null
+[94m[bash][0m $ grep -rn "renderHook\|jest.mock" packages/twenty-front/src/modules/template-gallery 2>/dev/null | he...
+[94m[read][0m
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-front/src/modules/command-menu/hooks/__tests__/useCommandMenu.test.ts...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/command-menu/components/CommandMenuItem.tsx
+[94m[bash][0m $ cat packages/twenty-front/src/modules/ui/layout/selectable-list/components/SelectableListItem.tsx 2>...
+[94m[bash][0m $ grep -rln "SelectableListItem" packages/twenty-front/src --include='*.test.tsx' | head
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-front/src/modules/side-panel/hooks/__tests__/useOpenRecordInSidePanel...
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-front/src/modules/metadata-store/states/metadataStoreState.ts
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-shared/src/application/templateDescriptorType.ts
+[94m[bash][0m $ find packages/twenty-front/src/modules -maxdepth 2 -name "index.ts" | wc -l
+[94m[bash][0m $ grep -rn "SidePanelPages," packages/twenty-front/src 2>/dev/null | head
+[94m[bash][0m $ grep -rn "export.*Button" packages/twenty-ui/src/input/index.ts 2>/dev/null | head
+[94m[todowrite][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/SidePanelPages.ts
+[94m[write][0m "// The one well-known logic-function name every A2E content app exposes to
+// apply one of its templates by descriptor key (US-131). Matching it mirrors
+// `TEMPLATE_DESCRIPTOR_LOGIC_FUNCTION_NAME`: a... (401 chars)"
+[94m[write][0m "import { type LogicFunction } from '@/logic-functions/types/LogicFunction';
+import { type FlatApplication } from '@/metadata-store/types/FlatApplication';
+import { TEMPLATE_APPLY_LOGIC_FUNCTION_NAME }... (1535 chars)"
+[94m[write][0m "import { collectTemplateApplyLogicFunctions } from '@/template-gallery/utils/collectTemplateApplyLogicFunctions';
+import { type LogicFunction } from '@/logic-functions/types/LogicFunction';
+import { t... (2237 chars)"
+[94m[write][0m "import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { type TemplateDescriptorCategory } from 'twenty-shared/application';
+
+// The category an entry-point asks th... (604 chars)"
+[94m[write][0m "import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { templateGalleryCategoryPreselectState } from '@/template-gallery/states/templateGalleryCategoryPreselectState';
+import ... (1333 chars)"
+[94m[write][0m "import { useOpenTemplateGallery } from '@/template-gallery/hooks/useOpenTemplateGallery';
+import { templateGalleryCategoryPreselectState } from '@/template-gallery/states/templateGalleryCategoryPresel... (2410 chars)"
+[94m[write][0m "import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { t } from '@lingui/core... (760 chars)"
+[94m[write][0m "import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { useOpenTemplateGallery } from '@/template-gallery/hooks/useOpenTemplateGallery';
+import {
+  TEMPLATES_COMMAND_ID,
+... (1196 chars)"
+[94m[bash][0m $ 
+[94m[read][0m
+[94m[write][0m "import { useTemplatesCommand } from '@/template-gallery/hooks/useTemplatesCommand';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { jotaiStore } from '@/ui/ut... (1655 chars)"
+[94m[write][0m "import { TemplatesCommand } from '@/template-gallery/components/TemplatesCommand';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import ... (1840 chars)"
+[94m[write][0m "import { applicationsSelector } from '@/applications/states/applicationsSelector';
+import { useOpenTemplateGallery } from '@/template-gallery/hooks/useOpenTemplateGallery';
+import { useAtomStateValue ... (2242 chars)"
+[94m[write][0m "import { TemplateGalleryEntryPoint } from '@/template-gallery/components/TemplateGalleryEntryPoint';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { jotaiStor... (3106 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/components/TemplateGallery.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/components/TemplateGallery.tsx
+[94m[edit][0m
+[94m[write][0m "import { applicationsSelector } from '@/applications/states/applicationsSelector';
+import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
+import { collectTemplateApp... (2978 chars)"
+[94m[write][0m "import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
+import { TemplateGallery } from '@/template-gallery/components/TemplateGallery';
+import { useApplyTemplate } from '@/templ... (3068 chars)"
+[94m[edit][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/side-panel/constants/SidePanelPagesConfig.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/side-panel/constants/SidePanelPagesConfig.tsx
+Now the command-menu display page:
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx nx build twenty-shared --skip-nx-cache 2>&1 | tail -20
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -40
+[94m[bash][0m $ grep -rn "TemplateGallery\|QuickCapture" packages/twenty-sdk/dist/front-component/index.d.ts 2>/dev/...
+[94m[bash][0m $ find packages/twenty-sdk/src/sdk/front-component -maxdepth 1 -type f | head
+[94m[bash][0m $ sed -n '120,160p' packages/twenty-sdk/dist/front-component/index.d.ts
+[94m[bash][0m $ grep -rn "nx build twenty-sdk\|twenty-sdk:build" AGENTS.md package.json 2>/dev/null | head
+[94m[bash][0m $ npx nx build twenty-sdk --skip-nx-cache 2>&1 | tail -25
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -40
+[94m[bash][0m $ echo "TSC_EXIT=$?"
+[94m[bash][0m $ npx jest src/modules/template-gallery --config=jest.config.mjs 2>&1 | tail -60
+[94m[bash][0m $ npx jest --findRelatedTests src/modules/command-menu-item/display/components/SidePanelCommandMenuIte...
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-front 2>&1 | tail -40
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/template-gallery src/modules/command-menu-item...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/hooks/useApplyTemplate.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/hooks/useApplyTemplate.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/hooks/useApplyTemplate.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/hooks/useApplyTemplate.ts
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/template-gallery src/modules/command-menu-item...
+[94m[bash][0m $ npx oxfmt --check src/modules/template-gallery src/modules/command-menu-item/display/components/Side...
+[94m[bash][0m $ npx oxfmt src/modules/template-gallery src/modules/command-menu-item/display/components/SidePanelCom...
+[94m[bash][0m $ npx oxfmt --check packages/twenty-shared/src/types/SidePanelPages.ts 2>&1 | tail -5
+[94m[bash][0m $ ls packages/twenty-shared/.oxlintrc.json 2>/dev/null && npx oxlint -c .oxlintrc.json src/types/SideP...
+[94m[bash][0m $ grep -n "lint" packages/twenty-shared/project.json | head
+[94m[bash][0m $ npx oxlint -c .oxlintrc.json src/types/SidePanelPages.ts 2>&1 | tail -10
+[94m[bash][0m $ npx jest src/modules/template-gallery --config=jest.config.mjs 2>&1 | tail -20
+[94m[bash][0m $ echo "TSC_EXIT=$?"
+[94m[bash][0m $ git status --porcelain --ignored packages/twenty-shared/dist packages/twenty-sdk/dist 2>/dev/null | ...
+[94m[bash][0m $ grep -rn "payload" packages/twenty-server/src/engine/metadata-modules/logic-function/services/logic-...
+[94m[bash][0m $ grep -n "executeOneLogicFunction\|payload" packages/twenty-server/src/engine/metadata-modules/logic-...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/hooks/useTemplateGalleryItems.ts
+[94m[bash][0m $ echo "TSC_EXIT=$?"
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/hooks/useApplyTemplate.ts
+[94m[bash][0m $ git diff packages/twenty-front/src/modules/command-menu-item/display/components/SidePanelCommandMenu...
+[94m[bash][0m $ git rev-parse HEAD
+[94m[bash][0m $ do not add a second open path. EOF echo done
+[94m[bash][0m $ ls -la .ralph-tui/progress.md 2>/dev/null && sed -n '1,40p' .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -8 .ralph-tui/progress.md
+[94m[bash][0m $ `side-panel/constants/SidePanelPagesConfig.tsx`. - **Learnings:**   - Adding a `SidePanelPages` memb...
+[94m[bash][0m $ grep -c "US-132/gallery-entry-points" docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ echo "EXIT=$?"
+Done. US-132 M9a-4 mounted the template gallery end-to-end in twenty-front.
+
+**Delivered**
+- `SidePanelPages.TemplateGallery` + `TemplateGallerySidePanelPage` host (lists every installed app's descriptors, `Use template` via each app's `apply-template`, typed rejection banner).
+- Cmd+K **Templates** entry (`TemplatesCommand`/`useTemplatesCommand`) rendered in `SidePanelCommandMenuItemDisplayPage`, selectable-list + no-match aware.
+- Install-gated `TemplateGalleryEntryPoint` exported for M7f/M13c; single `useOpenTemplateGallery({ category })` seam; `TemplateGallery` `initialCategory` soft preselect (clearable).
+- `useApplyTemplate` resolves the source app's apply function, calls `ExecuteOneLogicFunction` with `{key, inputs:null, operationId}`, validates `isTemplateApplyResult`.
+- Fixed latent US-118 bug: descriptor listing omitted the GraphQL-required `payload` field.
+
+**Gates (Tier 0)**: twenty-shared + twenty-sdk builds ✓ · front `tsgo` exit 0 ✓ · oxlint/oxfmt 0/0 ✓ · new target jest 34/34, related 25/25 ✓ · docs check ✓ · no locales/AI attribution ✓.
+
+**Missing for tick**: Tier-2 browser E15; AC3's concrete a2e-documents app-side "New" embedding (L-TPL app lane, the AC's M13a follow-up).
+
+Reports appended to `docs/plan/phases/phase-13-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

@@ -39,3 +39,12 @@ after each iteration and it's included in prompts for context.
   - Front custom lint rules: a state-driven variable must be named after the state (`templateGalleryCategoryPreselect`), and `useRef` cannot hold state (`no-state-useref`) — use `useState(() => …)` for a stable session value.
   - `conditional` test setup: mock `SelectableListItem`/`CommandMenuItem` to plain buttons to render a command without the full component-state context (pattern from `SidePanelPageLayoutRecordPageWidgetTypeSelect.test.tsx`).
 ---
+
+## 2026-10-01 - US-133
+- Executed D-B1 option (a) for M7e: added `A2E_BUREAU_BUNDLE_APPLICATION_UNIVERSAL_IDENTIFIERS` (documents + projects + chat, install order documents-first) and pointed all five Bureau personas (INDIVIDUAL/STUDENT/TEAM/NON_PROFIT/SMALL_BUSINESS) at the spread bundle, template version 1→2.
+- New `workspace-template-definitions.bureau-bundle.spec.ts`; updated onboarding service specs/idempotency fixtures for three install steps; front picker copy now Bureau pages/Projects/Discussions (no G14 remnant); front truthfulness spec expands bundle constants; template-contracts doc examples refreshed.
+- Files changed: `packages/twenty-server/src/engine/core-modules/onboarding/constants/workspace-template-definitions.constant.ts` + 4 `__tests__` files; `packages/twenty-front/src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts` + its test; `docs/plan/05-template-contracts.md`.
+- **Learnings:**
+  - A preset's `applicationUniversalIdentifiers` may now reference a spread bundle constant; the front truthfulness spec is source-text based, so it must expand `export const X = [...]` bundle constants one level or it checks the constant name instead of real UUIDs.
+  - Three install steps shift every onboarding call-count assertion (`installApplication` once → 3) and the step-status arrays; the incompatible-app case now has only the first app flagged so the other two still install.
+---

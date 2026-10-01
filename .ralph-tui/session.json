@@ -3,10 +3,10 @@
   "sessionId": "6881c00b-f739-4804-8118-8aa3fc38e243",
   "status": "running",
   "startedAt": "2026-10-01T15:03:12.006Z",
-  "updatedAt": "2026-10-01T15:39:58.152Z",
-  "currentIteration": 1,
+  "updatedAt": "2026-10-01T15:55:49.453Z",
+  "currentIteration": 3,
   "maxIterations": 20,
-  "tasksCompleted": 1,
+  "tasksCompleted": 2,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -26,6 +26,26 @@
       "durationMs": 1072399,
       "startedAt": "2026-10-01T15:03:18.840Z",
       "endedAt": "2026-10-01T15:21:11.239Z"
+    },
+    {
+      "iteration": 2,
+      "status": "completed",
+      "taskId": "US-132",
+      "taskTitle": "M9a-4: mount gallery entry-points — Cmd+K 'Templates', every 'New' surface, app landing pages",
+      "taskCompleted": true,
+      "durationMs": 1121319,
+      "startedAt": "2026-10-01T15:21:16.825Z",
+      "endedAt": "2026-10-01T15:39:58.144Z"
+    },
+    {
+      "iteration": 3,
+      "status": "failed",
+      "taskId": "US-133",
+      "taskTitle": "M7e: Bureau packaging decision executed (D-B1) — preset bundle 'Bureau' installing all three Bureau apps",
+      "taskCompleted": false,
+      "durationMs": 826430,
+      "startedAt": "2026-10-01T15:40:03.668Z",
+      "endedAt": "2026-10-01T15:53:50.098Z"
     }
   ],
   "skippedTaskIds": [],

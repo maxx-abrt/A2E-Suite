@@ -92,3 +92,18 @@ CLAIMED — US-116/M7d — deepseek-v4.1-flash — 2026-09-29T22:12:00Z — base
 - Orchestrator fix: refreshed the stale `get-standard-object-metadata-related-entity-ids`
   snapshot (standard `calendarEvent` reminder fields added by auto-commit
   `a2a4932f` shifted the deterministic UUIDs; test was red at HEAD).
+
+CLAIMED — US-133/bureau-bundle — deepseek-v4.1-flash — 2026-10-01T15:44:00Z — base 2b3d7781c945366035f9db23390cd90746e3846c
+
+## 2026-10-01 16:00 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-133 M7e: Bureau packaging decision executed (D-B1) — preset bundle 'Bureau' installing all three Bureau apps · **Slice:** execute option (a) + decision record + drift-guard specs
+**Claim:** done-for-review
+**Ready-to-tick:** yes
+**Base:** 2b3d7781c945366035f9db23390cd90746e3846c
+**Changed:** `packages/twenty-server/src/engine/core-modules/onboarding/constants/workspace-template-definitions.constant.ts` (new `A2E_BUREAU_BUNDLE_APPLICATION_UNIVERSAL_IDENTIFIERS` = documents+projects+chat, install order documents-first; all five Bureau personas install the bundle, version 1→2); `.../__tests__/workspace-template-definitions.bureau-bundle.spec.ts` (new); `.../__tests__/workspace-template.service.spec.ts`; `.../__tests__/workspace-template.service.idempotency.spec.ts`; `.../__tests__/fixtures/apply-template-operation.fixtures.ts`; `packages/twenty-front/src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts` (Bureau/Bilan copy, no G14 remnant); `.../__tests__/A2eWorkspaceTemplates.test.ts` (bundle-constant expansion so truthfulness spec still reads the real app set); `docs/plan/05-template-contracts.md` (preview/apply examples now show the 3-app bundle).
+**Checks:** `npx jest src/engine/core-modules/onboarding --config=packages/twenty-server/jest.config.mjs` → 12 suites/107 passed; `packages/twenty-server npx tsgo -p tsconfig.json --noEmit` → exit 0; `npx jest .../A2eWorkspaceTemplates.test.ts --config=packages/twenty-front/jest.config.mjs` → 13 passed; `packages/twenty-front npx tsgo -p tsconfig.json --noEmit` → exit 0; `npx oxlint --type-aware -c .oxlintrc.json <touched files>` server (5 files, 0/0) + front (2 files, 0/0); `node docs/scripts/check-docs.mjs` → PASS.
+**Decision:** D-B1 option (a) executed — keep 3 apps, add a preset bundle entry. Option (b) (thin a2e-bureau app with SDK app-dependencies) explicitly left to a maintainer decision once the SDK supports declared app dependencies.
+**Missing for tick:** Tier 2 (orchestrator): live persona apply on a running app observing the three apps installed and one Bureau folder row (US-115-owned), not three top-level groups.
+**Do not redo:** bundle constant, persona version bump, front copy, fixtures, and all onboarding specs — green as listed.
+**Remaining:** US-134 (chat Discussions row nests into the Bureau folder) unlocked by this; US-164 M13b catalogue copy; M7f landing pages.
+**Next:** a2e-chat Bureau nesting (US-134) now that the bundle fixes the install-order dependency.

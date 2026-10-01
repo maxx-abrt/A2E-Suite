@@ -243,9 +243,12 @@ describe('WorkspaceTemplateService', () => {
       );
       expect(result.appliedTemplateKeyVersion).toEqual({
         key: WorkspaceTemplate.INDIVIDUAL,
-        version: 1,
+        version: 2,
       });
+      // Three Bureau-bundle install steps, then navigation and the template row.
       expect(result.steps.map((step) => step.status)).toEqual([
+        'succeeded',
+        'succeeded',
         'succeeded',
         'succeeded',
         'succeeded',
@@ -322,11 +325,11 @@ describe('WorkspaceTemplateService', () => {
         operationId: 'op-seed-retry',
         requestedTemplateKeyVersion: {
           key: WorkspaceTemplate.INDIVIDUAL,
-          version: 1,
+          version: 2,
         },
         appliedTemplateKeyVersion: {
           key: WorkspaceTemplate.INDIVIDUAL,
-          version: 1,
+          version: 2,
         },
         steps: [
           {
@@ -464,7 +467,9 @@ describe('WorkspaceTemplateService', () => {
 
       expect(installStep?.status).toBe('failed');
       expect(installStep?.errorCode).toBe('VERSION_INCOMPATIBLE');
-      expect(installApplication).not.toHaveBeenCalled();
+      // Only the first bundle app (documents) was flagged incompatible; the
+      // remaining required apps still attempted and succeeded.
+      expect(installApplication).toHaveBeenCalledTimes(2);
       expect(result.appliedTemplateKeyVersion).toBeNull();
     });
 
@@ -475,10 +480,20 @@ describe('WorkspaceTemplateService', () => {
       findOneByUniversalIdentifierGlobal.mockResolvedValue(
         buildRegistration('registration-1'),
       );
-      findByUniversalIdentifier.mockResolvedValueOnce({
-        id: 'existing-install-id',
-        universalIdentifier: A2E_DOCUMENTS_UNIVERSAL_IDENTIFIER,
-      });
+      // Every bundle app is already installed: one `Once` per install-step read.
+      findByUniversalIdentifier
+        .mockResolvedValueOnce({
+          id: 'existing-install-documents',
+          universalIdentifier: A2E_DOCUMENTS_UNIVERSAL_IDENTIFIER,
+        })
+        .mockResolvedValueOnce({
+          id: 'existing-install-projects',
+          universalIdentifier: '4f759655-84f8-434d-9c76-ee1850e8c1a4',
+        })
+        .mockResolvedValueOnce({
+          id: 'existing-install-chat',
+          universalIdentifier: 'e2dce399-87f1-4548-b307-5f368b4d5dd4',
+        });
 
       const result = await service.applyWorkspaceTemplateOperation({
         workspaceId,
@@ -497,7 +512,7 @@ describe('WorkspaceTemplateService', () => {
       // The full operation completes and records the template key.
       expect(result.appliedTemplateKeyVersion).toEqual({
         key: WorkspaceTemplate.INDIVIDUAL,
-        version: 1,
+        version: 2,
       });
       expect(workspaceUpdate).toHaveBeenCalledWith(
         { id: workspaceId },
@@ -513,7 +528,7 @@ describe('WorkspaceTemplateService', () => {
         operationId: 'op-retry-already-installed',
         requestedTemplateKeyVersion: {
           key: WorkspaceTemplate.INDIVIDUAL,
-          version: 1,
+          version: 2,
         },
         appliedTemplateKeyVersion: null,
         steps: [
@@ -555,7 +570,7 @@ describe('WorkspaceTemplateService', () => {
       // The complete retry records the template key.
       expect(result.appliedTemplateKeyVersion).toEqual({
         key: WorkspaceTemplate.INDIVIDUAL,
-        version: 1,
+        version: 2,
       });
     });
 
@@ -564,11 +579,11 @@ describe('WorkspaceTemplateService', () => {
         operationId: 'op-1',
         requestedTemplateKeyVersion: {
           key: WorkspaceTemplate.INDIVIDUAL,
-          version: 1,
+          version: 2,
         },
         appliedTemplateKeyVersion: {
           key: WorkspaceTemplate.INDIVIDUAL,
-          version: 1,
+          version: 2,
         },
         steps: [
           {
@@ -599,7 +614,7 @@ describe('WorkspaceTemplateService', () => {
         operationId: 'op-2',
         requestedTemplateKeyVersion: {
           key: WorkspaceTemplate.INDIVIDUAL,
-          version: 1,
+          version: 2,
         },
         appliedTemplateKeyVersion: null,
         steps: [
@@ -795,13 +810,30 @@ describe('WorkspaceTemplateService', () => {
 
       expect(preview).toMatchObject({
         templateKey: WorkspaceTemplate.INDIVIDUAL,
-        version: 1,
+        version: 2,
         blocked: false,
       });
+      // The D-B1 Bureau bundle: documents, projects and chat in install order.
       expect(preview.apps).toEqual([
         {
           universalIdentifier: A2E_DOCUMENTS_UNIVERSAL_IDENTIFIER,
           displayName: A2E_DOCUMENTS_UNIVERSAL_IDENTIFIER,
+          registered: true,
+          versionCompatible: true,
+          required: true,
+          currentlyInstalled: false,
+        },
+        {
+          universalIdentifier: '4f759655-84f8-434d-9c76-ee1850e8c1a4',
+          displayName: '4f759655-84f8-434d-9c76-ee1850e8c1a4',
+          registered: true,
+          versionCompatible: true,
+          required: true,
+          currentlyInstalled: false,
+        },
+        {
+          universalIdentifier: 'e2dce399-87f1-4548-b307-5f368b4d5dd4',
+          displayName: 'e2dce399-87f1-4548-b307-5f368b4d5dd4',
           registered: true,
           versionCompatible: true,
           required: true,

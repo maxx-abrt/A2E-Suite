@@ -58,6 +58,36 @@ const readServerTemplateDefinitions = (): ServerTemplateDefinition[] => {
     ),
   );
 
+  // D-B1 (M7e): a preset's app list may be a bundled constant (e.g. the Bureau
+  // bundle) rather than direct UUID constants. Expand one level so the spec
+  // keeps checking the real installed app set instead of the constant's name.
+  const bundleMemberConstantNamesByConstantName = new Map(
+    [...source.matchAll(/export const (\w+) = \[([\s\S]*?)\];/g)].map(
+      (match) => [match[1], match[2].match(/\w+/g) ?? []] as const,
+    ),
+  );
+
+  const resolveApplicationConstantNames = (
+    constantName: string,
+  ): string[] => {
+    const universalIdentifier = universalIdentifierByConstantName.get(
+      constantName,
+    );
+
+    if (universalIdentifier !== undefined) {
+      return [universalIdentifier];
+    }
+
+    const bundleMemberConstantNames =
+      bundleMemberConstantNamesByConstantName.get(constantName);
+
+    if (bundleMemberConstantNames !== undefined) {
+      return bundleMemberConstantNames.flatMap(resolveApplicationConstantNames);
+    }
+
+    throw new Error(`Unknown application constant ${constantName}`);
+  };
+
   const definitionsSource = source.slice(
     source.indexOf('export const WORKSPACE_TEMPLATE_DEFINITIONS'),
   );
@@ -79,16 +109,7 @@ const readServerTemplateDefinitions = (): ServerTemplateDefinition[] => {
       template,
       applicationUniversalIdentifiers: (
         applicationList.match(/\w+/g) ?? []
-      ).map((constantName) => {
-        const universalIdentifier =
-          universalIdentifierByConstantName.get(constantName);
-
-        if (universalIdentifier === undefined) {
-          throw new Error(`Unknown application constant ${constantName}`);
-        }
-
-        return universalIdentifier;
-      }),
+      ).flatMap(resolveApplicationConstantNames),
       hidesCrmNavigation: /'[0-9a-f-]{36}'/.test(hiddenNavigationList),
     };
   });

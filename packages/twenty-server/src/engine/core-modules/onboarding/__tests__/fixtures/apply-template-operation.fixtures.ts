@@ -64,15 +64,32 @@ export type TemplateRejectionFixture = {
   expectedCodes: TemplateContractRejectionCode[];
 };
 
-// §7 preview example: individual template on a fresh workspace, a2e-documents
-// 0.2.0 compatible and not yet installed.
+// §7 preview example: individual template on a fresh workspace, the D-B1
+// Bureau bundle (documents + projects + chat) all compatible and not yet
+// installed.
 export const individualTemplatePreview: TemplatePreview = {
   templateKey: WorkspaceTemplate.INDIVIDUAL,
-  version: 1,
+  version: 2,
   apps: [
     {
       universalIdentifier: '19126a9c-7cc0-4368-aaba-c7e5a87b0c48',
       displayName: 'A2E Documents',
+      registered: true,
+      versionCompatible: true,
+      required: true,
+      currentlyInstalled: false,
+    },
+    {
+      universalIdentifier: '4f759655-84f8-434d-9c76-ee1850e8c1a4',
+      displayName: 'A2E Projects',
+      registered: true,
+      versionCompatible: true,
+      required: true,
+      currentlyInstalled: false,
+    },
+    {
+      universalIdentifier: 'e2dce399-87f1-4548-b307-5f368b4d5dd4',
+      displayName: 'A2E Chat',
       registered: true,
       versionCompatible: true,
       required: true,
@@ -110,13 +127,23 @@ export const individualTemplateApplyResult: ApplyTemplateResult = {
   operationId: '9f1c3a20-8f4e-4d9a-9c1e-2b6a7d8e9f01',
   requestedTemplateKeyVersion: {
     key: WorkspaceTemplate.INDIVIDUAL,
-    version: 1,
+    version: 2,
   },
-  appliedTemplateKeyVersion: { key: WorkspaceTemplate.INDIVIDUAL, version: 1 },
+  appliedTemplateKeyVersion: { key: WorkspaceTemplate.INDIVIDUAL, version: 2 },
   steps: [
     {
       kind: 'install-app',
       targetUniversalIdentifier: '19126a9c-7cc0-4368-aaba-c7e5a87b0c48',
+      status: 'succeeded',
+    },
+    {
+      kind: 'install-app',
+      targetUniversalIdentifier: '4f759655-84f8-434d-9c76-ee1850e8c1a4',
+      status: 'succeeded',
+    },
+    {
+      kind: 'install-app',
+      targetUniversalIdentifier: 'e2dce399-87f1-4548-b307-5f368b4d5dd4',
       status: 'succeeded',
     },
     { kind: 'navigation-visibility', status: 'succeeded' },

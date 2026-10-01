@@ -59,9 +59,10 @@
         "Quality gates: for each touched package npx nx lint:diff-with-main <pkg> clean and npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest specs green with --config=packages/twenty-server/jest.config.mjs (and twenty-front if OnboardingInstallableApps.ts touched); a2e-workspace slice: yarn typecheck && yarn lint && yarn test:unit && npx twenty dev:build . green; no i18n catalog churn; no AI attribution"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-NAV (onboarding/constants + a2e-workspace). UNLOCKS US-134 (chat nesting) and feeds US-164 (M13b catalogue copy). D-B1 is decided by executing recommendation (a) — not decision-gated; the PLAN itself says 'Record in phase report'.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-134",
@@ -369,6 +370,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T15:39:58.151Z"
+    "updatedAt": "2026-10-01T15:55:49.452Z"
   }
 }

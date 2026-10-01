@@ -213,7 +213,8 @@ describe('WorkspaceTemplateService idempotency and concurrency', () => {
       retryResults.push(await applyOperation(idempotencyKey));
     }
 
-    expect(installApplication).toHaveBeenCalledTimes(1);
+    // The Bureau bundle has three install steps; all run exactly once.
+    expect(installApplication).toHaveBeenCalledTimes(3);
     expect(workspaceUpdate).toHaveBeenCalledTimes(1);
     expect(firstResult.operationId).toBe(idempotencyKey);
     expect(firstResult.steps[0]).toMatchObject({
@@ -226,6 +227,8 @@ describe('WorkspaceTemplateService idempotency and concurrency', () => {
       expect(retryResult).toEqual(firstResult);
       expect(retryResult.operationId).toBe(idempotencyKey);
       expect(retryResult.steps.map((step) => step.status)).toEqual([
+        'succeeded',
+        'succeeded',
         'succeeded',
         'succeeded',
         'succeeded',
@@ -251,7 +254,7 @@ describe('WorkspaceTemplateService idempotency and concurrency', () => {
 
     // The second caller waited for the lock, then read the persisted operation
     // instead of installing again.
-    expect(installApplication).toHaveBeenCalledTimes(1);
+    expect(installApplication).toHaveBeenCalledTimes(3);
     expect(workspaceUpdate).toHaveBeenCalledTimes(1);
     expect(firstResult).toEqual(secondResult);
     expect(firstResult.operationId).toBe(idempotencyKey);
@@ -287,7 +290,7 @@ describe('WorkspaceTemplateService idempotency and concurrency', () => {
     expect(findOneByUniversalIdentifierGlobal.mock.calls.length).toBe(
       registrationLookupsAfterFirstRun,
     );
-    expect(installApplication).toHaveBeenCalledTimes(1);
+    expect(installApplication).toHaveBeenCalledTimes(3);
     expect(retryResult).toEqual(firstResult);
   });
 });
