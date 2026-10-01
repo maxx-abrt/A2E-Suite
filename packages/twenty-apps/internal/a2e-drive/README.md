@@ -20,12 +20,18 @@ and install the app on a disposable workspace.
 
 ## Where users find it
 
-- Sidebar entry **Archive** → the native `/drive` page (the nav item is an
-  in-app LINK target, US-101)
-  ([drive.navigation-menu-item.ts](./src/navigation-menu-items/drive.navigation-menu-item.ts)).
+- Sidebar folder **Archive** grouping the app's managed rows (M7c Archive leg);
+  its **Files** row opens the native `/drive` page (the row is an in-app LINK
+  target, US-101)
+  ([archive-folder.navigation-menu-item.ts](./src/navigation-menu-items/archive-folder.navigation-menu-item.ts),
+  [drive.navigation-menu-item.ts](./src/navigation-menu-items/drive.navigation-menu-item.ts)).
 - Native page at route `/drive` (`AppPath.Drive`,
   [DrivePage.tsx](../../../twenty-front/src/pages/drive/DrivePage.tsx)). The
-  page is a front surface that reads and writes this app's metadata.
+  page is a front surface that reads and writes this app's metadata. At its root
+  it carries the Archive landing strip (M7f): the primary **Upload** action, a
+  **New folder** action, three folder-structure starters and the usage readout
+  ([ArchiveLanding.tsx](../../../twenty-front/src/modules/drive/components/ArchiveLanding.tsx)),
+  install-gated on this app.
 - A Drive usage summary widget
   ([DriveUsageWidget.tsx](../../../twenty-front/src/modules/drive/components/DriveUsageWidget.tsx))
   renders the storage/quota readout. Its host surface is being re-homed from

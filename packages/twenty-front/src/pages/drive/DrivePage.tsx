@@ -7,6 +7,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
+import { ArchiveLanding } from '@/drive/components/ArchiveLanding';
 import { DriveBreadcrumb } from '@/drive/components/DriveBreadcrumb';
 import { DriveBulkActions } from '@/drive/components/DriveBulkActions';
 import { DriveBulkResultNotice } from '@/drive/components/DriveBulkResultNotice';
@@ -56,6 +57,7 @@ import {
   listDriveMoveTargets,
 } from '@/drive/utils/driveFolderTree';
 import { getDriveFilePreviewValue } from '@/drive/utils/driveFilePreview';
+import { buildDriveUsageSummary } from '@/drive/utils/driveUsage';
 import {
   selectDriveFilesInRange,
   toggleDriveFileId,
@@ -249,6 +251,13 @@ export const DrivePage = () => {
   const trashedFiles = useMemo(
     () => files.filter((file) => isDriveRecordInTrash(file.archivedAt)),
     [files],
+  );
+
+  // The landing's usage indicator is a projection of the same live files the
+  // explorer already reads, so the strip adds no query of its own.
+  const usageSummary = useMemo(
+    () => buildDriveUsageSummary({ files: liveFiles }),
+    [liveFiles],
   );
 
   const folderTree = useMemo(
@@ -657,6 +666,13 @@ export const DrivePage = () => {
                   />
                 )}
               </StyledHeader>
+              {!isDefined(selectedFolderId) && (
+                <ArchiveLanding
+                  onUpload={handleOpenUploadPicker}
+                  onCreateFolder={handleCreateFolder}
+                  usageSummary={usageSummary}
+                />
+              )}
               <DriveToolbar
                 viewMode={viewMode}
                 onChangeViewMode={setViewMode}

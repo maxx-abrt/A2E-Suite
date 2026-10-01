@@ -77,6 +77,11 @@ export const LOGIC_FUNCTION_IDS = {
 
 export const NAVIGATION_MENU_ITEM_IDS = {
   drive: 'c31d0000-0010-4000-8000-000000000001',
+  // One collapsible folder for the whole Archive surface (M7c Archive leg): the
+  // app's managed rows nest under it so the sidebar shows a single "Archive"
+  // group rather than a loose row per app feature. a2e-drive owns it and its own
+  // rows point their folderUniversalIdentifier here.
+  archiveFolder: 'c31d0000-0010-4000-8000-000000000002',
 } as const;
 
 // View fields are positional, so their identifiers are derived. `viewFamily`
