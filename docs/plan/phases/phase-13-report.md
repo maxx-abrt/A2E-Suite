@@ -767,3 +767,33 @@ CLAIMED — US-146/quick-capture-daily-note — deepseek-v4.1-flash — 2026-10-
 **Do not redo:** the in-flight US-146 slice — do not add/rename quick-capture files, touch `MainAppLayoutWithSidePanel.tsx`, append a second `CLAIMED`, or revert the work. Let the claiming executor finish and report.
 **Remaining:** US-146…US-149 plus batch 14B.
 **Next:** orchestrator — wait for the claiming executor's `done-for-review` on US-146; if it stalls with the slice half-built, adjudicate the stale claim and re-dispatch. Executor side: do not resume US-146 while the claim is unexpired.
+
+## 2026-10-01 18:01 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-146 M8e: quick capture & daily note — Cmd+Shift+N / Cmd+K 'New page' + opt-in daily note from Agenda · **Slice:** the first unmet acceptance bullet — quick capture (AC2/AC4/AC5): Cmd+Shift+N + Cmd+K "New page" create an untitled document in the personal root via the native create path and open it, install-gated on a2e-documents.
+**Claim:** partial
+**Ready-to-tick:** no — the quick-capture slice is green, but the task's daily-note-from-Agenda bullet (AC3) is not implemented, so the task is not complete.
+**Base:** bd94bb38ea4abb3383313f1d22358049dde8ca81 (HEAD advanced to 6f690fbf by a parallel Ralph engine commit that swept this slice; see Evidence)
+**Changed:** (all committed to HEAD `6f690fbf`)
+- `twenty-front/.../quick-capture/utils/newPageDocument.ts` (NEW: `A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER`, `isDocumentApplicationInstalled`, `buildNewPageCreatePlan` → untitled `document` at root, no `parentId`)
+- `twenty-front/.../quick-capture/hooks/useIsDocumentApplicationInstalled.ts` (NEW: install gate off `applicationsSelector`)
+- `twenty-front/.../quick-capture/hooks/useCreateNewPage.ts` (NEW: `useCreateOneRecord({objectNameSingular:'document'})` → `useOpenRecordInSidePanel({isNewRecord:true, resetNavigationStack:true})`, error snackbar)
+- `twenty-front/.../quick-capture/hooks/useNewPageCommand.ts` (NEW: `NEW_PAGE_COMMAND_ID='new-page'`, t`New page`, search + install gate)
+- `twenty-front/.../quick-capture/components/NewPageCommand.tsx` (NEW: Cmd+K entry, `IconPlus`, SelectableListItem/CommandMenuItem pattern)
+- `twenty-front/.../quick-capture/components/NewPageHotKeyGate.tsx` (NEW: `meta/ctrl+shift+n` via `useGlobalHotkeys`, only mounted while a2e-documents is installed)
+- `twenty-front/.../command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx` (wire the new command into "Other")
+- `twenty-front/.../ui/layout/page/components/MainAppLayoutWithSidePanel.tsx` (mount `<NewPageHotKeyGate />`)
+- tests (NEW): `quick-capture/utils/__tests__/newPageDocument.test.ts`, `quick-capture/hooks/__tests__/useNewPageCommand.test.tsx`, `quick-capture/hooks/__tests__/useCreateNewPage.test.tsx`
+**Checks:**
+- `cd packages/twenty-front && npx jest src/modules/quick-capture --config=jest.config.mjs` → 4 suites / 24 tests pass
+- `cd packages/twenty-front && npx jest --findRelatedTests <8 changed src files> --config=jest.config.mjs` → 6 suites / 23 tests pass (includes `MainAppLayoutWithSidePanel.test.tsx`)
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx oxlint --type-aware -c .oxlintrc.json <11 touched files>` → 0 warnings / 0 errors; `npx oxfmt --check <same>` → clean
+- `npx nx lint:diff-with-main twenty-front` → exit 0 but "No changed files" (branch is `main`, `main...HEAD` is empty); direct oxlint/oxfmt run above is the substantive evidence, matching the established convention
+- no `locales/**` touched; canonical icon (`IconPlus`, action per icon-dictionary rule 2); no AI attribution
+**Missing for tick:**
+- **AC3 (daily note):** the Agenda day-header opt-in daily-note affordance is not built. Needs: an opt-in setting/first-use prompt, a day-header action in `CalendarDayView`/`CalendarWeekView`/`CalendarAgendaView`, and a host apply call to a2e-documents `apply-template` (`key: 'note-quotidienne'`) through `ExecuteOneLogicFunction`, with a deterministic per-date `operationId` for "one note per date (idempotent re-open)". The gallery apply path currently ignores `created` for navigation, so the created-record open step must be added.
+- **Tier 2 (orchestrator):** browser — press Cmd+Shift+N on any page → untitled doc opens in the side panel; Agenda day header → daily note.
+- **Parallel-session contamination:** a concurrent `ralph-tui run` (session `20784e55`) reported `blocked` on this slice, and its engine commit `6f690fbf` (subject "US-146") swept this slice's files into git AND set `tasks/prd-batch-a.json` `US-146.passes=true` + `completionNotes:"Completed by agent"` although AC3 is unmet. That tracker flag is premature — adjudicate against this report, not the JSON.
+**Do not redo:** the whole quick-capture slice above — it is green and committed. Reuse `useCreateNewPage`/`newPageDocument` rather than adding a second create path; extend `useCreateNewPage` or add a sibling for the daily note. `useOpenRecordInSidePanel` is the open seam.
+**Remaining:** AC3 (daily note) for US-146, then US-147…US-149 plus batch 14B.
+**Next:** orchestrator — decide whether to resume US-146 for AC3 (daily note) or tick AC2/AC4/AC5 only. If resuming, implement the Agenda day-header daily-note affordance with a deterministic per-date operation id against `apply-template`. Tier-2 browser pass for Cmd+Shift+N is also open.
