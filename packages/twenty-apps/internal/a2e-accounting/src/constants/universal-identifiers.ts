@@ -110,6 +110,8 @@ export const LOGIC_FUNCTION_IDS = {
   stampInvoiceNumber: 'b11a0000-0012-4000-8000-00000000000c',
   // C1 read-only descriptor source consumed by the M9a-2 gallery (US-117).
   listTemplateDescriptors: 'b11a0000-0012-4000-8000-00000000000d',
+  // C1 write path: applies a listed descriptor by key (M9a-3 / US-131).
+  applyTemplate: 'b11a0000-0012-4000-8000-00000000000e',
 } as const;
 
 export const FRONT_COMPONENT_IDS = {

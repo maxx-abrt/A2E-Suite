@@ -243,6 +243,19 @@ export default defineObject({
       defaultValue: false,
     },
     {
+      // M9a-3 apply idempotency (US-131): the operation id of the gallery
+      // apply that created this fiche, so a retried apply finds the row and
+      // creates no duplicate. Null on human-made fiches.
+      universalIdentifier: 'b11a0900-0001-4000-8000-00000000000d',
+      type: FieldType.TEXT,
+      name: 'templateApplyOperationId',
+      label: 'Opération de modèle',
+      description:
+        'Identifiant d’idempotence de l’application du modèle qui a créé la fiche',
+      icon: 'IconTemplate',
+      isNullable: true,
+    },
+    {
       universalIdentifier: RELATION_IDS.ficheSavedSubvention,
       type: FieldType.RELATION,
       name: 'savedSubvention',

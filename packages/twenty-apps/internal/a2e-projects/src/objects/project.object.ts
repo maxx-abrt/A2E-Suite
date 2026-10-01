@@ -158,6 +158,19 @@ export default defineObject({
       isNullable: true,
     },
     {
+      // M9a-3 apply idempotency (US-131): the operation id of the gallery
+      // apply that created this project, so a retried apply finds the row and
+      // creates no duplicate. Null on human-made and installed projects.
+      universalIdentifier: PROJECT_FIELD_IDS.applyOperationId,
+      type: FieldType.TEXT,
+      name: 'templateApplyOperationId',
+      label: 'Opération de modèle',
+      description:
+        'Identifiant d’idempotence de l’application du modèle qui a créé le projet',
+      icon: 'IconTemplate',
+      isNullable: true,
+    },
+    {
       // Trash lifecycle field (P4.3): present = in the corbeille, restore
       // clears it, the purge cron destroys past 7 days (P3 mirror).
       universalIdentifier: 'c31b0200-0001-4000-8000-00000000000b',

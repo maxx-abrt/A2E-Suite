@@ -1,7 +1,7 @@
 {
   "name": "A2E Suite — executor batch 14A (2026-10-01, base e952bf15): M7–M13 experience program, high-unlock half",
-  "branchName": "main",
   "description": "Fresh re-scan of PLAN.md (M0–M13 milestones + current-state ledger + historical P1–P10) at HEAD e952bf15, phase reports through phase-16.\n\nPRIORITY 0 FINDING: both defects from the 2026-09-22 live Tier-2 pass are ALREADY FIXED at HEAD — (1) a2e-projects install-time schema-build failure (US-074, re-proven live 2026-09-22, M1a install legs 5/5); (2) CRM nav-restore defect (US-075 + provenance follow-up, verified live STUDENT→CRM restore×3). US-076 (INSTALL_APP idempotency), US-077 (allowlist), US-078/079 (bundled provisioning), US-080 (upgrade cursor reachability), US-081 (install log hygiene) are also consumed. No PRIORITY-0 story is extracted; their remaining legs are Tier-2 only.\n\nThe historical P1–P10 ledger is exhausted for Tier-0/1 work (batches 8–10 adjudication; 2026-10-01 orchestrator passes consumed US-109–US-116) with ONE exception extracted here: the P4.2 task-calendar GroupByTasks GraphQL-complexity defect (2001 > 2000), explicitly 'queued for an executor' in PLAN.md.\n\nAll other executor-completable work lives in the M7–M13 suite program (PLAN revision 2026-09-27), whose 2026-10-01 annotations record precisely which legs remain: M7c chat-nesting/Bilan-reduction/Archive-folder, M7e (D-B1 execution), M7f landings, M8a date/reminder+stories, M8b editable half, M8d–g, M9a entry-points + apply path, M9b mount, M9c Agenda/Syna families, M10a model-registry consumption, M10b selection toolbar, M10d gating/usage, M11a implementation legs (D-M11A-LINK decided), M11c–e, M12b/d/f/g, M13a–f.\n\nEXCLUDED (deferred — needs orchestrator, Tier 2): M0a five browser journeys; P1.1/P1.3/P1.6c/P1.6d/P1.7c browser+codegen legs; P2.1 real-handshake/fan-out/revocation legs; P2.4/P2.5 (p95@10k, searchAppRecords re-proof); P3.2/P3.3 browser legs; P4.1 live install + human-ID concurrency proof; P4.2/P4.3 render proofs; P4C.3 browser proof; P5 two-session + a2e-chat live chain; P6 drive journey; P8 live push/email; P9.1 live dispatch; P9.3 live firing; P10 performance + final regression; M1 docker legs (environment-blocked, no docker); all M-milestone E13–E17 browser rounds.\n\nEXCLUDED (deferred — blocked upstream): ALL P7 bullets (21, P7.0 gate proofs open — install passing is not gate-closed); P4C.4 server leg (P4C.3 browser proof); P4C.5 + P4.3 calendar links (P4.1 live proof); P9.2 Projects AI + P9.2b + P9.3 invoice leg (P7-gated); M9c 'invoice paid' recipe (DEFERRED precedent).\n\nEXCLUDED (deferred — decision-gated): M9d app-set expansion (D02); M7e alternative (b) thin a2e-bureau (D-B1 option recorded, (a) is the recommendation); M8a equation block (D07); M12f provisioning-mechanism wording beyond shipped state (D-M1 docker legs); M9c per-template fr+en i18n layer (documented SDK deviation, no i18n layer in packages/twenty-apps/internal/*).\n\nEXCLUDED (platform cap): M7c 'Mes tâches under Bureau folder' (2-level nav depth cap; needs a platform change — left to maintainer).\n\nOrdering: unlock-impact first (M9a apply path → entry-points → M7e bundle → M10 model-registry → the user-facing P4.2 defect), then phase-report 'Next:' lines. 19 stories, US-131–US-149. Batch 14B (US-150–US-169) carries M7f landings, M8f/g, M11c–e, M12, M13.\n\nEvery story is executor-completable at Tier 0/1: no running app, no browser, no Tier-2 evidence claimed. Copy acceptance criteria verbatim from PLAN.md or the cited phase-report line; note starting state; append the Tier 0/1 quality-gate block.",
+  "branchName": "main",
   "userStories": [
     {
       "id": "US-131",
@@ -17,9 +17,10 @@
         "Quality gates: for each touched package npx nx lint:diff-with-main <pkg> clean and npx tsgo -p tsconfig.json --noEmit exit 0 (run tsgo directly, not nx typecheck); targeted npx jest specs green with --config=packages/<pkg>/jest.config.mjs; a2e-* app slices: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; bump each touched app's patch version once; no i18n catalog churn (never commit locales/*.po or locales/generated/*); no AI attribution"
       ],
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-TPL (a2e-*/src/lib/*template*, starter-*). HIGHEST UNLOCK: this write path is consumed by US-132 (entry-points), US-137 (save-as-template mount), US-150–153 (landing pages' template links), US-163 (M13a chooser), US-169 (M13f undo on apply). Phase-13-report line 215 records the deliberate deferral of exactly this slice.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-132",
@@ -38,7 +39,9 @@
       "priority": 2,
       "passes": false,
       "notes": "Lane L-TPL front (twenty-front/src/modules/template-gallery/** + command-menu). Unlocks US-137, US-146, US-150–153, US-163, US-165. Phase-13-report line 215 defers entry-points 'so the next session lands them together with their command tests'.",
-      "dependsOn": ["US-131"]
+      "dependsOn": [
+        "US-131"
+      ]
     },
     {
       "id": "US-133",
@@ -75,7 +78,9 @@
       "priority": 4,
       "passes": false,
       "notes": "Lane L-NAV. Completes the Bureau half of M7c (Mes tâches nesting stays excluded — 2-level depth cap). Phase-11-report line 64 names this as the next M7c leg.",
-      "dependsOn": ["US-133"]
+      "dependsOn": [
+        "US-133"
+      ]
     },
     {
       "id": "US-135",
@@ -129,7 +134,10 @@
       "priority": 7,
       "passes": false,
       "notes": "Lane L-TPL. Phase-13-report line 242: 'mount the save action (record surfaces + gallery) and the US-118 gallery entry-points together'. Depends on US-132 so the gallery surface it mounts into is reachable.",
-      "dependsOn": ["US-131", "US-132"]
+      "dependsOn": [
+        "US-131",
+        "US-132"
+      ]
     },
     {
       "id": "US-138",
@@ -220,7 +228,9 @@
       "priority": 12,
       "passes": false,
       "notes": "Lane L-TPL. PLAN ordering guidance: 'M9c content slices are ideal executor tasks: one template family per slice'. UNLOCKS US-160 (catalogue covers all families).",
-      "dependsOn": ["US-131"]
+      "dependsOn": [
+        "US-131"
+      ]
     },
     {
       "id": "US-143",
@@ -291,7 +301,10 @@
       "priority": 16,
       "passes": false,
       "notes": "Lane L-EDITOR/L-LINK boundary (command-menu + calendar host + documents). Depends on US-131 (apply path for the daily-note template) and US-132 (New-surface seam).",
-      "dependsOn": ["US-131", "US-132"]
+      "dependsOn": [
+        "US-131",
+        "US-132"
+      ]
     },
     {
       "id": "US-147",
@@ -327,7 +340,9 @@
       "priority": 18,
       "passes": false,
       "notes": "Lane L-LINK. Depends on the a2e-links junction existing (US-147).",
-      "dependsOn": ["US-147"]
+      "dependsOn": [
+        "US-147"
+      ]
     },
     {
       "id": "US-149",
@@ -345,7 +360,14 @@
       "priority": 19,
       "passes": false,
       "notes": "Lane L-LINK. Completes M11a at Tier 1. Reuses US-139's mention read model where a document-mention row is the link (co-reference, not duplication).",
-      "dependsOn": ["US-147", "US-139", "US-148"]
+      "dependsOn": [
+        "US-147",
+        "US-139",
+        "US-148"
+      ]
     }
-  ]
+  ],
+  "metadata": {
+    "updatedAt": "2026-10-01T15:21:11.243Z"
+  }
 }

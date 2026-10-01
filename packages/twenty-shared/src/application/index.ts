@@ -184,6 +184,21 @@ export type { SkillManifest } from './skillManifestType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
 export {
+  isTemplateApplyApplied,
+  isTemplateApplyRejected,
+  isTemplateApplyResult,
+  resolveTemplateApplyRequestError,
+} from './templateApplyGuards';
+export type {
+  TemplateApplyErrorCode,
+  TemplateApplyCreatedRecord,
+  TemplateApplyApplied,
+  TemplateApplyRejected,
+  TemplateApplyResult,
+  TemplateApplyInstalledApplications,
+  TemplateApplyRequestRejection,
+} from './templateApplyType';
+export {
   isTemplateDescriptorLabels,
   isTemplateDescriptorInput,
   isTemplateDescriptorPreviewWrite,

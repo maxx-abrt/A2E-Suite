@@ -53,6 +53,14 @@ export const DOCUMENT_CHROME_FIELD_IDS = {
   isLocked: 'c31a0100-0001-4000-8000-000000000010',
 } as const;
 
+// M9a-3 template-apply provenance (US-131). Set on the document a gallery
+// apply created, so a retried apply with the same operation id finds its row
+// instead of duplicating it. Null on human-made documents. Suffix continues the
+// object 01 own-field sequence after the chrome fields (…0010).
+export const DOCUMENT_TEMPLATE_FIELD_IDS = {
+  applyOperationId: 'c31a0100-0001-4000-8000-000000000011',
+} as const;
+
 export const LOGIC_FUNCTION_IDS = {
   postInstall: 'c31a0000-0012-4000-8000-000000000001',
   purgeArchivedDocuments: 'c31a0000-0012-4000-8000-000000000002',
@@ -64,6 +72,8 @@ export const LOGIC_FUNCTION_IDS = {
   improveDocumentWriting: 'c31a0000-0012-4000-8000-000000000008',
   // C1 read-only descriptor source consumed by the M9a-2 gallery (US-117).
   listTemplateDescriptors: 'c31a0000-0012-4000-8000-000000000009',
+  // C1 write path: applies a listed descriptor by key (M9a-3 / US-131).
+  applyTemplate: 'c31a0000-0012-4000-8000-00000000000a',
 } as const;
 
 export const COMMAND_MENU_ITEM_IDS = {

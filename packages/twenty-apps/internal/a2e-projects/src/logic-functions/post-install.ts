@@ -2,11 +2,8 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { definePostInstallLogicFunction } from 'twenty-sdk/define';
 
 import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
-import {
-  findMissingStarterProjects,
-  resolveMilestoneDueAt,
-  type StarterProjectTemplate,
-} from '../lib/starter-projects.ts';
+import { createStarterProject } from '../lib/create-starter-project.ts';
+import { findMissingStarterProjects } from '../lib/starter-projects.ts';
 
 // INSTALL = READY TO USE.
 //
@@ -14,7 +11,8 @@ import {
 // usable projects (livraison, rétroplanning d'événement, sprint, contenu,
 // recrutement, onboarding, refonte, semestre, AG, subvention, bugs,
 // objectifs), their tasks on the board and milestones on the calendar. Every
-// step is idempotent, because an app can be reinstalled.
+// step is idempotent, because an app can be reinstalled. The project write path
+// is shared with the M9a-3 gallery apply (`lib/create-starter-project.ts`).
 
 const coreClient = (): CoreApiClient => new CoreApiClient();
 
@@ -40,75 +38,6 @@ const findExistingProjectKeys = async (
     .filter((key): key is string => typeof key === 'string');
 };
 
-const createStarterProject = async (
-  client: CoreApiClient,
-  starterProject: StarterProjectTemplate,
-  now: Date,
-): Promise<void> => {
-  const result = (await client.mutation({
-    createProjects: {
-      __args: {
-        data: [
-          {
-            name: starterProject.name,
-            key: starterProject.key,
-            status: starterProject.status,
-            health: starterProject.health,
-            // `description` is RICH_TEXT: the scalar string is a live-input
-            // error ("Invalid object value"), the markdown arm is the shape.
-            description: { markdown: starterProject.description },
-          },
-        ],
-      },
-      id: true,
-    },
-  } as never)) as { createProjects?: { id: string }[] };
-
-  const projectId = result?.createProjects?.[0]?.id;
-
-  if (projectId === undefined) {
-    return;
-  }
-
-  // Tasks and milestones are created after the project so the board opens
-  // populated on first visit. Relation FKs go through the join-column scalar
-  // (same payload shape as the ledger writer in a2e-accounting).
-  const tasks = starterProject.tasks;
-
-  if (tasks.length > 0) {
-    await client.mutation({
-      createTasks: {
-        __args: {
-          data: tasks.map((starterTask) => ({
-            title: starterTask.title,
-            position: 'last',
-            projectId,
-            projectStatus: starterTask.projectStatus,
-          })),
-        },
-        id: true,
-      },
-    } as never);
-  }
-
-  const milestones = starterProject.milestones;
-
-  if (milestones.length > 0) {
-    await client.mutation({
-      createMilestones: {
-        __args: {
-          data: milestones.map((starterMilestone) => ({
-            name: starterMilestone.name,
-            dueAt: resolveMilestoneDueAt(starterMilestone.dueInDays, now),
-            projectId,
-          })),
-        },
-        id: true,
-      },
-    } as never);
-  }
-};
-
 const handler = async () => {
   const client = coreClient();
   const now = new Date();
@@ -117,7 +46,7 @@ const handler = async () => {
   const missingProjects = findMissingStarterProjects(existingProjectKeys);
 
   for (const starterProject of missingProjects) {
-    await createStarterProject(client, starterProject, now);
+    await createStarterProject(client, starterProject, { now });
   }
 
   console.log('[a2e-projects] Installation terminée', {

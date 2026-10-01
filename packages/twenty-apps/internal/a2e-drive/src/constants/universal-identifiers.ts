@@ -38,6 +38,9 @@ export const FOLDER_FIELD_IDS = {
   // folder, null for a user folder. The seeder deltas on it, so re-applying a
   // template never duplicates a subtree.
   templateKey: 'c31d0100-0001-4000-8000-000000000005',
+  // M9a-3 apply idempotency (US-131): set on the root folder a gallery apply
+  // created, so a retried apply finds its tree instead of duplicating it.
+  applyOperationId: 'c31d0100-0001-4000-8000-000000000006',
 } as const;
 
 // Fields pinned on the standard `attachment` object. The relation field is
@@ -68,6 +71,8 @@ export const LOGIC_FUNCTION_IDS = {
   postInstall: 'c31d0000-0012-4000-8000-000000000005',
   // C1 read-only descriptor source consumed by the M9a-2 gallery (US-117).
   listTemplateDescriptors: 'c31d0000-0012-4000-8000-000000000006',
+  // C1 write path: applies a listed descriptor by key (M9a-3 / US-131).
+  applyTemplate: 'c31d0000-0012-4000-8000-000000000007',
 } as const;
 
 export const NAVIGATION_MENU_ITEM_IDS = {

@@ -80,6 +80,19 @@ export default defineObject({
       isNullable: true,
     },
     {
+      // M9a-3 apply idempotency (US-131): set on the root folder a gallery
+      // apply created, so a retried apply finds its tree instead of
+      // duplicating it. Null on installed and user folders.
+      universalIdentifier: FOLDER_FIELD_IDS.applyOperationId,
+      type: FieldType.TEXT,
+      name: 'templateApplyOperationId',
+      label: 'Opération de modèle',
+      description:
+        'Identifiant d’idempotence de l’application du modèle qui a créé ce dossier',
+      icon: 'IconTemplate',
+      isNullable: true,
+    },
+    {
       universalIdentifier: RELATION_IDS.folderParent,
       type: FieldType.RELATION,
       name: 'parent',

@@ -97,6 +97,9 @@ export const RELATION_IDS = {
 export const PROJECT_FIELD_IDS = {
   isTemplate: 'c31b0200-0001-4000-8000-00000000000e',
   recipeCorrelationKey: 'c31b0200-0001-4000-8000-00000000000c',
+  // M9a-3 apply idempotency (US-131): the operation id of the gallery apply
+  // that created this project, so a retried apply finds its row.
+  applyOperationId: 'c31b0200-0001-4000-8000-00000000000f',
 } as const;
 
 // The cross-app recipe family (US-107) mints one such provenance field per
@@ -137,6 +140,8 @@ export const LOGIC_FUNCTION_IDS = {
   taskDueReminder: 'c31b0000-0012-4000-8000-000000000014',
   // C1 read-only descriptor source consumed by the M9a-2 gallery (US-117).
   listTemplateDescriptors: 'c31b0000-0012-4000-8000-000000000015',
+  // C1 write path: applies a listed descriptor by key (M9a-3 / US-131).
+  applyTemplate: 'c31b0000-0012-4000-8000-000000000016',
 } as const;
 
 // Task-extension fields live on the standard task object (app fields,
