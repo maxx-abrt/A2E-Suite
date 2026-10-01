@@ -375,16 +375,17 @@
         "Quality gates: a2e-links: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; twenty-front tsgo clean if front components touched; targeted npx jest green; bump a2e-links patch version once; Lingui fr+en; no i18n catalog churn; no AI attribution"
       ],
       "priority": 19,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-LINK. Completes M11a at Tier 1. Reuses US-139's mention read model where a document-mention row is the link (co-reference, not duplication).",
       "dependsOn": [
         "US-147",
         "US-139",
         "US-148"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T18:36:14.691Z"
+    "updatedAt": "2026-10-01T19:02:34.052Z"
   }
 }

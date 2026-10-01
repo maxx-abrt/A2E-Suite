@@ -62,3 +62,27 @@ export const SELECT_OPTION_IDS = {
   linkTypeUserLink: 'c31f0100-0005-4000-8000-000000000001',
   linkTypeMention: 'c31f0100-0005-4000-8000-000000000002',
 } as const;
+
+// M11a-i3 "Related" surface. App-level (OO=00) identifiers: the front
+// components and the standalone tabs are cross-object surfaces (document +
+// task), not fields of the a2eLink object. Families follow A2E Documents:
+// 0009 page-layout tab, 000a widget, 0013 front component.
+export const FRONT_COMPONENT_IDS = {
+  documentRelatedLinks: 'c31f0000-0013-4000-8000-000000000001',
+  taskRelatedLinks: 'c31f0000-0013-4000-8000-000000000002',
+} as const;
+
+export const PAGE_LAYOUT_TAB_IDS = {
+  documentRelated: 'c31f0000-0009-4000-8000-000000000001',
+  documentRelatedWidget: 'c31f0000-000a-4000-8000-000000000001',
+  taskRelated: 'c31f0000-0009-4000-8000-000000000002',
+  taskRelatedWidget: 'c31f0000-000a-4000-8000-000000000002',
+} as const;
+
+// A2E Documents owns the document record page (c31a…), so its page-layout
+// universal identifier is a known cross-app target at install time — the same
+// coupling as EXTERNAL_OBJECT_IDS.document. A2E Documents installs first
+// (provider-before-consumer), so the referenced layout always exists when the
+// Related tab is added.
+export const DOCUMENT_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  'c31a0100-0008-4000-8000-000000000001';

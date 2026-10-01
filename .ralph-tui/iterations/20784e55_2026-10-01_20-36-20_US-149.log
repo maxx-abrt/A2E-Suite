@@ -1,0 +1,124 @@
+# Iteration 8 Log
+
+## Metadata
+
+- **Task ID**: US-149
+- **Task Title**: M11a-i3: 'Related' FRONT_COMPONENT tab — links + backlinks on record pages
+- **Description**: As a user, I want a Related tab on record pages listing everything linked to or from this record so that connections are visible in both directions. Starting state: not started; per US-125 spike: 'bac...
+- **Status**: completed
+- **Task Completed**: No
+- **Promise Detected**: No
+- **Started At**: 2026-10-01T18:36:20.241Z
+- **Ended At**: 2026-10-01T18:45:57.382Z
+- **Duration**: 9m 37s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-149" PLAN.md
+[94m[bash][0m $ grep -rn "US-149\|M11a-i3\|Related.*FRONT_COMPONENT" PLAN.md docs/ tasks/ 2>/dev/null | head -50
+[94m[bash][0m $ grep -n "M11a\|M11" PLAN.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd-batch-a.json
+[94m[bash][0m $ grep -n "US-149\|CLAIMED\|US-148\|US-147" docs/plan/phases/phase-15-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-15-report.md
+[94m[bash][0m $ find "packages/twenty-apps/internal/a2e-links" -type f -not -path "*/node_modules/*" -not -path "*/....
+[94m[bash][0m $ done
+[94m[bash][0m $ done
+[94m[bash][0m $ find "packages/twenty-front/src/modules/a2e-links" -type f | sort
+[94m[bash][0m $ done
+[94m[bash][0m $ done
+[94m[bash][0m $ find "packages/twenty-apps/internal/a2e-documents/src" -type f | sort
+[94m[bash][0m $ done
+[94m[bash][0m $ find packages/twenty-front/src -iname "*FrontComponent*" -type f | sort
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-sdk -type f -iname "*front-component*" | head -30
+[94m[bash][0m $ find packages/twenty-sdk/src/sdk/front-component -type f | sort && echo "=====" && cat packages/twen...
+[94m[bash][0m $ done
+[94m[bash][0m $ find packages/twenty-sdk/src/sdk/define/front-component -type f
+[94m[bash][0m $ cat packages/twenty-sdk/src/sdk/define/front-component/define-front-component.ts packages/twenty-sdk...
+[94m[bash][0m $ grep -rn "selectedRecordIds\|timelineActivityId" packages/twenty-front/src/modules/front-components ...
+[94m[bash][0m $ grep -rn "selectedRecordIds" packages/twenty-front/src/modules/front-components packages/twenty-fron...
+[94m[bash][0m $ find packages/twenty-apps/internal -path "*a2e-chat*" -type f | sort
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-15-report.md
+[94m[bash][0m $ grep -rn "definePageLayoutTab\|STANDARD_PAGE_LAYOUT" packages/twenty-sdk/src/sdk/define --include=*....
+[94m[bash][0m $ done
+[94m[bash][0m $ grep -rn "companyRecordPage\|taskRecordPage\|documentRecordPage" packages/twenty-shared/src/metadata...
+[94m[bash][0m $ grep -rn "companyRecordPage\|taskRecordPage\|documentRecordPage" packages/twenty-shared/src 2>/dev/n...
+[94m[read][0m
+[94m[bash][0m $ grep -n "taskRecordPage" packages/twenty-shared/src/metadata/constants/standard-page-layout-universa...
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-apps/internal/real-estate/src -path "*page-layout*" -type f
+[94m[bash][0m $ grep -n "c31a0100-0008\|PAGE_LAYOUT\|FRONT_COMPONENT_IDS" packages/twenty-apps/internal/a2e-document...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts
+[94m[bash][0m $ find packages/twenty-apps -path "*/src/*" -name "*.page-layout-tab.ts" -not -path "*/node_modules/*"...
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-front/src/modules/ui/layout/contexts/LayoutRenderingContext.tsx 2>/dev/null || f...
+[94m[bash][0m $ cat packages/twenty-front/src/modules/ui/layout/contexts/TargetRecordIdentifier.ts
+[94m[bash][0m $ done
+[94m[bash][0m $ grep -n "\"name\"" packages/twenty-client-sdk/package.json 2>/dev/null
+[94m[bash][0m $ wc -l packages/twenty-client-sdk/dist/core/generated/schema.d.ts
+[94m[bash][0m $ rg -o "a2eLink[A-Za-z]*" packages/twenty-client-sdk/dist/core/generated/schema.d.ts | sort -u | head
+[94m[bash][0m $ grep -o "a2eLink[A-Za-z]*" packages/twenty-client-sdk/dist/core/generated/schema.d.ts | sort -u | he...
+[94m[bash][0m $ done
+[94m[bash][0m $ cat packages/twenty-client-sdk/dist/core/generated/index.d.ts
+[94m[bash][0m $ find packages/twenty-client-sdk -name "*.ts" -path "*generated*" -not -path "*/node_modules/*" | hea...
+[94m[bash][0m $ grep -rn "client.query" packages/twenty-apps/internal/*/src --include=*.tsx 2>/dev/null | head
+[94m[bash][0m $ grep -rln "CoreSchema" packages/twenty-apps/internal/*/src 2>/dev/null | head
+[94m[bash][0m $ grep -rn "CoreSchema\|client.query" packages/twenty-apps/internal/a2e-accounting/src/front-component...
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-links/src/lib/__tests__/a2e-links-integrity.test.ts
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-links && ls .twenty/output/ 2>/dev/null && echo "=== manifest =...
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-links && cat .twenty/output/manifest.json | python3 -c " import...
+[94m[bash][0m $ cat .twenty/output/manifest.json | python3 -c " import json,sys m=json.load(sys.stdin) print('frontC...
+[94m[bash][0m $ cat .twenty/output/manifest.json | python3 -c " import json,sys m=json.load(sys.stdin) print('pageLa...
+[94m[bash][0m $ redis-cli ping 2>&1 | head -1
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-links && npx twenty dev:build . 2>&1 | tail -8
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-links && cat .twenty/output/manifest.json | python3 -c " import...
+[94m[bash][0m $ find packages/twenty-sdk/src/cli/utilities/build -type d | grep -i "manifest" | head -30
+[94m[bash][0m $ ls packages/twenty-sdk/src/cli/utilities/build/manifest packages/twenty-sdk/src/cli/utilities/build/...
+[94m[bash][0m $ grep -n "page-layout-tab\|pageLayoutTab\|page-layouts\|pageLayout\|front-components\|entityType\|Ent...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/cli/utilities/build/manifest/manifest-extract-config.ts
+[94m[read][0m
+[94m[bash][0m $ grep -rn "page-layout-tabs\|page-layouts\|glob\|fast-glob\|walk\|entityFilePaths\|EntityFilePaths" p...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/cli/utilities/build/manifest/manifest-build.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/cli/utilities/build/manifest/manifest-build.ts
+[94m[bash][0m $ grep -n "ManifestEntityKey.PageLayoutTabs\|ManifestEntityKey.PageLayouts\|ManifestEntityKey.FrontCom...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/cli/utilities/build/manifest/manifest-build.ts
+[94m[bash][0m $ ls packages/twenty-sdk/dist/cli/utilities/build/manifest/ 2>/dev/null
+[94m[bash][0m $ console.log('bin',m.bin)"
+[94m[bash][0m $ console.log(Object.keys(m.exports).join('\n'))"
+[94m[bash][0m $ cat packages/twenty-sdk/dist/cli.cjs 2>/dev/null | head -c 300
+[94m[bash][0m $ grep -o "pageLayoutTabs" node_modules/twenty-sdk/dist/operations.cjs | head -1
+[94m[bash][0m $ ls node_modules/twenty-sdk/dist/ | head -30
+[94m[bash][0m $ " 2>&1 | head
+[94m[bash][0m $ console.log(Object.keys(m).slice(0,60))" 2>&1 | head
+[94m[bash][0m $ console.log(Object.keys(m).join('\n'))" 2>&1 | grep -i "manifest\|build\|layout\|develop\|dev"
+[94m[bash][0m $ " 2>&1 | head
+[94m[bash][0m $ " 2>&1 | head -5
+[94m[bash][0m $ " 2>&1 | head -5
+[94m[bash][0m $ " 2>&1 | head -20
+[94m[bash][0m $ } } " 2>&1 | head -30
+[94m[bash][0m $ " 2>&1 | head -40
+[94m[bash][0m $ } " 2>&1 | head
+[94m[bash][0m $ "
+[94m[bash][0m $ " | head -20
+[94m[bash][0m $ "
+[94m[bash][0m $ " 2>&1 | tail -30
+[94m[bash][0m $ "
+[94m[bash][0m $ } "
+[94m[bash][0m $ "
+[94m[bash][0m $ "
+[94m[bash][0m $ "
+[94m[bash][0m $ "
+[94m[bash][0m $ "
+[94m[bash][0m $ "
+[94m[bash][0m $ grep -n "PageLayoutTabs\|pageLayoutTabs\|DefinePageLayoutTab\|RT(\|t.mjs") /tmp/ct_dump.txt | head
+[94m[bash][0m $ grep -n "PageLayoutTabs\|pageLayoutTabs\|DefinePageLayoutTab" /tmp/ct_dump.txt | head
+[94m[read][0m /tmp/ct_dump.txt
+
+--- STDERR ---
+[93m[1m! [0mpermission requested: external_directory (/tmp/*); auto-rejecting

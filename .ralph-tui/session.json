@@ -3,10 +3,10 @@
   "sessionId": "20784e55-938f-43af-9035-82514fa8f305",
   "status": "running",
   "startedAt": "2026-10-01T17:35:39.318Z",
-  "updatedAt": "2026-10-01T18:36:14.691Z",
-  "currentIteration": 6,
+  "updatedAt": "2026-10-01T19:02:34.052Z",
+  "currentIteration": 8,
   "maxIterations": 20,
-  "tasksCompleted": 5,
+  "tasksCompleted": 6,
   "isPaused": false,
   "agentPlugin": "opencode",
   "model": "opencode-go/deepseek-v4.1-flash",
@@ -76,6 +76,26 @@
       "durationMs": 593149,
       "startedAt": "2026-10-01T18:10:13.686Z",
       "endedAt": "2026-10-01T18:20:06.835Z"
+    },
+    {
+      "iteration": 7,
+      "status": "completed",
+      "taskId": "US-148",
+      "taskTitle": "M11a-i2: universal link picker — 'Link…' searches all objects and creates an a2eLink",
+      "taskCompleted": true,
+      "durationMs": 961443,
+      "startedAt": "2026-10-01T18:20:13.247Z",
+      "endedAt": "2026-10-01T18:36:14.690Z"
+    },
+    {
+      "iteration": 8,
+      "status": "completed",
+      "taskId": "US-149",
+      "taskTitle": "M11a-i3: 'Related' FRONT_COMPONENT tab — links + backlinks on record pages",
+      "taskCompleted": false,
+      "durationMs": 577141,
+      "startedAt": "2026-10-01T18:36:20.241Z",
+      "endedAt": "2026-10-01T18:45:57.382Z"
     }
   ],
   "skippedTaskIds": [],

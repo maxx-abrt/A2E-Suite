@@ -27,8 +27,19 @@ The "Link…" picker (US-148) is the host-side universal linker in
 universal identifier. It searches the declared linkable set through the core
 `search` federation (`SingleRecordPicker` → `useObjectRecordSearchRecords`) and
 writes one `a2eLink` row per pair through the record-create primitive, using
-`linkKey` as the duplicate guard. The "Related" tab (US-149) is the remaining
-follow-up increment.
+`linkKey` as the duplicate guard.
+
+The "Related" tab (US-149) is an app-owned `FRONT_COMPONENT` tab, declared as a
+standalone page-layout tab on each first consumer target (`document`, `task`).
+It lists the current record's outgoing junction rows and its inbound rows read
+from the persisted inverse relation — no read-time scan — and deep-links each
+entry to its target. Only readable rows appear (a denied relation resolves to
+null and is dropped). The empty state offers a "Lier…" action; because a
+sandboxed front component cannot reach the host `SingleRecordPicker`, that
+action searches the declared linkable set and writes the identical `a2eLink`
+row (same `linkKey`, same morph FKs), so the two entry points share one store.
+Both tabs are app-owned, so uninstalling A2E Links removes them with no
+dangling surface.
 
 ## Install order
 
