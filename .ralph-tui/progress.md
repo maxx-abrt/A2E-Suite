@@ -100,3 +100,13 @@ after each iteration and it's included in prompts for context.
   - `RECORD_SELECTION` + `availabilityObjectUniversalIdentifier: <app object uid>` scopes a record action correctly; `targetObjectReadPermissions.<appObjectName>` works.
   - Still open for US-137: the **board view menu** mount (no view-availability primitive exists — needs a twenty-front core seam) and the **gallery** mount (list saved `isTemplate` rows), plus the Tier-2 round-trip.
 ---
+
+## 2026-10-01 - US-138
+- M8b-2 editable inline views: `resolveRecordViewEmbedState`'s ready state now carries `isUIEditable: objectPermissions.canUpdateObjectRecords`, and `RecordViewEmbedHost` passes it to `RecordTableWidgetRendererContent` (was hardcoded `false`). Denied-read still renders the US-123 safe stub; read-only is still the default when update rights are absent.
+- No forked write path: raising `isUIEditable` clears `isRecordTableCellsNonEditableComponentState` in `RecordTableWidgetStatesEffect`, so cell edits flow through the widget's existing `RecordTableUpdateContext` → `useUpdateOneRecord` mutation.
+- Files changed: `packages/twenty-front/src/modules/blocknote-editor/{utils/resolveRecordViewEmbedState.ts, components/RecordViewEmbedHost.tsx, utils/__tests__/resolveRecordViewEmbedState.test.ts, components/__tests__/RecordViewEmbedHost.test.tsx}`.
+- **Learnings:**
+  - The embedded view's persist path is entirely the shared record-table stack; the only host-level edit switch is the `isUIEditable` prop. `RecordTableWidgetStatesEffect` maps it to `isRecordTableCellsNonEditableComponentState`.
+  - Unit-testing the prop flip: capture the mocked `RecordTableWidgetRendererContent` arguments (`expect(mock).toHaveBeenCalledWith(expect.objectContaining({ isUIEditable: true }))`) rather than a live mutation.
+  - Tier-2 E14 browser round-trip still owed by the orchestrator.
+---

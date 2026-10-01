@@ -35,10 +35,15 @@ jest.mock('@/views/hooks/useViewById', () => ({
   useViewById: () => mockUseViewById(),
 }));
 
+const mockRecordTableWidgetRendererContent = jest.fn(
+  (_props: { isUIEditable?: boolean }) => <div>record view widget</div>,
+);
+
 jest.mock(
   '@/page-layout/widgets/record-table/components/RecordTableWidgetRendererContent',
   () => ({
-    RecordTableWidgetRendererContent: () => <div>record view widget</div>,
+    RecordTableWidgetRendererContent: (props: { isUIEditable?: boolean }) =>
+      mockRecordTableWidgetRendererContent(props),
   }),
 );
 
@@ -48,11 +53,12 @@ jest.mock('@/blocknote-editor/components/RecordViewEmbedViewPicker', () => ({
 
 const buildPermissions = (
   canReadObjectRecords: boolean,
+  canUpdateObjectRecords = true,
 ): Record<string, ObjectPermissions & { objectMetadataId: string }> => ({
   'task-metadata-id': {
     objectMetadataId: 'task-metadata-id',
     canReadObjectRecords,
-    canUpdateObjectRecords: true,
+    canUpdateObjectRecords,
     canSoftDeleteObjectRecords: true,
     canDestroyObjectRecords: true,
     restrictedFields: {},
@@ -90,6 +96,25 @@ describe('RecordViewEmbedHost', () => {
 
     expect(screen.getByText('record view widget')).toBeVisible();
     expect(screen.getByText('Tasks by project')).toBeVisible();
+  });
+
+  it('enables the widget edit pipeline when the object is updatable', () => {
+    renderHost();
+
+    expect(mockRecordTableWidgetRendererContent).toHaveBeenCalledWith(
+      expect.objectContaining({ isUIEditable: true }),
+    );
+  });
+
+  it('keeps the widget read-only when the object cannot be updated', () => {
+    mockObjectPermissions.mockReturnValue(buildPermissions(true, false));
+
+    renderHost();
+
+    expect(screen.getByText('record view widget')).toBeVisible();
+    expect(mockRecordTableWidgetRendererContent).toHaveBeenCalledWith(
+      expect.objectContaining({ isUIEditable: false }),
+    );
   });
 
   it('renders a safe permission stub and never the view when denied', () => {

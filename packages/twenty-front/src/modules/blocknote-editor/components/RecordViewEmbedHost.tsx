@@ -45,8 +45,11 @@ type RecordViewEmbedHostProps = {
 };
 
 // Hosts a live native view inside a page. Reuses the record-table widget stack
-// (the same tree the dashboard widgets use) read-only, and degrades to a safe
-// stub on missing metadata or denied permission — it never renders a raw error.
+// (the same tree the dashboard widgets use) and degrades to a safe stub on
+// missing metadata or denied permission — it never renders a raw error. The
+// view is read-only unless the object grants update rights, so the widget's own
+// cell-edit path persists through the standard record update mutation with no
+// forked write path.
 export const RecordViewEmbedHost = ({
   blockId,
   viewId,
@@ -107,7 +110,7 @@ export const RecordViewEmbedHost = ({
               objectMetadataId={state.objectMetadataId}
               viewId={viewId}
               widgetId={blockId}
-              isUIEditable={false}
+              isUIEditable={state.isUIEditable}
             />
           </ErrorBoundary>
         </PageLayoutComponentInstanceContext.Provider>

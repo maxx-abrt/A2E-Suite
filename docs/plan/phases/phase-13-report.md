@@ -506,3 +506,30 @@ CLAIMED — US-137/record-action-mount — deepseek-v4.1-flash — 2026-10-01T16
 **Do not redo:** the US-119 builders (`save-*-as-template.ts`) and their tests; the `isTemplate`/`templateApplyOperationId` fields; the US-131 `apply-template` functions and the US-132 gallery surface. The record-action mechanism is the standard `RECORD_SELECTION` command-menu item + headless `<Command>` front component (same as `save-record-as-document`); reuse it, do not invent a second record-action path.
 **Remaining:** the M9b mount legs (board view + gallery) and Tier-2, then the rest of Ralph's batch A (US-138…US-149) and batch 14B.
 **Next:** mount the board-view save from a twenty-front view-menu seam (call a projects `save-board-view` logic function with the current `ViewManifest`), then surface saved `isTemplate` records in `useTemplateGalleryItems`; do not add a core `view` column (board marker stays payload-side).
+
+CLAIMED — US-138/editable-record-view-embed — deepseek-v4.1-flash — 2026-10-01T16:35:09Z — base 397a82dce5e4b16e60ddc500fa82f7b314099acd
+
+## 2026-10-01 16:37 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-138 M8b-2: editable inline views — flip the embedded record view to isUIEditable with a working persist path · **Slice:** the first unmet bullet — drive `isUIEditable` from the object's `canUpdateObjectRecords` and pass it to the shared record-table widget (AC2–AC5)
+**Claim:** done-for-review
+**Ready-to-tick:** yes — all Tier-0 gates green; only the Tier-2 E14 browser leg is absent
+**Base:** 397a82dce5e4b16e60ddc500fa82f7b314099acd
+**Changed:**
+- `packages/twenty-front/src/modules/blocknote-editor/utils/resolveRecordViewEmbedState.ts` (ready state now carries `isUIEditable: objectPermissions.canUpdateObjectRecords`; comment updated)
+- `packages/twenty-front/src/modules/blocknote-editor/components/RecordViewEmbedHost.tsx` (`isUIEditable={false}` → `isUIEditable={state.isUIEditable}`; comment)
+- `.../utils/__tests__/resolveRecordViewEmbedState.test.ts` (+read-only case; ready assertions carry `isUIEditable`)
+- `.../components/__tests__/RecordViewEmbedHost.test.tsx` (mock captures the widget prop; +2 tests: editable when updatable, read-only when not)
+- this report + `.ralph-tui/progress.md`
+**Checks:**
+- `cd packages/twenty-front && npx jest src/modules/blocknote-editor/utils/__tests__/resolveRecordViewEmbedState.test.ts src/modules/blocknote-editor/components/__tests__/RecordViewEmbedHost.test.tsx --config=jest.config.mjs` → 2 suites / 11 tests pass (was 8)
+- `npx jest --findRelatedTests <2 changed sources> --config=jest.config.mjs` → 20 suites / 158 tests pass
+- `npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `npx oxlint --type-aware -c .oxlintrc.json <4 touched files>` → 0 warnings / 0 errors; `npx oxfmt --check <same>` → clean
+- `npx nx lint:diff-with-main twenty-front` → clean ("No changed files" — reports on `main...HEAD`; uncommitted tree)
+- no new user-facing strings (no Lingui change); no `locales/**` touched; no AI attribution
+**Missing for tick:**
+- **Tier 2 (orchestrator):** E14 browser — embed a Tasks board filtered by project → edit a cell → confirm the change on `/objects/tasks`; plus the permission-denied stub render.
+- The persist path is the shared record-table update mutation (`RecordTableContextProvider`'s `useUpdateOneRecord`) reached through the widget's own `isUIEditable` cell-edit pipeline; the host unit test asserts the widget receives `isUIEditable=true`, not a live mutation (that would need the full provider tree + server). No forked mutation was added.
+**Do not redo:** the `recordView` block + picker + safe stub + provider wrapping from US-123; the `RecordTableWidgetRendererContent`/`RecordTableWidgetProvider` edit pipeline (cell edits already route through `useUpdateOneRecord` once `isRecordTableCellsNonEditableComponentState` is false — `RecordTableWidgetStatesEffect` sets it from `isUIEditable`). Read-only remains the default; the denied stub is unchanged.
+**Remaining:** the rest of Ralph's batch A (US-139…US-149) and batch 14B.
+**Next:** orchestrator runs the E14 browser pass (embed Tasks board filtered by project → edit a cell → confirm on `/objects/tasks` → denied user sees the stub), then tick US-138 and M8b.

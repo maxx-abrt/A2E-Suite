@@ -159,9 +159,10 @@
         "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green with --config=packages/twenty-front/jest.config.mjs; Lingui fr+en for new strings; no i18n catalog churn; no AI attribution"
       ],
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-EDITOR. Phase-13-report line 365 names exactly this next step. Completes the M8b flagship bullet at Tier 1.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-139",
@@ -374,6 +375,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T16:34:38.386Z"
+    "updatedAt": "2026-10-01T16:38:04.124Z"
   }
 }

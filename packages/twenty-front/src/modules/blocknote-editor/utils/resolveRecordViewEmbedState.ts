@@ -13,7 +13,7 @@ export type RecordViewEmbedState =
   | { status: 'unconfigured' }
   | { status: 'unavailable' }
   | { status: 'denied'; objectLabel: string }
-  | { status: 'ready'; objectMetadataId: string };
+  | { status: 'ready'; objectMetadataId: string; isUIEditable: boolean };
 
 type ResolveRecordViewEmbedStateInput = {
   viewId: string;
@@ -28,7 +28,9 @@ type ResolveRecordViewEmbedStateInput = {
 // Decides what an embedded view block may render. A missing view or object is
 // "unavailable" (safe stub), never a raw error; a present object the user
 // cannot read is "denied". `getObjectPermissionsForObject` defaults to allowed
-// for unknown ids, so the object-existence check must run first.
+// for unknown ids, so the object-existence check must run first. Read rights
+// only unlock the view; edit affordances additionally require update rights, so
+// the ready state carries `isUIEditable` for the host to pass down.
 export const resolveRecordViewEmbedState = ({
   viewId,
   objectMetadataId,
@@ -56,5 +58,9 @@ export const resolveRecordViewEmbedState = ({
     return { status: 'denied', objectLabel: objectMetadataItem.labelSingular };
   }
 
-  return { status: 'ready', objectMetadataId };
+  return {
+    status: 'ready',
+    objectMetadataId,
+    isUIEditable: objectPermissions.canUpdateObjectRecords,
+  };
 };

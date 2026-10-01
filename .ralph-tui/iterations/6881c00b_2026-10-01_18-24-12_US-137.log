@@ -1,0 +1,261 @@
+# Iteration 9 Log
+
+## Metadata
+
+- **Task ID**: US-137
+- **Task Title**: M9b-2: mount 'Save as template' on record surfaces and the gallery
+- **Description**: As a user, I want to save my document/project (+tasks)/board view/Bilan fiche as a workspace template from where I already am (record page, gallery) so that C1 'save as template' is one click. Startin...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-01T16:24:12.140Z
+- **Ended At**: 2026-10-01T16:34:38.386Z
+- **Duration**: 10m 26s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start with the mandatory clean-start check and understand my task context.
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-137" PLAN.md
+[94m[bash][0m $ grep -rn "US-137" docs/plan/phases/ | head -50
+[94m[bash][0m $ grep -n "M9b" PLAN.md
+[94m[bash][0m $ grep -n "Save as template\|save as template\|save-as-template" PLAN.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "US-119\|US-137\|US-132\|US-131\|CLAIMED" docs/plan/phases/phase-13-report.md | tail -60
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+Dependencies (US-131, US-132) are done-for-review. Now let me explore the existing code — the US-119 builders and record action patterns.
+[94m[bash][0m $ ls packages/twenty-apps/internal/ 2>/dev/null
+[94m[bash][0m $ grep -rln "save-project-as-template\|save-board-view-as-template\|save-fiche-as-template\|save-as-te...
+[94m[bash][0m $ ls -la packages/twenty-apps/internal/a2e-accounting/src/lib/ | grep -i "template\|save"
+[94m[bash][0m $ cat package.json 2>/dev/null | head -40
+[94m[bash][0m $ cat src/command-menu-items/save-person-as-document.command-menu-item.ts
+[94m[bash][0m $ cd packages/twenty-sdk && grep -rn "defineRecordAction\|RecordAction\|record-action" src/ --include=...
+[94m[bash][0m $ cd packages/twenty-apps/internal && grep -rln "RecordAction\|record-action" . --include="*.ts" --inc...
+[94m[bash][0m $ grep -rn "export" src/define/index.ts 2>/dev/null | head -60
+[94m[bash][0m $ cat package.json | grep -A30 '"exports"'
+[94m[bash][0m $ find ../.. -path "*/src/*" -name "*.ts" 2>/dev/null | xargs grep -ln "export const defineCommandMenu...
+[94m[bash][0m $ cat src/sdk/define/index.ts 2>/dev/null | head -80
+No dedicated record-action primitive exists. Let me examine the US-119 builders, existing mount patterns, and search for any 'Save as template' wiring already present.
+[94m[bash][0m $ done
+[94m[bash][0m $ cd packages/twenty-apps/internal && grep -rln "Save as template\|save-as-template\|Enregistrer comme...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/save-project-as-template.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/save-document-as-template.ts
+[94m[bash][0m $ cd packages/twenty-apps/internal/a2e-projects && find src -type f | sort | grep -v __tests__
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/save-board-view-as-template.ts
+[94m[bash][0m $ grep -n "US-137" tasks/prd-batch-a.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd-batch-a.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && find src/modules/template-gallery -...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && grep -rln "RecordAction\|record-act...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && grep -rln "isTemplate\|SaveAsTempla...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/command-menu-items/command-menu-item-config.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && grep -rln "CommandMenuItemAvailabil...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-shared" && grep -rn "availabilityType\|Comman...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/CommandMenuItemAvailabilityType.ts
+[94m[bash][0m $ grep -rln "CommandMenuItemManifest" src/application/ | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/save-fiche-as-template.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/objects/project.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/page-layouts/project.page-layout.ts
+[94m[bash][0m $ find src -path "*front-component*" -name "index.ts" | head
+[94m[bash][0m $ grep -rln "CommandProps" src/ --include="*.ts" | head
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk" && cat src/sdk/front-component/command/C...
+[94m[bash][0m $ grep -rn "CommandMenuItemManifest" src/application/manifestType.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "record action\|record-action\|action de fiche\|...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "record action\|RecordAction\|action.*record\|re...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -rn "RECORD_SELECTION\|command-menu\|command menu\|C...
+[94m[bash][0m $ ls docs/plan/phases/
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && grep -n "save-record-as-document\|Enregistrer comme\|comm...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting" && grep -rn "cr...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects" && grep -rn "crea...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/apply-template.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/apply-template.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/create-starter-project.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents" && grep -rn "isT...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents" && grep -rn "isT...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents" && cat src/comma...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk" && grep -rn "targetObjectReadPermissions...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting" && grep -n "COM...
+[94m[bash][0m $ tail -5 docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && cat >> docs/plan/phases/phase-13-report.md <<'EOF'  CLAIM...
+Now let me claim the slice and check a couple more patterns before implementing.
+[94m[bash][0m $ grep -rn "objectNameSingular: 'fiche'\|objectNameSingular: 'project'\|objectNameSingular: 'document'...
+[94m[bash][0m $ grep -rn "openCommandConfirmationModal" ../../packages/twenty-apps/internal --include="*.tsx" | grep...
+[94m[bash][0m $ grep -rn "enqueueSnackbar(" --include="*.tsx" . | grep -v node_modules | grep -v dist | head -5
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting" && sed -n '330,...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal" && grep -rn "targetObjectReadP...
+[94m[bash][0m $ grep -rln "CommandMenuContextApi" src/ | head
+[94m[bash][0m $ grep -rln "targetObjectReadPermissions" src/sdk | head
+[94m[bash][0m $ grep -rln "CommandMenuContextApi" src/types/
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-server" && grep -rln "targetObjectReadPermiss...
+[94m[read][0m
+[94m[bash][0m $ ls src/objects/
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects" && grep -n "name:...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects" && grep -rn "subt...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/lib/__tests__/apply-template.test.ts
+[94m[todowrite][0m
+Now implementing. Starting with a2e-documents service:
+[94m[write][0m "import type { CoreApiClient } from 'twenty-client-sdk/core';
+
+import { buildSaveAsTemplatePayload } from './save-document-as-template.ts';
+
+// M9b record-action mount (US-137): promote the document th... (2160 chars)"
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk" && grep -n "enqueueSnackbar\|useSelected...
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  Command,
+  enqueueSnackbar,
+  useSelectedRecordIds,
+} from 'twenty-sdk/fron... (1891 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts
+[94m[write][0m "import {
+  defineCommandMenuItem,
+  targetObjectReadPermissions,
+} from 'twenty-sdk/define';
+
+import {
+  COMMAND_MENU_ITEM_IDS,
+  FRONT_COMPONENT_IDS,
+  OBJECT_IDS,
+} from '../constants/universal-iden... (924 chars)"
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents" && grep -n "TEMP...
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  saveDocumentAsTemplate,
+  type SaveDocumentTemplateClient,
+  type SourceDocumentRecord,
+} from '../save-document-... (3407 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/package.json
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents" && yarn typechec...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents" && yarn lint 2>&...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents" && yarn test:uni...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents" && npx twenty de...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents" && grep -o "save...
+[94m[edit][0m
+Documents done. Now a2e-projects. Let me check the project uid fields and existing test patterns.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[bash][0m $ grep '"version"' package.json
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects" && grep -rn "buil...
+[94m[write][0m "import type { CoreApiClient } from 'twenty-client-sdk/core';
+
+import {
+  buildSaveProjectAsTemplatePayload,
+  type SourceProject,
+} from './save-project-as-template.ts';
+
+// M9b record-action mount (U... (4013 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && grep -rln "targetObjectReadPermissi...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-front" && grep -n "targetObjectReadPermission...
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  Command,
+  enqueueSnackbar,
+  useSelectedRecordIds,
+} from 'twenty-sdk/fron... (1875 chars)"
+[94m[write][0m "import {
+  defineCommandMenuItem,
+  targetObjectReadPermissions,
+} from 'twenty-sdk/define';
+
+import {
+  COMMAND_MENU_ITEM_IDS,
+  FRONT_COMPONENT_IDS,
+  OBJECT_IDS,
+} from '../constants/universal-iden... (904 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  saveProjectAsTemplate,
+  type SaveProjectTemplateClient,
+} from '../save-project-template-service.ts';
+
+type Proj... (4707 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/package.json
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects" && yarn typecheck...
+[94m[edit][0m
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects" && yarn typecheck...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects" && npx twenty dev...
+[94m[bash][0m $ grep '"version"' package.json
+[94m[write][0m "import type { CoreApiClient } from 'twenty-client-sdk/core';
+
+import {
+  buildSaveFicheAsTemplatePayload,
+  type SourceFiche,
+} from './save-fiche-as-template.ts';
+
+// M9b record-action mount (US-137)... (2025 chars)"
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting" && grep -n "OBJ...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/constants/universal-identifiers.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/src/constants/universal-identifiers.ts
+[94m[write][0m "import { CoreApiClient } from 'twenty-client-sdk/core';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  Command,
+  enqueueSnackbar,
+  useSelectedRecordIds,
+} from 'twenty-sdk/fron... (1891 chars)"
+[94m[write][0m "import {
+  defineCommandMenuItem,
+  targetObjectReadPermissions,
+} from 'twenty-sdk/define';
+
+import {
+  COMMAND_MENU_ITEM_IDS,
+  FRONT_COMPONENT_IDS,
+  OBJECT_IDS,
+} from '../constants/universal-iden... (881 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import {
+  saveFicheAsTemplate,
+  type SaveFicheTemplateClient,
+} from '../save-fiche-template-service.ts';
+import type { So... (3570 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/package.json
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting" && yarn typeche...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting" && npx twenty d...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents" && yarn typechec...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents" && npx twenty de...
+[94m[bash][0m $ cd "/Users/maxaubert/Projets/A2E Suite" && git status --porcelain | grep -v "^??.*\.ralph-tui/iterat...
+All three apps green. Now appending the phase report and Ralph progress entries.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ `targetObjectReadPermissions.<appObjectName>` works.   - Still open for US-137: the **board view men...
+[94m[bash][0m $ do not add a core `view` column (board marker stays payload-side). EOF echo appended
+[94m[bash][0m $ echo "=== status ===" && git status --porcelain | grep -vE "\.ralph-tui/(session|iterations)|tasks/p...
+[94m[todowrite][0m
+US-137 first slice landed: the 'Save as template' record action is now mounted on document, project (+tasks), and Bilan fiche record surfaces, each calling its US-119 builder and persisting a fresh template row.
+
+**Implemented (3 apps):**
+- `save-document-template-service.ts` → `createDocuments` with `kind: TEMPLATE`
+- `save-project-template-service.ts` → `createProjects` (`isTemplate: true`) + fresh `createTasks`
+- `save-fiche-template-service.ts` → `createFiches` (`isTemplate: true`, layout-only)
+- Each with a `RECORD_SELECTION` command-menu item, a headless `<Command>` front component, uid constants, lib unit tests (C1 no-aliasing + `isTemplate` provenance), and one patch bump.
+
+**Gates green:** all three apps `yarn typecheck` / `yarn lint` / `yarn test:unit` (261 / 372 / 132) / `npx twenty dev:build .`; manifests carry the new commands. No `twenty-shared`/`twenty-front`/`locales` churn.
+
+**Deferred (reported under Missing):** the board-view menu mount (no app-side view-availability primitive — needs a twenty-front core seam) and the gallery listing of saved `isTemplate` rows; plus the Tier-2 round-trip. Reported `partial` / `Ready-to-tick: no`.
+
+Phase report appended to `docs/plan/phases/phase-13-report.md` and the entry + reusable record-action pattern to `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>
+
+--- STDERR ---
+error: Error starting FSEvents stream

@@ -7,11 +7,12 @@ const objectMetadataItems = [{ id: 'task-metadata-id', labelSingular: 'Task' }];
 
 const buildPermissions = (
   canReadObjectRecords: boolean,
+  canUpdateObjectRecords = true,
 ): Record<string, ObjectPermissions & { objectMetadataId: string }> => ({
   'task-metadata-id': {
     objectMetadataId: 'task-metadata-id',
     canReadObjectRecords,
-    canUpdateObjectRecords: true,
+    canUpdateObjectRecords,
     canSoftDeleteObjectRecords: true,
     canDestroyObjectRecords: true,
     restrictedFields: {},
@@ -32,15 +33,34 @@ describe('resolveRecordViewEmbedState', () => {
     ).toEqual({ status: 'unconfigured' });
   });
 
-  it('is ready when the view object exists and is readable', () => {
+  it('is ready and editable when the view object is readable and updatable', () => {
     expect(
       resolveRecordViewEmbedState({
         viewId: 'view-id',
         objectMetadataId: 'task-metadata-id',
         objectMetadataItems,
-        objectPermissionsByObjectMetadataId: buildPermissions(true),
+        objectPermissionsByObjectMetadataId: buildPermissions(true, true),
       }),
-    ).toEqual({ status: 'ready', objectMetadataId: 'task-metadata-id' });
+    ).toEqual({
+      status: 'ready',
+      objectMetadataId: 'task-metadata-id',
+      isUIEditable: true,
+    });
+  });
+
+  it('is ready but read-only when the object cannot be updated', () => {
+    expect(
+      resolveRecordViewEmbedState({
+        viewId: 'view-id',
+        objectMetadataId: 'task-metadata-id',
+        objectMetadataItems,
+        objectPermissionsByObjectMetadataId: buildPermissions(true, false),
+      }),
+    ).toEqual({
+      status: 'ready',
+      objectMetadataId: 'task-metadata-id',
+      isUIEditable: false,
+    });
   });
 
   it('is denied when the object permission forbids reading', () => {
