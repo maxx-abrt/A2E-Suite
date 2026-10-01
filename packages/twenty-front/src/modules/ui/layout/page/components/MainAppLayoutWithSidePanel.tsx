@@ -1,7 +1,7 @@
 import { CommandMenuForMobile } from '@/command-menu/components/CommandMenuForMobile';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { RouteContextStoreProvider } from '@/context-store/components/RouteContextStoreProvider';
-import { NewPageHotKeyEffect } from '@/quick-capture/components/NewPageHotKeyEffect';
+import { NewPageHotKeyGate } from '@/quick-capture/components/NewPageHotKeyGate';
 import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
 import { SidePanelPathUrlSyncEffect } from '@/side-panel/routing/components/SidePanelPathUrlSyncEffect';
 import { SidePanelTabsRestoreEffect } from '@/side-panel/tabs/components/SidePanelTabsRestoreEffect';
@@ -52,7 +52,7 @@ export const MainAppLayoutWithSidePanel = () => {
 
   return (
     <StyledRow>
-      <NewPageHotKeyEffect />
+      <NewPageHotKeyGate />
       <RouteContextStoreProvider />
       <SidePanelPathUrlSyncEffect />
       <SidePanelTabsRestoreEffect />

@@ -749,3 +749,21 @@ CLAIMED — US-146/quick-capture-daily-note — deepseek-v4.1-flash — 2026-10-
 **Do not redo:** the committed M8a blocks and US-121/122/123/144 work; the slash-menu seam; `RecordViewEmbedStub`. The views are pure wrappers — do not re-inline their markup into the blocks. US-146 (quick-capture) is a separate live claim; its files are untouched.
 **Remaining:** US-146…US-149 plus batch 14B.
 **Next:** orchestrator — commit the uncommitted US-145 source, then run `npx nx storybook:test twenty-front` for the interaction pass; tick US-145 if green.
+
+## 2026-10-01 17:59 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-146 M8e: quick capture & daily note — Cmd+Shift+N / Cmd+K 'New page' + opt-in daily note from Agenda · **Slice:** whole task (first unmet bullet)
+**Claim:** blocked — already claimed
+**Ready-to-tick:** no — an unexpired competing `CLAIMED` for this exact slice (phase-13-report.md:728, 17:50:21Z, ~9 min old) has no blocked/conflict/done follow-up, and a live executor is actively writing the slice (uncommitted `NewPageHotKeyEffect.tsx`→`NewPageHotKeyGate.tsx` rename + `MainAppLayoutWithSidePanel.tsx` rewrite) right now.
+**Base:** 301ce56b7bfba60e16fa2bbf04f09338b01aa643
+**Changed:** none (stopped at contract §1.3/§3 before any edit; only this report + progress note appended)
+**Checks:** none run — no source touched, so no Tier-0 gate applies; this is a coordination stop, not a code stop.
+**Evidence:**
+- `docs/plan/phases/phase-13-report.md:728` = `CLAIMED — US-146/quick-capture-daily-note — deepseek-v4.1-flash — 2026-10-01T17:50:21Z — base bd94bb38…`, unexpired at UTC 17:59 (~9 min), no follow-up.
+- The claim is not this iteration's: `session.json` shows this session (20784e55) still on US-145 until 17:58:03Z, while the claim was written 17:50:21Z into HEAD `301ce56b` by a parallel `ralph-tui run`.
+- In-flight work is visible and changing: `git status` shows ` D …/quick-capture/components/NewPageHotKeyEffect.tsx` and `?? …/NewPageHotKeyGate.tsx`, ` M …/MainAppLayoutWithSidePanel.tsx` (import flipped `NewPageHotKeyEffect`→`NewPageHotKeyGate`), mtimes 19:55–19:58 local.
+- The first batch of US-146 source was already swept into HEAD `301ce56b` (engine commit labelled US-145): `NewPageCommand.tsx`, `useCreateNewPage.ts`, `useIsDocumentApplicationInstalled.ts`, `useNewPageCommand.ts`, `newPageDocument.ts` + 3 new specs, plus the `A2eSuiteApplicationUniversalIdentifiers` / `SidePanelCommandMenuItemDisplayPage` wiring.
+- Three `bun …/ralph-tui run` processes are live on this one checkout (`ps`); `[parallel] mode = "never"` is not enforced across invocations.
+**Missing for tick:** the claiming executor's own Tier-0 gates + the orchestrator's Tier-2 browser pass (Cmd+Shift+N; Agenda day-header daily note). The daily-note-from-Agenda half of the AC is not yet visible in the working tree.
+**Do not redo:** the in-flight US-146 slice — do not add/rename quick-capture files, touch `MainAppLayoutWithSidePanel.tsx`, append a second `CLAIMED`, or revert the work. Let the claiming executor finish and report.
+**Remaining:** US-146…US-149 plus batch 14B.
+**Next:** orchestrator — wait for the claiming executor's `done-for-review` on US-146; if it stalls with the slice half-built, adjudicate the stale claim and re-dispatch. Executor side: do not resume US-146 while the claim is unexpired.

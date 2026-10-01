@@ -1,5 +1,5 @@
-import { A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER } from '@/a2e-workspace/constants/A2eSuiteApplicationUniversalIdentifiers';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER } from '@/quick-capture/utils/newPageDocument';
 import {
   NEW_PAGE_COMMAND_ID,
   useNewPageCommand,
@@ -30,9 +30,7 @@ const setInstalledApplications = (universalIdentifiers: string[]) => {
 describe('useNewPageCommand', () => {
   beforeEach(() => {
     jotaiStore.set(sidePanelSearchState.atom, '');
-    setInstalledApplications([
-      A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER,
-    ]);
+    setInstalledApplications([A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER]);
   });
 
   it('exposes the New page command id and label when a2e-documents is installed', () => {

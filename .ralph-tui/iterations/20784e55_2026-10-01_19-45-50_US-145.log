@@ -1,0 +1,213 @@
+# Iteration 3 Log
+
+## Metadata
+
+- **Task ID**: US-145
+- **Task Title**: M8a-4: light+dark storybook stories for the new editor blocks (provider-free presentational views)
+- **Description**: As a developer/designer, I want storybook stories for every M8a block so that blocks are verifiable and reviewable without the app provider tree. Starting state: not started — PLAN M8a annotation: 'st...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-01T17:45:50.838Z
+- **Ended At**: 2026-10-01T17:58:03.862Z
+- **Duration**: 12m 13s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---BASE---" && git rev-parse HEAD
+[94m[bash][0m $ ls .ralph-tui/iterations/ 2>/dev/null | tail -5
+[94m[bash][0m $ grep -n "US-145" PLAN.md | head -20
+[94m[bash][0m $ grep -rn "M8a-4\|US-145\|M8a" PLAN.md | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ grep -n "US-145\|CLAIMED\|storybook\|__stories__" docs/plan/phases/phase-13-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ ps aux | grep -i "ralph-tui\|opencode" | grep -v grep | head -20
+[94m[bash][0m $ git diff packages/twenty-front/src/modules/blocknote-editor/utils/buildDateReminderMention.ts
+[94m[bash][0m $ grep -n "US-145\|US-146\|US-147\|US-148\|US-149" tasks/prd-batch-a.json | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd-batch-a.json
+No US-145 claim exists and dependencies are committed. Let me append my claim, then re-read.
+[94m[bash][0m $ cat >> docs/plan/phases/phase-13-report.md << 'EOF'  CLAIMED — US-145/provider-free-stories — deepse...
+Claim is uncontested. Now exploring the block set and storybook precedent.
+[94m[bash][0m $ find "packages/twenty-front" -name "ObjectLayoutHeroCard.stories.tsx"
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/Schema.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/TableOfContentsBlock.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/TodoTaskBlock.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/BookmarkBlock.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/PageLinkBlock.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/RecordViewBlock.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/FileBlock.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/RecordViewEmbedHost.tsx
+[94m[bash][0m $ find "packages/twenty-front/src/modules/blocknote-editor" -name "*.test.*" -o -name "*.spec.*" | sor...
+[94m[bash][0m $ cat packages/twenty-front/.storybook/main.ts 2>/dev/null | head -80
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/.storybook/preview.tsx
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/blocks/CalloutBlock.tsx
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/RecordViewEmbedStub.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/mention/components/MentionRecordChip.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/testing/decorators/RootDecorator.tsx
+[94m[bash][0m $ grep -rn "useCreateBlockNote\|BlockNoteView" packages/twenty-front/src/modules/blocknote-editor --in...
+[94m[bash][0m $ grep -rn "useCreateBlockNote\|BlockNoteView" packages/twenty-front/src/modules/blocknote-editor | he...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/BlockEditor.tsx
+[94m[bash][0m $ grep -rln "useCreateBlockNote" packages/twenty-front/src | head
+[94m[bash][0m $ grep -n "import" packages/twenty-front/src/modules/page-layout/widgets/standalone-rich-text/componen...
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-front/src/modules/page-layout/widgets/standalone-rich-text/components...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/utils/getColumnListBlock.ts
+[94m[bash][0m $ cat node_modules/@blocknote/core/package.json 2>/dev/null | grep '"version"'
+[94m[bash][0m $ ls node_modules/@blocknote/core/types/src/blocks/ 2>/dev/null | head -40
+[94m[bash][0m $ grep -rn "tableContent\|TableContent" node_modules/@blocknote/core/types/src/blocks/Table/*.d.ts | h...
+[94m[bash][0m $ grep -rln "codeBlock" packages/twenty-front/src/modules/blocknote-editor | head
+[94m[bash][0m $ grep -rln "tableContent" node_modules/@blocknote/core/ 2>/dev/null | head
+[94m[bash][0m $ sed -n '540,600p' node_modules/@blocknote/core/dist/blocks-DGsP5WKr.js
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-front/src/modules/advanced-text-editor/components/__stories__/Advanc...
+[94m[bash][0m $ cat packages/twenty-front/src/modules/page-layout/widgets/standalone-rich-text/components/Dashboards...
+[94m[bash][0m $ cat node_modules/@blocknote/core/types/src/blocks/ToggleWrapper/block.d.ts 2>/dev/null | head -40
+[94m[bash][0m $ cat node_modules/@blocknote/core/types/src/blocks/Code/block.d.ts 2>/dev/null | head -30
+[94m[bash][0m $ cat node_modules/@blocknote/core/types/src/blocks/defaultBlocks.d.ts | head -60
+[94m[bash][0m $ grep -n "toggleListItem\|readonly table\|readonly heading\|readonly quote\|readonly image\|readonly ...
+[94m[bash][0m $ grep -rn "export type PartialBlock\|type PartialBlock" node_modules/@blocknote/core/types/src/schema...
+[94m[bash][0m $ grep -rn "export type PartialBlock" node_modules/@blocknote/core/types/src/*.d.ts node_modules/@bloc...
+[94m[bash][0m $ find node_modules/@blocknote/react/types -name "*.d.ts" | xargs grep -ln "useCreateBlockNote" 2>/dev...
+[94m[bash][0m $ grep -rn "initialContent" node_modules/@blocknote/core/types/src/editor/BlockNoteEditor.d.ts | head
+[94m[bash][0m $ grep -rn "@blocknote/xl-multi-column" packages/twenty-front/src | head
+[94m[bash][0m $ ls node_modules/@blocknote/xl-multi-column/dist 2>/dev/null | head
+[94m[bash][0m $ ls packages/twenty-front/.oxlintrc.json packages/twenty-front/oxlint* 2>/dev/null
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/.oxlintrc.json
+[94m[bash][0m $ cat packages/twenty-front/src/modules/activities/files/types/AttachmentFileCategory.ts 2>/dev/null
+[94m[bash][0m $ grep -rn "MantineProvider" node_modules/@blocknote/mantine/dist/*.js 2>/dev/null | head -2
+[94m[bash][0m $ grep -n "MantineProvider\|createStyles\|useMantine" node_modules/@blocknote/mantine/dist/blocknote-m...
+[94m[bash][0m $ cat node_modules/@blocknote/mantine/types/src/BlockNoteView.d.ts 2>/dev/null
+[94m[bash][0m $ find packages/twenty-ui/src -name "LinkChip*" -o -name "*LinkChip*" | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-ui/src/data-display/LinkChip/LinkChip.tsx
+[94m[bash][0m $ cat packages/twenty-front/src/modules/object-metadata/utils/getLinkToShowPage.ts 2>/dev/null | head ...
+Now I'll create the provider-free presentational views. Starting with the directory and the structural/custom views.
+[94m[write][0m "import { type BlockOutlineEntry } from '@/blocknote-editor/editor-status/utils/getBlockOutline';
+import { useLingui } from '@lingui/react/macro';
+import { styled } from '@linaria/react';
+import { them... (2372 chars)"
+[94m[write][0m "import { createReactBlockSpec, useBlockNoteEditor } from '@blocknote/react';
+import { useEffect, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+
+import {
+  type BlockOutline... (2387 chars)"
+[94m[write][0m "import { MentionRecordChip } from '@/mention/components/MentionRecordChip';
+import { t } from '@lingui/core/macro';
+import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/g... (2623 chars)"
+[94m[write][0m "import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { TodoTaskView } from '@/blocknote-editor/blocks/views/TodoTaskView';
+import { buildTaskFromTodoBlockInput } from '@/blockn... (2988 chars)"
+[94m[write][0m "import { styled } from '@linaria/react';
+import { IconLink } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledBookmarkCard = styled.a`
+  align-items: ... (1868 chars)"
+[94m[write][0m "import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { BookmarkCardView } from '@/blocknote-editor/blocks/views/BookmarkCardView';
+import { buildBookmarkCardFromUrl } from '@/b... (3185 chars)"
+[94m[write][0m "import { MentionRecordChip } from '@/mention/components/MentionRecordChip';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledPageLin... (826 chars)"
+[94m[write][0m "import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { PageLinkView } from '@/blocknote-editor/blocks/views/PageLinkView';
+import { BlockEditorDocumentContext } from '@/blockno... (3697 chars)"
+[94m[write][0m "import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
+import { FileIcon } from '@/file/components/FileIcon';
+import { getFileEmbedKind } from '@/blocknote-edit... (2053 chars)"
+[94m[write][0m "import { createReactBlockSpec } from '@blocknote/react';
+import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { type ChangeEvent, useRef } from 'react';
+i... (2922 chars)"
+[94m[write][0m "import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+cons... (1345 chars)"
+Now refactor `RecordViewEmbedHost` to use the frame view.
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/RecordViewEmbedHost.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/RecordViewEmbedHost.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/RecordViewEmbedHost.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/blocknote-editor/components/RecordViewEmbedHost.tsx
+[94m[bash][0m $ sed -n '226,250p' node_modules/@blocknote/core/types/src/schema/blocks/types.d.ts
+[94m[bash][0m $ sed -n '200,226p' node_modules/@blocknote/core/types/src/schema/blocks/types.d.ts
+[94m[bash][0m $ sed -n '1,60p' node_modules/@blocknote/core/types/src/schema/inlineContent/types.d.ts | grep -n "Par...
+[94m[bash][0m $ sed -n '100,150p' packages/twenty-front/.oxlintrc.json
+Now the structural story with a real provider-free BlockNote editor.
+[94m[write][0m "import { BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import '@blocknote/mantine/style.css';
+import { BlockNoteView } from '@blocknote/mantine';
+import { useCreateBlockNote } from '@blockno... (3211 chars)"
+[94m[bash][0m $ cat packages/twenty-front/src/modules/activities/files/utils/getFileType.ts 2>/dev/null | head -40
+[94m[write][0m "import { BookmarkCardView } from '@/blocknote-editor/blocks/views/BookmarkCardView';
+import { FileEmbedView } from '@/blocknote-editor/blocks/views/FileEmbedView';
+import { PageLinkView } from '@/bloc... (3225 chars)"
+[94m[write][0m "import { RecordViewEmbedFrameView } from '@/blocknote-editor/blocks/views/RecordViewEmbedFrameView';
+import { RecordViewEmbedStub } from '@/blocknote-editor/components/RecordViewEmbedStub';
+import { t... (1699 chars)"
+[94m[write][0m "import { type BlockOutlineEntry } from '@/blocknote-editor/editor-status/utils/getBlockOutline';
+import { TableOfContentsView } from '@/blocknote-editor/blocks/views/TableOfContentsView';
+import { typ... (1755 chars)"
+Let me typecheck the package to catch issues early.
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -40
+[94m[bash][0m $ tail -20 /tmp/tsgo.out
+Typecheck is clean. Now lint/fmt the touched files.
+[94m[bash][0m $ git status --porcelain | grep -E "blocknote-editor|_stories_"
+[94m[bash][0m $ git diff --name-only | grep blocknote
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json \   src/modules/blocknote-editor/blocks/BookmarkBlock.tsx ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/.oxlintrc.json
+[94m[bash][0m $ npx oxfmt --check \   src/modules/blocknote-editor/blocks/BookmarkBlock.tsx \   src/modules/blocknot...
+[94m[bash][0m $ npx oxfmt \   src/modules/blocknote-editor/blocks/BookmarkBlock.tsx \   src/modules/blocknote-editor...
+Now the key Tier-0 gate: storybook build.
+[94m[bash][0m $ tail -40 /tmp/sb-build.out
+[94m[bash][0m $ grep -c "Structural Blocks\|Custom Block Views\|Record View Embed\|Table Of Contents View" packages/...
+Storybook build green and the new stories are in the index. Now targeted jest.
+[94m[bash][0m $ npx jest src/modules/blocknote-editor --config=jest.config.mjs 2>&1 | tail -30
+[94m[bash][0m $ tail -40 /tmp/lintdiff.out
+[94m[bash][0m $ grep -rniE "anthropic|co-authored-by|generated with" packages/twenty-front/src/modules/blocknote-edi...
+[94m[bash][0m $ npx jest --findRelatedTests \   src/modules/blocknote-editor/blocks/BookmarkBlock.tsx \   src/module...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ git diff HEAD --stat packages/twenty-front/src/modules/blocknote-editor/utils/buildDateReminderMenti...
+[94m[bash][0m $ git show --stat 0d9ede12 | head -20
+[94m[bash][0m $ tail -60 docs/plan/phases/phase-13-report.md
+My claim held; a concurrent session backed off. Let me verify no US-146 files overlap mine, then finalize. First inspect `progress.md`.
+[94m[bash][0m $ sed -n '1,40p' .ralph-tui/progress.md
+Everything green. Now appending the required phase report and Ralph progress entries.
+[94m[bash][0m $ tail -5 docs/plan/phases/phase-13-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ the global preview decorators do not include a router. ---
+[94m[bash][0m $ git diff --stat -- packages/twenty-front/src/modules/blocknote-editor
+[94m[bash][0m $ grep -n "US-146/quick-capture-daily-note" docs/plan/phases/phase-13-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[bash][0m $ tail -3 docs/plan/phases/phase-13-report.md
+Done. Summary of the US-145 slice:
+
+**Implemented**
+- 6 provider-free presentational views under `blocknote-editor/blocks/views/` (ToC, todo/task, bookmark, page link, file embed, record-view frame) and refactored the 6 block/host components to render them (markup moved, hooks stayed in the blocks — no behaviour change).
+- 4 Light/Dark story files under `blocks/__stories__/`:
+  - `StructuralBlocks` — bare `BlockNoteView` over `BLOCK_SCHEMA` seeded with toggle list, toggle heading, 2-column `columnList`, quote, code(typescript), divider, table, and ToC.
+  - `CustomBlockViews` — todo/task chip (open + converted), media embed, web bookmark, page link.
+  - `RecordViewEmbed` — frame + denied/unavailable stub.
+  - `TableOfContentsView` — entries + empty.
+
+**Gates (all green)**
+- `tsgo -p tsconfig.json --noEmit` → exit 0
+- `oxlint --type-aware` on 12 changed sources → 0/0; `oxfmt --check` on 16 files → clean
+- `nx storybook:build twenty-front` → exit 0; all four new story titles present in `storybook-static/index.json`
+- `jest src/modules/blocknote-editor` → 36 suites / 221 pass; `--findRelatedTests` → 20 / 157 pass
+- no `locales/**` churn; no AI attribution
+
+`Ready-to-tick: yes` (orchestrator's `storybook:test` interaction pass + live glance remain). Notes on the concurrent checkout: my changes are isolated to `blocknote-editor/**`; the live US-146 quick-capture files and engine state were left untouched, and a duplicate US-146 claim I accidentally appended was removed.
+
+<promise>COMPLETE</promise>

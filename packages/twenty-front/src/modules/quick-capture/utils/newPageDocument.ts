@@ -1,4 +1,8 @@
-import { A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER } from '@/a2e-workspace/constants/A2eSuiteApplicationUniversalIdentifiers';
+// Mirrors a2e-documents/src/application.config.ts (committed forever there, and
+// the value also appears in A2eSuiteApplicationUniversalIdentifiers). Kept
+// local because that constants file allows a single const per file.
+export const A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '19126a9c-7cc0-4368-aaba-c7e5a87b0c48';
 
 // The a2e-documents app owns the `document` object; the host can only create
 // it once the app's metadata is installed, so every new-page entry-point is

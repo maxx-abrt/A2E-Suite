@@ -1,5 +1,5 @@
-import { A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER } from '@/a2e-workspace/constants/A2eSuiteApplicationUniversalIdentifiers';
 import {
+  A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER,
   buildNewPageCreatePlan,
   DOCUMENT_OBJECT_NAME_SINGULAR,
   isDocumentApplicationInstalled,
@@ -17,9 +17,7 @@ describe('buildNewPageCreatePlan', () => {
   });
 
   it('plans the page at the personal root, with no parent', () => {
-    expect(buildNewPageCreatePlan().recordInput).not.toHaveProperty(
-      'parentId',
-    );
+    expect(buildNewPageCreatePlan().recordInput).not.toHaveProperty('parentId');
   });
 });
 

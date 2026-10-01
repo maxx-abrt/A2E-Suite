@@ -36,9 +36,7 @@ describe('useCreateNewPage', () => {
     });
 
     expect(mockCreateOneRecord).toHaveBeenCalledWith({ title: '' });
-    expect(
-      mockCreateOneRecord.mock.calls[0][0],
-    ).not.toHaveProperty('parentId');
+    expect(mockCreateOneRecord.mock.calls[0][0]).not.toHaveProperty('parentId');
     expect(mockOpenRecordInSidePanel).toHaveBeenCalledWith({
       recordId: 'page-1',
       objectNameSingular: 'document',

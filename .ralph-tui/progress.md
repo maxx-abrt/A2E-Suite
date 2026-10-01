@@ -69,3 +69,12 @@ after each iteration and it's included in prompts for context.
   - oxlint `ignorePatterns` excludes `**/*.stories.tsx`, so the executor lint evidence for stories is `oxfmt --check` + `tsgo` + `storybook:build`; only the non-story files are oxlint-checked.
   - Stories that render `MentionRecordChip` (`LinkChip` → react-router `<Link>`) need a `MemoryRouter` wrapper; the global preview decorators do not include a router.
 ---
+
+## [2026-10-01] - US-146 (blocked — already claimed)
+- What was implemented: nothing. Stopped at contract §1.3/§3: `phase-13-report.md:728` holds an unexpired `CLAIMED — US-146/quick-capture-daily-note` (2026-10-01T17:50:21Z, base `bd94bb38`) ~9 min old with no follow-up, and a live parallel executor is actively editing the slice. Zero source edits made.
+- Files changed: none (only the phase-13 report entry + this note).
+- **Learnings:**
+  - The claim was not this iteration's: this session (20784e55) was still on US-145 until 17:58:03Z, while US-146 was claimed at 17:50:21Z into HEAD `301ce56b` by a concurrent `ralph-tui run`.
+  - A parallel executor's uncommitted US-146 source (NewPageCommand, useCreateNewPage, useIsDocumentApplicationInstalled, useNewPageCommand, newPageDocument + specs, universal-identifier/side-panel wiring) was swept into the engine commit labelled `301ce56b` (US-145) — engine commits capture the whole dirty tree, so a "US-145" commit can carry another task's files. Always diff the commit, not just its subject.
+  - Active writer is visible via `git status`: ` D NewPageHotKeyEffect.tsx` + `?? NewPageHotKeyGate.tsx` + ` M MainAppLayoutWithSidePanel.tsx` (import flipped), mtimes 19:55–19:58. Do not touch overlapping files or append a second `CLAIMED`; report `blocked — already claimed` and let the orchestrator adjudicate.
+---
