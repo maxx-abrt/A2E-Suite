@@ -13,7 +13,7 @@ WORKDIR /apps
 # resolves yarn@4.13.0 without a network fetch (Node 24 ships corepack bundled).
 RUN corepack enable yarn
 
-# All six bundled apps — copied individually so layer caching kicks in when
+# All seven bundled apps — copied individually so layer caching kicks in when
 # only one app's source changes. Keep this list, the loop below and the front
 # A2E allowlist (A2eSuiteApplicationUniversalIdentifiers.ts) in sync; a front
 # spec fails when an internal a2e-* app is missing from either.
@@ -23,11 +23,12 @@ COPY ./packages/twenty-apps/internal/a2e-projects   /apps/a2e-projects
 COPY ./packages/twenty-apps/internal/a2e-chat        /apps/a2e-chat
 COPY ./packages/twenty-apps/internal/a2e-drive       /apps/a2e-drive
 COPY ./packages/twenty-apps/internal/a2e-crm         /apps/a2e-crm
+COPY ./packages/twenty-apps/internal/a2e-links       /apps/a2e-links
 
 # Each app is an independent Yarn workspace; install deps and build with tarball.
 # `yarn twenty dev:build --tarball` is equivalent to the SDK CLI command that
 # the development runbook uses. Each app's pinned twenty-sdk resolves from npm.
-RUN for app in a2e-documents a2e-accounting a2e-projects a2e-chat a2e-drive a2e-crm; do \
+RUN for app in a2e-documents a2e-accounting a2e-projects a2e-chat a2e-drive a2e-crm a2e-links; do \
       echo "Building $app ..."; \
       cd /apps/$app && \
       yarn install --immutable && \

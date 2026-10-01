@@ -1,0 +1,219 @@
+# Iteration 5 Log
+
+## Metadata
+
+- **Task ID**: US-147
+- **Task Title**: M11a-i1: a2e-links app scaffold — a2eLink morph junction object + inverse fields on first consumer targets
+- **Description**: As a user, I want a generic way to link any record to any other so that cross-app links stop being per-pair (G13). Starting state: spike done (US-125) — decision D-M11A-LINK recorded: 'app-owned a2eLi...
+- **Status**: failed
+- **Task Completed**: No
+- **Promise Detected**: No
+- **Started At**: 2026-10-01T17:59:55.876Z
+- **Ended At**: 2026-10-01T18:10:03.677Z
+- **Duration**: 10m 7s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ ls -la && echo "---PLAN search---" && grep -n "US-147" PLAN.md
+I'll start with the clean-start check and gather the required context.
+[94m[bash][0m $ git status --porcelain && echo "---BASE---" && git rev-parse HEAD
+[94m[bash][0m $ ls docs/plan/phases/ 2>/dev/null && echo "---" && ls docs/plan/ 2>/dev/null
+[94m[bash][0m $ ls packages/twenty-apps/internal/ 2>/dev/null && echo "---real-estate---" && ls packages/twenty-apps...
+The clean-start dirty files are Ralph engine files (expected). `US-147` isn't in PLAN.md; let me locate the actual task ledger and phase report.
+[94m[bash][0m $ grep -rn "US-147" . --include="*.md" --include="*.json" -l 2>/dev/null | grep -v node_modules | grep...
+[94m[bash][0m $ python3 -c " import json for f in ['tasks/prd-batch-a.json','tasks/prd-batch-b.json']:     d=json.lo...
+[94m[bash][0m $ grep -n "US-147\|US-146\|US-148\|US-125" docs/plan/phases/phase-11-report.md | head -40
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd-batch-b.json')) for us in d['userStories']:    ...
+[94m[bash][0m $ grep -n "M11a\|M11A\|D-M11A-LINK\|a2e-links\|a2eLink" PLAN.md | head -40
+[94m[bash][0m $ python3 -c " import json for f in ['tasks/prd-batch-a.json','tasks/prd-batch-b.json']:     d=json.lo...
+[94m[bash][0m $ sed -n '520,560p' PLAN.md
+[94m[bash][0m $ grep -n "US-147\|US-125\|a2e-links\|CLAIMED\|conflict\|blocked" docs/plan/phases/phase-15-report.md ...
+[94m[bash][0m $ wc -l docs/plan/phases/phase-15-report.md && sed -n '1,60p' docs/plan/phases/phase-15-report.md
+[94m[bash][0m $ find packages/twenty-apps/internal/real-estate -type f -not -path "*/node_modules/*" | sort
+[94m[bash][0m $ find packages/twenty-apps/public/last-contact -type f -not -path "*/node_modules/*" | sort
+Now I have the full spike decision. Let me examine the app-format reference and existing morph precedents.
+[94m[bash][0m $ ls -la packages/twenty-apps/ && echo "---examples?---" && ls packages/twenty-apps/public/ 2>/dev/nul...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/README-A2E.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/real-estate/src/application.config.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/real-estate/package.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/real-estate/src/objects/showing.object.ts
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/fieldManifestType.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/public/last-contact/src/application-config.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/public/last-contact/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/public/last-contact/package.json
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents -type f -not -path "*/node_modules/*" | sort | head...
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents/src -type f | sort | head -80
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-accounting/src -type f 2>/dev/null | sort | head -40
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-documents/src/objects packages/twenty-apps/internal/a2e-proje...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/application.config.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/package.json
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/document-project.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/objects/document.object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/constants/universal-identifiers.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/constants/universal-identifiers.ts
+[94m[bash][0m $ done
+[94m[bash][0m $ find packages/twenty-server/src -iname "*uninstall-preflight*"
+[94m[bash][0m $ grep -rhoE "\b[0-9a-f]{8}-[0-9a-f]{4}-4000-8000-[0-9a-f]{12}\b" packages/twenty-apps/internal/*/src ...
+[94m[bash][0m $ grep -n "APPLICATION_UNIVERSAL_IDENTIFIER" packages/twenty-apps/internal/a2e-chat/src/application.co...
+[94m[bash][0m $ grep -rl "c31f" packages/twenty-apps/internal/*/src 2>/dev/null
+[94m[bash][0m $ find packages/twenty-sdk -type f -name "*.ts" | grep -iE "build|manifest|dev|define" | head -40
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/.oxlintrc.json 2>/dev/null
+[94m[bash][0m $ find packages/twenty-sdk/src/cli/utilities/build -type f -name "*.ts" | grep -v __tests__ | grep -v ...
+[94m[bash][0m $ find packages/twenty-sdk/src -type f -name "*.ts" | grep -iE "define|entity" | grep -v __tests__ | h...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/cli/utilities/build/manifest/manifest-build.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/cli/utilities/build/common/build-application.ts
+[94m[bash][0m $ grep -rln "MorphRelation\|MORPH_RELATION" packages/twenty-shared/src --include="*.ts" | head -20
+[94m[bash][0m $ find packages/twenty-apps/fixtures -name "*.ts" | xargs grep -l "MORPH" 2>/dev/null | head
+[94m[bash][0m $ find packages/twenty-apps/fixtures/rich-app -type f -name "*.ts" | grep -v node_modules | sort
+[94m[bash][0m $ grep -rln "MORPH_RELATION\|morphId" packages/twenty-apps/fixtures --include="*.ts" | grep -v node_mo...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/fixtures/rich-app/src/objects/post-card-recipient.object.ts
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-apps/internal/real-estate/src/roles/default-function.role.ts
+[94m[bash][0m $ find packages/twenty-sdk/src/sdk/define -type f -name "*.ts" | grep -iE "define-application|define-o...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/roles/default-function.role.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/application/define-application.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/fields/define-field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/objects/define-object.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/fields/validate-fields.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/cli/utilities/build/manifest/build-and-validate-manifest.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/cli/utilities/build/manifest/manifest-validate.ts
+[94m[bash][0m $ grep -rln "morphId" packages/twenty-server/src --include="*.ts" | grep -v spec | grep -v __tests__ |...
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/util...
+[94m[bash][0m $ sed -n '1,160p' packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/util...
+[94m[bash][0m $ sed -n '120,400p' packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/ut...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/define/objects/object-config.ts
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-apps/fixtures/minimal-app -type f -name "*.ts" | grep -v node_modules
+[94m[bash][0m $ grep -rn "STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS" packages/twenty-sdk/src --include="*.ts" | grep "ex...
+[94m[bash][0m $ grep -rln "STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS" packages/twenty-shared/src | head
+[94m[bash][0m $ sed -n '965,985p' packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ ls -d packages/twenty-apps/internal/a2e-projects/node_modules 2>/dev/null
+[94m[bash][0m $ grep -n "\"twenty\"\|\"bin\"" packages/twenty-sdk/package.json
+[94m[bash][0m $ grep -n "workspaces" package.json | head
+[94m[bash][0m $ ls -d packages/twenty-apps/public/last-contact/node_modules 2>/dev/null
+[94m[bash][0m $ yarn --version 2>/dev/null
+[94m[bash][0m $ sed -n '1,40p' packages/twenty-apps/internal/a2e-projects/package.json
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/node_modules/twenty-sdk/package.json | grep '"versio...
+[94m[bash][0m $ grep -rln "objects/\|fields/" packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/*.test.ts...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "a2e-links\|a2eLink\|Related" docs/plan/03-integration-blueprint.md docs/product-experience...
+[94m[bash][0m $ grep -n "task:" packages/twenty-shared/src/metadata/constants/standard-object-fields.constant.ts | h...
+[94m[bash][0m $ grep -rln "a2e-documents\|a2e-projects\|applicationUniversalIdentifiers" packages/twenty-server/src ...
+[94m[bash][0m $ grep -rln "internal/a2e\|internal/real-estate" packages --include="*.ts" | grep -v node_modules | he...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-front/src -iname "OnboardingInstallableApps.ts"
+[94m[bash][0m $ grep -n "for app in\|COPY ./packages/twenty-apps/internal" packages/twenty-docker/twenty/Dockerfile ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/onboarding/constants/OnboardingInstallableApps.ts
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-docker/twenty/Dockerfile
+[94m[bash][0m $ grep -rln "a2e-documents\|a2e-projects\|a2e-crm\|19126a9c\|4f759655\|c31e0000" packages/twenty-serve...
+[94m[bash][0m $ grep -rln "ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS\|ONBOARDING_INSTALLABLE_APPS\|A2E_SUITE_...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-server/src/engine/core-modules/onboarding/constants/workspace-templat...
+[94m[bash][0m $ grep -rn "toHaveLength\|\.length\b\|toBe(6\|length, 6\|A2E_BUREAU_BUNDLE\|applicationUniversalIdenti...
+[94m[bash][0m $ cat packages/twenty-front/src/modules/a2e-workspace/constants/A2eSuiteApplicationGroupHeadings.ts 2>...
+[94m[bash][0m $ git log --oneline -3
+[94m[bash][0m $ tail -30 .ralph-tui/progress.md 2>/dev/null
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+This is a substantial scaffold with a cross-package registration drift guard. Let me claim the slice and set up a task list.
+[94m[bash][0m $ ls ~/.yarn/berry/cache/ | grep -iE "twenty-sdk|twenty-client-sdk|^typescript-npm|^@types-node|^react...
+[94m[bash][0m $ ls ~/.yarn/berry/cache/ | grep -iE "twenty-sdk|twenty-client-sdk|typescript-npm-5|react-npm-19|react...
+[94m[todowrite][0m
+[94m[bash][0m $ tail -8 docs/plan/phases/phase-15-report.md
+[94m[bash][0m $ cat >> docs/plan/phases/phase-15-report.md <<'EOF'  CLAIMED — US-147/m11a-i1-a2e-links-scaffold — de...
+Now scaffolding the app package. I'll mirror the `a2e-projects` package config (same SDK/lock) and set version 0.1.0.
+[94m[bash][0m $ done && ls -la a2e-links && echo "---sdk ver in lock---" && grep -c "twenty-sdk@npm:2.31.0" a2e-link...
+[94m[write][0m "{
+  "name": "a2e-links",
+  "version": "0.1.0",
+  "license": "MIT",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2",
+    "twenty": ">=2.19.0"
+  },
+  "keywords"... (779 chars)"
+[94m[write][0m "import { defineApplication } from 'twenty-sdk/define';
+
+export const APPLICATION_UNIVERSAL_IDENTIFIER =
+  'c31f0000-0000-4000-8000-000000000000';
+
+export default defineApplication({
+  universalIdentif... (401 chars)"
+[94m[write][0m "// Universal identifiers for A2E Links.
+//
+// One UUIDv4-class identifier per declarable thing, committed forever
+// (additive-only law). The namespace follows the suite convention — A2E
+// Documents ... (2798 chars)"
+[94m[write][0m "import { defineApplicationRole } from 'twenty-sdk/define';
+
+import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from '../constants/universal-identifiers.ts';
+
+export default defineApplicationRole({
+... (518 chars)"
+[94m[bash][0m $ grep -rn "isValidObjectName\|objectNameRegex\|NAME_REGEX\|nameSingular.*match\|/^[a-z]" packages/twe...
+[94m[bash][0m $ grep -rln "nameSingular" packages/twenty-server/src/engine/core-modules/application --include="*.ts"...
+[94m[write][0m "import { defineObject, FieldType } from 'twenty-sdk/define';
+
+import {
+  LINK_FIELD_IDS,
+  LINK_TYPE_OPTION_IDS,
+  OBJECT_IDS,
+} from '../constants/universal-identifiers.ts';
+
+// Link-type discriminat... (2015 chars)"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/fields/company-documents.field.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/fields/task-project.field.ts
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  OnDeleteAction,
+  RelationType,
+} from 'twenty-sdk/define';
+
+import {
+  EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIERS,
+  LINK_MORPH_IDS,
+  OBJECT_IDS,
+  RELATION_IDS,
+} ... (1226 chars)"
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  OnDeleteAction,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+import {
+  LINK_MORPH_IDS,
+  OBJECT_IDS,
+  RELATION_IDS,
+} ... (1132 chars)"
+[94m[write][0m "import {
+  defineField,
+  FieldType,
+  OnDeleteAction,
+  RelationType,
+} from 'twenty-sdk/define';
+
+import {
+  EXTERNAL_OBJECT_UNIVERSAL_IDENTIFIERS,
+  LINK_MORPH_IDS,
+  OBJECT_IDS,
+  RELATION_IDS,
+} ... (1108 chars)"
+
+[91m[Error: Unknown error][0m

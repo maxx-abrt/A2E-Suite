@@ -15,4 +15,6 @@ export const A2E_SUITE_APPLICATION_UNIVERSAL_IDENTIFIERS: string[] = [
   'b11cd01f-75de-4acd-8e67-0e9c484fde02',
   // a2e-crm
   'c31e0000-0000-4000-8000-000000000000',
+  // a2e-links
+  '895bb7aa-3ae3-400f-9dfa-72116f0021e2',
 ];

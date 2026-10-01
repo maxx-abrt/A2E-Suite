@@ -84,13 +84,14 @@ const dockerfileBuildLoopApps =
     .split(/\s+/) ?? [];
 
 describe('A2E_SUITE_APPLICATION_UNIVERSAL_IDENTIFIERS', () => {
-  it('discovers the six first-party A2E apps', () => {
+  it('discovers the seven first-party A2E apps', () => {
     expect(firstPartyApps.map((app) => app.name).sort()).toEqual([
       'a2e-accounting',
       'a2e-chat',
       'a2e-crm',
       'a2e-documents',
       'a2e-drive',
+      'a2e-links',
       'a2e-projects',
     ]);
   });

@@ -33,6 +33,11 @@ export const ONBOARDING_INSTALLABLE_APPS: OnboardingInstallableApp[] = [
     description: msg`Review-first AI reply drafts and record enrichment`,
   },
   {
+    universalIdentifier: '895bb7aa-3ae3-400f-9dfa-72116f0021e2',
+    label: msg`Links`,
+    description: msg`Link any record to any other across apps`,
+  },
+  {
     universalIdentifier: '8da4b8b5-5edf-4880-b51f-ab6e679ec617',
     label: msg`Call recorder`,
     description: msg`Record your calls and get transcripts`,

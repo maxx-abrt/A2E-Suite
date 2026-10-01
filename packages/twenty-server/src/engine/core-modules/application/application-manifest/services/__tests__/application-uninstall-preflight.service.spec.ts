@@ -126,8 +126,9 @@ describe('ApplicationUninstallPreflightService', () => {
 
       // count maps are keyed by the derived live table name ('_'-prefixed
       // for non-standard apps), matching the physical table name
-      (objectRecordCountService.getExactRecordCountByTableNames as jest.Mock)
-        .mockResolvedValue(new Map([['_invoice', 42]]));
+      (
+        objectRecordCountService.getExactRecordCountByTableNames as jest.Mock
+      ).mockResolvedValue(new Map([['_invoice', 42]]));
 
       const impact = await preflightService.computeUninstallImpact({
         workspaceId: WORKSPACE_ID,
@@ -252,8 +253,51 @@ describe('ApplicationUninstallPreflightService', () => {
       expect(impact.crossAppDependents).toEqual([
         {
           dependentApplicationName: OTHER_APP_NAME,
-          dependency:
-            "field 'linkedInvoice' (relation to object 'invoice')",
+          dependency: "field 'linkedInvoice' (relation to object 'invoice')",
+        },
+      ]);
+    });
+
+    it('reports a cross-app MORPH_RELATION leg whose target is an owned object', async () => {
+      injectFlatMaps({
+        flatObjectMetadataMaps: {
+          byUniversalIdentifier: {
+            [APP_UNIVERSAL_IDENTIFIER]: buildFlatObjectMetadata({
+              universalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+              applicationId: APP_ID,
+              applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+              nameSingular: 'document',
+            }),
+          },
+        },
+        flatFieldMetadataMaps: {
+          byUniversalIdentifier: {
+            // A link-app morph leg targeting a provider-owned object (the
+            // D-M11A-LINK consumer-owns-both-sides shape) must block removing
+            // the provider exactly like a plain relation field does.
+            'link-morph-leg': {
+              id: 'link-morph-leg-id',
+              universalIdentifier: 'link-morph-leg',
+              applicationId: OTHER_APP_ID,
+              type: 'MORPH_RELATION',
+              morphId: 'morph-group-1',
+              name: 'sourceDocument',
+              relationTargetObjectMetadataId: `id-${APP_UNIVERSAL_IDENTIFIER}`,
+              relationTargetFieldMetadataId: 'link-inverse-field-id',
+            },
+          },
+        },
+      });
+
+      const impact = await preflightService.computeUninstallImpact({
+        workspaceId: WORKSPACE_ID,
+        applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+      });
+
+      expect(impact.crossAppDependents).toEqual([
+        {
+          dependentApplicationName: OTHER_APP_NAME,
+          dependency: "field 'sourceDocument' (relation to object 'document')",
         },
       ]);
     });
@@ -296,8 +340,9 @@ describe('ApplicationUninstallPreflightService', () => {
         },
       });
 
-      (objectRecordCountService.getExactRecordCountByTableNames as jest.Mock)
-        .mockResolvedValue(new Map([['_invoice', 7]]));
+      (
+        objectRecordCountService.getExactRecordCountByTableNames as jest.Mock
+      ).mockResolvedValue(new Map([['_invoice', 7]]));
 
       await expect(
         preflightService.assertUninstallAllowed({
@@ -383,13 +428,13 @@ describe('ApplicationUninstallPreflightService', () => {
     });
 
     it('refuses uninstall for an application that is not installed', async () => {
-      (applicationService.findOneApplicationOrThrow as jest.Mock).mockResolvedValue(
-        {
-          id: APP_ID,
-          universalIdentifier: APP_UNIVERSAL_IDENTIFIER,
-          state: ApplicationState.UNINSTALLING,
-        },
-      );
+      (
+        applicationService.findOneApplicationOrThrow as jest.Mock
+      ).mockResolvedValue({
+        id: APP_ID,
+        universalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+        state: ApplicationState.UNINSTALLING,
+      });
 
       await expect(
         preflightService.assertUninstallAllowed({

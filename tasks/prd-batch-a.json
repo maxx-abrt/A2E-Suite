@@ -335,9 +335,10 @@
         "Quality gates: a2e-links: yarn typecheck && yarn lint && yarn test:unit green && npx twenty dev:build . succeeds; twenty-server tsgo clean if shared metadata utilities touched; npx nx build twenty-shared --skip-nx-cache if touched; no i18n catalog churn; no AI attribution"
       ],
       "priority": 17,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-LINK. UNLOCKS US-148 (picker), US-149 (Related tab), US-154 (quick-create pre-link), US-156, M12e docs, E17.",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-148",
@@ -383,6 +384,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T18:01:56.477Z"
+    "updatedAt": "2026-10-01T18:20:06.841Z"
   }
 }

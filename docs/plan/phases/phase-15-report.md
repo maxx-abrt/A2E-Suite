@@ -63,3 +63,21 @@ CLAIMED — US-126/m11b-today-cards — deepseek-v4.1-flash — 2026-09-30T21:31
 - PLAN: M11a `[~]` (spike done, implementation pending), M11b `[x]`; M11
   milestone row `partial`. Only E17 link-picker/reload-removal proof remains for
   the ticked half.
+
+CLAIMED — US-147/m11a-i1-a2e-links-scaffold — deepseek-v4.1-flash — 2026-10-01T18:08:17Z — base e98d58781a45c4af5197ca04479aa71ca62df586
+
+CLAIMED — US-147/m11a-i1-a2e-links-scaffold — deepseek-v4.1-flash — 2026-10-01T18:07:39Z — base 6f690fbfadc04a3c2fd91626e2e57040b591f01a
+
+CLAIMED — US-147/m11a-i1-a2e-links-scaffold — deepseek-v4.1-flash — 2026-10-01T18:13:00Z — base e98d58781a45c4af5197ca04479aa71ca62df586
+
+## 2026-10-01 18:19 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-147 M11a-i1: a2e-links app scaffold — a2eLink morph junction object + inverse fields on first consumer targets · **Slice:** finish the scaffold + first-consumer inverse fields + registration surfaces + C3-morph spec (the task's unmet acceptance).
+**Claim:** done-for-review
+**Ready-to-tick:** yes — Tier 0/1 all green on the working tree; only the Tier-2 live install/codegen proof is absent by contract.
+**Base:** e98d58781a45c4af5197ca04479aa71ca62df586
+**Changed:** NEW `packages/twenty-apps/internal/a2e-links/**` (`src/application.config.ts`; `objects/a2e-link.object.ts`; 8 `fields/*.field.ts` = two MORPH groups × {document,task} legs + four inverse O2M; `constants/{universal-identifiers,field-vocabulary}.ts`; `roles/default-function.role.ts`; `lib/__tests__/a2e-links-integrity.test.ts`; package/tsconfig/lint/lock/dotfiles/README); DELETED three orphan drafts `src/fields/a2e-link-{source-document,source-task,target-document}.field.ts` (failed-iteration residue importing removed constants); `packages/twenty-docker/twenty/Dockerfile`; `packages/twenty-front/.../a2e-workspace/constants/A2eSuiteApplicationUniversalIdentifiers.ts` (+ its drift-guard spec); `packages/twenty-front/.../onboarding/constants/OnboardingInstallableApps.ts`; `packages/twenty-server/.../onboarding/constants/onboarding-installable-app-universal-identifiers.ts`; `packages/twenty-server/.../application-manifest/services/__tests__/application-uninstall-preflight.service.spec.ts`; this report; `.ralph-tui/progress.md`.
+**Checks:** a2e-links `yarn install --immutable` → exit 0; `yarn typecheck` → exit 0; `yarn lint` → 0 warnings/0 errors; `yarn test:unit` → 7/7 pass; `npx twenty dev:build .` → "Build succeeded", `.twenty/output/manifest.json` carries a2eLink + 4 `MORPH_RELATION` legs across two distinct `morphId`s + 4 inverse `ONE_TO_MANY` (document ×2, task ×2). Front drift guard `npx jest .../a2e-workspace/constants/__tests__/` → 3 suites/19 pass. Server parity spec → 3/3 pass. `npx jest --findRelatedTests <front constants>` → 8 suites/69 pass; `... <server list>` → 25 suites/175 pass. Preflight spec (added MORPH_RELATION dependent case) → 9/9 pass. `npx oxlint`/`oxfmt --check` on every changed TS file → clean. No `locales/**` touched; no AI attribution.
+**Missing for tick:** Tier 2 only — live install of a2e-links on a workspace with **a2e-documents installed first** (morph target `document` must resolve; `task` is standard), the metadata-codegen/schema proof, and the E17 browser journey. App anatomy (view, page layout, nav, 2 command-menu items) is intentionally deferred: the Related tab is US-149 and the picker US-148.
+**Do not redo:** the `a2eLink` object/fields/constants and the whole-manifest integrity walk (green); the four registration surfaces + the drift-guard's seven-app list; the preflight morph-dependent spec case. Note the two failed US-147 iterations (6881c00b, 20784e55) left a stale lock and the orphan drafts — both already resolved here.
+**Remaining:** US-148 (picker), US-149 (Related tab), US-154/156, plus M12e/E17 — all downstream of this hub.
+**Next:** orchestrator tick after the Tier-2 install-order proof; then executor — US-148 wiring `SingleRecordPicker` → `useObjectRecordSearchRecords` → create on `a2eLink`.

@@ -15,6 +15,8 @@ export const ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS = [
   'b11cd01f-75de-4acd-8e67-0e9c484fde02',
   // a2e-crm (CRM assistant)
   'c31e0000-0000-4000-8000-000000000000',
+  // a2e-links (generic cross-app links)
+  '895bb7aa-3ae3-400f-9dfa-72116f0021e2',
   // Call recorder
   '8da4b8b5-5edf-4880-b51f-ab6e679ec617',
   // Enrichment (People Data Labs)
