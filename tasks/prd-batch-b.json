@@ -138,12 +138,13 @@
         "Quality gates: npx nx lint:diff-with-main twenty-server clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest + integration specs green; twenty-front tsgo clean if deep-link labels touched; Lingui fr+en for new labels; no i18n catalog churn; no AI attribution"
       ],
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-LINK/L-AI boundary. Depends on US-155 (event contract) and US-139 (mention index).",
       "dependsOn": [
         "US-155",
         "US-139"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-157",
@@ -401,6 +402,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T22:00:24.621Z"
+    "updatedAt": "2026-10-01T22:16:09.491Z"
   }
 }

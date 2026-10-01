@@ -73,6 +73,39 @@ export class MentionNotificationService {
       mentionedWorkspaceMemberIds: candidateWorkspaceMemberIds,
     });
 
+    return this.notifyMentionTargets({
+      workspaceId,
+      source,
+      targets,
+      authorId,
+      mentionedWorkspaceMemberIds: extraction.mentionedWorkspaceMemberIds,
+      contextSnippet: extraction.contextSnippet,
+      createdAt,
+    });
+  }
+
+  // The explicit-target entry point: the document mention index (US-139)
+  // already resolved the mentioned members from the saved body, so there is no
+  // body left to parse. It shares the one permission filter and the one P8.1
+  // emit seam below, so an index-driven mention lands in the same inbox with
+  // the same preference/quiet-hours policy as a body-parsed one.
+  async notifyMentionTargets({
+    workspaceId,
+    source,
+    targets,
+    authorId,
+    mentionedWorkspaceMemberIds,
+    contextSnippet = '',
+    createdAt,
+  }: {
+    workspaceId: string;
+    source: MentionSource;
+    targets: MentionTarget[];
+    authorId: string | null;
+    mentionedWorkspaceMemberIds: string[];
+    contextSnippet?: string;
+    createdAt?: Date;
+  }): Promise<MentionTarget[]> {
     if (targets.length === 0) {
       return [];
     }
@@ -99,8 +132,8 @@ export class MentionNotificationService {
         payload: buildMentionNotificationPayload({
           source,
           authorId,
-          mentionedWorkspaceMemberIds: extraction.mentionedWorkspaceMemberIds,
-          contextSnippet: extraction.contextSnippet,
+          mentionedWorkspaceMemberIds,
+          contextSnippet,
         }),
         ...(createdAt === undefined ? {} : { createdAt }),
       })),

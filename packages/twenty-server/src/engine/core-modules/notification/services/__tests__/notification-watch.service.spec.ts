@@ -276,6 +276,70 @@ describe('NotificationWatchService', () => {
     });
   });
 
+  describe('watcher lookup for mention fan-out', () => {
+    it('resolves watchers to member identities and dedupes by user', async () => {
+      workspaceCacheService.getOrRecompute.mockResolvedValue({
+        flatWorkspaceMemberMaps: {
+          byId: {},
+          idByUserId: {
+            'user-1': 'workspace-member-1',
+            'user-2': 'workspace-member-2',
+          },
+        },
+      });
+      notificationWatchRepository.find.mockResolvedValue([
+        buildWatchRow({ id: 'watch-1', userId: 'user-1' }),
+        buildWatchRow({ id: 'watch-2', userId: 'user-1' }),
+        buildWatchRow({ id: 'watch-3', userId: 'user-2' }),
+      ]);
+
+      const watchingMembers = await service.findWatchingWorkspaceMembers({
+        workspaceId: 'workspace-1',
+        targetKind: 'RECORD',
+        targetId: 'record-1',
+      });
+
+      expect(notificationWatchRepository.find).toHaveBeenCalledWith({
+        where: {
+          workspaceId: 'workspace-1',
+          targetKind: 'RECORD',
+          targetId: 'record-1',
+        },
+      });
+      expect(watchingMembers).toEqual([
+        { userId: 'user-1', workspaceMemberId: 'workspace-member-1' },
+        { userId: 'user-2', workspaceMemberId: 'workspace-member-2' },
+      ]);
+    });
+
+    it('drops a watcher with no member-cache entry', async () => {
+      notificationWatchRepository.find.mockResolvedValue([
+        buildWatchRow({ id: 'watch-1', userId: 'removed-user' }),
+      ]);
+
+      const watchingMembers = await service.findWatchingWorkspaceMembers({
+        workspaceId: 'workspace-1',
+        targetKind: 'RECORD',
+        targetId: 'record-1',
+      });
+
+      expect(watchingMembers).toEqual([]);
+    });
+
+    it('short-circuits without reading the member cache when nobody watches', async () => {
+      notificationWatchRepository.find.mockResolvedValue([]);
+
+      const watchingMembers = await service.findWatchingWorkspaceMembers({
+        workspaceId: 'workspace-1',
+        targetKind: 'RECORD',
+        targetId: 'record-1',
+      });
+
+      expect(watchingMembers).toEqual([]);
+      expect(workspaceCacheService.getOrRecompute).not.toHaveBeenCalled();
+    });
+  });
+
   describe('permission-loss cleanup', () => {
     it('drops a watch whose user lost record access and does not notify them', async () => {
       notificationWatchRepository.find.mockResolvedValue([

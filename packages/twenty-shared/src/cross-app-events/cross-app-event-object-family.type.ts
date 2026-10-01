@@ -7,4 +7,5 @@ export type CrossAppEventObjectFamily =
   | 'task'
   | 'calendarEvent'
   | 'file'
-  | 'invoice';
+  | 'invoice'
+  | 'mention';

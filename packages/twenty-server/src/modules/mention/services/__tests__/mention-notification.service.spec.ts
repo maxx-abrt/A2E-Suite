@@ -219,4 +219,59 @@ describe('MentionNotificationService', () => {
     expect(notifiedTargets).toEqual([]);
     expect(requestNotifications).not.toHaveBeenCalled();
   });
+
+  it('emits one explicit-target mention with a document deep-link payload', async () => {
+    const { service, requestNotifications } = buildService();
+
+    const notifiedTargets = await service.notifyMentionTargets({
+      workspaceId: WORKSPACE_ID,
+      source: { surface: 'document', documentId: DOCUMENT_ID },
+      targets: [{ workspaceMemberId: ALICE_MEMBER_ID, userId: ALICE_USER_ID }],
+      authorId: null,
+      mentionedWorkspaceMemberIds: [ALICE_MEMBER_ID],
+      contextSnippet: '',
+      createdAt: new Date('2026-10-01T22:00:00.000Z'),
+    });
+
+    expect(notifiedTargets).toEqual([
+      { workspaceMemberId: ALICE_MEMBER_ID, userId: ALICE_USER_ID },
+    ]);
+    expect(requestNotifications).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      requests: [
+        {
+          userId: ALICE_USER_ID,
+          type: 'MENTION',
+          payload: {
+            kind: 'document.mention',
+            objectNameSingular: 'document',
+            recordId: DOCUMENT_ID,
+            documentId: DOCUMENT_ID,
+            authorId: null,
+            mentionedWorkspaceMemberIds: [ALICE_MEMBER_ID],
+            snippet: '',
+          },
+          createdAt: new Date('2026-10-01T22:00:00.000Z'),
+        },
+      ],
+    });
+  });
+
+  it('suppresses an explicit target that cannot read the source document', async () => {
+    const canMentionTargetReadSource = jest.fn().mockResolvedValue(false);
+    const { service, requestNotifications } = buildService({
+      canMentionTargetReadSource,
+    });
+
+    const notifiedTargets = await service.notifyMentionTargets({
+      workspaceId: WORKSPACE_ID,
+      source: { surface: 'document', documentId: DOCUMENT_ID },
+      targets: [{ workspaceMemberId: ALICE_MEMBER_ID, userId: ALICE_USER_ID }],
+      authorId: null,
+      mentionedWorkspaceMemberIds: [],
+    });
+
+    expect(notifiedTargets).toEqual([]);
+    expect(requestNotifications).not.toHaveBeenCalled();
+  });
 });

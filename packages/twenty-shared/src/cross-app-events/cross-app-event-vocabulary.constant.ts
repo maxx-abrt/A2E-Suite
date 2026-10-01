@@ -6,7 +6,7 @@ import { type CrossAppEventObjectFamily } from '@/cross-app-events/cross-app-eve
 export const CROSS_APP_EVENT_CONTRACT_VERSION = 1;
 
 export const CROSS_APP_EVENT_OBJECT_FAMILIES: readonly CrossAppEventObjectFamily[] =
-  ['document', 'task', 'calendarEvent', 'file', 'invoice'];
+  ['document', 'task', 'calendarEvent', 'file', 'invoice', 'mention'];
 
 export const CROSS_APP_EVENT_ACTIONS: readonly CrossAppEventAction[] = [
   'created',
@@ -16,7 +16,9 @@ export const CROSS_APP_EVENT_ACTIONS: readonly CrossAppEventAction[] = [
 ];
 
 // Family -> workspace object singular name. `file` rides the standard
-// `attachment` object, which is the single storage for uploaded files.
+// `attachment` object, which is the single storage for uploaded files; `mention`
+// rides the a2e-documents save-time mention index (US-139), so notifications
+// can subscribe to new mentions instead of re-scanning document bodies.
 export const CROSS_APP_EVENT_OBJECT_NAME_BY_FAMILY: Record<
   CrossAppEventObjectFamily,
   string
@@ -26,15 +28,17 @@ export const CROSS_APP_EVENT_OBJECT_NAME_BY_FAMILY: Record<
   calendarEvent: 'calendarEvent',
   file: 'attachment',
   invoice: 'invoice',
+  mention: 'documentMention',
 };
 
 // Family -> universal identifier of the app that must be installed for its
 // objects to exist. Standard families (task, calendarEvent, file/attachment)
-// are ungated; document and invoice belong to optional apps, so their events
-// are only emitted once the app is installed.
+// are ungated; document, invoice and mention belong to optional apps, so their
+// events are only emitted once the app is installed.
 export const CROSS_APP_EVENT_ACTIVATION_APP_BY_FAMILY: Partial<
   Record<CrossAppEventObjectFamily, string>
 > = {
   document: '19126a9c-7cc0-4368-aaba-c7e5a87b0c48',
   invoice: 'b11a0000-0000-4000-8000-000000000001',
+  mention: '19126a9c-7cc0-4368-aaba-c7e5a87b0c48',
 };

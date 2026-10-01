@@ -37,6 +37,7 @@ describe('cross-app event contract', () => {
     expect(resolveCrossAppEventObjectFamily('document')).toBe('document');
     expect(resolveCrossAppEventObjectFamily('attachment')).toBe('file');
     expect(resolveCrossAppEventObjectFamily('invoice')).toBe('invoice');
+    expect(resolveCrossAppEventObjectFamily('documentMention')).toBe('mention');
     expect(resolveCrossAppEventObjectFamily('company')).toBeUndefined();
   });
 
@@ -82,6 +83,7 @@ describe('cross-app event contract', () => {
   it('gates only the optional-app families', () => {
     expect(CROSS_APP_EVENT_ACTIVATION_APP_BY_FAMILY).toHaveProperty('document');
     expect(CROSS_APP_EVENT_ACTIVATION_APP_BY_FAMILY).toHaveProperty('invoice');
+    expect(CROSS_APP_EVENT_ACTIVATION_APP_BY_FAMILY).toHaveProperty('mention');
     expect(CROSS_APP_EVENT_ACTIVATION_APP_BY_FAMILY).not.toHaveProperty('task');
     expect(CROSS_APP_EVENT_ACTIVATION_APP_BY_FAMILY).not.toHaveProperty('file');
   });

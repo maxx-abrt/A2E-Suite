@@ -119,6 +119,55 @@ export class NotificationWatchService {
     });
   }
 
+  // The mention-of-record fan-out reads the same watch rows as the change
+  // fan-out, but pivots each watch to a member identity so a mention can reuse
+  // the mentions engine (permission-checked per member). A removed member has
+  // no member-cache entry and drops out, so the caller never emits to a
+  // non-member. Deduped by user because one member may hold several watches.
+  async findWatchingWorkspaceMembers({
+    workspaceId,
+    targetKind,
+    targetId,
+  }: {
+    workspaceId: string;
+    targetKind: NotificationWatchTargetKind;
+    targetId: string;
+  }): Promise<{ userId: string; workspaceMemberId: string }[]> {
+    const watchers = await this.notificationWatchRepository.find({
+      where: { workspaceId, targetKind, targetId },
+    });
+
+    if (watchers.length === 0) {
+      return [];
+    }
+
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    const watchingMembers: { userId: string; workspaceMemberId: string }[] = [];
+    const seenUserIds = new Set<string>();
+
+    for (const watcher of watchers) {
+      if (seenUserIds.has(watcher.userId)) {
+        continue;
+      }
+
+      const workspaceMemberId =
+        flatWorkspaceMemberMaps.idByUserId[watcher.userId];
+
+      if (!isDefined(workspaceMemberId)) {
+        continue;
+      }
+
+      seenUserIds.add(watcher.userId);
+      watchingMembers.push({ userId: watcher.userId, workspaceMemberId });
+    }
+
+    return watchingMembers;
+  }
+
   // Removes every watch a user holds in a workspace: the permission-loss hook a
   // removed member calls (P2.1 revocation semantics — a revoked member keeps no
   // subscriptions). Returns how many were dropped.
