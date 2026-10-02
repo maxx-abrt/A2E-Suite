@@ -7,8 +7,8 @@ import {
 
 export default defineCommandMenuItem({
   universalIdentifier: COMMAND_MENU_ITEM_IDS.findSubventions,
-  label: 'Bilan : trouver des aides',
-  shortLabel: 'Trouver des aides',
+  label: 'Bilan : ouvrir les aides',
+  shortLabel: 'Ouvrir les aides',
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: FRONT_COMPONENT_IDS.subventionExplorer,
 });

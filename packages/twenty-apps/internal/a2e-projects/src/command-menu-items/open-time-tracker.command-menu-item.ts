@@ -14,8 +14,8 @@ import {
 // owning a presence system.
 export default defineCommandMenuItem({
   universalIdentifier: COMMAND_MENU_ITEM_IDS.openTimeTracker,
-  label: 'Bureau : chronomètre',
-  shortLabel: 'Chronomètre',
+  label: 'Bureau : ouvrir le chronomètre',
+  shortLabel: 'Ouvrir le chronomètre',
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task.universalIdentifier,

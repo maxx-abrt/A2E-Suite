@@ -1,0 +1,184 @@
+# Iteration 21 Log
+
+## Metadata
+
+- **Task ID**: US-167
+- **Task Title**: M13d: customize in place — 'Customize' opens native layout edit with per-managed-item 'Reset to template default'
+- **Description**: As a user on an app landing page, I want a 'Customize' action opening the native layout/view/field editors, with a reset per managed item, so that customization is in place and reversible. Starting st...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-02T03:40:23.174Z
+- **Ended At**: 2026-10-02T03:55:04.730Z
+- **Duration**: 14m 41s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-167" PLAN.md | head -20
+[94m[bash][0m $ grep -n "M13d" PLAN.md | head -20
+[94m[bash][0m $ grep -rn "US-167" . --include="*.md" --include="*.json" -l 2>/dev/null | grep -v node_modules | head...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd-batch-b.json')) def walk(o):     if isinstance(...
+[94m[bash][0m $ grep -n "US-150\|US-151\|US-153" PLAN.md | head -20
+[94m[bash][0m $ grep -n "US-167\|M13d\|CLAIMED" docs/plan/phases/phase-17-report.md | tail -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-17-report.md
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd-batch-b.json')) def walk(o):     if isinstance(...
+[94m[bash][0m $ grep -rn "P1.7\|provenance" PLAN.md | head -30
+[94m[bash][0m $ grep -rln "provenance" packages/twenty-front/src packages/twenty-server/src --include="*.ts" --inclu...
+[94m[bash][0m $ grep -rln "overridable\|overridden\|customizedBy\|customisedBy\|templateVersion\|appliedTemplateKey"...
+[94m[bash][0m $ grep -rln "managedItem\|managed item\|isManaged\|managedObject" packages/twenty-front/src packages/t...
+[94m[bash][0m $ grep -rln "resetToDefault\|ResetToDefault\|reset-to-default\|Reset to template" packages/twenty-fron...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ ls packages/twenty-server/src/engine/metadata-modules/page-layout/ 2>/dev/null
+[94m[bash][0m $ grep -rln "isCustom\|isApplication\|applicationId" packages/twenty-server/src/engine/metadata-module...
+[94m[bash][0m $ ls packages/twenty-server/src/engine/metadata-modules/page-layout/services/
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "Reset to default\|Reset to template" packages/twenty-front/src/locales/generated/en.ts | he...
+[94m[bash][0m $ grep -rln "resetPageLayout\|ResetPageLayout\|resetToDefault" packages/twenty-front/src --include="*....
+[94m[bash][0m $ ls -R packages/twenty-front/src/modules/layout-customization/ | head -80
+[94m[bash][0m $ grep -rln "isLayoutCustomizationMode\|LayoutCustomization\|layoutCustomization" packages/twenty-fron...
+[94m[read][0m
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "useEnterLayoutCustomizationMode\|enterLayoutCustomizationMode\|useSetIsPageLayoutInEditMod...
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-front/src/modules/bureau/components/ packages/twenty-front/src/modules/calendar/c...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/BureauLanding.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/ArchiveLanding.tsx
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/AgendaLanding.tsx
+[94m[read][0m
+[94m[bash][0m $ grep -rn "resetPageLayoutWidgetToDefault\|resetPageLayoutTabToDefault" packages/twenty-front/src --i...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "LayoutCustomizationBar" packages/twenty-front/src --include="*.tsx" | grep -v "__tests__" ...
+[94m[bash][0m $ grep -rn "EditLayoutCommand\|edit-layout\|Edit layout" packages/twenty-front/src/modules/command-men...
+[94m[read][0m
+[94m[bash][0m $ grep -rn "OBJECT_DETAIL_TABS\|ObjectDetailTabs\|label.*Fields\|label.*Views" packages/twenty-front/s...
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-front/src/pages/settings/data-model/ 2>/dev/null | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/settings/data-model/SettingsObjectDetailPage.tsx
+[94m[bash][0m $ grep -rn "Customize\|customize" packages/twenty-front/src/modules/bureau packages/twenty-front/src/m...
+[94m[bash][0m $ grep -rn "Reset to default" packages/twenty-front/src/locales/generated/en.ts | head
+[94m[bash][0m $ tail -60 .ralph-tui/progress.md 2>/dev/null
+[94m[bash][0m $ grep -rn "BureauLanding\|AgendaLanding\|ArchiveLanding" packages/twenty-front/src --include="*.tsx" ...
+[94m[bash][0m $ grep -rln "PAGE_LAYOUT\|pageLayout\|layout" packages/twenty-apps/internal/*/src/navigation-menu-item...
+[94m[bash][0m $ grep -rn "AppPath" packages/twenty-front/src/modules/bureau packages/twenty-front/src/modules/calend...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src 2>/dev/null
+[94m[bash][0m $ find packages/twenty-apps/internal -path "*navigation-menu-items*" -name "*.ts" | grep -iE "bureau|a...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/src/navigation-menu-items/documents.navigation-menu-...
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-documents/src/page-layouts/*.ts 2>/dev/null | head -120
+[94m[bash][0m $ grep -rn "ObjectDetail" packages/twenty-shared/src/types --include="*.ts" | head
+[94m[bash][0m $ grep -rn "SettingsPath.ObjectDetail\|SettingsPath.Objects" packages/twenty-front/src --include="*.ts...
+[94m[bash][0m $ ls packages/twenty-front/src/modules/a2e-empty-state/
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-front/src/modules/a2e-empty-state/constants/A2eEmptyStateSurfaces.ts
+[94m[bash][0m $ grep -rln "isResetToDefaultDisabled\|Reset to default\|resetPageLayoutWidgetToDefault\|resetPageLayo...
+[94m[bash][0m $ grep -rln "resetPageLayoutWidgetToDefault\|WidgetSettingsManageSection\|SidePanelPageLayoutTabSettin...
+[94m[bash][0m $ find packages/twenty-front/src -name "useNavigateSettings.ts" -o -name "useNavigateSettings.tsx" | h...
+[94m[bash][0m $ grep -nE "IconListDetails|IconLayout|IconTable|IconPaint|IconPencil|IconAdjustments|IconEye|IconColu...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/hooks/useNavigateSettings.ts
+[94m[bash][0m $ find packages/twenty-apps/internal/a2e-drive/src/objects -name "*.ts" | head
+[94m[bash][0m $ grep -n "nameSingular:\|namePlural:" packages/twenty-server/src/modules/calendar/common/standard-obj...
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-front/src/modules/template-gallery/hooks/useOpenTemplateGallery.ts
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-drive/src/navigation-menu-items/drive.navigation-menu-item.ts ...
+[94m[bash][0m $ grep -rn "calendarEvents\|namePlural" packages/twenty-server/src/modules/calendar/common/standard-ob...
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ git log --oneline -5
+[94m[bash][0m $ wc -l docs/plan/phases/phase-17-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-17-report.md
+[94m[bash][0m $ grep -rln "clickableComponent={" packages/twenty-front/src/modules --include="*.tsx" | head -8
+[94m[bash][0m $ done
+[94m[read][0m
+[94m[bash][0m $ grep -rn "LeftIcon\|text\|onClick\|disabled" packages/twenty-ui/src/navigation/menu-item/components/...
+[94m[bash][0m $ grep -rn "LeftIcon\|text:\|onClick\|disabled" packages/twenty-ui/src/navigation/menu-item/components...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-ui/src/navigation/MenuItem/MenuItem.tsx
+[94m[read][0m
+[94m[bash][0m $ grep -rn "CalendarEvent" packages/twenty-shared/src/types/*.ts | head
+[94m[bash][0m $ grep -rn "calendarEvents" packages/twenty-front/src --include="*.ts" --include="*.tsx" | grep -v loc...
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-front/src/modules/ui/layout/dropdown/components/Dropdown.tsx | grep -...
+[94m[bash][0m $ grep -n "onClickOutside\|dropdownOffset\|dropdownPlacement\|clickableComponent\|dropdownComponents\|...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/hooks/useNavigateApp.ts
+[94m[bash][0m $ grep -rn "AppPath.RecordIndexPage" packages/twenty-front/src/modules --include="*.tsx" | grep -v "__...
+[94m[write][0m "export const A2E_CUSTOMIZE_ACTION_DROPDOWN_ID = 'a2e-customize-action-dropdown';
+"
+[94m[write][0m "import { A2E_CUSTOMIZE_ACTION_DROPDOWN_ID } from '@/a2e-customize/constants/A2eCustomizeActionDropdownId';
+import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutC... (4008 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-customize/components/A2eCustomizeAction.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-customize/components/A2eCustomizeAction.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/BureauLanding.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/BureauLanding.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/BureauLanding.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/BureauLanding.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/BureauLanding.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/AgendaLanding.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/AgendaLanding.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/ArchiveLanding.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/ArchiveLanding.tsx
+[94m[bash][0m $ done 2>/dev/null | head -160
+[94m[bash][0m $ sed -n '1,120p' packages/twenty-front/src/modules/bureau/components/__tests__/BureauLanding.test.tsx
+[94m[write][0m "import { A2E_CUSTOMIZE_ACTION_DROPDOWN_ID } from '@/a2e-customize/constants/A2eCustomizeActionDropdownId';
+import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutC... (1626 chars)"
+[94m[write][0m "import { A2eCustomizeAction } from '@/a2e-customize/components/A2eCustomizeAction';
+import { useA2eCustomizeActions } from '@/a2e-customize/hooks/useA2eCustomizeActions';
+import { useHasPermissionFlag... (3149 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-customize/components/A2eCustomizeAction.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-customize/components/A2eCustomizeAction.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-customize/components/A2eCustomizeAction.tsx
+[94m[write][0m "import { useA2eCustomizeActions } from '@/a2e-customize/hooks/useA2eCustomizeActions';
+import { A2E_CUSTOMIZE_ACTION_DROPDOWN_ID } from '@/a2e-customize/constants/A2eCustomizeActionDropdownId';
+import... (2821 chars)"
+[94m[bash][0m $ npx jest src/modules/a2e-customize --config=jest.config.mjs 2>&1 | tail -40
+[94m[bash][0m $ npx jest src/modules/bureau/components/__tests__/BureauLanding.test.tsx src/modules/calendar/compone...
+[94m[bash][0m $ sed -n '1,70p' packages/twenty-front/src/modules/drive/components/__tests__/ArchiveLanding.test.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/__tests__/BureauLanding.test.tsx
+[94m[edit][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/__tests__/ArchiveLanding.test.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/__tests__/BureauLanding.test.tsx
+[94m[edit][0m
+[94m[bash][0m $ grep -n "renders one primary action, a new folder action" -A 20 packages/twenty-front/src/modules/dr...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/__tests__/ArchiveLanding.test.tsx
+[94m[bash][0m $ npx jest src/modules/bureau/components/__tests__/BureauLanding.test.tsx src/modules/calendar/compone...
+[94m[bash][0m $ echo "EXIT:$?"
+[94m[bash][0m $ echo "EXIT:$?"
+[94m[bash][0m $ echo "EXIT:$?"
+[94m[bash][0m $ npx oxfmt --check src/modules/a2e-customize 2>&1 | tail -5
+[94m[bash][0m $ grep -rln "reset\|Reset" packages/twenty-front/src/modules/navigation-menu-item --include="*.ts" --i...
+[94m[bash][0m $ grep -rln "reset" packages/twenty-front/src/modules/command-menu-item --include="*.ts" --include="*....
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ echo "EXIT:$?"
+[94m[bash][0m $ npx jest src/modules/a2e-customize src/modules/bureau/components/__tests__/BureauLanding.test.tsx sr...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ grep -rn "msgid \"Views\"\|msgid \"Fields\"\|msgid \"Edit layout\"\|msgid \"Customize\"" packages/tw...
+[94m[bash][0m $ grep -n "msgid \"Fields\"" -A 2 packages/twenty-front/src/locales/fr-FR.po | head
+[94m[bash][0m $ grep -n "msgid \"Layout\"" -A 2 packages/twenty-front/src/locales/fr-FR.po | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-customize/components/A2eCustomizeAction.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-customize/components/A2eCustomizeAction.tsx
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd-batch-b.json')) def walk(o):     if isinstance(...
+[94m[bash][0m $ npx oxfmt --check src/modules/a2e-customize/components/A2eCustomizeAction.tsx 2>&1 | tail -3
+[94m[bash][0m $ grep -n "msgid \"Layout\"" -A 1 packages/twenty-front/src/locales/fr-FR.po | head
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-customize/components/A2eCustomizeAction.tsx
+[94m[bash][0m $ npx oxfmt --check src/modules/a2e-customize 2>&1 | tail -2
+[94m[bash][0m $ grep -rln "resetCommandMenuItem" packages/twenty-server/src --include="*.spec.ts" | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-17-report.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-17-report.md
+[94m[bash][0m $ wc -l .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ tail -8 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ find packages/twenty-front/src/modules/a2e-customize -type f
+Slice complete. Summary of what I did for **US-167 M13d**:
+
+- **New `a2e-customize` module** (`packages/twenty-front/src/modules/a2e-customize/`): a reusable `Customize` dropdown that opens the native layout-edit mode (`useEnterLayoutCustomizationMode`) plus entry points to the surface's **Views** (`AppPath.RecordIndexPage`) and **Fields** (`SettingsPath.ObjectDetail`) settings. Logic extracted into `useA2eCustomizeActions` for testability.
+- **Mounted on the three landings**: Bureau (`documents`), Agenda (`calendarEvents`), Archive (`driveFolders`); each existing spec stubs/asserts the new child.
+- **Reset per managed item** already ships in the native editors (`PageLayoutResetService` + `splitEntitiesByResetStrategy`; `WidgetSettingsManageSection`/`SidePanelPageLayoutTabSettingsContent`/`CommandMenuItemOptionsDropdown`) with `applicationId !== workspaceCustomApplication.id` gating — verified, not rebuilt.
+- **Gates**: 4 suites / 21 tests green; `tsgo` exit 0; oxlint 0/0 + oxfmt clean; `nx lint:diff-with-main` exit 0; all four labels already translated (no catalog churn).
+
+Reported as `done-for-review`, `Ready-to-tick: no` — the entry-point bullet is green, but US-167’s “user-created items have no reset affordance” front test and the Tier-2 browser journey remain.
+
+<promise>COMPLETE</promise>

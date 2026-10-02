@@ -14,8 +14,8 @@ import {
 // fiche read right — the fiche layout is the payload.
 export default defineCommandMenuItem({
   universalIdentifier: COMMAND_MENU_ITEM_IDS.saveFicheAsTemplate,
-  label: 'Bilan : enregistrer comme modèle',
-  shortLabel: 'Enregistrer comme modèle',
+  label: 'Bilan : créer un modèle',
+  shortLabel: 'Créer un modèle',
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier: OBJECT_IDS.fiche,
   frontComponentUniversalIdentifier:

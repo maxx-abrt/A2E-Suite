@@ -12,8 +12,8 @@ import { FRONT_COMPONENT_IDS } from '../constants/universal-identifiers.ts';
 // read the company but not its notes must not see the action.
 export default defineCommandMenuItem({
   universalIdentifier: 'c31a0000-0011-4000-8000-000000000004',
-  label: 'Bureau : enregistrer comme document',
-  shortLabel: 'Enregistrer comme document',
+  label: 'Bureau : créer un document depuis une entreprise',
+  shortLabel: 'Créer un document depuis une entreprise',
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,

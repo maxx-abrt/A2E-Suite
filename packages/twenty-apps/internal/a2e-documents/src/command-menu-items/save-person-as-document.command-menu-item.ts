@@ -12,8 +12,8 @@ import { FRONT_COMPONENT_IDS } from '../constants/universal-identifiers.ts';
 // read the person but not its notes must not see the action.
 export default defineCommandMenuItem({
   universalIdentifier: 'c31a0000-0011-4000-8000-000000000005',
-  label: 'Bureau : enregistrer comme document',
-  shortLabel: 'Enregistrer comme document',
+  label: 'Bureau : créer un document depuis une personne',
+  shortLabel: 'Créer un document depuis une personne',
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,

@@ -147,3 +147,30 @@ CLAIMED — US-167/m13d-landing-customize — deepseek-v4.1-flash — 2026-10-02
 **Do not redo:** the native layout-customization mode (`useEnterLayoutCustomizationMode`, `LayoutCustomizationBar`), the reset mutations/services and their provenance gating, the `A2eContextualEmptyState` empty branches, and `useOpenTemplateGallery`.
 **Remaining:** 2 other open tasks in batch 14B (US-168, US-169).
 **Next:** orchestrator Tier-2 browser check; add the managed-only reset front test (or accept the pre-existing gating) then tick US-167; the next executor slice is US-168 (M13e consistency pass).
+
+CLAIMED — US-168/m13e-labels — deepseek-v4.1-flash — 2026-10-02T04:15:23Z — base 5df743dca7e129104c50403956c851978c37c63e
+
+## 2026-10-02 04:35 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-168 M13e: consistency pass — same verbs, same icons, no mixed-language labels + grep-based label-convention test · **Slice:** the label-convention half — audit + fix every app `command-menu-items` label to `<App> : <verb> …` with verbs from the PLAN canonical set (Créer/Ouvrir/Partager), plus the per-app grep-based drift guard (bullets 2, 4, 5). Icon audit (bullet 3) left for the next slice.
+**Claim:** partial
+**Ready-to-tick:** no — labels + test are green, but the icon audit bullet and the Tier-2 Cmd+K rendering pass are still absent.
+**Base:** 5df743dca7e129104c50403956c851978c37c63e
+**Changed:**
+- a2e-accounting labels: `find-subventions` `Bilan : trouver des aides`→`Bilan : ouvrir les aides`; `quick-entry` `Bilan : saisie rapide`→`Bilan : créer une écriture`; `save-fiche-as-template` `Bilan : enregistrer comme modèle`→`Bilan : créer un modèle` (+ shortLabels verb-first); `package.json` 0.1.5→0.1.6.
+- a2e-chat label: `go-to-chat` `Bureau : aller aux discussions`→`Bureau : ouvrir les discussions` (+ shortLabel); `package.json` 0.1.2→0.1.3.
+- a2e-documents labels: `go-to-documents` `aller aux documents`→`ouvrir les documents`; `save-company-as-document` `enregistrer comme document`→`créer un document depuis une entreprise`; `save-document-as-template` `enregistrer comme modèle`→`créer un modèle`; `save-person-as-document` `enregistrer comme document`→`créer un document depuis une personne` (+ shortLabels); `package.json` 0.2.13→0.2.14.
+- a2e-projects labels: `go-to-projects` `aller aux projets`→`ouvrir les projets`; `open-dependencies` `Bureau : dépendances`→`ouvrir les dépendances`; `open-subtasks` `sous-tâches`→`ouvrir les sous-tâches`; `open-time-tracker` `chronomètre`→`ouvrir le chronomètre`; `save-project-as-template` `enregistrer comme modèle`→`créer un modèle` (+ shortLabels); `package.json` 0.1.20→0.1.21.
+- NEW per-app `src/lib/__tests__/command-menu-label-convention.test.ts` (4 files): grep-reads every `*.command-menu-item.ts` and asserts `label` matches `^<App> : (créer|ouvrir|partager) \S` and `shortLabel` starts with the capitalized canonical verb.
+- Already-conforming labels left untouched: `Bureau : créer un canal`, `Bureau : créer un document` (×2, create + create-and-open), `Bureau : créer un projet`, `Bureau : créer une tâche`. All labels are French (no mixed-language), app prefix present on every label per the PLAN convention.
+- this report + `.ralph-tui/progress.md`.
+**Checks:**
+- `node --test --experimental-strip-types src/lib/__tests__/command-menu-label-convention.test.ts` per app → 2 tests pass each (the guard failed on the pre-fix `Bilan : …' lowercase/Capitalized mismatch, proving it catches violations).
+- per app `yarn typecheck` → exit 0; `yarn lint` → 0 warnings/0 errors; `yarn test:unit` → accounting 134 pass / chat 63 / documents 294 / projects 374, 0 fail (new spec included in each glob).
+- per app `npx twenty dev:build .` → Build succeeded (accounting 34 files, chat 12, documents 36, projects 54).
+- No `locales/**` touched; no host (`twenty-front`) file touched so no tsgo needed; no `any`; no direct `@tabler/icons-react` or `twenty-ui/icon` import under `packages/twenty-apps/internal/**`; no AI attribution.
+**Missing for tick:**
+- **Icon audit (AC bullet 3):** apps expose icon *string* names (nav items/objects) resolved by the host and import no icon package, so no `@tabler`/`twenty-ui/icon` import deviation exists in-app; the canonical-icon decision for nav/object concept strings (e.g. a2e-chat `IconMessages` vs dictionary `IconMessage`, a2e-documents `IconNotes` vs `IconFiles`) and any host `twenty-front` app-surface icon is the next slice.
+- **Tier 2 (orchestrator):** re-publish the 4 bumped apps and confirm the Cmd+K palette shows the new labels (`Ouvrir les discussions`, `Créer un modèle`, `Ouvrir le chronomètre`, …).
+**Do not redo:** the canonical verb mapping above; the 4 `command-menu-label-convention.test.ts` guards (extend the `APP_PREFIX`/directory the same way for any new app with `command-menu-items`); the untouched create commands.
+**Remaining:** 1 other open task in batch 14B (US-169).
+**Next:** US-168 second slice — icon audit per AC bullet 3 (nav/object icon strings vs `packages/twenty-ui/src/icon/icon-dictionary.md`; host `twenty-front` A2E surfaces if any direct icon import deviates), then Tier-2 rendering pass.

@@ -10,8 +10,8 @@ import {
 // when there is exactly one, and otherwise browses the whole forest.
 export default defineCommandMenuItem({
   universalIdentifier: COMMAND_MENU_ITEM_IDS.openSubtasks,
-  label: 'Bureau : sous-tâches',
-  shortLabel: 'Sous-tâches',
+  label: 'Bureau : ouvrir les sous-tâches',
+  shortLabel: 'Ouvrir les sous-tâches',
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: FRONT_COMPONENT_IDS.taskSubtasks,
 });

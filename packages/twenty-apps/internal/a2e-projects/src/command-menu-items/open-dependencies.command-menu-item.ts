@@ -10,8 +10,8 @@ import {
 // single selection before offering the blocker choices.
 export default defineCommandMenuItem({
   universalIdentifier: COMMAND_MENU_ITEM_IDS.openDependencies,
-  label: 'Bureau : dépendances',
-  shortLabel: 'Dépendances',
+  label: 'Bureau : ouvrir les dépendances',
+  shortLabel: 'Ouvrir les dépendances',
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: FRONT_COMPONENT_IDS.taskDependencies,
 });

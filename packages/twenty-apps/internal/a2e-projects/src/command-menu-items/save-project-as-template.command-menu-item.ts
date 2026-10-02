@@ -14,8 +14,8 @@ import {
 // read right — the project and its tasks are the payload.
 export default defineCommandMenuItem({
   universalIdentifier: COMMAND_MENU_ITEM_IDS.saveProjectAsTemplate,
-  label: 'Bureau : enregistrer comme modèle',
-  shortLabel: 'Enregistrer comme modèle',
+  label: 'Bureau : créer un modèle',
+  shortLabel: 'Créer un modèle',
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier: OBJECT_IDS.project,
   frontComponentUniversalIdentifier:

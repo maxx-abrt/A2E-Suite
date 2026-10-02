@@ -14,8 +14,8 @@ import {
 // caller's document read right — the source body is the payload.
 export default defineCommandMenuItem({
   universalIdentifier: COMMAND_MENU_ITEM_IDS.saveDocumentAsTemplate,
-  label: 'Bureau : enregistrer comme modèle',
-  shortLabel: 'Enregistrer comme modèle',
+  label: 'Bureau : créer un modèle',
+  shortLabel: 'Créer un modèle',
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier: OBJECT_IDS.document,
   frontComponentUniversalIdentifier:

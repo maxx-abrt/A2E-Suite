@@ -7,8 +7,8 @@ import {
 
 export default defineCommandMenuItem({
   universalIdentifier: COMMAND_MENU_ITEM_IDS.goToChat,
-  label: 'Bureau : aller aux discussions',
-  shortLabel: 'Discussions',
+  label: 'Bureau : ouvrir les discussions',
+  shortLabel: 'Ouvrir les discussions',
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: FRONT_COMPONENT_IDS.goToChat,
 });
