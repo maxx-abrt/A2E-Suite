@@ -62,3 +62,35 @@ CLAIMED — US-164/m13b-start-from-scratch — deepseek-v4.1-flash — 2026-10-0
 **Do not redo:** the existing `useInstallOnboardingApps` no-install path (`skip`/`triggerStep([])` → server `triggerInstallAppsOnboardingStep` claim + reversible history + 0 credits) and the `A2eWorkspaceTemplatePreview`/operation contract; the shared picker's persona grid/preview flow (only an optional prop was added). Do not add a `SCRATCH` server `WorkspaceTemplate` — the task is satisfied by the empty selection, and the enum is a GraphQL change.
 **Remaining:** 5 other open tasks in batch 14B (US-165–US-169).
 **Next:** orchestrator Tier-2 browser check, then tick US-164; the next executor slice is US-165 (M13c-1 contextual empty states — Bureau + Agenda).
+
+CLAIMED — US-165/m13c-bureau-agenda — deepseek-v4.1-flash — 2026-10-02T00:20:39Z — base a8b1c19f2f97cae04fcdb6c2910c623e1cbfe2b0
+
+## 2026-10-02 00:48 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-165 M13c-1: contextual empty states — Bureau + Agenda surfaces · **Slice:** the whole M13c-1 half: one reusable contextual empty state (host display reuse) mounted on the Bureau landing, the Agenda landing/calendar, and the documents + tasks host record indexes
+**Claim:** done-for-review
+**Ready-to-tick:** yes — every Tier-0 gate green; only the Tier-2 browser pass on fresh workspaces is absent.
+**Base:** a8b1c19f2f97cae04fcdb6c2910c623e1cbfe2b0
+**Changed:**
+- MOD `.../object-record/record-index/components/RecordIndexEmptyStateDisplay.tsx` — additive: `subTitle?`, `buttonVariant?`, `buttonDataTestId?`, `footer?`, `dataTestId?` (defaults preserve every existing caller) so an A2E state adds its two links below the host button instead of forking the shell.
+- NEW `.../a2e-empty-state/constants/A2eEmptyStateSurfaces.ts` — the four surfaces (bureau/agenda/documents/tasks): one sentence, primary-action label+icon, gallery category, help appKey, animated-placeholder type, object name, document-install gate.
+- NEW `.../a2e-empty-state/utils/getA2eEmptyStateSurfaceForObject.ts` (own file for `max-consts-per-file`).
+- NEW `.../a2e-empty-state/components/A2eContextualEmptyState.tsx` — renders EXACTLY the four elements through the host `RecordIndexEmptyStateDisplay`: one sentence (title, no subtitle), one primary button (surface create action), one "Use a template" link (`useOpenTemplateGallery({category})`), one `A2eLearnMoreLink`.
+- NEW `.../a2e-empty-state/hooks/useA2eRecordIndexSurfaceKey.ts` — maps an object to its surface key or `null`; document returns `null` without a2e-documents.
+- MOD `.../object-record/record-index/components/RecordIndexEmptyState.tsx` — `totalCount===0` + mapped surface + create permitted → `A2eContextualEmptyState`; else host state unchanged.
+- MOD `.../bureau/components/BureauLanding.tsx` — split into gate + content; zero documents → the four-element state (primary = existing `createNewPage`), else the M7f landing.
+- MOD `.../calendar/components/AgendaLanding.tsx` (+ optional `isRecordEmpty`) and `pages/calendar/CalendarPage.tsx` — no events at all (`!loading && !hasError && events.length===0`) → the Agenda state (primary = existing `handleCreateEvent`); toolbar/views return with the first event.
+- NEW tests: `A2eContextualEmptyState.test.tsx` (4 elements per surface + gallery category + doc href), `A2eContextualEmptyStateReuse.test.tsx` (mocks the host display — reuse assertion), `A2eEmptyStateSurfaces.test.ts` (real categories + real doc URLs + object mapping), `useA2eRecordIndexSurfaceKey.test.tsx` (install gate), `RecordIndexEmptyState.test.tsx` (mapped object → A2E state, unmapped → host state); MOD `BureauLanding.test.tsx` + `AgendaLanding.test.tsx` (empty branch).
+- this report + `.ralph-tui/progress.md`.
+**Checks:**
+- `cd packages/twenty-front && npx jest src/modules/a2e-empty-state src/modules/bureau src/modules/calendar/components/__tests__/AgendaLanding.test.tsx src/modules/object-record/record-index src/modules/object-record/record-table/empty-state --config=jest.config.mjs` → 16 suites / 76 tests pass
+- `cd packages/twenty-front && npx jest --findRelatedTests <9 changed sources> --config=jest.config.mjs` → 28 suites / 189 tests pass
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `cd packages/twenty-front && npx oxlint --type-aware -c .oxlintrc.json <16 touched files>` → 0 warnings / 0 errors; `npx oxfmt --check <same>` → clean
+- `npx nx lint:diff-with-main twenty-front` → exit 0 but "No changed files" (`main...HEAD`; uncommitted) — the direct oxlint/oxfmt run is the substantive evidence (US-162/163/164 precedent)
+- no `locales/**` touched (new copy uses `msg`/`t`; the pipeline extracts) → no catalog churn; no `any`; no direct `@tabler/react` import; no AI attribution.
+**Missing for tick:**
+- **Tier 2 (orchestrator):** fresh-workspace browser pass — `/bureau` shows the four-element Bureau state with no documents; `/calendar` shows the Agenda state with no events; the `documents` and `task` indexes show their contextual states; "Use a template" opens the gallery on the right category; "Learn more" opens the matching doc page.
+- **App-owned document tree:** the a2e-documents `document-browser` front-component runs isolated and cannot import host empty-state components, so its per-subtree empties (favorites/templates/trash) are unchanged; this slice covers the *host* documents index that `/bureau → All pages` opens. If the orchestrator wants the app browser's full-tree empty converted too, that is an app-lane (L-TPL/L-UX app) follow-up, not host `twenty-front`.
+**Do not redo:** `RecordIndexEmptyStateDisplay` (extended additively, still the one host shell), `A2eLearnMoreLink` (M12g slot reused), the US-132 `useOpenTemplateGallery` seam, `useCreateNewPage`/`useCreateNewIndexRecord`/`handleCreateEvent` (each surface keeps its own write path), and the M7f landing content (only the empty branch was added).
+**Remaining:** 4 other open tasks in batch 14B (US-166–US-169).
+**Next:** orchestrator Tier-2 browser check, then tick US-165; US-166 (M13c-2) reuses `A2eContextualEmptyState` for Bilan/Archive/Syna by adding surface keys + record-index mappings rather than new components.

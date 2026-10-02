@@ -66,6 +66,38 @@ describe('AgendaLanding', () => {
     expect(onCreateEvent).toHaveBeenCalledTimes(1);
   });
 
+  it('shows the M13c contextual empty state when there are no events', () => {
+    render(<AgendaLanding onCreateEvent={onCreateEvent} isRecordEmpty />, {
+      wrapper: Wrapper,
+    });
+
+    expect(
+      screen.getByTestId('a2e-contextual-empty-state'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId('a2e-empty-state-primary-agenda'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId('a2e-empty-state-template-agenda'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId('a2e-empty-state-learn-more-agenda'),
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('agenda-landing')).not.toBeInTheDocument();
+  });
+
+  it('opens event creation from the contextual empty state', async () => {
+    const user = userEvent.setup();
+
+    render(<AgendaLanding onCreateEvent={onCreateEvent} isRecordEmpty />, {
+      wrapper: Wrapper,
+    });
+
+    await user.click(screen.getByTestId('a2e-empty-state-primary-agenda'));
+
+    expect(onCreateEvent).toHaveBeenCalledTimes(1);
+  });
+
   it('deep-links a template into the gallery preselected to the Agenda category', async () => {
     const user = userEvent.setup();
 

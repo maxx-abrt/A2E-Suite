@@ -1,3 +1,5 @@
+import { A2eContextualEmptyState } from '@/a2e-empty-state/components/A2eContextualEmptyState';
+import { useA2eRecordIndexSurfaceKey } from '@/a2e-empty-state/hooks/useA2eRecordIndexSurfaceKey';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useObjectLabel } from '@/object-metadata/hooks/useObjectLabel';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -11,6 +13,7 @@ import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/can
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { IconFilterOff, IconPlus, IconSettings } from 'twenty-ui/icon';
 import { type ObjectPermission } from '~/generated-metadata/graphql';
 
@@ -66,6 +69,12 @@ export const RecordIndexEmptyState = ({
       }
     : undefined;
 
+  // A2E objects (document, task) get the M13c four-element contextual empty
+  // state; every other object falls through to the host state unchanged.
+  const a2eSurfaceKey = useA2eRecordIndexSurfaceKey(
+    objectMetadataItem.nameSingular,
+  );
+
   if (!objectPermissions.canUpdateObjectRecords) {
     return (
       <RecordIndexEmptyStateDisplay
@@ -106,6 +115,16 @@ export const RecordIndexEmptyState = ({
   }
 
   if (totalCount === 0) {
+    if (isDefined(a2eSurfaceKey) && isDefined(handleAddRecordClick)) {
+      return (
+        <A2eContextualEmptyState
+          surfaceKey={a2eSurfaceKey}
+          onPrimaryAction={handleAddRecordClick}
+          width={width}
+        />
+      );
+    }
+
     return (
       <RecordIndexEmptyStateDisplay
         animatedPlaceholderType="noRecord"

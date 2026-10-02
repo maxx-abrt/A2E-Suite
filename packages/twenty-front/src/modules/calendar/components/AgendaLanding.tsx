@@ -1,3 +1,4 @@
+import { A2eContextualEmptyState } from '@/a2e-empty-state/components/A2eContextualEmptyState';
 import { AGENDA_LANDING_TEMPLATE_CATEGORY } from '@/calendar/constants/AgendaLandingTemplateCategory';
 import { AGENDA_LANDING_TEMPLATE_LINKS } from '@/calendar/constants/AgendaLandingTemplates';
 import { A2eLearnMoreLink } from '@/a2e-help/components/A2eLearnMoreLink';
@@ -13,6 +14,10 @@ export type AgendaLandingProps = {
   // state — it only offers the week's entry point, so the calendar page keeps
   // its single write path.
   onCreateEvent: () => void;
+  // When the workspace has no events, the M7f strip becomes the M13c contextual
+  // empty state (one sentence, one "New event", one "Use a template", one
+  // "Learn more") instead of a header over an empty grid.
+  isRecordEmpty?: boolean;
 };
 
 const StyledLanding = styled.header`
@@ -55,9 +60,21 @@ const StyledActions = styled.div`
 // action and three M9c starter templates, never a second navigation shell. The
 // week view stays the page's own content below this strip, so the landing adds
 // no calendar state and no parallel write path.
-export const AgendaLanding = ({ onCreateEvent }: AgendaLandingProps) => {
+export const AgendaLanding = ({
+  onCreateEvent,
+  isRecordEmpty = false,
+}: AgendaLandingProps) => {
   const { t } = useLingui();
   const { openTemplateGallery } = useOpenTemplateGallery();
+
+  if (isRecordEmpty) {
+    return (
+      <A2eContextualEmptyState
+        surfaceKey="agenda"
+        onPrimaryAction={onCreateEvent}
+      />
+    );
+  }
 
   return (
     <StyledLanding data-testid="agenda-landing">

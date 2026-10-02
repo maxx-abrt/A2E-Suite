@@ -320,13 +320,14 @@
         "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; Lingui fr+en; no i18n catalog churn; no AI attribution"
       ],
       "priority": 16,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-UX. Split from M13c by app groups for one-session sizing; Bilan/Archive/Syna in US-166.",
       "dependsOn": [
         "US-150",
         "US-151",
         "US-162"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-166",
@@ -410,6 +411,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-02T00:15:49.518Z"
+    "updatedAt": "2026-10-02T00:37:42.896Z"
   }
 }

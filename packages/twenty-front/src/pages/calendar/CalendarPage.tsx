@@ -869,112 +869,126 @@ export const CalendarPage = () => {
       : t`Could not save the event. Please try again.`
     : null;
 
+  // A workspace with no events at all shows the M13c contextual empty state
+  // instead of an empty grid; the toolbar and views return as soon as one event
+  // exists. While loading or after an error the normal page renders.
+  const isAgendaEmpty = !loading && !hasError && events.length === 0;
+
   return (
     <StyledPage data-testid="calendar-page">
-      <AgendaLanding onCreateEvent={handleCreateEvent} />
-      <CalendarToolbar
-        mode={mode}
-        title={title}
-        onModeChange={handleModeChange}
-        onPrevious={handlePrevious}
-        onNext={handleNext}
-        onToday={handleToday}
-        showTaskDueDates={showTaskDueDates}
-        onToggleTaskDueDates={() => setShowTaskDueDates((isShown) => !isShown)}
+      <AgendaLanding
+        onCreateEvent={handleCreateEvent}
+        isRecordEmpty={isAgendaEmpty}
       />
-      {isDefined(selectedEvent) && (
-        <CalendarEventDetails
-          event={selectedEvent}
-          isAllDay={selectedSpan?.isAllDay ?? selectedEvent.isFullDay}
-          isLocal={isLocalCalendarEvent(selectedEvent)}
-          isEditable={isCalendarLocalEditSurface(mode)}
-          timeZone={timeZone}
-          locale={dateLocale.locale}
-          onClose={() => setSelectedEventId(null)}
-          onEdit={handleEditSelectedEvent}
-          onDelete={() => void handleDeleteSelectedEvent()}
-        />
-      )}
-      <StyledContent>
-        {loading && events.length === 0 ? (
-          <StyledStatus>{t`Loading…`}</StyledStatus>
-        ) : hasError ? (
-          <StyledError>
-            <StyledStatus>{errorMessage}</StyledStatus>
-            <Button
-              title={t`Retry`}
-              size="small"
-              variant="secondary"
-              onClick={() => refetch()}
+      {!isAgendaEmpty && (
+        <>
+          <CalendarToolbar
+            mode={mode}
+            title={title}
+            onModeChange={handleModeChange}
+            onPrevious={handlePrevious}
+            onNext={handleNext}
+            onToday={handleToday}
+            showTaskDueDates={showTaskDueDates}
+            onToggleTaskDueDates={() =>
+              setShowTaskDueDates((isShown) => !isShown)
+            }
+          />
+          {isDefined(selectedEvent) && (
+            <CalendarEventDetails
+              event={selectedEvent}
+              isAllDay={selectedSpan?.isAllDay ?? selectedEvent.isFullDay}
+              isLocal={isLocalCalendarEvent(selectedEvent)}
+              isEditable={isCalendarLocalEditSurface(mode)}
+              timeZone={timeZone}
+              locale={dateLocale.locale}
+              onClose={() => setSelectedEventId(null)}
+              onEdit={handleEditSelectedEvent}
+              onDelete={() => void handleDeleteSelectedEvent()}
             />
-          </StyledError>
-        ) : (
-          <>
-            {mode === 'month' && (
-              <CalendarMonthView
-                weeks={viewDays}
-                anchorMonth={anchorDate.month}
-                spansByDay={spansByDay}
-                taskDuesByDay={taskDuesByDay}
-                selectedEventId={selectedEventId}
-                timeZone={timeZone}
-                locale={dateLocale.locale}
-                onSelectEvent={handleSelectEvent}
-                onOpenTask={handleOpenTask}
-              />
+          )}
+          <StyledContent>
+            {loading && events.length === 0 ? (
+              <StyledStatus>{t`Loading…`}</StyledStatus>
+            ) : hasError ? (
+              <StyledError>
+                <StyledStatus>{errorMessage}</StyledStatus>
+                <Button
+                  title={t`Retry`}
+                  size="small"
+                  variant="secondary"
+                  onClick={() => refetch()}
+                />
+              </StyledError>
+            ) : (
+              <>
+                {mode === 'month' && (
+                  <CalendarMonthView
+                    weeks={viewDays}
+                    anchorMonth={anchorDate.month}
+                    spansByDay={spansByDay}
+                    taskDuesByDay={taskDuesByDay}
+                    selectedEventId={selectedEventId}
+                    timeZone={timeZone}
+                    locale={dateLocale.locale}
+                    onSelectEvent={handleSelectEvent}
+                    onOpenTask={handleOpenTask}
+                  />
+                )}
+                {mode === 'week' && (
+                  <CalendarWeekView
+                    days={viewDays.flat()}
+                    spansByDay={spansByDay}
+                    taskDuesByDay={taskDuesByDay}
+                    selectedEventId={selectedEventId}
+                    timeZone={timeZone}
+                    locale={dateLocale.locale}
+                    onSelectEvent={handleSelectEvent}
+                    onOpenTask={handleOpenTask}
+                    onAddTask={onAddTask}
+                  />
+                )}
+                {mode === 'day' && (
+                  <CalendarDayView
+                    day={anchorDate}
+                    spansByDay={spansByDay}
+                    taskDuesByDay={taskDuesByDay}
+                    selectedEventId={selectedEventId}
+                    timeZone={timeZone}
+                    locale={dateLocale.locale}
+                    onSelectEvent={handleSelectEvent}
+                    onOpenTask={handleOpenTask}
+                    onAddTask={onAddTask}
+                    onCreateEventFromSlots={handleCreateEventFromSlots}
+                  />
+                )}
+                {mode === 'agenda' && (
+                  <CalendarAgendaView
+                    days={agendaDays}
+                    spansByDay={spansByDay}
+                    taskDuesByDay={taskDuesByDay}
+                    selectedEventId={selectedEventId}
+                    timeZone={timeZone}
+                    locale={dateLocale.locale}
+                    onSelectEvent={handleSelectEvent}
+                    onOpenTask={handleOpenTask}
+                  />
+                )}
+                {eventsInRangeCount === 0 &&
+                  taskDuesInRangeCount === 0 &&
+                  mode === 'month' && (
+                    <StyledStatus>{t`No events in this range`}</StyledStatus>
+                  )}
+                {isDefined(taskDueError) && (
+                  <StyledStatus data-testid="calendar-task-due-error">
+                    {t`Could not load task due dates`}
+                  </StyledStatus>
+                )}
+              </>
             )}
-            {mode === 'week' && (
-              <CalendarWeekView
-                days={viewDays.flat()}
-                spansByDay={spansByDay}
-                taskDuesByDay={taskDuesByDay}
-                selectedEventId={selectedEventId}
-                timeZone={timeZone}
-                locale={dateLocale.locale}
-                onSelectEvent={handleSelectEvent}
-                onOpenTask={handleOpenTask}
-                onAddTask={onAddTask}
-              />
-            )}
-            {mode === 'day' && (
-              <CalendarDayView
-                day={anchorDate}
-                spansByDay={spansByDay}
-                taskDuesByDay={taskDuesByDay}
-                selectedEventId={selectedEventId}
-                timeZone={timeZone}
-                locale={dateLocale.locale}
-                onSelectEvent={handleSelectEvent}
-                onOpenTask={handleOpenTask}
-                onAddTask={onAddTask}
-                onCreateEventFromSlots={handleCreateEventFromSlots}
-              />
-            )}
-            {mode === 'agenda' && (
-              <CalendarAgendaView
-                days={agendaDays}
-                spansByDay={spansByDay}
-                taskDuesByDay={taskDuesByDay}
-                selectedEventId={selectedEventId}
-                timeZone={timeZone}
-                locale={dateLocale.locale}
-                onSelectEvent={handleSelectEvent}
-                onOpenTask={handleOpenTask}
-              />
-            )}
-            {eventsInRangeCount === 0 &&
-              taskDuesInRangeCount === 0 &&
-              mode === 'month' && (
-                <StyledStatus>{t`No events in this range`}</StyledStatus>
-              )}
-            {isDefined(taskDueError) && (
-              <StyledStatus data-testid="calendar-task-due-error">
-                {t`Could not load task due dates`}
-              </StyledStatus>
-            )}
-          </>
-        )}
-      </StyledContent>
+          </StyledContent>
+        </>
+      )}
       {isDefined(statusMessage) && (
         <StyledStatus aria-live="polite">{statusMessage}</StyledStatus>
       )}

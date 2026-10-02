@@ -1,7 +1,9 @@
+import { A2eContextualEmptyState } from '@/a2e-empty-state/components/A2eContextualEmptyState';
 import { BUREAU_LANDING_TEMPLATE_CATEGORY } from '@/bureau/constants/BureauLandingTemplateCategory';
 import { BUREAU_LANDING_TEMPLATE_LINKS } from '@/bureau/constants/BureauLandingTemplates';
 import { A2eLearnMoreLink } from '@/a2e-help/components/A2eLearnMoreLink';
 import { RecentPagesWidget } from '@/home-dashboard/components/RecentPagesWidget';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useCreateNewPage } from '@/quick-capture/hooks/useCreateNewPage';
 import { useIsDocumentApplicationInstalled } from '@/quick-capture/hooks/useIsDocumentApplicationInstalled';
 import { useOpenTemplateGallery } from '@/template-gallery/hooks/useOpenTemplateGallery';
@@ -79,18 +81,43 @@ const StyledTemplateRow = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
+const BUREAU_DOCUMENT_OBJECT_NAME_SINGULAR = 'document';
+
 // The Bureau home (M7f): one primary action, three starter templates from the
 // M9 gallery and the recent pages, so the app opens on a home instead of a bare
 // table view. It is install-gated on a2e-documents — without the app the object
 // does not exist and the landing renders nothing rather than a broken widget.
 export const BureauLanding = () => {
-  const { t } = useLingui();
   const isDocumentApplicationInstalled = useIsDocumentApplicationInstalled();
-  const { createNewPage } = useCreateNewPage();
-  const { openTemplateGallery } = useOpenTemplateGallery();
 
   if (!isDocumentApplicationInstalled) {
     return null;
+  }
+
+  return <BureauLandingContent />;
+};
+
+// When the workspace has no pages yet the landing becomes the M13c contextual
+// empty state — one sentence, one "New page", one "Use a template" link and one
+// "Learn more" — instead of a header over an empty "Recent pages" list.
+const BureauLandingContent = () => {
+  const { t } = useLingui();
+  const { createNewPage } = useCreateNewPage();
+  const { openTemplateGallery } = useOpenTemplateGallery();
+  const { totalCount } = useFindManyRecords({
+    objectNameSingular: BUREAU_DOCUMENT_OBJECT_NAME_SINGULAR,
+    limit: 1,
+  });
+
+  if (totalCount === 0) {
+    return (
+      <A2eContextualEmptyState
+        surfaceKey="bureau"
+        onPrimaryAction={() => {
+          void createNewPage();
+        }}
+      />
+    );
   }
 
   return (
