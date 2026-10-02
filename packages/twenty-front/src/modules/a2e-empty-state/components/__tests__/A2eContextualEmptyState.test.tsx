@@ -39,6 +39,12 @@ const SURFACE_KEYS: A2eEmptyStateSurfaceKey[] = [
   'agenda',
   'documents',
   'tasks',
+  'bilanInvoices',
+  'bilanQuotes',
+  'bilanBudgets',
+  'bilanCategories',
+  'archive',
+  'archiveFolders',
 ];
 
 describe('A2eContextualEmptyState', () => {
@@ -127,4 +133,32 @@ describe('A2eContextualEmptyState', () => {
       screen.getByTestId('a2e-empty-state-learn-more-tasks'),
     ).toHaveAttribute('href', getA2eHelpDocUrl('agenda'));
   });
+
+  it.each([
+    ['bilanInvoices', 'Bilan', 'bilan'],
+    ['archive', 'Archive', 'archive'],
+  ] as const)(
+    'links %s to its own gallery category and doc page',
+    async (surfaceKey, category, appKey) => {
+      const user = userEvent.setup();
+
+      render(
+        <A2eContextualEmptyState
+          surfaceKey={surfaceKey}
+          onPrimaryAction={jest.fn()}
+        />,
+        { wrapper: Wrapper },
+      );
+
+      expect(
+        screen.getByTestId(`a2e-empty-state-learn-more-${surfaceKey}`),
+      ).toHaveAttribute('href', getA2eHelpDocUrl(appKey));
+
+      await user.click(
+        screen.getByTestId(`a2e-empty-state-template-${surfaceKey}`),
+      );
+
+      expect(mockOpenTemplateGallery).toHaveBeenCalledWith({ category });
+    },
+  );
 });

@@ -1,3 +1,4 @@
+import { A2eContextualEmptyState } from '@/a2e-empty-state/components/A2eContextualEmptyState';
 import { ARCHIVE_LANDING_TEMPLATE_CATEGORY } from '@/drive/constants/ArchiveLandingTemplateCategory';
 import { ARCHIVE_LANDING_TEMPLATE_LINKS } from '@/drive/constants/ArchiveLandingTemplates';
 import { A2eLearnMoreLink } from '@/a2e-help/components/A2eLearnMoreLink';
@@ -43,12 +44,6 @@ const StyledTitle = styled.h1`
   margin: 0;
 `;
 
-const StyledSubtitle = styled.p`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-  margin: 0;
-`;
-
 const StyledUsage = styled.span`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.sm};
@@ -84,19 +79,27 @@ export const ArchiveLanding = ({
 
   const isEmpty = usageSummary.totalFiles === 0;
 
+  if (isEmpty) {
+    // No file yet: the M13c four-element state (one sentence, one Upload, one
+    // "Use a template" link, one "Learn more") replaces the M7f strip so Archive
+    // matches Bureau/Agenda. The M7f "New folder" action stays reachable in the
+    // toolbar; the empty state keeps a single primary as M13c requires.
+    return (
+      <A2eContextualEmptyState
+        surfaceKey="archive"
+        onPrimaryAction={onUpload}
+        dataTestId="archive-landing"
+      />
+    );
+  }
+
   return (
     <StyledLanding data-testid="archive-landing">
       <StyledTitleGroup>
         <StyledTitle>{t`Archive`}</StyledTitle>
-        {isEmpty ? (
-          <StyledSubtitle>
-            {t`No files yet — upload one or start from a folder structure.`}
-          </StyledSubtitle>
-        ) : (
-          <StyledUsage data-testid="archive-landing-usage">
-            {t`${usageSummary.totalFiles} files`}
-          </StyledUsage>
-        )}
+        <StyledUsage data-testid="archive-landing-usage">
+          {t`${usageSummary.totalFiles} files`}
+        </StyledUsage>
         <A2eLearnMoreLink appKey="archive" />
       </StyledTitleGroup>
       <StyledActions>

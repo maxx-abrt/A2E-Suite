@@ -1,0 +1,184 @@
+# Iteration 19 Log
+
+## Metadata
+
+- **Task ID**: US-165
+- **Task Title**: M13c-1: contextual empty states — Bureau + Agenda surfaces
+- **Description**: As a user hitting an empty Bureau or Agenda view, I want one sentence, one primary button, one template link and one learn-more link so that empty states guide instead of dead-end. Starting state: not...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-02T00:15:55.068Z
+- **Ended At**: 2026-10-02T00:37:42.896Z
+- **Duration**: 21m 47s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ ls docs/plan/ 2>/dev/null
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/PLAN.md[0m pattern: [96mUS-165[0m
+[94m[bash][0m $ grep -n "M13c\|US-165\|US-162\|US-150\|US-151" PLAN.md | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-17-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd-batch-b.json
+[94m[bash][0m $ grep -n "US-150\|US-151\|US-162" docs/plan/phases/phase-11-report.md docs/plan/phases/phase-16-repor...
+[94m[bash][0m $ sed -n '127,175p' docs/plan/phases/phase-16-report.md
+[94m[bash][0m $ grep -rln "EmptyState\|empty-state\|EmptyPlaceholder" packages/twenty-front/src --include=*.tsx --in...
+[94m[bash][0m $ rg -l "EmptyState|EmptyPlaceholder|empty state" packages/twenty-front/src -g '*.tsx' -g '*.ts' | hea...
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mEmptyState|EmptyPlaceholder[0m
+[94m[bash][0m $ find packages/twenty-front/src/modules/object-record/record-index -name "RecordIndexEmptyState*"
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/BureauLanding.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/AgendaLanding.tsx
+[94m[bash][0m $ ls packages/twenty-front/src/modules/object-record/record-table/empty-state/utils/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-ui/src/feedback/AnimatedPlaceholder/AnimatedPlaceholder.tsx
+[94m[read][0m
+[94m[bash][0m $ ls packages/twenty-ui/src/feedback/
+[94m[read][0m
+[94m[read][0m
+[94m[grep][0m [95m/Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src[0m pattern: [96mRecordIndexEmptyState|RecordTableEmptyState|RecordIndexEmptyStateDisplay[0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-help/components/A2eLearnMoreLink.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/hooks/useOpenTemplateGallery.ts
+[94m[bash][0m $ ls packages/twenty-front/src/modules/bureau/components/__tests__/ packages/twenty-front/src/modules/...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/__tests__/BureauLanding.test.tsx
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-help/constants/A2eHelpDocPages.ts
+[94m[bash][0m $ grep -rn "document tree\|task view\|task views\|empty state\|empty-state" docs/plan/01-codebase-map....
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-ui/src/feedback/EmptyPlaceholderStyled/EmptyPlaceholderStyled.tsx
+[94m[bash][0m $ cat packages/twenty-front/src/modules/bureau/constants/BureauLandingTemplates.ts packages/twenty-fro...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -rn "getEmptyStateTitle\|getEmptyStateSubTitle" packages/twenty-front/src --include=*.ts --incl...
+[94m[bash][0m $ grep -rln "from '@/a2e" packages/twenty-front/src/modules --include=*.tsx --include=*.ts 2>/dev/null...
+[94m[bash][0m $ grep -rln "from '@/bureau\|from '@/calendar\|from '@/drive" packages/twenty-front/src/modules 2>/dev...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[bash][0m $ grep -rn "Task =\|Document =\|Documents =\|Task:" packages/twenty-shared/src/types/CoreObjectNameSin...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/CoreObjectNameSingular.ts
+[94m[bash][0m $ cat packages/twenty-front/src/modules/home-dashboard/components/RecentPagesWidget.tsx 2>/dev/null
+[94m[read][0m
+[94m[bash][0m $ find packages/twenty-shared/src -name "*.ts" | xargs grep -ln "type TemplateDescriptorCategory\|Temp...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/templateDescriptorType.ts
+[94m[bash][0m $ find packages/twenty-apps -path "*lib*" -name "*template*" -o -path "*lib*" -name "*descriptor*" 2>/...
+[94m[bash][0m $ grep -rhn "category: '[A-Za-z]*'" packages/twenty-apps/internal/a2e-documents/src/lib/*.ts packages/...
+[94m[bash][0m $ cat packages/twenty-front/src/modules/template-gallery/constants/HostTemplateDescriptorGroups.ts
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-front/src/modules/object-record/hooks/useFindManyRecords.ts
+[94m[bash][0m $ cat packages/twenty-front/src/modules/object-record/record-list/components/RecordListEmptyState.tsx
+[94m[bash][0m $ sed -n '1,90p' packages/twenty-ui/src/input/Button/Button.tsx 2>/dev/null || find packages/twenty-ui...
+[94m[bash][0m $ find packages/twenty-front/src/pages/calendar -name "__tests__" -type d
+[94m[bash][0m $ find packages/twenty-front/src/pages/calendar packages/twenty-front/src/modules/calendar -name "*.te...
+[94m[bash][0m $ grep -n "ButtonVariant\|ButtonProps\|IconComponent" packages/twenty-ui/src/input/index.ts packages/t...
+[94m[todowrite][0m
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ printf '\nCLAIMED — US-165/m13c-bureau-agenda — deepseek-v4.1-flash — 2026-10-02T00:20:39Z — base a8...
+[94m[edit][0m
+[94m[bash][0m $ grep -n "IconPlus\|IconLayoutGrid\|IconSquarePlus" packages/twenty-ui/src/icon/index.ts | head
+[94m[write][0m "import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+import { type TemplateDescriptorCategory } from 'twenty-shared/application';
+import { type AnimatedPlac... (3730 chars)"
+[94m[write][0m "import { A2eLearnMoreLink } from '@/a2e-help/components/A2eLearnMoreLink';
+import {
+  A2E_EMPTY_STATE_SURFACES,
+  type A2eEmptyStateSurfaceKey,
+} from '@/a2e-empty-state/constants/A2eEmptyStateSurface... (2837 chars)"
+[94m[write][0m "import {
+  type A2eEmptyStateSurfaceKey,
+  getA2eEmptyStateSurfaceForObject,
+} from '@/a2e-empty-state/constants/A2eEmptyStateSurfaces';
+import { useIsDocumentApplicationInstalled } from '@/quick-capt... (1003 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/BureauLanding.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/BureauLanding.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/AgendaLanding.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/AgendaLanding.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/components/AgendaLanding.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[read][0m
+[94m[bash][0m $ grep -n "totalCount" packages/twenty-front/src/modules/object-record/hooks/useFindManyRecords.ts | h...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit
+[94m[edit][0m
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit
+[94m[bash][0m $ grep -n "dataTestId\|data-testid" packages/twenty-ui/src/input/Button/Button.tsx packages/twenty-ui/...
+[94m[write][0m "import { A2eContextualEmptyState } from '@/a2e-empty-state/components/A2eContextualEmptyState';
+import {
+  A2E_EMPTY_STATE_SURFACES,
+  type A2eEmptyStateSurfaceKey,
+} from '@/a2e-empty-state/constants... (3653 chars)"
+[94m[bash][0m $ grep -rn "'Pages'.*'Projets'\|Projets.*Bilan.*Archive" packages/twenty-shared/src packages/twenty-fr...
+[94m[write][0m "import {
+  A2E_EMPTY_STATE_SURFACES,
+  getA2eEmptyStateSurfaceForObject,
+} from '@/a2e-empty-state/constants/A2eEmptyStateSurfaces';
+import { getA2eHelpDocUrl } from '@/a2e-help/constants/A2eHelpDocPa... (2457 chars)"
+[94m[write][0m "import { A2eContextualEmptyState } from '@/a2e-empty-state/components/A2eContextualEmptyState';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, scre... (2237 chars)"
+[94m[write][0m "import { useA2eRecordIndexSurfaceKey } from '@/a2e-empty-state/hooks/useA2eRecordIndexSurfaceKey';
+import { useIsDocumentApplicationInstalled } from '@/quick-capture/hooks/useIsDocumentApplicationInst... (1651 chars)"
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/__tests__/BureauLanding.test.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/__tests__/BureauLanding.test.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/__tests__/BureauLanding.test.tsx
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/bureau/components/__tests__/BureauLanding.test.tsx
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/modules/a2e-empty-state src/modules/bureau/components/__tests__/BureauLanding.test.tsx ...
+[94m[bash][0m $ npx jest src/modules/a2e-empty-state src/modules/bureau/components/__tests__/BureauLanding.test.tsx ...
+[94m[edit][0m
+[94m[bash][0m $ npx jest src/modules/a2e-empty-state src/modules/bureau/components/__tests__/BureauLanding.test.tsx ...
+[94m[bash][0m $ grep -rln "useObjectLabel" packages/twenty-front/src -g '*.test.tsx' 2>/dev/null | head
+[94m[write][0m "import { useA2eRecordIndexSurfaceKey } from '@/a2e-empty-state/hooks/useA2eRecordIndexSurfaceKey';
+import { RecordIndexEmptyState } from '@/object-record/record-index/components/RecordIndexEmptyState'... (4895 chars)"
+[94m[bash][0m $ npx jest src/modules/object-record/record-index/components/__tests__/RecordIndexEmptyState.test.tsx ...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | head -30
+[94m[edit][0m
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | head -30
+[94m[bash][0m $ npx oxfmt --check src/modules/object-record/record-index/components/RecordIndexEmptyStateDisplay.tsx...
+[94m[bash][0m $ npx oxfmt --check src/modules/object-record/record-index/components/RecordIndexEmptyStateDisplay.tsx...
+[94m[bash][0m $ npx oxfmt src/modules/object-record/record-index/components/RecordIndexEmptyStateDisplay.tsx src/mod...
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/object-record/record-index/components/RecordIn...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-empty-state/constants/A2eEmptyStateSurfaces.ts
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/a2e-empty-state/constants/A2eEmptyStateSurfaces.ts
+[94m[write][0m "import {
+  A2E_EMPTY_STATE_SURFACES,
+  type A2eEmptyStateSurface,
+} from '@/a2e-empty-state/constants/A2eEmptyStateSurfaces';
+
+// The record index only knows the object it lists, so this maps a `docum... (532 chars)"
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ npx oxfmt "src/modules/a2e-empty-state/**/*.{ts,tsx}" src/modules/object-record/record-index/compone...
+[94m[bash][0m $ npx jest src/modules/a2e-empty-state src/modules/bureau src/modules/calendar/components/__tests__/Ag...
+[94m[bash][0m $ echo "=== TSC EXIT: $? ==="
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-front 2>&1 | tail -12
+[94m[bash][0m $ npx jest --findRelatedTests src/modules/a2e-empty-state/constants/A2eEmptyStateSurfaces.ts src/modul...
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ grep -rn "record-index\|record-table\|object-record" packages/twenty-front/src/modules/template-gall...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/pages/calendar/CalendarPage.tsx
+[94m[bash][0m $ grep -rln "tree\|Tree" packages/twenty-apps/internal/a2e-documents/src/front-components 2>/dev/null ...
+[94m[bash][0m $ grep -n "empty\|Empty\|No documents\|No pages\|first" packages/twenty-apps/internal/a2e-documents/sr...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ US-166 (M13c-2) reuses `A2eContextualEmptyState` for Bilan/Archive/Syna by adding surface keys + rec...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ assert the host container `data-testid` instead. --- EOF echo done
+[94m[bash][0m $ tail -6 .ralph-tui/progress.md
+US-165 (M13c-1) implemented and self-verified.
+
+**What landed:** one reusable `A2eContextualEmptyState` that renders exactly the four required elements through the host `RecordIndexEmptyStateDisplay` (extended additively with optional `footer`/`buttonVariant`/`subTitle`/`buttonDataTestId`/`dataTestId` — no fork), mounted on:
+- Bureau landing (0 documents → state, else the M7f landing)
+- Agenda landing + `CalendarPage` (`isRecordEmpty` when no events)
+- documents + tasks host record indexes via install-gated `useA2eRecordIndexSurfaceKey`
+
+**Gates:** 16 suites/76 tests and 28 suites/189 `--findRelatedTests` green; `tsgo` exit 0; oxlint 0/0 + oxfmt clean; no `locales/**` churn. Tier-2 browser pass remains for the orchestrator.
+
+Reports appended to `docs/plan/phases/phase-17-report.md` (claim + `done-for-review`) and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

@@ -94,3 +94,30 @@ CLAIMED — US-165/m13c-bureau-agenda — deepseek-v4.1-flash — 2026-10-02T00:
 **Do not redo:** `RecordIndexEmptyStateDisplay` (extended additively, still the one host shell), `A2eLearnMoreLink` (M12g slot reused), the US-132 `useOpenTemplateGallery` seam, `useCreateNewPage`/`useCreateNewIndexRecord`/`handleCreateEvent` (each surface keeps its own write path), and the M7f landing content (only the empty branch was added).
 **Remaining:** 4 other open tasks in batch 14B (US-166–US-169).
 **Next:** orchestrator Tier-2 browser check, then tick US-165; US-166 (M13c-2) reuses `A2eContextualEmptyState` for Bilan/Archive/Syna by adding surface keys + record-index mappings rather than new components.
+
+CLAIMED — US-166/m13c-bilan-archive-syna — deepseek-v4.1-flash — 2026-10-02T00:43:30Z — base 73f434e24f35d440aa0d2baf78fc7128704d73fe
+
+## 2026-10-02 00:46 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-166 M13c-2: contextual empty states — Bilan, Archive + Syna surfaces · **Slice:** the host Bilan + Archive surfaces of PLAN M13c: extend the one `A2eContextualEmptyState` registry/bridge with Bilan record objects and the Archive explorer/folder surfaces, generalize the install gate per owning app, and swap the Archive `/drive` root empty strip for the shared state. Syna (US-152) already ships its landing + zero-AI gate, verified rather than rebuilt.
+**Claim:** partial
+**Ready-to-tick:** no — host Bilan record indexes + Archive are green, but the Bilan dashboard surface is app-owned and the Syna landing keeps its own M7f component (see Missing).
+**Base:** 73f434e24f35d440aa0d2baf78fc7128704d73fe
+**Changed:**
+- MOD `.../a2e-empty-state/constants/A2eEmptyStateSurfaces.ts` — generalized `requiresDocumentApplication: boolean` into `requiredApplication: 'document' | 'accounting' | 'drive' | null` (one gate mechanism, no parallel field); added six surfaces: `bilanInvoices` (invoice), `bilanQuotes` (quote), `bilanBudgets` (budget), `bilanCategories` (financeCategory), `archive` (`/drive` explorer, object `null`), `archiveFolders` (driveFolder). Each carries the four M13c elements (sentence, primary label+icon, Bilan/Archive gallery category, Bilan/Archive doc page) and its owning-app gate.
+- MOD `.../a2e-empty-state/hooks/useA2eRecordIndexSurfaceKey.ts` — calls the document/accounting/drive install hooks unconditionally (stable hook order) and reads only the gate the matched surface declares; unmapped object or missing app → `null` (host state untouched).
+- MOD `.../drive/components/ArchiveLanding.tsx` — when the explorer root has zero files, renders the shared `A2eContextualEmptyState surfaceKey="archive"` (one sentence, one Upload, one "Use a template", one "Learn more"), still install-gated on a2e-drive; the non-empty M7f strip (usage + 3 starters + New folder) is unchanged. Removed the now-unused `StyledSubtitle`.
+- MOD tests: `A2eEmptyStateSurfaces.test.ts` (+ real-object mapping + gate assertions), `useA2eRecordIndexSurfaceKey.test.tsx` (mocks the three gates; Bilan/drive gating cases), `A2eContextualEmptyState.test.tsx` (all 10 surface keys in the four-element matrix; Bilan/Archive category + doc-link cases), `ArchiveLanding.test.tsx` (empty branch now asserts the four shared-state elements; strip tests use a non-empty summary).
+- this report + `.ralph-tui/progress.md`.
+**Checks:**
+- `cd packages/twenty-front && npx jest src/modules/a2e-empty-state src/modules/drive/components/__tests__/ArchiveLanding.test.tsx --config=jest.config.mjs` → 5 suites / 32 tests pass.
+- `cd packages/twenty-front && npx jest --findRelatedTests <3 changed sources> --config=jest.config.mjs` → 29 suites / 206 tests pass.
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0.
+- `cd packages/twenty-front && npx oxlint --type-aware -c .oxlintrc.json <7 touched>` → 0 warnings / 0 errors; `npx oxfmt --check <same>` → clean (3 test files reformatted).
+- no `locales/**` touched (new copy uses `msg`; the pipeline extracts) → no catalog churn; no app package touched (host-owned states, no version bump); no `any`; no AI attribution.
+**Missing for tick:**
+- **Bilan dashboard** is an app-owned a2e-accounting PAGE_LAYOUT nav row (`dashboard.navigation-menu-item.ts`, type PAGE_LAYOUT), not a host record index and not an empty-state surface; M13c has no host primitive for a page-layout body. Applying it would be an app-lane (L-UX app) follow-up, and P7 forbids new Bilan features here. Listed, not faked.
+- **Syna** already ships its empty state as `SynaLanding` (US-152): one sentence, New conversation, the three Syna recipe starters + full READY actions library, recent runs, and the US-141 zero-AI gate (admin "Connect a provider" / member-safe `null`) with `SynaLanding.test.tsx` gating tests. Adopting `A2eContextualEmptyState` verbatim would regress that M7f landing; left as-is, verified.
+- **Tier 2 (orchestrator):** fresh-workspace browser pass — an empty `invoice`/`quote`/`budget`/`financeCategory` index shows the four-element Bilan state (gallery opens on `Bilan`); an empty `/drive` root shows the Archive four-element state (Upload primary); the `driveFolder` index shows the Archive-folders state; without a2e-accounting/a2e-drive the hosts fall back to their native empty state.
+**Do not redo:** the US-165 `A2eContextualEmptyState` / `RecordIndexEmptyStateDisplay` shell, `A2eLearnMoreLink`, the US-132 `useOpenTemplateGallery` seam, `useCreateNewIndexRecord`/`createNewIndexRecord` (each surface keeps its own write path), `SynaLanding` + its zero-AI gate, and the non-empty M7f ArchiveLanding strip.
+**Remaining:** 3 other open tasks in batch 14B (US-167–US-169).
+**Next:** orchestrator Tier-2 browser check, then either the app-lane Bilan dashboard empty state or tick US-166 with the dashboard noted as app-owned.

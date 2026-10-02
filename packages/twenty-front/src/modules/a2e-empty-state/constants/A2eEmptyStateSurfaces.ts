@@ -2,19 +2,39 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { type TemplateDescriptorCategory } from 'twenty-shared/application';
 import { type AnimatedPlaceholderType } from 'twenty-ui/feedback';
-import { type IconComponent, IconPlus } from 'twenty-ui/icon';
+import {
+  type IconComponent,
+  IconFolderPlus,
+  IconPlus,
+  IconUpload,
+} from 'twenty-ui/icon';
 
 import { type A2eHelpAppKey } from '@/a2e-help/constants/A2eHelpDocPages';
 
-// The surfaces M13c covers in the Bureau + Agenda half (US-165). One entry per
-// surface so the four required elements — one sentence, one primary action, one
-// "Use a template" link and one "Learn more" link — are declared once and read
-// by both the landing components and the record-index empty-state bridge.
+// The surfaces M13c covers, both halves (US-165 Bureau/Agenda, US-166
+// Bilan/Archive). One entry per surface so the four required elements — one
+// sentence, one primary action, one "Use a template" link and one "Learn more"
+// link — are declared once and read by both the landing components and the
+// record-index empty-state bridge.
 export type A2eEmptyStateSurfaceKey =
   | 'bureau'
   | 'agenda'
   | 'documents'
-  | 'tasks';
+  | 'tasks'
+  | 'bilanInvoices'
+  | 'bilanQuotes'
+  | 'bilanBudgets'
+  | 'bilanCategories'
+  | 'archive'
+  | 'archiveFolders';
+
+// Which app owns the surface's object, so a missing app degrades to the host
+// empty state instead of a broken panel. `null` means the surface is native and
+// always available.
+export type A2eEmptyStateRequiredApplication =
+  | 'document'
+  | 'accounting'
+  | 'drive';
 
 export type A2eEmptyStateSurface = {
   surfaceKey: A2eEmptyStateSurfaceKey;
@@ -29,13 +49,13 @@ export type A2eEmptyStateSurface = {
   // surface so each keeps its own untouched write path.
   primaryActionLabel: MessageDescriptor;
   primaryActionIcon: IconComponent;
-  // The record object this surface lists, or `null` for the two app-home
-  // landings that are their own page. The bridge matches on this so a document
-  // index and a task index get their contextual state without hard-coded files.
+  // The record object this surface lists, or `null` for the app-home/explorer
+  // surfaces that are their own page. The bridge matches on this so an invoice
+  // index and a folder index get their contextual state without hard-coded files.
   objectNameSingular: string | null;
-  // Install gate: a state for the app-owned `document` object only renders when
-  // a2e-documents is present, so a missing object never leaves a broken panel.
-  requiresDocumentApplication: boolean;
+  // Install gate: a state for an app-owned object only renders when its app is
+  // present, so a missing object never leaves a broken panel.
+  requiredApplication: A2eEmptyStateRequiredApplication | null;
 };
 
 export const A2E_EMPTY_STATE_SURFACES: Record<
@@ -51,7 +71,7 @@ export const A2E_EMPTY_STATE_SURFACES: Record<
     primaryActionLabel: msg`New page`,
     primaryActionIcon: IconPlus,
     objectNameSingular: null,
-    requiresDocumentApplication: true,
+    requiredApplication: 'document',
   },
   agenda: {
     surfaceKey: 'agenda',
@@ -62,7 +82,7 @@ export const A2E_EMPTY_STATE_SURFACES: Record<
     primaryActionLabel: msg`New event`,
     primaryActionIcon: IconPlus,
     objectNameSingular: null,
-    requiresDocumentApplication: false,
+    requiredApplication: null,
   },
   documents: {
     surfaceKey: 'documents',
@@ -73,7 +93,7 @@ export const A2E_EMPTY_STATE_SURFACES: Record<
     primaryActionLabel: msg`New page`,
     primaryActionIcon: IconPlus,
     objectNameSingular: 'document',
-    requiresDocumentApplication: true,
+    requiredApplication: 'document',
   },
   tasks: {
     surfaceKey: 'tasks',
@@ -84,6 +104,72 @@ export const A2E_EMPTY_STATE_SURFACES: Record<
     primaryActionLabel: msg`New task`,
     primaryActionIcon: IconPlus,
     objectNameSingular: 'task',
-    requiresDocumentApplication: false,
+    requiredApplication: null,
+  },
+  bilanInvoices: {
+    surfaceKey: 'bilanInvoices',
+    appKey: 'bilan',
+    templateCategory: 'Bilan',
+    sentence: msg`Create your first invoice, or start from a Bilan template.`,
+    animatedPlaceholderType: 'noRecord',
+    primaryActionLabel: msg`New invoice`,
+    primaryActionIcon: IconPlus,
+    objectNameSingular: 'invoice',
+    requiredApplication: 'accounting',
+  },
+  bilanQuotes: {
+    surfaceKey: 'bilanQuotes',
+    appKey: 'bilan',
+    templateCategory: 'Bilan',
+    sentence: msg`Create your first quote, or start from a Bilan template.`,
+    animatedPlaceholderType: 'noRecord',
+    primaryActionLabel: msg`New quote`,
+    primaryActionIcon: IconPlus,
+    objectNameSingular: 'quote',
+    requiredApplication: 'accounting',
+  },
+  bilanBudgets: {
+    surfaceKey: 'bilanBudgets',
+    appKey: 'bilan',
+    templateCategory: 'Bilan',
+    sentence: msg`Set your first budget, or start from a Bilan template.`,
+    animatedPlaceholderType: 'noRecord',
+    primaryActionLabel: msg`New budget`,
+    primaryActionIcon: IconPlus,
+    objectNameSingular: 'budget',
+    requiredApplication: 'accounting',
+  },
+  bilanCategories: {
+    surfaceKey: 'bilanCategories',
+    appKey: 'bilan',
+    templateCategory: 'Bilan',
+    sentence: msg`Add your first category, or start from a Bilan template.`,
+    animatedPlaceholderType: 'noRecord',
+    primaryActionLabel: msg`New category`,
+    primaryActionIcon: IconPlus,
+    objectNameSingular: 'financeCategory',
+    requiredApplication: 'accounting',
+  },
+  archive: {
+    surfaceKey: 'archive',
+    appKey: 'archive',
+    templateCategory: 'Archive',
+    sentence: msg`Upload your first file, or start from a folder structure.`,
+    animatedPlaceholderType: 'noRecord',
+    primaryActionLabel: msg`Upload a file`,
+    primaryActionIcon: IconUpload,
+    objectNameSingular: null,
+    requiredApplication: 'drive',
+  },
+  archiveFolders: {
+    surfaceKey: 'archiveFolders',
+    appKey: 'archive',
+    templateCategory: 'Archive',
+    sentence: msg`Create your first folder, or start from a folder structure.`,
+    animatedPlaceholderType: 'noRecord',
+    primaryActionLabel: msg`New folder`,
+    primaryActionIcon: IconFolderPlus,
+    objectNameSingular: 'driveFolder',
+    requiredApplication: 'drive',
   },
 };

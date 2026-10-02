@@ -72,7 +72,7 @@ describe('ArchiveLanding', () => {
       <ArchiveLanding
         onUpload={jest.fn()}
         onCreateFolder={jest.fn()}
-        usageSummary={buildUsageSummary(0)}
+        usageSummary={buildUsageSummary(3)}
       />,
       { wrapper: Wrapper },
     );
@@ -89,7 +89,7 @@ describe('ArchiveLanding', () => {
     ).toBeInTheDocument();
   });
 
-  it('shows the empty state with the single primary action when there is no file', () => {
+  it('shows the shared four-element empty state when there is no file', () => {
     render(
       <ArchiveLanding
         onUpload={jest.fn()}
@@ -99,10 +99,20 @@ describe('ArchiveLanding', () => {
       { wrapper: Wrapper },
     );
 
+    expect(screen.getByTestId('archive-landing')).toBeInTheDocument();
     expect(
       screen.getByText(
-        'No files yet — upload one or start from a folder structure.',
+        'Upload your first file, or start from a folder structure.',
       ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId('a2e-empty-state-primary-archive'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId('a2e-empty-state-template-archive'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId('a2e-empty-state-learn-more-archive'),
     ).toBeInTheDocument();
     expect(
       screen.queryByTestId('archive-landing-usage'),
@@ -149,7 +159,7 @@ describe('ArchiveLanding', () => {
       <ArchiveLanding
         onUpload={jest.fn()}
         onCreateFolder={jest.fn()}
-        usageSummary={buildUsageSummary(0)}
+        usageSummary={buildUsageSummary(3)}
       />,
       { wrapper: Wrapper },
     );

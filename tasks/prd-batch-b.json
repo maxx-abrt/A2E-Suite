@@ -343,13 +343,14 @@
         "Quality gates: packages/twenty-front npx nx lint:diff-with-main twenty-front clean; npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green; a2e-* slices green if their empty states are app-owned (bump versions once); Lingui fr+en; no i18n catalog churn; no AI attribution"
       ],
       "priority": 17,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-UX. Depends on US-152/153 landings + US-162 help pattern.",
       "dependsOn": [
         "US-152",
         "US-153",
         "US-162"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-167",
@@ -411,6 +412,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-02T00:37:42.896Z"
+    "updatedAt": "2026-10-02T00:47:31.359Z"
   }
 }

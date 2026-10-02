@@ -62,6 +62,32 @@ describe('A2E_EMPTY_STATE_SURFACES', () => {
       'documents',
     );
     expect(getA2eEmptyStateSurfaceForObject('task')?.surfaceKey).toBe('tasks');
+    expect(getA2eEmptyStateSurfaceForObject('invoice')?.surfaceKey).toBe(
+      'bilanInvoices',
+    );
+    expect(getA2eEmptyStateSurfaceForObject('quote')?.surfaceKey).toBe(
+      'bilanQuotes',
+    );
+    expect(getA2eEmptyStateSurfaceForObject('budget')?.surfaceKey).toBe(
+      'bilanBudgets',
+    );
+    expect(
+      getA2eEmptyStateSurfaceForObject('financeCategory')?.surfaceKey,
+    ).toBe('bilanCategories');
+    expect(getA2eEmptyStateSurfaceForObject('driveFolder')?.surfaceKey).toBe(
+      'archiveFolders',
+    );
     expect(getA2eEmptyStateSurfaceForObject('company')).toBeNull();
+  });
+
+  it('gates every app-owned surface on its owning app', () => {
+    expect(A2E_EMPTY_STATE_SURFACES.bilanInvoices.requiredApplication).toBe(
+      'accounting',
+    );
+    expect(A2E_EMPTY_STATE_SURFACES.archive.requiredApplication).toBe('drive');
+    expect(A2E_EMPTY_STATE_SURFACES.archiveFolders.requiredApplication).toBe(
+      'drive',
+    );
+    expect(A2E_EMPTY_STATE_SURFACES.agenda.requiredApplication).toBeNull();
   });
 });
