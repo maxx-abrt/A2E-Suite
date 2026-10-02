@@ -1,3 +1,4 @@
+import { A2eCustomizeAction } from '@/a2e-customize/components/A2eCustomizeAction';
 import { A2eContextualEmptyState } from '@/a2e-empty-state/components/A2eContextualEmptyState';
 import { BUREAU_LANDING_TEMPLATE_CATEGORY } from '@/bureau/constants/BureauLandingTemplateCategory';
 import { BUREAU_LANDING_TEMPLATE_LINKS } from '@/bureau/constants/BureauLandingTemplates';
@@ -32,6 +33,12 @@ const StyledHeader = styled.header`
   display: flex;
   gap: ${themeCssVariables.spacing[4]};
   justify-content: space-between;
+`;
+
+const StyledHeaderActions = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTitleGroup = styled.div`
@@ -130,14 +137,17 @@ const BureauLandingContent = () => {
           </StyledSubtitle>
           <A2eLearnMoreLink appKey="bureau" />
         </StyledTitleGroup>
-        <Button
-          Icon={IconPlus}
-          title={t`New page`}
-          onClick={() => {
-            void createNewPage();
-          }}
-          dataTestId="bureau-new-page"
-        />
+        <StyledHeaderActions>
+          <A2eCustomizeAction objectNamePlural="documents" />
+          <Button
+            Icon={IconPlus}
+            title={t`New page`}
+            onClick={() => {
+              void createNewPage();
+            }}
+            dataTestId="bureau-new-page"
+          />
+        </StyledHeaderActions>
       </StyledHeader>
       <StyledSection>
         <StyledSectionTitle>{t`Starter templates`}</StyledSectionTitle>

@@ -1,3 +1,4 @@
+import { A2eCustomizeAction } from '@/a2e-customize/components/A2eCustomizeAction';
 import { A2eContextualEmptyState } from '@/a2e-empty-state/components/A2eContextualEmptyState';
 import { AGENDA_LANDING_TEMPLATE_CATEGORY } from '@/calendar/constants/AgendaLandingTemplateCategory';
 import { AGENDA_LANDING_TEMPLATE_LINKS } from '@/calendar/constants/AgendaLandingTemplates';
@@ -86,6 +87,7 @@ export const AgendaLanding = ({
         <A2eLearnMoreLink appKey="agenda" />
       </StyledTitleGroup>
       <StyledActions>
+        <A2eCustomizeAction objectNamePlural="calendarEvents" />
         {AGENDA_LANDING_TEMPLATE_LINKS.map((templateLink) => (
           <Button
             key={templateLink.descriptorKey}

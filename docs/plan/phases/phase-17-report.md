@@ -121,3 +121,29 @@ CLAIMED — US-166/m13c-bilan-archive-syna — deepseek-v4.1-flash — 2026-10-0
 **Do not redo:** the US-165 `A2eContextualEmptyState` / `RecordIndexEmptyStateDisplay` shell, `A2eLearnMoreLink`, the US-132 `useOpenTemplateGallery` seam, `useCreateNewIndexRecord`/`createNewIndexRecord` (each surface keeps its own write path), `SynaLanding` + its zero-AI gate, and the non-empty M7f ArchiveLanding strip.
 **Remaining:** 3 other open tasks in batch 14B (US-167–US-169).
 **Next:** orchestrator Tier-2 browser check, then either the app-lane Bilan dashboard empty state or tick US-166 with the dashboard noted as app-owned.
+
+CLAIMED — US-167/m13d-landing-customize — deepseek-v4.1-flash — 2026-10-02T03:47:00Z — base 474857ee735c373760d2ba483634a7bcd0d6a35e
+
+## 2026-10-02 03:58 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-167 M13d: customize in place · **Slice:** the M13d entry point — a reusable `Customize` action on the three M7f app landings that opens the native layout-edit mode plus the surface's Views/Fields settings. The per-managed-item `Reset to default` (P1.7 provenance) already ships in the native editors, so it was verified, not rebuilt.
+**Claim:** done-for-review
+**Ready-to-tick:** no — the entry point bullet is complete and every Tier-0 gate is green, but US-167's Reset acceptance has no front-end unit test for the "user-created items have no reset affordance" rule (pre-existing native gating, untouched), and the Tier-2 browser journey is absent.
+**Base:** 474857ee735c373760d2ba483634a7bcd0d6a35e
+**Changed:**
+- NEW `packages/twenty-front/src/modules/a2e-customize/constants/A2eCustomizeActionDropdownId.ts`
+- NEW `.../a2e-customize/hooks/useA2eCustomizeActions.ts` — `editLayout` → native `enterLayoutCustomizationMode()`; `openViews` → `AppPath.RecordIndexPage`; `openFields` → `SettingsPath.ObjectDetail`; both navigations no-op without an object.
+- NEW `.../a2e-customize/hooks/__tests__/useA2eCustomizeActions.test.tsx` — 4 tests (native edit from the action, Views/Fields targets, no navigation without an object).
+- NEW `.../a2e-customize/components/A2eCustomizeAction.tsx` — `Customize` dropdown (Layout customization · Views · Fields); the layout item is disabled without the host `LAYOUTS` permission, matching `ObjectLayout`.
+- MOD `bureau/components/BureauLanding.tsx` (`documents`), `calendar/components/AgendaLanding.tsx` (`calendarEvents`), `drive/components/ArchiveLanding.tsx` (`driveFolders`) — mount the action in each header; MOD their specs to stub the new child and assert it mounts.
+- this report + `.ralph-tui/progress.md`.
+**Checks:**
+- `cd packages/twenty-front && npx jest src/modules/a2e-customize src/modules/bureau/components/__tests__/BureauLanding.test.tsx src/modules/calendar/components/__tests__/AgendaLanding.test.tsx src/modules/drive/components/__tests__/ArchiveLanding.test.tsx --config=jest.config.mjs` → 4 suites / 21 tests pass.
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0.
+- `npx nx lint:diff-with-main twenty-front` → exit 0 but "No changed files" (`main...HEAD`, uncommitted); direct `npx oxlint --type-aware -c .oxlintrc.json <10 files>` → 0 warnings / 0 errors; `npx oxfmt --check <same>` → clean.
+- no `locales/**` touched; all four new labels (`Customize`, `Layout customization`, `Views`, `Fields`) already exist in the fr catalog → no new msgid, no extraction churn; no `any`; no direct `@tabler/icons-react`; no AI attribution.
+**Missing for tick:**
+- **Tier 2 (orchestrator):** browser — on `/bureau`, `/calendar`, `/drive` click `Customize`; the native layout-customization bar appears and nav/command-menu editing is enabled; `Views` opens the surface record index; `Fields` opens the surface object settings. Then confirm the native per-managed-item `Reset to default` restores only the provenance-tagged item and is absent/disabled for user-created ones.
+- **Reset provenance unit tests:** the server `PageLayoutResetService` (tab/widget) and front `WidgetSettingsManageSection` / `SidePanelPageLayoutTabSettingsContent` / `CommandMenuItemOptionsDropdown` reset code is pre-existing and untouched; this slice adds no test for its "managed only" gating.
+**Do not redo:** the native layout-customization mode (`useEnterLayoutCustomizationMode`, `LayoutCustomizationBar`), the reset mutations/services and their provenance gating, the `A2eContextualEmptyState` empty branches, and `useOpenTemplateGallery`.
+**Remaining:** 2 other open tasks in batch 14B (US-168, US-169).
+**Next:** orchestrator Tier-2 browser check; add the managed-only reset front test (or accept the pre-existing gating) then tick US-167; the next executor slice is US-168 (M13e consistency pass).

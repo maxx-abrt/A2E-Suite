@@ -17,6 +17,10 @@ jest.mock('@/template-gallery/hooks/useOpenTemplateGallery', () => ({
   }),
 }));
 
+jest.mock('@/a2e-customize/components/A2eCustomizeAction', () => ({
+  A2eCustomizeAction: () => <div data-testid="a2e-customize-stub" />,
+}));
+
 beforeAll(async () => {
   await dynamicActivate(SOURCE_LOCALE);
 });
@@ -43,6 +47,7 @@ describe('AgendaLanding', () => {
 
     expect(screen.getByTestId('agenda-landing')).toBeInTheDocument();
     expect(screen.getByTestId('agenda-new-event')).toBeInTheDocument();
+    expect(screen.getByTestId('a2e-customize-stub')).toBeInTheDocument();
     expect(
       screen.getByTestId('agenda-template-agenda-blocage-temps-semaine'),
     ).toBeInTheDocument();

@@ -36,6 +36,10 @@ jest.mock('@/home-dashboard/components/RecentPagesWidget', () => ({
   RecentPagesWidget: () => <div data-testid="recent-pages-stub" />,
 }));
 
+jest.mock('@/a2e-customize/components/A2eCustomizeAction', () => ({
+  A2eCustomizeAction: () => <div data-testid="a2e-customize-stub" />,
+}));
+
 const mockedUseIsDocumentApplicationInstalled = jest.mocked(
   useIsDocumentApplicationInstalled,
 );
@@ -76,6 +80,7 @@ describe('BureauLanding', () => {
 
     expect(screen.getByTestId('bureau-landing')).toBeInTheDocument();
     expect(screen.getByTestId('bureau-new-page')).toBeInTheDocument();
+    expect(screen.getByTestId('a2e-customize-stub')).toBeInTheDocument();
     expect(
       screen.getByTestId('bureau-template-notes-de-reunion'),
     ).toBeInTheDocument();

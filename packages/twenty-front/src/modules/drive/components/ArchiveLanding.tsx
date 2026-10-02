@@ -1,3 +1,4 @@
+import { A2eCustomizeAction } from '@/a2e-customize/components/A2eCustomizeAction';
 import { A2eContextualEmptyState } from '@/a2e-empty-state/components/A2eContextualEmptyState';
 import { ARCHIVE_LANDING_TEMPLATE_CATEGORY } from '@/drive/constants/ArchiveLandingTemplateCategory';
 import { ARCHIVE_LANDING_TEMPLATE_LINKS } from '@/drive/constants/ArchiveLandingTemplates';
@@ -103,6 +104,7 @@ export const ArchiveLanding = ({
         <A2eLearnMoreLink appKey="archive" />
       </StyledTitleGroup>
       <StyledActions>
+        <A2eCustomizeAction objectNamePlural="driveFolders" />
         {ARCHIVE_LANDING_TEMPLATE_LINKS.map((templateLink) => (
           <Button
             key={templateLink.descriptorKey}

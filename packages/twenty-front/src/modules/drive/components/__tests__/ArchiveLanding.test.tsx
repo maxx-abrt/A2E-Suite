@@ -23,6 +23,10 @@ jest.mock('@/drive/hooks/useIsDriveApplicationInstalled', () => ({
   useIsDriveApplicationInstalled: jest.fn(),
 }));
 
+jest.mock('@/a2e-customize/components/A2eCustomizeAction', () => ({
+  A2eCustomizeAction: () => <div data-testid="a2e-customize-stub" />,
+}));
+
 const mockedUseIsDriveApplicationInstalled = jest.mocked(
   useIsDriveApplicationInstalled,
 );
@@ -80,6 +84,7 @@ describe('ArchiveLanding', () => {
     expect(screen.getByTestId('archive-landing')).toBeInTheDocument();
     expect(screen.getByTestId('archive-upload')).toBeInTheDocument();
     expect(screen.getByTestId('archive-new-folder')).toBeInTheDocument();
+    expect(screen.getByTestId('a2e-customize-stub')).toBeInTheDocument();
     expect(screen.getByTestId('archive-template-CLIENT')).toBeInTheDocument();
     expect(
       screen.getByTestId('archive-template-ASSOCIATION'),
