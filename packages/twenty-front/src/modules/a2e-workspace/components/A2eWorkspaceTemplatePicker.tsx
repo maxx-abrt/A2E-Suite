@@ -1,9 +1,11 @@
 import { A2eWorkspaceTemplatePreview } from '@/a2e-workspace/components/A2eWorkspaceTemplatePreview';
 import { type A2eWorkspaceTemplateOption } from '@/a2e-workspace/constants/A2eWorkspaceTemplates';
+import { type MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { type IconComponent } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledGrid = styled.div`
@@ -58,22 +60,36 @@ const StyledCardDescription = styled.span`
   line-height: 1.4;
 `;
 
+export type A2eWorkspaceTemplatePickerStartFromScratch = {
+  label: MessageDescriptor;
+  description: MessageDescriptor;
+  Icon: IconComponent;
+  // Rendered in the grid's slot when the scratch card is chosen, instead of a
+  // template preview. Onboarding supplies the app catalogue plus the no-install
+  // confirmation; Settings omits the whole prop, so its picker is unchanged.
+  content: ReactNode;
+};
+
 export type A2eWorkspaceTemplatePickerProps = {
   options: A2eWorkspaceTemplateOption[];
   // Set by the onboarding flow so a freshly created workspace shows a
   // template as active before the user picks one (defaults mirror the server
   // default of no template == CRM-only).
   onApplied?: () => void;
+  startFromScratch?: A2eWorkspaceTemplatePickerStartFromScratch;
 };
 
 export const A2eWorkspaceTemplatePicker = ({
   options,
   onApplied,
+  startFromScratch,
 }: A2eWorkspaceTemplatePickerProps) => {
   const { t } = useLingui();
   const [selectedTemplate, setSelectedTemplate] = useState<
     A2eWorkspaceTemplateOption['value'] | null
   >(null);
+  const [isStartFromScratchSelected, setIsStartFromScratchSelected] =
+    useState(false);
 
   // Both entrypoints (onboarding picker and Settings section) render through
   // the same preview + operation flow so the server applies one operation
@@ -81,6 +97,24 @@ export const A2eWorkspaceTemplatePicker = ({
   return (
     <>
       <StyledGrid>
+        {isDefined(startFromScratch) && (
+          <StyledCard
+            isSelected={isStartFromScratchSelected}
+            type="button"
+            onClick={() => {
+              setSelectedTemplate(null);
+              setIsStartFromScratchSelected(true);
+            }}
+          >
+            <StyledCardIcon>
+              <startFromScratch.Icon size={themeCssVariables.icon.size.md} />
+            </StyledCardIcon>
+            <StyledCardLabel>{t(startFromScratch.label)}</StyledCardLabel>
+            <StyledCardDescription>
+              {t(startFromScratch.description)}
+            </StyledCardDescription>
+          </StyledCard>
+        )}
         {options.map((option) => {
           const isSelected = selectedTemplate === option.value;
           const { Icon } = option;
@@ -90,7 +124,10 @@ export const A2eWorkspaceTemplatePicker = ({
               key={option.value}
               isSelected={isSelected}
               type="button"
-              onClick={() => setSelectedTemplate(option.value)}
+              onClick={() => {
+                setIsStartFromScratchSelected(false);
+                setSelectedTemplate(option.value);
+              }}
             >
               <StyledCardIcon>
                 <Icon size={themeCssVariables.icon.size.md} />
@@ -103,7 +140,10 @@ export const A2eWorkspaceTemplatePicker = ({
           );
         })}
       </StyledGrid>
-      {isDefined(selectedTemplate) && (
+      {isStartFromScratchSelected && isDefined(startFromScratch) && (
+        <>{startFromScratch.content}</>
+      )}
+      {!isStartFromScratchSelected && isDefined(selectedTemplate) && (
         <A2eWorkspaceTemplatePreview
           template={selectedTemplate}
           onApplied={onApplied}

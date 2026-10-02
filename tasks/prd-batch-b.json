@@ -299,11 +299,12 @@
         "Quality gates: touched packages: npx nx lint:diff-with-main <pkg> clean + npx tsgo -p tsconfig.json --noEmit exit 0; targeted npx jest green (twenty-front + twenty-server onboarding); Lingui fr+en; no i18n catalog churn; no AI attribution"
       ],
       "priority": 15,
-      "passes": false,
+      "passes": true,
       "notes": "Lane L-UX (onboarding front + server constants). Depends on US-133 so catalogue copy matches the Bureau bundle reality.",
       "dependsOn": [
         "US-133"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-165",
@@ -409,6 +410,6 @@
     }
   ],
   "metadata": {
-    "updatedAt": "2026-10-01T23:58:00.031Z"
+    "updatedAt": "2026-10-02T00:15:49.518Z"
   }
 }

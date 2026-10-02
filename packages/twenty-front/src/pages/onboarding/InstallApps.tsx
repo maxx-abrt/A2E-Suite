@@ -3,13 +3,16 @@ import { A2E_SUITE_APPLICATION_UNIVERSAL_IDENTIFIERS } from '@/a2e-workspace/con
 import { A2E_WORKSPACE_TEMPLATE_OPTIONS } from '@/a2e-workspace/constants/A2eWorkspaceTemplates';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useMarketplaceApps } from '@/marketplace/hooks/useMarketplaceApps';
+import { OnboardingStartFromScratchContent } from '@/onboarding/components/OnboardingStartFromScratchContent';
 import { ONBOARDING_INSTALLABLE_APPS } from '@/onboarding/constants/OnboardingInstallableApps';
 import { InstallAppsAutoSkipEffect } from '@/onboarding/effect-components/InstallAppsAutoSkipEffect';
 import { useInstallOnboardingApps } from '@/onboarding/hooks/useInstallOnboardingApps';
 import { shouldAutoSkipInstallAppsStep } from '@/onboarding/utils/shouldAutoSkipInstallAppsStep';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { msg } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { IconPuzzle } from 'twenty-ui/icon';
 import { InstallAppsContent } from '~/pages/onboarding/InstallAppsContent';
 
 const ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS =
@@ -56,7 +59,20 @@ export const InstallApps = () => {
   }, []);
 
   const templatePicker = (
-    <A2eWorkspaceTemplatePicker options={A2E_WORKSPACE_TEMPLATE_OPTIONS} />
+    <A2eWorkspaceTemplatePicker
+      options={A2E_WORKSPACE_TEMPLATE_OPTIONS}
+      startFromScratch={{
+        label: msg`Start from scratch`,
+        description: msg`Install nothing now and build your workspace your way`,
+        Icon: IconPuzzle,
+        content: (
+          <OnboardingStartFromScratchContent
+            onConfirm={skip}
+            isCompleting={isCompleting}
+          />
+        ),
+      }}
+    />
   );
 
   if (isLoading) {

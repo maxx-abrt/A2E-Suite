@@ -1,4 +1,5 @@
 import { i18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -10,6 +11,7 @@ import { useApplyWorkspaceTemplateOperation } from '@/a2e-workspace/hooks/useApp
 import { useWorkspaceTemplatePreview } from '@/a2e-workspace/hooks/useWorkspaceTemplatePreview';
 import { type TemplatePreview } from '@/a2e-workspace/types/apply-template-operation.types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { IconPuzzle } from 'twenty-ui/icon';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 jest.mock('@/a2e-workspace/hooks/useWorkspaceTemplatePreview');
@@ -81,6 +83,50 @@ describe('A2eWorkspaceTemplatePicker', () => {
 
     await user.click(screen.getByRole('button', { name: /Individual/ }));
 
+    expect(
+      screen.getByTestId('a2e-workspace-template-preview'),
+    ).toBeInTheDocument();
+  });
+
+  it('renders the optional start-from-scratch card first-class beside the personas', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <A2eWorkspaceTemplatePicker
+        options={A2E_WORKSPACE_TEMPLATE_OPTIONS}
+        startFromScratch={{
+          label: msg`Start from scratch`,
+          description: msg`Install nothing now and build your workspace your way`,
+          Icon: IconPuzzle,
+          content: <div data-testid="start-from-scratch-content" />,
+        }}
+      />,
+      { wrapper: Wrapper },
+    );
+
+    const scratchCard = screen.getByRole('button', {
+      name: /Start from scratch/,
+    });
+
+    expect(scratchCard).toBeInTheDocument();
+    expect(
+      screen.queryByTestId('start-from-scratch-content'),
+    ).not.toBeInTheDocument();
+
+    await user.click(scratchCard);
+
+    expect(
+      screen.getByTestId('start-from-scratch-content'),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByTestId('a2e-workspace-template-preview'),
+    ).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /Individual/ }));
+
+    expect(
+      screen.queryByTestId('start-from-scratch-content'),
+    ).not.toBeInTheDocument();
     expect(
       screen.getByTestId('a2e-workspace-template-preview'),
     ).toBeInTheDocument();

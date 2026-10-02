@@ -30,3 +30,35 @@ CLAIMED — US-163/m13a-create-chooser — deepseek-v4.1-flash — 2026-10-01T23
 **Do not redo:** the US-132 `useOpenTemplateGallery` seam and `TemplateGallerySidePanelPage`/`TemplateGallery`; the US-118 data layer (`useTemplateGalleryItems`/`buildTemplateGalleryItems`); the quick-create create path (`useQuickCreateRecordCreate` + prelink) and `useCreateNewPage`. Extend the chooser's mount list rather than adding a second gallery open path or a second descriptor read.
 **Remaining:** 6 other open tasks in batch 14B (US-164–US-169), all M13.
 **Next:** orchestrator Tier-2 browser check, then tick US-163; the next executor slice is US-164 (M13b onboarding "Start from scratch").
+
+CLAIMED — US-164/m13b-start-from-scratch — deepseek-v4.1-flash — 2026-10-02T00:10:17Z — base eab7cec3315ec55f842c6f5f67a74ca26942ca11
+
+## 2026-10-02 02:15 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-164 M13b: onboarding 'Start from scratch' path — first-class next to personas, empty app catalogue · **Slice:** the whole M13b step: a first-class scratch card beside the persona cards, the five-app catalogue shown on selection, and completion with zero installs via the existing empty-selection path
+**Claim:** done-for-review
+**Ready-to-tick:** yes — every Tier-0 gate green; the only absent evidence is the Tier-2 browser journey.
+**Base:** eab7cec3315ec55f842c6f5f67a74ca26942ca11
+**Changed:**
+- NEW `packages/twenty-front/src/modules/onboarding/constants/OnboardingAppCatalogue.ts` — the five D-N1 suite entries (Bureau · Agenda · Bilan · Syna · Archive). Each description is the shipped per-app doc copy (`twenty-docs/user-guide/a2e-suite/<app>.mdx` front matter), the only shipped one-liners that cover all five surfaces consistently (the installable-app list names 4/5 and calls Syna "Syna for CRM").
+- NEW `.../onboarding/constants/__tests__/OnboardingAppCatalogue.test.ts` — asserts exactly the five D-N1 names in order, and that each English message equals the matching `.mdx` front-matter `description` (drift guard, fs read like the existing workspace-template truthfulness spec).
+- NEW `.../onboarding/components/OnboardingStartFromScratchContent.tsx` — the catalogue panel: one intro line ("Nothing is installed… installed later from its landing page"), one row per app (name + description + per-row "Installable later from its landing page" hint = the M13c anchor), and the no-install confirm `Start with an empty workspace`.
+- NEW `.../onboarding/components/__tests__/OnboardingStartFromScratchContent.test.tsx` — five rows present; confirm fires `onConfirm` once; disabled while `isCompleting`.
+- MOD `.../a2e-workspace/components/A2eWorkspaceTemplatePicker.tsx` — optional `startFromScratch` prop: renders the scratch card **first in the same `StyledGrid`** (first-class parity, not a footnote) and swaps the template preview for the supplied content when chosen. Settings does not pass it → Settings picker unchanged.
+- MOD `.../a2e-workspace/components/__tests__/A2eWorkspaceTemplatePicker.test.tsx` — new test: scratch card renders beside personas; selecting it shows content, hides preview; selecting a persona restores the preview (persona path unaffected).
+- MOD `.../pages/onboarding/InstallApps.tsx` — passes `startFromScratch` (`IconPuzzle`, Lingui label/description) with `onConfirm={skip}`, reusing `useInstallOnboardingApps().skip` = `triggerStep([])`: the existing empty-selection path claims the step, pushes reversible history and credits 0 — no new server primitive.
+- NEW `.../pages/onboarding/__tests__/InstallAppsStartFromScratch.test.tsx` — rendering the real `InstallApps` and clicking scratch → confirm calls `triggerInstallAppsOnboardingStep({ universalIdentifiers: [], isAutoSkipped: false })`, proving no app installs.
+- this report + `.ralph-tui/progress.md`
+**Checks:**
+- `cd packages/twenty-front && npx jest src/modules/onboarding/constants/__tests__/OnboardingAppCatalogue.test.ts src/modules/onboarding/components/__tests__/OnboardingStartFromScratchContent.test.tsx src/modules/a2e-workspace/components/__tests__/A2eWorkspaceTemplatePicker.test.tsx src/pages/onboarding/__tests__/InstallAppsStartFromScratch.test.tsx src/pages/onboarding/__tests__/InstallApps.test.tsx --config=jest.config.mjs` → 5 suites / 15 tests pass
+- `cd packages/twenty-front && npx jest src/modules/a2e-workspace src/pages/onboarding src/modules/onboarding --config=jest.config.mjs` → 45 suites / 252 tests pass (existing onboarding + picker entrypoint parity intact)
+- `cd packages/twenty-server && npx jest src/engine/core-modules/onboarding --config=jest.config.mjs` → 12 suites / 107 tests pass (empty-selection enqueues nothing already covered)
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0
+- `cd packages/twenty-front && npx oxlint --type-aware -c .oxlintrc.json <8 touched files>` → Found 0 warnings and 0 errors; `npx oxfmt --check <same>` → all formatted
+- `npx nx lint:diff-with-main twenty-front` → exit 0 but "No changed files" (branch is `main`); direct oxlint/oxfmt above is the substantive evidence (US-163 precedent)
+- no `locales/**` touched (new strings use `t`/`msg`; pipeline extracts) → no catalog churn; no `any`; no direct `@tabler/icons-react`; no AI attribution.
+**Missing for tick:**
+- **Tier 2 (orchestrator):** browser — fresh-workspace scratch journey: the "Start from scratch" card shows first-class beside the personas; selecting it lists Bureau/Agenda/Bilan/Syna/Archive with one-line descriptions and the install-later hint; confirming completes the step and lands on the next step with **no app installed** and no seeded content beyond the CRM baseline.
+- **M13c link:** rows reference "installable later from its landing page" as copy only; the clickable link lands with US-165/US-166 (M13c), as the AC allows.
+**Do not redo:** the existing `useInstallOnboardingApps` no-install path (`skip`/`triggerStep([])` → server `triggerInstallAppsOnboardingStep` claim + reversible history + 0 credits) and the `A2eWorkspaceTemplatePreview`/operation contract; the shared picker's persona grid/preview flow (only an optional prop was added). Do not add a `SCRATCH` server `WorkspaceTemplate` — the task is satisfied by the empty selection, and the enum is a GraphQL change.
+**Remaining:** 5 other open tasks in batch 14B (US-165–US-169).
+**Next:** orchestrator Tier-2 browser check, then tick US-164; the next executor slice is US-165 (M13c-1 contextual empty states — Bureau + Agenda).
