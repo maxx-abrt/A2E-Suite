@@ -39,6 +39,7 @@ after each iteration and it's included in prompts for context.
   - App front-components run isolated and cannot call host hooks — a landing that deep-links the host gallery must be a host page, not a `definePageLayout` FRONT_COMPONENT widget.
   - `twenty(max-consts-per-file)` forces one exported const per file; split constants.
   - The exhaustive page-change test was already red at HEAD (Drive/Calendar/Discussions/Inbox unexempted); added all native home pages to `UNTESTED_APP_PATHS`.
+- **Native undo snackbar + template-apply Undo (M13f)**: the host `useSnackBar().enqueueSuccessSnackBar({ message, options })` accepts `buttonLabel`/`buttonOnClick` — that is the native undo affordance (the front-component `enqueueSnackbar` host API has **no** button, so app front-components cannot show it). Scope an apply's undo to the apply result's own `created[]` (never a workspace query, C1); reverse it with the standard `delete<Plural>(filter:{id:{in}})` soft-delete mutation via `useApolloCoreClient` + `useObjectMetadataItems`; report `deleted` (platform-returned ids), `skipped` (requested-not-returned = already absent) and `failed` (mutation threw). Inject the per-group deleter so the pure orchestrator (`undoTemplateApply`) is unit-testable without Apollo. A2E user surfaces only ever soft-delete: native record action → `useDeleteOneRecord` sets `deletedAt`; a2e-documents `destroyDocument` (misnamed) calls `deleteDocument`; the only hard deletes are the 7-day retention `purge-*` logic functions.
 ---
 
 ## 2026-10-01 - US-151 M7f-2: Agenda landing page
@@ -252,4 +253,15 @@ after each iteration and it's included in prompts for context.
   - French label style: verb is lowercase after the `<App> :` prefix (`Bureau : créer un document`) but capitalized at the start of the unprefixed `shortLabel` (`Créer un document`) — the guard encodes both cases.
   - App command-menu-item labels are plain strings in ts modules read by the manifest builder; no typed registry exists, so an fs-read grep test is the only way to cover every file (including ones no test imports). Place it in `src/lib/__tests__/` — that glob is in every app's `test:unit`.
   - Apps import no icon package (nav/object icons are host-resolved string names); the AC icon-import rule is vacuous in-app. The icon-audit slice must judge those strings against `icon-dictionary.md`.
+---
+
+## [2026-10-02] - US-169 M13f: template-apply Undo + destructive-action audit
+- Added a host-side template-apply Undo: after a successful gallery apply the native success snackbar shows `Undo`; the click removes exactly the apply result's `created[]` via the standard soft-delete `delete<Plural>` mutation and reports `Removed / Already absent / Could not be removed`.
+- NEW `packages/twenty-front/src/modules/template-gallery/utils/undoTemplateApply.ts` (pure group + orchestrator + report), NEW `.../hooks/useUndoTemplateApply.ts` (metadata + Apollo deleteGroup), MOD `.../components/TemplateGallerySidePanelPage.tsx` (snackbar wiring). NEW tests: `utils/__tests__/undoTemplateApply.test.ts` (9), `hooks/__tests__/useUndoTemplateApply.test.tsx` (2).
+- Audited all destructive A2E actions (delete page/task/project/folder, remove template content): every one routes through the native soft-delete path; no hard delete in any `a2e-*/src/front-components` or `command-menu-items`. Gap recorded (not forced): core record-action delete soft-deletes but has no undo snackbar.
+- **Learnings:**
+  - `useSnackBar` options carry `buttonLabel`/`buttonOnClick`; the front-component `enqueueSnackbar` host API does not — only host surfaces can show a native undo button.
+  - Undo must be scoped to the apply result's `created[]`, not a query by `templateApplyOperationId` — only the root object carries the operation tag, so children (tasks/milestones/folders) are only known from the apply response.
+  - An idempotent re-apply echoes only the root id in `created[]` (US-131 behavior), so undo after a re-apply is only as complete as the first apply's response — do not rebuild the created set from a second call.
+  - The `useDeleteManyRecords` hook is per-object (can't loop hooks); the generic soft-delete mutation can be built inline from `objectMetadataItem.namePlural` via `getDeleteManyRecordsMutationResponseField` + `capitalize(nameSingular)` for the filter input type.
 ---

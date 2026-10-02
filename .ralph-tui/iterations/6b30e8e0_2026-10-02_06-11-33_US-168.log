@@ -1,0 +1,165 @@
+# Iteration 22 Log
+
+## Metadata
+
+- **Task ID**: US-168
+- **Task Title**: M13e: consistency pass — same verbs, same icons, no mixed-language labels + grep-based label-convention test
+- **Description**: As a user, I want the same verbs and icons everywhere with no mixed-language labels so that the suite feels like one product. Starting state: not started — PLAN M13e open.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-02T04:11:33.367Z
+- **Ended At**: 2026-10-02T04:22:02.054Z
+- **Duration**: 10m 28s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ ls .ralph-tui/ 2>/dev/null
+[94m[bash][0m $ grep -n "US-168" PLAN.md
+[94m[bash][0m $ grep -rn "US-168" docs/plan/phases/ .ralph-tui/progress.md 2>/dev/null | head -50
+[94m[bash][0m $ grep -n "M13e\|M13\|consistency pass" PLAN.md | head -50
+[94m[bash][0m $ ls tasks/
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ ls docs/plan/phases/phase-17-report.md && wc -l docs/plan/phases/phase-17-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-17-report.md
+[94m[bash][0m $ ls packages/twenty-apps/internal/
+[94m[bash][0m $ ls packages/twenty-apps/internal/*/src/command-menu-items/ 2>/dev/null
+[94m[bash][0m $ done
+[94m[bash][0m $ done
+[94m[bash][0m $ grep -rn "command-menu-item\|command menu item\|<App> :\|app-name prefix\|Créer/Create" docs/product...
+[94m[bash][0m $ grep -rn "M9c\|M8c\|mixed-language\|une langue\|label convention\|libellé" docs/plan/phases/*.md | h...
+[94m[bash][0m $ grep -n "command\|Commande\|Créer\|Ouvrir\|Partager\|label\|libellé\|français\|fr\b" docs/product-ex...
+[94m[bash][0m $ grep -rn "fr-only\|French-only\|français\|fr only\|langue\|Lingui fr" docs/plan/phases/*.md docs/*.m...
+[94m[bash][0m $ grep -rn "app command\|command-menu-item\|label:" docs/plan/phases/phase-11-report.md | head -30
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-11-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/tasks/prd-batch-b.json
+[94m[bash][0m $ ls packages/twenty-apps/internal/*/src/navigation-menu-items/ 2>/dev/null
+[94m[bash][0m $ grep -rn "Partager\|Ouvrir\|canonical verb\|verbs" docs/ PLAN.md packages/twenty-apps/ 2>/dev/null |...
+[94m[bash][0m $ grep -rn "canonical" docs/plan/phases/*.md | head -20
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-ui/src/icon/icon-dictionary.md
+[94m[bash][0m $ grep -rn "comme modèle\|saisie rapide\|trouver des aides\|dépendances\|sous-tâches\|chronomètre\|all...
+[94m[bash][0m $ grep -rn --include='*.ts' --include='*.tsx' "comme modèle\|saisie rapide\|trouver des aides\|dépenda...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-accounting/src/lib/__tests__/ packages/twenty-apps/internal/a2e...
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-projects/src/lib/__tests__/ | head -40
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ cat packages/twenty-apps/internal/a2e-projects/tsconfig.json
+[94m[read][0m
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-apps/internal/a2e-accounting/src/front-components/quick-entry.front-c...
+[94m[bash][0m $ done
+[94m[bash][0m $ done
+[94m[bash][0m $ sed -n '1,80p' docs/product-experience.md
+[94m[bash][0m $ grep -rn "anatomy\|Create <thing>\|Créer <\|Create <" docs/ packages/twenty-apps/ 2>/dev/null | grep...
+[94m[bash][0m $ grep -rn "anatomy rule" packages/twenty-apps/internal/*/src | head -30
+[94m[bash][0m $ ls .ralph-tui/iterations/ | tail -5
+I've confirmed the slice is free. Let me check the current time and claim.
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ printf '\nCLAIMED — US-168/m13e-labels — deepseek-v4.1-flash — 2026-10-02T04:15:23Z — base 5df743dca...
+[94m[bash][0m $ grep -n "name:" packages/twenty-apps/internal/a2e-accounting/src/navigation-menu-items/book-entries....
+[94m[bash][0m $ grep -rn "icon:" packages/twenty-apps/internal/*/src/navigation-menu-items/*.ts | head -40
+[94m[todowrite][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+Now the label edits:
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ grep -rn "label:" packages/twenty-apps/internal/*/src/command-menu-items/*.ts
+[94m[write][0m "import assert from 'node:assert/strict';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { test } from 'node:test';
+
+// M13e drift guard (US-168): every C... (1971 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { test } from 'node:test';
+
+// M13e drift guard (US-168): every C... (1972 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { test } from 'node:test';
+
+// M13e drift guard (US-168): every C... (1972 chars)"
+[94m[write][0m "import assert from 'node:assert/strict';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { test } from 'node:test';
+
+// M13e drift guard (US-168): every C... (1972 chars)"
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/command-menu-label-convention.test.ts" 2>&...
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/command-menu-label-convention.test.ts" 2>&...
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/command-menu-label-convention.test.ts" 2>&...
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/command-menu-label-convention.test.ts" 2>&...
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/command-menu-label-convention.test.ts" 2>&...
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/command-menu-label-convention.test.ts" 2>&...
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/command-menu-label-convention.test.ts" 2>&...
+[94m[bash][0m $ node --test --experimental-strip-types "src/lib/__tests__/command-menu-label-convention.test.ts" 2>&...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-accounting/package.json
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-chat/package.json
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/package.json
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/package.json
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -15
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -15
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -15
+[94m[bash][0m $ yarn typecheck 2>&1 | tail -15
+[94m[bash][0m $ echo "EXIT=$?"
+[94m[bash][0m $ echo "EXIT=$?"
+[94m[bash][0m $ tail -6 /tmp/a2e-acc-test.log
+[94m[bash][0m $ tail -6 /tmp/a2e-chat-test.log
+[94m[bash][0m $ tail -6 /tmp/a2e-doc-test.log
+[94m[bash][0m $ tail -6 /tmp/a2e-proj-test.log
+[94m[bash][0m $ echo "BUILD EXIT=${pipestatus[1]:-$?}"
+[94m[bash][0m $ echo "BUILD EXIT=${pipestatus[1]:-$?}"
+[94m[bash][0m $ echo "BUILD EXIT=${pipestatus[1]:-$?}"
+[94m[bash][0m $ echo "BUILD EXIT=${pipestatus[1]:-$?}"
+[94m[bash][0m $ git check-ignore packages/twenty-apps/internal/a2e-projects/.twenty/output/ && echo "IGNORED" || ech...
+[94m[bash][0m $ git status --porcelain | head -40
+[94m[bash][0m $ grep -rn "import.*Icon" packages/twenty-apps/internal/*/src --include='*.tsx' --include='*.ts' | gre...
+[94m[bash][0m $ grep -rn "Icon" packages/twenty-sdk/src/front-component* 2>/dev/null | head
+[94m[bash][0m $ done
+[94m[bash][0m $ grep -rn "command-menu-label" /tmp/a2e-acc-test.log | head -3
+[94m[bash][0m $ grep -rn "bureau-landing-template-links" /tmp/a2e-doc-test.log | head -2
+[94m[bash][0m $ grep -rn "IconMessages\|IconNotes\|IconKanban\|IconLayoutKanban\|IconFiles\|IconBook\b" packages/twe...
+[94m[bash][0m $ grep -rn "icon" packages/twenty-apps/internal/a2e-documents/src/lib/__tests__/bureau-navigation.test...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ grep -rn "Icon" packages/twenty-apps/internal/*/src/front-components/*.tsx 2>/dev/null | grep -iE "i...
+[94m[bash][0m $ grep -rn "@tabler/icons-react\|twenty-ui/icon" packages/twenty-apps/internal/ --include='*.ts' --inc...
+[94m[bash][0m $ host `twenty-front` A2E surfaces if any direct icon import deviates), then Tier-2 rendering pass. EO...
+[94m[bash][0m $ tail -20 .ralph-tui/progress.md
+[94m[bash][0m $ the AC icon-import rule is vacuous in-app. The icon-audit slice must judge those strings against `ic...
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ tail -6 docs/plan/phases/phase-17-report.md
+[94m[todowrite][0m
+US-168 first slice complete: label convention fix + per-app grep guard.
+
+**Done**
+- Normalized 13 app `command-menu-items` labels to `<App> : <verb> …` with canonical verbs `créer|ouvrir|partager` (e.g. `Bilan : saisie rapide`→`Bilan : créer une écriture`, `Bureau : dépendances`→`Bureau : ouvrir les dépendances`, `Bureau : enregistrer comme modèle`→`Bureau : créer un modèle`); shortLabels made verb-first. 5 already-conforming create labels untouched. All French, no mixed-language.
+- New per-app `src/lib/__tests__/command-menu-label-convention.test.ts` (fs-grep over `*.command-menu-item.ts`) in a2e-accounting/chat/documents/projects; verified it fails on a violation.
+- Green: each app `yarn typecheck && yarn lint && yarn test:unit` (134/63/294/374 pass, 0 fail) + `npx twenty dev:build .` (34/12/36/54 files); package.json patch-bumped once each. No host files, no `locales/**`, no AI attribution.
+
+**Remaining (reported as `partial`, Ready-to-tick: no)**
+- AC bullet 3 icon audit (nav/object icon strings vs `icon-dictionary.md`; no in-app icon-package imports exist) — deferred to the next slice per one-bullet scope rule.
+- Tier-2 Cmd+K rendering pass (orchestrator).
+
+Report appended to `docs/plan/phases/phase-17-report.md:151` and log to `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>

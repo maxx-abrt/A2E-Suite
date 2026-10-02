@@ -174,3 +174,31 @@ CLAIMED — US-168/m13e-labels — deepseek-v4.1-flash — 2026-10-02T04:15:23Z 
 **Do not redo:** the canonical verb mapping above; the 4 `command-menu-label-convention.test.ts` guards (extend the `APP_PREFIX`/directory the same way for any new app with `command-menu-items`); the untouched create commands.
 **Remaining:** 1 other open task in batch 14B (US-169).
 **Next:** US-168 second slice — icon audit per AC bullet 3 (nav/object icon strings vs `packages/twenty-ui/src/icon/icon-dictionary.md`; host `twenty-front` A2E surfaces if any direct icon import deviates), then Tier-2 rendering pass.
+
+CLAIMED — US-169/m13f-apply-undo — deepseek-v4.1-flash — 2026-10-02T04:26:18Z — base e1ab15e04f885bb828f5fbd3d692d4049699cad9
+
+## 2026-10-02 04:29 UTC — deepseek-v4.1-flash [executor] — contract v4
+**Task:** US-169 M13f: undo & safety — native undo snackbar/soft delete on destructive A2E actions + template-apply 'Undo' · **Slice:** template-apply 'Undo' (AC bullets 3–5) implemented host-side, with the destructive-action audit (bullet 2) recorded below.
+**Claim:** done-for-review
+**Ready-to-tick:** yes — apply-undo + honest degradation + tests are green on Tier 0; only the Tier-2 browser round-trip and a not-forced native-delete-snackbar gap remain.
+**Base:** e1ab15e04f885bb828f5fbd3d692d4049699cad9
+**Changed:**
+- `packages/twenty-front/src/modules/template-gallery/utils/undoTemplateApply.ts` (NEW: pure `groupCreatedRecordsByObject` (group + dedupe + drop empty ids), `undoTemplateApply(created, deleteGroup)` orchestrator, `buildTemplateApplyUndoReport`; `TemplateApplyUndoReport`/outcomes typed).
+- `packages/twenty-front/src/modules/template-gallery/hooks/useUndoTemplateApply.ts` (NEW: resolves each created object's metadata, builds the native soft-delete `delete<Plural>(filter: {id:{in}})` mutation and calls it through `apolloCoreClient`; returns the platform-reported deleted ids).
+- `packages/twenty-front/src/modules/template-gallery/components/TemplateGallerySidePanelPage.tsx` (after a successful apply, enqueue the native success snackbar with `buttonLabel: Undo` + `buttonOnClick`; the click runs the undo and enqueues an honest `Removed / Already absent / Could not be removed` info snackbar).
+- NEW tests `utils/__tests__/undoTemplateApply.test.ts` (9) + `hooks/__tests__/useUndoTemplateApply.test.tsx` (2).
+- this report + `.ralph-tui/progress.md`.
+- **Audit (AC bullet 2), explicit:** (1) *delete page* — no app-side delete; native record action → `useDeleteOneRecord` → `deleteOne<Object>` soft delete (sets `deletedAt`); document-browser "Corbeille" `destroyDocument` (misnamed) also calls `deleteDocument` = soft delete. (2) *delete task/project* — native record action, same soft-delete path (a2e-projects ships no delete command-item). (3) *delete folder* — native record action on `driveFolder`, same soft-delete path (a2e-drive ships no delete command-item). (4) *remove template content* — a saved template is an `isTemplate` row; deleting it is a record delete → soft delete. Grep confirms no `destroy*`/hard-delete call in any `a2e-*/src/front-components` or `command-menu-items`; the only hard deletes are the retention `purge-*` logic functions (7-day post-trash, not a user surface).
+**Checks:**
+- `cd packages/twenty-front && npx jest src/modules/template-gallery --config=jest.config.mjs` → 14 suites / 61 tests pass (was 12/50; +2 suites/+11 tests mine).
+- `npx jest src/modules/template-gallery/utils/__tests__/undoTemplateApply.test.ts ...` → 9/9; `.../hooks/__tests__/useUndoTemplateApply.test.tsx` → 2/2.
+- `npx jest --findRelatedTests <3 changed non-test sources> --config=jest.config.mjs` → 5 suites / 23 tests pass.
+- `cd packages/twenty-front && npx tsgo -p tsconfig.json --noEmit` → exit 0.
+- `npx oxlint --type-aware -c .oxlintrc.json <5 changed files>` → 0 warnings / 0 errors; `npx oxfmt --check <them>` → clean.
+- no app package touched → no version bump; no `twenty-shared` source touched → no dist rebuild; no `locales/**` touched; no AI attribution.
+**Missing for tick:**
+- **Tier 2 (orchestrator):** browser — apply a project/document template from the gallery, click `Undo` on the native snackbar, confirm the workspace returns to the prior state (created project+tasks+milestones / document gone) and a second apply→undo leaves pre-existing rows untouched.
+- **Recorded gap (not forced):** native record-action deletes already soft-delete but do not expose a native undo snackbar; the audit bullet reads "undo snackbar / soft-delete path", and the soft-delete path is satisfied. Adding an undo affordance to the core record delete action (outside A2E surfaces) is left as a gap per the task's "recorded as a gap, not forced" note.
+**Do not redo:** the US-131 `created[]` contract and the four `apply-template` functions (untouched); the `useApplyTemplate`/gallery surface; the native `deleteOne<Object>` soft-delete path; `DriveBulkResultNotice`'s separate undo. The undo stays scoped to the apply result's own `created[]` (C1) — do not make it query the workspace by object or it can touch pre-existing rows.
+**Remaining:** 0 other open tasks in batch 14B (US-169 is the last). Icon audit follow-up from US-168 is a separate gap.
+**Next:** orchestrator Tier-2 apply→undo browser pass; optionally extend the native soft-delete undo snackbar to the core record delete action.
