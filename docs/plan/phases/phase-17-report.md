@@ -202,3 +202,19 @@ CLAIMED — US-169/m13f-apply-undo — deepseek-v4.1-flash — 2026-10-02T04:26:
 **Do not redo:** the US-131 `created[]` contract and the four `apply-template` functions (untouched); the `useApplyTemplate`/gallery surface; the native `deleteOne<Object>` soft-delete path; `DriveBulkResultNotice`'s separate undo. The undo stays scoped to the apply result's own `created[]` (C1) — do not make it query the workspace by object or it can touch pre-existing rows.
 **Remaining:** 0 other open tasks in batch 14B (US-169 is the last). Icon audit follow-up from US-168 is a separate gap.
 **Next:** orchestrator Tier-2 apply→undo browser pass; optionally extend the native soft-delete undo snackbar to the core record delete action.
+
+## 2026-10-11 — orchestrator verification (M13: US-163…US-169)
+- Verified at HEAD. Heavy Tier-0: twenty-front `tsgo --noEmit` exit 0;
+  `npx jest src/modules/template-gallery src/modules/a2e-empty-state
+  src/modules/a2e-help src/modules/a2e-customize src/modules/quick-create` →
+  25 suites / 115 pass. Safety scan clean; no i18n catalog churn; app version
+  bumps additive (accounting 0.1.3→0.1.6, chat 0.1.1→0.1.3, documents
+  0.2.8→0.2.14, projects 0.1.17→0.1.21).
+- PLAN:
+  - **M13b `[x]`** (US-164), **M13f `[x]`** (US-169).
+  - **M13a `[~]`** (US-163 chooser + 2 host mounts; remaining create commands
+    direct-create), **M13c `[~]`** (US-165/166 — Bilan dashboard + Syna open),
+    **M13d `[~]`** (US-167 — reset-provenance front test + Tier-2 open),
+    **M13e `[~]`** (US-168 — icon audit + Tier-2 open).
+- Tier-2 browser legs (chooser, scratch journey, empty states, customize/reset,
+  Cmd+K labels, apply→undo) remain deferred.

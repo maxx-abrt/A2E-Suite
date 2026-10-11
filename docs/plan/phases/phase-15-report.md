@@ -152,3 +152,17 @@ CLAIMED — US-156/m11e-i1-document-index-mention-notifications — deepseek-v4.
 **Do not redo:** the US-139 `documentMention` object/writer and `listMentionedInDocuments`; `DocumentMentionListener` (owns workspace-member mentions from the created/updated body scan — this listener deliberately skips `workspaceMember` targets so one mention never yields two inbox rows); the mention engine's parser/permission filter/`buildMentionNotificationPayload`; the notification core (`NotificationService.requestNotifications`, `NotificationWatchService`) and the US-155 `WorkspaceEventEmitter.emitCustomBatchEvent` primitives. Recipients for a **record** mention are the record's watchers (the `notificationWatch` rows), permission-checked against the source document.
 **Remaining:** AC3–AC5 of US-156 (task mention path, Bilan approval events, integration proof) then the Tier-2 leg; afterwards M12e/E17. PLAN M11e stays `[ ]`.
 **Next:** executor — AC3 task mentions: either extend `MentionSource`/`MENTION_SURFACES` with a `task` surface (description/comment body) reusing `MentionNotificationService`, or add a Bilan approval event (install-gated on a2e-accounting) that emits through the same seam; do NOT add a second notification system.
+
+## 2026-10-11 — orchestrator verification (M11: US-147, US-148, US-149, US-154, US-155, US-156)
+- Verified at HEAD. Heavy Tier-0: twenty-front/server `tsgo --noEmit` exit 0;
+  `npx nx build twenty-shared --skip-nx-cache` green (shared `cross-app-events`
+  touched); `check-docs.mjs` PASS. Safety scan clean (a2e-links is a NEW additive
+  app; no schema/migration needed, no deleted files).
+- PLAN:
+  - **M11a `[x]`** (US-147 scaffold + US-148 picker + US-149 Related tab, code
+    level), **M11c `[x]`** (US-154 quick-create).
+  - **M11d `[~]`** (US-155 contract + server projector done; recipe-enqueue
+    integration spec + Tier-2 open), **M11e `[~]`** (US-156 AC2 record-mention
+    done; AC3 task/Bilan sources + integration open).
+- Tier-2 E17 browser leg (link/backlink/uninstall-degrade, create + pre-link,
+  install-gated event publication, inbox mention) remains deferred.

@@ -856,3 +856,20 @@ CLAIMED — US-158/import-export-utils-resume — deepseek-v4.1-flash — 2026-1
 **Do not redo:** the conversion table, the codec-agnostic `DocumentsTransferEntry` contract, the Notion walker, the import planner/permission error, the subtree export builder, and the fflate adapter — all green. Extend the converters table rather than adding a parallel markdown parser; route any new archive codec through `zipArchiveCodec`.
 **Remaining:** M8g is the last open M8 bullet; then US-159…US-169 in batch 14B.
 **Next:** orchestrator Tier-2 browser journey, then tick US-158; no executor follow-up required.
+
+## 2026-10-11 — orchestrator verification (M8/M9: US-131, US-132, US-137, US-138, US-142, US-143, US-144, US-145, US-146, US-157, US-158)
+- Verified at HEAD. Heavy Tier-0: twenty-front/server `tsgo --noEmit` exit 0;
+  `npx nx build twenty-shared --skip-nx-cache` green; `npx jest
+  src/modules/template-gallery …` 25 suites/115 pass (spot); `check-docs.mjs`
+  PASS. Safety scan clean.
+- Ticked/annotated in PLAN:
+  - **M8b `[x]`** (US-138 editable inline views complete at code level),
+    **M8f `[x]`** (US-157 tree polish).
+  - **M8a `[~]`** (US-144 date/reminder + US-145 stories done; Syna group member
+    open), **M8d `[~]`** (US-139 index/read model done; AC3 tab mount open),
+    **M8e `[~]`** (US-146 quick capture done; daily note open), **M8g `[~]`
+    (US-158 utilities done; UI mount open).
+  - **M9a `[x]`** (US-131 apply functions + US-132 entry-points), **M9c `[x]`
+    (US-142 Agenda + US-143 Syna — all families built), **M9b `[~]`** (US-137
+    record mount done; board-view + gallery mount open).
+- Tier-2 E14/E15 browser round-trips remain deferred.

@@ -1462,3 +1462,12 @@ CLAIMED — US-136/task-calendar-complexity — deepseek-v4.1-flash — 2026-10-
 **Do not redo:** the `task-calendar.view.ts` repair (no `project` relation column — `a2a4932f`); the US-059 OR completion group and the `project IS_NOT_EMPTY` scope filter; the `task-calendar.test.ts` graph tests. Never raise `COMMON_QUERY_COMPLEXITY_LIMIT`; reduce the view's selection instead.
 **Remaining:** other P4.2/P4C legacy legs and the standing Tier-2 ledger (unchanged).
 **Next:** orchestrator — Tier-2: reinstall a2e-projects, open the task-calendar view, confirm the due task renders; tick the P4.2 calendar bullet if it does.
+
+## 2026-10-11 — orchestrator verification (US-136 P4.2 task-calendar complexity)
+- Verified at Tier-0: the compute-side model (`task-calendar-complexity.ts`,
+  calibrated `OBSERVED_DEFECT_COMPLEXITY = 2001` vs `GROUP_BY_QUERY_COMPLEXITY_LIMIT
+  = 2000`, `countTaskCalendarRelationFields` = 38) is green with 5 tests; app
+  `typecheck`/`lint`/`test:unit` 367 pass per report; twenty-server tsgo clean.
+- No P4.2 calendar-view bullet is ticked at code level — the calibrated 1951 vs
+  the real query needs the Tier-2 live render (reinstall a2e-projects, open the
+  task-calendar month grid) to confirm the due task renders.

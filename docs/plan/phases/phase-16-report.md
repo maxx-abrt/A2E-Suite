@@ -160,3 +160,13 @@ CLAIMED — US-162/M12g-in-app-help-wiring — deepseek-v4.1-flash — 2026-10-0
 **Do not redo:** the `a2e-help` module (doc-slug source + `A2eLearnMoreLink`), the topic `docPageKey`s, the panel doc links, the Cmd+K Help entries + `externalUrl` plumbing, and the five app-surface link insertions. US-165/166 must reuse `A2eLearnMoreLink` (M13c slot) rather than adding another.
 **Remaining:** M12c, M12e (2 other [ ] bullets in the M12 milestone)
 **Next:** orchestrator ticks M12g; then M12c (one page per app) / M12e (cross-app recipes).
+
+## 2026-10-11 — orchestrator verification (M12: US-159, US-160, US-161, US-162)
+- Verified at HEAD. `node docs/scripts/check-docs.mjs` → PASS; `lint-mdx` clean
+  (per reports); `npx jest src/modules/a2e-help …` (with the other M13/M12g
+  modules) 25 suites/115 pass. Safety scan clean; no i18n catalog churn.
+- PLAN ticked `[x]`: **M12b** (US-159), **M12d** (US-160), **M12f** (US-161),
+  **M12g** (US-162) — all docs-only, label-grep-verified against source.
+- Tier-2 screenshots (E13 captures) remain placeholders across the pages.
+  `npx nx build twenty-docs` has no build target (documented gate is
+  `check-docs.mjs` + `lint-mdx`, unchanged).

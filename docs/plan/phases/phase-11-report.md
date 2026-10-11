@@ -223,3 +223,19 @@ CLAIMED — US-153/archive-landing-and-drive-folder — deepseek-v4.1-flash — 
 **Do not redo:** the P6.1 drive model/hooks (`useDriveFolders`/`useDriveFiles`/`useDriveActions`/`useDriveUploadQueue`), `buildDriveUsageSummary`/`DriveUsageWidget`, the US-132 `useOpenTemplateGallery({category,templateKey})` seam, and the a2e-drive folder-structure descriptors/`applyTemplate` path. Archive reuses all of them — do not fork a second gallery, usage counter, or upload path.
 **Remaining:** M7c Bilan reduction + CRM host folder are open; M7f landing set now complete (US-150/151/152/153); then US-165/US-167 consume the landings.
 **Next:** orchestrator tick + Tier-2 browser leg; then the M7c Bilan reduction (needs M7f dashboard links) and CRM host folder legs.
+
+## 2026-10-11 — orchestrator verification (M7c/M7f: US-134, US-150…153)
+- Verified at HEAD. Heavy Tier-0: `npx tsgo -p tsconfig.json --noEmit`
+  twenty-front **exit 0** and twenty-server **exit 0**; `npx nx build
+  twenty-shared --skip-nx-cache` green; representative front suites green.
+  Safety scan of the unverified range clean (no i18n catalog churn, no secrets,
+  no schema change, no deleted files; app patch bumps additive).
+- US-134 (M7c chat Discussions nesting) and US-153 (a2e-drive Archive FOLDER row
+  nesting `Files`) verified at code level (app `test:unit`/`dev:build` green per
+  reports). US-150/151/152/153 (the four M7f landings) code-complete.
+- PLAN: M7c annotation extended (chat Discussions + drive Archive folder done;
+  Bilan reduction + CRM host folder + `Mes tâches` depth cap + collapse-per-user
+  open); **M7f ticked `[x]`** at code level.
+- Tier-2 browser (E13: fresh sidebar ≤7 top rows, folder nesting, `/bureau`/
+  `/calendar`/`/chat`/`/drive` landings + install gating, upgrade reparent)
+  remains deferred.

@@ -238,3 +238,17 @@ CLAIMED — US-141/M10d-2 — deepseek-v4.1-flash — 2026-10-01T16:55:00Z — b
 **Do not redo:** US-130 `AiMonthlyTokenCapService`/`aiMonthlyTokenCap` column/refusal; US-128/140 `SYNA_DOCUMENT_AI_ACTIONS`, `getOfferedSynaActions`, `useOpenAskAiPageWithPreprompt` confirm-first; the US-045 `SettingsAiUsageTab` enterprise/ClickHouse-gated analytics; US-102/127 provider entity/resolver/Settings UI; US-135 `runWithWorkspaceRegistry`.
 **Remaining:** US-141: Cmd+K/record-page/chat-surface gating + workspace-scoped `ClientConfig.aiModels` (unblocks BYOK model pickers); plus US-142+ in Ralph's batch.
 **Next:** make `ClientConfigService.getClientConfig` resolve `getAvailableModels`/defaults through `runWithWorkspaceRegistry` (needs a workspace id in that path), then extend the command-menu availability evaluator with `hasConfiguredAiProvider` and add the `ASK_AI` expression/upgrade command.
+
+## 2026-10-11 — orchestrator verification (M10: US-135, US-140, US-141)
+- Verified at HEAD. Heavy Tier-0: twenty-front/server `tsgo --noEmit` exit 0;
+  `npx nx build twenty-shared --skip-nx-cache` green. Safety scan clean.
+- PLAN annotations updated (all stay `[~]`):
+  - **M10a**: US-135 server consumption leg (`runWithWorkspaceRegistry` in
+    `buildModelRegistry`) noted done; the DB-backed integration spec and the
+    front `ClientConfig.aiModels` workspace read remain open.
+  - **M10b**: US-140 selection toolbar noted done; Bilan categorization (P7) +
+    Agenda scheduling tool open.
+  - **M10d**: US-141 partial — workspace `hasConfiguredAiProvider` + admin link +
+    Usage-tab cap landed; Cmd+K `ASK_AI`/record-page gating + workspace-scoped
+    `ClientConfig` open.
+- Tier-2 E16 browser journey remains deferred.

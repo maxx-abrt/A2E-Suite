@@ -77,13 +77,13 @@ minimum product increment a user can touch. Status is one of
 | M4 | **Bilan safe & complete** | Finance flows end-to-end: invoice→payment→ledger, fiches, subventions, budgets | (a) P7.0 safety gate live proofs (replay, numbering, period locks, alternate-API stamping); (b) P7.1d/2 open legs (invoice PDF+send, fiche editors, reports, grant wizard); (c) E10/E11 journeys green; (d) finance/privacy reviewer sign-off recorded | partial — app code strong, live proofs blocked behind M0 |
 | M5 | **Collaboration & smart layer** | Chat/Inbox/Drive/AI feel built-in, calm, and permission-safe | (a) Chat two-session live proof (P5 Tier-2); (b) inbox mention→deep-link journey; (c) drive upload/preview journey; (d) AI direct-tool live dispatch incl. server restart with the `directToolInvocation` arg; (e) every AI mutation shows confirm-first; (f) solo-mode degradation re-verified | partial — all built at Tier-1; live journeys pending |
 | M6 | **Release polish** | "Best app possible": fast, graceful, fr/en, accessible | (a) Performance budgets measured (p95 search < 150ms @10k records; 1k-task Gantt); (b) E12 usability pass with recorded sessions; (c) full e2e regression green; (d) upgrade-from-clean-2.39 + uninstall-everything→CRM-works rehearsals; (e) release notes declare accepted/deferred scope | planned |
-| M7 | **Suite identity & navigation** (G6/G7/G8) | Sidebar shows five named apps — Bureau, Agenda, Bilan, Syna, Archive — each a grouped, reorderable native section with one landing page; CRM is one optional section among them | E13 green; see M7 below | partial — M7a/M7b/M7d code-complete (naming, internal-route nav, Agenda host entry); M7c Bureau folder only; M7e/M7f open; E13 browser pending |
-| M8 | **Notion-grade Bureau** (G9/G10) | Slash menu, rich blocks, inline databases, page icons/covers, backlinks, quick capture — calm and discoverable | E14 green; see M8 below | partial — M8a structural + 4/6 interactive blocks, M8b read-only embeds, M8c page chrome done; M8d–g open; E14 round-trip pending |
-| M9 | **Template gallery** (G11) | One searchable gallery across apps with ≥ 60 curated templates, previews, "use"/"save as template" | E15 green; see M9 below | partial — C1 contract + gallery module + content families (Bureau pages/projects, Bilan, Archive, recipes) + save-as-template builders done; entry-points/apply mount, Agenda/Syna families open; E15 pending |
-| M10 | **Syna — AI with BYOK** (G12) | Workspace admins bring their own provider key; Syna is available everywhere in context, confirm-before-write, zero-AI mode intact | E16 green; see M10 below | partial — BYOK entity/resolution/Settings UI, Syna slash entry, scoped house style, monthly token cap done; workspace-key generation consumption + zero-AI gate open; E16 pending |
-| M11 | **Interconnected suite** (G13/G14) | Any record links to any other app's record; Today view, universal quick-create, cross-app automations recipes | E17 green; see M11 below | partial — link pattern decided (M11a spike), Today view done (M11b); link picker, quick-create, C5 events, inbox open; E17 pending |
-| M12 | **Product documentation** | Detailed user guide per app written from the real UI, linked from in-app help | M12 acceptance; see M12 below | partial — M12a IA skeleton (11 en + 11 fr pages, docs.json nav) done; M12b–g open |
-| M13 | **Guided-or-in-control UX** | Every "New" offers blank / suggested templates / gallery; contextual empty states; customize-in-place with reset | E12 + E15 re-run; see M13 below | planned |
+| M7 | **Suite identity & navigation** (G6/G7/G8) | Sidebar shows five named apps — Bureau, Agenda, Bilan, Syna, Archive — each a grouped, reorderable native section with one landing page; CRM is one optional section among them | E13 green; see M7 below | partial — M7a/b/d done; M7c Bureau folder + chat Discussions + drive Archive folder done; M7f landings done; M7e + Bilan/CRM folder open; E13 browser pending |
+| M8 | **Notion-grade Bureau** (G9/G10) | Slash menu, rich blocks, inline databases, page icons/covers, backlinks, quick capture — calm and discoverable | E14 green; see M8 below | partial — M8a full block set + stories, M8b read+editable embeds, M8c chrome, M8f tree polish done; M8d tab mount, M8e daily note, M8g UI wiring open; E14 pending |
+| M9 | **Template gallery** (G11) | One searchable gallery across apps with ≥ 60 curated templates, previews, "use"/"save as template" | E15 green; see M9 below | partial — all 7 content families, gallery + apply + entry-points + record save mount done; board-view/gallery save mount open; E15 pending |
+| M10 | **Syna — AI with BYOK** (G12) | Workspace admins bring their own provider key; Syna is available everywhere in context, confirm-before-write, zero-AI mode intact | E16 green; see M10 below | partial — BYOK entity + server consumption + slash + selection toolbar + house style + token cap done; zero-AI Cmd+K/record gating + workspace ClientConfig open; E16 pending |
+| M11 | **Interconnected suite** (G13/G14) | Any record links to any other app's record; Today view, universal quick-create, cross-app automations recipes | E17 green; see M11 below | partial — M11a link picker + Related tab, M11b Today, M11c quick-create done; M11d/M11e integration + AC3 open; E17 pending |
+| M12 | **Product documentation** | Detailed user guide per app written from the real UI, linked from in-app help | M12 acceptance; see M12 below | partial — M12a/b/d/f/g done; M12c + M12e open; screenshots Tier-2 |
+| M13 | **Guided-or-in-control UX** | Every "New" offers blank / suggested templates / gallery; contextual empty states; customize-in-place with reset | E12 + E15 re-run; see M13 below | partial — M13b/f done; M13a/c/d/e partial; E12 + E15 re-run Tier-2 |
 
 ### Milestone discipline
 
@@ -289,6 +289,13 @@ completion claim.
       cannot nest (2-level depth cap), a2e-chat Bureau nesting is blocked on M7e,
       a2e-drive needs its Archive folder once M7f rows exist, and Bilan reduction +
       CRM host folder are not done.
+      — 2026-10-11 orchestrator (phase-11-report, US-134/US-153): a2e-chat
+      `Discussions` now nests under the Bureau folder (duplicated external UUID,
+      position 2, LINK `/discussions` preserved; 61 app tests green) and a2e-drive
+      owns an `Archive` FOLDER row nesting `Files` (US-153). Still open: `Mes
+      tâches` (2-level depth cap), Bilan ≤6-row reduction, CRM host folder, and
+      collapse-per-user. Browser sidebar leg (fresh workspace ≤7 top rows, folder
+      nesting, upgrade reparent) is Tier-2.
 - [x] **M7d — Agenda host entry without an app.** Agenda is a host page; add
       a host-seeded (standard) nav item for `/calendar` in new workspaces and
       a preset flag `agendaEnabled`; existing workspaces get it via an upgrade
@@ -310,11 +317,19 @@ completion claim.
       thin `a2e-bureau` app that declares the others as dependencies and owns
       the Bureau landing page. Recommendation: (a) now, (b) only if SDK
       supports app dependencies. Record in phase report.
-- [ ] **M7f — Per-app landing pages.** Bureau home, Agenda (calendar week),
+- [x] **M7f — Per-app landing pages.** Bureau home, Agenda (calendar week),
       Bilan dashboard (exists), Syna (chat + recent runs + actions library),
       Archive (`/drive` explorer + usage). Built with `definePageLayout`
       widgets or existing host pages; each has an empty state with 1 primary
       action + 3 templates from M9.
+      — 2026-10-11 orchestrator (phase-11-report, US-150…153): all four landings
+      code-complete — Bureau `/bureau` (primary action + 3 gallery links + recent
+      pages, a2e-documents nav repointed to it), Agenda `/calendar` opens on week
+      view under a landing strip, Syna `/chat` empty state (starters + actions
+      library + recent runs behind the zero-AI gate), Archive `/drive` landing
+      (Upload + New folder + 3 starters + usage, plus the a2e-drive Archive folder
+      nav row). Bilan dashboard pre-exists. E13 browser render leg (landings +
+      per-app install gating) is Tier-2.
 
 ### M8 — Notion-grade Bureau
 
@@ -337,10 +352,17 @@ completion claim.
       `TableOfContentsBlock`) + grouped/localized Basic/Media/Bureau/Links/Syna
       slash menu (US-121); interactive set to-do→task (`TodoTaskBlock`, native
       `task` with provenance), media embeds via `FileBlock`, `BookmarkBlock`,
-      `PageLinkBlock` (child `document`) (US-122). Partial: date/reminder mention
-      (needs `connectedAccountId` composer flow), Syna group member, and storybook
-      stories (blocks need the app provider tree) are open; E14 round-trip Tier-2.
-- [~] **M8b — Inline views ("databases") in pages.** A block embedding a
+       `PageLinkBlock` (child `document`) (US-122). Partial: date/reminder mention
+       (needs `connectedAccountId` composer flow), Syna group member, and storybook
+       stories (blocks need the app provider tree) are open; E14 round-trip Tier-2.
+       — 2026-10-11 orchestrator (phase-13-report, US-144/US-145): date/reminder
+       mention landed (`DateReminderInlineContent` + `buildDateReminderMention`
+       creating a real `calendarEvent` via a calendar-capable account, degrade-with-
+       snackbar when none) and provider-free light/dark Storybook stories for the
+       new blocks shipped (`storybook:build twenty-front` green, `__stories__/`
+       present). Still open: the **Syna group member** (no Syna block — blocked on
+       M7e) and the E14 browser round-trip.
+- [x] **M8b — Inline views ("databases") in pages.** A block embedding a
       native view (table/kanban/calendar/gallery) of any object with its own
       filters (reuse record-table/board components read-only first, then
       editable). This is the flagship "better than Notion": the database is a
@@ -352,6 +374,12 @@ completion claim.
       `RecordTableWidgetRendererContent` (TABLE/KANBAN/LIST/CALENDAR,
       `isUIEditable=false`), safe permission stub, object→view picker; edits-back
       to `/objects/tasks` (the editable half) are open. Tier-2 E14 proof pending.
+      — 2026-10-11 orchestrator (phase-13-report, US-138): editable half landed —
+      `resolveRecordViewEmbedState` now carries `isUIEditable =
+      objectPermissions.canUpdateObjectRecords` and `RecordViewEmbedHost` passes it
+      to the shared record-table widget (persist via the existing
+      `useUpdateOneRecord` cell-edit pipeline; read-only stays the default). Ticked
+      at code level; E14 embed-edit-reflect browser leg is Tier-2.
 - [x] **M8c — Page chrome.** Page icon (emoji/icon dictionary) + cover image,
       full-width toggle, small-text toggle, "last edited by", breadcrumbs from
       tree, word count, favourites (existing `document-favorite`), lock page.
@@ -364,22 +392,50 @@ completion claim.
       migration); favourite reuses the personal `documentFavorite` path. Ticked:
       code scope delivered; Tier-2 browser pass, fr/en catalog and cover-upload
       button remain.
-- [ ] **M8d — Backlinks & mentions panel.** "Mentioned in" section on
+- [~] **M8d — Backlinks & mentions panel.** "Mentioned in" section on
       document and on every record page (page-layout tab/widget) computed
       from mention nodes stored at save; no full-text scan at read.
-- [ ] **M8e — Quick capture & daily note.** Global shortcut (Cmd+Shift+N) and
+      — 2026-10-11 orchestrator (phase-13-report, US-139): the save-time mention
+      index and read model are done — app-owned `documentMention` object (polymorphic
+      target, unique `mentionKey`, CASCADE to document) + `document.updated`/`content`
+      trigger + `syncDocumentMentions` writer + index-only `listMentionedInDocuments`
+      reader (273 app tests green). Still open: the AC3 'Mentioned in' page-layout
+      tab/widget mount (front component + page-layout-tab declarations) and the
+      Tier-2 browser leg.
+- [~] **M8e — Quick capture & daily note.** Global shortcut (Cmd+Shift+N) and
       Cmd+K "New page" creating an untitled doc in Inbox/personal root; opt-in
       daily note (template from M9) opened from Agenda day header.
-- [ ] **M8f — Drag & drop tree polish.** Drag pages in sidebar tree and in
+      — 2026-10-11 orchestrator (phase-13-report, US-146): quick capture done —
+      `NewPageHotKeyGate` (Cmd/Ctrl+Shift+N, install-gated on a2e-documents),
+      Cmd+K `New page` (`useNewPageCommand`/`useCreateNewPage` → untitled `document`
+      at root, opened in side panel), wired into the command-menu "Other" group and
+      `MainAppLayoutWithSidePanel`. Still open: the AC3 **daily note** (Agenda
+      day-header opt-in note via `apply-template` key `note-quotidienne`) and the
+      Tier-2 browser leg.
+- [x] **M8f — Drag & drop tree polish.** Drag pages in sidebar tree and in
       page, move-to dialog with search, duplicate page, copy link, open in
       side panel; keyboard alternatives (C7).
-- [ ] **M8g — Markdown & Notion import.** Import `.md` / Notion export zip
+      — 2026-10-11 orchestrator (phase-13-report, US-157): complete at code level —
+      `buildDocumentDropPayload` (drag reparent), `document-tree-move-to` (search
+      move-to dialog), `document-duplicate` (fresh block ids + child linking),
+      `document-deep-link` (`/object/document/:id`), single `persistDocumentMove`
+      write path, in-page child drag + page action bar (292 app tests green). Deep-
+      tree drag browser journey (P3.3 leg) is Tier-2.
+- [~] **M8g — Markdown & Notion import.** Import `.md` / Notion export zip
       (pages + nested pages + images) into Bureau via existing `import/` module;
       export page subtree as zip. No Notion API integration in this slice.
+      — 2026-10-11 orchestrator (phase-13-report, US-158): the whole utility surface
+      is code-complete and green — `markdownToImportedBlocks` (total converter
+      table), codec-agnostic `DocumentsTransferEntry`/`notionExportZip` walker,
+      `bureauImportPlan` (+ permission error + plain `.md` plan), `zipArchiveCodec`
+      (fflate at the edges), and `documentSubtreeExportEntries` (Notion-export
+      shape, import-the-exported-zip round-trip tested). Still open: the **UI
+      surface** that triggers import/export in the browser (upload/menu action) and
+      file-storage upload of extracted image bytes — utilities only, no mount yet.
 
 ### M9 — Template gallery (one gallery, all apps)
 
-- [~] **M9a — Gallery surface.** One host surface (modal from Cmd+K "Templates",
+- [x] **M9a — Gallery surface.** One host surface (modal from Cmd+K "Templates",
       from every "New" button and each app landing page) listing content
       templates across installed apps, with categories, search, preview pane,
       "Use template" and "Blank". Data source: each app exposes its templates
@@ -395,6 +451,13 @@ completion claim.
       surface (search / category tabs / preview / Use / Blank). Still partial:
       Cmd+K "Templates", the "New" surfaces and app-landing entry-points are not
       mounted, so the gallery is not yet reachable. Tier-2 E15 pending.
+      — 2026-10-11 orchestrator (phase-13-report, US-131/132): the write path and
+      entry-points landed — one per-app `apply-template` logic function keyed by the
+      US-117 descriptor key (requirement validation + operation-id idempotency), and
+      the gallery is now reachable from Cmd+K `Templates` / every `New` surface /
+      app landings via `useOpenTemplateGallery`, with the `Use` action bound through
+      `useApplyTemplate` (`created[]` result contract). Ticked at code level; E15
+      browser round-trip (search→preview→Use→fresh objects) is Tier-2.
 - [~] **M9b — Workspace templates ("Save as template").** Any document/project
       (and its tasks), board view, Bilan fiche can be saved as a workspace
       template (an `isTemplate` flag + provenance on the existing object, as
@@ -408,7 +471,13 @@ completion claim.
       payload-side (core `view` cannot carry an app field). Still partial: the
       save action is not mounted on the record/gallery surfaces and the
       save→instantiate non-aliasing round-trip is Tier-2.
-- [~] **M9c — Content: ≥ 60 curated templates, fr+en, no fake real data.**
+      — 2026-10-11 orchestrator (phase-13-report, US-137): the record-action half
+      of the mount landed — `RECORD_SELECTION` command-menu item + headless front
+      component on document, project (+tasks) and Bilan fiche call the US-119
+      builders and persist a fresh `isTemplate` row. Still open: board-view menu
+      mount (no app-side view-availability primitive) + gallery mount, and the
+      Tier-2 save→instantiate round-trip.
+- [x] **M9c — Content: ≥ 60 curated templates, fr+en, no fake real data.**
       Minimum set (each a separate small executor slice, grouped by app):
       - Bureau pages (20): meeting notes ✔, 1:1 ✔, project brief ✔, PRD ✔,
         journal ✔, weekly review, daily note, OKRs, team wiki home, onboarding
@@ -443,8 +512,16 @@ completion claim.
       `dev:build` green. Still partial: **Agenda (6)** and **Syna (8+)** template
       families are not built, and the per-template fr+en labels are a recorded
       deviation (no i18n layer in `packages/twenty-apps/internal/*`; content is
-      French-only like every app string). Tier-2 preview/apply/idempotency proof
-      pending.
+       French-only like every app string). Tier-2 preview/apply/idempotency proof
+       pending.
+       — 2026-10-11 orchestrator (phase-13-report, US-142/143): the last two
+       families landed — Agenda (6 host descriptors; `applyAgendaTemplate` creates
+       real `calendarEvent` rows with deterministic iCalUid idempotency, registered
+       via `HOST_TEMPLATE_DESCRIPTOR_GROUPS`) and Syna (8 recipes — 7 READY + 1
+       `DEFERRED` P7-gated; `useSynaRecipeApply` stages the prompt confirm-first).
+       All seven families now built. The fr+en `labels`/fr-only-content deviation
+       stands (no app i18n layer — recorded, not regressed). Tier-2 E15
+       preview/apply/idempotency proof pending.
 - [~] **M9d — Persona presets use the gallery.** Rewrite the six preset
       `starterBundleContents` to reference gallery keys; add Agenda, Archive,
       Projects, Syna where relevant (fixes G14 together with M2).
@@ -479,9 +556,17 @@ completion claim.
       bypass) over instance `AI_PROVIDERS` over catalog; key-safe resolver
       (`workspaceAiProviders` query, upsert/remove returning masked DTO,
       `testWorkspaceAiProvider` on a transient provider) + Settings → Syna →
-      Providers UI. **Open:** `AiModelRegistryService.buildModelRegistry` is still
-      instance-wide, so a saved workspace key is not yet consumed at generation
-      time (the remaining M10a/M10b server leg). Tier-2 E16 pending.
+       Providers UI. **Open:** `AiModelRegistryService.buildModelRegistry` is still
+       instance-wide, so a saved workspace key is not yet consumed at generation
+       time (the remaining M10a/M10b server leg). Tier-2 E16 pending.
+       — 2026-10-11 orchestrator (phase-14-report, US-135): the server consumption
+       leg landed — `AiModelRegistryService.buildModelRegistry` now resolves per
+       acting workspace via `runWithWorkspaceRegistry`, so a saved BYOK key is
+       consumed at generation. Still open: the DB-backed
+       `workspace-ai-provider.integration-spec.ts` (needs the test DB — Postgres/
+       Redis were down at executor time, now up) and the **front**
+       `ClientConfig.aiModels` workspace-scoped read (still instance-wide, blocks
+       BYOK-only model pickers). Tier-2 E16 pending.
 - [~] **M10b — Syna everywhere.** One entry per context: Cmd+K "Ask Syna",
       editor slash `/syna` + selection toolbar (improve, summarize,
       translate, continue), record page "Ask about this record", Bilan
@@ -493,9 +578,17 @@ completion claim.
       mapped to the read-only document tools and opening the assistant with a
       PREFILL draft (confirm-first; nothing executes directly), gated on the `AI`
       permission flag + an available model. Cmd+K "Ask Syna" and the record-page
-      context buttons already existed. Still partial: selection-toolbar actions
-      need a replacement default toolbar; Bilan categorization stays P7-gated;
-      no read-only Agenda scheduling tool exists yet.
+       context buttons already existed. Still partial: selection-toolbar actions
+       need a replacement default toolbar; Bilan categorization stays P7-gated;
+       no read-only Agenda scheduling tool exists yet.
+       — 2026-10-11 orchestrator (phase-14-report, US-140): the selection toolbar
+       landed — a custom `FormattingToolbarController` preserves the default
+       formatting controls and appends the Syna selection entries (improve/
+       summarize/translate, confirm-first PREFILL draft quoting the selection).
+       Still open: Bilan categorization (P7-gated), no read-only Agenda
+       scheduling tool, and the provider gate still uses the `enabledModels`
+       proxy until the workspace-scoped `ClientConfig` lands (US-135/US-141).
+       Tier-2 select→Syna→draft browser leg pending.
 - [x] **M10c — Syna context & memory, scoped.** Context = current record/page
       + explicit @mentions only; no silent workspace-wide retrieval.
       Workspace-level instructions ("house style") editable by admins.
@@ -519,13 +612,21 @@ completion claim.
       `MONTHLY_TOKEN_CAP_EXCEEDED`, wired into
       `AiBillingService.assertAiExecutionAllowed`; null/0 cap and zero-usage
       months fail open, ClickHouse reads fail open. Still partial: the zero-AI
-      entry gating through the US-102 resolution order (admins get a "Connect a
-      provider" link, members nothing) and surfacing the cap in the Usage tab
-      are open. Tier-2 E16 pending.
+       entry gating through the US-102 resolution order (admins get a "Connect a
+       provider" link, members nothing) and surfacing the cap in the Usage tab
+       are open. Tier-2 E16 pending.
+       — 2026-10-11 orchestrator (phase-14-report, US-141): partial — a workspace-
+       scoped `hasConfiguredAiProvider` read + front gate + admin "Connect a
+       provider" link landed, and `aiMonthlyTokenCap`/month-to-date usage are
+       surfaced in the Usage tab. Still open: Cmd+K seeded `ASK_AI` and the record-
+       page context buttons are not gated (needs a command-menu availability
+       variable + upgrade command), and `ClientConfig.aiModels` is still
+       instance-wide so a BYOK-only workspace shows an empty model list. Tier-2
+       E16 pending.
 
 ### M11 — Interconnected suite
 
-- [~] **M11a — Universal link picker & "Related" panel.** From any record or
+- [x] **M11a — Universal link picker & "Related" panel.** From any record or
       page: "Link…" searches all objects (reuse search federation, P2.5)
       and creates a link via a generic junction (evaluate native
       `attachment`-like polymorphic pattern vs a new app-owned `a2eLink`
@@ -538,8 +639,15 @@ completion claim.
       already blocks provider removal; backlinks read the persisted inverse
       relation; search reuses core `search` via `useObjectRecordSearchRecords` +
       `SingleRecordPicker`; Related surface is an app `FRONT_COMPONENT` tab.
-      Still partial: the implementation legs (a2e-links scaffold → picker →
-      Related tab) are not built. Tier-2 E17 pending.
+       Still partial: the implementation legs (a2e-links scaffold → picker →
+       Related tab) are not built. Tier-2 E17 pending.
+       — 2026-10-11 orchestrator (phase-15-report, US-147/148/149): implementation
+       landed — `a2e-links` app scaffold (`a2eLink` MORPH junction + 4 inverse O2M
+       on document/task, C3 preflight morph case), the host `Link…` picker
+       (`SingleRecordPicker` → `useObjectRecordSearchRecords`, bounded to {document,
+       task}), and the `Related` FRONT_COMPONENT tab on document/task reading both
+       directions (`readRelatedLinks`; 27 app tests green). Ticked at code level;
+       E17 link/backlink/uninstall-degrade browser leg is Tier-2.
 - [x] **M11b — Today view.** Home becomes "Today": tasks due/overdue, today's
       Agenda events, recent pages, pending Bilan items (unpaid invoices,
       grant deadlines), Syna digest (optional). Reuses `home-dashboard`
@@ -552,14 +660,35 @@ completion claim.
       covered by the existing `MyTasks`/`UpcomingEvents` cards. Ticked at code
       level; the optional Syna-digest leg is not built and the browser pass
       (Bureau + Bilan installed / empty states) is Tier-2.
-- [ ] **M11c — Universal quick-create.** Cmd+K "Create…" lists page, task,
+- [x] **M11c — Universal quick-create.** Cmd+K "Create…" lists page, task,
       project, event, invoice, expense, file upload, with the current record
       pre-linked.
-- [ ] **M11d — Cross-app events contract (C5) implemented once.** Event
+      — 2026-10-11 orchestrator (phase-15-report, US-154): one install-gated
+      `Create…` command-menu group (7 entries — page/task/project/event/invoice/
+      expense/file) + `a2eLink` pre-link from a record context via
+      `useCreateA2eLink`; "New page" folded into the group (no duplicate entry).
+      Ticked at code level; E17 create+pre-link+uninstall-degrade browser leg is
+      Tier-2.
+- [~] **M11d — Cross-app events contract (C5) implemented once.** Event
       payload conventions for doc/task/event/invoice/file lifecycle so M9c
       recipes and Inbox notifications consume the same events.
-- [ ] **M11e — Unified activity & inbox.** Mentions from pages, chat, tasks,
+      — 2026-10-11 orchestrator (phase-15-report, US-155): the shared contract
+      (`twenty-shared/src/cross-app-events/**` — family/action/actor/payload
+      vocabulary, name/guard/`build-cross-app-event-payload` utils) + the server
+      projector (`CrossAppEventsModule`, `@OnDatabaseBatchEvent('*')` → reuses
+      `WorkspaceEventEmitter`/`WorkspaceCacheService.flatApplicationMaps`, install
+      gating) are green (shared + server specs, tsgo clean). Still open: the
+      Tier-1 recipe-enqueue integration spec (needs `database:reset` +
+      `jest-integration.config.ts`) and the Tier-2 install/uninstall browser leg.
+- [~] **M11e — Unified activity & inbox.** Mentions from pages, chat, tasks,
       Bilan approvals flow into the native Inbox (P8) with deep links.
+      — 2026-10-11 orchestrator (phase-15-report, US-156): AC2 (record mentions
+      from pages) landed — a saved document's US-139 mention index with a record
+      mention emits `mention.created` on `cross_app_lifecycle`, the
+      `CrossAppDocumentMentionListener` requests one `NOTIFICATION_REQUESTED` row
+      deep-linking to the document (watchers permission-checked). Still open:
+      AC3 task/Bilan sources (no task mention surface, no Bilan approval event),
+      the DB-backed integration spec, and the Tier-2 inbox browser leg.
 
 ### Validation journeys (extend E01–E12)
 
@@ -590,11 +719,16 @@ states the version it documents. Lives in `packages/twenty-docs/user-guide/`
       navigation template regenerated. Phase report records "nothing missing for
       tick"; `node docs/scripts/check-docs.mjs` PASS (the sole `twenty-docs:validate`
       failure is a pre-existing unrelated ar-locale warning).
-- [ ] **M12b — Getting started.** Create workspace → pick a starting point
+- [x] **M12b — Getting started.** Create workspace → pick a starting point
       (each persona: what gets installed, what content is seeded, first
       action) or "Start from scratch"; sidebar tour (sections, reorder, hide);
       Cmd+K; side panel vs full page; Home/Today. Screenshots from the E13
       run (`tasks/live-verify/*.mjs` can capture them).
+      — 2026-10-11 orchestrator (phase-16-report, US-159): en + fr pages filled
+      from the real UI (sign-in, workspace form, persona picker, sidebar,
+      Cmd+K, side panel, Today) with every quoted label grep-verified against
+      source; `check-docs.mjs` PASS, `lint-mdx` clean. E13 screenshot
+      placeholders remain Tier-2 (`TODO: E13 screenshot`).
 - [ ] **M12c — One page per app, per real screen.** For each app: landing
       page, every nav entry, every view (table/kanban/calendar/gantt), record
       page tabs, every command-menu action (exact labels from the
@@ -605,16 +739,34 @@ states the version it documents. Lives in `packages/twenty-docs/user-guide/`
       Archive: folders, upload, preview, usage. Agenda: views, recurrence
       edit scopes, reminders, task deadlines vs events. Syna: BYOK setup,
       actions per app, confirm-first, zero-AI mode.
-- [ ] **M12d — Templates catalogue page** generated from the M9 descriptors
+- [x] **M12d — Templates catalogue page** generated from the M9 descriptors
       (script in `packages/twenty-docs/scripts/`, no hand-maintained list):
       name, app, what it creates, inputs, screenshot.
+      — 2026-10-11 orchestrator (phase-16-report, US-160): generator script
+      (`generate-template-catalogue.ts`) + renderer read the live descriptors
+      (documents 20 / projects 12 / fiches 10 / folders 4 / host Agenda 6 +
+      Syna 7 = 59 rows) and regenerate both `templates.mdx` pages idempotently;
+      a vitest drift test asserts committed == regeneration. Tier-2 screenshot
+      cells remain placeholders.
 - [ ] **M12e — Cross-app recipes & linking** (M11): "meeting → notes →
       tasks → invoice" walkthrough; link picker; Related panel.
-- [ ] **M12f — Admin & self-host:** provisioning (M1), app install/upgrade/
+- [x] **M12f — Admin & self-host:** provisioning (M1), app install/upgrade/
       uninstall data policy (C3), roles (C4), BYOK keys, backups; link
       `DEPLOY.md`, `docs/applications.md`.
-- [ ] **M12g — In-app help wiring:** `FirstOpenHelpWidget` and each app's
+      — 2026-10-11 orchestrator (phase-16-report, US-161): en + fr pages
+      complete and grep-verified against source (`app:provision-bundled`,
+      `install-pre-installed-apps`, `BUNDLED_APPS_DIR`, uninstall preflight
+      labels, roles, BYOK, `aiMonthlyTokenCap`, backups); `DEPLOY.md` +
+      `docs/applications.md` links resolve (HTTP 200). E13 screenshot
+      placeholders remain Tier-2.
+- [x] **M12g — In-app help wiring:** `FirstOpenHelpWidget` and each app's
       empty state link to the matching doc page; Cmd+K "Help: <topic>".
+      — 2026-10-11 orchestrator (phase-16-report, US-162): `a2e-help` module
+      (`A2eHelpDocPages` slug source + `A2eLearnMoreLink`), FirstOpenHelpWidget
+      Getting-started + per-topic doc links, Cmd+K `Help: <topic>` entries
+      (`externalUrl` plumbing in search), and the Learn-more slot on Bureau/
+      Agenda/Archive/Syna empty states + Bilan widget. Link targets verified to
+      exist en+fr; docs gates green. Tier-2 browser check only.
       — Acceptance for M12: `docs.json` builds (`npx nx build twenty-docs`
       or the package's documented command), every page names real UI labels
       that grep-match source, fr+en present, no screenshot older than the
@@ -625,27 +777,68 @@ states the version it documents. Lives in `packages/twenty-docs/user-guide/`
 The product must be usable two ways on every surface: **pick a template /
 wizard and be done**, or **build it yourself with full native flexibility**.
 
-- [ ] **M13a — Dual entry on every "New".** Each create action opens a small
+- [~] **M13a — Dual entry on every "New".** Each create action opens a small
       chooser: Blank · 3 suggested templates (context-aware: current app,
       persona) · "Browse all" (M9 gallery). Keyboard: Enter = blank.
-- [ ] **M13b — Onboarding "Start from scratch" path** is first-class next to
+      — 2026-10-11 orchestrator (phase-17-report, US-163): the reusable chooser
+      landed (`selectSuggestedTemplates` + `CreateChooser` + `CreateChooserModal`
+      wired through `useOpenTemplateGallery`; Enter = blank, roving highlight,
+      descriptor labels) and is mounted on the two host document New surfaces
+      (Cmd+K `Create… → New page` + the Cmd/Ctrl+Shift+N shortcut). Still open:
+      the remaining create commands (task/project/event/invoice/expense/file and
+      the a2e-documents app command) still direct-create (incremental adoption);
+      persona weighting deferred (no preset context). Tier-2 browser leg pending.
+- [x] **M13b — Onboarding "Start from scratch" path** is first-class next to
       personas: installs nothing, shows the app catalogue with one-line
       descriptions (Bureau, Agenda, Bilan, Syna, Archive), each installable
       later from the landing page's empty state.
-- [ ] **M13c — Contextual empty states** for every A2E view/page: one
+      — 2026-10-11 orchestrator (phase-17-report, US-164): first-class scratch
+      card beside the persona cards + `OnboardingAppCatalogue` (five D-N1 entries
+      with shipped doc descriptions) + `OnboardingStartFromScratchContent`, and a
+      no-install confirm reusing the existing empty-selection `triggerStep([])`
+      path (0 installs, reversible history). Tier-2 scratch browser journey
+      pending.
+- [~] **M13c — Contextual empty states** for every A2E view/page: one
       sentence, one primary button, one "Use a template" link, one "Learn
       more" (M12g). Reuse the host empty-state components.
-- [ ] **M13d — Customize in place.** From any app landing page: "Customize"
+      — 2026-10-11 orchestrator (phase-17-report, US-165/166): the reusable
+      `A2eContextualEmptyState` (4 elements via `RecordIndexEmptyStateDisplay`)
+      is mounted on Bureau landing, Agenda landing/calendar, the documents +
+      task host indexes, the Bilan record indexes (invoice/quote/budget/category),
+      and the Archive `/drive` root + `driveFolder` index (install-gated per
+      owning app). Still open: the **Bilan dashboard** (app-owned PAGE_LAYOUT nav
+      row, no host primitive) and **Syna** (keeps its own M7f landing + zero-AI
+      gate, verified not rebuilt). Tier-2 browser pass pending.
+- [~] **M13d — Customize in place.** From any app landing page: "Customize"
       opens native layout edit (page-layout edit mode), views, fields — with
       a "Reset to template default" per managed item (P1.7 provenance).
-- [ ] **M13e — Consistency pass.** Same verbs everywhere (Créer/Create,
+      — 2026-10-11 orchestrator (phase-17-report, US-167): the `Customize` action
+      (`A2eCustomizeAction` → `enterLayoutCustomizationMode` / Views / Fields,
+      layout item disabled without `LAYOUTS` permission) is mounted on Bureau/
+      Agenda/Archive landings. Still open: a front unit test for the
+      "user-created items have no reset affordance" rule (pre-existing native
+      provenance gating, untouched) and the Tier-2 browser leg.
+- [~] **M13e — Consistency pass.** Same verbs everywhere (Créer/Create,
       Ouvrir/Open, Partager/Share), same icon per concept (icon dictionary),
       no mixed-language labels, app-name prefix only where ambiguous.
       Grep-based test that app `command-menu-items` labels follow
       `<App> : <verb> …`.
-- [ ] **M13f — Undo & safety.** Destructive actions from A2E surfaces use the
+      — 2026-10-11 orchestrator (phase-17-report, US-168): the label-convention
+      half landed — 13 labels normalized across the 4 apps to `<App> : <verb> …`
+      (créer/ouvrir/partager) with a per-app grep drift guard
+      (`command-menu-label-convention.test.ts`); apps typecheck/lint/test/dev:build
+      green, versions bumped. Still open: the **icon audit** (nav/object icon
+      strings vs `icon-dictionary.md`) and the Tier-2 Cmd+K rendering pass.
+- [x] **M13f — Undo & safety.** Destructive actions from A2E surfaces use the
       native undo snackbar/soft delete; template apply shows "Undo" (removes
       only what that operation created).
+      — 2026-10-11 orchestrator (phase-17-report, US-169): template-apply `Undo`
+      landed (`undoTemplateApply`/`useUndoTemplateApply` remove exactly the apply
+      result's `created[]` via the native soft-delete path, honest removed/already-
+      absent/failed report) + the destructive-action audit confirms every A2E
+      delete routes through soft delete (no hard delete in app front-components/
+      command-menu-items). Recorded gap (not forced): core record-action delete
+      has no undo snackbar. Tier-2 apply→undo browser leg pending.
 
 ### Task mechanics for executors (M7–M13)
 
