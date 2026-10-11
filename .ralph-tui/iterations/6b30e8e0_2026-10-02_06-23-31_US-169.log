@@ -1,0 +1,166 @@
+# Iteration 23 Log
+
+## Metadata
+
+- **Task ID**: US-169
+- **Task Title**: M13f: undo & safety — native undo snackbar/soft delete on destructive A2E actions + template-apply 'Undo'
+- **Description**: As a user, I want destructive actions from A2E surfaces to be undoable (native undo snackbar/soft delete) and template applies to offer an Undo that removes only what that operation created, so that e...
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-10-02T04:23:31.478Z
+- **Ended At**: 2026-10-02T04:30:31.603Z
+- **Duration**: 7m 0s
+- **Agent**: opencode
+- **Model**: opencode-go/deepseek-v4.1-flash
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[bash][0m $ git status --porcelain && echo "---HEAD---" && git rev-parse HEAD
+[94m[bash][0m $ grep -n "US-169" "PLAN.md" | head -50
+[94m[bash][0m $ ls .ralph-tui/ 2>/dev/null
+[94m[bash][0m $ ls docs/tasks/ 2>/dev/null
+[94m[bash][0m $ grep -rn "M13f\|M13" PLAN.md | head -50
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/PLAN.md
+[94m[bash][0m $ grep -n "US-169\|CLAIMED\|US-131\|M13f" docs/plan/phases/phase-17-report.md | tail -60
+[94m[bash][0m $ ls .ralph-tui/reports/ 2>/dev/null | tail
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-17-report.md
+[94m[bash][0m $ sed -n '390,420p' tasks/prd-batch-b.json
+[94m[bash][0m $ python3 -c " import json for f in ['tasks/prd-batch-a.json','tasks/prd-batch-b.json']:     d=json.lo...
+[94m[bash][0m $ grep -n "US-131\|operationId\|operation id\|apply-undo\|Undo" docs/plan/phases/phase-13-report.md | ...
+[94m[bash][0m $ python3 -c " import json d=json.load(open('tasks/prd-batch-a.json')) for s in d.get('userStories',d....
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/docs/plan/phases/phase-13-report.md
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/application/templateApplyType.ts
+[94m[bash][0m $ ls packages/twenty-front/src/modules/template-gallery/hooks/ packages/twenty-front/src/modules/templ...
+[94m[read][0m
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/hooks/useApplyTemplate.ts
+[94m[bash][0m $ grep -rln "undo" packages/twenty-front/src/modules --include=*.ts --include=*.tsx -i | grep -iv test...
+[94m[bash][0m $ grep -rln "softDelete\|soft-delete\|SnackBar\|Snackbar\|enqueueSnackbar" packages/twenty-front/src/m...
+[94m[grep][0m [95mpackages/twenty-front/src/modules[0m pattern: [96mundo[0m
+[94m[grep][0m [95mpackages/twenty-front/src/modules[0m pattern: [96menqueueSnackbar[0m
+[94m[grep][0m [95mpackages/twenty-front/src/modules[0m pattern: [96mSnackBar|Snackbar[0m
+[94m[grep][0m [95mpackages/twenty-front/src/modules/object-record[0m pattern: [96msoftDelete|soft_delete|soft-delete[0m
+[94m[bash][0m $ rg -li "soft.?delete|destroyOneRecord|deleteOneRecord|restore" packages/twenty-front/src/modules/obj...
+[94m[bash][0m $ rg -li "undo" packages/twenty-front/src --glob '!**/*.test.*' --glob '!**/__tests__/**' -l | head -4...
+[94m[bash][0m $ grep -rli "restore.*record\|softDelete" packages/twenty-front/src/modules/object-record 2>/dev/null ...
+[94m[bash][0m $ grep -rli "undo" packages/twenty-front/src --include='*.ts' --include='*.tsx' 2>/dev/null | grep -v ...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/hooks/useDeleteOneRecord.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/hooks/useDestroyOneRecord.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/lib/apply-template.ts
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/lib/ | head -40
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-projects/src/lib/apply-template.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-drive/src/lib/apply-template.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
+[94m[bash][0m $ ls -R packages/twenty-front/src/modules/ui/feedback/snack-bar-manager | head -60
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ grep -n "undo\|Undo" packages/twenty-front/src/modules/drive/utils/driveBulkOperations.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/drive/components/DriveBulkResultNotice.tsx
+[94m[bash][0m $ grep -rln "delete\|destroy\|remove" packages/twenty-apps/internal/a2e-documents/src/front-components...
+[94m[bash][0m $ grep -rn "destroy\|deleteMany\|deleteOne\|Delete" packages/twenty-apps/internal --include='*.ts' --i...
+[94m[bash][0m $ grep -rn "buttonLabel" packages/twenty-front/src --include='*.ts' --include='*.tsx' 2>/dev/null | gr...
+[94m[bash][0m $ grep -rln "useDeleteOneRecord\|deleteOneRecord" packages/twenty-front/src/modules --include='*.ts' -...
+[94m[bash][0m $ ls packages/twenty-front/src/modules/object-record/hooks/ | grep -i delete
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/hooks/useDeleteOneRecordMutation.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/hooks/useDeleteManyRecords.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-apps/internal/a2e-documents/src/logic-functions/apply-template.ts
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-apps/internal/a2e-accounting/src/lib/apply-template.ts
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/object-record/hooks/useDeleteManyRecordsMutation.ts
+[94m[bash][0m $ grep -rn "getDeleteManyRecordsMutationResponseField" packages/twenty-front/src/modules/object-record...
+[94m[bash][0m $ done
+[94m[read][0m
+[94m[bash][0m $ grep -rln "enqueueSnackbar" packages/twenty-sdk packages/twenty-shared src 2>/dev/null | grep -v nod...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-sdk/src/sdk/front-component/functions/enqueueSnackbar.ts
+[94m[bash][0m $ grep -n "EnqueueSnackbarParams\|EnqueueSnackbarFunction\|buttonLabel\|buttonOnClick" packages/twenty...
+[94m[bash][0m $ grep -rn "EnqueueSnackbarParams" packages/twenty-shared/src --include='*.ts' | head
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-shared/src/types/EnqueueSnackbarParams.ts
+[94m[bash][0m $ sed -n '395,430p' packages/twenty-front/src/modules/front-components/hooks/useFrontComponentExecutio...
+[94m[read][0m
+[94m[bash][0m $ sed -n '1,60p' packages/twenty-front/src/modules/object-metadata/hooks/useObjectMetadataItems.ts
+[94m[bash][0m $ sed -n '1,80p' packages/twenty-front/src/modules/template-gallery/hooks/__tests__/useApplyTemplate.t...
+[94m[bash][0m $ ls packages/twenty-front/src/modules/template-gallery/hooks/__tests__/ packages/twenty-front/src/mod...
+[94m[read][0m
+Now let me look at the `TemplateGallery.tsx` `onUseTemplate` flow and the `useSynaRecipeApply`/`useAgendaTemplateApply` signatures, then implement.
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/template-gallery/components/TemplateGallery.tsx
+[94m[bash][0m $ date -u +"%Y-%m-%dT%H:%M:%SZ"
+[94m[bash][0m $ printf '\nCLAIMED — US-169/m13f-apply-undo — deepseek-v4.1-flash — 2026-10-02T04:26:18Z — base e1ab1...
+[94m[bash][0m $ cat packages/twenty-front/src/modules/object-metadata/hooks/useApolloCoreClient.ts
+[94m[bash][0m $ grep -rn "useUndo\|undo.*SnackBar\|buttonOnClick" packages/twenty-front/src/modules/object-record --...
+[94m[todowrite][0m
+[94m[write][0m "import { type TemplateApplyCreatedRecord } from 'twenty-shared/application';
+
+// M13f — the "removes only what that operation created" contract for a template
+// apply. The apply result carries the ex... (3234 chars)"
+[94m[write][0m "import gql from 'graphql-tag';
+import { useCallback } from 'react';
+
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useObjectMetadataItems } from '@/object... (2525 chars)"
+[94m[bash][0m $ grep -n "templateApply" packages/twenty-shared/src/application/index.ts | head
+[94m[edit][0m
+[94m[edit][0m
+[94m[write][0m "import {
+  buildTemplateApplyUndoReport,
+  groupCreatedRecordsByObject,
+  undoTemplateApply,
+  type TemplateApplyGroupDeleter,
+  type TemplateApplyUndoGroup,
+} from '@/template-gallery/utils/undoTempl... (5559 chars)"
+[94m[bash][0m $ npx jest src/modules/template-gallery/utils/__tests__/undoTemplateApply.test.ts --config=jest.config...
+[94m[bash][0m $ grep -rln "jest.mock('@/object-metadata/hooks/useObjectMetadataItems'" packages/twenty-front/src/mod...
+[94m[bash][0m $ grep -rln "renderHook" packages/twenty-front/src/modules --include='*.test.tsx' --include='*.test.ts...
+[94m[read][0m
+[94m[write][0m "import { useUndoTemplateApply } from '@/template-gallery/hooks/useUndoTemplateApply';
+import { act, renderHook } from '@testing-library/react';
+
+const mutateMock = jest.fn();
+const objectMetadataItems... (3509 chars)"
+[94m[bash][0m $ npx jest src/modules/template-gallery/hooks/__tests__/useUndoTemplateApply.test.tsx --config=jest.co...
+[94m[bash][0m $ npx tsgo -p tsconfig.json --noEmit 2>&1 | tail -30
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/template-gallery/utils/undoTemplateApply.ts sr...
+[94m[bash][0m $ npx oxfmt --check src/modules/template-gallery/utils/undoTemplateApply.ts src/modules/template-galle...
+[94m[bash][0m $ npx oxfmt src/modules/template-gallery/utils/undoTemplateApply.ts src/modules/template-gallery/utils...
+[94m[bash][0m $ npx jest src/modules/template-gallery --config=jest.config.mjs 2>&1 | tail -30
+[94m[bash][0m $ npx oxlint --type-aware -c .oxlintrc.json src/modules/template-gallery/utils/undoTemplateApply.ts sr...
+[94m[bash][0m $ cat packages/twenty-front/lingui.config.ts 2>/dev/null | head -30
+[94m[edit][0m
+[94m[edit][0m
+[94m[bash][0m $ ls packages/twenty-apps/internal/a2e-documents/src/front-components/__tests__/ 2>/dev/null | head -4...
+[94m[bash][0m $ grep -rn "destroy" packages/twenty-apps/internal/*/src/front-components packages/twenty-apps/interna...
+[94m[bash][0m $ grep -rn "delete[A-Z]\|remove[A-Z]" packages/twenty-apps/internal/a2e-documents/src/front-components...
+[94m[read][0m
+[94m[read][0m
+[94m[bash][0m $ git status --porcelain
+[94m[bash][0m $ npx jest --findRelatedTests src/modules/template-gallery/utils/undoTemplateApply.ts src/modules/temp...
+[94m[bash][0m $ echo "TSGO_EXIT=$?"
+[94m[bash][0m $ grep -n "created\|status: 'applied'\|TemplateApplyResult\|operationId" packages/twenty-front/src/mod...
+[94m[read][0m /Users/maxaubert/Projets/A2E Suite/packages/twenty-front/src/modules/calendar/hooks/useAgendaTemplateApply.ts
+[94m[bash][0m $ grep -n "created" packages/twenty-front/src/modules/calendar/utils/applyAgendaTemplate.ts | head
+[94m[bash][0m $ grep -rn "type: 'DELETE'\|DELETE_RECORD\|AvailabilityType" packages/twenty-apps/internal/a2e-documen...
+[94m[bash][0m $ date -u +"%Y-%m-%d %H:%M UTC"
+[94m[bash][0m $ npx oxfmt --check src/modules/template-gallery/components/TemplateGallerySidePanelPage.tsx src/modul...
+[94m[bash][0m $ optionally extend the native soft-delete undo snackbar to the core record delete action. REPORT echo...
+[94m[bash][0m $ tail -30 .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ sed -n '40,48p' .ralph-tui/progress.md
+[94m[edit][0m /Users/maxaubert/Projets/A2E Suite/.ralph-tui/progress.md
+[94m[bash][0m $ the generic soft-delete mutation can be built inline from `objectMetadataItem.namePlural` via `getDe...
+[94m[bash][0m $ git status --porcelain && echo "---" && git diff --stat -- packages/twenty-front
+[94m[bash][0m $ npx nx lint:diff-with-main twenty-front 2>&1 | tail -15
+[94m[todowrite][0m
+US-169 slice complete — template-apply `Undo` implemented host-side on top of US-131's `created[]` / operation id.
+
+**What landed**
+- `template-gallery/utils/undoTemplateApply.ts` — pure orchestrator scoped to the apply result's own `created[]` (groups per object, dedupes, drops empty ids); reports `deleted` / `skipped` (already absent) / `failed` honestly.
+- `template-gallery/hooks/useUndoTemplateApply.ts` — reverses via the native soft-delete `delete<Plural>(filter:{id:{in}})` mutation; permission/transport errors fail only that group.
+- `TemplateGallerySidePanelPage.tsx` — after a successful apply, the native success snackbar shows `Undo`; the click runs the undo and enqueues an honest result snackbar.
+
+**Audit (explicit):** delete page / task / project / folder / remove template content all route through native soft delete (`useDeleteOneRecord` sets `deletedAt`; a2e-documents `destroyDocument` actually calls `deleteDocument`). No hard delete exists in any `a2e-*/src/front-components` or `command-menu-items`; only the 7-day retention `purge-*` crons hard-delete. Recorded gap: core record-action delete soft-deletes but exposes no undo snackbar (not forced, per task notes).
+
+**Checks:** template-gallery jest 14 suites/61 tests green (+11 mine); tsgo exit 0; oxlint/oxfmt clean; `lint:diff-with-main` reports "No changed files" (uncommitted tree) so direct oxlint is the evidence. No `locales/**`, no app package touched (no version bump), no AI attribution.
+
+**Missing for tick:** Tier-2 browser apply → undo → prior state; the recorded native-delete-snackbar gap.
+
+Report appended to `docs/plan/phases/phase-17-report.md` and `.ralph-tui/progress.md`.
+
+<promise>COMPLETE</promise>
