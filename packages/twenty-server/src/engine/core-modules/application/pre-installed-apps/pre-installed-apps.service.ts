@@ -41,46 +41,79 @@ export class PreInstalledAppsService {
 
   // Per-app failures are logged but never block the other installs —
   // `ApplicationInstallService` holds a per-app cache lock so parallel
-  // installs are safe.
+  // installs are safe. Apps can relate to objects owned by other apps
+  // (projects → documents, chat → projects) and registrations carry no
+  // dependency graph, so installs run in passes: each pass retries what
+  // failed in the previous one for as long as that pass made progress.
   async installOnWorkspace(workspaceId: string): Promise<void> {
     const registrations = await this.applicationRegistrationRepository.find({
       where: { isPreInstalled: true },
     });
 
-    if (registrations.length === 0) {
-      return;
-    }
+    let pendingRegistrations = registrations;
 
-    await Promise.allSettled(
-      registrations.map(async (registration) => {
-        try {
-          await this.applicationInstallService.installApplication({
-            appRegistrationId: registration.id,
-            workspaceId,
-          });
-        } catch (error) {
-          // APP_ALREADY_INSTALLED is not a failure — it means the app was
-          // previously installed (e.g. from an earlier boot). Log at debug
-          // level and continue.
-          if (
-            error instanceof ApplicationException &&
-            error.code === ApplicationExceptionCode.APP_ALREADY_INSTALLED
-          ) {
-            this.logger.log(
-              `Pre-installed app "${registration.name}" already installed on workspace ${workspaceId}, skipping`,
-            );
+    while (pendingRegistrations.length > 0) {
+      const outcomes = await Promise.all(
+        pendingRegistrations.map(async (registration) => ({
+          registration,
+          failure: await this.tryInstallRegistration(registration, workspaceId),
+        })),
+      );
 
-            return;
-          }
+      const failedOutcomes = outcomes.filter(
+        (outcome) => outcome.failure !== null,
+      );
+      const madeProgress = failedOutcomes.length < pendingRegistrations.length;
 
+      if (failedOutcomes.length === 0 || !madeProgress) {
+        for (const { registration, failure } of failedOutcomes) {
           this.logger.error(
-            `Failed to install pre-installed app "${registration.name}" (${registration.id}) on workspace ${workspaceId}: ${
-              error instanceof Error ? error.message : String(error)
-            }`,
+            `Failed to install pre-installed app "${registration.name}" (${registration.id}) on workspace ${workspaceId}: ${failure}`,
           );
         }
-      }),
-    );
+
+        return;
+      }
+
+      this.logger.log(
+        `Retrying ${failedOutcomes.length} pre-installed app(s) on workspace ${workspaceId} after their dependencies were installed`,
+      );
+
+      pendingRegistrations = failedOutcomes.map(
+        (outcome) => outcome.registration,
+      );
+    }
+  }
+
+  // Resolves to null when the app is installed (or already was), otherwise to
+  // the failure message so the caller can decide whether to retry.
+  private async tryInstallRegistration(
+    registration: ApplicationRegistrationEntity,
+    workspaceId: string,
+  ): Promise<string | null> {
+    try {
+      await this.applicationInstallService.installApplication({
+        appRegistrationId: registration.id,
+        workspaceId,
+      });
+
+      return null;
+    } catch (error) {
+      // APP_ALREADY_INSTALLED is not a failure — it means the app was
+      // previously installed (e.g. from an earlier boot).
+      if (
+        error instanceof ApplicationException &&
+        error.code === ApplicationExceptionCode.APP_ALREADY_INSTALLED
+      ) {
+        this.logger.log(
+          `Pre-installed app "${registration.name}" already installed on workspace ${workspaceId}, skipping`,
+        );
+
+        return null;
+      }
+
+      return error instanceof Error ? error.message : String(error);
+    }
   }
 
   async backfillApplicationOnAllWorkspaces(

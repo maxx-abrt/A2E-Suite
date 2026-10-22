@@ -4,9 +4,12 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { WorkspaceAiProviderResolver } from 'src/engine/metadata-modules/ai/ai-models/resolvers/workspace-ai-provider.resolver';
 import { WorkspaceAiProviderAdminService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-provider-admin.service';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 @Module({
-  imports: [AiModelsModule],
+  // SettingsPermissionGuard on the resolver resolves PermissionsService from
+  // this module's scope; without the import the server cannot boot.
+  imports: [AiModelsModule, PermissionsModule],
   providers: [
     WorkspaceAiProviderResolver,
     WorkspaceAiProviderAdminService,
