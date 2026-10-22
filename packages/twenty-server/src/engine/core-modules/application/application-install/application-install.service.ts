@@ -10,6 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { buildApplicationFileList } from 'src/engine/core-modules/application/application-install/utils/build-application-file-list.util';
+import { describeApplicationInstallError } from 'src/engine/core-modules/application/application-install/utils/describe-application-install-error.util';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import {
@@ -426,7 +427,7 @@ export class ApplicationInstallService {
       return true;
     } catch (error) {
       this.logger.error(
-        `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,
+        `Failed to install app ${appRegistration.universalIdentifier}: ${describeApplicationInstallError(error)}`,
       );
 
       if (isUpgradeOfInstalledApplication) {

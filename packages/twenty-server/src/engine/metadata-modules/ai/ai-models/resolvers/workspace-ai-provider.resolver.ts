@@ -8,8 +8,8 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { type TestWorkspaceAiProviderInput } from 'src/engine/metadata-modules/ai/ai-models/dtos/test-workspace-ai-provider.input';
-import { type UpsertWorkspaceAiProviderInput } from 'src/engine/metadata-modules/ai/ai-models/dtos/upsert-workspace-ai-provider.input';
+import { TestWorkspaceAiProviderInput } from 'src/engine/metadata-modules/ai/ai-models/dtos/test-workspace-ai-provider.input';
+import { UpsertWorkspaceAiProviderInput } from 'src/engine/metadata-modules/ai/ai-models/dtos/upsert-workspace-ai-provider.input';
 import { WorkspaceAiProvidersDTO } from 'src/engine/metadata-modules/ai/ai-models/dtos/workspace-ai-provider.dto';
 import { WorkspaceAiProviderTestResultDTO } from 'src/engine/metadata-modules/ai/ai-models/dtos/workspace-ai-provider-test-result.dto';
 import { WorkspaceAiProviderAdminService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-provider-admin.service';
@@ -41,7 +41,8 @@ export class WorkspaceAiProviderResolver {
 
   @Mutation(() => WorkspaceAiProvidersDTO)
   async upsertWorkspaceAiProvider(
-    @Args('input') input: UpsertWorkspaceAiProviderInput,
+    @Args('input', { type: () => UpsertWorkspaceAiProviderInput })
+    input: UpsertWorkspaceAiProviderInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<WorkspaceAiProvidersDTO> {
     await this.workspaceAiProviderService.upsertProvider({
@@ -56,7 +57,8 @@ export class WorkspaceAiProviderResolver {
 
   @Mutation(() => WorkspaceAiProviderTestResultDTO)
   async testWorkspaceAiProvider(
-    @Args('input') input: TestWorkspaceAiProviderInput,
+    @Args('input', { type: () => TestWorkspaceAiProviderInput })
+    input: TestWorkspaceAiProviderInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<WorkspaceAiProviderTestResultDTO> {
     return this.workspaceAiProviderAdminService.testProvider({

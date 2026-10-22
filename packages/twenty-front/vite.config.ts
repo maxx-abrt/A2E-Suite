@@ -31,6 +31,9 @@ export default defineConfig(({ mode }) => {
     REACT_APP_PORT,
     REACT_APP_SERVER_BASE_URL,
     IS_DEBUG_MODE,
+    VITE_ALLOWED_HOSTS,
+    VITE_WATCH_SKIP_TESTS,
+    VITE_BUILD_MERGE_INITIAL_CHUNKS,
   } = env;
 
   const port = isNonEmptyString(REACT_APP_PORT)
@@ -41,12 +44,22 @@ export default defineConfig(({ mode }) => {
     ? REACT_APP_SERVER_BASE_URL
     : 'http://localhost:3000';
 
+  // Realtime runs over websockets, so its proxy entry must upgrade the
+  // connection when the dev server is reached through a remote host.
   const apiProxy = Object.fromEntries(
     API_PROXY_PATHS.map((apiPath) => [
       buildApiProxyMatcher(apiPath),
-      { target: apiProxyTarget },
+      { target: apiProxyTarget, ws: apiPath === 'realtime' },
     ]),
   );
+
+  // Remote dev hosts (tunnels, preview domains) are rejected by Vite's
+  // DNS-rebinding guard unless listed; `all` disables the guard entirely.
+  const allowedHosts = isNonEmptyString(VITE_ALLOWED_HOSTS)
+    ? VITE_ALLOWED_HOSTS === 'all'
+      ? true
+      : VITE_ALLOWED_HOSTS.split(',').map((host) => host.trim())
+    : undefined;
 
   const CHUNK_SIZE_WARNING_LIMIT = 1024 * 1024; // 1MB
   // Please don't increase this limit for main index chunk
@@ -68,6 +81,24 @@ export default defineConfig(({ mode }) => {
       port: port,
       proxy: apiProxy,
       ...(VITE_HOST ? { host: VITE_HOST } : {}),
+      ...(allowedHosts !== undefined ? { allowedHosts } : {}),
+      // Hosts with a low inotify limit (containers) cannot watch the whole
+      // tree; tests, stories and catalogs never need HMR in the app server.
+      ...(VITE_WATCH_SKIP_TESTS === 'true'
+        ? {
+            watch: {
+              ignored: [
+                '**/__tests__/**',
+                '**/__stories__/**',
+                '**/__mocks__/**',
+                '**/*.test.{ts,tsx}',
+                '**/*.stories.{ts,tsx}',
+                '**/testing/**',
+                '**/locales/**',
+              ],
+            },
+          }
+        : {}),
       ...(SSL_KEY_PATH && SSL_CERT_PATH
         ? {
             protocol: 'https',
@@ -254,6 +285,33 @@ export default defineConfig(({ mode }) => {
               },
             }*/
           ],
+          // Opt-in for hosts behind request-rate limits (CDN/preview
+          // proxies): the entry graph otherwise ships as ~340 preloaded
+          // chunks. Only statically reachable modules are merged, so lazy
+          // routes keep loading on demand.
+          ...(VITE_BUILD_MERGE_INITIAL_CHUNKS === 'true'
+            ? {
+                // Merged chunks must keep the original module evaluation
+                // order, otherwise circular imports read uninitialized
+                // bindings at boot.
+                strictExecutionOrder: true,
+                codeSplitting: {
+                  groups: [
+                    {
+                      name: 'initial',
+                      tags: ['$initial' as const],
+                      maxSize: 4 * 1024 * 1024,
+                    },
+                    {
+                      name: 'lazy-vendor',
+                      test: /node_modules[\\/]/,
+                      minShareCount: 2,
+                      maxSize: 4 * 1024 * 1024,
+                    },
+                  ],
+                },
+              }
+            : {}),
         },
       },
     },
