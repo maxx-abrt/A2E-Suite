@@ -1,4 +1,6 @@
 import { A2eCustomizeAction } from '@/a2e-customize/components/A2eCustomizeAction';
+import { BureauWorkspaceContext } from '@/bureau/contexts/BureauWorkspaceContext';
+import { useContext } from 'react';
 import { A2eContextualEmptyState } from '@/a2e-empty-state/components/A2eContextualEmptyState';
 import { BUREAU_LANDING_TEMPLATE_CATEGORY } from '@/bureau/constants/BureauLandingTemplateCategory';
 import { BUREAU_LANDING_TEMPLATE_LINKS } from '@/bureau/constants/BureauLandingTemplates';
@@ -94,34 +96,59 @@ const BUREAU_DOCUMENT_OBJECT_NAME_SINGULAR = 'document';
 // M9 gallery and the recent pages, so the app opens on a home instead of a bare
 // table view. It is install-gated on a2e-documents — without the app the object
 // does not exist and the landing renders nothing rather than a broken widget.
-export const BureauLanding = () => {
+type BureauLandingProps = {
+  onCreatePage?: () => void;
+  onSelectPage?: (pageId: string) => void;
+};
+
+export const BureauLanding = ({
+  onCreatePage,
+  onSelectPage,
+}: BureauLandingProps) => {
   const isDocumentApplicationInstalled = useIsDocumentApplicationInstalled();
 
   if (!isDocumentApplicationInstalled) {
     return null;
   }
 
-  return <BureauLandingContent />;
+  return (
+    <BureauLandingContent
+      onCreatePage={onCreatePage}
+      onSelectPage={onSelectPage}
+    />
+  );
 };
 
 // When the workspace has no pages yet the landing becomes the M13c contextual
 // empty state — one sentence, one "New page", one "Use a template" link and one
 // "Learn more" — instead of a header over an empty "Recent pages" list.
-const BureauLandingContent = () => {
+type BureauLandingContentProps = BureauLandingProps;
+
+const BureauLandingContent = ({
+  onCreatePage,
+  onSelectPage,
+}: BureauLandingContentProps) => {
   const { t } = useLingui();
   const { createNewPage } = useCreateNewPage();
   const { openTemplateGallery } = useOpenTemplateGallery();
-  const { totalCount } = useFindManyRecords({
+  const workspace = useContext(BureauWorkspaceContext);
+  const { totalCount: queriedTotalCount } = useFindManyRecords({
     objectNameSingular: BUREAU_DOCUMENT_OBJECT_NAME_SINGULAR,
     limit: 1,
+    skip: workspace !== null,
   });
+  const totalCount = workspace?.documents.length ?? queriedTotalCount;
+
+  if (workspace?.isLoading)
+    return <StyledContainer role="status">{t`Loading pages…`}</StyledContainer>;
 
   if (totalCount === 0) {
     return (
       <A2eContextualEmptyState
         surfaceKey="bureau"
         onPrimaryAction={() => {
-          void createNewPage();
+          if (onCreatePage) onCreatePage();
+          else void createNewPage();
         }}
       />
     );
@@ -143,7 +170,8 @@ const BureauLandingContent = () => {
             Icon={IconPlus}
             title={t`New page`}
             onClick={() => {
-              void createNewPage();
+              if (onCreatePage) onCreatePage();
+              else void createNewPage();
             }}
             dataTestId="bureau-new-page"
           />
@@ -183,7 +211,7 @@ const BureauLandingContent = () => {
             dataTestId="bureau-all-pages"
           />
         </StyledSectionHeader>
-        <RecentPagesWidget />
+        <RecentPagesWidget onSelectPage={onSelectPage} />
       </StyledSection>
     </StyledContainer>
   );

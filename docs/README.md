@@ -14,6 +14,7 @@ explains the fork; upstream product documentation lives in
 | Understand the product and naming | [Product experience](product-experience.md) | [Delivery plan](../PLAN.md) |
 | See what each app and surface does | [Feature surfaces](features.md) | The linked app `README.md` and its source |
 | Find Bilan, Bureau or the app installer | [Applications runbook](applications.md) | The linked catalog, installer and preset source |
+| Continue the full-page Bureau workspace or Notion import | [Bureau delivery checklist](BUREAU_PLAN.md) | PLAN M8 + the dated phase-13 verification report |
 | Locate the code for a change | [Codebase map](plan/01-codebase-map.md) | One adjacent implementation and its tests |
 | Build a native feature | [Integration blueprint](plan/03-integration-blueprint.md) | [Native patterns](plan/04-twenty-native-law.md), [app authoring](../packages/twenty-apps/README-A2E.md) |
 | Gate advanced authoring blocks | [P3.4 feasibility check](plan/p3.4-advanced-authoring-feasibility.md) | The cited editor/export source paths |

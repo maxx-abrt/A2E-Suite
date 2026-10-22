@@ -44,7 +44,8 @@ export const BureauPageActionsDropdown = ({
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
   const { copyToClipboard } = useCopyToClipboard();
-  const { actions, favoriteDocumentIds, toggleFavorite } = useBureauWorkspace();
+  const { actions, favoriteDocumentIds, toggleFavorite, permissions } =
+    useBureauWorkspace();
   const isFavorite = favoriteDocumentIds.has(page.id);
 
   const closeThen = (callback: () => void) => () => {
@@ -68,15 +69,17 @@ export const BureauPageActionsDropdown = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              LeftIcon={IconPlus}
-              text={t`Add a sub-page`}
-              testId={`${dropdownId}-add-sub-page`}
-              onClick={closeThen(() => {
-                void actions.createPage({ parentId: page.id });
-              })}
-            />
-            {onRename ? (
+            {permissions.canUpdateObjectRecords && (
+              <MenuItem
+                LeftIcon={IconPlus}
+                text={t`Add a sub-page`}
+                testId={`${dropdownId}-add-sub-page`}
+                onClick={closeThen(() => {
+                  void actions.createPage({ parentId: page.id });
+                })}
+              />
+            )}
+            {onRename && permissions.canUpdateObjectRecords ? (
               <MenuItem
                 LeftIcon={IconPencil}
                 text={t`Rename`}
@@ -86,9 +89,7 @@ export const BureauPageActionsDropdown = ({
             ) : null}
             <MenuItem
               LeftIcon={IconStar}
-              text={
-                isFavorite ? t`Remove from favorites` : t`Add to favorites`
-              }
+              text={isFavorite ? t`Remove from favorites` : t`Add to favorites`}
               testId={`${dropdownId}-favorite`}
               onClick={closeThen(() => {
                 void toggleFavorite(page.id);
@@ -125,18 +126,22 @@ export const BureauPageActionsDropdown = ({
               </DropdownMenuItemsContainer>
             </>
           ) : null}
-          <DropdownMenuSeparator />
-          <DropdownMenuItemsContainer>
-            <MenuItem
-              accent="danger"
-              LeftIcon={IconTrash}
-              text={t`Move to trash`}
-              testId={`${dropdownId}-trash`}
-              onClick={closeThen(() => {
-                void actions.trashPage(page.id);
-              })}
-            />
-          </DropdownMenuItemsContainer>
+          {permissions.canSoftDeleteObjectRecords && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItemsContainer>
+                <MenuItem
+                  accent="danger"
+                  LeftIcon={IconTrash}
+                  text={t`Move to trash`}
+                  testId={`${dropdownId}-trash`}
+                  onClick={closeThen(() => {
+                    void actions.trashPage(page.id);
+                  })}
+                />
+              </DropdownMenuItemsContainer>
+            </>
+          )}
         </DropdownContent>
       }
     />

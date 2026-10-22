@@ -1,4 +1,6 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { BureauWorkspaceContext } from '@/bureau/contexts/BureauWorkspaceContext';
+import { useContext } from 'react';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { RecentPagesWidgetContent } from '@/home-dashboard/components/RecentPagesWidgetContent';
@@ -16,8 +18,26 @@ const DOCUMENT_OBJECT_NAME_SINGULAR = 'document';
 
 // Bureau owns the `document` object, so the card self-gates: when the app is
 // absent the fetch is never reached and the widget shows its empty state.
-export const RecentPagesWidget = () => {
+type RecentPagesWidgetProps = { onSelectPage?: (pageId: string) => void };
+
+export const RecentPagesWidget = ({ onSelectPage }: RecentPagesWidgetProps) => {
   const { objectMetadataItems } = useObjectMetadataItems();
+  const workspace = useContext(BureauWorkspaceContext);
+
+  if (workspace)
+    return (
+      <RecentPagesWidgetContent
+        entries={getRecentPagesEntries(
+          workspace.documents.map((page) => ({
+            id: page.id,
+            title: page.title ?? '',
+            kind: page.kind ?? null,
+            updatedAt: page.updatedAt,
+          })),
+        )}
+        onSelectEntry={onSelectPage}
+      />
+    );
 
   if (
     !hasObjectMetadataItem(objectMetadataItems, DOCUMENT_OBJECT_NAME_SINGULAR)
@@ -25,10 +45,12 @@ export const RecentPagesWidget = () => {
     return <RecentPagesWidgetContent entries={[]} />;
   }
 
-  return <RecentPagesRecords />;
+  return <RecentPagesRecords onSelectPage={onSelectPage} />;
 };
 
-const RecentPagesRecords = () => {
+type RecentPagesRecordsProps = RecentPagesWidgetProps;
+
+const RecentPagesRecords = ({ onSelectPage }: RecentPagesRecordsProps) => {
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const { records } = useFindManyRecords({
@@ -38,20 +60,15 @@ const RecentPagesRecords = () => {
     recordGqlFields: { id: true, title: true, kind: true, updatedAt: true },
   });
 
-  const pages = selectRecentPages(
+  const entries = getRecentPagesEntries(
     records as unknown as HomeRecentPageSummary[],
-    {
-      limit: RECENT_PAGES_WIDGET_LIMIT,
-    },
   );
 
-  const entries: HomeWidgetListEntry[] = pages.map((page) => ({
-    id: page.id,
-    title: page.title,
-    subtitle: formatHomeWidgetDayLabel(page.updatedAt ?? ''),
-  }));
-
   const handleSelectPage = (pageId: string) => {
+    if (onSelectPage) {
+      onSelectPage(pageId);
+      return;
+    }
     openRecordInSidePanel({
       recordId: pageId,
       objectNameSingular: DOCUMENT_OBJECT_NAME_SINGULAR,
@@ -65,3 +82,14 @@ const RecentPagesRecords = () => {
     />
   );
 };
+
+const getRecentPagesEntries = (
+  pages: HomeRecentPageSummary[],
+): HomeWidgetListEntry[] =>
+  selectRecentPages(pages, { limit: RECENT_PAGES_WIDGET_LIMIT }).map(
+    (page) => ({
+      id: page.id,
+      title: page.title,
+      subtitle: formatHomeWidgetDayLabel(page.updatedAt ?? ''),
+    }),
+  );

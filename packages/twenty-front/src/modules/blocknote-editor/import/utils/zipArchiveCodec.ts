@@ -11,10 +11,27 @@ import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
 
 const isDirectoryEntryName = (path: string): boolean => path.endsWith('/');
 
+const MAX_ARCHIVE_ENTRIES = 5000;
+const MAX_UNCOMPRESSED_BYTES = 250 * 1024 * 1024;
+
 export const readZipEntries = (
   archive: Uint8Array,
 ): DocumentsTransferEntry[] => {
-  const unzipped = unzipSync(archive);
+  let entryCount = 0;
+  let totalBytes = 0;
+  const unzipped = unzipSync(archive, {
+    filter: (entry) => {
+      entryCount += 1;
+      totalBytes += entry.originalSize;
+      if (
+        entryCount > MAX_ARCHIVE_ENTRIES ||
+        totalBytes > MAX_UNCOMPRESSED_BYTES
+      ) {
+        throw new Error('Archive exceeds the import size limit');
+      }
+      return true;
+    },
+  });
 
   return Object.entries(unzipped)
     .filter(

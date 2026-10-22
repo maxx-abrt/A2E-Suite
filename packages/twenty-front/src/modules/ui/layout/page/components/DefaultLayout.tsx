@@ -1,4 +1,5 @@
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
+import { BureauWorkspaceProvider } from '@/bureau/components/BureauWorkspaceProvider';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
 import { AppPageErrorFallback } from '@/error-handler/components/AppPageErrorFallback';
 import { FileUploadProvider } from '@/file-upload/components/FileUploadProvider';
@@ -84,19 +85,21 @@ export const DefaultLayout = () => {
             <InformationBannerIsImpersonating />
             <LayoutCustomizationBar />
             <StyledPageContainer>
-              <PageDragDropProvider>
-                <KeyboardShortcutMenu />
-                {useShowFullScreen ? null : (
-                  <StyledNavigationDrawerWrapper>
-                    <AppNavigationDrawer />
-                  </StyledNavigationDrawerWrapper>
-                )}
-                <StyledMainContainer>
-                  <AppErrorBoundary FallbackComponent={AppPageErrorFallback}>
-                    <Outlet />
-                  </AppErrorBoundary>
-                </StyledMainContainer>
-              </PageDragDropProvider>
+              <BureauWorkspaceProvider>
+                <PageDragDropProvider>
+                  <KeyboardShortcutMenu />
+                  {useShowFullScreen ? null : (
+                    <StyledNavigationDrawerWrapper>
+                      <AppNavigationDrawer />
+                    </StyledNavigationDrawerWrapper>
+                  )}
+                  <StyledMainContainer>
+                    <AppErrorBoundary FallbackComponent={AppPageErrorFallback}>
+                      <Outlet />
+                    </AppErrorBoundary>
+                  </StyledMainContainer>
+                </PageDragDropProvider>
+              </BureauWorkspaceProvider>
             </StyledPageContainer>
             {isMobile && <MobileNavigationBar />}
           </AppErrorBoundary>

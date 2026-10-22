@@ -4,6 +4,7 @@ export type BureauDocument = {
   __typename: string;
   id: string;
   title: string | null;
+  kind?: string | null;
   icon: string | null;
   parentId: string | null;
   position: number | null;

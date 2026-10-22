@@ -13,6 +13,45 @@ const linkParagraph = (href: string) => ({
 });
 
 describe('mapImportedAttachmentsAndLinks', () => {
+  it('rewrites links inside table cells without flattening the table', () => {
+    const { blocks } = mapImportedAttachmentsAndLinks(
+      [
+        {
+          type: 'table',
+          content: {
+            type: 'tableContent',
+            rows: [
+              {
+                cells: [
+                  [
+                    {
+                      type: 'link',
+                      href: 'Child.html',
+                      content: [{ type: 'text', text: 'Child' }],
+                    },
+                  ],
+                  {
+                    type: 'tableCell',
+                    content: [
+                      {
+                        type: 'link',
+                        href: 'Child.html',
+                        content: [{ type: 'text', text: 'Child' }],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+      { resolveLinkUrl: () => '/bureau/child-id' },
+    );
+    expect(JSON.stringify(blocks)).not.toContain('Child.html');
+    expect(JSON.stringify(blocks)).toContain('/bureau/child-id');
+    expect(blocks[0].type).toBe('table');
+  });
   it('rewrites attachment URLs through the resolver', () => {
     const { blocks, warnings } = mapImportedAttachmentsAndLinks(
       [image('https://external.example/a.png')],

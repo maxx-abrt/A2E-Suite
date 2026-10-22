@@ -6,4 +6,5 @@ export const BUREAU_PAGE_RECORD_GQL_FIELDS = {
   contentRevision: true,
   isFullWidth: true,
   isSmallText: true,
+  isLocked: true,
 };

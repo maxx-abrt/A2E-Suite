@@ -21,12 +21,14 @@ type NavigationMenuItemFolderContentProps = {
   folderId: string;
   folderName: string;
   navigationMenuItems: NavigationMenuItem[];
+  hideBackButton?: boolean;
 };
 
 export const NavigationMenuItemFolderContent = ({
   folderName,
   folderId,
   navigationMenuItems,
+  hideBackButton = false,
 }: NavigationMenuItemFolderContentProps) => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
@@ -39,7 +41,9 @@ export const NavigationMenuItemFolderContent = ({
 
   return (
     <>
-      <NavigationMenuItemBackButton folderName={folderName} />
+      {!hideBackButton && (
+        <NavigationMenuItemBackButton folderName={folderName} />
+      )}
       {navigationMenuItems.map((navigationMenuItem, index) => {
         const label = getNavigationMenuItemLabel(
           navigationMenuItem,

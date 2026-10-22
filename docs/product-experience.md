@@ -20,7 +20,7 @@ another backend, or fork the design system.
 | Name | Product meaning | Current implementation boundary |
 | --- | --- | --- |
 | **A2E Suite** | The platform, workspace and shared shell | Twenty fork; internal package names remain `twenty-*` |
-| **Bureau** | Intended installable work/knowledge experience: documents, projects and tasks; later collaboration and Drive | No Bureau app definition today. `a2e-documents` and `a2e-projects` supply parts of this experience |
+| **Bureau** | Work/knowledge experience: documents, projects, tasks and discussions | `a2e-documents` supplies pages and the host full-page `/bureau/:documentId` workspace; `a2e-projects` and `a2e-chat` remain separate apps. A unified bundle lifecycle is still pending |
 | **Bilan** | Intended installable finance experience: quotes, invoices, cash movements, books, budgets, fiches and funding | Existing `a2e-accounting` app, display name `Bilan`; not release-certified |
 | **Agenda** | Calendar: events, recurrence, reminders, task deadlines | Host page `/calendar`; no sidebar entry yet (PLAN M7b/M7d) |
 | **Syna** | AI assistant with bring-your-own-key, in context everywhere | Host AI chat + tool registry; instance-only keys today (PLAN M10) |
@@ -76,7 +76,7 @@ Source: [server definitions](../packages/twenty-server/src/engine/core-modules/o
 | Non-profit | Documents + Bilan | Kept | Off |
 | Small business | Documents + Bilan | Kept | Off |
 
-Projects/Bureau are not included. Preset selection is not proof of installation:
+Projects and Discussions are not included; Bureau pages use the Documents registration. Preset selection is not proof of installation:
 missing registrations/install failures can be skipped, and no generic starter
 content seeder exists. See [troubleshooting](applications.md).
 

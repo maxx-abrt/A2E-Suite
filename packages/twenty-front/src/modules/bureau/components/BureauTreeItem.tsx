@@ -2,6 +2,9 @@ import { BureauPageActionsDropdown } from '@/bureau/components/BureauPageActions
 import { BureauPageIcon } from '@/bureau/components/BureauPageIcon';
 import { useBureauTextInputFocus } from '@/bureau/hooks/useBureauTextInputFocus';
 import { useBureauWorkspace } from '@/bureau/hooks/useBureauWorkspace';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type BureauDocument } from '@/bureau/types/BureauDocument';
 import { type BureauDropZone } from '@/bureau/types/BureauDropZone';
 import { getBureauPagePath } from '@/bureau/utils/getBureauPagePath';
@@ -192,9 +195,17 @@ type BureauTreeItemProps = {
   section: 'pages' | 'favorites';
 };
 
-export const BureauTreeItem = ({ page, depth, section }: BureauTreeItemProps) => {
+export const BureauTreeItem = ({
+  page,
+  depth,
+  section,
+}: BureauTreeItemProps) => {
   const { t } = useLingui();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
+  const setIsNavigationDrawerExpanded = useSetAtomState(
+    isNavigationDrawerExpandedState,
+  );
   const {
     tree,
     activeDocumentId,
@@ -204,6 +215,7 @@ export const BureauTreeItem = ({ page, depth, section }: BureauTreeItemProps) =>
     setDraggedPageId,
     invalidDropTargetIds,
     actions,
+    permissions,
   } = useBureauWorkspace();
   const [dropZone, setDropZone] = useState<BureauDropZone | null>(null);
   const [renameDraft, setRenameDraft] = useState<string | null>(null);
@@ -226,9 +238,11 @@ export const BureauTreeItem = ({ page, depth, section }: BureauTreeItemProps) =>
   const openPage = () => {
     // oxlint-disable-next-line twenty/no-navigate-prefer-link
     navigate(getBureauPagePath(page.id));
+    if (isMobile) setIsNavigationDrawerExpanded(false);
   };
 
   const startRename = () => {
+    if (!permissions.canUpdateObjectRecords) return;
     setRenameDraft(page.title ?? '');
   };
 
@@ -287,6 +301,7 @@ export const BureauTreeItem = ({ page, depth, section }: BureauTreeItemProps) =>
   };
 
   const canAcceptDrop =
+    permissions.canUpdateObjectRecords &&
     isTreeSection &&
     isDefined(draggedPageId) &&
     !invalidDropTargetIds.has(page.id);
@@ -340,7 +355,9 @@ export const BureauTreeItem = ({ page, depth, section }: BureauTreeItemProps) =>
         data-drop-zone={canAcceptDrop ? (dropZone ?? undefined) : undefined}
         data-testid={testIdPrefix}
         style={rowStyle}
-        draggable={isTreeSection && !isRenaming}
+        draggable={
+          isTreeSection && !isRenaming && permissions.canUpdateObjectRecords
+        }
         // oxlint-disable-next-line twenty/no-navigate-prefer-link
         onClick={openPage}
         onDoubleClick={startRename}
@@ -397,16 +414,18 @@ export const BureauTreeItem = ({ page, depth, section }: BureauTreeItemProps) =>
             dropdownId={`bureau-${section}-item-menu-${page.id}`}
             onRename={startRename}
           />
-          <LightIconButton
-            Icon={IconPlus}
-            accent="tertiary"
-            size="small"
-            aria-label={t`Add a sub-page`}
-            testId={`${testIdPrefix}-add`}
-            onClick={() => {
-              void actions.createPage({ parentId: page.id });
-            }}
-          />
+          {permissions.canUpdateObjectRecords && (
+            <LightIconButton
+              Icon={IconPlus}
+              accent="tertiary"
+              size="small"
+              aria-label={t`Add a sub-page`}
+              testId={`${testIdPrefix}-add`}
+              onClick={() => {
+                void actions.createPage({ parentId: page.id });
+              }}
+            />
+          )}
         </StyledRowActions>
       </StyledRow>
       {isExpanded ? (

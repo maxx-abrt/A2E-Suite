@@ -3,6 +3,8 @@ import { BUREAU_TRASH_MODAL_ID } from '@/bureau/constants/BureauTrashModalId';
 import { useBureauDocuments } from '@/bureau/hooks/useBureauDocuments';
 import { useBureauFavorites } from '@/bureau/hooks/useBureauFavorites';
 import { useBureauPageActions } from '@/bureau/hooks/useBureauPageActions';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { bureauExpandedPageIdsState } from '@/bureau/states/bureauExpandedPageIdsState';
 import { getBureauAncestors } from '@/bureau/utils/getBureauAncestors';
 import { getBureauDescendantIds } from '@/bureau/utils/getBureauDescendantIds';
@@ -12,7 +14,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useBureauWorkspaceValue = (activeDocumentId: string | null) => {
-  const { documents, tree, isLoading, resyncDocuments } = useBureauDocuments();
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: 'document',
+  });
+  const permissions = useObjectPermissionsForObject(objectMetadataItem.id);
+  const { documents, tree, isLoading, error, resyncDocuments } =
+    useBureauDocuments();
   const { favoriteDocumentIds, toggleFavorite } = useBureauFavorites();
   const [bureauExpandedPageIds, setBureauExpandedPageIds] = useAtomState(
     bureauExpandedPageIdsState,
@@ -66,6 +73,7 @@ export const useBureauWorkspaceValue = (activeDocumentId: string | null) => {
     activeDocumentId,
     resyncDocuments,
     expandPageIds,
+    isTreeLoading: isLoading,
   });
 
   const favoriteDocuments = useMemo(
@@ -102,6 +110,8 @@ export const useBureauWorkspaceValue = (activeDocumentId: string | null) => {
     documents,
     tree,
     isLoading,
+    error,
+    resyncDocuments,
     favoriteDocumentIds,
     favoriteDocuments,
     toggleFavorite,
@@ -112,6 +122,7 @@ export const useBureauWorkspaceValue = (activeDocumentId: string | null) => {
     setDraggedPageId,
     invalidDropTargetIds,
     actions,
+    permissions,
     openSearch,
     openTrash,
   };

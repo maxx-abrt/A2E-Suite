@@ -30,17 +30,19 @@ export const useBureauPageActions = ({
   activeDocumentId,
   resyncDocuments,
   expandPageIds,
+  isTreeLoading = false,
 }: {
   tree: BureauTree;
   activeDocumentId: string | null;
   resyncDocuments: () => void;
   expandPageIds: (pageIds: string[]) => void;
+  isTreeLoading?: boolean;
 }) => {
   const { t } = useLingui();
   const navigate = useNavigate();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
-  const { createOneRecord } = useCreateOneRecord<BureauDocument>({
+  const { createOneRecord } = useCreateOneRecord({
     objectNameSingular: DOCUMENT_OBJECT_NAME_SINGULAR,
     recordGqlFields: BUREAU_TREE_RECORD_GQL_FIELDS,
     shouldMatchRootQueryFilter: true,
@@ -65,12 +67,21 @@ export const useBureauPageActions = ({
         objectNameSingular: DOCUMENT_OBJECT_NAME_SINGULAR,
         idToUpdate: documentId,
         updateOneRecordInput: updateInput,
+        recordGqlFields: {
+          ...BUREAU_TREE_RECORD_GQL_FIELDS,
+          isFullWidth: true,
+          isSmallText: true,
+        },
       });
     } catch {
       enqueueErrorSnackBar({
         message: t`Could not save the page. Please try again.`,
       });
+
+      return false;
     }
+
+    return true;
   };
 
   const createPage = async ({
@@ -108,6 +119,12 @@ export const useBureauPageActions = ({
     targetId: string | null,
     zone: BureauDropZone,
   ) => {
+    if (isTreeLoading) {
+      enqueueErrorSnackBar({
+        message: t`Please wait until all pages have loaded.`,
+      });
+      return;
+    }
     const placement = getBureauDropPlacement({
       draggedId,
       targetId,
@@ -130,17 +147,19 @@ export const useBureauPageActions = ({
     }
 
     for (const siblingReposition of placement.siblingRepositions) {
-      await updatePage(siblingReposition.id, {
+      const didSave = await updatePage(siblingReposition.id, {
         position: siblingReposition.position,
       });
+
+      if (!didSave) return;
     }
 
-    await updatePage(draggedId, {
+    const didMove = await updatePage(draggedId, {
       parentId: placement.parentId,
       position: placement.position,
     });
 
-    if (isDefined(placement.parentId)) {
+    if (didMove && isDefined(placement.parentId)) {
       expandPageIds([placement.parentId]);
     }
   };
@@ -153,6 +172,12 @@ export const useBureauPageActions = ({
   // A page goes to the trash with its whole subtree, so no child is left
   // pointing at a trashed parent.
   const trashPage = async (documentId: string) => {
+    if (isTreeLoading) {
+      enqueueErrorSnackBar({
+        message: t`Please wait until all pages have loaded.`,
+      });
+      return;
+    }
     const pageIds = [
       documentId,
       ...getBureauDescendantIds(documentId, tree.childrenByParentId),
@@ -179,7 +204,11 @@ export const useBureauPageActions = ({
       options: {
         buttonLabel: t`Undo`,
         buttonOnClick: () => {
-          void restorePageIds(pageIds);
+          void restorePageIds(pageIds).catch(() => {
+            enqueueErrorSnackBar({
+              message: t`Could not restore the page. Please try again.`,
+            });
+          });
         },
       },
     });
@@ -191,7 +220,16 @@ export const useBureauPageActions = ({
     trashedPage: BureauDocument,
     trashedPages: BureauDocument[],
   ) => {
-    const trashedChildrenByParentId = new Map<string | null, BureauDocument[]>();
+    if (isTreeLoading) {
+      enqueueErrorSnackBar({
+        message: t`Please wait until all pages have loaded.`,
+      });
+      return false;
+    }
+    const trashedChildrenByParentId = new Map<
+      string | null,
+      BureauDocument[]
+    >();
 
     for (const page of trashedPages) {
       const siblings = trashedChildrenByParentId.get(page.parentId) ?? [];

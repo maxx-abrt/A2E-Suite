@@ -17,3 +17,11 @@ export const parseHtmlWithBlockNote = (html: string): readonly unknown[] => {
 
   return sharedDocumentEditor.tryParseHTMLToBlocks(html);
 };
+
+export const parseMarkdownWithBlockNote = (
+  markdown: string,
+): readonly unknown[] => {
+  sharedDocumentEditor ??= createDocumentEditor();
+
+  return sharedDocumentEditor.tryParseMarkdownToBlocks(markdown);
+};

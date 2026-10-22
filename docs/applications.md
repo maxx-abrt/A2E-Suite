@@ -172,6 +172,24 @@ Preset evidence:
 Installation evidence:
 [ApplicationInstallService](../packages/twenty-server/src/engine/core-modules/application/application-install/application-install.service.ts).
 
+## Bureau host experience (2026-10-22)
+
+With `a2e-documents` installed, `/bureau` opens its home and
+`/bureau/:documentId` opens a full-page document using the existing host editor.
+The tree, favorites, search, trash and Notion HTML/Markdown import live in the
+native drawer. The native app folder focuses when one of its configured links
+is opened; **All apps** returns to workspace navigation without leaving the
+document. Existing record views and side panels continue to use the same IDs.
+Missing installation/metadata offers an Applications link; older schemas hide
+page controls whose fields are not installed.
+
+Local evidence: the existing package built/published privately to the local
+scratch registry and upgraded the populated Apple seed workspace to `0.2.14`
+with **1 upgraded, 0 failed**. Its pre-upgrade document survived; a browser
+HTML ZIP import reconstructed two pages, nesting, a table, working links and a
+workspace-stored image. This is not a clean-container or all-app lifecycle pass.
+See [the delivery checklist](BUREAU_PLAN.md) for conversion limits and open gates.
+
 ## Uninstall is not a harmless off switch
 
 [ApplicationSyncService](../packages/twenty-server/src/engine/core-modules/application/application-manifest/application-sync.service.ts)

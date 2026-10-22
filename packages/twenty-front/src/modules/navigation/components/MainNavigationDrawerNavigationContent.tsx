@@ -1,4 +1,5 @@
 import { NavigationMenuItemFolderContentDispatcherEffect } from '@/navigation-menu-item/edit/components/NavigationMenuItemFolderContentDispatcher';
+import { FocusedAppNavigationDrawerContent } from '@/navigation/components/FocusedAppNavigationDrawerContent';
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder';
 import { MainNavigationDrawerScrollableItems } from '@/navigation/components/MainNavigationDrawerScrollableItems';
 import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
@@ -15,7 +16,7 @@ export const MainNavigationDrawerNavigationContent = () => {
   );
 
   return (
-    <>
+    <FocusedAppNavigationDrawerContent>
       {openedNavigationMenuItemFolder ? (
         <NavigationMenuItemFolderContentDispatcherEffect
           folderName={openedNavigationMenuItemFolder.folderName}
@@ -27,6 +28,6 @@ export const MainNavigationDrawerNavigationContent = () => {
       ) : (
         <MainNavigationDrawerScrollableItems />
       )}
-    </>
+    </FocusedAppNavigationDrawerContent>
   );
 };

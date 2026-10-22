@@ -50,6 +50,7 @@ type RichTextFieldEditorProps = {
   recordId: string;
   objectNameSingular: string;
   fieldName: string;
+  isReadOnly?: boolean;
   onPersistBody?: (blocknote: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -62,6 +63,7 @@ export const RichTextFieldEditor = ({
   recordId,
   objectNameSingular,
   fieldName,
+  isReadOnly = false,
   onPersistBody,
   onFocus: onFocusOverride,
   onBlur: onBlurOverride,
@@ -275,7 +277,7 @@ export const RichTextFieldEditor = ({
       persistDebounceMs: 300,
       resetKey: recordId,
       onPersist: ({ blocknote }) => {
-        if (isRecordFieldReadOnly === true) return;
+        if (isRecordFieldReadOnly === true || isReadOnly) return;
 
         // A concurrent revision overlap holds the save until the user picks a
         // side; the draft stays in the editor and is never silently dropped.
@@ -434,6 +436,15 @@ export const RichTextFieldEditor = ({
 
   const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
 
+  // Route changes can unmount the editor before the serialization debounce.
+  useEffect(
+    () => () => {
+      handleBodyChangeDebounced.flush();
+      flush();
+    },
+    [handleBodyChangeDebounced, flush],
+  );
+
   const handleEditorChange = () => {
     if (isApplyingUpstreamBodyRef.current) {
       return;
@@ -504,7 +515,7 @@ export const RichTextFieldEditor = ({
         versionHistoryPersistence={
           isDocumentRecord ? documentRevisionPersistence : undefined
         }
-        readonly={isRecordFieldReadOnly}
+        readonly={isRecordFieldReadOnly || isReadOnly}
       />
     </>
   );

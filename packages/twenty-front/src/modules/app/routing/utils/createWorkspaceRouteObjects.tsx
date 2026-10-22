@@ -4,6 +4,7 @@ import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { LazyRoute } from '@/app/components/LazyRoute';
+import { BUREAU_PAGE_PATH } from '@/bureau/constants/BureauPagePath';
 import {
   createSettingsRouteObjects,
   SettingsRouteOutlet,
@@ -170,6 +171,14 @@ export const createWorkspaceRouteObjects = ({
       element: (
         <LazyRoute>
           <InboxPage />
+        </LazyRoute>
+      ),
+    },
+    {
+      path: BUREAU_PAGE_PATH,
+      element: (
+        <LazyRoute>
+          <BureauPage />
         </LazyRoute>
       ),
     },

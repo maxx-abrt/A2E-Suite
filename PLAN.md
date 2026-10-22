@@ -19,6 +19,15 @@ may run in parallel with M0–M2 because they are small and unblock copy/QA.
 
 ## Product definition (what "done" looks like)
 
+**2026-10-22 Bureau integration update:** the Emergent foundation is connected
+to a full-page host editor at `/bureau/:documentId`, with its tree inside the
+native drawer, app-folder focus / All apps, personal favorites, body search,
+trash and HTML/Markdown Notion import. A local populated Bureau upgrade to
+0.2.14 and a two-page HTML/image/table import passed in the browser. See
+[Bureau delivery checklist](docs/BUREAU_PLAN.md) and the dated
+[phase report](docs/plan/phases/phase-13-report.md). This does not close the
+clean-deployment, all-app lifecycle, cross-workspace or full E14 release gates.
+
 One install of A2E Suite, no separate products:
 
 - **Bureau** (work/knowledge) = Documents + Projects + Tasks, experienced as one
@@ -78,7 +87,7 @@ minimum product increment a user can touch. Status is one of
 | M5 | **Collaboration & smart layer** | Chat/Inbox/Drive/AI feel built-in, calm, and permission-safe | (a) Chat two-session live proof (P5 Tier-2); (b) inbox mention→deep-link journey; (c) drive upload/preview journey; (d) AI direct-tool live dispatch incl. server restart with the `directToolInvocation` arg; (e) every AI mutation shows confirm-first; (f) solo-mode degradation re-verified | partial — all built at Tier-1; live journeys pending |
 | M6 | **Release polish** | "Best app possible": fast, graceful, fr/en, accessible | (a) Performance budgets measured (p95 search < 150ms @10k records; 1k-task Gantt); (b) E12 usability pass with recorded sessions; (c) full e2e regression green; (d) upgrade-from-clean-2.39 + uninstall-everything→CRM-works rehearsals; (e) release notes declare accepted/deferred scope | planned |
 | M7 | **Suite identity & navigation** (G6/G7/G8) | Sidebar shows five named apps — Bureau, Agenda, Bilan, Syna, Archive — each a grouped, reorderable native section with one landing page; CRM is one optional section among them | E13 green; see M7 below | partial — M7a/b/d done; M7c Bureau folder + chat Discussions + drive Archive folder done; M7f landings done; M7e + Bilan/CRM folder open; E13 browser pending |
-| M8 | **Notion-grade Bureau** (G9/G10) | Slash menu, rich blocks, inline databases, page icons/covers, backlinks, quick capture — calm and discoverable | E14 green; see M8 below | partial — M8a full block set + stories, M8b read+editable embeds, M8c chrome, M8f tree polish done; M8d tab mount, M8e daily note, M8g UI wiring open; E14 pending |
+| M8 | **Notion-grade Bureau** (G9/G10) | Slash menu, rich blocks, inline databases, page icons/covers, backlinks, quick capture — calm and discoverable | E14 green; see M8 below | partial — M8a full block set + stories, M8b read+editable embeds, M8c chrome, M8f tree polish done; M8d tab mount, M8e daily note, M8g import UI/local HTML proof done (2026-10-22); real-export/subtree-export and full E14 gates open |
 | M9 | **Template gallery** (G11) | One searchable gallery across apps with ≥ 60 curated templates, previews, "use"/"save as template" | E15 green; see M9 below | partial — all 7 content families, gallery + apply + entry-points + record save mount done; board-view/gallery save mount open; E15 pending |
 | M10 | **Syna — AI with BYOK** (G12) | Workspace admins bring their own provider key; Syna is available everywhere in context, confirm-before-write, zero-AI mode intact | E16 green; see M10 below | partial — BYOK entity + server consumption + slash + selection toolbar + house style + token cap done; zero-AI Cmd+K/record gating + workspace ClientConfig open; E16 pending |
 | M11 | **Interconnected suite** (G13/G14) | Any record links to any other app's record; Today view, universal quick-create, cross-app automations recipes | E17 green; see M11 below | partial — M11a link picker + Related tab, M11b Today, M11c quick-create done; M11d/M11e integration + AC3 open; E17 pending |
@@ -422,6 +431,7 @@ completion claim.
       write path, in-page child drag + page action bar (292 app tests green). Deep-
       tree drag browser journey (P3.3 leg) is Tier-2.
 - [~] **M8g — Markdown & Notion import.** Import `.md` / Notion export zip
+
       (pages + nested pages + images) into Bureau via existing `import/` module;
       export page subtree as zip. No Notion API integration in this slice.
       — 2026-10-11 orchestrator (phase-13-report, US-158): the whole utility surface
@@ -432,6 +442,25 @@ completion claim.
       shape, import-the-exported-zip round-trip tested). Still open: the **UI
       surface** that triggers import/export in the browser (upload/menu action) and
       file-storage upload of extracted image bytes — utilities only, no mount yet.
+
+      — 2026-10-22: upload/preview/progress UI is now mounted in the native Bureau
+      drawer. HTML and Markdown files/ZIPs use BlockNote's own parser, existing
+      sanitizer/codec/URL mapper, native records and attachment storage; folder
+      nesting and page/image/file links are reconstructed. Browser fixture:
+      two HTML pages, nested tree/breadcrumbs, formatting/table, rewritten page
+      link and loaded image passed. Partial remains: large real exports,
+      unsupported database semantics, import recovery after reload and subtree
+      export/re-import; conversion limits are shown before import.
+
+- [x] **M8h — Full-page host integration.** Connect the existing Bureau tree
+      and actions to Twenty's native drawer, full-page editor route, home,
+      search and trash. App-folder focus follows native configured links and
+      offers All apps without navigating away. Reuse the shared editor and
+      record/attachment/permission primitives. — 2026-10-22: focused component
+      checks and local browser creation, autosave/reload, nested imported pages,
+      personal favorite and body search verified; see phase-13-report and
+      docs/BUREAU_PLAN.md. Full mobile/accessibility/multi-user acceptance stays
+      in the release matrix.
 
 ### M9 — Template gallery (one gallery, all apps)
 

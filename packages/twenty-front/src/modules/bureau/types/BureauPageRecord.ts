@@ -6,4 +6,5 @@ export type BureauPageRecord = BureauDocument & {
   contentRevision: string | null;
   isFullWidth: boolean | null;
   isSmallText: boolean | null;
+  isLocked: boolean | null;
 };

@@ -31,6 +31,26 @@ export const mapImportedAttachmentsAndLinks = (
   const resolveLinkUrl = resolvers.resolveLinkUrl ?? ((url: string) => url);
 
   const mapInlineContent = (content: unknown): unknown => {
+    if (
+      isPlainObject(content) &&
+      content.type === 'tableContent' &&
+      Array.isArray(content.rows)
+    ) {
+      return {
+        ...content,
+        rows: content.rows.map((row: unknown) => {
+          if (!isPlainObject(row) || !Array.isArray(row.cells)) return row;
+          return {
+            ...row,
+            cells: row.cells.map((cell: unknown) =>
+              isPlainObject(cell)
+                ? { ...cell, content: mapInlineContent(cell.content) }
+                : mapInlineContent(cell),
+            ),
+          };
+        }),
+      };
+    }
     if (!Array.isArray(content)) {
       return content;
     }

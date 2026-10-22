@@ -1,76 +1,89 @@
-# plan.md — A2E Suite (Twenty fork) · Bureau workspace
+# Bureau workspace — implementation and verification
 
-## User decisions (binding)
-- Language: English. Push cleanly to `main`.
-- NO paid BlockNote extras (multi-column / xl-ai / premium pdf), NO AI. Focus: app availability + clean Bureau writing experience.
-- Optimise tokens; be accurate. UI uses Twenty's design tokens (`themeCssVariables`, twenty-ui). No new design system.
+[Delivery plan](../PLAN.md) · [Applications](applications.md) · [Verification](verification.md)
 
-## Runtime (preview)
-- Supervisor runs a2e-postgres, a2e-redis, a2e-server and a2e-worker. a2e-server is NestJS on :3000 and serves the front build through `dist/front -> twenty-front/build`. `a2e-front` (vite dev) is off.
-- Front rebuild: `bash /root/a2e-env/build-front.sh > /root/a2e-env/build-front.log 2>&1 &` (about 2 min, pauses the worker).
-- After a pod restart: `bash /root/a2e-env/bootstrap.sh`. API token for curl: `bash /root/a2e-env/gql-token.sh`.
-- Login: tim@apple.dev / tim@apple.dev (dev seed, prefilled).
+Updated **2026-10-22**, starting from `2741c7e2`. PLAN.md remains the release
+acceptance reference. This replaces the Emergent handoff and its estimated
+completion percentage; the old preview environment is not the local runtime.
 
-## Phase 1 — App available (Status: COMPLETED)
-- [x] Infra boots, migrations run, bundled apps provisioned.
-- [x] Vite prod build fixed and served by the server.
-- [x] Fixed UI text showing raw ids (e.g. `BQPUt2`): ran `lingui extract` + `lingui compile` in twenty-front and rebuilt.
+## Product contract
 
-## Phase 2 — Bureau full-page workspace `/bureau` (Status: IN PROGRESS, about 60%)
-Verified data model (GraphQL, live):
-- `document`: title, content{blocknote,markdown}, icon(emoji), coverColor(hex), coverImage(url), isFullWidth, isSmallText, parentId, position(float), deletedAt.
-  - The server fills in markdown from blocknote, so `content.markdown ilike` works for search.
-  - Trash query: `filter {deletedAt:{is:NOT_NULL}}`.
-- `documentFavorite`: userId (core user id), documentId, favoriteKey `${userId}:${documentId}` (unique). Destroy it; don't soft-delete.
+- One Twenty shell, workspace identity, permission model and storage system.
+- App navigation focuses the existing native folder when its link is opened;
+  **All apps** restores workspace navigation without leaving the current page.
+  Folder names and native links remain editable; no separate app registry.
+- Bureau prioritizes full-page writing at `/bureau/:documentId`, while native
+  record pages, side panels, projects, tasks and cross-app references remain
+  available. The `document` identity is shared by all of those surfaces.
+- Keep the existing BlockNote schema and its rich blocks, columns, tables,
+  media, mentions, page links and native view embeds. No editor replacement or
+  new premium dependency was introduced. Existing Syna behavior is unchanged.
+- New host UI strings use Lingui with English source text. Production Docker
+  already extracts/compiles front catalogs before building. Generated catalogs
+  are not part of this change.
 
-DONE (in `packages/twenty-front/src/modules/bureau/`):
-- types/ (BureauDocument, BureauPageRecord, BureauTree, BureauDropZone, BureauDropPlacement)
-- constants/ (page path, gql fields, icon choices, cover colors, modal ids, favorite object name)
-- states/bureauExpandedPageIdsState (localStorage)
-- utils/
-  - Done: buildBureauTree (orphans and cycles go to root), getBureauAncestors, getBureauDescendantIds, getBureauDropPlacement (before/after/inside, cycle-safe, renumbers siblings on collision), getBureauPositionBetween, getBureauAppendPosition, getBureauPagePath.
-  - Jest tests: 7 passing.
-- hooks/
-  - Done: useBureauDocuments (paged tree query, resync on events, focus and side-panel close), useBureauFavorites, useBureauPageActions (create→navigate, update, move, trash with subtree and Undo, restore with subtree and re-home, destroy), useBureauTextInputFocus, useBureauWorkspaceValue.
-  - contexts/BureauWorkspaceContext plus useBureauWorkspace.
-- components/
-  - Done: BureauPageIcon, BureauSidebarAction, BureauPageActionsDropdown, BureauTreeItem (native drag/nest, rename, keyboard), BureauBreadcrumbs, BureauIconPicker, BureauCoverPicker.
-  - None of these are wired to the route yet.
+## Delivered in this change
 
-REMAINING (next agent, in order):
-1. `components/BureauSidebar.tsx`:
-   - Header (Bureau link + new page) and actions: Search / Home / Templates (`useOpenTemplateGallery({category: BUREAU_LANDING_TEMPLATE_CATEGORY})`).
-   - Sections: Favorites (BureauTreeItem section="favorites") and Pages tree (section="pages", role=tree).
-   - Root drop zone while dragging: `actions.movePage(id, null, 'inside')`.
-   - Footer: Trash (openTrash).
-2. `components/BureauPageView.tsx`, which loads the open page:
-   - Query: `useFindOneRecord` with BUREAU_PAGE_RECORD_GQL_FIELDS.
-   - Seed the record store with `useUpsertRecordsInStore` before mounting the editor. RichTextFieldEditor reads the store once per recordId.
-   - Then render: top bar (BureauBreadcrumbs, "Edited x ago", favorite LightIconButton, BureauPageActionsDropdown with readingControls), cover, hero icon (BureauIconPicker), "Add icon / Add cover" hover controls, and a title TextareaAutosize (debounced updatePage; Enter focuses the editor through editorRef).
-   - Editor: lazy `RichTextFieldEditor` with objectNameSingular='document' and fieldName='content'. It already provides the slash menu, autosave, versions, comments and export.
-   - Font size: `.bn-container .editor` = font.size.lg, or md when isSmallText. Max width 760px unless isFullWidth.
-   - Not-found state with "Back to Bureau" and "Open trash".
-3. `components/BureauHome.tsx`:
-   - Greeting, New page / Search / Templates buttons, recent pages grid (by updatedAt), starter templates (BUREAU_LANDING_TEMPLATE_LINKS).
-   - Empty state: `A2eContextualEmptyState surfaceKey="bureau"`.
-4. Modals:
-   - `BureauSearchModal`: ModalStatefulWrapper with id BUREAU_SEARCH_MODAL_ID and renderInDocumentBody. Matches titles client-side plus content via `content.markdown ilike` (debounced). Arrow keys and Enter.
-   - `BureauTrashModal`: list deleted pages with network-only fetch, Restore (actions.restorePage), Delete forever (two-step confirm, actions.destroyPage).
-5. `components/BureauWorkspace.tsx`:
-   - Wrap in the context provider, using `useBureauWorkspaceValue(activeDocumentId)`.
-   - Layout: sidebar 260px plus main. On mobile, show either the sidebar or the page.
-   - Render the modals here.
-6. `pages/bureau/BureauPage.tsx`:
-   - Read `documentId` with `useParams`.
-   - Gate on `useIsDocumentApplicationInstalled` and on both objects existing in `useObjectMetadataItems`.
-   - Render BureauWorkspace.
-   - Add route `BUREAU_PAGE_PATH` ('/bureau/:documentId') next to `AppPath.Bureau` in `modules/app/routing/utils/createWorkspaceRouteObjects.tsx`.
-   - Delete `bureau/components/BureauLanding.tsx` and its test. Keep constants/BureauLanding*.
-7. Finish up:
-   - `npx lingui extract --overwrite && npx lingui compile --typescript` in twenty-front.
-   - `npx oxlint src/modules/bureau` and a typecheck.
-   - Rebuild the front, take screenshots, run the testing agent, then commit and push.
+- [x] Connect the existing tree/actions to Twenty's native drawer and register
+  `/bureau/:documentId`; retain the Bureau landing, templates and record views.
+- [x] Load/seed the selected record before mounting the existing rich-text
+  editor. Save titles on debounce, blur and navigation; offer retry on failure.
+  Flush pending editor serialization when leaving a page.
+- [x] Mount breadcrumbs, personal favorites, emoji icons, cover picker and
+  reading controls. Respect native field read-only state and existing locks.
+  Older installations keep writing available and hide unavailable controls.
+- [x] Add title/body search, keyboard selection, escaped literal queries and
+  loading/error states. Pending searches cannot open an old result.
+- [x] Mount trash with paginated subtree restore, orphan recovery, Undo, and
+  an explicit permanent-deletion confirmation. Mutation controls follow object
+  permissions; server authorization remains authoritative.
+- [x] Add Notion import preview and progress: HTML/Markdown files or ZIPs,
+  nested page hierarchy, supported BlockNote formatting and tables, uploaded
+  local images/linked files, rewritten page links (including table cells).
+  Unreferenced assets are attached to the first imported page.
+- [x] Reuse the existing archive codec, sanitizer, BlockNote parser, URL mapper,
+  record mutations and attachment uploader. Stable page IDs and an in-dialog
+  session allow failed writes to resume without making duplicate pages.
+- [x] Bound archive processing: 100 MB input, 5,000 ZIP entries and 250 MB
+  uncompressed; reject traversal/duplicate paths. Keep the modal open while
+  importing and explain conversion limitations before creating records.
 
-## Phase 3 — Ship (Status: partial)
-- [x] Commit and push of infra fixes, compiled catalogs and the Bureau foundation (this commit).
-- [ ] Final push after REMAINING 1–7.
+## Evidence from this session
+
+- Frontend: uncached `tsgo`, direct type-aware oxlint; focused Bureau/import/
+  navigation/application-catalog Jest checks. Exact final counts and build
+  evidence are in [the phase report](plan/phases/phase-13-report.md).
+- Existing server install-readiness, already-installed and uninstall-preflight
+  tests: **3 suites, 17 tests passed**.
+- Local server was rebuilt from source. The backed-up development database
+  received the repository's two missing instance migrations. No database reset.
+- Existing Bureau package `0.2.14` built and published to the **local scratch
+  registry**; native CLI upgrade of the Apple seed workspace completed with
+  **1 upgraded, 0 failed**. The document written before upgrade survived.
+- Browser: login, full-page creation/writing and reload; imported HTML archive
+  with two nested pages, formatting/table, working page links and a successfully
+  loaded workspace-stored image; child breadcrumbs; personal favorite; body
+  search. These are local development proofs, not production certification.
+
+## Remaining release acceptance
+
+- [ ] Verify large real customer exports, missing/duplicate assets, malformed
+  archives, interruption/reconnect, low-storage and negative permissions in two
+  workspaces. The tested archive is a synthetic Notion-shaped fixture.
+- [ ] Notion database formulas, relations, view configurations, sharing and
+  comments need an explicit migration contract. HTML/Markdown export conversion
+  cannot reconstruct features that those formats do not represent. CSVs
+  remain files; they do not become native databases automatically. Nested ZIPs remain downloadable attachments; their contents are not recursively
+  converted. Unlinked assets are preserved as attachments.
+- [ ] Persist import recovery beyond closing/reloading the dialog; expose
+  per-file fidelity details and a subtree export/re-import journey.
+- [ ] Finish the broader PLAN.md gates: clean deployment provisioning, persona
+  bundle/retry/seeding, safe removal/reinstall on disposable workspaces,
+  populated upgrades for every app, cross-app permission journeys and worker
+  execution. Only the Bureau populated upgrade was run here.
+- [ ] Finish M8 backlinks widget/daily note and the full E14 embedded-view edit,
+  reload and export journey. Existing editor tools are reused, not newly
+  certified as lossless collaboration or export.
+- [ ] Cross-device/mobile and accessibility acceptance, cover-upload workflow,
+  concurrent-edit conflict recovery and production deployment checks remain
+  part of the release matrix even after focused local checks pass.

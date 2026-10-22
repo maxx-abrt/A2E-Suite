@@ -71,7 +71,7 @@ export const useBureauDocuments = () => {
   return {
     documents: records,
     tree,
-    isLoading: loading && records.length === 0,
+    isLoading: loading || hasNextPage === true,
     error,
     resyncDocuments,
   };

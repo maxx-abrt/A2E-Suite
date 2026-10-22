@@ -6,12 +6,12 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 type BureauFavoriteRecord = {
-  __typename?: string;
+  __typename: string;
   id: string;
   documentId: string | null;
 };
@@ -24,13 +24,18 @@ export const useBureauFavorites = () => {
   const userId = currentUser?.id;
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const { records, refetch } = useFindManyRecords<BureauFavoriteRecord>({
-    objectNameSingular: BUREAU_FAVORITE_OBJECT_NAME_SINGULAR,
-    filter: { userId: { eq: userId ?? '' } },
-    recordGqlFields: { id: true, documentId: true },
-    limit: QUERY_MAX_RECORDS,
-    skip: !isDefined(userId),
-  });
+  const { records, refetch, hasNextPage, fetchMoreRecords, loading } =
+    useFindManyRecords<BureauFavoriteRecord>({
+      objectNameSingular: BUREAU_FAVORITE_OBJECT_NAME_SINGULAR,
+      filter: { userId: { eq: userId ?? '' } },
+      recordGqlFields: { id: true, documentId: true },
+      limit: QUERY_MAX_RECORDS,
+      skip: !isDefined(userId),
+    });
+
+  useEffect(() => {
+    if (hasNextPage && !loading) void fetchMoreRecords();
+  }, [hasNextPage, loading, fetchMoreRecords]);
 
   const { createOneRecord } = useCreateOneRecord({
     objectNameSingular: BUREAU_FAVORITE_OBJECT_NAME_SINGULAR,

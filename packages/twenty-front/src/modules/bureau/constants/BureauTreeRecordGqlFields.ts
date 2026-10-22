@@ -1,6 +1,7 @@
 export const BUREAU_TREE_RECORD_GQL_FIELDS = {
   id: true,
   title: true,
+  kind: true,
   icon: true,
   parentId: true,
   position: true,
