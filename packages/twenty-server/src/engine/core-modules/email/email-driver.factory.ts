@@ -4,6 +4,8 @@ import { type EmailDriverInterface } from 'src/engine/core-modules/email/drivers
 
 import { LoggerDriver } from 'src/engine/core-modules/email/drivers/logger.driver';
 import { SmtpDriver } from 'src/engine/core-modules/email/drivers/smtp.driver';
+import { ResendDriver } from 'src/engine/core-modules/email/drivers/resend.driver';
+import { ResendApiClientService } from 'src/engine/core-modules/emailing-domain/drivers/resend/services/resend-api-client.service';
 import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
@@ -15,6 +17,7 @@ export class EmailDriverFactory extends DriverFactoryBase<EmailDriverInterface> 
   constructor(
     twentyConfigService: TwentyConfigService,
     configGroupHashService: ConfigGroupHashService,
+    private readonly resendApiClientService: ResendApiClientService,
   ) {
     super(twentyConfigService, configGroupHashService);
   }
@@ -24,6 +27,10 @@ export class EmailDriverFactory extends DriverFactoryBase<EmailDriverInterface> 
 
     if (driver === EmailDriver.LOGGER) {
       return 'logger';
+    }
+
+    if (driver === EmailDriver.RESEND) {
+      return `resend|${this.configGroupHashService.computeHash(ConfigVariablesGroup.RESEND_SETTINGS)}`;
     }
 
     if (driver === EmailDriver.SMTP) {
@@ -44,6 +51,9 @@ export class EmailDriverFactory extends DriverFactoryBase<EmailDriverInterface> 
       case EmailDriver.LOGGER:
         return new LoggerDriver();
 
+      case EmailDriver.RESEND:
+        return new ResendDriver(this.resendApiClientService);
+
       case EmailDriver.SMTP: {
         const host = this.twentyConfigService.get('EMAIL_SMTP_HOST');
         const port = this.twentyConfigService.get('EMAIL_SMTP_PORT');
@@ -62,7 +72,12 @@ export class EmailDriverFactory extends DriverFactoryBase<EmailDriverInterface> 
           secure?: boolean;
           ignoreTLS?: boolean;
           requireTLS?: boolean;
-        } = { host, port };
+        } = {
+          host,
+          port,
+          secure: !noTLS && (port === 465 || port === 2465),
+          requireTLS: !noTLS && port !== 465 && port !== 2465,
+        };
 
         if (user && pass) {
           options.auth = { user, pass };

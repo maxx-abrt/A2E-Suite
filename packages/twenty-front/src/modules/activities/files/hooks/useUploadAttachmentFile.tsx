@@ -28,7 +28,9 @@ export const useUploadAttachmentFile = () => {
   const uploadAttachmentFile = async (
     file: File,
     targetableObject: ActivityTargetableObject,
+    options?: { assertCanContinue?: () => void },
   ) => {
+    options?.assertCanContinue?.();
     assertIsDefinedOrThrow(
       filesFieldMetadataId,
       new Error(t`File field not found for attachment object`),
@@ -37,7 +39,9 @@ export const useUploadAttachmentFile = () => {
     const uploadedFile = await directUploadFile(file, {
       fileFolder: FileFolder.FilesField,
       fieldMetadataId: filesFieldMetadataId,
+      assertCanContinue: options?.assertCanContinue,
     });
+    options?.assertCanContinue?.();
 
     if (!isDefined(uploadedFile)) {
       throw new Error("Couldn't upload the attachment.");
@@ -59,6 +63,7 @@ export const useUploadAttachmentFile = () => {
     } as Partial<Attachment>;
 
     await createOneAttachment(attachmentToCreate);
+    options?.assertCanContinue?.();
 
     return {
       attachmentAbsoluteURL: uploadedFile.url,

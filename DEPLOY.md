@@ -143,9 +143,11 @@ Rules:
   `FALLBACK_ENCRYPTION_KEY` (encrypted data in the DB depends on it).
 
 Everything else has a sane default (Postgres user/db, Redis URL, local file
-storage). Optional extras (S3 storage, SMTP email, Google/Microsoft SSO) are
-listed commented-out in the compose file — add them in the same tab only if
-you need them.
+storage). Email settings are passed to both server and worker; configure them
+in the same tab when needed. For account verification, password resets and
+invitations through Resend, follow the [transactional email guide](docs/resend-email.md).
+Do not enable required email verification until a real delivery journey passes.
+S3 storage and Google/Microsoft SSO remain optional extras.
 
 ## Part 5 — Domain + deploy
 

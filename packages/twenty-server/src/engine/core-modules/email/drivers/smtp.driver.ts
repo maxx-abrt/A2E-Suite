@@ -19,13 +19,8 @@ export class SmtpDriver implements EmailDriverInterface {
   }
 
   async send(sendMailOptions: SendMailOptions): Promise<void> {
-    this.transport
-      .sendMail(sendMailOptions)
-      .then(() =>
-        this.logger.log(`Email to '${sendMailOptions.to}' successfully sent`),
-      )
-      .catch((err) =>
-        this.logger.error(`sending email to '${sendMailOptions.to}': ${err}`),
-      );
+    // The queue must see delivery failures to retry the job instead of completing it.
+    await this.transport.sendMail(sendMailOptions);
+    this.logger.log('Email accepted by SMTP server');
   }
 }

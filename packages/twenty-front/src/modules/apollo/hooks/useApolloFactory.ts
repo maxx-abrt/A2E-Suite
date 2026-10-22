@@ -19,6 +19,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { t } from '@lingui/core/macro';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
@@ -66,6 +67,12 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
       currentWorkspaceMember: currentWorkspaceMember,
       currentWorkspace: currentWorkspace,
       appVersion,
+      onWorkspaceContextMismatch: () => {
+        enqueueErrorSnackBar({
+          message: t`Your session is connected to a different workspace. Sign in to this workspace again to continue.`,
+          options: { dedupeKey: 'workspace-context-mismatch' },
+        });
+      },
       onUnauthenticatedError: () => {
         setIsCookieAuthActive(false);
         setCurrentUser(null);

@@ -1,4 +1,5 @@
 import { type Response } from 'supertest';
+import { WORKSPACE_REQUEST_HEADER } from 'twenty-shared/constants';
 import { buildWorkspaceOriginForSubdomain } from 'test/integration/graphql/utils/build-apple-workspace-origin.util';
 import { getAuthTokensFromLoginTokenQueryFactory } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.query-factory.util';
 import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
@@ -9,6 +10,7 @@ import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-se
 type RequestHeaders = {
   originHeader?: string;
   cookieHeader?: string;
+  workspaceIdHeader?: string;
 };
 
 // Supertest requests dispatch lazily, so Origin and Cookie can be set on the
@@ -18,7 +20,7 @@ type RequestHeaders = {
 // util's default admin token.
 export const postMetadataOperationWithHeaders = (
   graphqlOperation: Parameters<typeof makeMetadataAPIRequest>[0],
-  { originHeader, cookieHeader }: RequestHeaders,
+  { originHeader, cookieHeader, workspaceIdHeader }: RequestHeaders,
   expectedStatus = 200,
 ) => {
   const graphqlRequest = makeMetadataAPIRequest(graphqlOperation, null);
@@ -29,6 +31,10 @@ export const postMetadataOperationWithHeaders = (
 
   if (cookieHeader !== undefined) {
     graphqlRequest.set('Cookie', cookieHeader);
+  }
+
+  if (workspaceIdHeader !== undefined) {
+    graphqlRequest.set(WORKSPACE_REQUEST_HEADER, workspaceIdHeader);
   }
 
   return graphqlRequest.expect(expectedStatus);
@@ -104,7 +110,12 @@ export const extractSessionCookie = (
   response: Response,
   cookieName?: string,
 ):
-  | { rawCookie: string; cookieName: string; cookieHeader: string; sessionToken: string }
+  | {
+      rawCookie: string;
+      cookieName: string;
+      cookieHeader: string;
+      sessionToken: string;
+    }
   | undefined => {
   const candidateNames =
     cookieName === undefined ? SESSION_COOKIE_NAMES : [cookieName];

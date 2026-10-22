@@ -28,6 +28,7 @@ import {
   type SelectionNode,
 } from 'graphql';
 import isEmpty from 'lodash.isempty';
+import { WORKSPACE_REQUEST_HEADER } from 'twenty-shared/constants';
 import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
 
 const logger = loggerLink(() => 'Twenty');
@@ -41,6 +42,7 @@ export interface Options {
   onError?: (err: readonly GraphQLFormattedError[] | undefined) => void;
   onNetworkError?: (err: Error | ServerParseError | ServerError) => void;
   onUnauthenticatedError?: () => void;
+  onWorkspaceContextMismatch?: () => void;
   onAppVersionMismatch?: (message: string) => void;
   onPayloadTooLarge?: (message: string) => void;
   currentWorkspaceMember: CurrentWorkspaceMember | null;
@@ -66,6 +68,7 @@ export class ApolloFactory implements ApolloManager {
       onError: onErrorCb,
       onNetworkError,
       onUnauthenticatedError,
+      onWorkspaceContextMismatch,
       onAppVersionMismatch,
       onPayloadTooLarge,
       currentWorkspaceMember,
@@ -103,6 +106,9 @@ export class ApolloFactory implements ApolloManager {
             ...headers,
             ...optionHeaders,
             'x-locale': locale,
+            ...(isDefined(this.currentWorkspace) && {
+              [WORKSPACE_REQUEST_HEADER]: this.currentWorkspace.id,
+            }),
             ...(isDefined(this.appVersion) && {
               'X-App-Version': this.appVersion,
             }),
@@ -214,7 +220,15 @@ export class ApolloFactory implements ApolloManager {
               }
               case 'NOT_FOUND':
               case 'BAD_USER_INPUT':
+                return;
               case 'FORBIDDEN':
+                if (
+                  graphQLError.extensions?.subCode ===
+                  'WORKSPACE_CONTEXT_MISMATCH'
+                ) {
+                  onWorkspaceContextMismatch?.();
+                }
+                return;
               case 'CONFLICT':
               case 'METADATA_VALIDATION_FAILED':
               case 'RATE_LIMITED':

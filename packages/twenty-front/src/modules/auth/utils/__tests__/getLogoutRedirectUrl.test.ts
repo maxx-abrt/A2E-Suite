@@ -11,13 +11,13 @@ describe('getLogoutRedirectUrl', () => {
     ).toBe('https://app.example.com/sign-in-up');
   });
 
-  it('preserves an explicitly configured landing page', () => {
+  it('returns to the full sign-in flow after logout even with a configured landing page', () => {
     expect(
       getLogoutRedirectUrl({
         landingPageUrl: 'https://www.example.com',
         workspaceAgnosticSignInUrl: 'https://app.example.com/sign-in-up',
       }),
-    ).toBe('https://www.example.com');
+    ).toBe('https://app.example.com/sign-in-up');
   });
   it.each([
     'http://localhost:3002',

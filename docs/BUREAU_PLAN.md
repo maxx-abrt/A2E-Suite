@@ -6,7 +6,45 @@ Updated **2026-10-22**, starting from `2741c7e2`. PLAN.md remains the release
 acceptance reference. This replaces the Emergent handoff and its estimated
 completion percentage; the old preview environment is not the local runtime.
 
+## 2026-10-23 home increment
+
+The Bureau home now combines a small animated pixel progress card, a native
+editable task sheet, recent pages and starter templates. It uses Twenty theme
+tokens for both themes and collapses to one column on narrow screens. Motion
+honors `prefers-reduced-motion`. This is the in-app Bureau home; no separate
+public marketing website was added.
+
+The sheet reuses saved native task table views, including their fields, filters,
+sorts, inline edits and record-opening behavior. It prefers a view containing
+the readable priority field when available, otherwise the native index. The
+full task link retains the selected view. Table state is isolated from the
+ordinary task index and resets when workspace object metadata changes. Native
+permissions gate read and update paths. Priority and parent/subtask relations
+continue to require the existing Projects application fields; this increment
+does not install Projects or introduce another task model or nested task editor.
+
+Daily progress uses server aggregate counts across tasks assigned to the
+current workspace member and due during today in the member's configured time
+zone. It follows Projects' pipeline status when that field is readable, with
+native status as the fallback for tasks whose app pipeline is unset. Counts
+refresh through the existing native mutation/aggregate path. Day boundaries
+advance at midnight or when the window regains focus. Loading and provider
+errors do not display invented completion percentages; an empty day shows 0%.
+
+Thirty focused home/sheet/progress/embedded-view tests and the production
+frontend build passed. Browser layout, real inline-edit persistence, cross-user
+updates and production journeys still need acceptance verification; see the
+[dated phase report](plan/phases/phase-13-report.md).
+
 ## Product contract
+
+The **2026-10-23 Notion import hardening** adds native column/callout/checklist
+conversion, source-media URL preservation, file figures, Notion page-link
+remapping, per-path review details, raw ZIP path validation, empty-page support
+and workspace checks through the upload/attachment pipeline. Existing native
+parsers, records, permissions and storage remain in use. See the
+[compatibility and recovery guide](notion-import.md); full Notion parity and
+live two-account acceptance remain unverified.
 
 - One Twenty shell, workspace identity, permission model and storage system.
 - App navigation focuses the existing native folder when its link is opened;

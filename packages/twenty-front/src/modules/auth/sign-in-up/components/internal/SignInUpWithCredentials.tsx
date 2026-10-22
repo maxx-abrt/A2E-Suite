@@ -47,6 +47,7 @@ export const SignInUpWithCredentials = ({
 
   const [signInUpStep, setSignInUpStep] = useAtomState(signInUpStepState);
   const [showErrors, setShowErrors] = useState(false);
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
   const captcha = useAtomStateValue(captchaState);
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
   const isRequestingCaptchaToken = useAtomStateValue(
@@ -57,12 +58,8 @@ export const SignInUpWithCredentials = ({
   );
   const hasMultipleAuthMethods = useHasMultipleAuthMethods();
 
-  const {
-    signInUpMode,
-    continueWithEmail,
-    continueWithCredentials,
-    submitCredentials,
-  } = useSignInUp(form);
+  const { signInUpMode, continueWithCredentials, submitCredentials } =
+    useSignInUp(form);
 
   const isLastUsed =
     signInUpStep === SignInUpStep.Init &&
@@ -74,14 +71,18 @@ export const SignInUpWithCredentials = ({
 
     if (isSubmitButtonDisabled) return;
 
-    if (signInUpStep === SignInUpStep.Init) {
-      continueWithEmail();
-    } else if (signInUpStep === SignInUpStep.Email) {
-      if (isDefined(form?.formState?.errors?.email)) {
-        setShowErrors(true);
-        return;
+    if (
+      signInUpStep === SignInUpStep.Init ||
+      signInUpStep === SignInUpStep.Email
+    ) {
+      setShowErrors(true);
+      if (!(await form.trigger('email'))) return;
+      setIsCheckingEmail(true);
+      try {
+        await continueWithCredentials();
+      } finally {
+        setIsCheckingEmail(false);
       }
-      continueWithCredentials();
     } else if (signInUpStep === SignInUpStep.Password) {
       if (!form.formState.isSubmitting) {
         setShowErrors(true);
@@ -92,6 +93,9 @@ export const SignInUpWithCredentials = ({
 
   const onEmailChange = (email: string) => {
     if (email !== form.getValues('email')) {
+      form.setValue('password', '');
+      form.setValue('captchaToken', '');
+      setShowErrors(false);
       setSignInUpStep(SignInUpStep.Email);
     }
   };
@@ -150,6 +154,7 @@ export const SignInUpWithCredentials = ({
     signInUpStep === SignInUpStep.Password;
 
   const isSubmitButtonDisabled =
+    isCheckingEmail ||
     isEmailStepSubmitButtonDisabledCondition ||
     isPasswordStepSubmitButtonDisabledCondition ||
     isSignUpBlockedByDDLLock;
@@ -160,12 +165,10 @@ export const SignInUpWithCredentials = ({
         signInUpStep === SignInUpStep.Email ||
         signInUpStep === SignInUpStep.Init) && (
         <StyledForm onSubmit={handleSubmit}>
-          {signInUpStep !== SignInUpStep.Init && (
-            <SignInUpEmailField
-              showErrors={showErrors}
-              onInputChange={onEmailChange}
-            />
-          )}
+          <SignInUpEmailField
+            showErrors={showErrors}
+            onInputChange={onEmailChange}
+          />
           {signInUpStep === SignInUpStep.Password && (
             <SignInUpPasswordField
               showErrors={showErrors}
@@ -179,7 +182,11 @@ export const SignInUpWithCredentials = ({
               variant={
                 signInUpStep === SignInUpStep.Init ? 'secondary' : 'primary'
               }
-              Icon={() => (form.formState.isSubmitting ? <Loader /> : null)}
+              Icon={() =>
+                form.formState.isSubmitting || isCheckingEmail ? (
+                  <Loader />
+                ) : null
+              }
               disabled={isSubmitButtonDisabled}
               fullWidth
             />

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type SendMailOptions } from 'nodemailer';
+import { randomUUID } from 'crypto';
 
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -17,7 +18,10 @@ export class EmailService {
   async send(sendMailOptions: SendMailOptions): Promise<void> {
     await this.messageQueueService.add<SendMailOptions>(
       EmailSenderJob.name,
-      sendMailOptions,
+      {
+        ...sendMailOptions,
+        messageId: sendMailOptions.messageId ?? `<${randomUUID()}@a2e.invalid>`,
+      },
       { retryLimit: 3 },
     );
   }

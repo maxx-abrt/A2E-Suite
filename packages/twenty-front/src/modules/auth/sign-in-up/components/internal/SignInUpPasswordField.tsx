@@ -51,6 +51,12 @@ export const SignInUpPasswordField = ({
               autoFocus
               value={value}
               type="password"
+              autoComplete={
+                signInUpMode === SignInUpMode.SignUp
+                  ? 'new-password'
+                  : 'current-password'
+              }
+              label={t`Password`}
               placeholder={t`Password`}
               onBlur={onBlur}
               onChange={onChange}

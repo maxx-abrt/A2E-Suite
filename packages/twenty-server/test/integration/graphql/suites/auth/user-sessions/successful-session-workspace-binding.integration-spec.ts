@@ -1,7 +1,10 @@
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+import { WORKSPACE_REQUEST_HEADER } from 'twenty-shared/constants';
+import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 
 import {
   extractSessionCookie,
+  hasClearingCookie,
   postMetadataOperationWithHeaders,
   signInWithCookieCapture,
 } from 'test/integration/graphql/suites/auth/user-sessions/utils/sign-in-with-cookie-capture.util';
@@ -100,5 +103,58 @@ describe('successful session workspace binding (integration)', () => {
     expect(ycContext.currentUserWorkspace.id).toBe(
       USER_WORKSPACE_DATA_SEED_IDS.TIM_ACME,
     );
+  });
+
+  it('accepts a workspace assertion matching the authenticated session', async () => {
+    const response = await postMetadataOperationWithHeaders(
+      currentUserWorkspaceContextQueryFactory(),
+      {
+        originHeader: ALLOWED_ORIGIN,
+        cookieHeader: appleSessionCookieHeader,
+        workspaceIdHeader: SEED_APPLE_WORKSPACE_ID,
+      },
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.currentUser.currentWorkspace.id).toBe(
+      SEED_APPLE_WORKSPACE_ID,
+    );
+  });
+
+  it('rejects an old tab after another workspace cookie is presented without clearing that cookie', async () => {
+    const response = await postMetadataOperationWithHeaders(
+      currentUserWorkspaceContextQueryFactory(),
+      {
+        originHeader: ALLOWED_ORIGIN,
+        cookieHeader: ycSessionCookieHeader,
+        workspaceIdHeader: SEED_APPLE_WORKSPACE_ID,
+      },
+    );
+
+    expect(response.body.data).toBeUndefined();
+    expect(response.body.errors).toEqual([
+      expect.objectContaining({
+        extensions: expect.objectContaining({
+          code: 'FORBIDDEN',
+          subCode: 'WORKSPACE_CONTEXT_MISMATCH',
+        }),
+      }),
+    ]);
+    expect(hasClearingCookie(response)).toBe(false);
+
+    const context = await fetchWorkspaceContext(ycSessionCookieHeader);
+
+    expect(context.currentWorkspace.id).toBe(SEED_YCOMBINATOR_WORKSPACE_ID);
+  });
+
+  it('rejects REST API key requests that assert another workspace', async () => {
+    const response = await makeRestAPIRequest({
+      method: 'get',
+      path: '/companies?limit=1',
+    })
+      .set(WORKSPACE_REQUEST_HEADER, SEED_YCOMBINATOR_WORKSPACE_ID)
+      .expect(403);
+
+    expect(response.body.error).toBe('WORKSPACE_CONTEXT_MISMATCH');
   });
 });

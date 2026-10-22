@@ -1,3 +1,4 @@
+import { ResendApiClientService } from 'src/engine/core-modules/emailing-domain/drivers/resend/services/resend-api-client.service';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { EmailDriverFactory } from 'src/engine/core-modules/email/email-driver.factory';
@@ -21,6 +22,7 @@ describe('EmailDriverFactory', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EmailDriverFactory,
+        { provide: ResendApiClientService, useValue: { sendEmail: jest.fn() } },
         {
           provide: TwentyConfigService,
           useValue: mockTwentyConfigService,
