@@ -532,3 +532,21 @@ checks on the first production deployment.
 **Missing for tick:** prod-composition rehearsal on real infra (deferred behind first production deployment, maintainer-confirmed); D06 CI-source decision (owner decision, not executor scope).
 **Do not redo:** version gate + redis pins + DEPLOY.md matrix are in place; do not raise the runtime floor to 16 without a migration story for existing deployments.
 **Next:** P0.5 is now executor-complete except Tier-2/prod items; next dependency-ready task per execution order is P1.6a (template contracts).
+
+## 2026-10-22 — Coolify deployment investigation and corrections
+
+Supplied Compose was stale: empty APP_SECRET fallback, disabled production
+functions, no startup grace period or worker probe. Public instance readiness
+returned DB/Redis up; client config confirmed single-workspace mode. Coolify logs
+showed the worker blocked by an unhealthy server dependency. GitHub image builds
+for a104d07e and 5d42c67c failed, so pulling latest cannot deliver those revisions.
+The latter failed the broad tarball count assertion; collect each declared app's
+exact version instead, excluding old artifacts. Added explicit frontend fflate
+dependency, honest provisioning/installation failures, catalog eviction, image
+revision logging, pull policy, account/email switching and visible app empty/error
+states. Local production Vite build passed, server SWC build passed, both direct
+package typechecks passed after correcting an unavailable guard import; 28 server
+regressions and 32 frontend tests passed across focused runs. Local updated worker
+initialized and processed queue jobs; readiness returned READY. Full Nx build was
+stopped after local barrel-generation stalled. Docker unavailable locally. Latest
+image build and production redeploy remain unverified; no production data changed.

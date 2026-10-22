@@ -41,14 +41,12 @@ describe('SettingsA2eSuiteSection', () => {
   ])(
     'keeps application discovery visible when $message',
     ({ isLoading, hasError, message }) => {
-      jest
-        .mocked(useA2eSuiteApplications)
-        .mockReturnValue({
-          installedApplications: [],
-          availableApplications: [],
-          isLoading,
-          hasError,
-        });
+      jest.mocked(useA2eSuiteApplications).mockReturnValue({
+        installedApplications: [],
+        availableApplications: [],
+        isLoading,
+        hasError,
+      });
       i18n.load('en', {});
       i18n.activate('en');
       render(

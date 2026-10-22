@@ -322,3 +322,39 @@ current authentication and recovery gaps.
 
 Reference (deeper detail, plain-Docker alternative, S3/SMTP/SSO env tables):
 [`packages/twenty-docker/SELF-HOSTING.md`](packages/twenty-docker/SELF-HOSTING.md)
+
+## Coolify recovery and verifying updates (2026-10-22)
+
+An Empty Compose service stores its own Compose configuration. A Git push does
+not replace that saved configuration. Update the **existing service** with
+`docker-compose.coolify.yml` from this repository, preserve its database/file
+volumes and secrets, and save before deploying. Do not create another service
+as an update: it can receive different persistent volumes.
+
+Both services use `LOGIC_FUNCTION_TYPE=LOCAL` for bundled application actions.
+`APP_SECRET` defaults to `ENCRYPTION_KEY`, rather than an empty value. The server
+gets a five-minute startup grace period for migrations/provisioning. The worker
+waits for server readiness and has its own probe on port 3099. Empty worker logs
+while the server is unhealthy mean it may not have started yet.
+
+Wait for **CD Docker image** to succeed before redeploying. A failed build does
+not update `latest`. Prefer setting `TAG` to the full Git commit SHA from a
+successful build; both services then use the same reproducible image. The
+entrypoint prints `revision=...` and the image carries the OCI revision label.
+Compare that revision with the intended commit after deploying. Package-version
+tags and `latest` are mutable. The shipped pull policy requests the selected
+image on deployment; restarting an existing container alone does not update it.
+
+A healthy `/readyz` proves database/Redis connectivity, not every app journey.
+Check server provisioning output and Settings → Applications, then open Bureau.
+Provisioning failures now stop startup instead of silently serving missing apps;
+fix the reported package/workspace error and retry. The explicit
+`DISABLE_BUNDLED_APP_PROVISIONING=true` opt-out remains available for deployments
+that intentionally manage app installation separately.
+
+Single-workspace mode remains the default. Different accounts need workspace
+membership/invitations. For several workspaces on one instance, configure
+`IS_MULTIWORKSPACE_ENABLED=true`, `DEFAULT_SUBDOMAIN`, wildcard DNS, TLS and proxy
+routing for Twenty's workspace domains together. Do not enable the flag alone
+on a domain that only routes the current workspace. Logout returns to central
+sign-in in multi-workspace mode unless a landing URL is explicitly configured.

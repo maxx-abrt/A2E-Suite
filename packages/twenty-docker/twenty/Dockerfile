@@ -37,10 +37,12 @@ RUN set -eu; for app in a2e-documents a2e-accounting a2e-projects a2e-chat a2e-d
     done
 
 # Collect all tarballs into a single dist directory.
-RUN mkdir -p /apps/dist && \
-    find /apps -name "*.tgz" -path "*/.twenty/output/*" -exec cp {} /apps/dist/ \; && \
-    test "$(find /apps/dist -name '*.tgz' | wc -l)" -eq 7 && \
-    echo "Bundled tarballs:" && ls /apps/dist/
+RUN set -eu; mkdir -p /apps/dist; \
+    for app in a2e-documents a2e-accounting a2e-projects a2e-chat a2e-drive a2e-crm a2e-links; do \
+      version=$(node -p "require('/apps/$app/package.json').version"); \
+      cp "/apps/$app/.twenty/output/$app-$version.tgz" /apps/dist/; \
+    done; \
+    echo "Bundled tarballs:"; ls /apps/dist/
 
 
 # ===========================================================================
