@@ -21,7 +21,7 @@ const StyledCardsGrid = styled.div`
 
 export const SettingsA2eSuiteSection = () => {
   const { t } = useLingui();
-  const { installedApplications, availableApplications } =
+  const { installedApplications, availableApplications, isLoading, hasError } =
     useA2eSuiteApplications();
 
   const availableUniversalIdentifiers = useMemo(
@@ -33,19 +33,22 @@ export const SettingsA2eSuiteSection = () => {
     universalIdentifiers: availableUniversalIdentifiers,
   });
 
-  if (
-    installedApplications.length === 0 &&
-    availableApplications.length === 0
-  ) {
-    return null;
-  }
-
   return (
     <Section>
       <H2Title
         title={t`A2E Suite`}
         description={t`The all-in-one workspace modules built into this suite. Install only what you need.`}
       />
+      {isLoading && <p>{t`Loading workspace applications…`}</p>}
+      {hasError && (
+        <p role="alert">{t`Applications could not be loaded. Reload this page to try again.`}</p>
+      )}
+      {!isLoading &&
+        !hasError &&
+        installedApplications.length === 0 &&
+        availableApplications.length === 0 && (
+          <p>{t`A2E applications are not available on this server yet. Ask your administrator to check bundled app provisioning in the deployment logs, then reload this page.`}</p>
+        )}
       {installedApplications.length > 0 && (
         <SettingsApplicationsTable applications={installedApplications} />
       )}

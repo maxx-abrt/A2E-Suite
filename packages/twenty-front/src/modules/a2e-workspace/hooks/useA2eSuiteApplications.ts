@@ -15,12 +15,18 @@ import { type ApplicationWithoutRelation } from '~/pages/settings/applications/t
 export const useA2eSuiteApplications = (): {
   installedApplications: ApplicationWithoutRelation[];
   availableApplications: MarketplaceApp[];
+  isLoading: boolean;
+  hasError: boolean;
 } => {
-  const { data } = useQuery<FindManyApplicationsQuery>(
+  const { data, loading, error } = useQuery<FindManyApplicationsQuery>(
     FindManyApplicationsDocument,
   );
 
-  const { data: catalogApps } = useMarketplaceApps({
+  const {
+    data: catalogApps,
+    isLoading: isCatalogLoading,
+    error: catalogError,
+  } = useMarketplaceApps({
     universalIdentifiers: A2E_SUITE_APPLICATION_UNIVERSAL_IDENTIFIERS,
   });
 
@@ -53,5 +59,10 @@ export const useA2eSuiteApplications = (): {
     [catalogApps, installedUniversalIdentifiers],
   );
 
-  return { installedApplications, availableApplications };
+  return {
+    installedApplications,
+    availableApplications,
+    isLoading: loading || isCatalogLoading,
+    hasError: Boolean(error || catalogError),
+  };
 };

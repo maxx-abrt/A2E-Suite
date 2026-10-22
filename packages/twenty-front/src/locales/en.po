@@ -349,6 +349,12 @@ msgstr "{0} of {1}"
 msgid "{0} opted out of this topic"
 msgstr "{0} opted out of this topic"
 
+#. js-lingui-id: FePH12
+#. placeholder {0}: plan.pages.length
+#: src/modules/bureau/components/BureauImportModal.tsx
+msgid "{0} pages ready to import"
+msgstr "{0} pages ready to import"
+
 #. js-lingui-id: 9tP5xw
 #. placeholder {0}: workspaceMembers.length
 #: src/modules/realtime/components/RealtimeTypingIndicator.tsx
@@ -803,6 +809,11 @@ msgstr "{visibleFieldsCount} selected"
 msgid "{visibleFieldsCount} visible fields"
 msgstr "{visibleFieldsCount} visible fields"
 
+#. js-lingui-id: S1pwli
+#: src/modules/bureau/components/BureauImportModal.tsx
+msgid "{warningCount} items need review. Some unsupported or missing content could not be converted. Keep your original export."
+msgstr "{warningCount} items need review. Some unsupported or missing content could not be converted. Keep your original export."
+
 #. js-lingui-id: riMLMq
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
 msgid "{workflowRunIteratorSubStepIterationsCount, plural, one {# item} other {# items}}"
@@ -1093,6 +1104,11 @@ msgstr "A watched record changed"
 #: src/modules/first-open-help/constants/FirstOpenHelpTopics.ts
 msgid "A workspace with a single member hides team-only surfaces such as presence and shared widgets. Inviting a second member brings them back; nothing created while solo is lost."
 msgstr "A workspace with a single member hides team-only surfaces such as presence and shared widgets. Inviting a second member brings them back; nothing created while solo is lost."
+
+#. js-lingui-id: RiY7KK
+#: src/modules/a2e-workspace/components/SettingsA2eSuiteSection.tsx
+msgid "A2E applications are not available on this server yet. Ask your administrator to check bundled app provisioning in the deployment logs, then reload this page."
+msgstr "A2E applications are not available on this server yet. Ask your administrator to check bundled app provisioning in the deployment logs, then reload this page."
 
 #. js-lingui-id: hdn5qA
 #: src/modules/a2e-workspace/components/SettingsA2eSuiteSection.tsx
@@ -1439,6 +1455,12 @@ msgstr "Add a step"
 msgid "Add a step to this workflow that "
 msgstr "Add a step to this workflow that "
 
+#. js-lingui-id: lUGQ1m
+#: src/modules/bureau/components/BureauPageActionsDropdown.tsx
+#: src/modules/bureau/components/BureauTreeItem.tsx
+msgid "Add a sub-page"
+msgstr "Add a sub-page"
+
 #. js-lingui-id: CAnl/q
 #: src/modules/calendar/components/CalendarWeekView.tsx
 msgid "Add a task due {dayLabel}"
@@ -1547,6 +1569,11 @@ msgstr "Add conferencing"
 msgid "Add connection"
 msgstr "Add connection"
 
+#. js-lingui-id: 3kS8Hp
+#: src/modules/bureau/components/BureauPageView.tsx
+msgid "Add cover"
+msgstr "Add cover"
+
 #. js-lingui-id: 3AphJD
 #: src/modules/settings/billing/components/AddPaymentMethodForm.tsx
 #: src/modules/settings/billing/components/StartSubscriptionConfirmationModal.tsx
@@ -1619,6 +1646,11 @@ msgstr "Add filter rule"
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddRootStepFilterButton.tsx
 msgid "Add first filter"
 msgstr "Add first filter"
+
+#. js-lingui-id: zFIUaq
+#: src/modules/bureau/components/BureauPageView.tsx
+msgid "Add icon"
+msgstr "Add icon"
 
 #. js-lingui-id: 7K4Hxr
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -1871,6 +1903,12 @@ msgstr "Add to blocklist"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Add to Favorite"
 msgstr "Add to Favorite"
+
+#. js-lingui-id: pBsoKL
+#: src/modules/bureau/components/BureauPageActionsDropdown.tsx
+#: src/modules/bureau/components/BureauPageView.tsx
+msgid "Add to favorites"
+msgstr "Add to favorites"
 
 #. js-lingui-id: hKNhfF
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
@@ -2356,6 +2394,12 @@ msgstr "All App Registrations"
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "All application registrations across the platform, including orphaned marketplace apps ({totalCount} matching)"
 msgstr "All application registrations across the platform, including orphaned marketplace apps ({totalCount} matching)"
+
+#. js-lingui-id: 01+9hA
+#: src/modules/navigation/components/FocusedAppNavigationDrawerContent.tsx
+#: src/modules/navigation/components/FocusedAppNavigationDrawerContent.tsx
+msgid "All apps"
+msgstr "All apps"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -2984,6 +3028,11 @@ msgstr "Applications - Developer"
 msgid "Applications below are not vetted. Use at your own risk."
 msgstr "Applications below are not vetted. Use at your own risk."
 
+#. js-lingui-id: fhd1KY
+#: src/modules/a2e-workspace/components/SettingsA2eSuiteSection.tsx
+msgid "Applications could not be loaded. Reload this page to try again."
+msgstr "Applications could not be loaded. Reload this page to try again."
+
 #. js-lingui-id: DB8zMK
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 msgid "Apply"
@@ -3541,10 +3590,21 @@ msgstr "Axis name"
 msgid "Back"
 msgstr "Back"
 
+#. js-lingui-id: uQZ27I
+#. placeholder {0}: activeFolder?.folderName ?? 'Bureau'
+#: src/modules/navigation/components/FocusedAppNavigationDrawerContent.tsx
+msgid "Back to {0}"
+msgstr "Back to {0}"
+
 #. js-lingui-id: wWjfh4
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
 msgid "Back to {text}"
 msgstr "Back to {text}"
+
+#. js-lingui-id: km8lJJ
+#: src/modules/bureau/components/BureauPageView.tsx
+msgid "Back to Bureau"
+msgstr "Back to Bureau"
 
 #. js-lingui-id: Dht9W3
 #: src/pages/not-found/NotFound.tsx
@@ -3794,6 +3854,11 @@ msgstr "Both"
 msgid "Bounce"
 msgstr "Bounce"
 
+#. js-lingui-id: iu7tUI
+#: src/modules/bureau/components/BureauBreadcrumbs.tsx
+msgid "Breadcrumb"
+msgstr "Breadcrumb"
+
 #. js-lingui-id: 1hGdwj
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -3904,7 +3969,9 @@ msgstr "Bundled with {applicationName}"
 #. js-lingui-id: vON7Ce
 #: src/modules/a2e-help/constants/A2eHelpDocPages.ts
 #: src/modules/blocknote-editor/utils/slashMenuGroups.ts
+#: src/modules/bureau/components/BureauBreadcrumbs.tsx
 #: src/modules/bureau/components/BureauLanding.tsx
+#: src/modules/bureau/components/BureauNavigation.tsx
 #: src/modules/onboarding/constants/OnboardingAppCatalogue.ts
 #: src/modules/onboarding/constants/OnboardingInstallableApps.ts
 #: src/utils/title-utils.ts
@@ -3915,6 +3982,11 @@ msgstr "Bureau"
 #: src/modules/onboarding/constants/OnboardingInstallableApps.ts
 msgid "Bureau Discussions"
 msgstr "Bureau Discussions"
+
+#. js-lingui-id: jS11Zl
+#: src/modules/bureau/components/BureauNavigation.tsx
+msgid "Bureau pages"
+msgstr "Bureau pages"
 
 #. js-lingui-id: qYqRyj
 #: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
@@ -4183,6 +4255,7 @@ msgstr "Can't scan? Copy the"
 
 #. js-lingui-id: dEgA5A
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
+#: src/modules/bureau/components/BureauTrashModal.tsx
 #: src/modules/calendar/components/CalendarEventComposer.tsx
 #: src/modules/calendar/components/CalendarSeriesScopeDialog.tsx
 #: src/modules/calendar/components/CalendarTaskQuickCreateDialog.tsx
@@ -4405,6 +4478,11 @@ msgstr "Cc/Bcc"
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardEditorSideMenu.tsx
 msgid "Change Color"
 msgstr "Change Color"
+
+#. js-lingui-id: isn2eh
+#: src/modules/bureau/components/BureauPageView.tsx
+msgid "Change cover"
+msgstr "Change cover"
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -4961,6 +5039,7 @@ msgstr "Code your function"
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/bureau/components/BureauTreeItem.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -5003,6 +5082,7 @@ msgstr "Collapse to side panel"
 
 #. js-lingui-id: jZlrte
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/bureau/components/BureauCoverPicker.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption.tsx
 msgid "Color"
 msgstr "Color"
@@ -5797,6 +5877,7 @@ msgid "Copy key ID"
 msgstr "Copy key ID"
 
 #. js-lingui-id: y1eoq1
+#: src/modules/bureau/components/BureauPageActionsDropdown.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
 msgid "Copy link"
 msgstr "Copy link"
@@ -5943,6 +6024,7 @@ msgid "Could not create the link. It may already exist."
 msgstr "Could not create the link. It may already exist."
 
 #. js-lingui-id: 61ydbC
+#: src/modules/bureau/hooks/useBureauPageActions.ts
 #: src/modules/quick-capture/hooks/useCreateNewPage.ts
 msgid "Could not create the page. Please try again."
 msgstr "Could not create the page. Please try again."
@@ -5961,6 +6043,11 @@ msgstr "Could not create the task. Please try again."
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
 msgid "Could not delete approved access domain"
 msgstr "Could not delete approved access domain"
+
+#. js-lingui-id: 5SV53M
+#: src/modules/bureau/hooks/useBureauPageActions.ts
+msgid "Could not delete the page. Please try again."
+msgstr "Could not delete the page. Please try again."
 
 #. js-lingui-id: /ZudQe
 #: src/pages/calendar/CalendarPage.tsx
@@ -6000,6 +6087,11 @@ msgstr "Could not load Archive"
 msgid "Could not load calendar events"
 msgstr "Could not load calendar events"
 
+#. js-lingui-id: kdTzgK
+#: src/modules/bureau/components/BureauNavigation.tsx
+msgid "Could not load pages. Retry"
+msgstr "Could not load pages. Retry"
+
 #. js-lingui-id: ZUhu+U
 #: src/pages/calendar/CalendarPage.tsx
 msgid "Could not load task due dates"
@@ -6015,10 +6107,25 @@ msgstr "Could not load the inbox"
 msgid "Could not load the template preview. Your template choice is kept — check your connection and retry."
 msgstr "Could not load the template preview. Your template choice is kept — check your connection and retry."
 
+#. js-lingui-id: ZSJvKr
+#: src/modules/bureau/components/BureauPageView.tsx
+msgid "Could not load this page."
+msgstr "Could not load this page."
+
+#. js-lingui-id: dDQML8
+#: src/modules/bureau/components/BureauTrashModal.tsx
+msgid "Could not load trash. Retry"
+msgstr "Could not load trash. Retry"
+
 #. js-lingui-id: FR0Fbp
 #: src/modules/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage.tsx
 msgid "Could not load versions."
 msgstr "Could not load versions."
+
+#. js-lingui-id: 5pxmjc
+#: src/modules/bureau/hooks/useBureauPageActions.ts
+msgid "Could not move the page to the trash. Please try again."
+msgstr "Could not move the page to the trash. Please try again."
 
 #. js-lingui-id: KqYYBp
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -6040,6 +6147,11 @@ msgstr "Could not open the API playground"
 msgid "Could not reach the server to apply the template. Your template choice is kept — retry."
 msgstr "Could not reach the server to apply the template. Your template choice is kept — retry."
 
+#. js-lingui-id: 6jcTCF
+#: src/modules/bureau/components/BureauImportModal.tsx
+msgid "Could not read this export. Choose an HTML or Markdown file, or a ZIP containing them (up to 100 MB, 5,000 entries and 250 MB uncompressed)."
+msgstr "Could not read this export. Choose an HTML or Markdown file, or a ZIP containing them (up to 100 MB, 5,000 entries and 250 MB uncompressed)."
+
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Could not refresh validity token - reverted the instance type change."
@@ -6054,6 +6166,12 @@ msgstr "Could not refresh validity token and could not revert the instance type 
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Could not refresh validity token. Please contact support."
 msgstr "Could not refresh validity token. Please contact support."
+
+#. js-lingui-id: Rficsg
+#: src/modules/bureau/hooks/useBureauPageActions.ts
+#: src/modules/bureau/hooks/useBureauPageActions.ts
+msgid "Could not restore the page. Please try again."
+msgstr "Could not restore the page. Please try again."
 
 #. js-lingui-id: 5ngF7a
 #: src/modules/object-core/workflows/versions/hooks/useRestoreCoreWorkflowVersionAsDraft.ts
@@ -6070,6 +6188,16 @@ msgstr "Could not run the lookup"
 #: src/pages/calendar/CalendarPage.tsx
 msgid "Could not save the event. Please try again."
 msgstr "Could not save the event. Please try again."
+
+#. js-lingui-id: RAH9vU
+#: src/modules/bureau/hooks/useBureauPageActions.ts
+msgid "Could not save the page. Please try again."
+msgstr "Could not save the page. Please try again."
+
+#. js-lingui-id: /NG7g9
+#: src/modules/bureau/components/BureauSearchModal.tsx
+msgid "Could not search page content. Please try again."
+msgstr "Could not search page content. Please try again."
 
 #. js-lingui-id: p75IO8
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
@@ -6103,6 +6231,11 @@ msgstr "Could not update this occurrence"
 #: src/pages/calendar/CalendarPage.tsx
 msgid "Could not update this series"
 msgstr "Could not update this series"
+
+#. js-lingui-id: afhQ8v
+#: src/modules/bureau/hooks/useBureauFavorites.ts
+msgid "Could not update your favorites. Please try again."
+msgstr "Could not update your favorites. Please try again."
 
 #. js-lingui-id: PiYvMl
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController.ts
@@ -7524,6 +7657,12 @@ msgstr "Delete field"
 msgid "Delete Folder"
 msgstr "Delete Folder"
 
+#. js-lingui-id: bsEIUp
+#: src/modules/bureau/components/BureauTrashModal.tsx
+#: src/modules/bureau/components/BureauTrashModal.tsx
+msgid "Delete forever"
+msgstr "Delete forever"
+
 #. js-lingui-id: k/RLDM
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterGroupOptionsDropdown.tsx
 msgid "Delete group"
@@ -8932,6 +9071,11 @@ msgstr "Enter a number"
 msgid "Enter a UUID"
 msgstr "Enter a UUID"
 
+#. js-lingui-id: 2VmTG8
+#: src/modules/bureau/components/BureauCoverPicker.tsx
+msgid "Enter a valid http(s) image link."
+msgstr "Enter a valid http(s) image link."
+
 #. js-lingui-id: oiVP/+
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 msgid "Enter a value to store in database"
@@ -9578,6 +9722,7 @@ msgstr "Exit import flow"
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/bureau/components/BureauTreeItem.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -9739,6 +9884,11 @@ msgstr "Export CSV"
 #: src/modules/blocknote-editor/export/components/BlockEditorExportMenu.tsx
 msgid "Export document"
 msgstr "Export document"
+
+#. js-lingui-id: vLze8v
+#: src/modules/bureau/components/BureauImportModal.tsx
+msgid "Export your Notion pages as HTML or Markdown with sub-pages and files included, then choose the ZIP. You can also import a single HTML or Markdown file."
+msgstr "Export your Notion pages as HTML or Markdown with sub-pages and files included, then choose the ZIP. You can also import a single HTML or Markdown file."
 
 #. js-lingui-id: leUV74
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionWorkflowActionTriggerSection.tsx
@@ -10237,7 +10387,13 @@ msgstr "Fast Model"
 msgid "Fast: {0}"
 msgstr "Fast: {0}"
 
+#. js-lingui-id: mOOsdg
+#: src/modules/bureau/components/BureauNavigation.tsx
+msgid "Favorite pages"
+msgstr "Favorite pages"
+
 #. js-lingui-id: X9kySA
+#: src/modules/bureau/components/BureauNavigation.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "Favorites"
 msgstr "Favorites"
@@ -10891,6 +11047,11 @@ msgstr "Full page"
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "full server access"
 msgstr "full server access"
+
+#. js-lingui-id: GyLW1N
+#: src/modules/bureau/components/BureauPageActionsDropdown.tsx
+msgid "Full width"
+msgstr "Full width"
 
 #. js-lingui-id: Fcl4s2
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
@@ -11835,6 +11996,12 @@ msgstr "Image \"{fileName}\" exceeds {maxUploadSize}"
 msgid "Image embed"
 msgstr "Image embed"
 
+#. js-lingui-id: T7x7bT
+#: src/modules/bureau/components/BureauCoverPicker.tsx
+#: src/modules/bureau/components/BureauCoverPicker.tsx
+msgid "Image link"
+msgstr "Image link"
+
 #. js-lingui-id: VyUuZb
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Image URL"
@@ -11931,10 +12098,21 @@ msgstr "Import"
 msgid "Import all emails"
 msgstr "Import all emails"
 
+#. js-lingui-id: ufx+1L
+#: src/modules/bureau/components/BureauImportModal.tsx
+msgid "Import complete: {completedCount} pages."
+msgstr "Import complete: {completedCount} pages."
+
 #. js-lingui-id: 2CeOI3
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Import CSV"
 msgstr "Import CSV"
+
+#. js-lingui-id: sRrsst
+#: src/modules/bureau/components/BureauImportModal.tsx
+#: src/modules/bureau/components/BureauNavigation.tsx
+msgid "Import from Notion"
+msgstr "Import from Notion"
 
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
@@ -11945,6 +12123,17 @@ msgstr "Import only selected folders/labels"
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "Import or add the MCP configuration from JetBrains settings."
+
+#. js-lingui-id: k0IbgW
+#: src/modules/bureau/components/BureauImportModal.tsx
+#: src/modules/bureau/components/BureauImportModal.tsx
+msgid "Import pages"
+msgstr "Import pages"
+
+#. js-lingui-id: FeRDsl
+#: src/modules/bureau/components/BureauImportModal.tsx
+msgid "Import paused. Your completed pages are saved. Retry to continue without creating duplicate pages. If you close this window, review the imported pages before starting a new import."
+msgstr "Import paused. Your completed pages are saved. Retry to continue without creating duplicate pages. If you close this window, review the imported pages before starting a new import."
 
 #. js-lingui-id: mcq2sV
 #. placeholder {0}: formatNumber(createdCount)
@@ -11958,6 +12147,12 @@ msgstr "Import stopped after {0} of {1} records. {2} records were not imported."
 #: src/pages/onboarding/ImportContacts.tsx
 msgid "Import your contacts"
 msgstr "Import your contacts"
+
+#. js-lingui-id: 9K8/k+
+#. placeholder {0}: plan?.pages.length ?? 0
+#: src/modules/bureau/components/BureauImportModal.tsx
+msgid "Imported {completedCount} of {0} pages…"
+msgstr "Imported {completedCount} of {0} pages…"
 
 #. js-lingui-id: wsKZ+v
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
@@ -12260,6 +12455,11 @@ msgstr "Install {appDisplayName} on your workspace"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Install and manage applications"
 msgstr "Install and manage applications"
+
+#. js-lingui-id: IPTXFR
+#: src/pages/bureau/BureauPage.tsx
+msgid "Install Bureau to start writing and organizing your pages. If it is already installed, check its status in Applications."
+msgstr "Install Bureau to start writing and organizing your pages. If it is already installed, check its status in Applications."
 
 #. js-lingui-id: 0RAaKu
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -13381,6 +13581,11 @@ msgstr "Link any record to any other across apps"
 msgid "Link content"
 msgstr "Link content"
 
+#. js-lingui-id: edWbV6
+#: src/modules/bureau/components/BureauPageActionsDropdown.tsx
+msgid "Link copied"
+msgstr "Link copied"
+
 #. js-lingui-id: pQjjYo
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
@@ -13557,6 +13762,11 @@ msgstr "Loading csv ... "
 msgid "Loading document viewer..."
 msgstr "Loading document viewer..."
 
+#. js-lingui-id: 7eJn9w
+#: src/modules/bureau/components/BureauPageView.tsx
+msgid "Loading editor…"
+msgstr "Loading editor…"
+
 #. js-lingui-id: qIaOZk
 #: src/modules/activities/emails/components/EmailLoader.tsx
 msgid "Loading emails"
@@ -13580,6 +13790,18 @@ msgstr "Loading metrics data..."
 msgid "Loading more..."
 msgstr "Loading more..."
 
+#. js-lingui-id: NrRDQy
+#: src/modules/bureau/components/BureauPageView.tsx
+#: src/modules/bureau/components/BureauPageView.tsx
+msgid "Loading page…"
+msgstr "Loading page…"
+
+#. js-lingui-id: qo/SNx
+#: src/modules/bureau/components/BureauLanding.tsx
+#: src/modules/bureau/components/BureauNavigation.tsx
+msgid "Loading pages…"
+msgstr "Loading pages…"
+
 #. js-lingui-id: nDnbEe
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "Loading retention configuration..."
@@ -13594,6 +13816,16 @@ msgstr "Loading skills..."
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadWidget.tsx
 msgid "Loading thread"
 msgstr "Loading thread"
+
+#. js-lingui-id: MRRWGz
+#: src/modules/bureau/components/BureauTrashModal.tsx
+msgid "Loading trash…"
+msgstr "Loading trash…"
+
+#. js-lingui-id: LKO6Xt
+#: src/modules/a2e-workspace/components/SettingsA2eSuiteSection.tsx
+msgid "Loading workspace applications…"
+msgstr "Loading workspace applications…"
 
 #. js-lingui-id: Z3FXyt
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -13639,7 +13871,6 @@ msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "Log a new deal (company, amount, stage, expected close). Details: "
 
 #. js-lingui-id: FgAxTj
-#: src/modules/auth/sign-in-up/components/WorkspaceSelectionFooter.tsx
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
 #: src/modules/settings/profile/devices/components/SettingsDeviceSessionRowDropdownMenu.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
@@ -14398,6 +14629,11 @@ msgstr "More actions"
 msgid "More options"
 msgstr "More options"
 
+#. js-lingui-id: Le70b5
+#: src/modules/bureau/components/BureauBreadcrumbs.tsx
+msgid "More pages"
+msgstr "More pages"
+
 #. js-lingui-id: 2MjaQ8
 #: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
 msgid "More widgets"
@@ -14465,7 +14701,13 @@ msgstr "Move to another tab"
 msgid "Move to folder"
 msgstr "Move to folder"
 
+#. js-lingui-id: BmVBL/
+#: src/modules/bureau/components/BureauNavigation.tsx
+msgid "Move to top level"
+msgstr "Move to top level"
+
 #. js-lingui-id: rRZjIm
+#: src/modules/bureau/components/BureauPageActionsDropdown.tsx
 #: src/modules/drive/components/DriveBulkActions.tsx
 #: src/modules/drive/components/DriveFolderActions.tsx
 msgid "Move to trash"
@@ -14915,6 +15157,7 @@ msgstr "New Object"
 #: src/modules/a2e-empty-state/constants/A2eEmptyStateSurfaces.ts
 #: src/modules/a2e-empty-state/constants/A2eEmptyStateSurfaces.ts
 #: src/modules/bureau/components/BureauLanding.tsx
+#: src/modules/bureau/components/BureauNavigation.tsx
 #: src/modules/quick-capture/hooks/useNewPageCommand.ts
 #: src/modules/quick-create/hooks/useQuickCreateCommands.ts
 msgid "New page"
@@ -15648,6 +15891,16 @@ msgstr "No output"
 msgid "No output available"
 msgstr "No output available"
 
+#. js-lingui-id: Oo/WWc
+#: src/modules/bureau/components/BureauSearchModal.tsx
+msgid "No pages found"
+msgstr "No pages found"
+
+#. js-lingui-id: bpQYpw
+#: src/modules/bureau/components/BureauTreeItem.tsx
+msgid "No pages inside"
+msgstr "No pages inside"
+
 #. js-lingui-id: 20ONq7
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
 msgid "No parameters"
@@ -16212,6 +16465,11 @@ msgstr "Nothing to see"
 msgid "Notification"
 msgstr "Notification"
 
+#. js-lingui-id: IDBvMi
+#: src/modules/bureau/components/BureauImportModal.tsx
+msgid "Notion export file"
+msgstr "Notion export file"
+
 #. js-lingui-id: YwzE9K
 #: src/utils/date-utils.ts
 #: src/utils/date-utils.ts
@@ -16673,6 +16931,11 @@ msgstr "Open an email editor to edit block settings."
 msgid "Open an empty document and shape it as you go."
 msgstr "Open an empty document and shape it as you go."
 
+#. js-lingui-id: +uZfY7
+#: src/pages/bureau/BureauPage.tsx
+msgid "Open Applications"
+msgstr "Open Applications"
+
 #. js-lingui-id: JG4LoU
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
 msgid "Open as link"
@@ -16717,6 +16980,12 @@ msgstr "Open event"
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Gmail"
 msgstr "Open Gmail"
+
+#. js-lingui-id: atilYD
+#: src/modules/bureau/components/BureauImportModal.tsx
+#: src/modules/bureau/components/BureauImportModal.tsx
+msgid "Open imported pages"
+msgstr "Open imported pages"
 
 #. js-lingui-id: C39K59
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
@@ -16784,6 +17053,11 @@ msgstr "Open Replit with the A2E Suite remote server config."
 #: src/modules/chat/components/ChatMessageList.tsx
 msgid "Open thread"
 msgstr "Open thread"
+
+#. js-lingui-id: iKXjzF
+#: src/modules/bureau/components/BureauPageView.tsx
+msgid "Open trash"
+msgstr "Open trash"
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -17084,10 +17358,20 @@ msgstr "Page"
 msgid "Page {0} of {pageCount}"
 msgstr "Page {0} of {pageCount}"
 
+#. js-lingui-id: /qoMyY
+#: src/modules/bureau/components/BureauPageActionsDropdown.tsx
+msgid "Page actions"
+msgstr "Page actions"
+
 #. js-lingui-id: HTqM7H
 #: src/modules/blocknote-editor/utils/slashMenuItemDefinitions.ts
 msgid "Page break"
 msgstr "Page break"
+
+#. js-lingui-id: 8psrIT
+#: src/modules/bureau/components/BureauIconPicker.tsx
+msgid "Page icon"
+msgstr "Page icon"
 
 #. js-lingui-id: SZgFyi
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -17129,6 +17413,11 @@ msgstr "Page layouts"
 msgid "Page links degrade to their title"
 msgstr "Page links degrade to their title"
 
+#. js-lingui-id: 81SQCI
+#: src/modules/bureau/hooks/useBureauPageActions.ts
+msgid "Page moved to the trash"
+msgstr "Page moved to the trash"
+
 #. js-lingui-id: zQF6Kb
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
 msgid "Page name"
@@ -17149,16 +17438,29 @@ msgstr "Page Not Found | A2E Suite"
 msgid "Page style"
 msgstr "Page style"
 
+#. js-lingui-id: ZfAT4u
+#: src/modules/bureau/components/BureauPageView.tsx
+#: src/modules/bureau/components/BureauTreeItem.tsx
+msgid "Page title"
+msgstr "Page title"
+
 #. js-lingui-id: sF+Xp9
 #: src/modules/settings/event-logs/components/EventLogTableSelector.tsx
 msgid "Page Views"
 msgstr "Page Views"
 
 #. js-lingui-id: wRR604
+#: src/modules/bureau/components/BureauNavigation.tsx
+#: src/modules/bureau/components/BureauNavigation.tsx
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 #: src/modules/template-gallery/constants/TemplateGalleryCategoryConfig.ts
 msgid "Pages"
 msgstr "Pages"
+
+#. js-lingui-id: 0ujJOw
+#: src/modules/bureau/components/BureauImportModal.tsx
+msgid "Pages, nested structure, supported blocks, local images, attachments and page links are imported. Extra files are attached to the first page. Notion permissions, comments, database formulas and view settings are not converted. CSV databases remain attachments."
+msgstr "Pages, nested structure, supported blocks, local images, attachments and page links are imported. Extra files are attached to the first page. Notion permissions, comments, database formulas and view settings are not converted. CSV databases remain attachments."
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -17381,6 +17683,11 @@ msgstr "Period"
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Permanent deletion. Enter the number of days."
 msgstr "Permanent deletion. Enter the number of days."
+
+#. js-lingui-id: GYhai/
+#: src/modules/bureau/components/BureauTrashModal.tsx
+msgid "Permanently delete this page and all its sub-pages? This cannot be undone."
+msgstr "Permanently delete this page and all its sub-pages? This cannot be undone."
 
 #. js-lingui-id: EPkrPQ
 #: src/modules/command-menu-item/engine-command/record/components/DestroyRecordsCommand.tsx
@@ -17628,6 +17935,13 @@ msgstr "Please type \"yes\" to confirm you want to delete this webhook."
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Please type in your email to confirm."
 msgstr "Please type in your email to confirm."
+
+#. js-lingui-id: IhGpKH
+#: src/modules/bureau/hooks/useBureauPageActions.ts
+#: src/modules/bureau/hooks/useBureauPageActions.ts
+#: src/modules/bureau/hooks/useBureauPageActions.ts
+msgid "Please wait until all pages have loaded."
+msgstr "Please wait until all pages have loaded."
 
 #. js-lingui-id: Ij2ljU
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -18195,6 +18509,11 @@ msgstr "Read-only {entityTypeLabel} definition shipped by this app"
 msgid "Read/Edit/Delete permissions"
 msgstr "Read/Edit/Delete permissions"
 
+#. js-lingui-id: fNJ/4i
+#: src/modules/bureau/components/BureauImportModal.tsx
+msgid "Reading export…"
+msgstr "Reading export…"
+
 #. js-lingui-id: Y3c/lx
 #: src/modules/home-dashboard/components/PomodoroWidgetContent.tsx
 msgid "Ready to focus"
@@ -18591,6 +18910,7 @@ msgstr "Remote"
 
 #. js-lingui-id: t/YqKh
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
+#: src/modules/bureau/components/BureauIconPicker.tsx
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -18637,6 +18957,11 @@ msgstr "Remove as default"
 msgid "Remove block"
 msgstr "Remove block"
 
+#. js-lingui-id: xhcj8E
+#: src/modules/bureau/components/BureauCoverPicker.tsx
+msgid "Remove cover"
+msgstr "Remove cover"
+
 #. js-lingui-id: 2HpFUd
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 msgid "Remove Deleted filter"
@@ -18656,6 +18981,12 @@ msgstr "Remove field"
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 msgid "Remove filter"
 msgstr "Remove filter"
+
+#. js-lingui-id: T/pF0Z
+#: src/modules/bureau/components/BureauPageActionsDropdown.tsx
+#: src/modules/bureau/components/BureauPageView.tsx
+msgid "Remove from favorites"
+msgstr "Remove from favorites"
 
 #. js-lingui-id: 9VZ6f0
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
@@ -18761,6 +19092,7 @@ msgstr "Removing the key falls back to the instance AI_PROVIDERS entry, then to 
 #. js-lingui-id: 2wxgft
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/ai/components/AiChatThreadItemMenu.tsx
+#: src/modules/bureau/components/BureauPageActionsDropdown.tsx
 #: src/modules/drive/components/DriveFolderActions.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
@@ -19022,6 +19354,7 @@ msgstr "restore"
 
 #. js-lingui-id: yKu/3Y
 #: src/modules/blocknote-editor/version-history/components/BlockEditorVersionHistoryPanel.tsx
+#: src/modules/bureau/components/BureauTrashModal.tsx
 #: src/modules/drive/components/DriveBulkActions.tsx
 #: src/modules/information-banner/components/deleted-record/InformationBannerDeletedRecord.tsx
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton.tsx
@@ -19046,6 +19379,11 @@ msgstr "Restore {fileName}"
 #: src/modules/command-menu-item/engine-command/record/components/RestoreRecordsCommand.tsx
 msgid "Restore {objectLabel}"
 msgstr "Restore {objectLabel}"
+
+#. js-lingui-id: T5VdjY
+#: src/modules/bureau/components/BureauTrashModal.tsx
+msgid "Restore a page and its sub-pages, or permanently delete a page."
+msgstr "Restore a page and its sub-pages, or permanently delete a page."
 
 #. js-lingui-id: jWQ+7u
 #: src/modules/first-open-help/components/FirstOpenHelpPanel.tsx
@@ -19091,6 +19429,7 @@ msgstr "Resume"
 
 #. js-lingui-id: 6gRgw8
 #: src/modules/ai/components/AiChatErrorMessage.tsx
+#: src/modules/bureau/components/BureauPageView.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
@@ -19104,6 +19443,12 @@ msgstr "Retry"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Retry All Failed"
 msgstr "Retry All Failed"
+
+#. js-lingui-id: tNrGZa
+#: src/modules/bureau/components/BureauImportModal.tsx
+#: src/modules/bureau/components/BureauImportModal.tsx
+msgid "Retry import"
+msgstr "Retry import"
 
 #. js-lingui-id: s/LEE/
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
@@ -19119,6 +19464,12 @@ msgstr "Retry preview"
 #: src/modules/a2e-workspace/components/A2eWorkspaceTemplatePreview.tsx
 msgid "Retry remaining steps"
 msgstr "Retry remaining steps"
+
+#. js-lingui-id: S6HtCJ
+#: src/modules/bureau/components/BureauPageView.tsx
+#: src/modules/bureau/components/BureauPageView.tsx
+msgid "Retry saving title"
+msgstr "Retry saving title"
 
 #. js-lingui-id: f0g4m/
 #. placeholder {0}: task.fileName
@@ -19773,6 +20124,13 @@ msgstr "Search operations"
 msgid "Search options"
 msgstr "Search options"
 
+#. js-lingui-id: MKIM3K
+#: src/modules/bureau/components/BureauNavigation.tsx
+#: src/modules/bureau/components/BureauSearchModal.tsx
+#: src/modules/bureau/components/BureauSearchModal.tsx
+msgid "Search pages"
+msgstr "Search pages"
+
 #. js-lingui-id: rRklUH
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx
 msgid "Search records..."
@@ -19782,6 +20140,11 @@ msgstr "Search records..."
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Search registrations..."
 msgstr "Search registrations..."
+
+#. js-lingui-id: 5WYZKZ
+#: src/modules/bureau/components/BureauSearchModal.tsx
+msgid "Search results"
+msgstr "Search results"
 
 #. js-lingui-id: Yv+rTs
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
@@ -19793,6 +20156,11 @@ msgstr "Search steps and fields"
 #: src/modules/template-gallery/components/TemplateGallery.tsx
 msgid "Search templates"
 msgstr "Search templates"
+
+#. js-lingui-id: 3ca33X
+#: src/modules/bureau/components/BureauSearchModal.tsx
+msgid "Search titles and page content…"
+msgstr "Search titles and page content…"
 
 #. js-lingui-id: YIix5Y
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
@@ -19839,6 +20207,11 @@ msgstr "Searching the web"
 #: src/modules/ai/utils/tool-display/get-tool-display-message.ts
 msgid "Searching the web for {query}"
 msgstr "Searching the web for {query}"
+
+#. js-lingui-id: SBTElJ
+#: src/modules/bureau/components/BureauSearchModal.tsx
+msgid "Searching…"
+msgstr "Searching…"
 
 #. js-lingui-id: Y00a9G
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -20674,6 +21047,11 @@ msgstr "Show this object's records in the command menu (⌘K)."
 msgid "Show value in center"
 msgstr "Show value in center"
 
+#. js-lingui-id: QuuN/A
+#: src/modules/bureau/components/BureauSearchModal.tsx
+msgid "Showing the first 50 results. Refine your search to find more."
+msgstr "Showing the first 50 results. Refine your search to find more."
+
 #. js-lingui-id: P7rcbf
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
 #: src/modules/settings/experience/components/OpenRecordInPreferencePicker.tsx
@@ -20705,6 +21083,11 @@ msgstr "Sign in"
 #: src/utils/title-utils.ts
 msgid "Sign in or Create an account"
 msgstr "Sign in or Create an account"
+
+#. js-lingui-id: 0b3bFC
+#: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
+msgid "Sign in to another workspace"
+msgstr "Sign in to another workspace"
 
 #. js-lingui-id: e+RpCP
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -20867,6 +21250,11 @@ msgstr "Small business"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Small section heading"
 msgstr "Small section heading"
+
+#. js-lingui-id: LBkaLa
+#: src/modules/bureau/components/BureauPageActionsDropdown.tsx
+msgid "Small text"
+msgstr "Small text"
 
 #. js-lingui-id: OueVS2
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -22025,6 +22413,7 @@ msgstr "Template or blank?"
 
 #. js-lingui-id: iTylMl
 #: src/modules/a2e-help/constants/A2eHelpDocPages.ts
+#: src/modules/bureau/components/BureauNavigation.tsx
 #: src/modules/template-gallery/hooks/useOpenTemplateGallery.ts
 #: src/modules/template-gallery/hooks/useTemplatesCommand.ts
 msgid "Templates"
@@ -22700,6 +23089,11 @@ msgstr "This application has already been claimed."
 msgid "This application's registration is claimed by your workspace"
 msgstr "This application's registration is claimed by your workspace"
 
+#. js-lingui-id: xBDa+r
+#: src/modules/bureau/components/BureauImportModal.tsx
+msgid "This archive includes CSV, JSON or nested ZIP files. These are preserved as attachments; their database behavior is not converted."
+msgstr "This archive includes CSV, JSON or nested ZIP files. These are preserved as attachments; their database behavior is not converted."
+
 #. js-lingui-id: W16Mnv
 #: src/modules/activities/files/components/AudioPreview.tsx
 msgid "This audio file could not be loaded. Please download the file to listen to it."
@@ -22854,6 +23248,16 @@ msgstr "This occurrence"
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
 msgid "This page has no content"
 msgstr "This page has no content"
+
+#. js-lingui-id: uo7yjw
+#: src/modules/bureau/components/BureauPageView.tsx
+msgid "This page is locked. Unlock it from the record page to edit."
+msgstr "This page is locked. Unlock it from the record page to edit."
+
+#. js-lingui-id: jseG2f
+#: src/modules/bureau/components/BureauPageView.tsx
+msgid "This page is unavailable. It may have been moved to the trash, or you may not have access."
+msgstr "This page is unavailable. It may have been moved to the trash, or you may not have access."
 
 #. js-lingui-id: 45fXTY
 #: src/modules/app/routing/components/WorkspaceRouteUnavailable.tsx
@@ -23447,10 +23851,17 @@ msgid "Translations"
 msgstr "Translations"
 
 #. js-lingui-id: GQ3O42
+#: src/modules/bureau/components/BureauNavigation.tsx
+#: src/modules/bureau/components/BureauTrashModal.tsx
 #: src/pages/drive/DrivePage.tsx
 #: src/pages/drive/DrivePage.tsx
 msgid "Trash"
 msgstr "Trash"
+
+#. js-lingui-id: 8m7S7Y
+#: src/modules/bureau/components/BureauTrashModal.tsx
+msgid "Trash is empty"
+msgstr "Trash is empty"
 
 #. js-lingui-id: lhkaAC
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
@@ -23827,6 +24238,7 @@ msgid "Undisplayed data: max {maxItems} slices per chart."
 msgstr "Undisplayed data: max {maxItems} slices per chart."
 
 #. js-lingui-id: 9uI/rE
+#: src/modules/bureau/hooks/useBureauPageActions.ts
 #: src/modules/drive/components/DriveBulkResultNotice.tsx
 #: src/modules/template-gallery/components/TemplateGallerySidePanelPage.tsx
 msgid "Undo"
@@ -24093,6 +24505,12 @@ msgstr "Unsupported image format"
 #: src/modules/ai/components/ChatReferenceChip.tsx
 #: src/modules/ai/components/ChatReferenceChip.tsx
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+#: src/modules/bureau/components/BureauBreadcrumbs.tsx
+#: src/modules/bureau/components/BureauBreadcrumbs.tsx
+#: src/modules/bureau/components/BureauPageView.tsx
+#: src/modules/bureau/components/BureauSearchModal.tsx
+#: src/modules/bureau/components/BureauTrashModal.tsx
+#: src/modules/bureau/components/BureauTreeItem.tsx
 #: src/modules/mention/components/MentionRecordChip.tsx
 #: src/modules/object-core/components/cells/CoreObjectNameCell.tsx
 #: src/modules/object-record/components/RecordChip.tsx
@@ -24616,6 +25034,16 @@ msgstr "Use a project recipe"
 msgid "Use a template"
 msgstr "Use a template"
 
+#. js-lingui-id: hOoqkh
+#: src/modules/auth/sign-in-up/components/WorkspaceSelectionFooter.tsx
+msgid "Use another account"
+msgstr "Use another account"
+
+#. js-lingui-id: GUYXfm
+#: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
+msgid "Use another email"
+msgstr "Use another email"
+
 #. js-lingui-id: 6kLyt5
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
 msgid "Use authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator to generate one-time passwords"
@@ -24626,6 +25054,11 @@ msgstr "Use authenticator apps and browser extensions like 1Password, Authy, Mic
 msgid "Use best models only"
 msgstr "Use best models only"
 
+#. js-lingui-id: xBscaj
+#: src/modules/bureau/components/BureauCoverPicker.tsx
+msgid "Use color {color}"
+msgstr "Use color {color}"
+
 #. js-lingui-id: 5ZehS/
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 msgid "Use filter to see existing skills or create your own"
@@ -24635,6 +25068,11 @@ msgstr "Use filter to see existing skills or create your own"
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Use filter to see existing tools or create your own"
 msgstr "Use filter to see existing tools or create your own"
+
+#. js-lingui-id: PTd/zR
+#: src/modules/bureau/components/BureauCoverPicker.tsx
+msgid "Use image"
+msgstr "Use image"
 
 #. js-lingui-id: 1Y7Unr
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx

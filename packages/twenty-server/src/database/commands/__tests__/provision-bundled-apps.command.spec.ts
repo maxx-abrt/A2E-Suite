@@ -21,9 +21,11 @@ jest.mock(
 jest.mock(
   'src/engine/core-modules/application/application-package/utils/tarball-utils',
   () => ({
-    resolvePackageContentDir: jest.fn().mockImplementation((dir: string) =>
-      Promise.resolve(join(dir, 'package')),
-    ),
+    resolvePackageContentDir: jest
+      .fn()
+      .mockImplementation((dir: string) =>
+        Promise.resolve(join(dir, 'package')),
+      ),
   }),
 );
 
@@ -63,7 +65,9 @@ jest.mock(
 
 describe('ProvisionBundledAppsCommand', () => {
   let command: ProvisionBundledAppsCommand;
-  let registrationRepository: jest.Mocked<Repository<ApplicationRegistrationEntity>>;
+  let registrationRepository: jest.Mocked<
+    Repository<ApplicationRegistrationEntity>
+  >;
 
   const workDir = join(tmpdir(), 'provision-bundled-test');
 
@@ -113,8 +117,8 @@ describe('ProvisionBundledAppsCommand', () => {
 
     it('registers a new bundled app with isPreInstalled=true and ownerWorkspaceId=null', async () => {
       registrationRepository.findOne.mockResolvedValue(null);
-      registrationRepository.save.mockImplementation(async (entity) =>
-        entity as ApplicationRegistrationEntity,
+      registrationRepository.save.mockImplementation(
+        async (entity) => entity as ApplicationRegistrationEntity,
       );
 
       await command.run([], { dir: workDir });
@@ -139,6 +143,8 @@ describe('ProvisionBundledAppsCommand', () => {
         latestAvailableVersion: '1.0.0',
         sourceType: ApplicationRegistrationSourceType.BUNDLED,
         bundledAppSourcePath: tarballPath,
+        isListed: true,
+        isPreInstalled: true,
       } as ApplicationRegistrationEntity);
 
       await command.run([], { dir: workDir });
@@ -156,8 +162,8 @@ describe('ProvisionBundledAppsCommand', () => {
       } as ApplicationRegistrationEntity;
 
       registrationRepository.findOne.mockResolvedValue(oldRegistration);
-      registrationRepository.save.mockImplementation(async (entity) =>
-        entity as ApplicationRegistrationEntity,
+      registrationRepository.save.mockImplementation(
+        async (entity) => entity as ApplicationRegistrationEntity,
       );
 
       await command.run([], { dir: workDir });
@@ -178,6 +184,39 @@ describe('ProvisionBundledAppsCommand', () => {
       await command.run([], { dir: workDir, dryRun: true });
 
       expect(registrationRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('repairs a same-version registration whose image path or catalog flags are stale', async () => {
+      registrationRepository.findOne.mockResolvedValue({
+        id: 'existing-id',
+        latestAvailableVersion: '1.0.0',
+        sourceType: ApplicationRegistrationSourceType.BUNDLED,
+        bundledAppSourcePath: '/old/image/app.tgz',
+        isListed: false,
+        isPreInstalled: false,
+      } as ApplicationRegistrationEntity);
+
+      await command.run([], { dir: workDir });
+
+      expect(registrationRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: 'existing-id',
+          bundledAppSourcePath: tarballPath,
+          isListed: true,
+          isPreInstalled: true,
+        }),
+      );
+    });
+
+    it('rejects when a package cannot be registered instead of reporting success', async () => {
+      registrationRepository.findOne.mockResolvedValue(null);
+      registrationRepository.save.mockRejectedValue(
+        new Error('database unavailable'),
+      );
+
+      await expect(command.run([], { dir: workDir })).rejects.toThrow(
+        'Failed to provision 1 bundled app(s)',
+      );
     });
   });
 });

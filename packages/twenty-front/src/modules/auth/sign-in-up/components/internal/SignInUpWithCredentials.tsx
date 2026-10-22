@@ -20,9 +20,11 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton, InputHint } from 'twenty-ui/input';
+import { ClickToActionLink } from 'twenty-ui/navigation';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -41,6 +43,7 @@ export const SignInUpWithCredentials = ({
 }) => {
   const { t } = useLingui();
   const form = useFormContext<Form>();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [signInUpStep, setSignInUpStep] = useAtomState(signInUpStepState);
   const [showErrors, setShowErrors] = useState(false);
@@ -91,6 +94,15 @@ export const SignInUpWithCredentials = ({
     if (email !== form.getValues('email')) {
       setSignInUpStep(SignInUpStep.Email);
     }
+  };
+
+  const handleUseAnotherEmail = () => {
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.delete('email');
+    setSearchParams(nextSearchParams, { replace: true });
+    form.reset({ exist: false, email: '', password: '', captchaToken: '' });
+    setShowErrors(false);
+    setSignInUpStep(SignInUpStep.Email);
   };
 
   const buttonTitle = useMemo(() => {
@@ -177,6 +189,11 @@ export const SignInUpWithCredentials = ({
             )}
           </StyledSsoButtonContainer>
         </StyledForm>
+      )}
+      {signInUpStep === SignInUpStep.Password && (
+        <ClickToActionLink onClick={handleUseAnotherEmail}>
+          {t`Use another email`}
+        </ClickToActionLink>
       )}
     </>
   );

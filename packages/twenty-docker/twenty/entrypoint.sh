@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+echo "A2E Suite starting: version=${APP_VERSION:-unknown} revision=${APP_REVISION:-unknown} command=$*"
+
 setup_and_migrate_db() {
     if [ "${DISABLE_DB_MIGRATIONS}" = "true" ]; then
         echo "Database setup and migrations are disabled, skipping..."
@@ -62,8 +64,9 @@ provision_bundled_apps() {
     if yarn command:prod app:provision-bundled; then
         echo "Successfully provisioned bundled apps!"
     else
-        echo "Warning: Bundled app provisioning failed, but continuing startup..."
+        echo "ERROR: Bundled app provisioning failed. Refusing to report a successful deployment with missing apps."
         echo "  Apps can be provisioned manually with: yarn command:prod app:provision-bundled"
+        exit 1
     fi
 
     # Install newly-registered pre-installed apps on all existing workspaces.
@@ -72,8 +75,13 @@ provision_bundled_apps() {
     if yarn command:prod install-pre-installed-apps; then
         echo "Successfully installed pre-installed apps!"
     else
-        echo "Warning: Pre-installed app installation failed, but continuing startup..."
+        echo "ERROR: Pre-installed app installation failed. Check the app and workspace errors above, then restart to retry."
+        exit 1
     fi
+
+    # Registrations are saved directly by the provisioning command, so evict
+    # catalog entries computed before this image's packages were registered.
+    yarn command:prod cache:flush
 }
 
 register_background_jobs() {

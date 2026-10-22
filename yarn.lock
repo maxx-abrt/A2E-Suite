@@ -50200,6 +50200,7 @@ __metadata:
     deep-equal: "npm:^2.2.2"
     dotenv-cli: "npm:^7.4.4"
     esbuild: "npm:^0.28.1"
+    fflate: "npm:^0.8.2"
     file-saver: "npm:^2.0.5"
     framer-motion: "npm:^11.18.0"
     fuse.js: "npm:^7.1.0"

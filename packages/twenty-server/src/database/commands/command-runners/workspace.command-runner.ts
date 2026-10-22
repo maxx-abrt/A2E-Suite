@@ -26,6 +26,7 @@ export abstract class WorkspaceCommandRunner<
   Options extends WorkspaceCommandOptions = WorkspaceCommandOptions,
 > extends CommandRunner {
   protected logger: CommandLogger;
+  protected failOnWorkspaceErrors = false;
 
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
@@ -130,6 +131,15 @@ export abstract class WorkspaceCommandRunner<
           });
         },
       });
+
+      if (
+        this.failOnWorkspaceErrors &&
+        (report.fail.length > 0 || report.interrupted)
+      ) {
+        throw new Error(
+          `Workspace command incomplete: ${report.fail.length} failed workspace(s), interrupted=${report.interrupted}`,
+        );
+      }
 
       if (report.interrupted) {
         this.logger.warn(

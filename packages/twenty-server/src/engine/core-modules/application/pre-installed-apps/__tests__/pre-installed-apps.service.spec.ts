@@ -67,7 +67,9 @@ describe('PreInstalledAppsService.installOnWorkspace', () => {
       installApplication,
     });
 
-    await service.installOnWorkspace('workspace-id');
+    await expect(service.installOnWorkspace('workspace-id')).rejects.toThrow(
+      'Failed to install 1 pre-installed app(s)',
+    );
 
     expect(installApplication).toHaveBeenCalledTimes(1);
   });

@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { Logger } from '@nestjs/common';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
@@ -11,6 +12,8 @@ import { startWorkerHealthServer } from 'src/queue-worker/start-worker-health-se
 import { enableValidationMetadataCache } from 'src/utils/enable-validation-metadata-cache.util';
 
 async function bootstrap() {
+  const bootstrapLogger = new Logger('QueueWorker');
+  bootstrapLogger.log('Starting queue worker...');
   let exceptionHandlerService: ExceptionHandlerService | undefined;
   let loggerService: LoggerService | undefined;
 
@@ -31,8 +34,9 @@ async function bootstrap() {
     });
 
     app.enableShutdownHooks();
+    bootstrapLogger.log('Queue worker initialized; waiting for jobs.');
   } catch (err) {
-    loggerService?.error(err?.message, err?.name);
+    (loggerService ?? bootstrapLogger).error(err?.message, err?.name);
 
     if (shouldCaptureException(err)) {
       exceptionHandlerService?.captureExceptions([err]);

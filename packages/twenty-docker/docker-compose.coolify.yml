@@ -20,6 +20,7 @@ name: a2e-suite
 services:
   server:
     image: ghcr.io/maxx-abrt/a2e-suite:${TAG:-latest}
+    pull_policy: always
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
     ports:
@@ -29,8 +30,11 @@ services:
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:?required}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/${PG_DATABASE_NAME:-default}
       SERVER_URL: ${SERVER_URL:?required}
       LANDING_PAGE_URL: ${LANDING_PAGE_URL:-}
+      IS_MULTIWORKSPACE_ENABLED: ${IS_MULTIWORKSPACE_ENABLED:-false}
+      DEFAULT_SUBDOMAIN: ${DEFAULT_SUBDOMAIN:-app}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       STORAGE_TYPE: ${STORAGE_TYPE:-local}
+      LOGIC_FUNCTION_TYPE: ${LOGIC_FUNCTION_TYPE:-LOCAL}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:?required}
       FALLBACK_ENCRYPTION_KEY: ${FALLBACK_ENCRYPTION_KEY}
       # APP_SECRET falls back to ENCRYPTION_KEY when unset or empty; an empty
@@ -68,21 +72,27 @@ services:
       interval: 5s
       timeout: 10s
       retries: 20
+      start_period: 300s
     restart: always
 
   worker:
     image: ghcr.io/maxx-abrt/a2e-suite:${TAG:-latest}
+    pull_policy: always
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
     command: ['yarn', 'worker:prod']
     environment:
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:?required}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/${PG_DATABASE_NAME:-default}
       SERVER_URL: ${SERVER_URL:?required}
+      IS_MULTIWORKSPACE_ENABLED: ${IS_MULTIWORKSPACE_ENABLED:-false}
+      DEFAULT_SUBDOMAIN: ${DEFAULT_SUBDOMAIN:-app}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       DISABLE_DB_MIGRATIONS: 'true' # it already runs on the server
       DISABLE_CRON_JOBS_REGISTRATION: 'true' # it already runs on the server
       DISABLE_BUNDLED_APP_PROVISIONING: 'true' # it already runs on the server
       STORAGE_TYPE: ${STORAGE_TYPE:-local}
+      LOGIC_FUNCTION_TYPE: ${LOGIC_FUNCTION_TYPE:-LOCAL}
+      WORKER_HEALTH_PORT: 3099
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:?required}
       FALLBACK_ENCRYPTION_KEY: ${FALLBACK_ENCRYPTION_KEY}
       # APP_SECRET falls back to ENCRYPTION_KEY when unset or empty; an empty
@@ -112,6 +122,7 @@ services:
       interval: 5s
       timeout: 10s
       retries: 20
+      start_period: 60s
     restart: always
 
   db:

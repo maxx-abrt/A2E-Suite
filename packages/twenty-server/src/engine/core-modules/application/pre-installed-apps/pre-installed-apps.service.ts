@@ -72,6 +72,12 @@ export class PreInstalledAppsService {
           );
         }
 
+        if (failedOutcomes.length > 0) {
+          throw new Error(
+            `Failed to install ${failedOutcomes.length} pre-installed app(s) on workspace ${workspaceId}`,
+          );
+        }
+
         return;
       }
 

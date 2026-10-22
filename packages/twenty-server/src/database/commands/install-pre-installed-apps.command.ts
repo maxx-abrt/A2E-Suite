@@ -13,6 +13,8 @@ import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre
     'Install every application registration flagged `isPreInstalled` on every provisioned workspace. Idempotent.',
 })
 export class InstallPreInstalledAppsCommand extends ProvisionedWorkspaceCommandRunner {
+  protected override failOnWorkspaceErrors = true;
+
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly preInstalledAppsService: PreInstalledAppsService,

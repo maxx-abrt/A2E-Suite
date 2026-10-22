@@ -24,10 +24,10 @@ import { type PackageJson } from 'type-fest';
 // Override with the BUNDLED_APPS_DIR environment variable.
 const DEFAULT_BUNDLED_APPS_DIR = '/app/packages/twenty-apps/dist';
 
-interface CommandOptions {
+type CommandOptions = {
   dryRun?: boolean;
   dir?: string;
-}
+};
 
 // Registers A2E apps bundled into the Docker image at build time so that they
 // appear in Settings → Applications → A2E Suite on a fresh deployment without
@@ -52,10 +52,7 @@ export class ProvisionBundledAppsCommand extends CommandRunner {
     super();
   }
 
-  async run(
-    _passedParams: string[],
-    options: CommandOptions,
-  ): Promise<void> {
+  async run(_passedParams: string[], options: CommandOptions): Promise<void> {
     const dryRun = options.dryRun ?? false;
     const bundledDir =
       options.dir ??
@@ -75,6 +72,11 @@ export class ProvisionBundledAppsCommand extends CommandRunner {
       // No `instanceof Error` guard: native fs errors are not realm-equal
       // under Jest, and `.code` is the only contract that matters here.
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+        if (process.env.NODE_ENV === 'production') {
+          throw new Error(
+            `Bundled apps directory ${bundledDir} is missing from the production image`,
+          );
+        }
         this.logger.log(
           `Bundled apps directory ${bundledDir} not found — skipping (expected on non-Docker servers)`,
         );
@@ -86,9 +88,7 @@ export class ProvisionBundledAppsCommand extends CommandRunner {
     }
 
     if (tarballPaths.length === 0) {
-      this.logger.log(`No bundled app tarballs found in ${bundledDir}`);
-
-      return;
+      throw new Error(`No bundled app tarballs found in ${bundledDir}`);
     }
 
     this.logger.log(
@@ -98,6 +98,7 @@ export class ProvisionBundledAppsCommand extends CommandRunner {
     let registered = 0;
     let updated = 0;
     let skipped = 0;
+    let failed = 0;
 
     for (const tarballPath of tarballPaths) {
       try {
@@ -107,6 +108,7 @@ export class ProvisionBundledAppsCommand extends CommandRunner {
         else if (result === 'updated') updated++;
         else skipped++;
       } catch (error) {
+        failed++;
         this.logger.error(
           `Failed to process bundled tarball ${tarballPath}: ${error}`,
         );
@@ -114,8 +116,14 @@ export class ProvisionBundledAppsCommand extends CommandRunner {
     }
 
     this.logger.log(
-      `${dryRun ? '[DRY RUN] ' : ''}Bundled app provisioning complete: ${registered} registered, ${updated} updated, ${skipped} skipped`,
+      `${dryRun ? '[DRY RUN] ' : ''}Bundled app provisioning complete: ${registered} registered, ${updated} updated, ${skipped} skipped, ${failed} failed`,
     );
+
+    if (failed > 0) {
+      throw new Error(
+        `Failed to provision ${failed} bundled app(s). See the individual errors above.`,
+      );
+    }
   }
 
   private async processTarball(
@@ -130,29 +138,27 @@ export class ProvisionBundledAppsCommand extends CommandRunner {
       await extractTarballSecurely(tarballPath, workDir);
 
       const contentDir = await resolvePackageContentDir(workDir);
-      const manifest = await readJsonFile<Manifest>(contentDir, 'manifest.json');
+      const manifest = await readJsonFile<Manifest>(
+        contentDir,
+        'manifest.json',
+      );
       const packageJson = await readJsonFile<PackageJson>(
         contentDir,
         'package.json',
       );
 
       if (!isDefined(manifest) || !isDefined(packageJson)) {
-        this.logger.warn(
-          `Tarball ${tarballPath} is missing manifest.json or package.json — skipping`,
+        throw new Error(
+          `Tarball ${tarballPath} is missing manifest.json or package.json`,
         );
-
-        return 'skipped';
       }
 
-      const universalIdentifier =
-        manifest.application?.universalIdentifier;
+      const universalIdentifier = manifest.application?.universalIdentifier;
 
       if (!isDefined(universalIdentifier)) {
-        this.logger.warn(
-          `Tarball ${tarballPath} manifest has no universalIdentifier — skipping`,
+        throw new Error(
+          `Tarball ${tarballPath} manifest has no universalIdentifier`,
         );
-
-        return 'skipped';
       }
 
       const version = packageJson.version ?? null;
@@ -165,7 +171,10 @@ export class ProvisionBundledAppsCommand extends CommandRunner {
       if (
         isDefined(existing) &&
         existing.latestAvailableVersion === version &&
-        existing.sourceType === ApplicationRegistrationSourceType.BUNDLED
+        existing.sourceType === ApplicationRegistrationSourceType.BUNDLED &&
+        existing.bundledAppSourcePath === tarballPath &&
+        existing.isPreInstalled &&
+        existing.isListed
       ) {
         this.logger.log(
           `${universalIdentifier} v${version} already registered as bundled — skipping`,
@@ -197,6 +206,7 @@ export class ProvisionBundledAppsCommand extends CommandRunner {
           sourceType: ApplicationRegistrationSourceType.BUNDLED,
           bundledAppSourcePath: tarballPath,
           isPreInstalled: true,
+          isListed: true,
           ...displayFields,
         });
 
@@ -251,7 +261,8 @@ export class ProvisionBundledAppsCommand extends CommandRunner {
 
   @Option({
     flags: '--dir <path>',
-    description: 'Directory containing bundled app tarballs (overrides BUNDLED_APPS_DIR env var)',
+    description:
+      'Directory containing bundled app tarballs (overrides BUNDLED_APPS_DIR env var)',
   })
   parseDir(val: string): string {
     return val;

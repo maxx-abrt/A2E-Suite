@@ -28,7 +28,7 @@ COPY ./packages/twenty-apps/internal/a2e-links       /apps/a2e-links
 # Each app is an independent Yarn workspace; install deps and build with tarball.
 # `yarn twenty dev:build --tarball` is equivalent to the SDK CLI command that
 # the development runbook uses. Each app's pinned twenty-sdk resolves from npm.
-RUN for app in a2e-documents a2e-accounting a2e-projects a2e-chat a2e-drive a2e-crm a2e-links; do \
+RUN set -eu; for app in a2e-documents a2e-accounting a2e-projects a2e-chat a2e-drive a2e-crm a2e-links; do \
       echo "Building $app ..."; \
       cd /apps/$app && \
       yarn install --immutable && \
@@ -39,6 +39,7 @@ RUN for app in a2e-documents a2e-accounting a2e-projects a2e-chat a2e-drive a2e-
 # Collect all tarballs into a single dist directory.
 RUN mkdir -p /apps/dist && \
     find /apps -name "*.tgz" -path "*/.twenty/output/*" -exec cp {} /apps/dist/ \; && \
+    test "$(find /apps/dist -name '*.tgz' | wc -l)" -eq 7 && \
     echo "Bundled tarballs:" && ls /apps/dist/
 
 
@@ -147,7 +148,9 @@ RUN chmod +x /app/entrypoint.sh
 WORKDIR /app/packages/twenty-server
 
 ARG APP_VERSION
+ARG APP_REVISION=unknown
 ENV APP_VERSION=$APP_VERSION
+ENV APP_REVISION=$APP_REVISION
 ENV NODE_ENV=production
 
 # Workspace root config
@@ -182,6 +185,7 @@ COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-client-sdk/dis
 COPY --chown=1000 --from=twenty-apps-build /apps/dist /app/packages/twenty-apps/dist
 
 LABEL org.opencontainers.image.source=https://github.com/maxx-abrt/A2E-Suite
+LABEL org.opencontainers.image.revision=$APP_REVISION
 LABEL org.opencontainers.image.description="Twenty server image (no frontend)."
 
 # Remove unused, unpatchable components the scanner flags (none are executed at

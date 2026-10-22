@@ -7,7 +7,7 @@ export const WorkspaceSelectionFooter = () => {
 
   return (
     <ClickToActionLink onClick={signOut}>
-      <Trans>Log out</Trans>
+      <Trans>Use another account</Trans>
     </ClickToActionLink>
   );
 };

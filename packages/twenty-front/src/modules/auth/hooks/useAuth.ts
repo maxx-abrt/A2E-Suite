@@ -54,6 +54,7 @@ import { isEmailVerificationRequiredState } from '@/client-config/states/isEmail
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
+import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
@@ -75,6 +76,7 @@ export const useAuth = () => {
   );
 
   const { origin } = useOrigin();
+  const { defaultDomain } = useReadDefaultDomainFromConfiguration();
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
@@ -130,12 +132,23 @@ export const useAuth = () => {
     store.set(currentUserWorkspaceState.atom, null);
     clearSessionLocalStorageKeys();
     setLastAuthenticateWorkspaceDomain(null);
+    const workspaceAgnosticSignInUrl = new URL(AppPath.SignInUp, origin);
+    if (isMultiWorkspaceEnabled) {
+      workspaceAgnosticSignInUrl.hostname = defaultDomain;
+    }
     window.location.assign(
       getLogoutRedirectUrl({
         landingPageUrl: store.get(domainConfigurationState.atom).landingPageUrl,
+        workspaceAgnosticSignInUrl: workspaceAgnosticSignInUrl.toString(),
       }),
     );
-  }, [store, setLastAuthenticateWorkspaceDomain]);
+  }, [
+    store,
+    setLastAuthenticateWorkspaceDomain,
+    origin,
+    isMultiWorkspaceEnabled,
+    defaultDomain,
+  ]);
 
   const navigateAfterMultiWorkspaceSignInUp = useCallback(
     async (

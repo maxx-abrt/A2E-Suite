@@ -56,7 +56,7 @@ const runEntrypoint = (environment: Record<string, string>): EntrypointRun => {
   mkdirSync(binDirectory);
   writeFileSync(
     join(binDirectory, 'yarn'),
-    `#!/bin/sh\necho "$*" >> "${yarnCallsFile}"\n`,
+    `#!/bin/sh\necho "$*" >> "${yarnCallsFile}"\nif [ "$*" = "$STUB_FAIL_YARN_COMMAND" ]; then exit 1; fi\n`,
   );
   // `t`: the core schema already has its tables, so no database:init:prod.
   writeFileSync(join(binDirectory, 'psql'), '#!/bin/sh\necho t\n');
@@ -188,6 +188,7 @@ describe('bundled app provisioning boot contract (entrypoint.sh)', () => {
       'command:prod cache:flush',
       PROVISION_BUNDLED,
       INSTALL_PRE_INSTALLED,
+      'command:prod cache:flush',
       'command:prod cron:register:all',
     ]);
   });
@@ -240,11 +241,50 @@ describe('bundled app provisioning boot contract (entrypoint.sh)', () => {
       DISABLE_BUNDLED_APP_PROVISIONING: 'false',
     });
 
-    expect(yarnCalls).toEqual([PROVISION_BUNDLED, INSTALL_PRE_INSTALLED]);
+    expect(yarnCalls).toEqual([
+      PROVISION_BUNDLED,
+      INSTALL_PRE_INSTALLED,
+      'command:prod cache:flush',
+    ]);
   });
+
+  it.each([PROVISION_BUNDLED, INSTALL_PRE_INSTALLED])(
+    'refuses to start after %s fails',
+    (command) => {
+      expect(() =>
+        runEntrypoint({ STUB_FAIL_YARN_COMMAND: command }),
+      ).toThrow();
+    },
+  );
 });
 
 describe('bundled app provisioning in shipped deployment manifests', () => {
+  it.each([
+    'docker-compose.coolify.yml',
+    'packages/twenty-docker/docker-compose.coolify.yml',
+  ])('%s enables application functions on both services', (relativePath) => {
+    const services = readComposeServices(relativePath).filter((service) =>
+      ['server', 'worker'].includes(service.name),
+    );
+    expect(services).toHaveLength(2);
+    for (const service of services) {
+      expect(service.environment.LOGIC_FUNCTION_TYPE).toBe(
+        '${LOGIC_FUNCTION_TYPE:-LOCAL}',
+      );
+    }
+  });
+
+  it('keeps the root and packaged Coolify configurations identical', () => {
+    expect(
+      readFileSync(join(repositoryRoot, 'docker-compose.coolify.yml'), 'utf8'),
+    ).toBe(
+      readFileSync(
+        join(twentyDockerDirectory, 'docker-compose.coolify.yml'),
+        'utf8',
+      ),
+    );
+  });
+
   it.each(COMPOSE_MANIFESTS)(
     '%s disables bundled provisioning on every worker service',
     (relativePath) => {

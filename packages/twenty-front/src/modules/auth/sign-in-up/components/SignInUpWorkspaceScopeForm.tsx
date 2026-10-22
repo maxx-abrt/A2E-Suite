@@ -7,6 +7,9 @@ import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPa
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useWorkspaceBypass } from '@/auth/sign-in-up/hooks/useWorkspaceBypass';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
+import { AppPath } from 'twenty-shared/types';
 import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
@@ -22,6 +25,10 @@ export const SignInUpWorkspaceScopeForm = () => {
     workspaceAuthBypassProvidersState,
   );
   const { shouldOfferBypass, shouldUseBypass } = useWorkspaceBypass();
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
+  const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
 
   const { form } = useSignInUpForm();
 
@@ -70,6 +77,15 @@ export const SignInUpWorkspaceScopeForm = () => {
           onClick={handleResetPassword(form.getValues('email'))}
         >
           <Trans>Forgot your password?</Trans>
+        </ClickToActionLink>
+      )}
+      {isMultiWorkspaceEnabled && (
+        <ClickToActionLink
+          onClick={() =>
+            redirectToDefaultDomain({ pathname: AppPath.SignInUp })
+          }
+        >
+          <Trans>Sign in to another workspace</Trans>
         </ClickToActionLink>
       )}
     </>
