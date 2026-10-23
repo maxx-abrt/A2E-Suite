@@ -169,6 +169,7 @@ export class ClientConfigService {
 
     const clientConfig: ClientConfig = {
       appVersion: this.twentyConfigService.get('APP_VERSION'),
+      appRevision: this.twentyConfigService.get('APP_REVISION'),
       billing: {
         isBillingEnabled,
         billingUrl: this.twentyConfigService.get('BILLING_PLAN_REQUIRED_LINK'),

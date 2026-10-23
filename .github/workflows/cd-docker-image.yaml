@@ -37,6 +37,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
+      - name: Verify release tooling
+        run: node --test packages/twenty-docker/scripts/__tests__/*.test.mjs
+
       # The frontend build needs ~8 GB heap plus toolchain output; standard
       # runners ship ~14 GB of scratch disk, most of it pre-filled with
       # Android/.NET/Haskell toolchains the image build never touches.
@@ -89,7 +92,29 @@ jobs:
       # green run redeploys the stack right after the image is pushed.
       # (secrets are not readable in `if:` directly, hence the env round-trip)
       - name: Trigger Coolify redeploy
+        id: deploy
         if: env.COOLIFY_DEPLOY_WEBHOOK != ''
         env:
           COOLIFY_DEPLOY_WEBHOOK: ${{ secrets.COOLIFY_DEPLOY_WEBHOOK }}
-        run: curl -fsS -X POST "$COOLIFY_DEPLOY_WEBHOOK"
+        run: curl --fail --silent --show-error --max-time 60 -X POST "$COOLIFY_DEPLOY_WEBHOOK"
+
+      - name: Verify deployed account entry
+        timeout-minutes: 10
+        if: steps.deploy.outcome == 'success' && vars.A2E_PUBLIC_URL != ''
+        env:
+          A2E_PUBLIC_URL: ${{ vars.A2E_PUBLIC_URL }}
+          EXPECTED_REVISION: ${{ github.sha }}
+        run: |
+          for attempt in {1..12}; do
+            if node packages/twenty-docker/scripts/verify-account-entry.mjs --url "$A2E_PUBLIC_URL" --revision "$EXPECTED_REVISION"; then
+              exit 0
+            fi
+            if [ "$attempt" -lt 12 ]; then sleep 30; fi
+          done
+          echo "Coolify did not serve the expected frontend/backend and shared account mode in time" >&2
+          exit 1
+
+      - name: Report deployment verification configuration
+        if: steps.deploy.outcome != 'success' || vars.A2E_PUBLIC_URL == ''
+        run: |
+          echo 'Image published; live deployment is unverified. Configure COOLIFY_DEPLOY_WEBHOOK and A2E_PUBLIC_URL to verify it automatically.' >> "$GITHUB_STEP_SUMMARY"

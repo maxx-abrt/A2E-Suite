@@ -51,10 +51,14 @@ describe('shared-domain account entry (integration)', () => {
       `http://localhost:${APP_PORT}/client-config`,
     );
     expect(configurationResponse.ok).toBe(true);
-    expect(await configurationResponse.json()).toMatchObject({
+    const configuration = await configurationResponse.json();
+    expect(configuration).toMatchObject({
       isMultiWorkspaceEnabled: true,
       isSharedDomainWorkspaceEnabled: true,
     });
+    if (process.env.APP_REVISION) {
+      expect(configuration.appRevision).toBe(process.env.APP_REVISION);
+    }
     const accountResponse = await postMetadataOperationWithHeaders(
       signInOperation(),
       { originHeader: ALLOWED_ORIGIN },

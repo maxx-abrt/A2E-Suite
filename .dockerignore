@@ -3,3 +3,10 @@
 **/node_modules
 .nx/cache
 packages/twenty-server/.env
+
+# Rebuild source artifacts inside the image; local SDK state may also contain credentials.
+**/.twenty
+packages/twenty-front/build
+packages/twenty-server/dist
+**/.env.*.local
+.env.resend.local

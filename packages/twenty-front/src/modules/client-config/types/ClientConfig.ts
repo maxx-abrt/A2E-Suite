@@ -14,6 +14,7 @@ import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
 
 export type ClientConfig = {
   appVersion?: string;
+  appRevision?: string;
   aiModels: Array<ClientAiModelConfig>;
   analyticsEnabled: boolean;
   api: ApiConfig;
