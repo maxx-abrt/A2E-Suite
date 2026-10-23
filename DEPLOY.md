@@ -64,8 +64,9 @@ actually runs if your source of truth is GitLab.
 Then wait for the build to finish **before** touching Coolify:
 
 1. Open https://github.com/maxx-abrt/A2E-Suite/actions
-2. Watch the workflow **"CD Docker image"** — green = done (~30–40 min the
-   first time, ~10 min after, thanks to caching).
+2. Watch **"CD Docker image"** until the image build/push succeeds. This
+   publishes the image; it does not by itself prove the running service updated.
+   The first build can take 30–40 minutes; caching speeds up later builds.
 3. Check the image exists: https://github.com/maxx-abrt?tab=packages
    → package `a2e-suite`.
 
@@ -356,7 +357,7 @@ that intentionally manage app installation separately.
 
 ### Accounts and workspaces on one domain
 
-The A2E Coolify Compose files now default to
+The A2E production image and both Coolify Compose copies default to
 `IS_SHARED_DOMAIN_WORKSPACE_ENABLED=true` on **both server and worker**. Set
 `SERVER_URL=https://bureau.serveurmax.store` (or your own public app URL).
 If `FRONTEND_URL` is configured separately, it must be the public browser origin.
@@ -372,10 +373,12 @@ loading another workspace's metadata. Native membership, auth-provider, 2FA,
 server-admin creation restrictions and enterprise workspace limits remain in
 force. This does not add concurrent independent workspace cookies per tab.
 
-**Updating the existing service is required:** deploy an image containing this
-change, update the saved Compose configuration, and preserve existing volumes
-and secrets. A previously saved Coolify Compose file will not gain the new
-variable from a Git push. Confirm `/client-config` reports both
+**Deploying the new image is required:** preserve the existing service, volumes
+and secrets. The image default activates shared-domain mode even when an older
+saved Compose does not pass the new flag; an explicit `false` or database
+configuration override must be reviewed separately. A Git push does not update
+saved Compose configuration. Use the current root Compose for the other
+readiness, mail and provisioning settings too. Confirm `/client-config` reports both
 `isSharedDomainWorkspaceEnabled: true` and `isMultiWorkspaceEnabled: true`.
 The latter describes native account/workspace features; it does not imply
 subdomain routing when shared-domain mode is enabled. The shared-domain flag
@@ -392,3 +395,42 @@ workspace → logout → a new email → new workspace, then sign into an existi
 account with a different membership. Also check invitations, reset emails,
 required 2FA and workspace switching. A public landing screenshot alone does
 not verify account creation or mail delivery.
+
+### Build failures and exact deployed version
+
+The root deployment file is `docker-compose.coolify.yml`: it **pulls** the image
+from GHCR. GitHub builds that image from
+`packages/twenty-docker/twenty/Dockerfile`, target `twenty`, with the repository
+root as context. There is no separate root Dockerfile to edit.
+
+The 2026-10-23 failed image build could not resolve
+`twenty-shared/application` from isolated app builds. Later app successes hid
+the original error in the shell loop, and archive collection eventually failed.
+The bundled-app stage now inherits the built native shared package from the
+server build, stops at the first failure and validates every archive. Host
+`.twenty` state and frontend/server build outputs are excluded from the context.
+The image always compiles the frontend from source.
+
+After the reviewed change is merged and **CD Docker image** publishes it, set
+Coolify's `TAG` to that build's full commit SHA and redeploy the existing stack.
+Verify the public service from the repository root with Node 24:
+
+```sh
+node packages/twenty-docker/scripts/verify-account-entry.mjs \
+  --url https://bureau.serveurmax.store \
+  --revision <full-40-character-commit-sha>
+```
+
+This requires `appRevision` from `/client-config` and `revision` from
+`/release.json` to match the expected SHA, both account/workspace flags true, and the configured
+frontend host to match the requested host. An old SPA HTML fallback at
+`/release.json` fails. A successful check establishes deployment identity and
+mode; run the browser journeys above to accept the account experience.
+
+For automatic redeploys, configure the existing Actions secret
+`COOLIFY_DEPLOY_WEBHOOK` and repository variable
+`A2E_PUBLIC_URL=https://bureau.serveurmax.store`. The workflow then waits for the
+expected backend/frontend revision and mode after the webhook. Missing either
+setting is reported as an unverified live deployment; a published image alone
+is not a deployment certificate. Keep the deployment's selected tag consistent
+with the workflow's intended SHA (a pinned older tag will correctly fail).

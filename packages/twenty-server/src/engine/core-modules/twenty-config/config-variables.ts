@@ -2123,6 +2123,17 @@ export class ConfigVariables {
   APP_VERSION?: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'Git revision of the running image',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+    isHiddenInAdminPanel: true,
+  })
+  @IsOptionalOrEmptyString()
+  @IsString()
+  APP_REVISION?: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Enable or disable google map api usage',
     type: ConfigVariableType.BOOLEAN,

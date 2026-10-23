@@ -1,51 +1,4 @@
 # ===========================================================================
-# A2E apps build stage (M1 one-command provisioning)
-# Builds each bundled A2E app into a tarball that the server registers and
-# auto-installs on every workspace at startup via `app:provision-bundled`.
-# Each app has its own Yarn workspace and twenty-sdk@2.31.0 from npm.
-# ===========================================================================
-
-FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491f4857e25e35a36ba7995 AS twenty-apps-build
-
-WORKDIR /apps
-
-# Enable corepack so the `packageManager` field in each app's package.json
-# resolves yarn@4.13.0 without a network fetch (Node 24 ships corepack bundled).
-RUN corepack enable yarn
-
-# All seven bundled apps — copied individually so layer caching kicks in when
-# only one app's source changes. Keep this list, the loop below and the front
-# A2E allowlist (A2eSuiteApplicationUniversalIdentifiers.ts) in sync; a front
-# spec fails when an internal a2e-* app is missing from either.
-COPY ./packages/twenty-apps/internal/a2e-documents /apps/a2e-documents
-COPY ./packages/twenty-apps/internal/a2e-accounting /apps/a2e-accounting
-COPY ./packages/twenty-apps/internal/a2e-projects   /apps/a2e-projects
-COPY ./packages/twenty-apps/internal/a2e-chat        /apps/a2e-chat
-COPY ./packages/twenty-apps/internal/a2e-drive       /apps/a2e-drive
-COPY ./packages/twenty-apps/internal/a2e-crm         /apps/a2e-crm
-COPY ./packages/twenty-apps/internal/a2e-links       /apps/a2e-links
-
-# Each app is an independent Yarn workspace; install deps and build with tarball.
-# `yarn twenty dev:build --tarball` is equivalent to the SDK CLI command that
-# the development runbook uses. Each app's pinned twenty-sdk resolves from npm.
-RUN set -eu; for app in a2e-documents a2e-accounting a2e-projects a2e-chat a2e-drive a2e-crm a2e-links; do \
-      echo "Building $app ..."; \
-      cd /apps/$app && \
-      yarn install --immutable && \
-      yarn twenty dev:build --tarball && \
-      cd /apps; \
-    done
-
-# Collect all tarballs into a single dist directory.
-RUN set -eu; mkdir -p /apps/dist; \
-    for app in a2e-documents a2e-accounting a2e-projects a2e-chat a2e-drive a2e-crm a2e-links; do \
-      version=$(node -p "require('/apps/$app/package.json').version"); \
-      cp "/apps/$app/.twenty/output/$app-$version.tgz" /apps/dist/; \
-    done; \
-    echo "Bundled tarballs:"; ls /apps/dist/
-
-
-# ===========================================================================
 # Dependency stages
 # ===========================================================================
 
@@ -106,6 +59,32 @@ RUN find /app/packages/twenty-server/dist -name '*.d.ts' -delete \
 RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-client-sdk twenty-server
 
 
+# ===========================================================================
+# Bundled apps build stage (native shared exports from the server build)
+# ===========================================================================
+
+FROM twenty-server-build AS twenty-apps-build
+
+# Template logic imports the fork's native shared exports; an isolated /apps tree cannot resolve them.
+WORKDIR /app/packages/twenty-apps/internal
+
+# Each independent app retains its pinned package manager and SDK lockfile.
+RUN corepack enable yarn
+
+# Keep this list, the build script and the frontend A2E allowlist in sync.
+COPY ./packages/twenty-apps/internal/a2e-documents /app/packages/twenty-apps/internal/a2e-documents
+COPY ./packages/twenty-apps/internal/a2e-accounting /app/packages/twenty-apps/internal/a2e-accounting
+COPY ./packages/twenty-apps/internal/a2e-projects   /app/packages/twenty-apps/internal/a2e-projects
+COPY ./packages/twenty-apps/internal/a2e-chat        /app/packages/twenty-apps/internal/a2e-chat
+COPY ./packages/twenty-apps/internal/a2e-drive       /app/packages/twenty-apps/internal/a2e-drive
+COPY ./packages/twenty-apps/internal/a2e-crm         /app/packages/twenty-apps/internal/a2e-crm
+COPY ./packages/twenty-apps/internal/a2e-links       /app/packages/twenty-apps/internal/a2e-links
+
+# Build and validate each archive before continuing to the next app.
+COPY ./packages/twenty-docker/scripts/build-bundled-apps.mjs /app/build-bundled-apps.mjs
+RUN node /app/build-bundled-apps.mjs /app/packages/twenty-apps/internal /apps/dist
+
+
 FROM front-deps AS twenty-front-build
 
 COPY ./packages/twenty-front /app/packages/twenty-front
@@ -116,14 +95,12 @@ COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 COPY ./packages/twenty-client-sdk /app/packages/twenty-client-sdk
 RUN npx nx run twenty-front:lingui:extract && \
     npx nx run twenty-front:lingui:compile
-# To skip the memory-intensive frontend build, pre-build on the host:
-#   npx nx build twenty-front
-# The check below will use packages/twenty-front/build/ if it already exists.
-RUN if [ -d /app/packages/twenty-front/build ]; then \
-      echo "Using pre-built frontend from host"; \
-    else \
-      NODE_OPTIONS="--max-old-space-size=8192" npx nx build twenty-front; \
-    fi
+ARG APP_REVISION=unknown
+ENV APP_REVISION=$APP_REVISION
+COPY ./packages/twenty-docker/scripts/write-frontend-release.mjs /app/write-frontend-release.mjs
+# Release images must compile this checkout, never an old host build or an Nx cache hit.
+RUN NODE_OPTIONS="--max-old-space-size=8192" npx nx build twenty-front --skip-nx-cache && \
+    node /app/write-frontend-release.mjs /app/packages/twenty-front/build
 
 
 # ===========================================================================
@@ -154,6 +131,8 @@ ARG APP_REVISION=unknown
 ENV APP_VERSION=$APP_VERSION
 ENV APP_REVISION=$APP_REVISION
 ENV NODE_ENV=production
+# Existing saved Compose files may not yet pass the new account-routing flag.
+ENV IS_SHARED_DOMAIN_WORKSPACE_ENABLED=true
 
 # Workspace root config
 COPY --chown=1000 --from=twenty-server-build /app/package.json /app/yarn.lock /app/.yarnrc.yml /app/

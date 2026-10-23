@@ -77,11 +77,19 @@ const dockerfile = readFileSync(
   'utf8',
 );
 
-const dockerfileBuildLoopApps =
-  dockerfile
-    .match(/for app in ([^;]+);/)?.[1]
-    .trim()
-    .split(/\s+/) ?? [];
+const bundledBuildScript = readFileSync(
+  join(
+    repositoryRoot,
+    'packages',
+    'twenty-docker',
+    'scripts',
+    'build-bundled-apps.mjs',
+  ),
+  'utf8',
+);
+const bundledBuildApps = [
+  ...bundledBuildScript.matchAll(/'(a2e-[a-z]+)'/g),
+].map((match) => match[1]);
 
 describe('A2E_SUITE_APPLICATION_UNIVERSAL_IDENTIFIERS', () => {
   it('discovers the seven first-party A2E apps', () => {
@@ -123,11 +131,15 @@ describe('A2E_SUITE_APPLICATION_UNIVERSAL_IDENTIFIERS', () => {
   });
 
   it('builds every first-party app into the production image', () => {
+    expect(bundledBuildApps.sort()).toEqual(
+      firstPartyApps.map((app) => app.name).sort(),
+    );
+    expect(dockerfile).toContain('RUN node /app/build-bundled-apps.mjs');
     for (const app of firstPartyApps) {
       expect(dockerfile).toContain(
         `COPY ./packages/twenty-apps/internal/${app.name} `,
       );
-      expect(dockerfileBuildLoopApps).toContain(app.name);
+      expect(bundledBuildApps).toContain(app.name);
     }
   });
 });
