@@ -33,6 +33,7 @@ type LedgerEntry = {
   cells?: Record<string, unknown> | null;
   entryDate?: string | null;
   deletedAt?: string | null;
+  sheetId?: string | null;
 };
 
 export const ensureLedgerSheet = async (
@@ -68,15 +69,12 @@ export const ensureLedgerSheet = async (
 
 export const upsertLedgerRow = async (
   input: LedgerRowInput & { financeEntryId?: string; invoiceId?: string },
+  client: ReturnType<typeof coreClient> = coreClient(),
 ): Promise<'CREATED' | 'UPDATED' | 'RESTORED' | 'SKIPPED_LOCKED'> => {
-  const client = coreClient();
   const sheet = await ensureLedgerSheet(client);
 
-  // The lock is re-checked after the find because a treasurer can close the
-  // period between this event's read and its write: the early check alone lets
-  // a late replay land on closed books. An update/restore must also refuse when
-  // the ROW's existing date is inside the lock — rewriting history is exactly
-  // what the lock exists to prevent.
+  // Both incoming and existing dates matter: moving a closed-period row into
+  // an open period must not bypass the lock.
   const isLocked = (existingEntryDate?: string | null): boolean =>
     isLedgerWriteLocked(sheet.periodLockedUntil, [
       input.entryDate,
@@ -102,16 +100,18 @@ export const upsertLedgerRow = async (
     { id: true, cells: true, entryDate: true, deletedAt: true },
     {
       sourceKey: { eq: row.sourceKey },
-      or: [
-        { deletedAt: { is: 'NULL' } },
-        { deletedAt: { is: 'NOT_NULL' } },
-      ],
+      or: [{ deletedAt: { is: 'NULL' } }, { deletedAt: { is: 'NOT_NULL' } }],
     },
   );
 
-  if (isLocked(existing?.entryDate)) {
+  if (
+    await isCurrentLedgerWriteLocked(client, sheet.id, [
+      input.entryDate,
+      existing?.entryDate,
+    ])
+  ) {
     console.log(
-      `[bilan] Écriture ignorée : ligne ${existing?.id} dans l'exercice clôturé jusqu'au ${sheet.periodLockedUntil}`,
+      `[bilan] Écriture ignorée : ligne ${existing?.id ?? row.sourceKey} dans une période clôturée`,
     );
 
     return 'SKIPPED_LOCKED';
@@ -137,7 +137,7 @@ export const upsertLedgerRow = async (
   const action = resolveLedgerUpsertAction(existing);
 
   if (existing === undefined) {
-    return createLedgerEntryWithRaceRecovery(client, row, data);
+    return createLedgerEntryWithRaceRecovery(client, sheet.id, row, data);
   }
 
   if (action === 'RESTORE') {
@@ -152,6 +152,23 @@ export const upsertLedgerRow = async (
   });
 
   return 'UPDATED';
+};
+
+const isCurrentLedgerWriteLocked = async (
+  client: ReturnType<typeof coreClient>,
+  sheetId: string,
+  entryDates: (string | null | undefined)[],
+): Promise<boolean> => {
+  const currentSheet = await findOneRecord<LedgerSheet>(
+    client,
+    'bookSheets',
+    { id: true, periodLockedUntil: true },
+    { id: { eq: sheetId } },
+  );
+  if (currentSheet === undefined) {
+    throw new Error('Ledger sheet unavailable; refusing to change its entries');
+  }
+  return isLedgerWriteLocked(currentSheet.periodLockedUntil, entryDates);
 };
 
 // `sourceKey` is unique over soft-deleted rows too (the manifest unique index
@@ -174,9 +191,11 @@ const restoreRetiredLedgerEntry = async (
 
 const createLedgerEntryWithRaceRecovery = async (
   client: ReturnType<typeof coreClient>,
+  sheetId: string,
   row: ReturnType<typeof buildLedgerRow>,
   data: RecordShape,
-): Promise<'CREATED' | 'UPDATED' | 'RESTORED'> => {
+): Promise<'CREATED' | 'UPDATED' | 'RESTORED' | 'SKIPPED_LOCKED'> => {
+  let conflict: unknown;
   try {
     await createRecords(client, 'createBookEntries', [
       { ...data, cells: row.cells },
@@ -187,20 +206,39 @@ const createLedgerEntryWithRaceRecovery = async (
     if (!isLedgerUniqueViolation(error)) {
       throw error;
     }
+    conflict = error;
   }
 
   // Two concurrent events for the same source both passed the empty find; the
   // loser of the create race adopts the winner's row and replays the merge.
-  // The winner of an insert race is live by definition, so no widening needed.
+  // A rival can retire the winner before it is read; include tombstones so
+  // the unique source key never causes an unbounded insert retry.
   const winner = await findOneRecord<LedgerEntry>(
     client,
     'bookEntries',
-    { id: true, cells: true },
-    { sourceKey: { eq: row.sourceKey } },
+    { id: true, cells: true, entryDate: true, deletedAt: true },
+    {
+      sourceKey: { eq: row.sourceKey },
+      or: [{ deletedAt: { is: 'NULL' } }, { deletedAt: { is: 'NOT_NULL' } }],
+    },
   );
 
   if (winner === undefined) {
-    return createLedgerEntryWithRaceRecovery(client, row, data);
+    throw conflict;
+  }
+
+  if (
+    await isCurrentLedgerWriteLocked(client, sheetId, [
+      row.entryDate,
+      winner.entryDate,
+    ])
+  ) {
+    return 'SKIPPED_LOCKED';
+  }
+
+  if (resolveLedgerUpsertAction(winner) === 'RESTORE') {
+    await restoreRetiredLedgerEntry(client, winner, row, data);
+    return 'RESTORED';
   }
 
   await updateRecord(client, 'updateBookEntry', winner.id, {
@@ -211,24 +249,34 @@ const createLedgerEntryWithRaceRecovery = async (
   return 'UPDATED';
 };
 
-
-// A deleted source is not erased from the book: the row is soft-deleted so the
-// export of a closed year keeps its trail.
+// Closed-period entries must survive source deletion. Open-period entries can
+// be retired while retaining their source key for a later restore.
 export const retireLedgerRow = async (
   sourceKind: LedgerSourceKind,
   sourceId: string,
+  client: ReturnType<typeof coreClient> = coreClient(),
 ): Promise<boolean> => {
-  const client = coreClient();
   const sourceKey = `${sourceKind}:${sourceId}`;
 
-  const existing = await findOneRecord<{ id: string }>(
+  const existing = await findOneRecord<LedgerEntry>(
     client,
     'bookEntries',
-    { id: true },
+    { id: true, entryDate: true, sheetId: true },
     { sourceKey: { eq: sourceKey } },
   );
 
   if (existing === undefined) {
+    return false;
+  }
+
+  if (!existing.sheetId) {
+    throw new Error('Ledger entry has no sheet; refusing to retire it');
+  }
+  if (
+    await isCurrentLedgerWriteLocked(client, existing.sheetId, [
+      existing.entryDate,
+    ])
+  ) {
     return false;
   }
 

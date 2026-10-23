@@ -57,6 +57,8 @@ describe('selectPendingBilanItems', () => {
         invoices: [
           buildInvoice({ id: 'paid', status: 'PAID' }),
           buildInvoice({ id: 'cancelled', status: 'CANCELLED' }),
+          buildInvoice({ id: 'draft', status: 'DRAFT' }),
+          buildInvoice({ id: 'incomplete', status: null }),
           buildInvoice({ id: 'sent', status: 'SENT' }),
         ],
         grants: [],

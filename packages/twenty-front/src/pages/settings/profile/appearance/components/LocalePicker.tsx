@@ -1,7 +1,9 @@
 import { styled } from '@linaria/react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useState } from 'react';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale';
 import { Select } from '@/ui/input/components/Select';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
@@ -27,54 +29,66 @@ const StyledContainer = styled.div`
 export const LocalePicker = () => {
   const { t } = useLingui();
   const store = useStore();
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(
-    currentWorkspaceMemberState,
-  );
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
   const localeOptions = useLocaleOptions();
 
   const { invalidateMetadataStore } = useInvalidateMetadataStore();
 
-  const updateWorkspaceMember = async (changedFields: any) => {
-    if (!currentWorkspaceMember?.id) {
-      throw new Error('User is not logged in');
-    }
-
-    try {
-      await updateWorkspaceMemberSettings({
-        workspaceMemberId: currentWorkspaceMember.id,
-        update: changedFields,
-      });
-    } catch (error) {
-      logError(error);
-    }
-  };
-
-  if (!isDefined(currentWorkspaceMember)) return;
+  const { enqueueErrorSnackBar, enqueueInfoSnackBar } = useSnackBar();
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleLocaleChange = async (value: keyof typeof APP_LOCALES) => {
-    setCurrentWorkspaceMember({
-      ...currentWorkspaceMember,
-      ...{ locale: value },
-    });
-    await updateWorkspaceMember({ locale: value });
+    if (!isDefined(currentWorkspaceMember) || isSaving) return;
+    const workspaceMemberId = currentWorkspaceMember.id;
+    const isCurrentMember = () =>
+      store.get(currentWorkspaceMemberState.atom)?.id === workspaceMemberId;
+    setIsSaving(true);
 
-    const dateFnsLocale = await getDateFnsLocale(value);
-    const newDateLocale = {
-      locale: value,
-      localeCatalog: dateFnsLocale || enUS,
-    };
-    store.set(dateLocaleState.atom, newDateLocale);
-
-    await dynamicActivate(value);
     try {
-      localStorage.setItem('locale', value);
+      const didSave = await updateWorkspaceMemberSettings({
+        workspaceMemberId,
+        update: { locale: value },
+      });
+      if (!didSave) throw new Error('Language preference was not saved');
+      if (!isCurrentMember()) return;
+
+      const dateFnsLocale = await getDateFnsLocale(value);
+      if (!isCurrentMember()) return;
+      const activatedLocale = await dynamicActivate(value, {
+        canActivate: isCurrentMember,
+      });
+      if (!isDefined(activatedLocale) || !isCurrentMember()) return;
+
+      store.set(dateLocaleState.atom, {
+        locale: activatedLocale,
+        localeCatalog:
+          activatedLocale === value ? (dateFnsLocale ?? enUS) : enUS,
+      });
+      try {
+        localStorage.setItem('locale', value);
+      } catch {
+        // The server preference remains durable when storage is unavailable.
+      }
+      if (activatedLocale !== value) {
+        enqueueInfoSnackBar({
+          message: t`Your language was saved. English is shown while its translations are unavailable.`,
+        });
+      }
+      invalidateMetadataStore();
     } catch (error) {
-      // oxlint-disable-next-line no-console
-      console.log('Failed to save locale to localStorage:', error);
+      logError(error);
+      if (isCurrentMember()) {
+        enqueueErrorSnackBar({
+          message: t`Could not save language. Please try again.`,
+        });
+      }
+    } finally {
+      setIsSaving(false);
     }
-    invalidateMetadataStore();
   };
+
+  if (!isDefined(currentWorkspaceMember)) return null;
 
   return (
     <StyledContainer>
@@ -83,6 +97,7 @@ export const LocalePicker = () => {
         label={t`Language`}
         dropdownWidthAuto
         fullWidth
+        disabled={isSaving}
         withSearchInput
         value={currentWorkspaceMember.locale}
         options={localeOptions}

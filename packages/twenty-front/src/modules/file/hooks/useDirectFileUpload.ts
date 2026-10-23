@@ -12,6 +12,7 @@ type DirectFileUploadOptions = {
   fieldMetadataId?: string;
   signal?: AbortSignal;
   onProgress?: (progress: number) => void;
+  assertCanContinue?: () => void;
 };
 
 // Progress only exists on the XHR path: fetch cannot observe upload progress.
@@ -93,8 +94,10 @@ export const useDirectFileUpload = () => {
       fieldMetadataId,
       signal,
       onProgress,
+      assertCanContinue,
     }: DirectFileUploadOptions,
   ): Promise<FileWithSignedUrl> => {
+    assertCanContinue?.();
     const createResult = await createFileUpload({
       variables: {
         filename: file.name,
@@ -103,6 +106,7 @@ export const useDirectFileUpload = () => {
         fieldMetadataId,
       },
     });
+    assertCanContinue?.();
 
     const uploadTarget = createResult?.data?.createFileUpload;
 
@@ -132,9 +136,12 @@ export const useDirectFileUpload = () => {
       }
     }
 
+    assertCanContinue?.();
+
     const completeResult = await completeFileUpload({
       variables: { fileId: uploadTarget.fileId },
     });
+    assertCanContinue?.();
 
     const uploadedFile = completeResult?.data?.completeFileUpload;
 

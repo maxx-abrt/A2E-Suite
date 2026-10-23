@@ -2284,7 +2284,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RESEND_SETTINGS,
     isSensitive: true,
-    description: 'Resend API key used when EMAILING_DOMAIN_DRIVER is RESEND',
+    description: 'Resend API key for EMAIL_DRIVER=RESEND and EMAILING_DOMAIN_DRIVER=RESEND',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()

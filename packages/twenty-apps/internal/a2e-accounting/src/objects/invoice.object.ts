@@ -38,7 +38,7 @@ export default defineObject({
       name: 'number',
       label: 'Numéro',
       description:
-        'Numéro séquentiel sans rupture, exigence de l’article L102 B du LPF',
+        'Identifiant de la facture émise, conservé lors des imports.',
       icon: 'IconHash',
       defaultValue: "''",
     },
@@ -139,7 +139,8 @@ export default defineObject({
       type: FieldType.CURRENCY,
       name: 'amountPaid',
       label: 'Montant encaissé',
-      description: 'Cumul des encaissements, pour suivre les paiements partiels',
+      description:
+        'Cumul des encaissements, pour suivre les paiements partiels',
       icon: 'IconCashBanknote',
       isNullable: true,
     },

@@ -3,7 +3,7 @@ import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/S
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/internal/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft';
 import { SignInUpWithSso } from '@/auth/sign-in-up/components/internal/SignInUpWithSso';
-import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
+import { ForgotPasswordLink } from '@/auth/sign-in-up/components/ForgotPasswordLink';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useWorkspaceBypass } from '@/auth/sign-in-up/hooks/useWorkspaceBypass';
@@ -31,8 +31,6 @@ export const SignInUpWorkspaceScopeForm = () => {
   const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
 
   const { form } = useSignInUpForm();
-
-  const { handleResetPassword } = useHandleResetPassword();
 
   const { signInUpStep } = useSignInUp(form);
 
@@ -73,11 +71,10 @@ export const SignInUpWorkspaceScopeForm = () => {
         )}
       </StyledOnboardingContentContainer>
       {signInUpStep === SignInUpStep.Password && (
-        <ClickToActionLink
-          onClick={handleResetPassword(form.getValues('email'))}
-        >
-          <Trans>Forgot your password?</Trans>
-        </ClickToActionLink>
+        <ForgotPasswordLink
+          key={form.getValues('email')}
+          email={form.getValues('email')}
+        />
       )}
       {isMultiWorkspaceEnabled && (
         <ClickToActionLink

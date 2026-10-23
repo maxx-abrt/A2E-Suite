@@ -7,6 +7,7 @@ import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tes
 import {
   AUTO_SELECT_FAST_MODEL_ID,
   AUTO_SELECT_SMART_MODEL_ID,
+  WORKSPACE_REQUEST_HEADER,
 } from 'twenty-shared/constants';
 import {
   WorkspaceActivationStatus,
@@ -38,6 +39,7 @@ const mockOnError = jest.fn();
 const mockOnNetworkError = jest.fn();
 const mockOnPayloadTooLarge = jest.fn();
 const mockOnUnauthenticatedError = jest.fn();
+const mockOnWorkspaceContextMismatch = jest.fn();
 
 const mockWorkspaceMember = {
   id: 'workspace-member-id',
@@ -101,13 +103,14 @@ const createMockOptions = (): Options => ({
   onNetworkError: mockOnNetworkError,
   onPayloadTooLarge: mockOnPayloadTooLarge,
   onUnauthenticatedError: mockOnUnauthenticatedError,
+  onWorkspaceContextMismatch: mockOnWorkspaceContextMismatch,
   appVersion: '1.0.0',
 });
 
-const makeRequestWithContext = async (context?: Record<string, unknown>) => {
-  const options = createMockOptions();
-  const apolloFactory = new ApolloFactory(options);
-
+const makeRequestWithContext = async (
+  context?: Record<string, unknown>,
+  apolloFactory = new ApolloFactory(createMockOptions()),
+) => {
   const client = apolloFactory.getClient();
 
   await client.mutate({
@@ -297,6 +300,100 @@ describe('ApolloFactory', () => {
     expect(readHeader(headers, 'authorization')).toBeUndefined();
     // Version-mismatch detection must keep working without one.
     expect(readHeader(headers, 'X-App-Version')).toBe('1.0.0');
+    expect(readHeader(headers, 'x-workspace-id')).toBe(mockWorkspace.id);
+  });
+
+  it('keeps workspace assertions independent between clients in different tabs', async () => {
+    fetchMock.mockResponse(JSON.stringify({ data: {} }));
+    const firstTab = new ApolloFactory(createMockOptions());
+    const secondWorkspace = { ...mockWorkspace, id: 'second-workspace-id' };
+    const secondTab = new ApolloFactory({
+      ...createMockOptions(),
+      currentWorkspace: secondWorkspace,
+    });
+
+    await makeRequestWithContext(undefined, firstTab);
+    await makeRequestWithContext(undefined, secondTab);
+    await makeRequestWithContext(undefined, firstTab);
+
+    const workspaceHeaders = fetchMock.mock.calls.map(([, options]) =>
+      readHeader(
+        options?.headers as Record<string, string>,
+        WORKSPACE_REQUEST_HEADER,
+      ),
+    );
+
+    expect(workspaceHeaders).toEqual([
+      mockWorkspace.id,
+      secondWorkspace.id,
+      mockWorkspace.id,
+    ]);
+  });
+
+  it('omits the workspace assertion for global account requests', async () => {
+    fetchMock.mockResponse(JSON.stringify({ data: {} }));
+    const factory = new ApolloFactory({
+      ...createMockOptions(),
+      currentWorkspace: null,
+    });
+
+    await makeRequestWithContext(undefined, factory);
+
+    const headers = fetchMock.mock.calls[0]?.[1]?.headers as Record<
+      string,
+      string
+    >;
+
+    expect(readHeader(headers, WORKSPACE_REQUEST_HEADER)).toBeUndefined();
+  });
+
+  it('preserves an in-flight request workspace when the current workspace changes', async () => {
+    const factory = new ApolloFactory(createMockOptions());
+
+    fetchMock.mockResponseOnce(async () => {
+      factory.updateCurrentWorkspace({
+        ...mockWorkspace,
+        id: 'next-workspace-id',
+      });
+
+      return JSON.stringify({ data: {} });
+    });
+    fetchMock.mockResponse(JSON.stringify({ data: {} }));
+
+    await makeRequestWithContext(undefined, factory);
+    await makeRequestWithContext(undefined, factory);
+
+    expect(
+      fetchMock.mock.calls.map(([, options]) =>
+        readHeader(
+          options?.headers as Record<string, string>,
+          WORKSPACE_REQUEST_HEADER,
+        ),
+      ),
+    ).toEqual([mockWorkspace.id, 'next-workspace-id']);
+  });
+
+  it('reports a workspace mismatch without signing out or retrying', async () => {
+    fetchMock.mockResponse(
+      JSON.stringify({
+        errors: [
+          {
+            message:
+              'Request workspace does not match the authenticated workspace',
+            extensions: {
+              code: 'FORBIDDEN',
+              subCode: 'WORKSPACE_CONTEXT_MISMATCH',
+            },
+          },
+        ],
+      }),
+    );
+
+    await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+    expect(mockOnWorkspaceContextMismatch).toHaveBeenCalledTimes(1);
+    expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   // The session cookie is issued and refreshed server-side, so a rejection is

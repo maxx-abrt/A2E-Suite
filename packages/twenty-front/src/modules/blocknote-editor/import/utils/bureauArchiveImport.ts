@@ -7,7 +7,8 @@ import {
   normalizeEntryPath,
   stripNotionEntryHash,
 } from '@/blocknote-editor/import/utils/documentsTransferEntries';
-import { sanitizeImportedHtml } from '@/blocknote-editor/import/utils/sanitizeImportedHtml';
+import { sanitizeNotionHtml } from '@/blocknote-editor/import/utils/prepareNotionHtml';
+import { collectHtmlImportWarnings } from '@/blocknote-editor/import/utils/htmlImportWarnings';
 import { isDefined } from 'twenty-shared/utils';
 
 export type BureauArchivePage = {
@@ -22,6 +23,7 @@ export type BureauArchiveImportPlan = {
   pages: BureauArchivePage[];
   entriesByPath: Map<string, DocumentsTransferEntry>;
   unsupportedPaths: string[];
+  reviewCountsByPath?: Map<string, number>;
 };
 
 export const resolveBureauArchivePath = (
@@ -66,6 +68,7 @@ export const planBureauArchiveImport = (
   }
 
   const pages: BureauArchivePage[] = [];
+  const reviewCountsByPath = new Map<string, number>();
 
   for (const [path, entry] of entriesByPath) {
     const format = /\.html?$/i.test(path)
@@ -87,17 +90,16 @@ export const planBureauArchiveImport = (
       parsedDocument?.title?.trim() ||
       fileTitle ||
       'Untitled';
+    const bodyHtml =
+      parsedDocument?.querySelector('.page-body')?.innerHTML ?? content;
+    if (format === 'html')
+      reviewCountsByPath.set(path, collectHtmlImportWarnings(bodyHtml).length);
     pages.push({
       path,
       title,
       parentPath: null,
       format,
-      content:
-        format === 'html'
-          ? sanitizeImportedHtml(
-              parsedDocument?.querySelector('.page-body')?.innerHTML ?? content,
-            )
-          : content,
+      content: format === 'html' ? sanitizeNotionHtml(bodyHtml) : content,
     });
   }
 
@@ -133,6 +135,7 @@ export const planBureauArchiveImport = (
     unsupportedPaths: [...entriesByPath.keys()].filter((path) =>
       /\.(csv|json|zip)$/i.test(path),
     ),
+    reviewCountsByPath,
   };
 };
 
@@ -169,6 +172,7 @@ type RunBureauArchiveImportOptions = {
   ) => Promise<void>;
   getPageUrl: (documentId: string) => string;
   onProgress: (completedCount: number, totalCount: number) => void;
+  assertCanContinue?: () => void;
 };
 
 export const runBureauArchiveImport = async (
@@ -177,9 +181,45 @@ export const runBureauArchiveImport = async (
   const { plan, session } = options;
   session.mappedBlocksByPath ??= new Map();
   session.warningCountsByPath ??= new Map();
+  const documentIdsByNotionId = new Map<string, string>();
+  for (const page of plan.pages) {
+    const sourceId =
+      /([a-f\d]{32}|[a-f\d]{8}(?:-[a-f\d]{4}){3}-[a-f\d]{12})\.(?:html?|md|markdown)$/i.exec(
+        page.path,
+      )?.[1];
+    const documentId = session.documentIdsByPath.get(page.path);
+    if (sourceId && documentId)
+      documentIdsByNotionId.set(
+        sourceId.replaceAll('-', '').toLowerCase(),
+        documentId,
+      );
+  }
+
+  const resolveLinkedDocumentId = (pagePath: string, url: string) => {
+    const path = resolveBureauArchivePath(pagePath, url);
+    if (path !== null) return session.documentIdsByPath.get(path);
+    try {
+      const source = new URL(url);
+      if (
+        !/^(?:https?:)$/.test(source.protocol) ||
+        !/(?:^|\.)notion\.(?:so|site)$/i.test(source.hostname)
+      )
+        return undefined;
+      const sourceId =
+        /([a-f\d]{32}|[a-f\d]{8}(?:-[a-f\d]{4}){3}-[a-f\d]{12})$/i.exec(
+          source.pathname,
+        )?.[1];
+      return sourceId
+        ? documentIdsByNotionId.get(sourceId.replaceAll('-', '').toLowerCase())
+        : undefined;
+    } catch {
+      return undefined;
+    }
+  };
 
   // Allocate every page first so forward and backward links resolve equally.
   for (const page of plan.pages) {
+    options.assertCanContinue?.();
     if (session.createdPaths.has(page.path)) continue;
     const id = session.documentIdsByPath.get(page.path);
     if (!id) throw new Error('Missing import identity');
@@ -188,14 +228,17 @@ export const runBureauArchiveImport = async (
       : null;
     if (page.parentPath && !parentId) throw new Error('Missing import parent');
     await options.createPage(page, id, parentId ?? null);
+    options.assertCanContinue?.();
     session.createdPaths.add(page.path);
   }
 
   for (const page of plan.pages) {
+    options.assertCanContinue?.();
     if (session.completedPaths.has(page.path)) continue;
     const documentId = session.documentIdsByPath.get(page.path);
     if (!documentId) throw new Error('Missing import identity');
     const blocks = await options.parsePage(page);
+    options.assertCanContinue?.();
 
     // The first pass discovers references without doing asynchronous work in
     // the shared block mapper's synchronous URL resolver.
@@ -211,25 +254,33 @@ export const runBureauArchiveImport = async (
       const entry = plan.entriesByPath.get(path);
       const attachmentKey = `${documentId}:${path}`;
       if (entry && !session.attachmentUrls.has(attachmentKey)) {
+        options.assertCanContinue?.();
         session.attachmentUrls.set(
           attachmentKey,
           await options.uploadAttachment(entry, documentId),
         );
+        options.assertCanContinue?.();
       }
     }
 
     const mapped = options.mapBlocks(blocks, (url) => {
+      const linkedId = resolveLinkedDocumentId(page.path, url);
+      const fragment = url.includes('#') ? url.slice(url.indexOf('#')) : '';
+      if (linkedId) return `${options.getPageUrl(linkedId)}${fragment}`;
       const path = resolveBureauArchivePath(page.path, url);
       if (path === null)
-        return /^(?:https?:|mailto:|#)/i.test(url) ? url : null;
-      const linkedId = session.documentIdsByPath.get(path);
-      if (linkedId) return options.getPageUrl(linkedId);
+        return /^(?:https?:|mailto:|tel:|#|\/\/)/i.test(url) ? url : null;
       return session.attachmentUrls.get(`${documentId}:${path}`) ?? null;
     });
 
-    session.warningCountsByPath.set(page.path, mapped.warnings.length);
+    session.warningCountsByPath.set(
+      page.path,
+      mapped.warnings.length + (plan.reviewCountsByPath?.get(page.path) ?? 0),
+    );
     session.mappedBlocksByPath.set(page.path, mapped.blocks);
+    options.assertCanContinue?.();
     await options.savePage(documentId, mapped.blocks);
+    options.assertCanContinue?.();
     session.completedPaths.add(page.path);
     options.onProgress(session.completedPaths.size, plan.pages.length);
   }
@@ -251,12 +302,14 @@ export const runBureauArchiveImport = async (
     );
     const extraBlocks: Record<string, unknown>[] = [];
     for (const path of session.extraFilePaths) {
+      options.assertCanContinue?.();
       const entry = plan.entriesByPath.get(path);
       if (!entry) continue;
       const attachmentKey = `${firstDocumentId}:${path}`;
       const url =
         session.attachmentUrls.get(attachmentKey) ??
         (await options.uploadAttachment(entry, firstDocumentId));
+      options.assertCanContinue?.();
       session.attachmentUrls.set(attachmentKey, url);
       extraBlocks.push({
         type: 'file',
@@ -264,10 +317,12 @@ export const runBureauArchiveImport = async (
       });
     }
     if (extraBlocks.length > 0) {
+      options.assertCanContinue?.();
       await options.savePage(firstDocumentId, [
         ...(session.mappedBlocksByPath.get(firstPage.path) ?? []),
         ...extraBlocks,
       ]);
+      options.assertCanContinue?.();
     }
   }
 

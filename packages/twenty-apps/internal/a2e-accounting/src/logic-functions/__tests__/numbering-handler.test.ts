@@ -42,7 +42,12 @@ const buildClientStub = (options: {
       const args = (
         selection as Record<
           string,
-          { __args: { filter: Record<string, unknown>; data: Record<string, unknown> } }
+          {
+            __args: {
+              filter: Record<string, unknown>;
+              data: Record<string, unknown>;
+            };
+          }
         >
       ).updateOrgProfiles.__args;
 
@@ -55,8 +60,7 @@ const buildClientStub = (options: {
         >[]
       )[0].eq as number;
 
-      const matches =
-        stored === null ? true : stored === expected;
+      const matches = stored === null ? true : stored === expected;
 
       if (!matches) {
         return { updateOrgProfiles: [] };
@@ -100,18 +104,23 @@ test('a losing allocator retries with the refreshed counter and never reprints a
       const args = (
         selection as Record<
           string,
-          { __args: { filter: Record<string, unknown>; data: Record<string, unknown> } }
+          {
+            __args: {
+              filter: Record<string, unknown>;
+              data: Record<string, unknown>;
+            };
+          }
         >
       ).updateOrgProfiles.__args;
 
       calls.push(args);
 
       const expected = (
-        ((args.filter.invoiceNextNumber as Record<string, unknown>).or as Record<
+        (args.filter.invoiceNextNumber as Record<string, unknown>).or as Record<
           string,
           unknown
-        >[])[0].eq
-      ) as number;
+        >[]
+      )[0].eq as number;
 
       // The stored value tracks the last successful bump; the rival took 4.
       const stored = expected === 4 ? 5 : expected;
@@ -244,10 +253,8 @@ const buildIssuingClient = (options: {
         };
 
         const expected = (
-          (args.filter.invoiceNextNumber as Record<string, unknown>).or as Record<
-            string,
-            unknown
-          >[]
+          (args.filter.invoiceNextNumber as Record<string, unknown>)
+            .or as Record<string, unknown>[]
         )[0].eq as number;
 
         const matches = stored === null ? true : stored === expected;
@@ -284,11 +291,14 @@ test('an invoice issued by a direct API write is stamped server-side, once', asy
 
   assert.deepEqual(result, { stamped: 'FA-2026-0007' });
 
-  const stamped = mutations.find((mutation) => mutation.name === 'updateInvoice');
+  const stamped = mutations.find(
+    (mutation) => mutation.name === 'updateInvoice',
+  );
 
   assert.deepEqual(stamped?.data, { number: 'FA-2026-0007' });
   assert.equal(
-    mutations.filter((mutation) => mutation.name === 'updateOrgProfiles').length,
+    mutations.filter((mutation) => mutation.name === 'updateOrgProfiles')
+      .length,
     1,
   );
 });
@@ -360,3 +370,32 @@ test('a legacy unnumbered invoice is stamped on its next update', async () => {
 
   assert.deepEqual(result, { stamped: 'FA-2026-0011' });
 });
+
+for (const record of [
+  { number: 'IMPORTED-2025-0042', status: 'SENT' },
+  { number: 'IMPORTED-2025-0042', status: 'PAID' },
+  { number: null, status: 'CANCELLED' },
+  { number: null, status: null },
+]) {
+  test(`creation preserves existing numbering and skips ineligible invoices: ${JSON.stringify(record)}`, async () => {
+    let calls = 0;
+    const client = {
+      query: async () => {
+        calls += 1;
+        throw new Error('No allocation expected');
+      },
+      mutation: async () => {
+        calls += 1;
+        throw new Error('No write expected');
+      },
+    };
+    const result = await stampInvoiceNumberIssued(
+      'imported-invoice',
+      record,
+      'invoice.created',
+      client,
+    );
+    assert.deepEqual(result, { skipped: 'already-numbered-or-draft' });
+    assert.equal(calls, 0);
+  });
+}

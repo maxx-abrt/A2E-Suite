@@ -9,6 +9,11 @@ import {
   currentWorkspaceMemberState,
 } from '@/auth/states/currentWorkspaceMemberState';
 import { HomeDashboard } from '@/home-dashboard/components/HomeDashboard';
+import { useBilanNavigationPath } from '@/bilan/hooks/useBilanNavigationPath';
+
+jest.mock('@/bilan/hooks/useBilanNavigationPath', () => ({
+  useBilanNavigationPath: jest.fn(() => '/objects/invoices'),
+}));
 
 // The widgets fetch their own data; Home only owns which cards exist, their
 // titles and their deep links, so each widget is stubbed to a marker.
@@ -67,6 +72,7 @@ const renderHomeDashboard = (firstName: string | null) => {
 
 describe('HomeDashboard', () => {
   beforeEach(() => {
+    jest.mocked(useBilanNavigationPath).mockReturnValue('/objects/invoices');
     jest.useFakeTimers({ now: new Date(2026, 8, 26, 9, 30) });
   });
 
@@ -127,5 +133,24 @@ describe('HomeDashboard', () => {
       'href',
       '/objects/invoices',
     );
+  });
+
+  it('opens the installed Bilan dashboard from Home', () => {
+    jest
+      .mocked(useBilanNavigationPath)
+      .mockReturnValue('/page/workspace-bilan-dashboard');
+    renderHomeDashboard('Ada');
+    expect(screen.getByRole('link', { name: 'Open Bilan' })).toHaveAttribute(
+      'href',
+      '/page/workspace-bilan-dashboard',
+    );
+  });
+
+  it('does not offer an unavailable finance app', () => {
+    jest.mocked(useBilanNavigationPath).mockReturnValue(null);
+    renderHomeDashboard('Ada');
+    expect(
+      screen.queryByTestId('home-card-pending-bilan'),
+    ).not.toBeInTheDocument();
   });
 });

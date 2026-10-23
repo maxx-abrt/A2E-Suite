@@ -1,18 +1,19 @@
+import { currentUserState } from '@/auth/states/currentUserState';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
-import { ClickToActionLink, UndecoratedLink } from 'twenty-ui/navigation';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/internal/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft';
-import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
+import { ForgotPasswordLink } from '@/auth/sign-in-up/components/ForgotPasswordLink';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import {
   SignInUpStep,
@@ -46,6 +47,12 @@ const StyledWorkspaceContainer = styled.div`
   overflow: hidden;
   width: 100%;
 
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid ${themeCssVariables.font.color.primary};
+    outline-offset: -3px;
+  }
+
   > * {
     border-bottom: 1px solid ${themeCssVariables.border.color.medium};
 
@@ -74,6 +81,37 @@ const StyledWorkspaceItem = styled.div`
   &:last-child {
     border-bottom: none;
   }
+`;
+
+const StyledCreateWorkspaceButton = styled.button`
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  min-height: ${themeCssVariables.spacing[15]};
+  padding: 0;
+  text-align: left;
+  width: 100%;
+
+  &:hover {
+    background: ${themeCssVariables.background.transparent.light};
+  }
+`;
+
+const StyledAccount = styled.p`
+  color: ${themeCssVariables.font.color.secondary};
+  line-height: 1.5;
+  margin: 0 0 ${themeCssVariables.spacing[4]};
+  overflow-wrap: anywhere;
+  text-align: center;
+`;
+
+const StyledWorkspaceStatus = styled.span`
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.xs};
 `;
 
 const StyledWorkspaceContent = styled.div`
@@ -131,10 +169,10 @@ export const SignInUpGlobalScopeForm = () => {
   const setSignInUpStep = useSetAtomState(signInUpStepState);
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
   const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
+  const currentUser = useAtomStateValue(currentUserState);
   const { t } = useLingui();
 
   const { form } = useSignInUpForm();
-  const { handleResetPassword } = useHandleResetPassword();
   const returnToPath = useAtomStateValue(returnToPathState);
 
   useQuery(GetWorkspaceCreationDefaultsDocument, {
@@ -157,15 +195,28 @@ export const SignInUpGlobalScopeForm = () => {
     );
   };
 
+  const joinedWorkspaceIds = new Set(
+    availableWorkspaces.availableWorkspacesForSignIn.map(({ id }) => id),
+  );
   const availableWorkspacesList = [
     ...availableWorkspaces.availableWorkspacesForSignIn,
-    ...availableWorkspaces.availableWorkspacesForSignUp,
+    ...availableWorkspaces.availableWorkspacesForSignUp.filter(
+      ({ id }) => !joinedWorkspaceIds.has(id),
+    ),
   ];
 
   return (
     <>
       {signInUpStep === SignInUpStep.WorkspaceSelection && (
         <StyledOnboardingContentContainer>
+          <StyledAccount>{t`Signed in as ${currentUser?.email ?? form.getValues('email')}`}</StyledAccount>
+          {availableWorkspacesList.length === 0 && (
+            <StyledAccount>
+              {isDDLLocked
+                ? t`No workspaces are available for this account. Ask your team for an invitation.`
+                : t`No workspaces yet. Create a workspace to get started, or ask your team for an invitation.`}
+            </StyledAccount>
+          )}
           <StyledWorkspaceContainer>
             {availableWorkspacesList.map((availableWorkspace, index) => (
               <OnboardingStepAnimatedItem
@@ -189,6 +240,11 @@ export const SignInUpGlobalScopeForm = () => {
                           {availableWorkspace.displayName ||
                             availableWorkspace.id}
                         </StyledWorkspaceName>
+                        <StyledWorkspaceStatus>
+                          {joinedWorkspaceIds.has(availableWorkspace.id)
+                            ? t`Your workspace`
+                            : t`Available to join`}
+                        </StyledWorkspaceStatus>
                         <StyledWorkspaceUrl>
                           {
                             new URL(
@@ -209,7 +265,8 @@ export const SignInUpGlobalScopeForm = () => {
               <OnboardingStepAnimatedItem
                 index={availableWorkspacesList.length}
               >
-                <StyledWorkspaceItem
+                <StyledCreateWorkspaceButton
+                  type="button"
                   onClick={() =>
                     setSignInUpStep(SignInUpStep.WorkspaceCreation)
                   }
@@ -225,7 +282,7 @@ export const SignInUpGlobalScopeForm = () => {
                       <IconChevronRight size={theme.icon.size.md} />
                     </StyledChevronIcon>
                   </StyledWorkspaceContent>
-                </StyledWorkspaceItem>
+                </StyledCreateWorkspaceButton>
               </OnboardingStepAnimatedItem>
             )}
           </StyledWorkspaceContainer>
@@ -256,11 +313,10 @@ export const SignInUpGlobalScopeForm = () => {
           </FormProvider>
           {signInUpStep === SignInUpStep.Password && (
             <StyledForgotPasswordLinkContainer>
-              <ClickToActionLink
-                onClick={handleResetPassword(form.getValues('email'))}
-              >
-                <Trans>Forgot your password?</Trans>
-              </ClickToActionLink>
+              <ForgotPasswordLink
+                key={form.getValues('email')}
+                email={form.getValues('email')}
+              />
             </StyledForgotPasswordLinkContainer>
           )}
         </StyledOnboardingContentContainer>

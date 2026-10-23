@@ -10,6 +10,7 @@ export const getLogoutRedirectUrl = ({
   landingPageUrl,
   workspaceAgnosticSignInUrl,
 }: GetLogoutRedirectUrlArgs) =>
-  isNonEmptyString(landingPageUrl) && landingPageUrl.trim().length > 0
+  workspaceAgnosticSignInUrl ??
+  (isNonEmptyString(landingPageUrl) && landingPageUrl.trim().length > 0
     ? landingPageUrl
-    : (workspaceAgnosticSignInUrl ?? AppPath.SignInUp);
+    : AppPath.SignInUp);

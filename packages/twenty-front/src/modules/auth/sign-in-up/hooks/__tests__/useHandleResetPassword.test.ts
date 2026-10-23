@@ -66,6 +66,7 @@ describe('useHandleResetPassword', () => {
     });
     (useMutation as unknown as jest.Mock).mockReturnValue([
       emailPasswordResetLinkMock,
+      { loading: false },
     ]);
     (useCaptcha as jest.Mock).mockReturnValue({ isCaptchaReady: true });
     (useReadCaptchaToken as jest.Mock).mockReturnValue({
@@ -73,12 +74,30 @@ describe('useHandleResetPassword', () => {
     });
   });
 
-  it('should show error message if email is invalid', async () => {
+  it.each(['', '   '])('rejects an empty email %j', async (email) => {
     const { result } = renderHooks();
-    await act(() => result.current.handleResetPassword('')());
+    await act(() => result.current.handleResetPassword(email)());
 
     expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({
       message: 'Invalid email',
+    });
+  });
+
+  it('normalizes the reset email and reports success to the form', async () => {
+    emailPasswordResetLinkMock.mockResolvedValue({
+      data: { emailPasswordResetLink: { success: true } },
+    });
+    const { result } = renderHooksWithoutWorkspace();
+    await act(async () => {
+      expect(
+        await result.current.handleResetPassword(' Person@Example.COM ')(),
+      ).toBe(true);
+    });
+    expect(emailPasswordResetLinkMock).toHaveBeenCalledWith({
+      variables: {
+        email: 'person@example.com',
+        captchaToken: 'mock-captcha-token',
+      },
     });
   });
 

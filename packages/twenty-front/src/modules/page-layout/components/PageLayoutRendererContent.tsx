@@ -1,8 +1,13 @@
 import { PageLayoutTabsRenderer } from '@/page-layout/components/PageLayoutTabsRenderer';
 import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { type ReactNode } from 'react';
 
-export const PageLayoutRendererContent = () => {
+type PageLayoutRendererContentProps = { headerContent?: ReactNode };
+
+export const PageLayoutRendererContent = ({
+  headerContent,
+}: PageLayoutRendererContentProps) => {
   const pageLayoutIsInitialized = useAtomComponentStateValue(
     pageLayoutIsInitializedComponentState,
   );
@@ -11,5 +16,5 @@ export const PageLayoutRendererContent = () => {
     return null;
   }
 
-  return <PageLayoutTabsRenderer />;
+  return <PageLayoutTabsRenderer headerContent={headerContent} />;
 };

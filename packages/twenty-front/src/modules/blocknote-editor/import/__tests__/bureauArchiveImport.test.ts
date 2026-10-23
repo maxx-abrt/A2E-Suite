@@ -12,6 +12,102 @@ const entry = (path: string, text: string) => ({
 });
 
 describe('Notion archive import', () => {
+  it('rewrites exported and absolute Notion links to the same imported page while preserving fragments', async () => {
+    const sourceId = 'a'.repeat(32);
+    const plan = planBureauArchiveImport([
+      entry('Home.md', 'Home'),
+      entry(`Home/Child ${sourceId}.html`, '<p>Child</p>'),
+    ]);
+    const session: BureauArchiveImportSession = {
+      documentIdsByPath: new Map([
+        ['Home.md', 'home-id'],
+        [`Home/Child ${sourceId}.html`, 'child-id'],
+      ]),
+      createdPaths: new Set(),
+      completedPaths: new Set(),
+      attachmentUrls: new Map(),
+    };
+    const savePage = jest.fn().mockResolvedValue(undefined);
+    await runBureauArchiveImport({
+      plan,
+      session,
+      createPage: jest.fn(),
+      uploadAttachment: jest.fn(),
+      savePage,
+      parsePage: async () => [
+        {
+          type: 'paragraph',
+          content: [
+            {
+              type: 'link',
+              href: `https://www.notion.so/Child-${sourceId}?share=copy#section`,
+              content: [{ type: 'text', text: 'Absolute' }],
+            },
+            {
+              type: 'link',
+              href: `Home/Child%20${sourceId}.html#section`,
+              content: [{ type: 'text', text: 'Exported' }],
+            },
+            {
+              type: 'link',
+              href: `https://notion.so.attacker.example/${sourceId}`,
+              content: [{ type: 'text', text: 'External' }],
+            },
+          ],
+        },
+      ],
+      mapBlocks: (blocks, resolveUrl) =>
+        mapImportedAttachmentsAndLinks(blocks, {
+          resolveLinkUrl: resolveUrl,
+          resolveAttachmentUrl: resolveUrl,
+        }),
+      getPageUrl: (id) => `/bureau/${id}`,
+      onProgress: jest.fn(),
+    });
+    expect(
+      savePage.mock.calls[0][1][0].content.map(
+        (link: { href: string }) => link.href,
+      ),
+    ).toEqual([
+      '/bureau/child-id#section',
+      '/bureau/child-id#section',
+      `https://notion.so.attacker.example/${sourceId}`,
+    ]);
+  });
+
+  it('stops before further writes when the import workspace guard fails', async () => {
+    const plan = planBureauArchiveImport([entry('Home.md', 'Home')]);
+    const session: BureauArchiveImportSession = {
+      documentIdsByPath: new Map([['Home.md', 'home-id']]),
+      createdPaths: new Set(),
+      completedPaths: new Set(),
+      attachmentUrls: new Map(),
+    };
+    let isCurrent = true;
+    const savePage = jest.fn();
+    const parsePage = jest.fn();
+    await expect(
+      runBureauArchiveImport({
+        plan,
+        session,
+        createPage: async () => {
+          isCurrent = false;
+        },
+        parsePage,
+        savePage,
+        mapBlocks: (blocks) => mapImportedAttachmentsAndLinks(blocks),
+        uploadAttachment: jest.fn(),
+        getPageUrl: (id) => `/bureau/${id}`,
+        onProgress: jest.fn(),
+        assertCanContinue: () => {
+          if (!isCurrent) throw new Error('Workspace changed');
+        },
+      }),
+    ).rejects.toThrow('Workspace changed');
+    expect(parsePage).not.toHaveBeenCalled();
+    expect(savePage).not.toHaveBeenCalled();
+  });
+
   it('keeps unlinked files accessible and resumes their final save without reuploading or duplicating content', async () => {
     const plan = planBureauArchiveImport([
       entry('Home.md', '# Home'),

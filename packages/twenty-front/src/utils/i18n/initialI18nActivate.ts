@@ -1,44 +1,34 @@
-import { fromNavigator, fromStorage, fromUrl } from '@lingui/detect-locale';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { fromStorage, fromUrl } from '@lingui/detect-locale';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined, isValidLocale, normalizeLocale } from 'twenty-shared/utils';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
+const getExplicitLocale = (value: string | null) => {
+  if (!isDefined(value) || value.trim() === '') return null;
+  const locale = normalizeLocale(value);
+  // normalizeLocale defaults unknown input to English. An invalid URL must
+  // not override a valid saved preference with that fallback.
+  if (locale === SOURCE_LOCALE && value.toLowerCase().split('-')[0] !== 'en') {
+    return null;
+  }
+  return isValidLocale(locale) ? locale : null;
+};
+
 export const initialI18nActivate = () => {
-  const urlLocale = fromUrl('locale');
-  const storageLocale = fromStorage('locale');
-  const navigatorLocale = fromNavigator();
-
-  let locale: keyof typeof APP_LOCALES = APP_LOCALES.en;
-
-  const normalizedUrlLocale = isDefined(urlLocale)
-    ? normalizeLocale(urlLocale)
-    : null;
-  const normalizedStorageLocale = isDefined(storageLocale)
-    ? normalizeLocale(storageLocale)
-    : null;
-  const normalizedNavigatorLocale = isDefined(navigatorLocale)
-    ? normalizeLocale(navigatorLocale)
-    : null;
-
-  if (isDefined(normalizedUrlLocale) && isValidLocale(normalizedUrlLocale)) {
-    locale = normalizedUrlLocale;
-    try {
-      localStorage.setItem('locale', normalizedUrlLocale);
-    } catch (error) {
-      // oxlint-disable-next-line no-console
-      console.log('Failed to save locale to localStorage:', error);
-    }
-  } else if (
-    isDefined(normalizedStorageLocale) &&
-    isValidLocale(normalizedStorageLocale)
-  ) {
-    locale = normalizedStorageLocale;
-  } else if (
-    isDefined(normalizedNavigatorLocale) &&
-    isValidLocale(normalizedNavigatorLocale)
-  ) {
-    locale = normalizedNavigatorLocale;
+  const urlLocale = getExplicitLocale(fromUrl('locale'));
+  let storageLocale = null;
+  try {
+    storageLocale = getExplicitLocale(fromStorage('locale'));
+  } catch {
+    // Privacy settings can disable browser storage; English stays usable.
   }
 
-  dynamicActivate(locale);
+  if (isDefined(urlLocale)) {
+    try {
+      localStorage.setItem('locale', urlLocale);
+    } catch {
+      // The explicit selection remains usable without browser storage.
+    }
+  }
+  return dynamicActivate(urlLocale ?? storageLocale ?? SOURCE_LOCALE);
 };

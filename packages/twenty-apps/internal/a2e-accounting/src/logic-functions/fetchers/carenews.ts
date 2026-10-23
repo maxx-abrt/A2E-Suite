@@ -29,6 +29,7 @@ export const fetchCarenewsAids = async ({
 
     const response = await fetch(url, {
       headers: { 'User-Agent': 'A2E-Bilan/1.0 (+catalogue de subventions)' },
+      signal: AbortSignal.timeout(20_000),
     });
 
     if (!response.ok) {

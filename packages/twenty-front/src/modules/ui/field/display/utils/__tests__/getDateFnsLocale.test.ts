@@ -26,4 +26,9 @@ describe('getDateFnsLocale', () => {
     expect((await getDateFnsLocale(undefined))?.code).toBe('en-US');
     expect((await getDateFnsLocale(null))?.code).toBe('en-US');
   });
+
+  it('keeps Brazilian and European Portuguese date locales distinct', async () => {
+    expect((await getDateFnsLocale('pt-BR'))?.code).toBe('pt-BR');
+    expect((await getDateFnsLocale('pt-PT'))?.code).toBe('pt');
+  });
 });

@@ -1,29 +1,20 @@
-import { type DatabaseEventPayload, defineLogicFunction } from 'twenty-sdk/define';
+import {
+  type DatabaseEventPayload,
+  defineLogicFunction,
+} from 'twenty-sdk/define';
 
 import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
 import { retireLedgerRow, upsertLedgerRow } from './handlers/ledger-handler.ts';
 
-type InvoiceRecord = {
-  id: string;
-  number?: string | null;
-  status?: string | null;
-  clientName?: string | null;
-  paidDate?: string | null;
-  issueDate?: string | null;
-  amountPaid?: { amountMicros?: number; currencyCode?: string } | null;
-  deletedAt?: string | null;
-};
-
-// Cash accounting: an invoice enters the book when it is actually paid, not
-// when it is issued. A draft or a merely sent invoice writes nothing.
-const isCashed = (record: InvoiceRecord): boolean =>
-  (record.amountPaid?.amountMicros ?? 0) > 0 &&
-  (record.status === 'PAID' || record.status === 'PARTIALLY_PAID');
+import {
+  buildInvoiceLedgerInput,
+  type InvoiceLedgerSource,
+} from '../lib/ledger-source.ts';
 
 const handler = async (
   payload: DatabaseEventPayload<{
     recordId: string;
-    properties: { after?: InvoiceRecord; before?: InvoiceRecord };
+    properties: { after?: InvoiceLedgerSource; before?: InvoiceLedgerSource };
   }>,
 ) => {
   const eventName = payload.name ?? '';
@@ -34,11 +25,13 @@ const handler = async (
     return { skipped: 'no-record' };
   }
 
+  const ledgerInput = buildInvoiceLedgerInput(record, recordId);
+
   if (
     eventName.endsWith('.deleted') ||
     eventName.endsWith('.destroyed') ||
     record.deletedAt ||
-    !isCashed(record)
+    ledgerInput === null
   ) {
     const retired = await retireLedgerRow('INVOICE', recordId);
 
@@ -46,18 +39,8 @@ const handler = async (
   }
 
   const outcome = await upsertLedgerRow({
-    sourceKind: 'INVOICE',
-    sourceId: recordId,
+    ...ledgerInput,
     invoiceId: recordId,
-    entryDate:
-      record.paidDate ?? record.issueDate ?? new Date().toISOString(),
-    entryType: 'INCOME',
-    label: `Facture ${record.number ?? ''} — ${record.clientName ?? 'client'}`.trim(),
-    amountMicros: record.amountPaid?.amountMicros ?? 0,
-    currencyCode: record.amountPaid?.currencyCode ?? 'EUR',
-    categoryLabel: 'Ventes',
-    paymentMethodLabel: '',
-    reference: record.number ?? undefined,
   });
 
   return { outcome };

@@ -1,4 +1,5 @@
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { mapImportedAttachmentsAndLinks } from '@/blocknote-editor/import/utils/mapImportedAttachmentsAndLinks';
 import {
   planBureauArchiveImport,
@@ -12,10 +13,14 @@ import { BUREAU_IMPORT_MODAL_ID } from '@/bureau/constants/BureauImportModalId';
 import { useBureauWorkspace } from '@/bureau/hooks/useBureauWorkspace';
 import { getBureauPagePath } from '@/bureau/utils/getBureauPagePath';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useStore } from 'jotai';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 } from 'uuid';
 import { Button } from 'twenty-ui/input';
@@ -23,6 +28,14 @@ import { Button } from 'twenty-ui/input';
 const MAX_IMPORT_FILE_BYTES = 100 * 1024 * 1024;
 
 export const BureauImportModal = () => {
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+
+  return (
+    <WorkspaceBureauImportModal key={currentWorkspace?.id ?? 'signed-out'} />
+  );
+};
+
+const WorkspaceBureauImportModal = () => {
   const [isImporting, setIsImporting] = useState(false);
 
   return (
@@ -45,6 +58,13 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
   });
   const { updateOneRecord } = useUpdateOneRecord();
   const { uploadAttachmentFile } = useUploadAttachmentFile();
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const store = useStore();
+  const apolloCoreClient = useApolloCoreClient();
+  const { findOneRecordQuery } = useFindOneRecordQuery({
+    objectNameSingular: 'document',
+    recordGqlFields: { id: true, title: true, parentId: true, kind: true },
+  });
   const [plan, setPlan] = useState<BureauArchiveImportPlan | null>(null);
   const [session, setSession] = useState<BureauArchiveImportSession | null>(
     null,
@@ -55,6 +75,23 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
   const [completedCount, setCompletedCount] = useState(0);
   const [warningCount, setWarningCount] = useState(0);
   const [errorMessage, setErrorMessage] = useState('');
+  // Awaiting transports must observe unmount synchronously, even if the same
+  // workspace is opened again; this guard never participates in rendering.
+  // oxlint-disable-next-line twenty/no-state-useref
+  const isActive = useRef(true);
+  useEffect(() => {
+    isActive.current = true;
+    return () => {
+      isActive.current = false;
+    };
+  }, []);
+  const isCurrentWorkspace = () =>
+    isActive.current &&
+    currentWorkspace?.id !== undefined &&
+    store.get(currentWorkspaceState.atom)?.id === currentWorkspace.id;
+  const assertCanContinue = () => {
+    if (!isCurrentWorkspace()) throw new Error('Import workspace changed');
+  };
 
   const readFile = async (file: File) => {
     setStatus('reading');
@@ -64,8 +101,10 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
     setSession(null);
     setCompletedCount(0);
     try {
+      assertCanContinue();
       if (file.size > MAX_IMPORT_FILE_BYTES) throw new Error('File too large');
       const bytes = new Uint8Array(await file.arrayBuffer());
+      assertCanContinue();
       const entries = /\.zip$/i.test(file.name)
         ? readZipEntries(bytes)
         : [{ path: file.name, bytes }];
@@ -82,6 +121,7 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
       });
       setStatus('idle');
     } catch {
+      if (!isCurrentWorkspace()) return;
       setStatus('failed');
       setErrorMessage(
         t`Could not read this export. Choose an HTML or Markdown file, or a ZIP containing them (up to 100 MB, 5,000 entries and 250 MB uncompressed).`,
@@ -97,18 +137,47 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
     onBusyChange(true);
     setErrorMessage('');
     try {
+      assertCanContinue();
       const { parseHtmlWithBlockNote, parseMarkdownWithBlockNote } =
         await import('@/blocknote-editor/import/adapters/parseHtmlWithBlockNote');
       const result = await runBureauArchiveImport({
         plan,
         session,
+        assertCanContinue,
         createPage: async (page, id, parentId) => {
-          await createOneRecord({
-            id,
-            title: page.title,
-            kind: 'DOCUMENT',
-            parentId,
-          });
+          try {
+            await createOneRecord({
+              id,
+              title: page.title,
+              kind: 'DOCUMENT',
+              parentId,
+            });
+          } catch (error) {
+            assertCanContinue();
+            // A lost response can follow a committed create; only recover the
+            // exact identity this session allocated, never merge by title.
+            const result = await apolloCoreClient.query<{
+              document: {
+                id: string;
+                title: string;
+                parentId: string | null;
+                kind: string;
+              } | null;
+            }>({
+              query: findOneRecordQuery,
+              variables: { objectRecordId: id },
+              fetchPolicy: 'network-only',
+            });
+            assertCanContinue();
+            const document = result.data?.document;
+            if (
+              document?.id !== id ||
+              document.title !== page.title ||
+              document.parentId !== parentId ||
+              document.kind !== 'DOCUMENT'
+            )
+              throw error;
+          }
         },
         parsePage: async (page) =>
           page.format === 'html'
@@ -124,10 +193,11 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
             [new Uint8Array(entry.bytes)],
             entry.path.split('/').pop() ?? 'attachment',
           );
-          const uploaded = await uploadAttachmentFile(file, {
-            id: documentId,
-            targetObjectNameSingular: 'document',
-          });
+          const uploaded = await uploadAttachmentFile(
+            file,
+            { id: documentId, targetObjectNameSingular: 'document' },
+            { assertCanContinue },
+          );
           return uploaded.attachmentAbsoluteURL;
         },
         savePage: async (documentId, blocks) => {
@@ -147,6 +217,7 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
       setStatus('complete');
       resyncDocuments();
     } catch {
+      if (!isCurrentWorkspace()) return;
       setStatus('failed');
       resyncDocuments();
       setErrorMessage(
@@ -158,11 +229,13 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
   };
 
   const isBusy = status === 'reading' || status === 'importing';
+  const destinationName = currentWorkspace?.displayName ?? t`This workspace`;
 
   return (
     <>
       <h2>{t`Import from Notion`}</h2>
-      <p>{t`Export your Notion pages as HTML or Markdown with sub-pages and files included, then choose the ZIP. You can also import a single HTML or Markdown file.`}</p>
+      <p>{t`Destination: ${destinationName}`}</p>
+      <p>{t`In the workspace where you want these pages, choose a Notion HTML export with sub-pages and files included. HTML preserves more layout information, including columns. Markdown files and ZIP exports are also supported.`}</p>
       <p>{t`Pages, nested structure, supported blocks, local images, attachments and page links are imported. Extra files are attached to the first page. Notion permissions, comments, database formulas and view settings are not converted. CSV databases remain attachments.`}</p>
       <input
         type="file"
@@ -190,7 +263,23 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
         <>
           <p role="status">{t`Import complete: ${completedCount} pages.`}</p>
           {warningCount > 0 && (
-            <p>{t`${warningCount} items need review. Some unsupported or missing content could not be converted. Keep your original export.`}</p>
+            <details>
+              <summary>{t`${warningCount} items need review`}</summary>
+              <p>{t`Some unsupported or missing content could not be converted. Keep your original export.`}</p>
+              <ul>
+                {plan?.pages
+                  .filter(
+                    (page) =>
+                      (session?.warningCountsByPath?.get(page.path) ?? 0) > 0,
+                  )
+                  .map((page) => (
+                    <li key={page.path}>{page.path}</li>
+                  ))}
+                {plan?.unsupportedPaths.map((path) => (
+                  <li key={path}>{path}</li>
+                ))}
+              </ul>
+            </details>
           )}
           <Button
             title={t`Open imported pages`}

@@ -25,6 +25,7 @@ export const exchangeAidesTerritoiresToken = async (
   const response = await fetch(`${AIDES_TERRITOIRES_BASE_URL}${CONNECT_PATH}`, {
     method: 'POST',
     headers: { 'X-AUTH-TOKEN': apiKey },
+    signal: AbortSignal.timeout(20_000),
   });
 
   if (!response.ok) {
@@ -65,10 +66,27 @@ export const fetchAidesTerritoiresAids = async ({
     `${AIDES_TERRITOIRES_BASE_URL}${AIDS_PATH}?page=1&itemsPerPage=${itemsPerPage}`;
   let total = 0;
   let pagesRead = 0;
+  const visitedPages = new Set<string>();
+  const deadline = AbortSignal.timeout(120_000);
 
   while (url !== undefined && pagesRead < maxPages) {
-    const response = await fetch(url, {
+    const pageUrl = new URL(url, AIDES_TERRITOIRES_BASE_URL);
+    if (
+      pageUrl.origin !== new URL(AIDES_TERRITOIRES_BASE_URL).origin ||
+      !pageUrl.pathname.startsWith(AIDS_PATH)
+    ) {
+      throw new Error(
+        'Aides-territoires a renvoyé une pagination non autorisée.',
+      );
+    }
+    if (visitedPages.has(pageUrl.href))
+      throw new Error(
+        'Pagination Aides-territoires répétée ; catalogue conservé.',
+      );
+    visitedPages.add(pageUrl.href);
+    const response = await fetch(pageUrl.href, {
       headers: { Authorization: `Bearer ${token}` },
+      signal: AbortSignal.any([deadline, AbortSignal.timeout(20_000)]),
     });
 
     if (!response.ok) {
@@ -93,8 +111,17 @@ export const fetchAidesTerritoiresAids = async ({
       aids.push(aid);
     }
 
-    url = typeof page.next === 'string' && page.next.length > 0 ? page.next : undefined;
+    url =
+      typeof page.next === 'string' && page.next.length > 0
+        ? page.next
+        : undefined;
   }
+
+  // Retirement is safe only after reading the complete upstream catalogue.
+  if (url !== undefined)
+    throw new Error(
+      'Catalogue Aides-territoires incomplet ; les aides existantes sont conservées.',
+    );
 
   return { aids, total: total || aids.length, pagesRead };
 };

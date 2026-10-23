@@ -13,6 +13,15 @@ import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 const mockCreateNewPage = jest.fn();
 const mockOpenTemplateGallery = jest.fn();
+const mockRefetch = jest.fn();
+
+jest.mock('@/bureau/components/BureauTaskSheet', () => ({
+  BureauTaskSheet: () => <section aria-label="Task sheet" />,
+}));
+
+jest.mock('@/bureau/components/BureauTodayProgress', () => ({
+  BureauTodayProgress: () => <div>Due today · assigned to you</div>,
+}));
 
 jest.mock('@/quick-capture/hooks/useIsDocumentApplicationInstalled', () => ({
   useIsDocumentApplicationInstalled: jest.fn(),
@@ -101,7 +110,7 @@ describe('BureauLanding', () => {
     expect(mockCreateNewPage).toHaveBeenCalledTimes(1);
   });
 
-  it('shows the M13c contextual empty state when the workspace has no pages', () => {
+  it('keeps tasks and daily progress visible when there are no pages', () => {
     mockedUseFindManyRecords.mockReturnValue({
       totalCount: 0,
     } as unknown as ReturnType<typeof useFindManyRecords>);
@@ -120,7 +129,12 @@ describe('BureauLanding', () => {
     expect(
       screen.getByTestId('a2e-empty-state-learn-more-bureau'),
     ).toBeInTheDocument();
-    expect(screen.queryByTestId('bureau-landing')).not.toBeInTheDocument();
+    expect(screen.getByTestId('bureau-landing')).toBeInTheDocument();
+    expect(
+      screen.getByRole('region', { name: 'Task sheet' }),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Due today · assigned to you')).toBeInTheDocument();
+    expect(screen.queryByTestId('bureau-new-page')).not.toBeInTheDocument();
   });
 
   it('creates a page from the contextual empty state primary action', async () => {
@@ -148,5 +162,38 @@ describe('BureauLanding', () => {
       category: 'Pages',
       templateKey: 'okr',
     });
+  });
+
+  it('keeps the task sheet available while pages load', () => {
+    mockedUseFindManyRecords.mockReturnValue({
+      loading: true,
+    } as unknown as ReturnType<typeof useFindManyRecords>);
+
+    render(<BureauLanding />, { wrapper: Wrapper });
+
+    expect(screen.getByRole('status')).toHaveTextContent('Loading pages…');
+    expect(
+      screen.getByRole('region', { name: 'Task sheet' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('recent-pages-stub')).not.toBeInTheDocument();
+  });
+
+  it('offers a real retry after a page-query failure', async () => {
+    const user = userEvent.setup();
+    mockedUseFindManyRecords.mockReturnValue({
+      error: new Error('Offline'),
+      refetch: mockRefetch,
+    } as unknown as ReturnType<typeof useFindManyRecords>);
+
+    render(<BureauLanding />, { wrapper: Wrapper });
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Could not load pages.',
+    );
+    await user.click(screen.getByRole('button', { name: 'Retry' }));
+    expect(mockRefetch).toHaveBeenCalledTimes(1);
+    expect(
+      screen.queryByTestId('a2e-contextual-empty-state'),
+    ).not.toBeInTheDocument();
   });
 });

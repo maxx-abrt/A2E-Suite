@@ -13,7 +13,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export const useHandleResetPassword = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
-  const [emailPasswordResetLink] = useMutation(EmailPasswordResetLinkDocument);
+  const [emailPasswordResetLink, { loading: isSendingResetLink }] = useMutation(
+    EmailPasswordResetLinkDocument,
+  );
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const currentUser = useAtomStateValue(currentUserState);
   const { isCaptchaReady } = useCaptcha();
@@ -24,33 +26,39 @@ export const useHandleResetPassword = () => {
   const handleResetPassword = useCallback(
     (email = currentUser?.email) => {
       return async () => {
-        if (!email) {
+        if (!email?.trim()) {
           enqueueErrorSnackBar({
             message: t`Invalid email`,
           });
-          return;
+          return false;
         }
 
         if (!isCaptchaReady) {
           enqueueErrorSnackBar({
             message: t`Captcha (anti-bot check) is still loading, try again`,
           });
-          return;
+          return false;
         }
 
-        const captchaToken = readCaptchaToken();
+        const normalizedEmail = email.trim().toLowerCase();
 
         try {
+          const captchaToken = readCaptchaToken();
           const { data } = await emailPasswordResetLink({
             variables: workspacePublicData?.id
-              ? { email, workspaceId: workspacePublicData.id, captchaToken }
-              : { email, captchaToken },
+              ? {
+                  email: normalizedEmail,
+                  workspaceId: workspacePublicData.id,
+                  captchaToken,
+                }
+              : { email: normalizedEmail, captchaToken },
           });
 
           if (data?.emailPasswordResetLink?.success === true) {
             enqueueSuccessSnackBar({
               message: t`If this email is registered, a password reset link has been sent`,
             });
+            return true;
           } else {
             enqueueErrorSnackBar({});
           }
@@ -61,6 +69,7 @@ export const useHandleResetPassword = () => {
               : { message: error instanceof Error ? error.message : undefined },
           );
         }
+        return false;
       };
     },
     [
@@ -75,5 +84,5 @@ export const useHandleResetPassword = () => {
     ],
   );
 
-  return { handleResetPassword };
+  return { handleResetPassword, isSendingResetLink };
 };

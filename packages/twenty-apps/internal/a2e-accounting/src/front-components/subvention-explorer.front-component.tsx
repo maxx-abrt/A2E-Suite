@@ -1,10 +1,14 @@
-import { type CSSProperties, useCallback, useEffect, useState } from 'react';
+import { type CSSProperties, useEffect, useState } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { RestApiClient } from 'twenty-client-sdk/rest';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 
 import { FRONT_COMPONENT_IDS } from '../constants/universal-identifiers.ts';
+import {
+  loadSubventionCatalogPage,
+  type CatalogSubvention as Subvention,
+} from '../lib/subvention-catalog.ts';
 
 // L'EXPLORATEUR D'AIDES.
 //
@@ -216,20 +220,6 @@ const SCALE_LABELS: Record<string, string> = {
   AUTRE: 'Autre périmètre',
 };
 
-type Subvention = {
-  id: string;
-  title: string;
-  description?: string | null;
-  submissionDeadline?: string | null;
-  audiences?: string[] | null;
-  perimeterScale?: string | null;
-  source?: string | null;
-  isCallForProject?: boolean | null;
-  rateMax?: number | null;
-  amountHint?: string | null;
-  officialLinks?: { primaryLinkUrl?: string | null } | null;
-};
-
 type MatchResult = {
   subventionId: string;
   score: number;
@@ -248,11 +238,14 @@ type RefreshResponse = {
   success?: boolean;
   totalCreated?: number;
   totalUpdated?: number;
-  sources?: { source: string; status: string; fetched: number; error?: string }[];
+  sources?: {
+    source: string;
+    status: string;
+    fetched: number;
+    error?: string;
+  }[];
   error?: string;
 };
-
-const PAGE_SIZE = 30;
 
 const formatDeadline = (value: string | null | undefined): string => {
   if (!value) {
@@ -277,78 +270,60 @@ export const SubventionExplorer = () => {
   const [subventions, setSubventions] = useState<Subvention[]>([]);
   const [scores, setScores] = useState<Record<string, MatchResult>>({});
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [cursor, setCursor] = useState<string | null>(null);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(false);
+  const [refreshVersion, setRefreshVersion] = useState(0);
   const [busy, setBusy] = useState<'none' | 'refresh' | 'match'>('none');
 
-  const load = useCallback(async () => {
-    setLoading(true);
-
-    try {
-      const filter: Record<string, unknown> = { isLive: { eq: true } };
-
-      if (query.trim().length > 0) {
-        filter.searchText = {
-          ilike: `%${query
-            .trim()
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')}%`,
-        };
-      }
-
-      if (audience.length > 0) {
-        filter.audiences = { containsAny: [audience] };
-      }
-
-      if (onlyCalls) {
-        filter.isCallForProject = { eq: true };
-      }
-
-      const response = (await new CoreApiClient().query({
-        subventions: {
-          __args: {
-            filter,
-            first: PAGE_SIZE,
-            orderBy: [{ submissionDeadline: 'AscNullsLast' }],
-          },
-          edges: {
-            node: {
-              id: true,
-              title: true,
-              description: true,
-              submissionDeadline: true,
-              audiences: true,
-              perimeterScale: true,
-              source: true,
-              isCallForProject: true,
-              rateMax: true,
-              amountHint: true,
-              officialLinks: { primaryLinkUrl: true },
-            },
-          },
-        },
-      } as never)) as {
-        subventions?: { edges?: { node: Subvention }[] };
-      };
-
-      setSubventions(
-        (response?.subventions?.edges ?? []).map((edge) => edge.node),
-      );
-    } catch (error) {
-      await enqueueSnackbar({
-        message:
-          error instanceof Error
-            ? error.message
-            : 'Lecture du catalogue impossible.',
-        variant: 'error',
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [audience, onlyCalls, query]);
-
   useEffect(() => {
-    void load();
-  }, [load]);
+    let isCurrent = true;
+    const load = async () => {
+      setLoading(true);
+      setLoadError(null);
+
+      try {
+        const page = await loadSubventionCatalogPage(new CoreApiClient(), {
+          query,
+          audience,
+          onlyCalls,
+          cursor,
+        });
+        if (!isCurrent) return;
+        setSubventions((current) =>
+          cursor
+            ? [
+                ...new Map(
+                  [...current, ...page.records].map((item) => [item.id, item]),
+                ).values(),
+              ]
+            : page.records,
+        );
+        setNextCursor(page.nextCursor);
+        setHasMore(page.hasMore);
+      } catch (error) {
+        if (isCurrent)
+          setLoadError(
+            error instanceof Error
+              ? error.message
+              : 'Lecture du catalogue impossible.',
+          );
+      } finally {
+        if (isCurrent) setLoading(false);
+      }
+    };
+    const timer = setTimeout(
+      () => {
+        void load();
+      },
+      query.trim() ? 250 : 0,
+    );
+    return () => {
+      isCurrent = false;
+      clearTimeout(timer);
+    };
+  }, [audience, onlyCalls, query, cursor, refreshVersion]);
 
   const handleRefresh = async () => {
     setBusy('refresh');
@@ -380,11 +355,14 @@ export const SubventionExplorer = () => {
               : 'success',
       });
 
-      await load();
+      setCursor(null);
+      setRefreshVersion((version) => version + 1);
     } catch (error) {
       await enqueueSnackbar({
         message:
-          error instanceof Error ? error.message : 'Rafraîchissement impossible.',
+          error instanceof Error
+            ? error.message
+            : 'Rafraîchissement impossible.',
         variant: 'error',
       });
     } finally {
@@ -432,7 +410,8 @@ export const SubventionExplorer = () => {
       });
     } catch (error) {
       await enqueueSnackbar({
-        message: error instanceof Error ? error.message : 'Classement impossible.',
+        message:
+          error instanceof Error ? error.message : 'Classement impossible.',
         variant: 'error',
       });
     } finally {
@@ -467,7 +446,9 @@ export const SubventionExplorer = () => {
     } catch (error) {
       await enqueueSnackbar({
         message:
-          error instanceof Error ? error.message : 'Ajout au dossier impossible.',
+          error instanceof Error
+            ? error.message
+            : 'Ajout au dossier impossible.',
         variant: 'error',
       });
     }
@@ -496,7 +477,9 @@ export const SubventionExplorer = () => {
             disabled={busy !== 'none'}
             data-testid="subvention-refresh-button"
           >
-            {busy === 'refresh' ? 'Rafraîchissement…' : 'Rafraîchir le catalogue'}
+            {busy === 'refresh'
+              ? 'Rafraîchissement…'
+              : 'Rafraîchir le catalogue'}
           </button>
           <button
             type="button"
@@ -515,13 +498,21 @@ export const SubventionExplorer = () => {
           style={styles.input}
           placeholder="Rechercher : jeunesse, rénovation, numérique…"
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => {
+            setCursor(null);
+            setScores({});
+            setQuery(event.target.value);
+          }}
           data-testid="subvention-search-input"
         />
         <select
           style={styles.select}
           value={audience}
-          onChange={(event) => setAudience(event.target.value)}
+          onChange={(event) => {
+            setCursor(null);
+            setScores({});
+            setAudience(event.target.value);
+          }}
           data-testid="subvention-audience-select"
         >
           {AUDIENCE_OPTIONS.map((option) => (
@@ -542,14 +533,31 @@ export const SubventionExplorer = () => {
           <input
             type="checkbox"
             checked={onlyCalls}
-            onChange={(event) => setOnlyCalls(event.target.checked)}
+            onChange={(event) => {
+              setCursor(null);
+              setScores({});
+              setOnlyCalls(event.target.checked);
+            }}
             data-testid="subvention-calls-checkbox"
           />
           Appels à projets uniquement
         </label>
       </div>
 
-      {loading ? (
+      {loadError ? (
+        <div style={styles.empty} role="alert">
+          <p>
+            Le catalogue ne peut pas être chargé. Vos données sont conservées.
+          </p>
+          <button
+            type="button"
+            style={styles.button}
+            onClick={() => setRefreshVersion((version) => version + 1)}
+          >
+            Réessayer
+          </button>
+        </div>
+      ) : loading && cursor === null ? (
         <div style={styles.empty} data-testid="subvention-loading">
           Lecture du catalogue…
         </div>
@@ -640,6 +648,16 @@ export const SubventionExplorer = () => {
             );
           })}
         </div>
+      )}
+      {hasMore && !loadError && (
+        <button
+          type="button"
+          style={styles.button}
+          disabled={loading}
+          onClick={() => setCursor(nextCursor)}
+        >
+          {loading ? 'Chargement…' : 'Charger plus d’aides'}
+        </button>
       )}
     </div>
   );

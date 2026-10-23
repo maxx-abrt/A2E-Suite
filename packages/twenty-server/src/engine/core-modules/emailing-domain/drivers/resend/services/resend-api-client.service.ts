@@ -19,8 +19,16 @@ const RESEND_API_BASE_URL = 'https://api.resend.com';
 export class ResendApiClientService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  async sendEmail(payload: ResendSendEmailPayload): Promise<{ id: string }> {
-    return this.requestJson<{ id: string }>('POST', '/emails', payload);
+  async sendEmail(
+    payload: ResendSendEmailPayload,
+    idempotencyKey?: string,
+  ): Promise<{ id: string }> {
+    return this.requestJson<{ id: string }>(
+      'POST',
+      '/emails',
+      payload,
+      idempotencyKey,
+    );
   }
 
   async createDomain(payload: {
@@ -84,8 +92,14 @@ export class ResendApiClientService {
     method: string,
     path: string,
     body?: object,
+    idempotencyKey?: string,
   ): Promise<T> {
-    const responseText = await this.performRequest(method, path, body);
+    const responseText = await this.performRequest(
+      method,
+      path,
+      body,
+      idempotencyKey,
+    );
     const parsedResponse = parseJson<T>(responseText);
 
     if (!isDefined(parsedResponse)) {
@@ -102,13 +116,16 @@ export class ResendApiClientService {
     method: string,
     path: string,
     body?: object,
+    idempotencyKey?: string,
   ): Promise<string> {
     const response = await fetch(`${RESEND_API_BASE_URL}${path}`, {
       method,
       headers: {
         Authorization: `Bearer ${this.getApiKeyOrThrow()}`,
         'Content-Type': 'application/json',
+        ...(idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {}),
       },
+      signal: AbortSignal.timeout(15_000),
       body: body ? JSON.stringify(body) : undefined,
     });
 

@@ -4,6 +4,7 @@ import { EmailDriverFactory } from 'src/engine/core-modules/email/email-driver.f
 import { EmailSenderService } from 'src/engine/core-modules/email/email-sender.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { ResendApiClientService } from 'src/engine/core-modules/emailing-domain/drivers/resend/services/resend-api-client.service';
 
 @Global()
 export class EmailModule {
@@ -11,7 +12,12 @@ export class EmailModule {
     return {
       module: EmailModule,
       imports: [TwentyConfigModule],
-      providers: [EmailDriverFactory, EmailSenderService, EmailService],
+      providers: [
+        ResendApiClientService,
+        EmailDriverFactory,
+        EmailSenderService,
+        EmailService,
+      ],
       exports: [EmailSenderService, EmailService],
     };
   }

@@ -41,8 +41,7 @@ export const parseSequenceNumber = (
   return Number.parseInt(trailingDigits[1], 10);
 };
 
-// A gap in an invoice sequence is a legal red flag in France (art. L102 B):
-// surface them instead of silently renumbering.
+// Missing sequence values require review; never silently renumber issued invoices.
 export const findSequenceGaps = (documentNumbers: string[]): number[] => {
   const sequences = documentNumbers
     .map(parseSequenceNumber)
@@ -94,7 +93,7 @@ export const DEFAULT_INVOICE_PREFIX = 'FA-{{YYYY}}-';
 export const DEFAULT_QUOTE_PREFIX = 'DE-{{YYYY}}-';
 export const DEFAULT_RECEIPT_PREFIX = 'RF-{{YYYY}}-';
 
-// The number belongs to the issued invoice, not the draft (art. L102 B): a
+// The number belongs to the issued invoice, not the draft: a
 // cancelled draft never burns one, and any non-DRAFT status — including one
 // written directly through the API — stamps exactly once.
 export const INVOICE_STAMP_STATUSES = [

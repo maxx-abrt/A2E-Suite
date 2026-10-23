@@ -23,6 +23,13 @@ cette application automatiquement.
 
 ## Surfaces déclarées dans le code
 
+La livraison **0.1.7** ajoute la capture de factures dans le tableau de bord
+natif, la revue du mouvement et ses justificatifs reliés au livre, la pagination
+du catalogue et des garde-fous de reprise. Voir le
+[guide de l’expérience et de ses limites](../../../../docs/bilan-experience.md)
+pour le parcours, les vérifications effectuées et les conditions de mise en
+production encore ouvertes.
+
 Le manifeste déclare un dossier **Bilan** dans la navigation, avec :
 
 | Page | À quoi elle sert |

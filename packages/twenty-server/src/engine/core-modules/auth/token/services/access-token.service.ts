@@ -19,6 +19,7 @@ import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-contex
 import { type AccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/access-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { type PlaygroundTokenJwtPayload } from 'src/engine/core-modules/auth/types/playground-token-jwt-payload.type';
+import { assertRequestWorkspaceMatchesAuthContext } from 'src/engine/core-modules/auth/utils/assert-request-workspace-matches-auth-context.util';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
@@ -205,14 +206,22 @@ export class AccessTokenService {
         );
       }
 
-      return this.validateToken(token);
+      const context = await this.validateToken(token);
+
+      assertRequestWorkspaceMatchesAuthContext(request, context);
+
+      return context;
     }
 
     const sessionToken =
       this.userSessionCookieService.extractSessionTokenFromRequest(request);
 
     if (sessionToken) {
-      return this.validateSessionToken(sessionToken);
+      const context = await this.validateSessionToken(sessionToken);
+
+      assertRequestWorkspaceMatchesAuthContext(request, context);
+
+      return context;
     }
 
     throw new AuthException(

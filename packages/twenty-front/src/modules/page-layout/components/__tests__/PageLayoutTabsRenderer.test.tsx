@@ -13,6 +13,7 @@ let mockActiveTabId = 'hidden-transcript-tab-id';
 let mockPrerenderedTabIds: string[] = [];
 let mockTargetRecordId = 'calendar-event-id';
 let mockIsInSidePanel = false;
+let mockIsInEditMode = false;
 const mockSetActiveTabId = jest.fn();
 const mockSetPrerenderedTabIds = jest.fn();
 
@@ -79,7 +80,7 @@ jest.mock('@/page-layout/hooks/useCurrentPageLayoutOrThrow', () => ({
 }));
 
 jest.mock('@/page-layout/hooks/useIsPageLayoutInEditMode', () => ({
-  useIsPageLayoutInEditMode: () => false,
+  useIsPageLayoutInEditMode: () => mockIsInEditMode,
 }));
 
 jest.mock('@/page-layout/hooks/usePageLayoutAddTabStrategy', () => ({
@@ -167,6 +168,7 @@ describe('PageLayoutTabsRenderer', () => {
     mockPrerenderedTabIds = [];
     mockTargetRecordId = 'calendar-event-id';
     mockIsInSidePanel = false;
+    mockIsInEditMode = false;
     mockSetActiveTabId.mockClear();
     mockSetPrerenderedTabIds.mockClear();
   });
@@ -185,6 +187,35 @@ describe('PageLayoutTabsRenderer', () => {
 
     render(<PageLayoutTabsRenderer />, { wrapper: TestWrapper });
 
+    expect(screen.getByText('Rendered tab: home-tab-id')).toBeVisible();
+  });
+
+  it('keeps an app overview in the native scroll area alongside the dashboard', () => {
+    mockActiveTabId = 'home-tab-id';
+    render(
+      <PageLayoutTabsRenderer
+        headerContent={<section aria-label="Finance overview" />}
+      />,
+      { wrapper: TestWrapper },
+    );
+    expect(screen.getByTestId('scroll-wrapper')).toContainElement(
+      screen.getByRole('region', { name: 'Finance overview' }),
+    );
+    expect(screen.getByText('Rendered tab: home-tab-id')).toBeVisible();
+  });
+
+  it('clears the app overview while editing the native dashboard', () => {
+    mockActiveTabId = 'home-tab-id';
+    mockIsInEditMode = true;
+    render(
+      <PageLayoutTabsRenderer
+        headerContent={<section aria-label="Finance overview" />}
+      />,
+      { wrapper: TestWrapper },
+    );
+    expect(
+      screen.queryByRole('region', { name: 'Finance overview' }),
+    ).not.toBeInTheDocument();
     expect(screen.getByText('Rendered tab: home-tab-id')).toBeVisible();
   });
 

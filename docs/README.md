@@ -15,6 +15,7 @@ explains the fork; upstream product documentation lives in
 | See what each app and surface does | [Feature surfaces](features.md) | The linked app `README.md` and its source |
 | Find Bilan, Bureau or the app installer | [Applications runbook](applications.md) | The linked catalog, installer and preset source |
 | Continue the full-page Bureau workspace or Notion import | [Bureau delivery checklist](BUREAU_PLAN.md) | PLAN M8 + the dated phase-13 verification report |
+| Import a Notion workspace export | [Notion import compatibility](notion-import.md) | Supported blocks, workspace boundaries, limits and recovery |
 | Locate the code for a change | [Codebase map](plan/01-codebase-map.md) | One adjacent implementation and its tests |
 | Build a native feature | [Integration blueprint](plan/03-integration-blueprint.md) | [Native patterns](plan/04-twenty-native-law.md), [app authoring](../packages/twenty-apps/README-A2E.md) |
 | Gate advanced authoring blocks | [P3.4 feasibility check](plan/p3.4-advanced-authoring-feasibility.md) | The cited editor/export source paths |
@@ -24,6 +25,8 @@ explains the fork; upstream product documentation lives in
 | Scope work or leave a handoff | [Task template](templates/task.md) | [Handoff template](templates/handoff.md) |
 | Run several executor slices in one session | [Batch executor prompt](templates/executor-batch-prompt.md) | [Execution contract](../PROMPT.md) |
 | Deploy the platform | [Deployment guide](../DEPLOY.md) | [App provisioning](applications.md) is separate |
+| Configure Resend account emails | [Transactional email](resend-email.md) | Native queue, Resend REST, sender DNS and delivery checks |
+| Use or verify Bilan's connected finance experience | [Bilan experience](bilan-experience.md) | Capture, review, native books, catalogue, language foundation and release gates |
 
 ## Document ownership and precedence
 

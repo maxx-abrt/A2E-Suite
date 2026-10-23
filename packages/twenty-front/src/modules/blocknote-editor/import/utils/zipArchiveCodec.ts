@@ -19,6 +19,7 @@ export const readZipEntries = (
 ): DocumentsTransferEntry[] => {
   let entryCount = 0;
   let totalBytes = 0;
+  const seenPaths = new Set<string>();
   const unzipped = unzipSync(archive, {
     filter: (entry) => {
       entryCount += 1;
@@ -29,14 +30,22 @@ export const readZipEntries = (
       ) {
         throw new Error('Archive exceeds the import size limit');
       }
+      if (isDirectoryEntryName(entry.name)) return false;
+      const path = normalizeEntryPath(entry.name);
+      if (
+        /^(?:[\\/]|[a-z]:)/i.test(entry.name) ||
+        path.split('/').some((segment) => segment === '..') ||
+        path.includes('\u0000')
+      )
+        throw new Error('Unsafe archive path');
+      if (seenPaths.has(path)) throw new Error('Duplicate archive path');
+      seenPaths.add(path);
       return true;
     },
   });
 
   return Object.entries(unzipped)
-    .filter(
-      ([path, bytes]) => !isDirectoryEntryName(path) && bytes.byteLength > 0,
-    )
+    .filter(([path]) => !isDirectoryEntryName(path))
     .map(([path, bytes]) => ({
       path: normalizeEntryPath(path),
       bytes,
