@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { IconHeartOff } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -62,25 +63,18 @@ export const NavigationMenuItemFolderContent = ({
           views,
         );
 
-        return (
-          <NavigationMenuItemSortableItem
-            key={navigationMenuItem.id}
-            id={navigationMenuItem.id}
-            index={index}
-            group={folderDroppableId}
-          >
-            <NavigationDrawerItem
-              secondaryLabel={getObjectNavigationMenuItemSecondaryLabel({
-                objectMetadataItems,
-                navigationMenuItemObjectNameSingular: objectNameSingular ?? '',
-              })}
-              label={label}
-              Icon={() => (
-                <NavigationMenuItemIcon
-                  navigationMenuItem={navigationMenuItem}
-                />
-              )}
-              rightOptions={
+        const content = (
+          <NavigationDrawerItem
+            secondaryLabel={getObjectNavigationMenuItemSecondaryLabel({
+              objectMetadataItems,
+              navigationMenuItemObjectNameSingular: objectNameSingular ?? '',
+            })}
+            label={label}
+            Icon={() => (
+              <NavigationMenuItemIcon navigationMenuItem={navigationMenuItem} />
+            )}
+            rightOptions={
+              !hideBackButton ? (
                 <LightIconButton
                   Icon={IconHeartOff}
                   onClick={(e) => {
@@ -89,10 +83,23 @@ export const NavigationMenuItemFolderContent = ({
                   }}
                   accent="tertiary"
                 />
-              }
-              triggerEvent="CLICK"
-              to={computedLink}
-            />
+              ) : undefined
+            }
+            triggerEvent="CLICK"
+            to={computedLink}
+          />
+        );
+        // Focused app navigation is read-only; a row must not double as a drag handle.
+        return hideBackButton ? (
+          <Fragment key={navigationMenuItem.id}>{content}</Fragment>
+        ) : (
+          <NavigationMenuItemSortableItem
+            key={navigationMenuItem.id}
+            id={navigationMenuItem.id}
+            index={index}
+            group={folderDroppableId}
+          >
+            {content}
           </NavigationMenuItemSortableItem>
         );
       })}

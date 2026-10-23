@@ -14,7 +14,7 @@ inputs:
   args:
     required: false
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Fetch main branch for diff
       shell: bash
