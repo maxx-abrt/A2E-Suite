@@ -1,4 +1,5 @@
 name: Yarn Install
+description: Install the pinned Node runtime and immutable Yarn dependencies.
 inputs:
   node-version:
     required: false

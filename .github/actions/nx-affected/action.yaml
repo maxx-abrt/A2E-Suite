@@ -1,4 +1,5 @@
 name: Nx Affected CI
+description: Run requested Nx tasks for affected projects.
 inputs:
   parallel:
     required: false

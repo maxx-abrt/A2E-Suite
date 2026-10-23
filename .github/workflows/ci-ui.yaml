@@ -26,7 +26,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         task: [lint, typecheck, test, size, pack-size]
@@ -46,7 +46,7 @@ jobs:
       (github.event_name == 'push' ||
       needs.changed-files-check.outputs.any_changed == 'true')
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -64,7 +64,7 @@ jobs:
           retention-days: 1
   ui-sb-test:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: ui-sb-build
     if: always() && needs.ui-sb-build.result == 'success'
     steps:
@@ -97,7 +97,7 @@ jobs:
   ci-ui-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [changed-files-check, ui-task, ui-sb-build, ui-sb-test]
     steps:
       - name: Fail job if any needs failed
