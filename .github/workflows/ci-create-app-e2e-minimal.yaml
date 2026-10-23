@@ -31,7 +31,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest-4-cores
+    runs-on: ${{ vars.A2E_LARGE_RUNNER || (github.repository_owner == 'twentyhq' && 'ubuntu-latest-4-cores' || 'ubuntu-24.04') }}
     services:
       postgres:
         image: postgres:18
@@ -163,7 +163,7 @@ jobs:
   ci-create-app-e2e-minimal-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [changed-files-check, create-app-e2e-minimal]
     steps:
       - name: Fail job if any needs failed

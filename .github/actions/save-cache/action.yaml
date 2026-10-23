@@ -1,4 +1,5 @@
 name: Save cache
+description: Save build and dependency caches under the requested key.
 inputs:
   key:
     required: true

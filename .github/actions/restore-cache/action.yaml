@@ -1,4 +1,5 @@
 name: Restore cache
+description: Restore build and dependency caches for the requested key.
 inputs:
   key:
     required: true
