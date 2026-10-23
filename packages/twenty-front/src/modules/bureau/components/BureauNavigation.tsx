@@ -19,6 +19,7 @@ import {
   IconTrash,
   IconUpload,
 } from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSection = styled.section`
@@ -34,6 +35,12 @@ const StyledHeading = styled.h2`
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
   margin: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledHeadingRow = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const StyledTree = styled.ul`
@@ -117,7 +124,19 @@ const BureauNavigationContent = () => {
           </StyledTree>
         </>
       )}
-      <StyledHeading>{t`Pages`}</StyledHeading>
+      <StyledHeadingRow>
+        <StyledHeading>{t`Pages`}</StyledHeading>
+        {permissions.canUpdateObjectRecords && (
+          <LightIconButton
+            Icon={IconPlus}
+            aria-label={t`New page`}
+            size="small"
+            onClick={() => {
+              void actions.createPage();
+            }}
+          />
+        )}
+      </StyledHeadingRow>
       {isLoading && <span role="status">{t`Loading pages…`}</span>}
       {error ? (
         <BureauSidebarAction

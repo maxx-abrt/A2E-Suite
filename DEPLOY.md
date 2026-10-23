@@ -434,3 +434,52 @@ expected backend/frontend revision and mode after the webhook. Missing either
 setting is reported as an unverified live deployment; a published image alone
 is not a deployment certificate. Keep the deployment's selected tag consistent
 with the workflow's intended SHA (a pinned older tag will correctly fail).
+
+### Public signup and the provided Coolify environment
+
+`Sign up is disabled.` can also mean workspace creation is reserved to server
+admins. Shared-domain routing does not bypass this native instance restriction.
+For a public A2E service, use the current root Compose (both services receive
+these flags) and configure:
+
+```dotenv
+IS_SHARED_DOMAIN_WORKSPACE_ENABLED=true
+IS_MULTIWORKSPACE_ENABLED=false
+IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=false
+EMAIL_DRIVER=RESEND
+RESEND_API_KEY=<existing-secret-key>
+EMAIL_FROM_ADDRESS=noreply@association2e.org
+EMAIL_FROM_NAME=A2E Suite
+IS_EMAIL_VERIFICATION_REQUIRED=false
+```
+
+The sender above is the previously configured A2E sender; use your own verified
+Resend sender if different. `LOGGER` does not deliver emails; the placeholder
+`noreply@yourdomain.com` must be replaced. REST mode does not need SMTP fields.
+Keep verification off until an actual reset/invitation reaches the inbox.
+The image also defaults the admin-only restriction to false for public A2E;
+explicit true still restricts registration. If the instance uses database-backed
+configuration with an existing override, review that flag in the server admin
+configuration too: database overrides take precedence over environment values.
+Do not bypass membership or manually alter workspace/user rows to enable signup.
+
+Keep the existing database password and encryption key unchanged. The root
+Compose already derives `PG_DATABASE_URL` and falls back from an empty
+`APP_SECRET` to `ENCRYPTION_KEY`; additional generated secrets are not mandatory
+for that path. Outside this Compose, configure those values explicitly.
+Saving a Coolify variable only affects the containers if the saved Compose
+passes it through. Preserve the existing service and its volumes when updating
+that configuration. Use normal URLs in the actual environment, without Markdown
+backslashes around colons.
+
+### GitHub workflows inherited from upstream
+
+A2E's deployment workflow is **CD Docker image**. **CD deploy main** and
+**App Prod-Parity E2E Dispatch** call private `twentyhq` repositories; on forks
+they run only when `TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID` is configured (along
+with its existing private-key secret). Skipping these optional external
+integrations does not certify prod-parity tests. Local A2E UI/E2E checks remain.
+Browser jobs use Ubuntu 24.04 because the pinned Playwright version rejects
+Ubuntu 26.04. A2E heavy jobs default to the standard runner; set
+`A2E_LARGE_RUNNER` to an available larger runner label when needed. Upstream's
+custom 4/8-core labels remain available for `twentyhq`.

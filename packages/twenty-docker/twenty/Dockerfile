@@ -133,6 +133,7 @@ ENV APP_REVISION=$APP_REVISION
 ENV NODE_ENV=production
 # Existing saved Compose files may not yet pass the new account-routing flag.
 ENV IS_SHARED_DOMAIN_WORKSPACE_ENABLED=true
+ENV IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=false
 
 # Workspace root config
 COPY --chown=1000 --from=twenty-server-build /app/package.json /app/yarn.lock /app/.yarnrc.yml /app/
