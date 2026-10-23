@@ -1,3 +1,4 @@
+import { isSharedDomainWorkspaceEnabledState } from '@/client-config/states/isSharedDomainWorkspaceEnabledState';
 import { render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
@@ -104,6 +105,14 @@ describe('DomainShell', () => {
 
     renderShell();
 
+    expect(screen.getByText('WORKSPACE_APP')).toBeInTheDocument();
+  });
+
+  it('keeps the workspace router and its onboarding routes on a shared origin', () => {
+    setClientConfigLoaded(true);
+    jotaiStore.set(isMultiWorkspaceEnabledState.atom, true);
+    jotaiStore.set(isSharedDomainWorkspaceEnabledState.atom, true);
+    renderShell();
     expect(screen.getByText('WORKSPACE_APP')).toBeInTheDocument();
   });
 

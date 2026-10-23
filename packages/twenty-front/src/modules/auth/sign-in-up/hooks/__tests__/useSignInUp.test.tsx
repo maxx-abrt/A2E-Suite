@@ -1,6 +1,8 @@
+import { isSharedDomainWorkspaceEnabledState } from '@/client-config/states/isSharedDomainWorkspaceEnabledState';
+import { AppPath } from 'twenty-shared/types';
 import { act, renderHook } from '@testing-library/react';
 import { type UseFormReturn } from 'react-hook-form';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
@@ -45,10 +47,15 @@ jest.mock(
   }),
 );
 
+const signInWithCredentialsMock = jest.fn();
+const signInWithCredentialsInWorkspaceMock = jest.fn();
+
 const signUpWithCredentialsMock = jest.fn();
 const signUpWithCredentialsInWorkspaceMock = jest.fn();
 
 (useAuth as jest.Mock).mockReturnValue({
+  signInWithCredentials: signInWithCredentialsMock,
+  signInWithCredentialsInWorkspace: signInWithCredentialsInWorkspaceMock,
   signUpWithCredentialsInWorkspace: signUpWithCredentialsInWorkspaceMock,
   signUpWithCredentials: signUpWithCredentialsMock,
   checkUserExists: { checkUserExistsQuery: jest.fn() },
@@ -61,15 +68,26 @@ const credentials: Form = {
   captchaToken: '',
 };
 
-const renderUseSignInUp = (workspacePublicData: PublicWorkspaceData | null) => {
+const renderUseSignInUp = (
+  workspacePublicData: PublicWorkspaceData | null,
+  shared = false,
+  mode = SignInUpMode.SignUp,
+  path = '/',
+) => {
+  jotaiStore.set(isSharedDomainWorkspaceEnabledState.atom, shared);
   jotaiStore.set(workspacePublicDataState.atom, workspacePublicData);
-  jotaiStore.set(signInUpModeState.atom, SignInUpMode.SignUp);
+  jotaiStore.set(signInUpModeState.atom, mode);
 
   return renderHook(() => useSignInUp({} as UseFormReturn<Form>), {
     wrapper: ({ children }) => (
       <JotaiProvider store={jotaiStore}>
         <I18nProvider i18n={i18n}>
-          <MemoryRouter>{children}</MemoryRouter>
+          <MemoryRouter initialEntries={[path]}>
+            <Routes>
+              <Route path={AppPath.Invite} element={children} />
+              <Route path="*" element={children} />
+            </Routes>
+          </MemoryRouter>
         </I18nProvider>
       </JotaiProvider>
     ),
@@ -113,4 +131,61 @@ describe('useSignInUp > submitCredentials > sign-up routing', () => {
     expect(signUpWithCredentialsMock).toHaveBeenCalledTimes(1);
     expect(signUpWithCredentialsInWorkspaceMock).not.toHaveBeenCalled();
   });
+});
+
+describe('shared-domain account entry', () => {
+  beforeEach(() => {
+    resetJotaiStore();
+    jest.clearAllMocks();
+  });
+
+  it('registers a different email independently of previous workspace public data', async () => {
+    const { result } = renderUseSignInUp(
+      { id: 'previous-workspace' } as PublicWorkspaceData,
+      true,
+    );
+    await act(() => result.current.submitCredentials(credentials));
+    expect(signUpWithCredentialsMock).toHaveBeenCalledWith(
+      'someone@example.com',
+      'Passw0rd!',
+      'captcha-token',
+    );
+    expect(signUpWithCredentialsInWorkspaceMock).not.toHaveBeenCalled();
+  });
+
+  it('signs an existing account in globally instead of requesting access to the previous workspace', async () => {
+    const { result } = renderUseSignInUp(
+      { id: 'previous-workspace' } as PublicWorkspaceData,
+      true,
+      SignInUpMode.SignIn,
+    );
+    await act(() => result.current.submitCredentials(credentials));
+    expect(signInWithCredentialsMock).toHaveBeenCalledWith(
+      'someone@example.com',
+      'Passw0rd!',
+      'captcha-token',
+    );
+    expect(signInWithCredentialsInWorkspaceMock).not.toHaveBeenCalled();
+  });
+
+  it.each([SignInUpMode.SignIn, SignInUpMode.SignUp])(
+    'keeps explicit invitations scoped for %s',
+    async (mode) => {
+      const { result } = renderUseSignInUp(
+        null,
+        true,
+        mode,
+        '/invite/invitation-hash?inviteToken=personal-token',
+      );
+      await act(() => result.current.submitCredentials(credentials));
+      expect(signUpWithCredentialsInWorkspaceMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workspaceInviteHash: 'invitation-hash',
+          workspacePersonalInviteToken: 'personal-token',
+        }),
+      );
+      expect(signUpWithCredentialsMock).not.toHaveBeenCalled();
+      expect(signInWithCredentialsMock).not.toHaveBeenCalled();
+    },
+  );
 });

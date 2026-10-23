@@ -4,6 +4,7 @@ import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingSt
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { useWorkspaceSubdomainField } from '@/auth/sign-in-up/hooks/useWorkspaceSubdomainField';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
+import { isSharedDomainWorkspaceEnabledState } from '@/client-config/states/isSharedDomainWorkspaceEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -139,9 +140,12 @@ export const SignInUpWorkspaceCreationForm = () => {
   const { t } = useLingui();
   const { createWorkspace } = useSignUpInNewWorkspace();
   const { frontDomain } = useAtomStateValue(domainConfigurationState);
-  const isMultiWorkspaceEnabled = useAtomStateValue(
-    isMultiWorkspaceEnabledState,
+  const isSharedDomainWorkspaceEnabled = useAtomStateValue(
+    isSharedDomainWorkspaceEnabledState,
   );
+  const isMultiWorkspaceEnabled =
+    useAtomStateValue(isMultiWorkspaceEnabledState) &&
+    !isSharedDomainWorkspaceEnabled;
 
   const isCreatingWorkspace = useAtomStateValue(isCreatingWorkspaceState);
   const setIsCreatingWorkspace = useSetAtomState(isCreatingWorkspaceState);

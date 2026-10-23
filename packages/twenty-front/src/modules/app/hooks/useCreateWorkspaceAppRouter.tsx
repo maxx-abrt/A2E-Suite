@@ -22,6 +22,12 @@ import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppL
 import { Verify } from '~/pages/onboarding/Verify';
 import { lazyWithPreload } from '~/utils/lazyWithPreload';
 
+const PublicLandingPage = lazy(() =>
+  import('~/pages/auth/PublicLandingPage').then((module) => ({
+    default: module.PublicLandingPage,
+  })),
+);
+
 const SignInUp = lazy(() =>
   import('~/pages/auth/SignInUp').then((module) => ({
     default: module.SignInUp,
@@ -135,7 +141,7 @@ const createWorkspaceAppRouter = ({
                       children: getWorkspaceRouteObjectsForSurface(
                         workspaceRouteObjects,
                         'main',
-                      ),
+                      ).filter((route) => route.path !== AppPath.Index),
                     },
                   ],
                 },
@@ -166,6 +172,14 @@ const createWorkspaceAppRouter = ({
             {
               element: <BlankLayout />,
               children: [
+                {
+                  path: AppPath.Index,
+                  element: (
+                    <LazyRoute fallback={null}>
+                      <PublicLandingPage />
+                    </LazyRoute>
+                  ),
+                },
                 {
                   element: <OnboardingTransitionOutlet />,
                   loader: preloadOnboardingPages,

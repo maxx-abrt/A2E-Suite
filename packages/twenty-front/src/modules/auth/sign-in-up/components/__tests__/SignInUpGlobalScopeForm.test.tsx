@@ -1,7 +1,8 @@
+import { isSharedDomainWorkspaceEnabledState } from '@/client-config/states/isSharedDomainWorkspaceEnabledState';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
@@ -9,6 +10,8 @@ import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import {
   GetWorkspaceCreationDefaultsDocument,
+  IdentityProviderType,
+  SsoIdentityProviderStatus,
   type AvailableWorkspace,
 } from '~/generated-metadata/graphql';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -26,6 +29,12 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+
+const redirectToSsoLoginPageMock = jest.fn();
+
+jest.mock('@/auth/sign-in-up/hooks/useSso', () => ({
+  useSso: () => ({ redirectToSsoLoginPage: redirectToSsoLoginPageMock }),
+}));
 
 const buildWorkspaceUrlMock = jest.fn();
 const signOutMock = jest.fn();
@@ -219,5 +228,68 @@ describe('SignInUpGlobalScopeForm', () => {
     ).toHaveFocus();
     await userEvent.keyboard('{Enter}');
     expect(signOutMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('shared-domain workspace choices', () => {
+  beforeEach(() => {
+    resetJotaiStore();
+    jest.clearAllMocks();
+    buildWorkspaceUrlMock.mockImplementation((baseUrl: string) => baseUrl);
+  });
+
+  it('keeps SSO-only workspaces on the picker and offers their own identity provider', async () => {
+    jotaiStore.set(isSharedDomainWorkspaceEnabledState.atom, true);
+    jotaiStore.set(availableWorkspacesState.atom, {
+      availableWorkspacesForSignIn: [
+        {
+          ...workspace('sso-space', 'Research team'),
+          sso: [
+            {
+              id: 'provider-id',
+              name: 'Team identity',
+              issuer: 'https://identity.example.com',
+              type: IdentityProviderType.OIDC,
+              status: SsoIdentityProviderStatus.Active,
+            },
+          ],
+        },
+      ],
+      availableWorkspacesForSignUp: [],
+    });
+    renderWorkspacePicker();
+    await waitFor(() =>
+      expect(
+        screen.getByText('Use your workspace sign-in method'),
+      ).toBeVisible(),
+    );
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Team identity' }),
+    );
+    expect(redirectToSsoLoginPageMock).toHaveBeenCalledWith('provider-id');
+    expect(
+      screen.queryByRole('link', { name: /Research team/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('uses a real document link for a token-bearing workspace choice', () => {
+    jotaiStore.set(isSharedDomainWorkspaceEnabledState.atom, true);
+    jotaiStore.set(availableWorkspacesState.atom, {
+      availableWorkspacesForSignIn: [
+        {
+          ...workspace('first', 'Design team'),
+          loginToken: 'signed-login-token',
+        },
+      ],
+      availableWorkspacesForSignUp: [],
+    });
+    buildWorkspaceUrlMock.mockReturnValue(
+      'https://app.example.com/verify?loginToken=signed-login-token',
+    );
+    renderWorkspacePicker();
+    expect(screen.getByRole('link', { name: /Design team/ })).toHaveAttribute(
+      'href',
+      'https://app.example.com/verify?loginToken=signed-login-token',
+    );
   });
 });

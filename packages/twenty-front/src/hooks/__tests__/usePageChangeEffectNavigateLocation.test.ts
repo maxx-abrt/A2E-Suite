@@ -1,3 +1,4 @@
+import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
@@ -76,6 +77,7 @@ const setupMockUseLocation = (
   loc: AppPath,
   objectNamePlural?: string,
   pageLayoutId?: string,
+  search: string = '',
 ) => {
   const pathname =
     loc === AppPath.RecordIndexPage
@@ -90,7 +92,7 @@ const setupMockUseLocation = (
 
   jest.mocked(useLocation).mockReturnValueOnce({
     pathname,
-    search: '',
+    search,
     hash: '',
     state: null,
     key: 'test-location',
@@ -107,9 +109,13 @@ const setupMockState = (
   isMinimalMetadataReady: boolean = true,
   shouldOpenAiChatAfterOnboarding: boolean = false,
   isOnboardingCheckoutPending: boolean = false,
+  isSharedDomainWorkspaceEnabled: boolean = false,
+  signInUpStep: SignInUpStep = SignInUpStep.Init,
 ) => {
   jest
     .mocked(useAtomStateValue)
+    .mockReturnValueOnce(isSharedDomainWorkspaceEnabled)
+    .mockReturnValueOnce(signInUpStep)
     .mockReturnValueOnce(currentWorkspace)
     .mockReturnValueOnce({ isBillingEnabled })
     .mockReturnValueOnce([{ namePlural: objectNamePlural ?? '' }])
@@ -299,7 +305,7 @@ const testCases: {
 
   { loc: AppPath.Index, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.Index, isLogged: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
-  { loc: AppPath.Index, isLogged: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: AppPath.SignInUp },
+  { loc: AppPath.Index, isLogged: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: undefined },
   { loc: AppPath.Index, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: AppPath.WorkspaceActivation },
   { loc: AppPath.Index, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: AppPath.CreateProfile },
   { loc: AppPath.Index, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: AppPath.SyncEmails },
@@ -575,4 +581,83 @@ describe('usePageChangeEffectNavigateLocation — authenticated with no current 
       expect(usePageChangeEffectNavigateLocation()).toEqual(AppPath.SignInUp);
     },
   );
+});
+
+describe('shared-domain account navigation', () => {
+  it.each([SignInUpStep.WorkspaceSelection, SignInUpStep.WorkspaceCreation])(
+    'keeps %s open when the previous workspace is still loaded',
+    (step) => {
+      setupMockIsMatchingLocation(AppPath.SignInUp);
+      setupMockOnboardingStatus(OnboardingStatus.COMPLETED);
+      setupMockIsWorkspaceActivationStatusEqualsTo(false);
+      setupMockIsLogged(true);
+      setupMockIsOnAWorkspace(true);
+      setupMockUseQuery();
+      setupMockUseLocation(AppPath.SignInUp);
+      setupMockState(
+        undefined,
+        undefined,
+        undefined,
+        { id: 'previous-workspace' },
+        false,
+        true,
+        false,
+        false,
+        true,
+        step,
+      );
+      expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+    },
+  );
+
+  it('keeps an explicit invitation open for an already signed-in account', () => {
+    setupMockIsMatchingLocation(AppPath.Invite);
+    setupMockOnboardingStatus(OnboardingStatus.COMPLETED);
+    setupMockIsWorkspaceActivationStatusEqualsTo(false);
+    setupMockIsLogged(true);
+    setupMockIsOnAWorkspace(true);
+    setupMockUseQuery();
+    setupMockUseLocation(AppPath.Invite);
+    setupMockState(
+      undefined,
+      undefined,
+      undefined,
+      { id: 'previous-workspace' },
+      false,
+      true,
+      false,
+      false,
+      true,
+    );
+    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+  });
+});
+
+describe('shared-domain workspace-switch continuation', () => {
+  it('keeps provider selection open before the picker loads for an existing session', () => {
+    setupMockIsMatchingLocation(AppPath.SignInUp);
+    setupMockOnboardingStatus(OnboardingStatus.COMPLETED);
+    setupMockIsWorkspaceActivationStatusEqualsTo(false);
+    setupMockIsLogged(true);
+    setupMockIsOnAWorkspace(true);
+    setupMockUseQuery();
+    setupMockUseLocation(
+      AppPath.SignInUp,
+      undefined,
+      undefined,
+      '?action=select-workspace',
+    );
+    setupMockState(
+      undefined,
+      undefined,
+      undefined,
+      { id: 'previous-workspace' },
+      false,
+      true,
+      false,
+      false,
+      true,
+    );
+    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+  });
 });

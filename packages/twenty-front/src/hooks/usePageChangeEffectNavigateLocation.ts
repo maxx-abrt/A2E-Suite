@@ -2,6 +2,11 @@ import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPa
 import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { isSharedDomainWorkspaceEnabledState } from '@/client-config/states/isSharedDomainWorkspaceEnabledState';
+import {
+  signInUpStepState,
+  SignInUpStep,
+} from '@/auth/states/signInUpStepState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { billingState } from '@/client-config/states/billingState';
@@ -36,6 +41,10 @@ const readReturnToPathFromUrlSearchParams = (): string | null => {
 
 export const usePageChangeEffectNavigateLocation = () => {
   const isLogged = useIsLogged();
+  const isSharedDomainWorkspaceEnabled = useAtomStateValue(
+    isSharedDomainWorkspaceEnabledState,
+  );
+  const signInUpStep = useAtomStateValue(signInUpStepState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const onboardingStatus = useOnboardingStatus();
@@ -92,6 +101,23 @@ export const usePageChangeEffectNavigateLocation = () => {
   const isOnboardingCheckoutPending = useAtomStateValue(
     isOnboardingCheckoutPendingState,
   );
+
+  if (!isLogged && isMatchingLocation(location, AppPath.Index)) {
+    return;
+  }
+
+  if (
+    isSharedDomainWorkspaceEnabled &&
+    (isMatchingLocation(location, AppPath.Invite) ||
+      (isMatchingLocation(location, AppPath.SignInUp) &&
+        (signInUpStep === SignInUpStep.WorkspaceSelection ||
+          signInUpStep === SignInUpStep.WorkspaceCreation ||
+          ['create-new-workspace', 'select-workspace'].includes(
+            new URLSearchParams(location.search).get('action') ?? '',
+          ))))
+  ) {
+    return;
+  }
 
   if (
     (!isLogged || !isOnAWorkspace || !isDefined(currentWorkspace)) &&

@@ -36,7 +36,8 @@ export class AuthSsoService {
     workspaceId?: string,
   ) {
     if (
-      this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') &&
+      (this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') ||
+        this.twentyConfigService.get('IS_SHARED_DOMAIN_WORKSPACE_ENABLED')) &&
       !workspaceId
     ) {
       // Multi-workspace enable mode but on non workspace url.

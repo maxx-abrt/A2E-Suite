@@ -1951,6 +1951,15 @@ export class ConfigVariables {
   IS_MULTIWORKSPACE_ENABLED = false;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Allow independent accounts and workspaces on the configured frontend origin without workspace subdomains. Takes precedence over domain-based multi-workspace routing.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_SHARED_DOMAIN_WORKSPACE_ENABLED = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
       'Number of inactive days before sending a deletion warning for workspaces. Used in the workspace deletion cron job to determine when to send warning emails.',
@@ -2284,7 +2293,8 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RESEND_SETTINGS,
     isSensitive: true,
-    description: 'Resend API key for EMAIL_DRIVER=RESEND and EMAILING_DOMAIN_DRIVER=RESEND',
+    description:
+      'Resend API key for EMAIL_DRIVER=RESEND and EMAILING_DOMAIN_DRIVER=RESEND',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()

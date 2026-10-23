@@ -1,4 +1,5 @@
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
+import { isSharedDomainWorkspaceEnabledState } from '@/client-config/states/isSharedDomainWorkspaceEnabledState';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
@@ -43,6 +44,9 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { verifyLoginToken } = useVerifyLogin();
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
+  const isSharedDomainWorkspaceEnabled = useAtomStateValue(
+    isSharedDomainWorkspaceEnabledState,
+  );
   const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
 
   const { t } = useLingui();
@@ -66,7 +70,7 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
       };
 
       try {
-        if (!isOnAWorkspace) {
+        if (!isOnAWorkspace || isSharedDomainWorkspaceEnabled) {
           await verifyEmailAndGetWorkspaceAgnosticToken(
             emailVerificationToken,
             email,

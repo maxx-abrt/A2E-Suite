@@ -1,9 +1,13 @@
+import { isSharedDomainWorkspaceEnabledState } from '@/client-config/states/isSharedDomainWorkspaceEnabledState';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
+import {
+  countAvailableWorkspaces,
+  getAvailableWorkspacePathAndSearchParams,
+} from '@/auth/utils/availableWorkspacesUtils';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
@@ -51,6 +55,9 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export const MultiWorkspaceDropdownDefaultComponents = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const isSharedDomainWorkspaceEnabled = useAtomStateValue(
+    isSharedDomainWorkspaceEnabledState,
+  );
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
@@ -90,8 +97,19 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   };
 
   const handleChange = async (availableWorkspace: AvailableWorkspace) => {
+    const { pathname, searchParams } =
+      getAvailableWorkspacePathAndSearchParams(availableWorkspace);
+    if (
+      isSharedDomainWorkspaceEnabled &&
+      !availableWorkspace.loginToken &&
+      !availableWorkspace.personalInviteToken
+    ) {
+      searchParams.action = 'select-workspace';
+    }
     redirectToWorkspaceDomain(
       getWorkspaceUrl(availableWorkspace.workspaceUrls),
+      pathname,
+      searchParams,
     );
   };
 

@@ -5,6 +5,7 @@ import { SharedAppProviders } from '@/app/components/SharedAppProviders';
 import { WorkspaceApp } from '@/app/components/WorkspaceApp';
 import { isOnOnboardingTransitionPath } from '@/auth/utils/isOnOnboardingTransitionPath';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
+import { isSharedDomainWorkspaceEnabledState } from '@/client-config/states/isSharedDomainWorkspaceEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { OnboardingPageLoader } from '@/onboarding/components/OnboardingPageLoader';
@@ -13,6 +14,9 @@ import { UserOrMetadataLoader } from '~/loading/components/UserOrMetadataLoader'
 
 export const DomainShell = () => {
   const { isLoadedOnce } = useAtomStateValue(clientConfigApiStatusState);
+  const isSharedDomainWorkspaceEnabled = useAtomStateValue(
+    isSharedDomainWorkspaceEnabledState,
+  );
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
@@ -32,7 +36,7 @@ export const DomainShell = () => {
     );
   }
 
-  if (!isMultiWorkspaceEnabled) {
+  if (!isMultiWorkspaceEnabled || isSharedDomainWorkspaceEnabled) {
     return <WorkspaceApp />;
   }
 

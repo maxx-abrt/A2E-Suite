@@ -6,7 +6,6 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
@@ -25,6 +24,11 @@ import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { isDefined } from 'twenty-shared/utils';
+import { useParams } from 'react-router-dom';
+import { useSso } from '@/auth/sign-in-up/hooks/useSso';
+import { isSharedDomainWorkspaceEnabledState } from '@/client-config/states/isSharedDomainWorkspaceEnabledState';
+import { MainButton } from 'twenty-ui/input';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { Avatar } from 'twenty-ui/data-display';
@@ -37,6 +41,19 @@ import {
 } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+
+const StyledWorkspaceLink = styled.a`
+  color: inherit;
+  display: block;
+  text-decoration: none;
+`;
+
+const StyledProviderChoice = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[4]};
+`;
 
 const StyledWorkspaceContainer = styled.div`
   background-color: ${themeCssVariables.background.primary};
@@ -163,6 +180,11 @@ const StyledForgotPasswordLinkContainer = styled.div`
 
 export const SignInUpGlobalScopeForm = () => {
   const { theme } = useContext(ThemeContext);
+  const { workspaceInviteHash } = useParams();
+  const { redirectToSsoLoginPage } = useSso();
+  const isSharedDomainWorkspaceEnabled = useAtomStateValue(
+    isSharedDomainWorkspaceEnabledState,
+  );
   const authProviders = useAtomStateValue(authProvidersState);
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
   const signInUpStep = useAtomStateValue(signInUpStepState);
@@ -223,42 +245,77 @@ export const SignInUpGlobalScopeForm = () => {
                 key={availableWorkspace.id}
                 index={index}
               >
-                <UndecoratedLink
-                  to={getAvailableWorkspaceUrl(availableWorkspace)}
-                >
-                  <StyledWorkspaceItem>
-                    <StyledWorkspaceContent>
-                      <Avatar
-                        placeholder={availableWorkspace.displayName || ''}
-                        avatarUrl={getAbsoluteImageUrl(
-                          availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
-                        )}
-                        size="lg"
+                {isSharedDomainWorkspaceEnabled &&
+                !availableWorkspace.loginToken &&
+                !availableWorkspace.personalInviteToken ? (
+                  <StyledProviderChoice>
+                    <StyledWorkspaceName>
+                      {availableWorkspace.displayName}
+                    </StyledWorkspaceName>
+                    <StyledWorkspaceStatus>{t`Use your workspace sign-in method`}</StyledWorkspaceStatus>
+                    {availableWorkspace.sso.map((provider) => (
+                      <MainButton
+                        key={provider.id}
+                        title={provider.name}
+                        variant="secondary"
+                        onClick={() => redirectToSsoLoginPage(provider.id)}
+                        fullWidth
                       />
-                      <StyledWorkspaceTextContainer>
-                        <StyledWorkspaceName>
-                          {availableWorkspace.displayName ||
-                            availableWorkspace.id}
-                        </StyledWorkspaceName>
-                        <StyledWorkspaceStatus>
-                          {joinedWorkspaceIds.has(availableWorkspace.id)
-                            ? t`Your workspace`
-                            : t`Available to join`}
-                        </StyledWorkspaceStatus>
-                        <StyledWorkspaceUrl>
-                          {
-                            new URL(
-                              getWorkspaceUrl(availableWorkspace.workspaceUrls),
-                            ).hostname
-                          }
-                        </StyledWorkspaceUrl>
-                      </StyledWorkspaceTextContainer>
-                      <StyledChevronIcon>
-                        <IconChevronRight size={theme.icon.size.md} />
-                      </StyledChevronIcon>
-                    </StyledWorkspaceContent>
-                  </StyledWorkspaceItem>
-                </UndecoratedLink>
+                    ))}
+                    {authProviders.google && (
+                      <SignInUpWithGoogle
+                        action="list-available-workspaces"
+                        isGlobalScope
+                      />
+                    )}
+                    {authProviders.microsoft && (
+                      <SignInUpWithMicrosoft
+                        action="list-available-workspaces"
+                        isGlobalScope
+                      />
+                    )}
+                  </StyledProviderChoice>
+                ) : (
+                  <StyledWorkspaceLink
+                    href={getAvailableWorkspaceUrl(availableWorkspace)}
+                    referrerPolicy="no-referrer"
+                  >
+                    <StyledWorkspaceItem>
+                      <StyledWorkspaceContent>
+                        <Avatar
+                          placeholder={availableWorkspace.displayName || ''}
+                          avatarUrl={getAbsoluteImageUrl(
+                            availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
+                          )}
+                          size="lg"
+                        />
+                        <StyledWorkspaceTextContainer>
+                          <StyledWorkspaceName>
+                            {availableWorkspace.displayName ||
+                              availableWorkspace.id}
+                          </StyledWorkspaceName>
+                          <StyledWorkspaceStatus>
+                            {joinedWorkspaceIds.has(availableWorkspace.id)
+                              ? t`Your workspace`
+                              : t`Available to join`}
+                          </StyledWorkspaceStatus>
+                          <StyledWorkspaceUrl>
+                            {
+                              new URL(
+                                getWorkspaceUrl(
+                                  availableWorkspace.workspaceUrls,
+                                ),
+                              ).hostname
+                            }
+                          </StyledWorkspaceUrl>
+                        </StyledWorkspaceTextContainer>
+                        <StyledChevronIcon>
+                          <IconChevronRight size={theme.icon.size.md} />
+                        </StyledChevronIcon>
+                      </StyledWorkspaceContent>
+                    </StyledWorkspaceItem>
+                  </StyledWorkspaceLink>
+                )}
               </OnboardingStepAnimatedItem>
             ))}
             {!isDDLLocked && (
@@ -292,13 +349,21 @@ export const SignInUpGlobalScopeForm = () => {
         <StyledOnboardingContentContainer>
           {authProviders.google && (
             <SignInUpWithGoogle
-              action="list-available-workspaces"
+              action={
+                isDefined(workspaceInviteHash)
+                  ? 'join-workspace'
+                  : 'list-available-workspaces'
+              }
               isGlobalScope
             />
           )}
           {authProviders.microsoft && (
             <SignInUpWithMicrosoft
-              action="list-available-workspaces"
+              action={
+                isDefined(workspaceInviteHash)
+                  ? 'join-workspace'
+                  : 'list-available-workspaces'
+              }
               isGlobalScope
             />
           )}

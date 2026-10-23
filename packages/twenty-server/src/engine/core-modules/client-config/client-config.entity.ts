@@ -277,6 +277,9 @@ export class ClientConfig {
   @Field(() => Boolean)
   isMultiWorkspaceEnabled: boolean;
 
+  // REST client configuration only; not part of the GraphQL API.
+  isSharedDomainWorkspaceEnabled?: boolean;
+
   @Field(() => Boolean)
   isEmailVerificationRequired: boolean;
 

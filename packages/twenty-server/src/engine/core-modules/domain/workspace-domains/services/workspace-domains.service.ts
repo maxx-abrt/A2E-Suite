@@ -64,6 +64,31 @@ export class WorkspaceDomainsService {
     return url.toString();
   }
 
+  isSharedDomainOrigin(origin: string) {
+    return (
+      this.twentyConfigService.get('IS_SHARED_DOMAIN_WORKSPACE_ENABLED') &&
+      new URL(origin).origin ===
+        this.domainServerConfigService.getFrontUrl().origin
+    );
+  }
+
+  async getWorkspaceForLoginToken(origin: string, workspaceId: string) {
+    if (this.twentyConfigService.get('IS_SHARED_DOMAIN_WORKSPACE_ENABLED')) {
+      if (!this.isSharedDomainOrigin(origin)) {
+        return undefined;
+      }
+
+      return (
+        (await this.workspaceRepository.findOne({
+          where: { id: workspaceId },
+          relations: ['workspaceSsoIdentityProviders'],
+        })) ?? undefined
+      );
+    }
+
+    return this.getWorkspaceByOriginOrDefaultWorkspace(origin);
+  }
+
   private async getDefaultWorkspace() {
     if (this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
       throw new Error(
@@ -108,7 +133,18 @@ export class WorkspaceDomainsService {
     const { subdomain, domain, isPublicDomainOrigin } =
       this.domainServerConfigService.getSubdomainAndDomainFromUrl(origin);
 
-    if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
+    if (this.isSharedDomainOrigin(origin)) {
+      return {
+        workspace: undefined,
+        publicDomain: null,
+        isIsolatedOrigin: false,
+      };
+    }
+
+    if (
+      !this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') &&
+      !this.twentyConfigService.get('IS_SHARED_DOMAIN_WORKSPACE_ENABLED')
+    ) {
       // Single-workspace: workspace is always the default. Still resolve a
       // matching public domain so the route trigger can scope by application.
       const publicDomain = isDefined(domain)
@@ -274,6 +310,13 @@ export class WorkspaceDomainsService {
     customDomain,
     isCustomDomainEnabled,
   }: WorkspaceDomainConfig) {
+    if (this.twentyConfigService.get('IS_SHARED_DOMAIN_WORKSPACE_ENABLED')) {
+      return {
+        subdomainUrl: this.domainServerConfigService.getFrontUrl().toString(),
+        customUrl: undefined,
+      };
+    }
+
     return {
       customUrl:
         isCustomDomainEnabled && customDomain

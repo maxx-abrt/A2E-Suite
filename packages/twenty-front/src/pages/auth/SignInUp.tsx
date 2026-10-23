@@ -152,6 +152,14 @@ export const SignInUp = () => {
       return <SignInUpWorkspaceCreationForm />;
     }
 
+    if (signInUpStep === SignInUpStep.TwoFactorAuthenticationProvision) {
+      return <SignInUpTwoFactorAuthenticationProvision />;
+    }
+
+    if (signInUpStep === SignInUpStep.TwoFactorAuthenticationVerification) {
+      return <SignInUpTOTPVerification />;
+    }
+
     if (isDefaultDomain && isMultiWorkspaceEnabled) {
       return (
         <>
@@ -167,14 +175,6 @@ export const SignInUp = () => {
       signInUpStep === SignInUpStep.SsoIdentityProviderSelection
     ) {
       return <SignInUpSsoIdentityProviderSelection />;
-    }
-
-    if (signInUpStep === SignInUpStep.TwoFactorAuthenticationProvision) {
-      return <SignInUpTwoFactorAuthenticationProvision />;
-    }
-
-    if (signInUpStep === SignInUpStep.TwoFactorAuthenticationVerification) {
-      return <SignInUpTOTPVerification />;
     }
 
     if (isDefined(workspacePublicData) && isOnAWorkspace) {
@@ -217,7 +217,7 @@ export const SignInUp = () => {
         </ModalContent>
       ) : (
         <SignInUpStandardContent
-          workspacePublicData={workspacePublicData}
+          workspacePublicData={isGlobalScope ? null : workspacePublicData}
           signInUpForm={signInUpForm}
           signInUpStep={signInUpStep}
           title={title}

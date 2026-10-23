@@ -474,6 +474,7 @@ export class SignInUpService {
 
     return (
       this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') ||
+      this.twentyConfigService.get('IS_SHARED_DOMAIN_WORKSPACE_ENABLED') ||
       workspaceCount === 0
     );
   }
@@ -493,9 +494,9 @@ export class SignInUpService {
     email: string,
   ): Promise<void> {
     const decision = getSignUpWithoutWorkspaceDecision({
-      isMultiWorkspaceEnabled: this.twentyConfigService.get(
-        'IS_MULTIWORKSPACE_ENABLED',
-      ),
+      isMultiWorkspaceEnabled:
+        this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') ||
+        this.twentyConfigService.get('IS_SHARED_DOMAIN_WORKSPACE_ENABLED'),
       isWorkspaceCreationLimitedToServerAdmins: this.twentyConfigService.get(
         'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
       ),
