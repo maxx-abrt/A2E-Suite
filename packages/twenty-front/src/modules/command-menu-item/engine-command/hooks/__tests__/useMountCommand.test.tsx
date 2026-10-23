@@ -49,6 +49,23 @@ const getWrapper =
   );
 
 describe('useMountCommand', () => {
+  it('retains the originating embedded index for quick-create filter defaults', async () => {
+    const store = createStore();
+    const { result } = renderHook(() => useMountCommand(), {
+      wrapper: getWrapper(store),
+    });
+    await act(async () => {
+      await result.current({
+        engineCommandId: 'quick-create',
+        contextStoreInstanceId: 'bureau-widget',
+        engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
+        recordIndexId: 'tasks-view-bureau',
+      });
+    });
+    expect(
+      store.get(headlessCommandContextApisState.atom).get('quick-create'),
+    ).toEqual({ ...baseContextApi, recordIndexId: 'tasks-view-bureau' });
+  });
   beforeEach(() => {
     jest.clearAllMocks();
   });

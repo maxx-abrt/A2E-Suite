@@ -1,4 +1,8 @@
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
+import { getRecordTableWidgetInstanceIds } from '@/object-record/record-table-widget/utils/getRecordTableWidgetInstanceIds';
+import { useMountCommand } from '@/command-menu-item/engine-command/hooks/useMountCommand';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { PageLayoutEditModeProviderContext } from '@/page-layout/contexts/PageLayoutEditModeContext';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -7,14 +11,19 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
-import { IconCheckbox } from 'twenty-ui/icon';
+import { IconCheckbox, IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ViewKey, ViewType } from '~/generated-metadata/graphql';
+import {
+  EngineComponentKey,
+  ViewKey,
+  ViewType,
+} from '~/generated-metadata/graphql';
 
 const StyledSection = styled.section`
   background: ${themeCssVariables.background.primary};
@@ -100,7 +109,7 @@ export const BureauTaskSheet = () => {
   return taskObject ? (
     <BureauTaskSheetContent
       key={taskObject.id}
-      objectMetadataId={taskObject.id}
+      objectMetadataItem={taskObject}
       priorityFieldMetadataId={
         taskObject.readableFields.find((field) => field.name === 'priority')?.id
       }
@@ -109,26 +118,48 @@ export const BureauTaskSheet = () => {
 };
 
 type BureauTaskSheetContentProps = {
-  objectMetadataId: string;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   priorityFieldMetadataId?: string;
 };
 
 const BureauTaskSheetContent = ({
-  objectMetadataId,
+  objectMetadataItem,
   priorityFieldMetadataId,
 }: BureauTaskSheetContentProps) => {
   const { t } = useLingui();
+  const objectMetadataId = objectMetadataItem.id;
+  const mountCommand = useMountCommand();
   const permissions = useObjectPermissionsForObject(objectMetadataId);
   const views = useAtomFamilySelectorValue(
     viewsFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataId },
   ).filter((view) => view.type === ViewType.TABLE);
   const [selectedViewId, setSelectedViewId] = useState<string>();
+  const compactView = views
+    .filter(
+      (view) =>
+        view.viewFields.some((field) => field.isVisible !== false) &&
+        (view.viewFilters?.length ?? 0) === 0 &&
+        (view.viewFilterGroups?.length ?? 0) === 0 &&
+        !isNonEmptyString(view.anyFieldFilterValue),
+    )
+    .sort(
+      (firstView, secondView) =>
+        firstView.viewFields.filter((field) => field.isVisible !== false)
+          .length -
+        secondView.viewFields.filter((field) => field.isVisible !== false)
+          .length,
+    )
+    .at(0);
   const selectedView =
     views.find((view) => view.id === selectedViewId) ??
+    compactView ??
     views.find((view) =>
       view.viewFields.some(
-        (field) => field.fieldMetadataId === priorityFieldMetadataId,
+        (field) =>
+          isDefined(priorityFieldMetadataId) &&
+          field.fieldMetadataId === priorityFieldMetadataId &&
+          field.isVisible !== false,
       ),
     ) ??
     views.find((view) => view.key === ViewKey.INDEX) ??
@@ -150,6 +181,34 @@ const BureauTaskSheetContent = ({
           {t`Task sheet`}
         </StyledTitle>
         <StyledActions>
+          {isDefined(selectedView) &&
+            canCreateRecordsForObjectMetadataItem({
+              objectMetadataItem,
+              objectPermissions: permissions,
+            }) && (
+              <Button
+                title={t`New task`}
+                ariaLabel={t`New task`}
+                Icon={IconPlus}
+                variant="secondary"
+                size="small"
+                onClick={() => {
+                  const { recordIndexId, contextStoreInstanceId } =
+                    getRecordTableWidgetInstanceIds({
+                      objectNamePlural: 'tasks',
+                      viewId: selectedView.id,
+                      widgetId: taskSheetId,
+                      instanceIdSuffix: taskSheetId,
+                    });
+                  void mountCommand({
+                    engineCommandId: `quick-create-${recordIndexId}`,
+                    engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
+                    contextStoreInstanceId,
+                    recordIndexId,
+                  });
+                }}
+              />
+            )}
           {views.length > 0 && (
             <StyledSelect
               aria-label={t`Task view`}

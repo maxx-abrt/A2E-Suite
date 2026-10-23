@@ -15,6 +15,32 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const mockTriggerInstallAppsOnboardingStep = jest.fn();
+const mockApplyTemplateOperation = jest.fn();
+
+jest.mock('@/a2e-workspace/hooks/useWorkspaceTemplatePreview', () => ({
+  useWorkspaceTemplatePreview: () => ({
+    preview: {
+      templateKey: 'INDIVIDUAL',
+      version: 3,
+      apps: [],
+      navigationChanges: [],
+      samples: [],
+      blockedSamples: [],
+      blocked: false,
+    },
+    isLoading: false,
+    refetch: jest.fn(),
+  }),
+}));
+jest.mock('@/a2e-workspace/hooks/useApplyWorkspaceTemplateOperation', () => ({
+  useApplyWorkspaceTemplateOperation: () => ({
+    applyTemplateOperation: mockApplyTemplateOperation,
+    resetOperation: jest.fn(),
+    operationResult: null,
+    operationErrorCode: null,
+    isLoading: false,
+  }),
+}));
 
 jest.mock('@/marketplace/hooks/useMarketplaceApps', () => ({
   useMarketplaceApps: jest.fn(),
@@ -42,6 +68,11 @@ describe('InstallApps start-from-scratch path', () => {
   beforeEach(() => {
     localStorage.clear();
     resetJotaiStore();
+    mockApplyTemplateOperation.mockReset();
+    mockApplyTemplateOperation.mockResolvedValue({
+      appliedTemplateKeyVersion: { key: 'INDIVIDUAL', version: 3 },
+      steps: [{ kind: 'SET_WORKSPACE_TEMPLATE', status: 'SUCCEEDED' }],
+    });
     mockTriggerInstallAppsOnboardingStep.mockReset();
     mockTriggerInstallAppsOnboardingStep.mockResolvedValue(undefined);
     mockedUseMarketplaceApps.mockReturnValue({
@@ -69,5 +100,30 @@ describe('InstallApps start-from-scratch path', () => {
         isAutoSkipped: false,
       }),
     );
+  });
+  it('continues onboarding after a template finishes successfully', async () => {
+    const user = userEvent.setup();
+    render(<InstallApps />, { wrapper: Wrapper });
+    await user.click(screen.getByRole('button', { name: /Individual/ }));
+    await user.click(screen.getByRole('button', { name: 'Apply template' }));
+    await waitFor(() =>
+      expect(mockTriggerInstallAppsOnboardingStep).toHaveBeenCalledWith({
+        universalIdentifiers: [],
+        isAutoSkipped: false,
+      }),
+    );
+  });
+
+  it('keeps onboarding open when the selected template fails', async () => {
+    mockApplyTemplateOperation.mockResolvedValue({
+      appliedTemplateKeyVersion: null,
+      steps: [{ kind: 'INSTALL_APP', status: 'FAILED' }],
+    });
+    const user = userEvent.setup();
+    render(<InstallApps />, { wrapper: Wrapper });
+    await user.click(screen.getByRole('button', { name: /Individual/ }));
+    await user.click(screen.getByRole('button', { name: 'Apply template' }));
+    expect(mockApplyTemplateOperation).toHaveBeenCalledTimes(1);
+    expect(mockTriggerInstallAppsOnboardingStep).not.toHaveBeenCalled();
   });
 });

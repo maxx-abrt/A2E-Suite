@@ -67,12 +67,9 @@ const readServerTemplateDefinitions = (): ServerTemplateDefinition[] => {
     ),
   );
 
-  const resolveApplicationConstantNames = (
-    constantName: string,
-  ): string[] => {
-    const universalIdentifier = universalIdentifierByConstantName.get(
-      constantName,
-    );
+  const resolveApplicationConstantNames = (constantName: string): string[] => {
+    const universalIdentifier =
+      universalIdentifierByConstantName.get(constantName);
 
     if (universalIdentifier !== undefined) {
       return [universalIdentifier];
@@ -110,7 +107,10 @@ const readServerTemplateDefinitions = (): ServerTemplateDefinition[] => {
       applicationUniversalIdentifiers: (
         applicationList.match(/\w+/g) ?? []
       ).flatMap(resolveApplicationConstantNames),
-      hidesCrmNavigation: /'[0-9a-f-]{36}'/.test(hiddenNavigationList),
+      hidesCrmNavigation:
+        /'[0-9a-f-]{36}'|CRM_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS/.test(
+          hiddenNavigationList,
+        ),
     };
   });
 };

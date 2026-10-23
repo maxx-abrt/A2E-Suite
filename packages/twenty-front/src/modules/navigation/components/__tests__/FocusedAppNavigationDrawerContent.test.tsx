@@ -1,11 +1,24 @@
 import { FocusedAppNavigationDrawerContent } from '@/navigation/components/FocusedAppNavigationDrawerContent';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 
+let mockIsLayoutCustomizationModeEnabled = false;
 const mockFolders = [
+  {
+    id: 'tasks',
+    folderName: 'Tasks',
+    navigationMenuItems: [
+      {
+        type: 'VIEW',
+        viewId: 'task-view',
+        link: '/objects/tasks?viewId=task-view',
+      },
+    ],
+  },
   {
     id: 'bureau',
     folderName: 'My writing',
@@ -56,9 +69,10 @@ jest.mock(
   }),
 );
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
-  useAtomStateValue: () => [
-    { id: 'review-view', objectMetadataId: 'invoice-metadata' },
-  ],
+  useAtomStateValue: (state: unknown) =>
+    state === isLayoutCustomizationModeEnabledState
+      ? mockIsLayoutCustomizationModeEnabled
+      : [{ id: 'review-view', objectMetadataId: 'invoice-metadata' }],
 }));
 jest.mock(
   '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink',
@@ -118,11 +132,18 @@ const renderDrawer = (path: string) =>
   );
 
 beforeEach(() => {
+  mockIsLayoutCustomizationModeEnabled = false;
   i18n.load('en', {});
   i18n.activate('en');
 });
 
 describe('native focused app navigation', () => {
+  it('exposes the native navigation editor in layout customization mode', () => {
+    mockIsLayoutCustomizationModeEnabled = true;
+    renderDrawer('/bureau');
+    expect(screen.getByText('All workspace apps')).toBeInTheDocument();
+    expect(screen.queryByText('Page tree')).not.toBeInTheDocument();
+  });
   it('focuses a deep-linked app using native links even when its folder was renamed', () => {
     renderDrawer('/bureau/page-id');
     expect(screen.getByText('Page tree')).toBeInTheDocument();
@@ -186,5 +207,13 @@ describe('native focused app navigation', () => {
   it('does not match similarly named objects or records outside the permitted metadata', () => {
     renderDrawer('/object/invoiceLine/line-id');
     expect(screen.getByText('All workspace apps')).toBeInTheDocument();
+  });
+
+  it('keeps the app focused after switching to a different saved view', () => {
+    renderDrawer('/objects/tasks?viewId=another-view');
+    expect(screen.queryByText('All workspace apps')).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: '/objects/tasks?viewId=task-view' }),
+    ).toBeInTheDocument();
   });
 });

@@ -2,6 +2,7 @@ import { A2eCustomizeAction } from '@/a2e-customize/components/A2eCustomizeActio
 import { BureauWorkspaceContext } from '@/bureau/contexts/BureauWorkspaceContext';
 import { BureauTaskSheet } from '@/bureau/components/BureauTaskSheet';
 import { BureauTodayProgress } from '@/bureau/components/BureauTodayProgress';
+import { BureauWorkspaceShortcuts } from '@/bureau/components/BureauWorkspaceShortcuts';
 import { useContext } from 'react';
 import { A2eContextualEmptyState } from '@/a2e-empty-state/components/A2eContextualEmptyState';
 import { BUREAU_LANDING_TEMPLATE_CATEGORY } from '@/bureau/constants/BureauLandingTemplateCategory';
@@ -21,7 +22,7 @@ import { IconFileText, IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
-  background: ${themeCssVariables.background.secondary};
+  background: ${themeCssVariables.background.primary};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -32,7 +33,12 @@ const StyledContainer = styled.div`
   width: 100%;
 
   > * {
+    box-sizing: border-box;
     flex-shrink: 0;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1120px;
+    width: 100%;
   }
 
   @media (max-width: 600px) {
@@ -43,7 +49,7 @@ const StyledContainer = styled.div`
 const StyledOverview = styled.div`
   display: grid;
   gap: ${themeCssVariables.spacing[4]};
-  grid-template-columns: minmax(240px, 0.8fr) minmax(0, 2fr);
+  grid-template-columns: minmax(0, 2fr) minmax(240px, 0.8fr);
 
   > header:only-child {
     grid-column: 1 / -1;
@@ -56,20 +62,11 @@ const StyledOverview = styled.div`
 
 const StyledHeader = styled.header`
   align-items: center;
-  background:
-    radial-gradient(
-      ellipse at top right,
-      ${themeCssVariables.background.transparent.medium},
-      transparent 65%
-    ),
-    ${themeCssVariables.background.primary};
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[4]};
   justify-content: space-between;
-  padding: ${themeCssVariables.spacing[6]};
+  padding: ${themeCssVariables.spacing[3]} 0;
 `;
 
 const StyledHeaderActions = styled.div`
@@ -132,9 +129,7 @@ const StyledSectionTitle = styled.h2`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
-  letter-spacing: 0.08em;
   margin: 0;
-  text-transform: uppercase;
 `;
 
 const StyledTemplateRow = styled.div`
@@ -201,7 +196,6 @@ const BureauLandingContent = ({
   return (
     <StyledContainer data-testid="bureau-landing">
       <StyledOverview>
-        <BureauTodayProgress />
         <StyledHeader>
           <StyledTitleGroup>
             <StyledTitle>{t`Bureau`}</StyledTitle>
@@ -222,7 +216,9 @@ const BureauLandingContent = ({
             )}
           </StyledHeaderActions>
         </StyledHeader>
+        <BureauTodayProgress />
       </StyledOverview>
+      <BureauWorkspaceShortcuts />
       <BureauTaskSheet />
       <StyledResources>
         <StyledSection>

@@ -19,6 +19,7 @@ type NavigationMenuItemDefinition = {
   type: NavigationMenuItemType;
   viewUniversalIdentifier?: string;
   folderUniversalIdentifier?: string;
+  link?: string;
 };
 
 type DefinitionResult<TDefinition> = {
@@ -55,4 +56,20 @@ test('the Projets row nests under the shared Bureau folder', async () => {
     EXTERNAL_NAVIGATION_FOLDER_UNIVERSAL_IDENTIFIERS.bureau,
   );
   assert.equal(projects.viewUniversalIdentifier, VIEW_IDS.allProjects);
+});
+
+test('Bureau shortcuts open the editable task table and native event calendar', async () => {
+  const tasks = await unwrap<NavigationMenuItemDefinition>(
+    '../../navigation-menu-items/bureau-tasks.navigation-menu-item.ts',
+  );
+  const events = await unwrap<NavigationMenuItemDefinition>(
+    '../../navigation-menu-items/bureau-events.navigation-menu-item.ts',
+  );
+  assert.equal(tasks.viewUniversalIdentifier, VIEW_IDS.projectTasks);
+  assert.equal(tasks.type, NavigationMenuItemType.VIEW);
+  assert.equal(events.type, NavigationMenuItemType.LINK);
+  assert.equal(events.link, '/calendar');
+  for (const item of [tasks, events]) {
+    assert.equal(item.folderUniversalIdentifier, EXTERNAL_NAVIGATION_FOLDER_UNIVERSAL_IDENTIFIERS.bureau);
+  }
 });

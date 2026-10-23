@@ -64,6 +64,7 @@ export default definePostInstallLogicFunction({
   description:
     'Prépare Bureau Projets : douze projets de démarrage (livraison, rétroplanning, sprint, contenu, recrutement, onboarding, refonte, semestre, AG, subvention, bugs, objectifs) avec leurs tâches et jalons.',
   timeoutSeconds: 120,
-  shouldRunSynchronously: false,
+  shouldRunSynchronously: true,
+  shouldRunOnVersionUpgrade: true,
   handler,
 });

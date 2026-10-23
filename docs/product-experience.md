@@ -67,18 +67,21 @@ engine. These are different lifecycle objects, not interchangeable labels.
 
 Source: [server definitions](../packages/twenty-server/src/engine/core-modules/onboarding/constants/workspace-template-definitions.constant.ts).
 
-| Preset | Requested apps now | CRM navigation | Starter-content seeding now |
+| Preset | Requested apps | CRM navigation | Starter content |
 | --- | --- | --- | --- |
-| CRM | None | Kept | Off |
-| Individual | Documents | Three managed CRM entries hidden | Off |
-| Student | Documents | Three managed CRM entries hidden | Off |
-| Team | Documents | Kept | Off |
-| Non-profit | Documents + Bilan | Kept | Off |
-| Small business | Documents + Bilan | Kept | Off |
+| CRM | None | Enabled explicitly | None |
+| Individual | Bureau Pages + Projects + Discussions | Hidden | App-owned templates |
+| Student | Bureau Pages + Projects + Discussions | Hidden | App-owned templates |
+| Team | Bureau Pages + Projects + Discussions | Hidden | App-owned templates |
+| Non-profit | Bureau bundle + Bilan | Hidden | Bureau templates; finance content gated |
+| Small business | Bureau bundle + Bilan | Hidden | Bureau templates; finance content gated |
 
-Projects and Discussions are not included; Bureau pages use the Documents registration. Preset selection is not proof of installation:
-missing registrations/install failures can be skipped, and no generic starter
-content seeder exists. See [troubleshooting](applications.md).
+CRM shortcuts are opt-in. Starting from scratch also hides the managed CRM
+shortcuts; applying CRM later restores only shortcuts hidden by setup. App
+installation is awaited in dependency order. Requested starter templates are
+confirmed from persisted app records, and retries retain successful steps.
+Bureau's app hook supplies its reusable template library independently of the
+optional sample confirmation. See [troubleshooting](applications.md).
 
 ### Proposed starter packs
 

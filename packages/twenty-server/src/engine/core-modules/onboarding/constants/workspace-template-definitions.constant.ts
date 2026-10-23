@@ -1,6 +1,9 @@
 import { WorkspaceTemplate } from 'src/engine/core-modules/onboarding/enums/workspace-template.enum';
 import { type TemplatePreviewSample } from 'src/engine/core-modules/onboarding/types/apply-template-operation.types';
-import { AGENDA_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
+import {
+  AGENDA_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER,
+  STANDARD_NAVIGATION_MENU_ITEMS,
+} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 
 // a2e-documents application (packages/twenty-apps/internal/a2e-documents).
 const A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER =
@@ -44,6 +47,7 @@ export const A2E_BUREAU_BUNDLE_APPLICATION_UNIVERSAL_IDENTIFIERS = [
 // out of M9d's scope.
 export type WorkspaceTemplateBundleContent = TemplatePreviewSample & {
   applicationUniversalIdentifier: string;
+  recordTitle?: string;
   // US-117 gallery descriptor key (C1) this proposal instantiates, when the app
   // ships a descriptor for it. Optional because a preset may propose content an
   // app seeds without a gallery descriptor (the Bilan starter sheets are app
@@ -72,6 +76,11 @@ const bundleContent = (
   applicationUniversalIdentifier,
   label,
   locale: 'fr',
+  recordTitle:
+    applicationUniversalIdentifier ===
+    A2E_DOCUMENTS_APPLICATION_UNIVERSAL_IDENTIFIER
+      ? `Modèle — ${label}`
+      : label,
   ...(templateKey === undefined ? {} : { templateKey }),
 });
 
@@ -177,6 +186,15 @@ export type WorkspaceTemplateDefinition = {
   blockedStarterBundleContents: WorkspaceTemplateBlockedBundleContent[];
 };
 
+export const CRM_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS: string[] = [
+  STANDARD_NAVIGATION_MENU_ITEMS.allCompanies.universalIdentifier,
+  STANDARD_NAVIGATION_MENU_ITEMS.allPeople.universalIdentifier,
+  STANDARD_NAVIGATION_MENU_ITEMS.allOpportunities.universalIdentifier,
+  STANDARD_NAVIGATION_MENU_ITEMS.allNotes.universalIdentifier,
+  STANDARD_NAVIGATION_MENU_ITEMS.allDashboards.universalIdentifier,
+  STANDARD_NAVIGATION_MENU_ITEMS.allMessageCampaigns.universalIdentifier,
+];
+
 export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
   WorkspaceTemplate,
   WorkspaceTemplateDefinition
@@ -192,15 +210,13 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
     blockedStarterBundleContents: [],
   },
   [WorkspaceTemplate.INDIVIDUAL]: {
-    version: 2,
+    version: 3,
     applicationUniversalIdentifiers: [
       ...A2E_BUREAU_BUNDLE_APPLICATION_UNIVERSAL_IDENTIFIERS,
     ],
     optionalApplicationUniversalIdentifiers: [],
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [
-      '20202020-b001-4b01-8b01-c0aba11c0001',
-      '20202020-b005-4b05-8b05-c0aba11c0005',
-      '20202020-b004-4b04-8b04-c0aba11c0004',
+      ...CRM_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
     ],
     agendaEnabled: true,
     sampleContentEnabled: false,
@@ -211,15 +227,13 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
     blockedStarterBundleContents: [],
   },
   [WorkspaceTemplate.STUDENT]: {
-    version: 2,
+    version: 3,
     applicationUniversalIdentifiers: [
       ...A2E_BUREAU_BUNDLE_APPLICATION_UNIVERSAL_IDENTIFIERS,
     ],
     optionalApplicationUniversalIdentifiers: [],
     hiddenStandardNavigationMenuItemUniversalIdentifiers: [
-      '20202020-b001-4b01-8b01-c0aba11c0001',
-      '20202020-b005-4b05-8b05-c0aba11c0005',
-      '20202020-b004-4b04-8b04-c0aba11c0004',
+      ...CRM_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
     ],
     agendaEnabled: true,
     sampleContentEnabled: false,
@@ -231,12 +245,14 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
     blockedStarterBundleContents: [],
   },
   [WorkspaceTemplate.TEAM]: {
-    version: 2,
+    version: 3,
     applicationUniversalIdentifiers: [
       ...A2E_BUREAU_BUNDLE_APPLICATION_UNIVERSAL_IDENTIFIERS,
     ],
     optionalApplicationUniversalIdentifiers: [],
-    hiddenStandardNavigationMenuItemUniversalIdentifiers: [],
+    hiddenStandardNavigationMenuItemUniversalIdentifiers: [
+      ...CRM_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
+    ],
     agendaEnabled: true,
     sampleContentEnabled: false,
     starterBundleContents: [
@@ -248,13 +264,15 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
     blockedStarterBundleContents: [],
   },
   [WorkspaceTemplate.NON_PROFIT]: {
-    version: 2,
+    version: 3,
     applicationUniversalIdentifiers: [
       ...A2E_BUREAU_BUNDLE_APPLICATION_UNIVERSAL_IDENTIFIERS,
       A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER,
     ],
     optionalApplicationUniversalIdentifiers: [],
-    hiddenStandardNavigationMenuItemUniversalIdentifiers: [],
+    hiddenStandardNavigationMenuItemUniversalIdentifiers: [
+      ...CRM_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
+    ],
     agendaEnabled: true,
     sampleContentEnabled: false,
     starterBundleContents: [DOCUMENT_BUNDLE_ITEM.meetingNotes],
@@ -266,13 +284,15 @@ export const WORKSPACE_TEMPLATE_DEFINITIONS: Record<
     ],
   },
   [WorkspaceTemplate.SMALL_BUSINESS]: {
-    version: 2,
+    version: 3,
     applicationUniversalIdentifiers: [
       ...A2E_BUREAU_BUNDLE_APPLICATION_UNIVERSAL_IDENTIFIERS,
       A2E_ACCOUNTING_APPLICATION_UNIVERSAL_IDENTIFIER,
     ],
     optionalApplicationUniversalIdentifiers: [],
-    hiddenStandardNavigationMenuItemUniversalIdentifiers: [],
+    hiddenStandardNavigationMenuItemUniversalIdentifiers: [
+      ...CRM_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
+    ],
     agendaEnabled: true,
     sampleContentEnabled: false,
     starterBundleContents: [

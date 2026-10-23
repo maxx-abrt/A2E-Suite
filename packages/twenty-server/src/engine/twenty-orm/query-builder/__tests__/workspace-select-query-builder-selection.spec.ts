@@ -10,6 +10,32 @@ import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-co
 import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 
 describe('WorkspaceSelectQueryBuilder selection', () => {
+  it('selects all physical columns of a composite field without duplicating explicit subfields', async () => {
+    const { queryBuilder } = buildQueryBuilder({
+      rows: [
+        {
+          person_id: 'person-1',
+          person_nameFirstName: 'Ada',
+          person_nameLastName: 'Lovelace',
+        },
+      ],
+    });
+
+    queryBuilder.setFindOptions({
+      select: { id: true, name: true, nameFirstName: true },
+    });
+
+    expect(queryBuilder.getQuery()).toContain(
+      '"person"."nameLastName" AS "person_nameLastName"',
+    );
+    expect(
+      queryBuilder.getQuery().match(/AS "person_nameFirstName"/g),
+    ).toHaveLength(1);
+    expect(await queryBuilder.getMany()).toEqual([
+      { id: 'person-1', nameFirstName: 'Ada', nameLastName: 'Lovelace' },
+    ]);
+  });
+
   it('should select the requested columns with alias-prefixed output names', () => {
     const { queryBuilder } = buildQueryBuilder();
 

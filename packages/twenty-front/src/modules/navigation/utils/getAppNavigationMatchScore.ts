@@ -23,7 +23,7 @@ export const getAppNavigationMatchScore = ({
     (pathname === targetPath || pathname.startsWith(`${targetPath}/`))
   ) {
     if (linkArgs.item.type === NavigationMenuItemType.VIEW && currentViewId) {
-      return targetViewId === currentViewId ? 3 : 0;
+      return targetViewId === currentViewId ? 3 : 1;
     }
     return 2;
   }

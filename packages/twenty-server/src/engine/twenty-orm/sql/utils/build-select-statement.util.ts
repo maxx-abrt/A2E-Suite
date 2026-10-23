@@ -223,7 +223,22 @@ export const buildProjection = (
 ): { expressions: string[]; mainAliasColumnNames: string[] } => {
   const selectedColumnNames = Object.entries(state.findOptions.select ?? {})
     .filter(([, isSelected]) => isSelected)
-    .map(([columnName]) => columnName);
+    .flatMap(([columnName]) => {
+      if (isDefined(state.tableShape.columnShapeByColumnName[columnName])) {
+        return [columnName];
+      }
+
+      // Composite fields such as createdBy occupy several physical columns.
+      const compositeColumnNames = Object.values(
+        state.tableShape.columnShapeByColumnName,
+      )
+        .filter((column) => column.compositeParentFieldName === columnName)
+        .map((column) => column.columnName);
+
+      return compositeColumnNames.length > 0
+        ? compositeColumnNames
+        : [columnName];
+    });
 
   for (const columnName of selectedColumnNames) {
     if (!isDefined(state.tableShape.columnShapeByColumnName[columnName])) {
@@ -237,7 +252,7 @@ export const buildProjection = (
   const mainAliasColumnNames =
     state.explicitSelection ??
     (selectedColumnNames.length > 0
-      ? selectedColumnNames
+      ? [...new Set(selectedColumnNames)]
       : state.tableShape.columnNames);
 
   const expressions = mainAliasColumnNames.map(

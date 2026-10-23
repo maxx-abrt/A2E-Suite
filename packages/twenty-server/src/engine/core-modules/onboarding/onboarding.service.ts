@@ -31,6 +31,7 @@ import { readBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboar
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceTemplateService } from 'src/engine/core-modules/onboarding/workspace-template.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum OnboardingStepKeys {
@@ -58,6 +59,7 @@ export class OnboardingService {
   private readonly logger = new Logger(OnboardingService.name);
 
   constructor(
+    private readonly workspaceTemplateService: WorkspaceTemplateService,
     private readonly billingService: BillingService,
     private readonly billingCreditService: BillingCreditService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
@@ -673,6 +675,13 @@ export class OnboardingService {
               queryRunner,
             );
 
+          if (hasClaimedInstallAppsStep) {
+            await this.workspaceTemplateService.configureOnboardingNavigation({
+              workspaceId,
+              crmEnabled: false,
+            });
+          }
+
           if (!hasClaimedInstallAppsStep || isAutoSkipped) {
             return;
           }
@@ -706,6 +715,12 @@ export class OnboardingService {
     }
 
     try {
+      await this.workspaceTemplateService.configureOnboardingNavigation({
+        workspaceId,
+        crmEnabled: installableUniversalIdentifiers.includes(
+          'c31e0000-0000-4000-8000-000000000000',
+        ),
+      });
       await this.messageQueueService.add<InstallOnboardingAppsJobData>(
         INSTALL_ONBOARDING_APPS_JOB_NAME,
         {

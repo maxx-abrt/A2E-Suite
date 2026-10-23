@@ -15,7 +15,13 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilterOff, IconPlus, IconSettings } from 'twenty-ui/icon';
-import { type ObjectPermission } from '~/generated-metadata/graphql';
+import {
+  type ObjectPermission,
+  EngineComponentKey,
+} from '~/generated-metadata/graphql';
+import { useMountCommand } from '@/command-menu-item/engine-command/hooks/useMountCommand';
+import { useContextStoreInstanceId } from '@/context-store/hooks/useContextStoreInstanceId';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 
 type RecordIndexEmptyStateProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -35,6 +41,9 @@ export const RecordIndexEmptyState = ({
   width,
 }: RecordIndexEmptyStateProps) => {
   const { t } = useLingui();
+  const mountCommand = useMountCommand();
+  const contextStoreInstanceId = useContextStoreInstanceId();
+  const { recordIndexId } = useRecordIndexContextOrThrow();
 
   const objectLabelSingular = useObjectLabel(objectMetadataItem);
 
@@ -65,6 +74,15 @@ export const RecordIndexEmptyState = ({
 
   const handleAddRecordClick = canCreateRecords
     ? () => {
+        if (['task', 'project'].includes(objectMetadataItem.nameSingular)) {
+          void mountCommand({
+            engineCommandId: `quick-create-${recordIndexId}`,
+            contextStoreInstanceId,
+            engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
+            recordIndexId,
+          });
+          return;
+        }
         createNewIndexRecord();
       }
     : undefined;

@@ -19,6 +19,7 @@ jest.mock(
           navigationMenuItems: [
             { type: 'LINK', link: '/bureau' },
             { type: 'OBJECT', targetObjectMetadataId: 'project-metadata' },
+            { type: 'LINK', link: '/calendar' },
           ],
         },
         { navigationMenuItems: [{ type: 'LINK', link: '/objects/invoices' }] },
@@ -46,7 +47,7 @@ const Probe = () => (
     {useContext(BureauWorkspaceContext) ? 'Pages available' : 'No page context'}
   </span>
 );
-it.each(['/bureau', '/bureau/document-id', '/objects/projects'])(
+it.each(['/bureau', '/bureau/document-id', '/objects/projects', '/calendar'])(
   'keeps page creation and tree available on %s',
   (path) => {
     render(

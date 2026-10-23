@@ -117,7 +117,7 @@ export class ApplicationInstallService {
             params.skipWorkspaceCompatibilityCheck,
         }),
       lockKey,
-      { ttl: 60_000, ms: 500, maxRetries: 120 },
+      { ttl: 600_000, ms: 500, maxRetries: 1200 },
     );
   }
 

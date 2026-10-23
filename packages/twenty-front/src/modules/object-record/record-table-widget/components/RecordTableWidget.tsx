@@ -1,6 +1,7 @@
 import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableWidgetStatesEffect } from '@/object-record/record-table-widget/components/RecordTableWidgetStatesEffect';
+import { RecordTableWidgetCommandMenu } from '@/object-record/record-table-widget/components/RecordTableWidgetCommandMenu';
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { styled } from '@linaria/react';
@@ -25,7 +26,7 @@ export const RecordTableWidget = ({
   const recordTableWidgetContext = useContext(RecordTableWidgetContext);
 
   return (
-    <>
+    <RecordTableWidgetCommandMenu>
       <RecordTableWidgetStatesEffect
         recordTableId={recordIndexId}
         isUIEditable={isUIEditable}
@@ -42,6 +43,6 @@ export const RecordTableWidget = ({
           viewBarId={viewBarInstanceId}
         />
       </StyledTableContainer>
-    </>
+    </RecordTableWidgetCommandMenu>
   );
 };

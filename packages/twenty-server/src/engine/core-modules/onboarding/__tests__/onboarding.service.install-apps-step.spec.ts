@@ -9,6 +9,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { INSTALL_ONBOARDING_APPS_JOB_NAME } from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job-constants';
+import { WorkspaceTemplateService } from 'src/engine/core-modules/onboarding/workspace-template.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
@@ -30,10 +31,12 @@ describe('OnboardingService.triggerInstallAppsOnboardingStep', () => {
   const workspaceId = 'workspace-id';
 
   const enqueue = jest.fn();
+  const configureOnboardingNavigation = jest.fn();
   const deleteUserVar = jest.fn();
   const setUserVar = jest.fn();
 
   beforeEach(async () => {
+    configureOnboardingNavigation.mockResolvedValue(undefined);
     enqueue.mockResolvedValue(undefined);
     // 1 affected row: this request claims the pending install-apps step.
     deleteUserVar.mockResolvedValue(1);
@@ -47,6 +50,12 @@ describe('OnboardingService.triggerInstallAppsOnboardingStep', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         OnboardingService,
+        {
+          provide: WorkspaceTemplateService,
+          useValue: {
+            configureOnboardingNavigation,
+          },
+        },
         { provide: BillingService, useValue: { isBillingEnabled: jest.fn() } },
         {
           provide: BillingCreditService,
@@ -134,5 +143,41 @@ describe('OnboardingService.triggerInstallAppsOnboardingStep', () => {
 
     expect(enqueue).not.toHaveBeenCalled();
     expect(deleteUserVar).toHaveBeenCalled();
+  });
+  it('hides CRM shortcuts when starting from scratch', async () => {
+    await service.triggerInstallAppsOnboardingStep({
+      userId,
+      workspaceId,
+      universalIdentifiers: [],
+      isAutoSkipped: false,
+    });
+    expect(configureOnboardingNavigation).toHaveBeenCalledWith({
+      workspaceId,
+      crmEnabled: false,
+    });
+  });
+
+  it('enables CRM navigation when CRM is explicitly selected', async () => {
+    await service.triggerInstallAppsOnboardingStep({
+      userId,
+      workspaceId,
+      universalIdentifiers: [A2E_CRM],
+      isAutoSkipped: false,
+    });
+    expect(configureOnboardingNavigation).toHaveBeenCalledWith({
+      workspaceId,
+      crmEnabled: true,
+    });
+  });
+
+  it('leaves navigation alone when a request does not claim the pending onboarding step', async () => {
+    deleteUserVar.mockResolvedValue(0);
+    await service.triggerInstallAppsOnboardingStep({
+      userId,
+      workspaceId,
+      universalIdentifiers: [],
+      isAutoSkipped: false,
+    });
+    expect(configureOnboardingNavigation).not.toHaveBeenCalled();
   });
 });

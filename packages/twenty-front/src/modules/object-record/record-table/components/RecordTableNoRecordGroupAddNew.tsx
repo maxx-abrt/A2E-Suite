@@ -1,10 +1,12 @@
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
+import { RecordTableInlineCreateRow } from '@/object-record/record-table/components/RecordTableInlineCreateRow';
 import { RecordTableWidgetJunctionAddNewRow } from '@/object-record/record-table-widget/components/RecordTableWidgetJunctionAddNewRow';
 import { RecordTableWidgetNestedRelationAddNewRow } from '@/object-record/record-table-widget/components/RecordTableWidgetNestedRelationAddNewRow';
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
@@ -51,11 +53,14 @@ export const RecordTableNoRecordGroupAddNew = () => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const handleCreateRecord = useCallback(
-    async (recordInput?: Partial<ObjectRecord>) => {
-      const createdRecord = await createNewIndexRecord({
-        position: 'last',
-        ...recordInput,
-      });
+    async (recordInput?: Partial<ObjectRecord>, shouldOpenRecord = true) => {
+      const createdRecord = await createNewIndexRecord(
+        {
+          position: 'last',
+          ...recordInput,
+        },
+        { shouldOpenRecord },
+      );
 
       upsertRecordsInStore({ partialRecords: [createdRecord] });
 
@@ -112,6 +117,23 @@ export const RecordTableNoRecordGroupAddNew = () => {
             [nestedRelationCreateThrough.nestedRelationJoinColumnName]:
               relationRecordId,
           })
+        }
+      />
+    );
+  }
+
+  if (['task', 'project'].includes(objectMetadataItem.nameSingular)) {
+    return (
+      <RecordTableInlineCreateRow
+        objectNameSingular={objectMetadataItem.nameSingular}
+        onCreate={(title) =>
+          handleCreateRecord(
+            {
+              [getLabelIdentifierFieldMetadataItem(objectMetadataItem)?.name ??
+              'name']: title,
+            },
+            false,
+          )
         }
       />
     );

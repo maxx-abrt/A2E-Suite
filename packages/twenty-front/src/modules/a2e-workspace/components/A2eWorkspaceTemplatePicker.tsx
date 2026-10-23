@@ -100,6 +100,7 @@ export const A2eWorkspaceTemplatePicker = ({
         {isDefined(startFromScratch) && (
           <StyledCard
             isSelected={isStartFromScratchSelected}
+            aria-pressed={isStartFromScratchSelected}
             type="button"
             onClick={() => {
               setSelectedTemplate(null);
@@ -123,6 +124,7 @@ export const A2eWorkspaceTemplatePicker = ({
             <StyledCard
               key={option.value}
               isSelected={isSelected}
+              aria-pressed={isSelected}
               type="button"
               onClick={() => {
                 setIsStartFromScratchSelected(false);
@@ -145,6 +147,7 @@ export const A2eWorkspaceTemplatePicker = ({
       )}
       {!isStartFromScratchSelected && isDefined(selectedTemplate) && (
         <A2eWorkspaceTemplatePreview
+          key={selectedTemplate}
           template={selectedTemplate}
           onApplied={onApplied}
         />

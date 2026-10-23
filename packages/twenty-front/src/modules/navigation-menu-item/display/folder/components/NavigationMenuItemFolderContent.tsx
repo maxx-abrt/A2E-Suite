@@ -1,4 +1,5 @@
 import { Fragment } from 'react';
+import { useLocation } from 'react-router-dom';
 import { IconHeartOff } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -17,6 +18,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
+import { getAppNavigationMatchScore } from '@/navigation/utils/getAppNavigationMatchScore';
 
 type NavigationMenuItemFolderContentProps = {
   folderId: string;
@@ -37,6 +39,20 @@ export const NavigationMenuItemFolderContent = ({
     lastVisitedViewPerObjectMetadataItemState,
   );
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
+  const { pathname, search } = useLocation();
+  const activeItem = navigationMenuItems
+    .map((item) => ({
+      id: item.id,
+      score: getAppNavigationMatchScore({
+        item,
+        pathname,
+        search,
+        objectMetadataItems,
+        views,
+      }),
+    }))
+    .sort((left, right) => right.score - left.score)
+    .find(({ score }) => score > 0);
 
   const folderDroppableId = `${NavigationMenuItemDroppableIds.FAVORITE_FOLDER_PREFIX}${folderId}`;
 
@@ -65,6 +81,7 @@ export const NavigationMenuItemFolderContent = ({
 
         const content = (
           <NavigationDrawerItem
+            active={navigationMenuItem.id === activeItem?.id}
             secondaryLabel={getObjectNavigationMenuItemSecondaryLabel({
               objectMetadataItems,
               navigationMenuItemObjectNameSingular: objectNameSingular ?? '',

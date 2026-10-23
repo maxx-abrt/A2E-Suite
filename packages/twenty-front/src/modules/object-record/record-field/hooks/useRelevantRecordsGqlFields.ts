@@ -13,6 +13,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { filterDuplicatesById, isDefined } from 'twenty-shared/utils';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 type UseRecordsUsefulGqlFields = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -63,6 +64,11 @@ export const useRelevantRecordsGqlFields = ({
     ...visibleRecordFieldMetadataItems,
     ...(recordFilterFields ?? []),
     ...additionalFieldMetadataItems,
+    ...(objectMetadataItem.nameSingular === CoreObjectNameSingular.Task
+      ? objectMetadataItem.readableFields.filter((field) =>
+          ['status', 'projectStatus'].includes(field.name),
+        )
+      : []),
   ].filter(filterDuplicatesById);
 
   const allDepthOneGqlFields = generateDepthRecordGqlFieldsFromFields({

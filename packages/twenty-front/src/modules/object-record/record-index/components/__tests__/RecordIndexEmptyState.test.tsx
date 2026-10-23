@@ -8,6 +8,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -16,6 +17,14 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 const mockCreateNewIndexRecord = jest.fn();
+const mockMountCommand = jest.fn();
+
+jest.mock('@/command-menu-item/engine-command/hooks/useMountCommand', () => ({
+  useMountCommand: () => mockMountCommand,
+}));
+jest.mock('@/object-record/record-index/contexts/RecordIndexContext', () => ({
+  useRecordIndexContextOrThrow: () => ({ recordIndexId: 'tasks-view-bureau' }),
+}));
 
 jest.mock('@/a2e-empty-state/hooks/useA2eRecordIndexSurfaceKey', () => ({
   useA2eRecordIndexSurfaceKey: jest.fn(),
@@ -101,6 +110,34 @@ describe('RecordIndexEmptyState', () => {
     mockedUseFindManyRecords.mockReturnValue({
       totalCount: 0,
     } as unknown as ReturnType<typeof useFindManyRecords>);
+  });
+
+  it('collects a task title before creating the first record and keeps the list open', async () => {
+    const user = userEvent.setup();
+    mockedUseA2eRecordIndexSurfaceKey.mockReturnValue('tasks');
+    const taskObject = {
+      ...objectMetadataItem,
+      id: 'task-object',
+      nameSingular: 'task',
+      labelIdentifierFieldMetadataId: 'title-field',
+      fields: [{ id: 'title-field', name: 'title' }],
+    } as unknown as EnrichedObjectMetadataItem;
+    render(
+      <RecordIndexEmptyState
+        objectMetadataItem={taskObject}
+        objectPermissions={objectPermissions}
+        isSoftDeleteFilterActive={false}
+      />,
+      { wrapper: Wrapper },
+    );
+    await user.click(screen.getByTestId('a2e-empty-state-primary-tasks'));
+    expect(mockCreateNewIndexRecord).not.toHaveBeenCalled();
+    expect(mockMountCommand).toHaveBeenCalledWith(
+      expect.objectContaining({
+        engineComponentKey: 'CREATE_NEW_RECORD',
+        recordIndexId: 'tasks-view-bureau',
+      }),
+    );
   });
 
   it('renders the A2E contextual empty state for a mapped object', () => {

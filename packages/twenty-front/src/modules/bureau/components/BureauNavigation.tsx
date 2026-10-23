@@ -19,7 +19,7 @@ import {
   IconTrash,
   IconUpload,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { useLocation } from 'react-router-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSection = styled.section`
@@ -35,12 +35,6 @@ const StyledHeading = styled.h2`
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
   margin: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledHeadingRow = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
 `;
 
 const StyledTree = styled.ul`
@@ -75,6 +69,7 @@ const BureauNavigationContent = () => {
   } = useBureauWorkspace();
   const { openTemplateGallery } = useOpenTemplateGallery();
   const { openModal } = useModal();
+  const { pathname } = useLocation();
 
   return (
     <StyledSection aria-label={t`Bureau pages`}>
@@ -83,7 +78,7 @@ const BureauNavigationContent = () => {
         label={t`Bureau`}
         testId="bureau-home"
         to={AppPath.Bureau}
-        isActive={activeDocumentId === null}
+        isActive={pathname === AppPath.Bureau && activeDocumentId === null}
       />
       {permissions.canUpdateObjectRecords && (
         <BureauSidebarAction
@@ -124,19 +119,7 @@ const BureauNavigationContent = () => {
           </StyledTree>
         </>
       )}
-      <StyledHeadingRow>
-        <StyledHeading>{t`Pages`}</StyledHeading>
-        {permissions.canUpdateObjectRecords && (
-          <LightIconButton
-            Icon={IconPlus}
-            aria-label={t`New page`}
-            size="small"
-            onClick={() => {
-              void actions.createPage();
-            }}
-          />
-        )}
-      </StyledHeadingRow>
+      <StyledHeading>{t`Pages`}</StyledHeading>
       {isLoading && <span role="status">{t`Loading pages…`}</span>}
       {error ? (
         <BureauSidebarAction

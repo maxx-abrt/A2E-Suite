@@ -1,3 +1,4 @@
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { ModuleRef } from '@nestjs/core';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -117,6 +118,22 @@ describe('WorkspaceTemplateService idempotency and concurrency', () => {
           provide: ModuleRef,
           useValue: {
             get: (token: unknown) => {
+              if (token === WorkspaceOrmManager) {
+                return {
+                  executeInWorkspaceContext: (
+                    callback: () => Promise<unknown>,
+                  ) => callback(),
+                  getRepository: () => ({
+                    find: jest
+                      .fn()
+                      .mockResolvedValue([
+                        { title: 'Modèle — Notes de réunion' },
+                        { title: 'Modèle — Entretien individuel' },
+                      ]),
+                  }),
+                };
+              }
+
               if (token === ApplicationInstallService) {
                 return { installApplication };
               }
