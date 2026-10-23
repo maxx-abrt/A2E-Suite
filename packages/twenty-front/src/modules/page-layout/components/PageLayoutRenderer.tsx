@@ -10,13 +10,16 @@ import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+import { type ReactNode } from 'react';
 
 type PageLayoutRendererProps = {
   pageLayoutId: string;
+  headerContent?: ReactNode;
 };
 
 export const PageLayoutRenderer = ({
   pageLayoutId,
+  headerContent,
 }: PageLayoutRendererProps) => {
   const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
 
@@ -49,7 +52,7 @@ export const PageLayoutRenderer = ({
           <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
           <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
           <RecordTableWidgetViewDraftsInitializationEffect />
-          <PageLayoutRendererContent />
+          <PageLayoutRendererContent headerContent={headerContent} />
         </PageLayoutEditModeProvider>
       </TabListComponentInstanceContext.Provider>
     </PageLayoutComponentInstanceContext.Provider>

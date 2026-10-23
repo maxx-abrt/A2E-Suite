@@ -13,9 +13,7 @@ import {
 
 // L'ALLOCATEUR DE NUMÉROS.
 //
-// Une facture française numérotée deux fois avec le même numéro (ou un trou
-// dans la séquence) est une anomalie relevée en contrôle fiscal (art. L102 B
-// du LPF). Le compteur vit sur orgProfile, écrit par des chemins concurrents
+// Le compteur vit sur orgProfile, écrit par des chemins concurrents
 // (deux factures émises en même temps, un cron + un humain) : « lire puis
 // écrire » allouerait deux fois le même numéro.
 //
@@ -59,8 +57,8 @@ const counterSelection = (): RecordShape => {
   return fields;
 };
 
-// The lease is single-shot: a crash between allocation and numbering burns the
-// number, which is legal (a gap) where a reused number is not.
+// Allocation and invoice stamping are separate API writes. A crash can consume
+// a number without stamping an invoice; this is not gap-free issuance.
 const MAX_ALLOCATION_ATTEMPTS = 10;
 
 const readCounterFromProfile = (
@@ -118,9 +116,7 @@ export type CoreClientLike = Pick<
 
 // The full issuance flow, extracted from the logic function so the unit
 // runner can exercise it without importing `twenty-sdk/define`.
-export type InvoiceNumberFlowResult =
-  | { skipped: string }
-  | { stamped: string };
+export type InvoiceNumberFlowResult = { skipped: string } | { stamped: string };
 
 export const stampInvoiceNumberIssued = async (
   recordId: string,
@@ -135,10 +131,9 @@ export const stampInvoiceNumberIssued = async (
     return { skipped: 'draft-created' };
   }
 
-  // On updates the invariant is re-checked instead of re-allocated, so a
-  // record created before this function existed is stamped the first time it
-  // is touched — and an already-numbered invoice never gets a second number.
-  if (!isCreated && !shouldStampInvoiceNumber(record)) {
+  // Imports can create already-issued invoices with their original number.
+  // Apply the same eligibility check to creates and updates to preserve it.
+  if (!shouldStampInvoiceNumber(record)) {
     return { skipped: 'already-numbered-or-draft' };
   }
 
@@ -179,7 +174,10 @@ export const allocateDocumentNumber = async (
 
   for (let attempt = 0; attempt < MAX_ALLOCATION_ATTEMPTS; attempt += 1) {
     const { prefix, next } = readCounterFromProfile(profile, kind);
-    const candidate = buildDocumentNumber({ prefix: prefix ?? '', next }, issuedAt);
+    const candidate = buildDocumentNumber(
+      { prefix: prefix ?? '', next },
+      issuedAt,
+    );
 
     // A concurrent increment lost the CAS only because our snapshot is stale;
     // re-read and retry with the fresh counter instead of guessing it.

@@ -45,6 +45,7 @@ export const getDateFnsLocaleImport = (locale: AppLocale) => {
     case 'pl-PL':
       return import('date-fns/locale/pl');
     case 'pt-BR':
+      return import('date-fns/locale/pt-BR');
     case 'pt-PT':
       return import('date-fns/locale/pt');
     case 'ro-RO':

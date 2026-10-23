@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useParams } from 'react-router-dom';
 
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { BilanPageOverview } from '@/bilan/components/BilanPageOverview';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
@@ -44,7 +45,10 @@ export const StandalonePageLayoutPage = () => {
           }}
         >
           <StyledPageLayoutContainer>
-            <PageLayoutRenderer pageLayoutId={pageLayoutId} />
+            <PageLayoutRenderer
+              pageLayoutId={pageLayoutId}
+              headerContent={<BilanPageOverview pageLayoutId={pageLayoutId} />}
+            />
           </StyledPageLayoutContainer>
         </LayoutRenderingProvider>
       </PageCardLayout>

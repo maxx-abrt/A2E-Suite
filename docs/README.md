@@ -26,6 +26,7 @@ explains the fork; upstream product documentation lives in
 | Run several executor slices in one session | [Batch executor prompt](templates/executor-batch-prompt.md) | [Execution contract](../PROMPT.md) |
 | Deploy the platform | [Deployment guide](../DEPLOY.md) | [App provisioning](applications.md) is separate |
 | Configure Resend account emails | [Transactional email](resend-email.md) | Native queue, Resend REST, sender DNS and delivery checks |
+| Use or verify Bilan's connected finance experience | [Bilan experience](bilan-experience.md) | Capture, review, native books, catalogue, language foundation and release gates |
 
 ## Document ownership and precedence
 

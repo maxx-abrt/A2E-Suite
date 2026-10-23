@@ -14,7 +14,24 @@ const mockFolders = [
   {
     id: 'bilan',
     folderName: 'Bilan',
-    navigationMenuItems: [{ link: '/objects/invoices' }],
+    navigationMenuItems: [
+      {
+        type: 'OBJECT',
+        targetObjectMetadataId: 'invoice-metadata',
+        link: '/objects/invoices',
+      },
+    ],
+  },
+  {
+    id: 'invoice-review',
+    folderName: 'Review',
+    navigationMenuItems: [
+      {
+        type: 'VIEW',
+        viewId: 'review-view',
+        link: '/objects/invoices?viewId=review-view',
+      },
+    ],
   },
 ];
 
@@ -28,10 +45,20 @@ jest.mock(
 );
 jest.mock(
   '@/navigation-menu-item/common/hooks/useNavigationObjectMetadataItems',
-  () => ({ useNavigationObjectMetadataItems: () => [] }),
+  () => ({
+    useNavigationObjectMetadataItems: () => [
+      {
+        id: 'invoice-metadata',
+        nameSingular: 'invoice',
+        namePlural: 'invoices',
+      },
+    ],
+  }),
 );
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
-  useAtomStateValue: () => [],
+  useAtomStateValue: () => [
+    { id: 'review-view', objectMetadataId: 'invoice-metadata' },
+  ],
 }));
 jest.mock(
   '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink',
@@ -133,6 +160,31 @@ describe('native focused app navigation', () => {
 
   it('keeps the workspace view on unrelated CRM routes', () => {
     renderDrawer('/objects/companies');
+    expect(screen.getByText('All workspace apps')).toBeInTheDocument();
+  });
+
+  it('keeps Bilan focused when an invoice is opened as a full page', () => {
+    renderDrawer('/object/invoice/invoice-id');
+    expect(
+      screen.getByRole('link', { name: '/objects/invoices' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('All workspace apps')).not.toBeInTheDocument();
+  });
+
+  it('prefers an explicitly selected native view over another folder for the same object', () => {
+    renderDrawer('/objects/invoices?viewId=review-view');
+    expect(
+      screen.getByRole('link', {
+        name: '/objects/invoices?viewId=review-view',
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: '/objects/invoices' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('does not match similarly named objects or records outside the permitted metadata', () => {
+    renderDrawer('/object/invoiceLine/line-id');
     expect(screen.getByText('All workspace apps')).toBeInTheDocument();
   });
 });

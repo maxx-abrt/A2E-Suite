@@ -53,6 +53,7 @@ export const useUpdateWorkspaceMemberSettings = () => {
         return mergeWorkspaceMemberSettingsIntoCurrent(previous, update);
       });
     }
+    return data?.updateWorkspaceMemberSettings === true;
   };
 
   return {

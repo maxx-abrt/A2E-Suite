@@ -26,6 +26,12 @@ export const HOME_BILAN_PAID_INVOICE_STATUS = 'PAID';
 
 export const HOME_BILAN_CANCELLED_INVOICE_STATUS = 'CANCELLED';
 
+export const HOME_BILAN_PENDING_INVOICE_STATUSES = [
+  'SENT',
+  'PARTIALLY_PAID',
+  'OVERDUE',
+];
+
 export const HOME_BILAN_ACTIVE_GRANT_STATUSES = ['SHORTLISTED', 'PREPARING'];
 
 const getTimestamp = (value: string | null): number | null => {
@@ -39,8 +45,7 @@ const getTimestamp = (value: string | null): number | null => {
 };
 
 const isUnpaidInvoiceStatus = (status: string | null): boolean =>
-  status !== HOME_BILAN_PAID_INVOICE_STATUS &&
-  status !== HOME_BILAN_CANCELLED_INVOICE_STATUS;
+  HOME_BILAN_PENDING_INVOICE_STATUSES.includes(status ?? '');
 
 // A grant stays "pending" while it is still a dossier to submit: once submitted
 // or decided it no longer needs a Today nudge.

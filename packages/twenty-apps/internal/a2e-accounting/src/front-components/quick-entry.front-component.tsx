@@ -1,10 +1,14 @@
 import { type CSSProperties, useCallback, useEffect, useState } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { enqueueSnackbar } from 'twenty-sdk/front-component';
+import {
+  enqueueSnackbar,
+  openSidePanelPage,
+  SidePanelPages,
+} from 'twenty-sdk/front-component';
 
 import { FRONT_COMPONENT_IDS } from '../constants/universal-identifiers.ts';
-import { toMicros } from '../lib/money.ts';
+import { buildQuickEntryRecordInput } from '../lib/quick-entry.ts';
 
 // LA SAISIE RAPIDE.
 //
@@ -169,6 +173,7 @@ export const QuickEntry = () => {
   const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [lastCreatedId, setLastCreatedId] = useState<string | null>(null);
 
   const loadCategories = useCallback(async () => {
     setLoading(true);
@@ -229,40 +234,26 @@ export const QuickEntry = () => {
   };
 
   const onSubmit = useCallback(async () => {
-    const parsedAmount = Number.parseFloat(amount.replace(',', '.'));
-
-    if (!label.trim() || !Number.isFinite(parsedAmount) || parsedAmount <= 0) {
-      void enqueueSnackbar({
-        message: 'Libellé et montant sont obligatoires',
-        variant: 'error',
-      });
-
-      return;
-    }
-
     setSubmitting(true);
 
     try {
       const client = new CoreApiClient();
 
-      await client.mutation({
-        createFinanceEntryFromQuickEntry: {
-          __args: {
-            data: {
-              label: label.trim(),
-              entryType,
-              // Money rounds half away from zero everywhere in Bilan; raw
-              // Math.round is half-toward-+∞ and would disagree on -x.5 cents.
-              amountMicros: toMicros(parsedAmount),
-              entryDate,
-              paymentMethod,
-              vatRate: Number.parseFloat(vatRate.replace(',', '.')) || 0,
-              ...(categoryId ? { category: { id: categoryId } } : {}),
-            },
-          },
-          id: true,
-        },
-      } as never);
+      const data = buildQuickEntryRecordInput({
+        label,
+        amount,
+        vatRate,
+        entryType,
+        entryDate,
+        paymentMethod,
+        categoryId,
+      });
+      const result = (await client.mutation({
+        createFinanceEntries: { __args: { data: [data] }, id: true },
+      } as never)) as { createFinanceEntries?: { id: string }[] };
+      const recordId = result.createFinanceEntries?.[0]?.id;
+      if (!recordId) throw new Error("La création n'a pas été confirmée.");
+      setLastCreatedId(recordId);
 
       void enqueueSnackbar({
         message:
@@ -273,9 +264,10 @@ export const QuickEntry = () => {
       });
       setLabel('');
       setAmount('');
-    } catch {
+    } catch (error) {
       void enqueueSnackbar({
-        message: "Échec de l'enregistrement",
+        message:
+          error instanceof Error ? error.message : "Échec de l'enregistrement",
         variant: 'error',
       });
     } finally {
@@ -342,7 +334,7 @@ export const QuickEntry = () => {
       <div style={styles.row}>
         <div style={{ ...styles.fieldGroup, ...styles.rowChild }}>
           <label style={styles.label} htmlFor="quick-entry-amount">
-            Montant (€)
+            Montant TTC (€)
           </label>
           <input
             id="quick-entry-amount"
@@ -442,6 +434,22 @@ export const QuickEntry = () => {
       >
         {submitting ? 'Enregistrement…' : 'Enregistrer'}
       </button>
+      {lastCreatedId && (
+        <button
+          type="button"
+          style={styles.select}
+          onClick={() =>
+            void openSidePanelPage({
+              page: SidePanelPages.ViewRecord,
+              recordId: lastCreatedId,
+              objectNameSingular: 'financeEntry',
+              resetNavigationStack: true,
+            })
+          }
+        >
+          Voir l’écriture et ses justificatifs
+        </button>
+      )}
     </div>
   );
 };

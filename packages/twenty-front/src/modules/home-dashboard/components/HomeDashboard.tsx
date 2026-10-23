@@ -16,6 +16,7 @@ import {
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useBilanNavigationPath } from '@/bilan/hooks/useBilanNavigationPath';
 import { FirstOpenHelpWidget } from '@/first-open-help/components/FirstOpenHelpWidget';
 import { ContributionGridWidget } from '@/home-dashboard/components/ContributionGridWidget';
 import { HomeDashboardCard } from '@/home-dashboard/components/HomeDashboardCard';
@@ -78,8 +79,9 @@ const StyledGrid = styled.div`
 // Desktop Home: the widgets the removed right dock used to host (D-Shell),
 // laid out as native dashboard cards. Each widget fetches its own data.
 export const HomeDashboard = () => {
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const bilanNavigationPath = useBilanNavigationPath();
   const now = new Date();
 
   const firstName = currentWorkspaceMember?.name?.firstName?.trim() ?? '';
@@ -107,11 +109,14 @@ export const HomeDashboard = () => {
     }
   };
 
-  const dateLabel = now.toLocaleDateString(undefined, {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-  });
+  const dateLabel = now.toLocaleDateString(
+    i18n.locale === 'pseudo-en' ? 'en' : i18n.locale || 'en',
+    {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+    },
+  );
 
   return (
     <StyledContainer data-testid="home-dashboard">
@@ -164,19 +169,19 @@ export const HomeDashboard = () => {
         >
           <RecentPagesWidget />
         </HomeDashboardCard>
-        <HomeDashboardCard
-          title={t`Pending in Bilan`}
-          Icon={IconCoins}
-          testId="home-card-pending-bilan"
-          seeAllLink={{
-            label: t`Open Bilan`,
-            to: getAppPath(AppPath.RecordIndexPage, {
-              objectNamePlural: 'invoices',
-            }),
-          }}
-        >
-          <PendingBilanWidget />
-        </HomeDashboardCard>
+        {bilanNavigationPath && (
+          <HomeDashboardCard
+            title={t`Pending in Bilan`}
+            Icon={IconCoins}
+            testId="home-card-pending-bilan"
+            seeAllLink={{
+              label: t`Open Bilan`,
+              to: bilanNavigationPath,
+            }}
+          >
+            <PendingBilanWidget />
+          </HomeDashboardCard>
+        )}
         <HomeDashboardCard
           title={t`Focus`}
           Icon={IconClockPlay}

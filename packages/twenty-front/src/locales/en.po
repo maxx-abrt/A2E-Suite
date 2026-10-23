@@ -26856,3 +26856,143 @@ msgstr "Your workspace will be disabled"
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Zed"
 msgstr "Zed"
+
+#. js-lingui-id: 8xLE4o
+#: src/modules/bilan/components/BilanCaptureActions.tsx
+msgid "Invoice attached. Review the amount and payment date to update your book."
+msgstr "Invoice attached. Review the amount and payment date to update your book."
+
+#. js-lingui-id: dpd5He
+#: src/modules/bilan/components/BilanCaptureActions.tsx
+msgid "Expense created. Add the invoice from its record to finish."
+msgstr "Expense created. Add the invoice from its record to finish."
+
+#. js-lingui-id: wyWs/w
+#: src/modules/bilan/components/BilanCaptureActions.tsx
+msgid "Could not finish creating the expense. Check Transactions before trying again."
+msgstr "Could not finish creating the expense. Check Transactions before trying again."
+
+#. js-lingui-id: HDeyWZ
+#: src/modules/bilan/components/BilanCaptureActions.tsx
+msgid "Uploading invoice…"
+msgstr "Uploading invoice…"
+
+#. js-lingui-id: WRo23w
+#: src/modules/bilan/components/BilanCaptureActions.tsx
+msgid "Upload invoice"
+msgstr "Upload invoice"
+
+#. js-lingui-id: Rb75HO
+#: src/modules/bilan/components/BilanPageOverview.tsx
+msgid "Daily work"
+msgstr "Daily work"
+
+#. js-lingui-id: F7nA5/
+#: src/modules/bilan/components/BilanPageOverview.tsx
+msgid "Invoices"
+msgstr "Invoices"
+
+#. js-lingui-id: aw226O
+#: src/modules/bilan/components/BilanPageOverview.tsx
+msgid "Track payments and follow up with clients."
+msgstr "Track payments and follow up with clients."
+
+#. js-lingui-id: eWLklq
+#: src/modules/bilan/components/BilanPageOverview.tsx
+msgid "Quotes"
+msgstr "Quotes"
+
+#. js-lingui-id: rb34GQ
+#: src/modules/bilan/components/BilanPageOverview.tsx
+msgid "Prepare your next proposal."
+msgstr "Prepare your next proposal."
+
+#. js-lingui-id: 4wyw8H
+#: src/modules/bilan/components/BilanPageOverview.tsx
+msgid "Transactions"
+msgstr "Transactions"
+
+#. js-lingui-id: NhFvSu
+#: src/modules/bilan/components/BilanPageOverview.tsx
+msgid "Keep income and expenses in one place."
+msgstr "Keep income and expenses in one place."
+
+#. js-lingui-id: 1uQ5+9
+#: src/modules/bilan/components/BilanPageOverview.tsx
+msgid "Plan ahead"
+msgstr "Plan ahead"
+
+#. js-lingui-id: IGsZpB
+#: src/modules/bilan/components/BilanPageOverview.tsx
+msgid "Budgets"
+msgstr "Budgets"
+
+#. js-lingui-id: KSk0YR
+#: src/modules/bilan/components/BilanPageOverview.tsx
+msgid "Plan resources for your activities."
+msgstr "Plan resources for your activities."
+
+#. js-lingui-id: 8iKx6G
+#: src/modules/bilan/components/BilanPageOverview.tsx
+msgid "Financial plans"
+msgstr "Financial plans"
+
+#. js-lingui-id: MQowti
+#: src/modules/bilan/components/BilanPageOverview.tsx
+msgid "Build a plan from a reusable template."
+msgstr "Build a plan from a reusable template."
+
+#. js-lingui-id: XSAJZ/
+#: src/modules/bilan/components/BilanPageOverview.tsx
+msgid "Funding applications"
+msgstr "Funding applications"
+
+#. js-lingui-id: 9XEV7I
+#: src/modules/bilan/components/BilanPageOverview.tsx
+msgid "Prepare applications and track deadlines."
+msgstr "Prepare applications and track deadlines."
+
+#. js-lingui-id: Pe3veM
+#: src/modules/bilan/components/BilanPageOverview.tsx
+msgid "Bilan overview"
+msgstr "Bilan overview"
+
+#. js-lingui-id: RoVo5x
+#: src/modules/bilan/components/BilanPageOverview.tsx
+msgid "Your finances, connected to the work behind them."
+msgstr "Your finances, connected to the work behind them."
+
+#. js-lingui-id: OcFJb2
+#: src/modules/bilan/components/BilanPageOverview.tsx
+msgid "Open book"
+msgstr "Open book"
+
+#. js-lingui-id: xROgp4
+#: src/modules/bilan/components/BilanPageOverview.tsx
+msgid "Find funding"
+msgstr "Find funding"
+
+#. js-lingui-id: dNWNqV
+#: src/modules/bilan/components/BilanPageOverview.tsx
+msgid "Organization profile"
+msgstr "Organization profile"
+
+#. js-lingui-id: MzKYeY
+#: src/modules/home-dashboard/components/PendingBilanWidgetContent.tsx
+msgid "Could not load pending items."
+msgstr "Could not load pending items."
+
+#. js-lingui-id: /7Jx1i
+#: src/modules/home-dashboard/components/PendingBilanWidgetContent.tsx
+msgid "Loading pending items…"
+msgstr "Loading pending items…"
+
+#. js-lingui-id: lfyBKE
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+msgid "Your language was saved. English is shown while its translations are unavailable."
+msgstr "Your language was saved. English is shown while its translations are unavailable."
+
+#. js-lingui-id: 1I6ZZD
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+msgid "Could not save language. Please try again."
+msgstr "Could not save language. Please try again."

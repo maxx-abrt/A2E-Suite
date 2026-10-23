@@ -28,6 +28,7 @@ import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutType } from '~/generated-metadata/graphql';
+import { type ReactNode } from 'react';
 
 const StyledRoot = styled.div`
   display: flex;
@@ -126,7 +127,11 @@ const StyledScrollWrapperContainer = styled.div`
   }
 `;
 
-export const PageLayoutTabsRenderer = () => {
+type PageLayoutTabsRendererProps = { headerContent?: ReactNode };
+
+export const PageLayoutTabsRenderer = ({
+  headerContent,
+}: PageLayoutTabsRendererProps) => {
   const workspaceSurface = useWorkspaceSurface();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
@@ -255,6 +260,7 @@ export const PageLayoutTabsRenderer = () => {
                 componentInstanceId={scrollWrapperInstanceId}
                 defaultEnableXScroll={false}
               >
+                {!isPageLayoutInEditMode && headerContent}
                 {isDefined(activeTabId) &&
                   activeTabExistsInRenderableTabs &&
                   tabsToMount.map((tab) => (

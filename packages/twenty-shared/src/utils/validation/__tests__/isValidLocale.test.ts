@@ -11,4 +11,11 @@ describe('isValidLocale', () => {
     expect(isValidLocale('invalidLocale')).toBe(false);
     expect(isValidLocale(null)).toBe(false);
   });
+
+  it.each(['constructor', 'toString', '__proto__'])(
+    'rejects inherited property %s as a locale',
+    (value) => {
+      expect(isValidLocale(value)).toBe(false);
+    },
+  );
 });

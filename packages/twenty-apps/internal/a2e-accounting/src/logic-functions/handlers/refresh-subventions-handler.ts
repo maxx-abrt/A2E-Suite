@@ -155,7 +155,11 @@ export const refreshSubventions = async ({
 
   const outcomes: SourceOutcome[] = [];
 
-  for (const source of enabled) {
+  // Seed the key-free catalogue before external portals can stall or fail.
+  const orderedSources = [...enabled].sort(
+    (left, right) => Number(right === 'CURATED') - Number(left === 'CURATED'),
+  );
+  for (const source of orderedSources) {
     const outcome: SourceOutcome = {
       source,
       status: 'SUCCESS',
