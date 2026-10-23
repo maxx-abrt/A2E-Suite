@@ -10,11 +10,12 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableDragAndDropPlaceholderCell } from '@/object-record/record-table/record-table-cell/components/RecordTableDragAndDropPlaceholderCell';
 import { RecordTableAddButtonPlaceholderCell } from '@/object-record/record-table/record-table-row/components/RecordTableAddButtonPlaceholderCell';
 import { RecordTableGroupSectionLastDynamicFillingCell } from '@/object-record/record-table/record-table-row/components/RecordTableGroupSectionLastDynamicFillingCell';
-import { useContext } from 'react';
+import { useContext, type ReactNode, type Ref } from 'react';
 import {
   filterOutByProperty,
   findByProperty,
   sumByProperty,
+  isDefined,
 } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -76,6 +77,11 @@ const StyledActionTextContainer = styled.div<{ width: number }>`
   left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
   position: sticky;
   width: ${({ width }) => width}px;
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: -2px;
+  }
 `;
 
 const StyledText = styled.span`
@@ -93,12 +99,16 @@ type RecordTableActionRowProps = {
   LeftIcon: IconComponent;
   text: string;
   onClick?: (event?: React.MouseEvent<HTMLDivElement>) => void;
+  children?: ReactNode;
+  actionRef?: Ref<HTMLDivElement>;
 };
 
 export const RecordTableActionRow = ({
   LeftIcon,
   text,
   onClick,
+  children,
+  actionRef,
 }: RecordTableActionRowProps) => {
   const { theme } = useContext(ThemeContext);
 
@@ -139,8 +149,19 @@ export const RecordTableActionRow = ({
           color={theme.font.color.tertiary}
         />
       </StyledIconContainer>
-      <StyledActionTextContainer width={firstColumnWidth}>
-        <StyledText>{text}</StyledText>
+      <StyledActionTextContainer
+        ref={actionRef}
+        width={firstColumnWidth}
+        role={onClick ? 'button' : undefined}
+        tabIndex={onClick ? 0 : isDefined(children) ? -1 : undefined}
+        onKeyDown={(event) => {
+          if (onClick && (event.key === 'Enter' || event.key === ' ')) {
+            event.preventDefault();
+            onClick();
+          }
+        }}
+      >
+        {children ?? <StyledText>{text}</StyledText>}
       </StyledActionTextContainer>
       <StyledFieldPlaceholderCell
         widthOfFields={

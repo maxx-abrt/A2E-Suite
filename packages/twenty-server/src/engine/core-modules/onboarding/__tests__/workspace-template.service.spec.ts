@@ -1,3 +1,5 @@
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { ModuleRef } from '@nestjs/core';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -42,6 +44,20 @@ describe('WorkspaceTemplateService', () => {
   const buildStandardFlatViewMaps = () => ({
     byId: {},
     byUniversalIdentifier: {
+      ...Object.fromEntries(
+        [
+          STANDARD_OBJECTS.note.views.allNotes,
+          STANDARD_OBJECTS.dashboard.views.allDashboards,
+          STANDARD_OBJECTS.messageCampaign.views.allMessageCampaigns,
+        ].map((view) => [
+          view.universalIdentifier,
+          {
+            id: `view-${view.universalIdentifier}`,
+            universalIdentifier: view.universalIdentifier,
+            objectMetadataId: 'object-metadata-id',
+          },
+        ]),
+      ),
       [STANDARD_OBJECTS.company.views.allCompanies.universalIdentifier]: {
         id: 'view-companies',
         universalIdentifier:
@@ -148,9 +164,18 @@ describe('WorkspaceTemplateService', () => {
   const workspaceFindOne = jest.fn().mockResolvedValue(null);
 
   const moduleRefGet = jest.fn();
+  const findStarterDocuments = jest.fn().mockResolvedValue([]);
 
   beforeEach(async () => {
+    findStarterDocuments.mockReset().mockResolvedValue([]);
     moduleRefGet.mockImplementation((token: unknown) => {
+      if (token === WorkspaceOrmManager) {
+        return {
+          executeInWorkspaceContext: (callback: () => Promise<unknown>) =>
+            callback(),
+          getRepository: () => ({ find: findStarterDocuments }),
+        };
+      }
       if (token === ApplicationInstallService) {
         return { installApplication };
       }
@@ -243,7 +268,7 @@ describe('WorkspaceTemplateService', () => {
       );
       expect(result.appliedTemplateKeyVersion).toEqual({
         key: WorkspaceTemplate.INDIVIDUAL,
-        version: 2,
+        version: 3,
       });
       // Three Bureau-bundle install steps, then navigation and the template row.
       expect(result.steps.map((step) => step.status)).toEqual([
@@ -289,7 +314,11 @@ describe('WorkspaceTemplateService', () => {
       expect(seedStep?.localizedMessage).toContain('Retry');
     });
 
-    it('reports sample seeding as succeeded only when the post-install hook ran synchronously during the install', async () => {
+    it('confirms sample seeding from persisted templates even with asynchronous sibling hooks', async () => {
+      findStarterDocuments.mockResolvedValue([
+        { title: 'Modèle — Notes de réunion' },
+        { title: 'Modèle — Entretien individuel' },
+      ]);
       findOneByUniversalIdentifierGlobal.mockImplementation(
         (universalIdentifier: string) =>
           Promise.resolve(
@@ -320,16 +349,20 @@ describe('WorkspaceTemplateService', () => {
       expect(seedStep?.errorCode).toBeUndefined();
     });
 
-    it('re-runs only the failed seed step on a same-key retry, without reinstalling apps or re-seeding content', async () => {
+    it('confirms a completed background seed on retry without reinstalling or duplicating content', async () => {
+      findStarterDocuments.mockResolvedValue([
+        { title: 'Modèle — Notes de réunion' },
+        { title: 'Modèle — Entretien individuel' },
+      ]);
       const storedOperation: ApplyTemplateResult = {
         operationId: 'op-seed-retry',
         requestedTemplateKeyVersion: {
           key: WorkspaceTemplate.INDIVIDUAL,
-          version: 2,
+          version: 3,
         },
         appliedTemplateKeyVersion: {
           key: WorkspaceTemplate.INDIVIDUAL,
-          version: 2,
+          version: 3,
         },
         steps: [
           {
@@ -382,10 +415,10 @@ describe('WorkspaceTemplateService', () => {
       ).toBe('succeeded');
       expect(
         result.steps.find((step) => step.kind === 'seed-samples')?.status,
-      ).toBe('failed');
+      ).toBe('succeeded');
     });
 
-    it('reports sample seeding as skipped when no succeeded install carries a post-install hook', async () => {
+    it('does not claim starter content exists just because an app is installed', async () => {
       findOneByUniversalIdentifierGlobal.mockResolvedValue(
         buildRegistration('registration-1'),
       );
@@ -401,7 +434,7 @@ describe('WorkspaceTemplateService', () => {
         (step) => step.kind === 'seed-samples',
       );
 
-      expect(seedStep?.status).toBe('skipped');
+      expect(seedStep?.status).toBe('failed');
     });
 
     it('never reports seeding as done when the only install failed', async () => {
@@ -484,14 +517,17 @@ describe('WorkspaceTemplateService', () => {
       findByUniversalIdentifier
         .mockResolvedValueOnce({
           id: 'existing-install-documents',
+          state: ApplicationState.INSTALLED,
           universalIdentifier: A2E_DOCUMENTS_UNIVERSAL_IDENTIFIER,
         })
         .mockResolvedValueOnce({
           id: 'existing-install-projects',
+          state: ApplicationState.INSTALLED,
           universalIdentifier: '4f759655-84f8-434d-9c76-ee1850e8c1a4',
         })
         .mockResolvedValueOnce({
           id: 'existing-install-chat',
+          state: ApplicationState.INSTALLED,
           universalIdentifier: 'e2dce399-87f1-4548-b307-5f368b4d5dd4',
         });
 
@@ -512,7 +548,7 @@ describe('WorkspaceTemplateService', () => {
       // The full operation completes and records the template key.
       expect(result.appliedTemplateKeyVersion).toEqual({
         key: WorkspaceTemplate.INDIVIDUAL,
-        version: 2,
+        version: 3,
       });
       expect(workspaceUpdate).toHaveBeenCalledWith(
         { id: workspaceId },
@@ -528,7 +564,7 @@ describe('WorkspaceTemplateService', () => {
         operationId: 'op-retry-already-installed',
         requestedTemplateKeyVersion: {
           key: WorkspaceTemplate.INDIVIDUAL,
-          version: 2,
+          version: 3,
         },
         appliedTemplateKeyVersion: null,
         steps: [
@@ -552,6 +588,7 @@ describe('WorkspaceTemplateService', () => {
       );
       findByUniversalIdentifier.mockResolvedValueOnce({
         id: 'existing-install-id',
+        state: ApplicationState.INSTALLED,
         universalIdentifier: A2E_DOCUMENTS_UNIVERSAL_IDENTIFIER,
       });
 
@@ -570,8 +607,29 @@ describe('WorkspaceTemplateService', () => {
       // The complete retry records the template key.
       expect(result.appliedTemplateKeyVersion).toEqual({
         key: WorkspaceTemplate.INDIVIDUAL,
-        version: 2,
+        version: 3,
       });
+    });
+
+    it('awaits an installing dependency instead of treating its application row as ready', async () => {
+      findOneByUniversalIdentifierGlobal.mockResolvedValue(
+        buildRegistration('registration-pending'),
+      );
+      findByUniversalIdentifier.mockResolvedValueOnce({
+        id: 'installing-app',
+        state: ApplicationState.INSTALLING,
+      });
+
+      const result = await service.applyWorkspaceTemplateOperation({
+        workspaceId,
+        idempotencyKey: 'pending-install',
+        template: WorkspaceTemplate.INDIVIDUAL,
+      });
+
+      expect(installApplication).toHaveBeenCalledTimes(3);
+      expect(result.appliedTemplateKeyVersion?.key).toBe(
+        WorkspaceTemplate.INDIVIDUAL,
+      );
     });
 
     it('returns the stored operation without reinstalling on same-key retry of a fully succeeded operation', async () => {
@@ -579,11 +637,11 @@ describe('WorkspaceTemplateService', () => {
         operationId: 'op-1',
         requestedTemplateKeyVersion: {
           key: WorkspaceTemplate.INDIVIDUAL,
-          version: 2,
+          version: 3,
         },
         appliedTemplateKeyVersion: {
           key: WorkspaceTemplate.INDIVIDUAL,
-          version: 2,
+          version: 3,
         },
         steps: [
           {
@@ -614,7 +672,7 @@ describe('WorkspaceTemplateService', () => {
         operationId: 'op-2',
         requestedTemplateKeyVersion: {
           key: WorkspaceTemplate.INDIVIDUAL,
-          version: 2,
+          version: 3,
         },
         appliedTemplateKeyVersion: null,
         steps: [
@@ -746,6 +804,15 @@ describe('WorkspaceTemplateService', () => {
                 expect.objectContaining({
                   universalIdentifier: '20202020-b004-4b04-8b04-c0aba11c0004',
                 }),
+                expect.objectContaining({
+                  universalIdentifier: '20202020-b003-4b03-8b03-c0aba11c0003',
+                }),
+                expect.objectContaining({
+                  universalIdentifier: '20202020-b002-4b02-8b02-c0aba11c0002',
+                }),
+                expect.objectContaining({
+                  universalIdentifier: '20202020-b00b-4b0b-8b0b-c0aba11c000b',
+                }),
               ],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
@@ -763,9 +830,7 @@ describe('WorkspaceTemplateService', () => {
     it('does not run the restore migration again once the managed rows were restored', async () => {
       mockNavigationRowState({
         presentUniversalIdentifiers: [
-          '20202020-b001-4b01-8b01-c0aba11c0001',
-          '20202020-b005-4b05-8b05-c0aba11c0005',
-          '20202020-b004-4b04-8b04-c0aba11c0004',
+          ...TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
         ],
       });
       storedKeyValuePairs.set(
@@ -810,7 +875,7 @@ describe('WorkspaceTemplateService', () => {
 
       expect(preview).toMatchObject({
         templateKey: WorkspaceTemplate.INDIVIDUAL,
-        version: 2,
+        version: 3,
         blocked: false,
       });
       // The D-B1 Bureau bundle: documents, projects and chat in install order.
@@ -842,7 +907,7 @@ describe('WorkspaceTemplateService', () => {
       ]);
       // The managed union is exactly the three rows this template hides and
       // all three are still present, so there is nothing to restore.
-      expect(preview.navigationChanges).toHaveLength(3);
+      expect(preview.navigationChanges).toHaveLength(6);
       expect(
         preview.navigationChanges.every(
           (navigationChange) => navigationChange.action === 'hide',
@@ -1023,6 +1088,9 @@ describe('WorkspaceTemplateService', () => {
                 expect.objectContaining({
                   universalIdentifier: '20202020-b001-4b01-8b01-c0aba11c0001',
                 }),
+                expect.objectContaining({
+                  universalIdentifier: '20202020-b002-4b02-8b02-c0aba11c0002',
+                }),
               ],
               flatEntityToUpdate: [],
             },
@@ -1033,7 +1101,10 @@ describe('WorkspaceTemplateService', () => {
       // rows are restore candidates later.
       expect(
         storedKeyValuePairs.get(TEMPLATE_HIDDEN_NAVIGATION_RECORD_KEY),
-      ).toEqual(['20202020-b001-4b01-8b01-c0aba11c0001']);
+      ).toEqual([
+        '20202020-b001-4b01-8b01-c0aba11c0001',
+        '20202020-b002-4b02-8b02-c0aba11c0002',
+      ]);
     });
 
     it('leaves navigation untouched for the CRM template', async () => {

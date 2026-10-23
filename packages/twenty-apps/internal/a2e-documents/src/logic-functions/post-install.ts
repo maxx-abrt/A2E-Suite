@@ -19,7 +19,7 @@ const findExistingRootDocuments = async (
   const result = (await client.query({
     documents: {
       __args: {
-        filter: { parent: { is: 'NULL' } },
+        filter: { parentId: { is: 'NULL' } },
         first: 1,
       },
       edges: { node: { id: true } },
@@ -35,7 +35,7 @@ const findExistingTemplateTitles = async (
   const result = (await client.query({
     documents: {
       __args: {
-        filter: { kind: { equals: 'TEMPLATE' } },
+        filter: { kind: { eq: 'TEMPLATE' } },
         // The page must cover every shipped template with headroom: a page
         // shorter than the bundle would hide titles from the missing-titles
         // delta and re-seed duplicates on reinstall.
@@ -67,7 +67,7 @@ const seedGettingStartedDocument = async (
             title: 'Bienvenue dans Bureau',
             kind: 'DOCUMENT',
             isFavorite: true,
-            position: 'V',
+            position: 1,
             content: {
               blocknote: null,
               markdown:
@@ -144,6 +144,7 @@ export default definePostInstallLogicFunction({
   description:
     'Prépare Bureau : document de bienvenue et bundle de modèles de démarrage (réunion, brief, PRD, entretien).',
   timeoutSeconds: 120,
-  shouldRunSynchronously: false,
+  shouldRunSynchronously: true,
+  shouldRunOnVersionUpgrade: true,
   handler,
 });

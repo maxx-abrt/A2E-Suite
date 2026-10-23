@@ -32,6 +32,7 @@ const StyledPreviewPanel = styled.div`
   background-color: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
@@ -389,6 +390,7 @@ export const A2eWorkspaceTemplatePreview = ({
             !resolvedApp.currentlyInstalled && (
               <Checkbox
                 aria-label={t`Include ${resolvedApp.displayName}`}
+                disabled={isApplying || hasSteps}
                 checked={!resolvedApp.excluded}
                 onCheckedChange={() =>
                   toggleOptionalApp(resolvedApp.universalIdentifier)
@@ -417,15 +419,22 @@ export const A2eWorkspaceTemplatePreview = ({
         <>
           <StyledRowSubText>{t`Navigation customization`}</StyledRowSubText>
           <StyledContentList data-testid="a2e-workspace-template-preview-navigation">
-            {resolvedPreview.navigationChanges.map((navigationChange) => (
-              <StyledContentItem
-                key={`${navigationChange.action}-${navigationChange.universalIdentifier}`}
-              >
-                {navigationChange.action === 'hide'
-                  ? t`Hide ${navigationChange.universalIdentifier}`
-                  : t`Restore ${navigationChange.universalIdentifier}`}
-              </StyledContentItem>
-            ))}
+            {resolvedPreview.navigationChanges
+              .filter(
+                (navigationChange, index, changes) =>
+                  changes.findIndex(
+                    (change) => change.action === navigationChange.action,
+                  ) === index,
+              )
+              .map((navigationChange) => (
+                <StyledContentItem
+                  key={`${navigationChange.action}-${navigationChange.universalIdentifier}`}
+                >
+                  {navigationChange.action === 'hide'
+                    ? t`Hide CRM shortcuts`
+                    : t`Restore CRM shortcuts`}
+                </StyledContentItem>
+              ))}
           </StyledContentList>
         </>
       )}
@@ -434,6 +443,7 @@ export const A2eWorkspaceTemplatePreview = ({
           <StyledPreviewRow>
             <Checkbox
               aria-label={t`Include sample content`}
+              disabled={isApplying || hasSteps}
               checked={sampleContentEnabled}
               onCheckedChange={setSampleContentEnabled}
             />
@@ -461,9 +471,7 @@ export const A2eWorkspaceTemplatePreview = ({
               <StyledContentItem
                 key={`${blockedSample.locale}-${blockedSample.label}`}
               >
-                {blockedSample.blockedBy === 'P7.0_SAFETY_GATE'
-                  ? t`${blockedSample.label} — blocked until the Bilan safety gate (P7.0) clears`
-                  : t`${blockedSample.label} — blocked upstream`}
+                {t`${blockedSample.label} — not included yet`}
               </StyledContentItem>
             ))}
           </StyledContentList>
@@ -519,7 +527,12 @@ export const A2eWorkspaceTemplatePreview = ({
                 {isDefined(step.targetUniversalIdentifier) && (
                   <StyledRowSubText>
                     {' '}
-                    · {step.targetUniversalIdentifier}
+                    ·{' '}
+                    {preview.apps.find(
+                      (app) =>
+                        app.universalIdentifier ===
+                        step.targetUniversalIdentifier,
+                    )?.displayName ?? t`Application`}
                   </StyledRowSubText>
                 )}
               </StyledRowText>
@@ -538,9 +551,11 @@ export const A2eWorkspaceTemplatePreview = ({
         <StyledApplyButton>
           <MainButton
             title={
-              hasSteps && operationOutcome !== 'applied'
-                ? t`Retry remaining steps`
-                : t`Apply template`
+              isApplying
+                ? t`Setting up your workspace…`
+                : hasSteps && operationOutcome !== 'applied'
+                  ? t`Retry remaining steps`
+                  : t`Apply template`
             }
             onClick={handleApply}
             disabled={preview.blocked || isApplying}

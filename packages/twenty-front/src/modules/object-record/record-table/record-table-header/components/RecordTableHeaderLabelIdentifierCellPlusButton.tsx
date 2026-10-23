@@ -1,4 +1,6 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { RecordQuickCreateModal } from '@/object-record/record-create/components/RecordQuickCreateModal';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
@@ -10,6 +12,8 @@ import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { LightIconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { useState } from 'react';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledHeaderIcon = styled.div`
   margin: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[1]}
@@ -17,10 +21,12 @@ const StyledHeaderIcon = styled.div`
 `;
 
 export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
-  const { objectMetadataItem, objectPermissions } =
+  const { objectMetadataItem, objectPermissions, recordTableId } =
     useRecordTableContextOrThrow();
 
   const isMobile = useIsMobile();
+  const { t } = useLingui();
+  const [isQuickCreateOpen, setIsQuickCreateOpen] = useState(false);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -30,6 +36,10 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
   });
 
   const handlePlusButtonClick = () => {
+    if (['task', 'project'].includes(objectMetadataItem.nameSingular)) {
+      setIsQuickCreateOpen(true);
+      return;
+    }
     createNewIndexRecord({
       position: 'first',
     });
@@ -53,7 +63,25 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
           size="small"
           accent="tertiary"
           onClick={handlePlusButtonClick}
+          aria-label={t`New ${objectMetadataItem.labelSingular}`}
         />
+        {isQuickCreateOpen && (
+          <RecordQuickCreateModal
+            modalId={`${recordTableId}-quick-create`}
+            objectNameSingular={objectMetadataItem.nameSingular}
+            onClose={() => setIsQuickCreateOpen(false)}
+            onCreate={(title) =>
+              createNewIndexRecord(
+                {
+                  position: 'first',
+                  [getLabelIdentifierFieldMetadataItem(objectMetadataItem)
+                    ?.name ?? 'name']: title,
+                },
+                { shouldOpenRecord: false },
+              )
+            }
+          />
+        )}
       </StyledHeaderIcon>
     )
   );

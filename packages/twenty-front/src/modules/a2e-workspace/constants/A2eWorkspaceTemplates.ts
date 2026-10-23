@@ -36,12 +36,6 @@ export type A2eWorkspaceTemplateOption = {
 
 export const A2E_WORKSPACE_TEMPLATE_OPTIONS: A2eWorkspaceTemplateOption[] = [
   {
-    value: 'CRM',
-    label: msg`CRM`,
-    description: msg`Classic sales workspace: companies, people and opportunities`,
-    Icon: IconBuildingSkyscraper,
-  },
-  {
     value: 'INDIVIDUAL',
     label: msg`Individual`,
     description: msg`Personal workspace with Bureau pages, Bureau Projects and Bureau Discussions; CRM navigation hidden`,
@@ -56,19 +50,25 @@ export const A2E_WORKSPACE_TEMPLATE_OPTIONS: A2eWorkspaceTemplateOption[] = [
   {
     value: 'TEAM',
     label: msg`Team`,
-    description: msg`Shared Bureau pages, Bureau Projects and Bureau Discussions alongside the CRM`,
+    description: msg`Shared Bureau pages, Bureau Projects and Bureau Discussions; CRM navigation hidden`,
     Icon: IconUsers,
   },
   {
     value: 'NON_PROFIT',
     label: msg`Non-profit`,
-    description: msg`CRM with Bureau pages, Bureau Projects and Bureau Discussions plus Bilan budgets and funding`,
+    description: msg`Bureau pages, Bureau Projects and Bureau Discussions plus Bilan budgets and funding; CRM navigation hidden`,
     Icon: IconHeart,
   },
   {
     value: 'SMALL_BUSINESS',
     label: msg`Small business`,
-    description: msg`CRM pipeline with Bureau pages, Bureau Projects and Bureau Discussions plus Bilan invoicing and bookkeeping`,
+    description: msg`Bureau pages, Bureau Projects and Bureau Discussions plus Bilan invoicing and bookkeeping; CRM navigation hidden`,
     Icon: IconBriefcase,
+  },
+  {
+    value: 'CRM',
+    label: msg`CRM`,
+    description: msg`Classic sales workspace: companies, people and opportunities`,
+    Icon: IconBuildingSkyscraper,
   },
 ];

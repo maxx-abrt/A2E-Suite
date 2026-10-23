@@ -9,6 +9,7 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
+import { WorkspaceTemplateService } from 'src/engine/core-modules/onboarding/workspace-template.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
@@ -53,6 +54,14 @@ describe('OnboardingService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         OnboardingService,
+        {
+          provide: WorkspaceTemplateService,
+          useValue: {
+            configureOnboardingNavigation: jest
+              .fn()
+              .mockResolvedValue(undefined),
+          },
+        },
         { provide: BillingService, useValue: { isBillingEnabled: jest.fn() } },
         { provide: BillingCreditService, useValue: { grantCredits } },
         {

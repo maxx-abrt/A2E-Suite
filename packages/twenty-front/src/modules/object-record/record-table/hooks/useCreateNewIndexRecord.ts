@@ -77,7 +77,10 @@ export const useCreateNewIndexRecord = ({
     });
 
   const createNewIndexRecord = useCallback(
-    async (recordInput?: Partial<ObjectRecord>) => {
+    async (
+      recordInput?: Partial<ObjectRecord>,
+      options?: { shouldOpenRecord?: boolean },
+    ) => {
       const recordId = v4();
       const recordInputFromRLSPredicates = buildRecordInputFromRLSPredicates();
       const recordInputFromFilters = buildRecordInputFromFilters();
@@ -93,35 +96,39 @@ export const useCreateNewIndexRecord = ({
         ...mergedRecordInput,
       });
 
-      if (workspaceSurface.type === 'side-panel') {
-        openRecordInSidePanel({
-          recordId,
-          objectNameSingular: objectMetadataItem.nameSingular,
-          isNewRecord: true,
-          resetNavigationStack: false,
-        });
-      } else if (openRecordIn === OpenRecordIn.SIDE_PANEL) {
-        openRecordInSidePanel({
-          recordId,
-          objectNameSingular: objectMetadataItem.nameSingular,
-          isNewRecord: true,
-        });
-      } else {
-        const labelIdentifierFieldMetadataItem =
-          getLabelIdentifierFieldMetadataItem(objectMetadataItem);
+      upsertRecordsInStore({ partialRecords: [createdRecord] });
 
-        if (isDefined(labelIdentifierFieldMetadataItem)) {
-          store.set(newRecordTitleCellToOpenState.atom, {
+      if (options?.shouldOpenRecord !== false) {
+        if (workspaceSurface.type === 'side-panel') {
+          openRecordInSidePanel({
             recordId,
-            fieldName: labelIdentifierFieldMetadataItem.name,
+            objectNameSingular: objectMetadataItem.nameSingular,
+            isNewRecord: true,
+            resetNavigationStack: false,
+          });
+        } else if (openRecordIn === OpenRecordIn.SIDE_PANEL) {
+          openRecordInSidePanel({
+            recordId,
+            objectNameSingular: objectMetadataItem.nameSingular,
+            isNewRecord: true,
+          });
+        } else {
+          const labelIdentifierFieldMetadataItem =
+            getLabelIdentifierFieldMetadataItem(objectMetadataItem);
+
+          if (isDefined(labelIdentifierFieldMetadataItem)) {
+            store.set(newRecordTitleCellToOpenState.atom, {
+              recordId,
+              fieldName: labelIdentifierFieldMetadataItem.name,
+            });
+          }
+
+          closeSidePanelMenu();
+          navigate(AppPath.RecordShowPage, {
+            objectNameSingular: objectMetadataItem.nameSingular,
+            objectRecordId: recordId,
           });
         }
-
-        closeSidePanelMenu();
-        navigate(AppPath.RecordShowPage, {
-          objectNameSingular: objectMetadataItem.nameSingular,
-          objectRecordId: recordId,
-        });
       }
 
       if (isDefined(recordIndexGroupFieldMetadataItem)) {
@@ -158,8 +165,6 @@ export const useCreateNewIndexRecord = ({
           }
         }
       }
-
-      upsertRecordsInStore({ partialRecords: [createdRecord] });
 
       return createdRecord;
     },

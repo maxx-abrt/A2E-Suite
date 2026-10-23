@@ -41,10 +41,10 @@ export const useBureauTodayProgress = () => {
 
   const filter = {
     assigneeId: { eq: currentWorkspaceMember?.id },
-    dueAt: {
-      gte: today.toInstant().toString(),
-      lt: tomorrow.toInstant().toString(),
-    },
+    and: [
+      { dueAt: { gte: today.toInstant().toString() } },
+      { dueAt: { lt: tomorrow.toInstant().toString() } },
+    ],
   };
   const skip = !isDefined(currentWorkspaceMember?.id);
   const total = useAggregateRecords({

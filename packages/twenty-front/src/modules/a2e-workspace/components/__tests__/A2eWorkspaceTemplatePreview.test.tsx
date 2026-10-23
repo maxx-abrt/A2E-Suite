@@ -210,8 +210,8 @@ describe('A2eWorkspaceTemplatePreview', () => {
     const navigation = screen.getByTestId(
       'a2e-workspace-template-preview-navigation',
     );
-    expect(navigation).toHaveTextContent('Hide nav-people');
-    expect(navigation).toHaveTextContent('Restore nav-notes');
+    expect(navigation).toHaveTextContent('Hide CRM shortcuts');
+    expect(navigation).toHaveTextContent('Restore CRM shortcuts');
     expect(
       screen.getByRole('checkbox', { name: 'Include sample content' }),
     ).toBeInTheDocument();
@@ -233,9 +233,7 @@ describe('A2eWorkspaceTemplatePreview', () => {
     const blockedContents = screen.getByTestId(
       'a2e-workspace-template-preview-blocked-contents',
     );
-    expect(blockedContents).toHaveTextContent(
-      'Dons — blocked until the Bilan safety gate (P7.0) clears',
-    );
+    expect(blockedContents).toHaveTextContent('Dons — not included yet');
   });
 
   it('offers an include toggle only for optional apps that are not installed', () => {

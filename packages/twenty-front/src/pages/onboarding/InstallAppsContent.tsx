@@ -145,7 +145,7 @@ export const InstallAppsContent = ({
         <OnboardingStepAnimatedItem index={1}>
           <StyledOnboardingStepSubtitle>
             {catalogueEmptyStateSubtitle ??
-              t`Get the most out of your CRM by installing some apps`}
+              t`Choose a starting point for your workspace. You can add more apps later.`}
           </StyledOnboardingStepSubtitle>
         </OnboardingStepAnimatedItem>
         {isDefined(creditsRewardPerApp) && hasApps && (

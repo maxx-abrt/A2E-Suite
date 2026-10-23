@@ -94,7 +94,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
 
   const body = getActivitySummary(task?.bodyV2?.blocknote ?? null);
 
-  const { completeTask } = useCompleteTask(task);
+  const { completeTask, canCompleteTask, isCompleted } = useCompleteTask(task);
 
   const junctionFieldName = useObjectMorphJunctionConfigOrThrow({
     objectNameSingular: CoreObjectNameSingular.Task,
@@ -124,12 +124,13 @@ export const TaskRow = ({ task }: { task: Task }) => {
           }}
         >
           <Checkbox
-            checked={task.status === 'DONE'}
+            checked={isCompleted}
+            disabled={!canCompleteTask}
             shape={CheckboxShape.Rounded}
             onCheckedChange={completeTask}
           />
         </StyledCheckboxContainer>
-        <StyledTaskTitle completed={task.status === 'DONE'}>
+        <StyledTaskTitle completed={isCompleted}>
           {task.title || <StyledPlaceholder>{t`Task title`}</StyledPlaceholder>}
         </StyledTaskTitle>
         <StyledTaskBody>

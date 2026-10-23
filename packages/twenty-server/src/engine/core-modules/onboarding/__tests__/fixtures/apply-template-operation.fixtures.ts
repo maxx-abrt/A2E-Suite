@@ -69,7 +69,7 @@ export type TemplateRejectionFixture = {
 // installed.
 export const individualTemplatePreview: TemplatePreview = {
   templateKey: WorkspaceTemplate.INDIVIDUAL,
-  version: 2,
+  version: 3,
   apps: [
     {
       universalIdentifier: '19126a9c-7cc0-4368-aaba-c7e5a87b0c48',
@@ -97,19 +97,13 @@ export const individualTemplatePreview: TemplatePreview = {
     },
   ],
   navigationChanges: [
-    {
-      universalIdentifier: '20202020-b001-4b01-8b01-c0aba11c0001',
-      action: 'hide',
-    },
-    {
-      universalIdentifier: '20202020-b005-4b05-8b05-c0aba11c0005',
-      action: 'hide',
-    },
-    {
-      universalIdentifier: '20202020-b004-4b04-8b04-c0aba11c0004',
-      action: 'hide',
-    },
-  ],
+    '20202020-b001-4b01-8b01-c0aba11c0001',
+    '20202020-b005-4b05-8b05-c0aba11c0005',
+    '20202020-b004-4b04-8b04-c0aba11c0004',
+    '20202020-b003-4b03-8b03-c0aba11c0003',
+    '20202020-b002-4b02-8b02-c0aba11c0002',
+    '20202020-b00b-4b0b-8b0b-c0aba11c000b',
+  ].map((universalIdentifier) => ({ universalIdentifier, action: 'hide' })),
   // P1.6d persona bundle: A2E Documents is registered and compatible, so its
   // proposed starter content is previewed.
   samples: [
@@ -127,9 +121,9 @@ export const individualTemplateApplyResult: ApplyTemplateResult = {
   operationId: '9f1c3a20-8f4e-4d9a-9c1e-2b6a7d8e9f01',
   requestedTemplateKeyVersion: {
     key: WorkspaceTemplate.INDIVIDUAL,
-    version: 2,
+    version: 3,
   },
-  appliedTemplateKeyVersion: { key: WorkspaceTemplate.INDIVIDUAL, version: 2 },
+  appliedTemplateKeyVersion: { key: WorkspaceTemplate.INDIVIDUAL, version: 3 },
   steps: [
     {
       kind: 'install-app',

@@ -190,6 +190,8 @@ export const NAVIGATION_MENU_ITEM_IDS = {
   myTasksAssigned: 'c31b0000-0010-4000-8000-000000000006',
   myTasksCreated: 'c31b0000-0010-4000-8000-000000000007',
   myTasksOverdue: 'c31b0000-0010-4000-8000-000000000008',
+  bureauTasks: 'c31b0000-0010-4000-8000-000000000009',
+  bureauEvents: 'c31b0000-0010-4000-8000-00000000000a',
 } as const;
 
 export const FRONT_COMPONENT_IDS = {

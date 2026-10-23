@@ -31,12 +31,48 @@ refresh through the existing native mutation/aggregate path. Day boundaries
 advance at midnight or when the window regains focus. Loading and provider
 errors do not display invented completion percentages; an empty day shows 0%.
 
-Thirty focused home/sheet/progress/embedded-view tests and the production
-frontend build passed. Browser layout, real inline-edit persistence, cross-user
-updates and production journeys still need acceptance verification; see the
-[dated phase report](plan/phases/phase-13-report.md).
+The home uses a plain, bounded canvas and compact shortcuts mirrored from the
+native Bureau folder. Projects 0.1.23 supplies Tasks and Events links; native
+layout customization owns shortcut names, order and removal. Focused navigation
+retains app ownership when switching saved views, marks the current destination
+and avoids duplicating Bureau home or New page.
+
+Embedded tables own their command-menu context and selection sync, so native
+row actions work without borrowing another record page's selection. Daily
+progress uses separate date-bound conditions, matching the API's
+single-operator-per-field filter contract. Local browser checks confirmed
+inline task status save/reload/restore, row actions, daily progress and opening
+the selected task view. Cross-user updates and production journeys still need
+acceptance verification; see the [dated phase report](plan/phases/phase-13-report.md).
 
 ## Product contract
+
+### Task and project quick entry (2026-10-23)
+
+Native task/project tables now collect a title before creating a record. New
+opens a small native modal; Add task / Add project supports repeated inline
+entry with Enter. Escape cancels, failed requests retain the title, and pending
+requests block duplicate submissions. Grouped lists retain their group defaults;
+filters, permission predicates and record creation use the existing primitives.
+The small Bureau task sheet also exposes New task in its header, using the
+selected embedded view's native command context. Creation and completion stay
+in Bureau. The default prefers a compact unfiltered saved table when available;
+users can still select any readable task table.
+The first-record empty state launches the same native command host so optimistic
+insertion cannot unmount its form during a failed request.
+
+Task titles have a direct completion control and a quieter text-link appearance.
+Completion/reopen synchronizes native status and readable Projects pipeline
+status with one mutation, requesting only the changed status fields. Field and
+record permissions gate the control. Readable status fields are fetched even
+when their columns are hidden. Existing record details remain available when
+opening a record; the created record is placed in the store before that path
+opens. No schema changes, second task store or new record backend were added.
+
+Local verification covers actual task/project creation, repeated inline entry,
+completion/reload and native trash cleanup, plus focused tests and a production
+build. This establishes interaction behavior; production latency and multi-user
+load are separate acceptance work.
 
 The **2026-10-23 Notion import hardening** adds native column/callout/checklist
 conversion, source-media URL preservation, file figures, Notion page-link

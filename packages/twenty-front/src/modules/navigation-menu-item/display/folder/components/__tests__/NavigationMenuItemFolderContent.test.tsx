@@ -37,8 +37,18 @@ jest.mock(
 jest.mock(
   '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem',
   () => ({
-    NavigationDrawerItem: ({ label, to }: { label: string; to: string }) => (
-      <Link to={to}>{label}</Link>
+    NavigationDrawerItem: ({
+      label,
+      to,
+      active,
+    }: {
+      label: string;
+      to: string;
+      active: boolean;
+    }) => (
+      <Link to={to} aria-current={active ? 'page' : undefined}>
+        {label}
+      </Link>
     ),
   }),
 );
@@ -66,4 +76,21 @@ it('opens Pages from a different table without enabling edit or drag controls', 
   await user.click(screen.getByRole('link', { name: /Pages/ }));
   expect(screen.getByText('/objects/documents')).toBeInTheDocument();
   expect(screen.queryByRole('button')).not.toBeInTheDocument();
+});
+
+it('marks the current native table and full-page records as active', () => {
+  render(
+    <MemoryRouter initialEntries={['/object/document/page-id']}>
+      <NavigationMenuItemFolderContent
+        folderId="bureau"
+        folderName="Bureau"
+        navigationMenuItems={[item]}
+        hideBackButton
+      />
+    </MemoryRouter>,
+  );
+  expect(screen.getByRole('link', { name: /Pages/ })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
 });

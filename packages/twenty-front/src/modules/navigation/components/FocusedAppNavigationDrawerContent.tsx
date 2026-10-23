@@ -1,5 +1,6 @@
 import { BureauNavigation } from '@/bureau/components/BureauNavigation';
 import { BureauWorkspaceContext } from '@/bureau/contexts/BureauWorkspaceContext';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useNavigationObjectMetadataItems } from '@/navigation-menu-item/common/hooks/useNavigationObjectMetadataItems';
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder';
 import { NavigationMenuItemFolderContent } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderContent';
@@ -11,6 +12,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { IconArrowLeft } from 'twenty-ui/icon';
+import { AppPath } from 'twenty-shared/types';
 
 type FocusedAppNavigationDrawerContentProps = { children: ReactNode };
 
@@ -25,6 +27,9 @@ export const FocusedAppNavigationDrawerContent = ({
   const { navigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
   const objectMetadataItems = useNavigationObjectMetadataItems();
   const views = useAtomStateValue(viewsSelector);
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
   // App ownership follows the existing, permission-filtered folder links;
   // renaming a folder or adding an app does not need another app registry.
   const rankedFolders = navigationMenuItemsByFolder.map((folder) => ({
@@ -45,7 +50,8 @@ export const FocusedAppNavigationDrawerContent = ({
   const activeFolder = rankedFolders
     .sort((left, right) => right.score - left.score)
     .find(({ score }) => score > 0)?.folder;
-  if (!activeFolder && !workspace) return children;
+  if (isLayoutCustomizationModeEnabled || (!activeFolder && !workspace))
+    return children;
 
   if (dismissedPath === locationKey)
     return (
@@ -70,7 +76,9 @@ export const FocusedAppNavigationDrawerContent = ({
         <NavigationMenuItemFolderContent
           folderId={activeFolder.id}
           folderName={t`All apps`}
-          navigationMenuItems={activeFolder.navigationMenuItems}
+          navigationMenuItems={activeFolder.navigationMenuItems.filter(
+            (item) => !workspace || item.link !== AppPath.Bureau,
+          )}
           hideBackButton
         />
       )}

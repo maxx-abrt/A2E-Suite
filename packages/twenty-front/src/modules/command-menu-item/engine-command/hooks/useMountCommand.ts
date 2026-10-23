@@ -22,6 +22,7 @@ type MountCommandParams = {
   payload?: CommandMenuItemPayload | null;
   navigationTargetObjectMetadataId?: string | null;
   isInSidePanel?: boolean;
+  recordIndexId?: string;
 };
 
 export const useMountCommand = () => {
@@ -43,8 +44,9 @@ export const useMountCommand = () => {
       payload,
       navigationTargetObjectMetadataId,
       isInSidePanel,
+      recordIndexId,
     }: MountCommandParams) => {
-      const headlessEngineCommandContextApi = buildHeadlessCommandContextApi({
+      const baseContextApi = buildHeadlessCommandContextApi({
         store,
         contextStoreInstanceId,
         engineComponentKey,
@@ -52,6 +54,10 @@ export const useMountCommand = () => {
         navigationTargetObjectMetadataId,
         isInSidePanel,
       });
+      // Embedded tables keep separate filter state even when they share a saved view.
+      const headlessEngineCommandContextApi = isDefined(recordIndexId)
+        ? { ...baseContextApi, recordIndexId }
+        : baseContextApi;
 
       const commandState = isDefined(frontComponentId)
         ? { ...headlessEngineCommandContextApi, frontComponentId }

@@ -202,3 +202,31 @@ Only run lifecycle acceptance on disposable workspaces: install → create/link
 records → upgrade → export/backup as specified → uninstall → inspect dependent
 apps and files → reinstall. A fresh reinstall does not prove data restoration.
 No uninstall or live provisioning was performed for this documentation MR.
+
+## Workspace setup reliability (2026-10-23)
+
+Bureau templates install Pages, Projects and Discussions in dependency order.
+Their app-owned post-install hooks now finish before installation is reported
+as ready and run again on version upgrades to recover missing starter content.
+The packaged versions for this repair are Documents **0.2.15**, Projects
+**0.1.23** and Discussions **0.1.4**. Deploy the rebuilt packages alongside the
+server changes; a source-only server update cannot replace an old app hook.
+
+All non-CRM presets and Start from scratch hide the six managed CRM shortcuts.
+CRM explicitly restores shortcuts hidden by setup, preserving user-removed
+entries and records. Sample confirmation reads persisted reusable templates,
+so a completed background seed can be recognized on retry. Successful setup
+advances onboarding to profile creation.
+
+Projects 0.1.23 also supplies native Tasks and Events shortcuts in the shared
+Bureau folder. Tasks opens the editable project-task table; Events opens the
+host calendar. Bureau home mirrors the folder as a compact shortcut row, so
+native layout customization remains the place to rename, reorder, add or remove
+shortcuts. No second shortcut configuration is stored. Existing workspaces need
+the packaged application upgrade to receive the new managed entries.
+
+Local acceptance covers account signup, activation and token renewal, packaged
+Bureau installation, starter pages, 12 projects, 60 tasks, 36 milestones, both
+discussion channels, onboarding continuation, repeat-safe seeds, operation
+replay and CRM visibility in both directions. Production rollout and Bilan
+preset installation are separate verification.

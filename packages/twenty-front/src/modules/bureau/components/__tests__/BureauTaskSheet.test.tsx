@@ -14,6 +14,10 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 jest.mock('@/object-metadata/hooks/useReadableObjectMetadataItems');
+const mockMountCommand = jest.fn();
+jest.mock('@/command-menu-item/engine-command/hooks/useMountCommand', () => ({
+  useMountCommand: () => mockMountCommand,
+}));
 jest.mock('@/object-record/hooks/useObjectPermissionsForObject');
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue');
 jest.mock(
@@ -43,6 +47,32 @@ beforeAll(async () => {
 });
 
 describe('BureauTaskSheet', () => {
+  it('starts quick entry in the selected embedded view without leaving Bureau', async () => {
+    const user = userEvent.setup();
+    mockedUseReadableObjects.mockReturnValue({
+      readableObjectMetadataItems: [
+        {
+          id: 'task-object',
+          nameSingular: 'task',
+          readableFields: [],
+          isUICreatable: true,
+          isUIEditable: true,
+          writability: 'OPEN',
+        },
+      ],
+    } as unknown as ReturnType<typeof useReadableObjectMetadataItems>);
+    render(<BureauTaskSheet />, { wrapper: Wrapper });
+    await user.selectOptions(screen.getByRole('combobox'), 'project-sheet');
+    await user.click(screen.getByRole('button', { name: 'New task' }));
+    expect(mockMountCommand).toHaveBeenCalledWith(
+      expect.objectContaining({
+        recordIndexId: 'tasks-project-sheet-bureau-task-sheet-task-object',
+        contextStoreInstanceId:
+          'record-table-widget-bureau-task-sheet-task-object-bureau-task-sheet-task-object',
+        engineComponentKey: 'CREATE_NEW_RECORD',
+      }),
+    );
+  });
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseReadableObjects.mockReturnValue({
@@ -133,6 +163,74 @@ describe('BureauTaskSheet', () => {
 
     expect(screen.getByRole('combobox')).toHaveValue('project-sheet');
     expect(screen.getByText('Native view: project-sheet')).toBeInTheDocument();
+  });
+
+  it('defaults to a compact unfiltered sheet while preserving an explicit selection', async () => {
+    const user = userEvent.setup();
+    mockedUseViews.mockReturnValue([
+      {
+        id: 'overdue',
+        name: 'Overdue',
+        type: 'TABLE',
+        viewFields: [{ fieldMetadataId: 'title', isVisible: true }],
+        viewFilters: [{ id: 'overdue-filter' }],
+      },
+      {
+        id: 'index',
+        name: 'All tasks',
+        type: 'TABLE',
+        key: 'INDEX',
+        viewFields: [
+          { fieldMetadataId: 'title', isVisible: true },
+          { fieldMetadataId: 'status', isVisible: true },
+          { fieldMetadataId: 'body', isVisible: true },
+        ],
+      },
+      {
+        id: 'compact',
+        name: 'Project tasks',
+        type: 'TABLE',
+        viewFields: [
+          { fieldMetadataId: 'title', isVisible: true },
+          { fieldMetadataId: 'status', isVisible: true },
+          { fieldMetadataId: 'body', isVisible: false },
+          { fieldMetadataId: 'assignee', isVisible: false },
+        ],
+        viewFilters: [],
+      },
+    ]);
+    render(<BureauTaskSheet />, { wrapper: Wrapper });
+
+    expect(screen.getByText('Native view: compact')).toBeInTheDocument();
+    await user.selectOptions(screen.getByRole('combobox'), 'overdue');
+    expect(screen.getByText('Native view: overdue')).toBeInTheDocument();
+  });
+
+  it('hides quick entry when the task object is read-only', () => {
+    mockedUseReadableObjects.mockReturnValue({
+      readableObjectMetadataItems: [
+        {
+          id: 'task-object',
+          nameSingular: 'task',
+          readableFields: [],
+          isUICreatable: true,
+          isUIEditable: true,
+          writability: 'OPEN',
+        },
+      ],
+    } as unknown as ReturnType<typeof useReadableObjectMetadataItems>);
+    mockedUsePermissions.mockReturnValue({
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: false,
+    } as ReturnType<typeof useObjectPermissionsForObject>);
+    render(<BureauTaskSheet />, { wrapper: Wrapper });
+
+    expect(
+      screen.queryByRole('button', { name: 'New task' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Open tasks' }),
+    ).toBeInTheDocument();
   });
 
   it('falls back safely if the selected view is removed', async () => {

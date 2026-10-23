@@ -55,10 +55,10 @@ describe('useBureauTodayProgress', () => {
       expect.objectContaining({
         filter: {
           assigneeId: { eq: 'member-one' },
-          dueAt: {
-            gte: '2026-10-24T22:00:00Z',
-            lt: '2026-10-25T23:00:00Z',
-          },
+          and: [
+            { dueAt: { gte: '2026-10-24T22:00:00Z' } },
+            { dueAt: { lt: '2026-10-25T23:00:00Z' } },
+          ],
         },
         skip: false,
       }),
@@ -96,10 +96,10 @@ describe('useBureauTodayProgress', () => {
     expect(mockedUseAggregate).toHaveBeenLastCalledWith(
       expect.objectContaining({
         filter: expect.objectContaining({
-          dueAt: {
-            gte: '2026-10-25T23:00:00Z',
-            lt: '2026-10-26T23:00:00Z',
-          },
+          and: [
+            { dueAt: { gte: '2026-10-25T23:00:00Z' } },
+            { dueAt: { lt: '2026-10-26T23:00:00Z' } },
+          ],
         }),
       }),
     );

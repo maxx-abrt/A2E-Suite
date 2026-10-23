@@ -15,6 +15,10 @@ const mockCreateNewPage = jest.fn();
 const mockOpenTemplateGallery = jest.fn();
 const mockRefetch = jest.fn();
 
+jest.mock('@/bureau/components/BureauWorkspaceShortcuts', () => ({
+  BureauWorkspaceShortcuts: () => <nav aria-label="Bureau shortcuts" />,
+}));
+
 jest.mock('@/bureau/components/BureauTaskSheet', () => ({
   BureauTaskSheet: () => <section aria-label="Task sheet" />,
 }));

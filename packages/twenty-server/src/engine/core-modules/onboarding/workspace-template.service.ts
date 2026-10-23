@@ -5,16 +5,26 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
+import { In, type Repository } from 'typeorm';
+
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
+import { describeApplicationInstallError } from 'src/engine/core-modules/application/application-install/utils/describe-application-install-error.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import {
+  CRM_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
   TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
   getHiddenStandardNavigationMenuItemUniversalIdentifiers,
   type WorkspaceTemplateDefinition,
@@ -221,7 +231,7 @@ export class WorkspaceTemplateService {
     selectedApplicationUniversalIdentifiers: string[];
     sampleContentEnabled: boolean;
   }): Promise<ApplyTemplateStep[]> {
-    const lockKey = `template-operation:${workspaceId}:${idempotencyKey}`;
+    const lockKey = `template-operation:${workspaceId}`;
 
     return this.cacheLockService.withLock(
       async () => {
@@ -320,7 +330,7 @@ export class WorkspaceTemplateService {
         return steps;
       },
       lockKey,
-      { ttl: 60_000, ms: 500, maxRetries: 120 },
+      { ttl: 600_000, ms: 500, maxRetries: 1200 },
     );
   }
 
@@ -437,6 +447,7 @@ export class WorkspaceTemplateService {
       if (step.kind === 'seed-samples') {
         const seedStep = await this.resolveSampleSeedingStep({
           workspaceId,
+          definition,
           steps,
         });
 
@@ -475,7 +486,15 @@ export class WorkspaceTemplateService {
             ),
         );
 
-        if (blockingFailedSteps.length > 0) {
+        if (
+          blockingFailedSteps.length > 0 ||
+          steps.some(
+            (candidateStep) =>
+              candidateStep.kind !== 'install-app' &&
+              candidateStep.kind !== 'set-workspace-template' &&
+              candidateStep.status === 'failed',
+          )
+        ) {
           step.status = 'skipped';
 
           continue;
@@ -493,91 +512,108 @@ export class WorkspaceTemplateService {
     return steps;
   }
 
-  // Sample seeding is app-owned since P1.6d: post-install hooks seed starter
-  // content during the install steps, so this step only reports that outcome.
-  // No parallel server-side seeder — that would duplicate a primitive that
-  // already exists and would bypass the app's own provenance checks.
+  // App hooks own the seed writes; confirm their persisted result instead of
+  // treating an enqueued job (or a synchronous hook on a prior install) as proof.
   private async resolveSampleSeedingStep({
     workspaceId,
+    definition,
     steps,
   }: {
     workspaceId: string;
+    definition: WorkspaceTemplateDefinition;
     steps: ApplyTemplateStep[];
   }): Promise<{
     status: OperationStepStatus;
     errorCode?: OperationStepErrorCode;
     localizedMessage?: string;
   }> {
-    // Only succeeded installs ran their post-install hook: a failed install
-    // seeded nothing, and reporting seeding as done would fake success.
-    const installedAppUniversalIdentifiers = steps
-      .filter(
-        (candidateStep) =>
-          candidateStep.kind === 'install-app' &&
-          candidateStep.status === 'succeeded',
-      )
-      .map((installedAppStep) => installedAppStep.targetUniversalIdentifier)
-      .filter(isDefined);
+    const sampleApplicationUniversalIdentifiers = new Set(
+      definition.starterBundleContents.map(
+        (sample) => sample.applicationUniversalIdentifier,
+      ),
+    );
+    const sampleInstalls = steps.filter(
+      (step) =>
+        step.kind === 'install-app' &&
+        isDefined(step.targetUniversalIdentifier) &&
+        sampleApplicationUniversalIdentifiers.has(
+          step.targetUniversalIdentifier,
+        ),
+    );
 
-    if (installedAppUniversalIdentifiers.length === 0) {
+    if (
+      sampleInstalls.length === 0 ||
+      sampleInstalls.some((step) => step.status !== 'succeeded')
+    ) {
       return { status: 'skipped' };
     }
 
-    const postInstallHooks = await Promise.all(
-      installedAppUniversalIdentifiers.map(
-        async (applicationUniversalIdentifier) => {
-          const registration =
-            await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
-              applicationUniversalIdentifier,
-            );
-
-          return registration?.manifest?.application?.postInstallLogicFunction;
-        },
-      ),
-    );
-
-    const definedPostInstallHooks = postInstallHooks.filter(isDefined);
-
-    if (definedPostInstallHooks.length === 0) {
-      return {
-        status: 'skipped',
-        localizedMessage:
-          'No sample content is defined for the installed apps.',
-      };
-    }
-
-    // A synchronous hook is past proof: ApplicationInstallService awaits it
-    // during the install step and aborts the install on error, so a succeeded
-    // install means the hook ran to completion. An asynchronous hook is only
-    // enqueued, so the operation resolves before seeding runs and cannot
-    // confirm the samples landed — reporting `succeeded` here would fake a
-    // completed preset (contract §5 2026-09-17).
-    const hasAsynchronousPostInstallHook = definedPostInstallHooks.some(
-      (postInstallLogicFunction) =>
-        postInstallLogicFunction.shouldRunSynchronously !== true,
-    );
-
-    if (hasAsynchronousPostInstallHook) {
-      this.logger.warn(
-        `Sample seeding for workspace ${workspaceId} is delegated to an asynchronous post-install hook and cannot be confirmed; reporting the seed-samples step as failed`,
+    try {
+      const workspaceOrmManager = this.moduleRef.get(WorkspaceOrmManager, {
+        strict: false,
+      });
+      const sampleTitles = definition.starterBundleContents.map(
+        (sample) => sample.recordTitle ?? sample.label,
+      );
+      const documents = await workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          workspaceOrmManager
+            .getRepository<{
+              id: string;
+              title: string;
+              kind: string;
+            }>('document', { shouldBypassPermissionChecks: true })
+            .find({
+              where: { title: In(sampleTitles), kind: 'TEMPLATE' },
+              select: { id: true, title: true },
+            }),
+        buildSystemAuthContext(workspaceId),
+      );
+      const persistedTitles = new Set(
+        documents.map((document) => document.title),
       );
 
-      return {
-        status: 'failed',
-        errorCode: 'SEED_FAILED',
-        localizedMessage:
-          'Sample content is created in the background and could not be confirmed yet. Retry the setup later.',
-      };
+      if (sampleTitles.every((title) => persistedTitles.has(title))) {
+        return { status: 'succeeded' };
+      }
+    } catch (error) {
+      this.logger.warn(
+        `Could not confirm starter content for workspace ${workspaceId}`,
+        error,
+      );
     }
 
-    this.logger.log(
-      `Sample seeding for workspace ${workspaceId} completed during the synchronous post-install hooks`,
-    );
-
     return {
-      status: 'succeeded',
-      localizedMessage: 'Starter content was provided by the installed apps.',
+      status: 'failed',
+      errorCode: 'SEED_FAILED',
+      localizedMessage:
+        'Starter content is not ready yet. Retry to check again; your installed apps are kept.',
     };
+  }
+
+  async configureOnboardingNavigation({
+    workspaceId,
+    crmEnabled,
+  }: {
+    workspaceId: string;
+    crmEnabled: boolean;
+  }): Promise<void> {
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+      select: { id: true, workspaceTemplate: true },
+    });
+
+    // A completed template is authoritative when onboarding continues or is replayed.
+    if (isDefined(workspace?.workspaceTemplate)) {
+      return;
+    }
+
+    await this.applyTemplateNavigationVisibility({
+      workspaceId,
+      hiddenUniversalIdentifiers: crmEnabled
+        ? []
+        : CRM_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
+    });
   }
 
   private async getStoredOperation({
@@ -661,12 +697,13 @@ export class WorkspaceTemplateService {
         versionCompatible = versionValidation.compatible;
       }
 
-      const currentlyInstalled = isDefined(
+      const installedApplication =
         await this.applicationService.findByUniversalIdentifier({
           universalIdentifier: applicationUniversalIdentifier,
           workspaceId,
-        }),
-      );
+        });
+      const currentlyInstalled =
+        installedApplication?.state === ApplicationState.INSTALLED;
 
       if (!isDefined(registration) || !versionCompatible) {
         blocked = required ? true : blocked;
@@ -802,14 +839,13 @@ export class WorkspaceTemplateService {
       // which reports FAILED and prevents honest retry completion (M2 exit
       // criteria c/d). The preview's `currentlyInstalled` flag already exposes
       // this state to the caller; the apply step mirrors it (C2).
-      const alreadyInstalled = isDefined(
+      const existingApplication =
         await this.applicationService.findByUniversalIdentifier({
           universalIdentifier: applicationUniversalIdentifier,
           workspaceId,
-        }),
-      );
+        });
 
-      if (alreadyInstalled) {
+      if (existingApplication?.state === ApplicationState.INSTALLED) {
         this.logger.log(
           `Template app ${applicationUniversalIdentifier} is already installed on workspace ${workspaceId}, skipping install`,
         );
@@ -820,10 +856,30 @@ export class WorkspaceTemplateService {
         };
       }
 
-      await this.applicationInstallService.installApplication({
-        appRegistrationId: registration.id,
-        workspaceId,
-      });
+      try {
+        await this.applicationInstallService.installApplication({
+          appRegistrationId: registration.id,
+          workspaceId,
+        });
+      } catch (error) {
+        // Provisioning can finish while we wait for the installer's app lock.
+        if (
+          !(error instanceof ApplicationException) ||
+          error.code !== ApplicationExceptionCode.APP_ALREADY_INSTALLED
+        ) {
+          throw error;
+        }
+
+        const installedApplication =
+          await this.applicationService.findByUniversalIdentifier({
+            universalIdentifier: applicationUniversalIdentifier,
+            workspaceId,
+          });
+
+        if (installedApplication?.state !== ApplicationState.INSTALLED) {
+          throw error;
+        }
+      }
 
       return {
         ...step,
@@ -831,7 +887,7 @@ export class WorkspaceTemplateService {
       };
     } catch (error) {
       this.logger.error(
-        `Failed to install template app ${applicationUniversalIdentifier} for workspace ${workspaceId}`,
+        `Failed to install template app ${applicationUniversalIdentifier} for workspace ${workspaceId}: ${describeApplicationInstallError(error)}`,
         error,
       );
 
@@ -989,7 +1045,7 @@ export class WorkspaceTemplateService {
       key: TEMPLATE_HIDDEN_NAVIGATION_KEY_VALUE_PAIR_KEY,
     })) as unknown as Array<{ value: string[] } | undefined>;
 
-    const managedUniversalIdentifierSet = new Set(
+    const managedUniversalIdentifierSet = new Set<string>(
       TEMPLATE_MANAGED_STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
     );
 
@@ -1008,11 +1064,15 @@ export class WorkspaceTemplateService {
       return [];
     }
 
-    return getHiddenStandardNavigationMenuItemUniversalIdentifiers(
-      getWorkspaceTemplateDefinition(workspace.workspaceTemplate),
-    ).filter((universalIdentifier) =>
-      managedUniversalIdentifierSet.has(universalIdentifier),
-    );
+    // Before provenance was stored, only Individual and Student hid the three
+    // sales entries. Newer definitions must not resurrect user-removed rows.
+    return workspace.workspaceTemplate === WorkspaceTemplate.INDIVIDUAL ||
+      workspace.workspaceTemplate === WorkspaceTemplate.STUDENT
+      ? CRM_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS.slice(0, 3).filter(
+          (universalIdentifier) =>
+            managedUniversalIdentifierSet.has(universalIdentifier),
+        )
+      : [];
   }
 
   private async buildTemplateNavigationPreviewChanges({

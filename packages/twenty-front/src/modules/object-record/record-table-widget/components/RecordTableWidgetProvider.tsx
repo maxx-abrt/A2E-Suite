@@ -19,9 +19,8 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { useRecordTableWidgetFieldUpdate } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFieldUpdate';
 import { useUpdateRecordTableWidgetViewDraft } from '@/page-layout/widgets/record-table/hooks/useUpdateRecordTableWidgetViewDraft';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { getRecordTableWidgetInstanceIds } from '@/object-record/record-table-widget/utils/getRecordTableWidgetInstanceIds';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { isNonEmptyString } from '@sniptt/guards';
 import { type PropsWithChildren, useCallback, useMemo } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
@@ -52,15 +51,13 @@ export const RecordTableWidgetProvider = ({
     objectNameSingular,
   });
 
-  const recordIndexIdWithoutSuffix =
-    getRecordIndexIdFromObjectNamePluralAndViewId(
-      objectMetadataItem.namePlural,
+  const { recordIndexId, contextStoreInstanceId } =
+    getRecordTableWidgetInstanceIds({
+      objectNamePlural: objectMetadataItem.namePlural,
       viewId,
-    );
-
-  const recordIndexId = isNonEmptyString(instanceIdSuffix)
-    ? `${recordIndexIdWithoutSuffix}-${instanceIdSuffix}`
-    : recordIndexIdWithoutSuffix;
+      widgetId,
+      instanceIdSuffix,
+    });
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const objectPermissions = getObjectPermissionsForObject(
@@ -139,9 +136,7 @@ export const RecordTableWidgetProvider = ({
     <RecordTableWidgetContext.Provider value={recordTableWidgetContext}>
       <ContextStoreComponentInstanceContext.Provider
         value={{
-          instanceId: isNonEmptyString(instanceIdSuffix)
-            ? `record-table-widget-${widgetId}-${instanceIdSuffix}`
-            : `record-table-widget-${widgetId}`,
+          instanceId: contextStoreInstanceId,
         }}
       >
         <RecordTableWidgetContextStoreInitEffect

@@ -61,6 +61,7 @@ export const InstallApps = () => {
   const templatePicker = (
     <A2eWorkspaceTemplatePicker
       options={A2E_WORKSPACE_TEMPLATE_OPTIONS}
+      onApplied={skip}
       startFromScratch={{
         label: msg`Start from scratch`,
         description: msg`Install nothing now and build your workspace your way`,

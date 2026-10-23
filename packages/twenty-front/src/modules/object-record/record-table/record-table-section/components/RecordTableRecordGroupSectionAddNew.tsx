@@ -1,4 +1,6 @@
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
+import { RecordTableInlineCreateRow } from '@/object-record/record-table/components/RecordTableInlineCreateRow';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
@@ -89,17 +91,23 @@ export const RecordTableRecordGroupSectionAddNew = () => {
     return null;
   }
 
-  const handleCreateRecord = (recordInput?: Partial<ObjectRecord>) => {
+  const handleCreateRecord = async (
+    recordInput?: Partial<ObjectRecord>,
+    shouldOpenRecord = true,
+  ) => {
     if (!fieldMetadataItem) {
       return;
     }
 
-    createNewIndexRecord({
-      position: 'last',
-      [getFieldMetadataItemGqlFieldName(fieldMetadataItem)]:
-        recordGroupDefinition?.value,
-      ...recordInput,
-    });
+    return createNewIndexRecord(
+      {
+        position: 'last',
+        [getFieldMetadataItemGqlFieldName(fieldMetadataItem)]:
+          recordGroupDefinition?.value,
+        ...recordInput,
+      },
+      { shouldOpenRecord },
+    );
   };
 
   if (isDefined(nestedRelationCreateThrough)) {
@@ -112,6 +120,23 @@ export const RecordTableRecordGroupSectionAddNew = () => {
             [nestedRelationCreateThrough.nestedRelationJoinColumnName]:
               relationRecordId,
           })
+        }
+      />
+    );
+  }
+
+  if (['task', 'project'].includes(objectMetadataItem.nameSingular)) {
+    return (
+      <RecordTableInlineCreateRow
+        objectNameSingular={objectMetadataItem.nameSingular}
+        onCreate={(title) =>
+          handleCreateRecord(
+            {
+              [getLabelIdentifierFieldMetadataItem(objectMetadataItem)?.name ??
+              'name']: title,
+            },
+            false,
+          )
         }
       />
     );

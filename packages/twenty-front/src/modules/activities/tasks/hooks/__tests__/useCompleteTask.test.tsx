@@ -29,6 +29,7 @@ const updateOneTaskMutation = generateUpdateOneRecordMutation({
   objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
   computeReferences: false,
   objectPermissionsByObjectMetadataId: {},
+  recordGqlFields: { id: true, status: true },
 });
 
 const mocks: MockedResponse[] = [

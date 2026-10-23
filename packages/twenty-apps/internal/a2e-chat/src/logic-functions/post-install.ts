@@ -22,6 +22,7 @@ export default definePostInstallLogicFunction({
   name: 'post-install',
   description: 'Prépare Bureau Discussions : canaux de démarrage (Général, Annonces).',
   timeoutSeconds: 120,
-  shouldRunSynchronously: false,
+  shouldRunSynchronously: true,
+  shouldRunOnVersionUpgrade: true,
   handler,
 });
