@@ -1,5 +1,6 @@
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
+import { isSharedDomainWorkspaceEnabledState } from '@/client-config/states/isSharedDomainWorkspaceEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
@@ -16,6 +17,9 @@ import { GetPublicWorkspaceDataByDomainDocument } from '~/generated-metadata/gra
 
 export const useGetPublicWorkspaceDataByDomain = () => {
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
+  const isSharedDomainWorkspaceEnabled = useAtomStateValue(
+    isSharedDomainWorkspaceEnabledState,
+  );
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
@@ -39,6 +43,7 @@ export const useGetPublicWorkspaceDataByDomain = () => {
       },
       skip:
         !clientConfigApiStatus.isSaved ||
+        isSharedDomainWorkspaceEnabled ||
         (isMultiWorkspaceEnabled && isDefaultDomain) ||
         isDefined(workspacePublicData),
     },

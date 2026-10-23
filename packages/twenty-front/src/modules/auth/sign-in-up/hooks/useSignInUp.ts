@@ -23,6 +23,7 @@ import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
+import { isSharedDomainWorkspaceEnabledState } from '@/client-config/states/isSharedDomainWorkspaceEnabledState';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -34,7 +35,12 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
 
   const [signInUpStep, setSignInUpStep] = useAtomState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useAtomState(signInUpModeState);
-  const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
+  const { isOnAWorkspace: isOnWorkspaceDomain } =
+    useIsCurrentLocationOnAWorkspace();
+  const isSharedDomainWorkspaceEnabled = useAtomStateValue(
+    isSharedDomainWorkspaceEnabledState,
+  );
+  const isOnAWorkspace = isOnWorkspaceDomain && !isSharedDomainWorkspaceEnabled;
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const { isCaptchaReady } = useCaptcha();
   const setLastAuthenticatedMethod = useSetAtomState(

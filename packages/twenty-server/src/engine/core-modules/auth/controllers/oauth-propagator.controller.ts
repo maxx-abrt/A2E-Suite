@@ -77,6 +77,10 @@ export class OAuthPropagatorController {
       return true;
     }
 
+    if (this.workspaceDomainsService.isSharedDomainOrigin(url.href)) {
+      return true;
+    }
+
     const workspace =
       await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         url.href,

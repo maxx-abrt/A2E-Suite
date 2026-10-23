@@ -22,6 +22,12 @@ const DocumentShareGuestPage = lazy(() =>
   })),
 );
 
+const PublicLandingPage = lazy(() =>
+  import('~/pages/auth/PublicLandingPage').then((module) => ({
+    default: module.PublicLandingPage,
+  })),
+);
+
 const SignInUp = lazy(() =>
   import('~/pages/auth/SignInUp').then((module) => ({
     default: module.SignInUp,
@@ -39,6 +45,14 @@ const createRootAppRouter = () =>
     createRoutesFromElements(
       <Route element={<RootAppProviders />} loader={async () => null}>
         <Route element={<BlankLayout />}>
+          <Route
+            path={AppPath.Index}
+            element={
+              <LazyRoute fallback={null}>
+                <PublicLandingPage />
+              </LazyRoute>
+            }
+          />
           <Route element={<OnboardingTransitionOutlet />}>
             <Route
               path={AppPath.SignInUp}

@@ -17,7 +17,7 @@ export const useRedirectToDefaultDomain = () => {
     searchParams?: Record<string, string>;
   }) => {
     const url = new URL(window.location.href);
-    if (url.hostname !== defaultDomain) {
+    if (url.hostname !== defaultDomain || isNonEmptyString(options?.pathname)) {
       setLastAuthenticateWorkspaceDomain(null);
 
       const returnToPath = store.get(returnToPathState.atom);

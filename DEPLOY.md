@@ -354,9 +354,41 @@ fix the reported package/workspace error and retry. The explicit
 `DISABLE_BUNDLED_APP_PROVISIONING=true` opt-out remains available for deployments
 that intentionally manage app installation separately.
 
-Single-workspace mode remains the default. Different accounts need workspace
-membership/invitations. For several workspaces on one instance, configure
-`IS_MULTIWORKSPACE_ENABLED=true`, `DEFAULT_SUBDOMAIN`, wildcard DNS, TLS and proxy
-routing for Twenty's workspace domains together. Do not enable the flag alone
-on a domain that only routes the current workspace. Logout returns to central
-sign-in in multi-workspace mode unless a landing URL is explicitly configured.
+### Accounts and workspaces on one domain
+
+The A2E Coolify Compose files now default to
+`IS_SHARED_DOMAIN_WORKSPACE_ENABLED=true` on **both server and worker**. Set
+`SERVER_URL=https://bureau.serveurmax.store` (or your own public app URL).
+If `FRONTEND_URL` is configured separately, it must be the public browser origin.
+No workspace subdomains or wildcard DNS are needed in this mode.
+
+The root shows a public landing page to signed-out visitors. `/welcome` is the
+native global account form: a different email signs into its own account or
+registers independently, then creates or selects an authorized workspace.
+Logout revokes the native session, clears previous workspace hints and returns
+to the root. Explicit invitations still join their target workspace. Workspace
+links exchange native signed login tokens and reload the document before
+loading another workspace's metadata. Native membership, auth-provider, 2FA,
+server-admin creation restrictions and enterprise workspace limits remain in
+force. This does not add concurrent independent workspace cookies per tab.
+
+**Updating the existing service is required:** deploy an image containing this
+change, update the saved Compose configuration, and preserve existing volumes
+and secrets. A previously saved Coolify Compose file will not gain the new
+variable from a Git push. Confirm `/client-config` reports both
+`isSharedDomainWorkspaceEnabled: true` and `isMultiWorkspaceEnabled: true`.
+The latter describes native account/workspace features; it does not imply
+subdomain routing when shared-domain mode is enabled. The shared-domain flag
+takes precedence if both routing flags are enabled.
+
+For an existing domain-based Twenty deployment, explicitly set
+`IS_SHARED_DOMAIN_WORKSPACE_ENABLED=false`, retain
+`IS_MULTIWORKSPACE_ENABLED=true`, and configure `DEFAULT_SUBDOMAIN`, wildcard
+DNS, TLS and proxy routing together. For a deliberately single-workspace
+instance, set both flags false; unrelated users still need invitations there.
+
+After release, verify in a private browser: root → account form → account A's
+workspace → logout → a new email → new workspace, then sign into an existing
+account with a different membership. Also check invitations, reset emails,
+required 2FA and workspace switching. A public landing screenshot alone does
+not verify account creation or mail delivery.

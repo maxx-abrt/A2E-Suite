@@ -38,7 +38,7 @@ const createMockUserService = () => ({
 });
 
 const createMockWorkspaceDomainsService = () => ({
-  getWorkspaceByOriginOrDefaultWorkspace: jest.fn(),
+  getWorkspaceForLoginToken: jest.fn(),
 });
 
 describe('TwoFactorAuthenticationResolver', () => {
@@ -143,7 +143,7 @@ describe('TwoFactorAuthenticationResolver', () => {
         sub: mockUser.email,
         workspaceId: mockWorkspace.id,
       });
-      workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace.mockResolvedValue(
+      workspaceDomainsService.getWorkspaceForLoginToken.mockResolvedValue(
         mockWorkspace,
       );
       userService.findUserByEmailOrThrow.mockResolvedValue(
@@ -164,8 +164,8 @@ describe('TwoFactorAuthenticationResolver', () => {
         mockInput.loginToken,
       );
       expect(
-        workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace,
-      ).toHaveBeenCalledWith(origin);
+        workspaceDomainsService.getWorkspaceForLoginToken,
+      ).toHaveBeenCalledWith(origin, mockWorkspace.id);
       expect(userService.findUserByEmailOrThrow).toHaveBeenCalledWith(
         mockUser.email,
       );
@@ -180,9 +180,7 @@ describe('TwoFactorAuthenticationResolver', () => {
     });
 
     it('should throw WORKSPACE_NOT_FOUND when workspace is not found', async () => {
-      workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace.mockResolvedValue(
-        null,
-      );
+      workspaceDomainsService.getWorkspaceForLoginToken.mockResolvedValue(null);
 
       await expect(
         resolver.initiateOTPProvisioning(mockInput, origin),

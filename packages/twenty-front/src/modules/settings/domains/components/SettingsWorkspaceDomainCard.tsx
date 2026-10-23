@@ -1,3 +1,4 @@
+import { isSharedDomainWorkspaceEnabledState } from '@/client-config/states/isSharedDomainWorkspaceEnabledState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCloudflareIntegrationEnabledState } from '@/client-config/states/isCloudflareIntegrationEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
@@ -24,9 +25,12 @@ const StyledContainer = styled.div`
 
 export const SettingsWorkspaceDomainCard = () => {
   const { t } = useLingui();
-  const isMultiWorkspaceEnabled = useAtomStateValue(
-    isMultiWorkspaceEnabledState,
+  const isSharedDomainWorkspaceEnabled = useAtomStateValue(
+    isSharedDomainWorkspaceEnabledState,
   );
+  const isMultiWorkspaceEnabled =
+    useAtomStateValue(isMultiWorkspaceEnabledState) &&
+    !isSharedDomainWorkspaceEnabled;
   const isCloudflareIntegrationEnabled = useAtomStateValue(
     isCloudflareIntegrationEnabledState,
   );

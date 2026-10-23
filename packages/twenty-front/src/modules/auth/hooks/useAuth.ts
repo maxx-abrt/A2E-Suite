@@ -49,8 +49,10 @@ import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession
 import {
   countAvailableWorkspaces,
   getFirstAvailableWorkspaces,
+  getAvailableWorkspacePathAndSearchParams,
 } from '@/auth/utils/availableWorkspacesUtils';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
+import { isSharedDomainWorkspaceEnabledState } from '@/client-config/states/isSharedDomainWorkspaceEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
@@ -77,6 +79,9 @@ export const useAuth = () => {
 
   const { origin } = useOrigin();
   const { defaultDomain } = useReadDefaultDomainFromConfiguration();
+  const isSharedDomainWorkspaceEnabled = useAtomStateValue(
+    isSharedDomainWorkspaceEnabledState,
+  );
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
@@ -130,9 +135,14 @@ export const useAuth = () => {
     store.set(currentWorkspaceState.atom, null);
     store.set(currentWorkspaceMemberState.atom, null);
     store.set(currentUserWorkspaceState.atom, null);
+    store.set(workspacePublicDataState.atom, null);
+    store.set(loginTokenState.atom, null);
     clearSessionLocalStorageKeys();
     setLastAuthenticateWorkspaceDomain(null);
-    const workspaceAgnosticSignInUrl = new URL(AppPath.SignInUp, origin);
+    const workspaceAgnosticSignInUrl = new URL(
+      isSharedDomainWorkspaceEnabled ? AppPath.Index : AppPath.SignInUp,
+      origin,
+    );
     if (isMultiWorkspaceEnabled) {
       workspaceAgnosticSignInUrl.hostname = defaultDomain;
     }
@@ -147,6 +157,7 @@ export const useAuth = () => {
     setLastAuthenticateWorkspaceDomain,
     origin,
     isMultiWorkspaceEnabled,
+    isSharedDomainWorkspaceEnabled,
     defaultDomain,
   ]);
 
@@ -173,25 +184,34 @@ export const useAuth = () => {
         return;
       }
 
-      if (availableWorkspacesCount === 1) {
+      const firstWorkspace = getFirstAvailableWorkspaces(availableWorkspaces);
+      const needsWorkspaceAuthProvider =
+        isSharedDomainWorkspaceEnabled &&
+        !firstWorkspace?.loginToken &&
+        !firstWorkspace?.personalInviteToken;
+
+      if (availableWorkspacesCount === 1 && !needsWorkspaceAuthProvider) {
         const targetWorkspace =
           getFirstAvailableWorkspaces(availableWorkspaces);
 
+        const { pathname, searchParams } =
+          getAvailableWorkspacePathAndSearchParams(targetWorkspace, { email });
+
         return await redirectToWorkspaceDomain(
           getWorkspaceUrl(targetWorkspace.workspaceUrls),
-          targetWorkspace.loginToken ? AppPath.Verify : AppPath.SignInUp,
-          {
-            ...(targetWorkspace.loginToken && {
-              loginToken: targetWorkspace.loginToken,
-            }),
-            email,
-          },
+          pathname,
+          searchParams,
         );
       }
 
       setSignInUpStep(SignInUpStep.WorkspaceSelection);
     },
-    [apolloClient, redirectToWorkspaceDomain, setSignInUpStep],
+    [
+      apolloClient,
+      redirectToWorkspaceDomain,
+      setSignInUpStep,
+      isSharedDomainWorkspaceEnabled,
+    ],
   );
 
   const handleGetLoginTokenFromCredentials = useCallback(
@@ -494,7 +514,7 @@ export const useAuth = () => {
           workspacePersonalInviteToken,
           captchaToken,
           locale: i18n.locale ?? SOURCE_LOCALE,
-          ...(workspacePublicData?.id
+          ...(!isSharedDomainWorkspaceEnabled && workspacePublicData?.id
             ? { workspaceId: workspacePublicData.id }
             : {}),
           verifyEmailRedirectPath,
@@ -539,6 +559,7 @@ export const useAuth = () => {
     [
       signUpInWorkspace,
       workspacePublicData,
+      isSharedDomainWorkspaceEnabled,
       isMultiWorkspaceEnabled,
       handleGetAuthTokensFromLoginToken,
       setSignInUpStep,

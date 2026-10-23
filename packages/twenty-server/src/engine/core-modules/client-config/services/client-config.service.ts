@@ -199,8 +199,11 @@ export class ClientConfigService {
         sso: [],
       },
       signInPrefilled: this.twentyConfigService.get('SIGN_IN_PREFILLED'),
-      isMultiWorkspaceEnabled: this.twentyConfigService.get(
-        'IS_MULTIWORKSPACE_ENABLED',
+      isMultiWorkspaceEnabled:
+        this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') ||
+        this.twentyConfigService.get('IS_SHARED_DOMAIN_WORKSPACE_ENABLED'),
+      isSharedDomainWorkspaceEnabled: this.twentyConfigService.get(
+        'IS_SHARED_DOMAIN_WORKSPACE_ENABLED',
       ),
       isEmailVerificationRequired: this.twentyConfigService.get(
         'IS_EMAIL_VERIFICATION_REQUIRED',

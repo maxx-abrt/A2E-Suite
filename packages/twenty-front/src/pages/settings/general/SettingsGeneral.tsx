@@ -1,3 +1,4 @@
+import { isSharedDomainWorkspaceEnabledState } from '@/client-config/states/isSharedDomainWorkspaceEnabledState';
 import { useLingui } from '@lingui/react/macro';
 
 import { SettingsA2eWorkspaceTemplateSection } from '@/a2e-workspace/components/SettingsA2eWorkspaceTemplateSection';
@@ -28,9 +29,12 @@ const GENERAL_TAB_LOGS = 'logs';
 export const SettingsGeneral = () => {
   const { t } = useLingui();
 
-  const isMultiWorkspaceEnabled = useAtomStateValue(
-    isMultiWorkspaceEnabledState,
+  const isSharedDomainWorkspaceEnabled = useAtomStateValue(
+    isSharedDomainWorkspaceEnabledState,
   );
+  const isMultiWorkspaceEnabled =
+    useAtomStateValue(isMultiWorkspaceEnabledState) &&
+    !isSharedDomainWorkspaceEnabled;
 
   const hasSecurityPermission = useHasPermissionFlag(
     PermissionFlagType.SECURITY,

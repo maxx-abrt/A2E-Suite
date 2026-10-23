@@ -1,3 +1,4 @@
+import { isSharedDomainWorkspaceEnabledState } from '@/client-config/states/isSharedDomainWorkspaceEnabledState';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, waitFor } from '@testing-library/react';
@@ -104,6 +105,20 @@ describe('VerifyEmail', () => {
     });
   });
 
+  it('verifies shared-domain registrations as accounts even when the workspace router is mounted', async () => {
+    isOnAWorkspaceValue = true;
+    jotaiStore.set(isSharedDomainWorkspaceEnabledState.atom, true);
+    verifyEmailAndGetWorkspaceAgnosticTokenMock.mockResolvedValue(undefined);
+    renderVerifyEmail(VERIFY_EMAIL_URL);
+    await waitFor(() =>
+      expect(verifyEmailAndGetWorkspaceAgnosticTokenMock).toHaveBeenCalledWith(
+        'valid-token',
+        'user@example.com',
+      ),
+    );
+    expect(verifyEmailAndGetLoginTokenMock).not.toHaveBeenCalled();
+    expect(verifyLoginTokenMock).not.toHaveBeenCalled();
+  });
   it('navigates to the SignInUp page after a successful workspace-agnostic verification on the central domain', async () => {
     verifyEmailAndGetWorkspaceAgnosticTokenMock.mockResolvedValue(undefined);
 

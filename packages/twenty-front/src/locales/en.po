@@ -26996,3 +26996,284 @@ msgstr "Your language was saved. English is shown while its translations are una
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Could not save language. Please try again."
 msgstr "Could not save language. Please try again."
+
+#. js-lingui-id: AfCjhE
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "A clear view of what matters, with everything close at hand."
+msgstr "A clear view of what matters, with everything close at hand."
+
+#. js-lingui-id: IvzmrH
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "A fresh start"
+msgstr "A fresh start"
+
+#. js-lingui-id: DL+8fN
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "A glimpse of your workspace. Make it your own."
+msgstr "A glimpse of your workspace. Make it your own."
+
+#. js-lingui-id: 8DUukv
+#: src/modules/auth/sign-in-up/components/SignInUpStandardContent.tsx
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "A little more space for your ideas."
+msgstr "A little more space for your ideas."
+
+#. js-lingui-id: DodH1n
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "A2E Suite home"
+msgstr "A2E Suite home"
+
+#. js-lingui-id: 5qRoxO
+#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
+msgid "Available to join"
+msgstr "Available to join"
+
+#. js-lingui-id: QeXxn3
+#: src/pages/auth/PasswordReset.tsx
+msgid "Back to sign in"
+msgstr "Back to sign in"
+
+#. js-lingui-id: IVxhYY
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "Bring people into your workspace, assign tasks and keep the next step clear. Switch between the workspaces you belong to."
+msgstr "Bring people into your workspace, assign tasks and keep the next step clear. Switch between the workspaces you belong to."
+
+#. js-lingui-id: GeP6Sq
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "Bring your agenda, relationships and finances into the same workspace. Open the tools you need, when you need them."
+msgstr "Bring your agenda, relationships and finances into the same workspace. Open the tools you need, when you need them."
+
+#. js-lingui-id: 5IXWmO
+#: src/modules/auth/sign-in-up/components/ForgotPasswordLink.tsx
+msgid "Check your inbox"
+msgstr "Check your inbox"
+
+#. js-lingui-id: EURzFR
+#: src/pages/auth/PasswordReset.tsx
+msgid "Checking your reset link"
+msgstr "Checking your reset link"
+
+#. js-lingui-id: LU5jex
+#: src/pages/auth/PasswordReset.tsx
+msgid "Choose a new password for {0}."
+msgstr "Choose a new password for {0}."
+
+#. js-lingui-id: P14+18
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "Collect ideas"
+msgstr "Collect ideas"
+
+#. js-lingui-id: xnWESi
+#: src/pages/auth/PasswordReset.tsx
+msgid "Confirm password"
+msgstr "Confirm password"
+
+#. js-lingui-id: +oS9lr
+#: src/pages/auth/PasswordReset.tsx
+msgid "Continue to workspace"
+msgstr "Continue to workspace"
+
+#. js-lingui-id: 93ROp1
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "Everything has its place"
+msgstr "Everything has its place"
+
+#. js-lingui-id: obufsv
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "Finances & documents"
+msgstr "Finances & documents"
+
+#. js-lingui-id: A/qGX8
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "Find your rhythm together"
+msgstr "Find your rhythm together"
+
+#. js-lingui-id: 7FaxwT
+#: src/modules/auth/sign-in-up/components/ForgotPasswordLink.tsx
+msgid "If this email is registered, a password reset link has been sent. Check your spam folder too."
+msgstr "If this email is registered, a password reset link has been sent. Check your spam folder too."
+
+#. js-lingui-id: YjSKzA
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "Make room for your best work."
+msgstr "Make room for your best work."
+
+#. js-lingui-id: YtXmNu
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "Make space for what’s next"
+msgstr "Make space for what’s next"
+
+#. js-lingui-id: OIYzx/
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "My workspace"
+msgstr "My workspace"
+
+#. js-lingui-id: /nT6AE
+#: src/pages/auth/PasswordReset.tsx
+msgid "New password"
+msgstr "New password"
+
+#. js-lingui-id: oumhBX
+#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
+msgid "No workspaces are available for this account. Ask your team for an invitation."
+msgstr "No workspaces are available for this account. Ask your team for an invitation."
+
+#. js-lingui-id: xcl1Zc
+#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
+msgid "No workspaces yet. Create a workspace to get started, or ask your team for an invitation."
+msgstr "No workspaces yet. Create a workspace to get started, or ask your team for an invitation."
+
+#. js-lingui-id: wcEcr0
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "Notes & knowledge"
+msgstr "Notes & knowledge"
+
+#. js-lingui-id: GIQYuY
+#: src/pages/auth/PasswordReset.tsx
+msgid "One moment while we check your link."
+msgstr "One moment while we check your link."
+
+#. js-lingui-id: /XSoVK
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "Pages, tasks, calendars and finances. One calm place to think clearly and move work forward, on your own or with your team."
+msgstr "Pages, tasks, calendars and finances. One calm place to think clearly and move work forward, on your own or with your team."
+
+#. js-lingui-id: lpIMne
+#: src/pages/auth/PasswordReset.tsx
+msgid "Passwords do not match"
+msgstr "Passwords do not match"
+
+#. js-lingui-id: QMzNaJ
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "Plan the next step"
+msgstr "Plan the next step"
+
+#. js-lingui-id: NCPwHR
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "Projects & plans"
+msgstr "Projects & plans"
+
+#. js-lingui-id: RfwZxd
+#: src/pages/auth/PasswordReset.tsx
+msgid "Reset password"
+msgstr "Reset password"
+
+#. js-lingui-id: slOprG
+#: src/pages/auth/PasswordReset.tsx
+msgid "Reset your password"
+msgstr "Reset your password"
+
+#. js-lingui-id: 2SOFq+
+#: src/pages/auth/PasswordReset.tsx
+msgid "Save password"
+msgstr "Save password"
+
+#. js-lingui-id: SLq7fA
+#: src/pages/auth/PasswordReset.tsx
+msgid "Saving password…"
+msgstr "Saving password…"
+
+#. js-lingui-id: D8tCa0
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "See the bigger picture"
+msgstr "See the bigger picture"
+
+#. js-lingui-id: h79N3n
+#: src/modules/auth/sign-in-up/components/ForgotPasswordLink.tsx
+msgid "Sending reset link…"
+msgstr "Sending reset link…"
+
+#. js-lingui-id: jwdcD0
+#: src/pages/auth/PasswordReset.tsx
+msgid "Set your password"
+msgstr "Set your password"
+
+#. js-lingui-id: zya8Mv
+#: src/modules/auth/sign-in-up/components/SignInUpStandardContent.tsx
+msgid "Sign in or create an account with your email to get started."
+msgstr "Sign in or create an account with your email to get started."
+
+#. js-lingui-id: GCV1HM
+#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
+msgid "Signed in as {0}"
+msgstr "Signed in as {0}"
+
+#. js-lingui-id: tFI3Lp
+#: src/modules/auth/sign-in-up/components/WorkspaceSelectionFooter.tsx
+msgid "Signing out…"
+msgstr "Signing out…"
+
+#. js-lingui-id: GDFDJh
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "Start with a thought"
+msgstr "Start with a thought"
+
+#. js-lingui-id: P1X5p3
+#: src/modules/auth/sign-in-up/components/SignInUpStandardContent.tsx
+msgid "Teamwork"
+msgstr "Teamwork"
+
+#. js-lingui-id: +cuaTO
+#: src/pages/auth/PasswordReset.tsx
+msgid "The link may have expired or already been used. Request a new link from the sign-in screen, or try again if your connection was interrupted."
+msgstr "The link may have expired or already been used. Request a new link from the sign-in screen, or try again if your connection was interrupted."
+
+#. js-lingui-id: EqS4lg
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "Today, at a glance"
+msgstr "Today, at a glance"
+
+#. js-lingui-id: wcGbNv
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "Turn notes into pages and plans in Bureau. Keep your knowledge close to the work it supports."
+msgstr "Turn notes into pages and plans in Bureau. Keep your knowledge close to the work it supports."
+
+#. js-lingui-id: HDOpPv
+#: src/pages/auth/PasswordReset.tsx
+msgid "Unable to open this reset link"
+msgstr "Unable to open this reset link"
+
+#. js-lingui-id: rsaiDG
+#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
+msgid "Use your workspace sign-in method"
+msgstr "Use your workspace sign-in method"
+
+#. js-lingui-id: OyyLy5
+#: src/pages/auth/PasswordReset.tsx
+msgid "We could not update your password. Please try again."
+msgstr "We could not update your password. Please try again."
+
+#. js-lingui-id: AHGx3z
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "Workspace preview"
+msgstr "Workspace preview"
+
+#. js-lingui-id: g92WXM
+#: src/modules/auth/sign-in-up/components/SignInUpStandardContent.tsx
+msgid "Write, organize your work, and bring your team together in A2E Suite."
+msgstr "Write, organize your work, and bring your team together in A2E Suite."
+
+#. js-lingui-id: lyuNUD
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "Your account. Your workspaces. Your way of working."
+msgstr "Your account. Your workspaces. Your way of working."
+
+#. js-lingui-id: cIFOIg
+#: src/pages/auth/PasswordReset.tsx
+msgid "Your password has been saved. You can now sign in with your new password."
+msgstr "Your password has been saved. You can now sign in with your new password."
+
+#. js-lingui-id: vYphfm
+#: src/pages/auth/PasswordReset.tsx
+msgid "Your password is ready"
+msgstr "Your password is ready"
+
+#. js-lingui-id: R/mbhR
+#: src/pages/auth/PublicLandingPage.tsx
+msgid "Your work, beautifully connected"
+msgstr "Your work, beautifully connected"
+
+#. js-lingui-id: GRAGsB
+#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
+msgid "Your workspace"
+msgstr "Your workspace"

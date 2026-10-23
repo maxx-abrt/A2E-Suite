@@ -7,8 +7,11 @@ import {
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 
 export const SignInUpGlobalScopeFormEffect = () => {
+  const { workspaceInviteHash } = useParams();
   const signInUpStep = useAtomStateValue(signInUpStepState);
   const { navigateAfterMultiWorkspaceSignInUp } = useAuth();
   const { loadCurrentUser } = useLoadCurrentUser();
@@ -23,11 +26,13 @@ export const SignInUpGlobalScopeFormEffect = () => {
       );
     };
 
-    if (signInUpStep !== SignInUpStep.Init) return;
+    if (signInUpStep !== SignInUpStep.Init || isDefined(workspaceInviteHash))
+      return;
     if (!isLogged) return;
 
     void resumeOnCentralDomain();
   }, [
+    workspaceInviteHash,
     loadCurrentUser,
     signInUpStep,
     isLogged,
