@@ -4,6 +4,7 @@ import { BureauCoverPicker } from '@/bureau/components/BureauCoverPicker';
 import { BureauIconPicker } from '@/bureau/components/BureauIconPicker';
 import { BureauPageActionsDropdown } from '@/bureau/components/BureauPageActionsDropdown';
 import { BureauPageIcon } from '@/bureau/components/BureauPageIcon';
+import { LinkToRecordButton } from '@/a2e-links/components/LinkToRecordButton';
 import { BUREAU_PAGE_RECORD_GQL_FIELDS } from '@/bureau/constants/BureauPageRecordGqlFields';
 import { useBureauTextInputFocus } from '@/bureau/hooks/useBureauTextInputFocus';
 import { useBureauWorkspace } from '@/bureau/hooks/useBureauWorkspace';
@@ -220,6 +221,10 @@ const BureauPageViewContent = ({ page }: { page: BureauPageRecord }) => {
       <StyledTopBar>
         <BureauBreadcrumbs page={page} />
         <StyledActions>
+          <LinkToRecordButton
+            sourceObjectNameSingular="document"
+            sourceRecordId={page.id}
+          />
           <LightIconButton
             Icon={IconStar}
             aria-label={

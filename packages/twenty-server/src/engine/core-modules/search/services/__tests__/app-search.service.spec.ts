@@ -11,6 +11,9 @@ const APP_B = '22222222-2222-4222-8222-222222222222';
 const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
 describe('AppSearchService', () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
   const buildService = (
     providers: Array<{
       appUniversalIdentifier: string;
@@ -128,6 +131,59 @@ describe('AppSearchService', () => {
 
     expect(result).toHaveLength(1);
     expect(result[0].appUniversalIdentifier).toBe(APP_B);
+  });
+
+  it('returns healthy results when another provider never responds', async () => {
+    jest.useFakeTimers();
+    const stalledProvider: SearchProvider = {
+      search: () => new Promise(() => {}),
+    };
+    const service = buildService([
+      { appUniversalIdentifier: APP_A, provider: stalledProvider },
+      {
+        appUniversalIdentifier: APP_B,
+        provider: buildProvider([
+          { recordId: 'record-2', label: 'Second', path: '/x/record-2' },
+        ]),
+      },
+    ]);
+    const result = service.searchInstalledAppRecords({
+      searchInput: 'second',
+      workspaceId: WORKSPACE_ID,
+      installedAppUniversalIdentifiers: [APP_A, APP_B],
+    });
+
+    await jest.advanceTimersByTimeAsync(750);
+
+    await expect(result).resolves.toEqual([
+      expect.objectContaining({ appUniversalIdentifier: APP_B }),
+    ]);
+    expect(jest.getTimerCount()).toBe(0);
+  });
+
+  it('bounds oversized provider results and clears successful deadlines', async () => {
+    jest.useFakeTimers();
+    const service = buildService([
+      {
+        appUniversalIdentifier: APP_A,
+        provider: buildProvider(
+          Array.from({ length: 20 }, (_, index) => ({
+            recordId: `record-${index}`,
+            label: `Record ${index}`,
+            path: `/x/record-${index}`,
+          })),
+        ),
+      },
+    ]);
+
+    const result = await service.searchInstalledAppRecords({
+      searchInput: 'record',
+      workspaceId: WORKSPACE_ID,
+      installedAppUniversalIdentifiers: [APP_A],
+    });
+
+    expect(result[0].records).toHaveLength(5);
+    expect(jest.getTimerCount()).toBe(0);
   });
 
   it('forwards searchInput, limit and workspaceId to providers', async () => {

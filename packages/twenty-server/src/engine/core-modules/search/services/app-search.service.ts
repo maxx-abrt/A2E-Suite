@@ -6,8 +6,10 @@ import { type AppSearchRecordDTO } from 'src/engine/core-modules/search/dtos/app
 import { type AppSearchResultGroupDTO } from 'src/engine/core-modules/search/dtos/app-search-result-group.dto';
 import { SearchProviderRegistryService } from 'src/engine/core-modules/search/services/search-provider-registry.service';
 import { type SearchProviderResultItem } from 'src/engine/core-modules/search/types/search-provider.type';
+import { withDeadline } from 'src/utils/with-deadline';
 
 const MAX_RECORDS_PER_APP = 5;
+const APP_SEARCH_PROVIDER_TIMEOUT_MS = 750;
 
 @Injectable()
 export class AppSearchService {
@@ -43,13 +45,18 @@ export class AppSearchService {
           provider,
         }): Promise<AppSearchResultGroupDTO | null> => {
           try {
-            const { items } = await provider.search({
-              searchInput,
-              limit: MAX_RECORDS_PER_APP,
-              workspaceId,
+            const { items } = await withDeadline({
+              promise: provider.search({
+                searchInput,
+                limit: MAX_RECORDS_PER_APP,
+                workspaceId,
+              }),
+              timeoutMs: APP_SEARCH_PROVIDER_TIMEOUT_MS,
+              createTimeoutError: () =>
+                new Error('App search provider exceeded its response budget'),
             });
 
-            const records = items.map(
+            const records = items.slice(0, MAX_RECORDS_PER_APP).map(
               (item: SearchProviderResultItem): AppSearchRecordDTO => ({
                 recordId: item.recordId,
                 label: item.label,

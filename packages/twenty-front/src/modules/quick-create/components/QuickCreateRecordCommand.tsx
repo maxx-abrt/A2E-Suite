@@ -11,6 +11,7 @@ import {
 } from '@/quick-create/utils/buildQuickCreatePreLinkEndpoints';
 import { type QuickCreateSourceRecord } from '@/quick-create/utils/resolveQuickCreateSourceRecord';
 import { useCallback } from 'react';
+import { QuickCreateWorkRecordCommandItem } from '@/quick-create/components/QuickCreateWorkRecordCommandItem';
 import { isDefined } from 'twenty-shared/utils';
 
 type QuickCreateRecordCommandProps = {
@@ -29,14 +30,8 @@ type QuickCreateRecordCommandWithoutPreLinkProps = {
   withCreateChooser: boolean;
 };
 
-// Split so `useCreateA2eLink` (which reads the a2eLink object metadata and would
-// throw while a2e-links is absent) is only mounted when a pre-link will actually
-// be written — the LinkToRecordButton outer/inner gate.
-//
-// The page command is the first surface to adopt the M13a create chooser
-// (QuickCreateRecordCommandWithChooser): its blank path is the exact create the
-// command performed before, so existing behaviour is unchanged when the chooser
-// is dismissed with Blank.
+// The link hook requires installed junction metadata, so only the linked branch
+// mounts it. Both branches share the same title-first task/project entry.
 export const QuickCreateRecordCommand = ({
   command,
   sourceRecord,
@@ -80,22 +75,19 @@ const QuickCreateRecordCommandWithoutPreLink = ({
     objectNameSingular: command.objectNameSingular,
   });
 
-  const handleClick = useCallback(() => {
-    void createQuickCreateRecord();
-  }, [createQuickCreateRecord]);
-
-  if (withCreateChooser) {
-    return (
-      <QuickCreateRecordCommandWithChooser
-        command={command}
-        category="Pages"
-        onBlank={handleClick}
-      />
-    );
-  }
+  const handleCreate = useCallback(
+    async (title?: string) => {
+      await createQuickCreateRecord(title);
+    },
+    [createQuickCreateRecord],
+  );
 
   return (
-    <QuickCreateRecordCommandItem command={command} onClick={handleClick} />
+    <QuickCreateRecordCommandAction
+      command={command}
+      withCreateChooser={withCreateChooser}
+      onCreate={handleCreate}
+    />
   );
 };
 
@@ -110,13 +102,11 @@ const QuickCreateRecordCommandWithPreLink = ({
   });
   const { createA2eLink } = useCreateA2eLink();
 
-  const handleClick = useCallback(() => {
-    void (async () => {
-      const createdRecord = await createQuickCreateRecord();
+  const handleCreate = useCallback(
+    async (title?: string) => {
+      const createdRecord = await createQuickCreateRecord(title);
 
-      if (!isDefined(createdRecord)) {
-        return;
-      }
+      if (!isDefined(createdRecord)) return;
 
       await createA2eLink(
         buildQuickCreatePreLinkEndpoints({
@@ -126,14 +116,39 @@ const QuickCreateRecordCommandWithPreLink = ({
           createdRecordId: createdRecord.id,
         }),
       );
-    })();
-  }, [
-    command.objectNameSingular,
-    createA2eLink,
-    createQuickCreateRecord,
-    sourceRecord.objectNameSingular,
-    sourceRecord.recordId,
-  ]);
+    },
+    [
+      command.objectNameSingular,
+      createA2eLink,
+      createQuickCreateRecord,
+      sourceRecord.objectNameSingular,
+      sourceRecord.recordId,
+    ],
+  );
+
+  return (
+    <QuickCreateRecordCommandAction
+      command={command}
+      withCreateChooser={withCreateChooser}
+      onCreate={handleCreate}
+    />
+  );
+};
+
+type QuickCreateRecordCommandActionProps = {
+  command: QuickCreateCommand;
+  withCreateChooser: boolean;
+  onCreate: (title?: string) => Promise<void>;
+};
+
+const QuickCreateRecordCommandAction = ({
+  command,
+  withCreateChooser,
+  onCreate,
+}: QuickCreateRecordCommandActionProps) => {
+  const handleClick = () => {
+    void onCreate();
+  };
 
   if (withCreateChooser) {
     return (
@@ -142,6 +157,15 @@ const QuickCreateRecordCommandWithPreLink = ({
         category="Pages"
         onBlank={handleClick}
       />
+    );
+  }
+
+  if (
+    command.objectNameSingular === 'task' ||
+    command.objectNameSingular === 'project'
+  ) {
+    return (
+      <QuickCreateWorkRecordCommandItem command={command} onCreate={onCreate} />
     );
   }
 

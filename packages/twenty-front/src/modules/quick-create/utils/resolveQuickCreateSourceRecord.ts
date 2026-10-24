@@ -7,21 +7,21 @@ export type QuickCreateSourceRecord = {
   recordId: string;
 };
 
-// The current record a Cmd+K creation should pre-link to. Only a record page
-// exposes one: the record page seeds the context store with a single selected
-// record (`RecordShowContainerContextStoreTargetedRecordsEffect`), so a
-// standalone/index page yields null and creation proceeds unlinked.
 export const resolveQuickCreateSourceRecord = ({
   pageType,
   objectNameSingular,
   selectedRecordIds,
+  bureauDocumentId,
 }: {
   pageType: ContextStorePageType | undefined;
   objectNameSingular: string | undefined;
   selectedRecordIds: string[];
+  bureauDocumentId?: string;
 }): QuickCreateSourceRecord | null => {
   if (pageType !== ContextStorePageType.Record) {
-    return null;
+    return isNonEmptyString(bureauDocumentId)
+      ? { objectNameSingular: 'document', recordId: bureauDocumentId }
+      : null;
   }
 
   const recordId = selectedRecordIds[0];

@@ -49,7 +49,11 @@ const renderCheckbox = (isReadOnly = false) => {
   const openDetails = jest.fn();
   render(
     <I18nProvider i18n={i18n}>
-      <div onClick={openDetails}>
+      <div
+        onClick={openDetails}
+        onMouseDown={openDetails}
+        onPointerDown={openDetails}
+      >
         <TaskCompletionCheckbox taskId="task" isReadOnly={isReadOnly} />
       </div>
     </I18nProvider>,

@@ -6,24 +6,23 @@ import {
 import { QUICK_CREATE_EVENT_DURATION_MILLISECONDS } from '@/quick-create/constants/QuickCreateEventDurationMilliseconds';
 import { QUICK_CREATE_EXPENSE_ENTRY_TYPE } from '@/quick-create/constants/QuickCreateExpenseEntryType';
 
-// Minimal input per entry: the create primitive mints the id and lets the
-// object's own defaults fill the rest. Creating title/name-empty and opening
-// the record lets the user name it in place (the M8e untitled-page pattern).
 // `at` is injected so the event input is deterministic under test.
 export const buildQuickCreateRecordInput = ({
   commandId,
   at,
+  title,
 }: {
   commandId: QuickCreateCommandId;
   at: Date;
+  title?: string;
 }): Partial<ObjectRecord> => {
   switch (commandId) {
     case QUICK_CREATE_COMMAND_IDS.page:
       return { title: '' };
     case QUICK_CREATE_COMMAND_IDS.task:
-      return { title: '' };
+      return { title: title?.trim() ?? '' };
     case QUICK_CREATE_COMMAND_IDS.project:
-      return { name: '' };
+      return { name: title?.trim() ?? '' };
     case QUICK_CREATE_COMMAND_IDS.event:
       return {
         title: '',

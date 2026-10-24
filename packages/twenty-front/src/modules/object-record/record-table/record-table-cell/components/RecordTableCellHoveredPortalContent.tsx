@@ -1,4 +1,4 @@
-import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
+import { RecordTableCellDisplay } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDisplay';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldFocusStaticFocusedProvider } from '@/object-record/record-field/ui/contexts/FieldFocusContextProvider';
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
@@ -87,7 +87,7 @@ export const RecordTableCellHoveredPortalContent = () => {
           </RecordTableCellEditMode>
         ) : (
           <RecordTableCellDisplayMode>
-            <FieldDisplay />
+            <RecordTableCellDisplay />
           </RecordTableCellDisplayMode>
         )}
       </FieldFocusStaticFocusedProvider>

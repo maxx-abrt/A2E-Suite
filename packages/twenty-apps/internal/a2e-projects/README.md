@@ -16,7 +16,8 @@ journey are not proven by their presence.
 To register, publish and install it on a disposable workspace, follow the
 [applications runbook](../../../../docs/applications.md). The app pins an
 older SDK than the workspace; check compatibility before promising an
-installation. Projects is not listed in the current workspace presets.
+installation. Projects is included with Bureau Pages and Discussions in all
+non-CRM workspace presets; CRM navigation remains opt-in.
 
 ## Where users find it
 

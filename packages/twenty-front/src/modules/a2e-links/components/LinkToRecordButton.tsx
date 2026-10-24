@@ -10,12 +10,12 @@ import { filterLinkableObjectMetadataItems } from '@/a2e-links/utils/filterLinka
 import { shouldShowA2eLinkAction } from '@/a2e-links/utils/shouldShowA2eLinkAction';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
+import { A2E_LINK_OBJECT_NAME_SINGULAR } from '@/a2e-links/constants/A2eLinkObjectNameSingular';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-
-const LINK_TO_RECORD_DROPDOWN_ID = 'link-to-record-dropdown';
 
 type LinkToRecordButtonProps = {
   sourceObjectNameSingular: string;
@@ -58,6 +58,11 @@ const LinkToRecordButtonContent = ({
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { createA2eLink } = useCreateA2eLink();
   const { closeDropdown } = useCloseDropdown();
+  const dropdownId = `link-to-record-${sourceObjectNameSingular}-${sourceRecordId}`;
+  const linkObjectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular === A2E_LINK_OBJECT_NAME_SINGULAR,
+  );
 
   const linkableObjectMetadataItems = useMemo(
     () =>
@@ -77,8 +82,8 @@ const LinkToRecordButtonContent = ({
   );
 
   const handleClose = useCallback(() => {
-    closeDropdown(LINK_TO_RECORD_DROPDOWN_ID);
-  }, [closeDropdown]);
+    closeDropdown(dropdownId);
+  }, [closeDropdown, dropdownId]);
 
   const handleMorphItemSelected = useCallback(
     (selectedMorphItem?: RecordPickerPickableMorphItem) => {
@@ -113,26 +118,37 @@ const LinkToRecordButtonContent = ({
     ],
   );
 
-  if (objectNameSingulars.length === 0) {
+  if (
+    objectNameSingulars.length === 0 ||
+    !isDefined(linkObjectMetadataItem) ||
+    objectPermissionsByObjectMetadataId[linkObjectMetadataItem.id]
+      ?.canReadObjectRecords !== true ||
+    !canCreateRecordsForObjectMetadataItem({
+      objectMetadataItem: linkObjectMetadataItem,
+      objectPermissions:
+        objectPermissionsByObjectMetadataId[linkObjectMetadataItem.id],
+    })
+  ) {
     return null;
   }
 
   return (
     <Dropdown
-      dropdownId={LINK_TO_RECORD_DROPDOWN_ID}
+      dropdownId={dropdownId}
       dropdownPlacement="bottom-end"
       clickableComponent={
         <Button
           Icon={IconLink}
           title={t`Link…`}
+          ariaLabel={t`Link to a record`}
           variant="secondary"
           size="small"
         />
       }
       dropdownComponents={
         <SingleRecordPicker
-          focusId={LINK_TO_RECORD_DROPDOWN_ID}
-          componentInstanceId={LINK_TO_RECORD_DROPDOWN_ID}
+          focusId={dropdownId}
+          componentInstanceId={dropdownId}
           onCancel={handleClose}
           onMorphItemSelected={handleMorphItemSelected}
           objectNameSingulars={objectNameSingulars}

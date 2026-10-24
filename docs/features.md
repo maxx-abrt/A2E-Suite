@@ -23,11 +23,11 @@ The suite has two kinds of surface:
 
 | Product | Package | Display name | In A2E allowlist / presets | Feature guide |
 | --- | --- | --- | --- | --- |
-| Documents | `a2e-documents` | A2E Documents | Yes (all non-CRM presets) | [README](../packages/twenty-apps/internal/a2e-documents/README.md) |
+| Documents | `a2e-documents` | Bureau | Yes (all non-CRM presets) | [README](../packages/twenty-apps/internal/a2e-documents/README.md) |
 | Bilan | `a2e-accounting` | Bilan | Yes (Non-profit, Small business) | [README](../packages/twenty-apps/internal/a2e-accounting/README.md) |
-| Projects | `a2e-projects` | A2E Projects | No | [README](../packages/twenty-apps/internal/a2e-projects/README.md) |
+| Projects | `a2e-projects` | Bureau Projets | Yes (all non-CRM presets) | [README](../packages/twenty-apps/internal/a2e-projects/README.md) |
 | Drive | `a2e-drive` | A2E Drive | No | [README](../packages/twenty-apps/internal/a2e-drive/README.md) |
-| Chat | `a2e-chat` | A2E Chat | No | [README](../packages/twenty-apps/internal/a2e-chat/README.md) |
+| Chat | `a2e-chat` | Bureau Discussions | Yes (all non-CRM presets) | [README](../packages/twenty-apps/internal/a2e-chat/README.md) |
 | CRM assistant | `a2e-crm` | A2E CRM | Allowlist only (no preset) | [README](../packages/twenty-apps/internal/a2e-crm/README.md) |
 
 **Bureau** is not a separate app: it is the intended work/knowledge experience
@@ -52,7 +52,12 @@ Twenty's native task engine, with a Kanban board, a monthly calendar, a Gantt
 view, time tracking, human-readable task IDs (`KEY-n`), retroplanning and a
 recurring-task workflow recipe. Twelve starter projects seed on install. See the
 [Projects README](../packages/twenty-apps/internal/a2e-projects/README.md).
-The "extract tasks from a document" AI tool is a deliberate stub.
+The "extract tasks from a document" tool produces read-only proposals from
+document content under caller permissions; creating tasks is a separate action.
+Native task/project indexes and the Bureau task sheet support title-first
+capture and direct task completion. Global task/project commands reuse the same
+capture form; failed creation retains the draft instead of leaving an empty
+record. Deployment and end-to-end acceptance remain separate from source presence.
 
 ## Bilan
 

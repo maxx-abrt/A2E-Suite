@@ -1,4 +1,4 @@
-import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
+import { RecordTableCellDisplay } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDisplay';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -67,7 +67,7 @@ export const RecordTableCellFocusedPortalContent = () => {
       onMouseMove={handleContainerMouseMove}
     >
       <RecordTableCellDisplayMode>
-        <FieldDisplay />
+        <RecordTableCellDisplay />
       </RecordTableCellDisplayMode>
     </StyledRecordTableCellFocusPortalContent>
   );
