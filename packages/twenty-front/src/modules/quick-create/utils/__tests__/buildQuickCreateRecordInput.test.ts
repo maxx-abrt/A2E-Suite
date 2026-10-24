@@ -4,6 +4,18 @@ import { buildQuickCreateRecordInput } from '@/quick-create/utils/buildQuickCrea
 const at = new Date('2026-10-01T09:00:00.000Z');
 
 describe('buildQuickCreateRecordInput', () => {
+  it.each([
+    [QUICK_CREATE_COMMAND_IDS.task, { title: 'Ship the report' }],
+    [QUICK_CREATE_COMMAND_IDS.project, { name: 'Ship the report' }],
+  ])('uses the captured title for %s', (commandId, expectedInput) => {
+    expect(
+      buildQuickCreateRecordInput({
+        commandId,
+        at,
+        title: '  Ship the report  ',
+      }),
+    ).toEqual(expectedInput);
+  });
   it('creates an untitled page through the document primitive', () => {
     expect(
       buildQuickCreateRecordInput({

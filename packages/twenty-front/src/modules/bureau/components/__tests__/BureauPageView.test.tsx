@@ -10,6 +10,11 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 const mockUpdatePage = jest.fn();
+jest.mock('@/a2e-links/components/LinkToRecordButton', () => ({
+  LinkToRecordButton: ({ sourceRecordId }: { sourceRecordId: string }) => (
+    <button>Link {sourceRecordId}</button>
+  ),
+}));
 const mockSeededRecords: BureauPageRecord[] = [];
 const mockUpsertRecordsInStore = jest.fn(
   ({ partialRecords }: { partialRecords: BureauPageRecord[] }) => {

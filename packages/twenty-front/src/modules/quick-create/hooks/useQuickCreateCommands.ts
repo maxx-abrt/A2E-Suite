@@ -13,6 +13,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { t } from '@lingui/core/macro';
 import { type IconComponent } from 'twenty-ui/icon';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
+import { isDefined } from 'twenty-shared/utils';
 
 export type QuickCreateCommand = {
   commandId: QuickCreateCommandId;
@@ -54,6 +58,8 @@ export const useQuickCreateCommands = () => {
   const isProjectsInstalled = useIsA2eProjectsApplicationInstalled();
   const isAccountingInstalled = useIsA2eAccountingApplicationInstalled();
   const isDriveInstalled = useIsDriveApplicationInstalled();
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const availableConfigs = resolveAvailableQuickCreateCommandConfigs({
     isDocumentsInstalled,
@@ -65,6 +71,23 @@ export const useQuickCreateCommands = () => {
   const normalizedSearch = normalizeSearchText(sidePanelSearch.trim());
 
   const quickCreateCommands: QuickCreateCommand[] = availableConfigs
+    .filter((config) => {
+      if (config.isFileUpload) return true;
+      const objectMetadataItem = objectMetadataItems.find(
+        (item) => item.nameSingular === config.objectNameSingular,
+      );
+      const objectPermissions = isDefined(objectMetadataItem)
+        ? objectPermissionsByObjectMetadataId[objectMetadataItem.id]
+        : undefined;
+      return (
+        isDefined(objectMetadataItem) &&
+        objectPermissions?.canReadObjectRecords === true &&
+        canCreateRecordsForObjectMetadataItem({
+          objectMetadataItem,
+          objectPermissions,
+        })
+      );
+    })
     .map((config) => ({
       commandId: config.commandId,
       id: config.commandId,

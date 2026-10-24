@@ -27,6 +27,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { useContext, useMemo } from 'react';
+import { useMatch } from 'react-router-dom';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 export const SidePanelCommandMenuItemDisplayPage = () => {
@@ -44,6 +45,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     useQuickCaptureCommand();
 
   const { quickCreateCommands } = useQuickCreateCommands();
+  const bureauPageMatch = useMatch('/bureau/:documentId');
 
   const { templatesCommandId, shouldDisplayTemplatesCommand } =
     useTemplatesCommand();
@@ -60,6 +62,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     selectedRecordIds: commandMenuContextApi.selectedRecords.map(
       (record) => record.id,
     ),
+    bureauDocumentId: bureauPageMatch?.params.documentId,
   });
 
   // The command menu list surfaces whatever overflowed out of the page header.

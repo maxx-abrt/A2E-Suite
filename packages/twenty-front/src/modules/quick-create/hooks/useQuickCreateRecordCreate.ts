@@ -6,11 +6,8 @@ import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSide
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
-// One create path for every "Create…" record entry: the native
-// `useCreateOneRecord` primitive (no new mutation) plus the existing
-// side-panel-open helper, so the created item lands where its object says. The
-// caller layers the optional a2eLink pre-link on top of the returned id.
 export const useQuickCreateRecordCreate = ({
   commandId,
   objectNameSingular,
@@ -22,36 +19,44 @@ export const useQuickCreateRecordCreate = ({
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const createQuickCreateRecord = useCallback(async (): Promise<{
-    id: string;
-  } | null> => {
-    try {
-      const createdRecord: ObjectRecord = await createOneRecord(
-        buildQuickCreateRecordInput({ commandId, at: new Date() }),
-      );
+  const createQuickCreateRecord = useCallback(
+    async (
+      title?: string,
+    ): Promise<{
+      id: string;
+    } | null> => {
+      try {
+        const createdRecord: ObjectRecord = await createOneRecord(
+          buildQuickCreateRecordInput({ commandId, at: new Date(), title }),
+        );
 
-      openRecordInSidePanel({
-        recordId: createdRecord.id,
-        objectNameSingular,
-        isNewRecord: true,
-        resetNavigationStack: true,
-      });
+        if (!isDefined(title)) {
+          openRecordInSidePanel({
+            recordId: createdRecord.id,
+            objectNameSingular,
+            isNewRecord: true,
+            resetNavigationStack: true,
+          });
+        }
 
-      return { id: createdRecord.id };
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Could not create the record. Please try again.`,
-      });
+        return { id: createdRecord.id };
+      } catch (error) {
+        if (isDefined(title)) throw error;
+        enqueueErrorSnackBar({
+          message: t`Could not create the record. Please try again.`,
+        });
 
-      return null;
-    }
-  }, [
-    commandId,
-    createOneRecord,
-    enqueueErrorSnackBar,
-    objectNameSingular,
-    openRecordInSidePanel,
-  ]);
+        return null;
+      }
+    },
+    [
+      commandId,
+      createOneRecord,
+      enqueueErrorSnackBar,
+      objectNameSingular,
+      openRecordInSidePanel,
+    ],
+  );
 
   return { createQuickCreateRecord };
 };

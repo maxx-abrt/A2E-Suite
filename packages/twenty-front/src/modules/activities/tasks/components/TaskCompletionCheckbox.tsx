@@ -47,7 +47,9 @@ export const TaskCompletionCheckbox = ({
 
   return (
     <span
+      data-select-disable="true"
       onClick={(event) => event.stopPropagation()}
+      onMouseDown={(event) => event.stopPropagation()}
       onPointerDown={(event) => event.stopPropagation()}
       onKeyDown={(event) => event.stopPropagation()}
     >
