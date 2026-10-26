@@ -303,6 +303,43 @@ current authentication and recovery gaps.
 
 ## Troubleshooting
 
+### Server unhealthy after a successful upgrade
+
+`Upgrade summary: ... 0 workspace(s) failed` followed by `Message queue
+shutdown complete` is the normal end of the **upgrade CLI**, not evidence that
+the HTTP server started. The entrypoint still has to flush caches, provision
+bundled apps, install them and register jobs before starting the server.
+New images print `[startup] step=... status=started|succeeded|failed` with
+duration and failure exit code, then `step=runtime status=starting`.
+
+The CLI now always closes its Nest application after command execution and
+explicitly exits after draining output. A retained library socket can otherwise
+leave a successful upgrade alive and block every later entrypoint step. Cleanup
+has a 30-second deadline that exits **nonzero** on a stalled hook; migration
+execution itself has no new deadline. Command errors and interruption statuses
+remain failures. This change requires a rebuilt image; editing saved Compose
+alone cannot change the CLI inside an existing image.
+
+On the Docker host, inspect the existing server container (replace the name
+with the one from the failed deployment):
+
+```sh
+docker inspect --format '{{json .State}}' server-qaegxmt0bkr7e3bizqifg05r
+docker inspect --format 'image={{.Config.Image}} image_id={{.Image}}' server-qaegxmt0bkr7e3bizqifg05r
+docker logs --timestamps --tail 2000 server-qaegxmt0bkr7e3bizqifg05r
+```
+
+The state includes the actual health-probe output, exit code and OOM flag.
+Connection refused means no HTTP listener answered; HTTP 503 with database or
+Redis details means the listener is running but a dependency is unavailable.
+Check the first failed or unfinished startup step before changing timeouts.
+The worker waiting for `service_healthy` is expected while the server is
+unhealthy. Preserve the service, database/file volumes and existing secrets.
+
+The 2026-10-26 supplied log excerpt ends after two successful workspace
+upgrades. It contains neither a server startup error nor the failing probe;
+that excerpt alone cannot establish the deployment's root cause.
+
 | Symptom                                  | Cause / fix                                                            |
 | ---------------------------------------- | ---------------------------------------------------------------------- |
 | `Resolved file: null/...` on repo screen | Base directory not empty → clear it (Part 3)                           |
@@ -421,7 +458,7 @@ node packages/twenty-docker/scripts/verify-account-entry.mjs \
   --revision <full-40-character-commit-sha>
 ```
 
-This requires `appRevision` from `/client-config` and `revision` from
+This requires healthy database/Redis checks from `/readyz`, `appRevision` from `/client-config` and `revision` from
 `/release.json` to match the expected SHA, both account/workspace flags true, and the configured
 frontend host to match the requested host. An old SPA HTML fallback at
 `/release.json` fails. A successful check establishes deployment identity and

@@ -180,7 +180,7 @@ const readComposeServices = (relativePath: string): ComposeService[] =>
 
 describe('bundled app provisioning boot contract (entrypoint.sh)', () => {
   it('provisions after the upgrade, then installs, on the migrating server', () => {
-    const { yarnCalls } = runEntrypoint({});
+    const { yarnCalls, output } = runEntrypoint({});
 
     expect(yarnCalls).toEqual([
       'command:prod cache:flush',
@@ -191,6 +191,13 @@ describe('bundled app provisioning boot contract (entrypoint.sh)', () => {
       'command:prod cache:flush',
       'command:prod cron:register:all',
     ]);
+    expect(output).toContain(
+      '[startup] step=database-upgrade status=succeeded',
+    );
+    expect(output).toContain(
+      '[startup] step=bundled-app-installation status=succeeded',
+    );
+    expect(output).toContain('[startup] step=runtime status=starting');
   });
 
   it('treats the empty value rendered by a compose passthrough as enabled', () => {
@@ -248,7 +255,7 @@ describe('bundled app provisioning boot contract (entrypoint.sh)', () => {
     ]);
   });
 
-  it.each([PROVISION_BUNDLED, INSTALL_PRE_INSTALLED])(
+  it.each([UPGRADE, PROVISION_BUNDLED, INSTALL_PRE_INSTALLED])(
     'refuses to start after %s fails',
     (command) => {
       expect(() =>
@@ -256,6 +263,12 @@ describe('bundled app provisioning boot contract (entrypoint.sh)', () => {
       ).toThrow();
     },
   );
+
+  it('identifies the failed startup step and its exit code', () => {
+    expect(() => runEntrypoint({ STUB_FAIL_YARN_COMMAND: UPGRADE })).toThrow(
+      '[startup] step=database-upgrade status=failed exit_code=1',
+    );
+  });
 });
 
 describe('bundled app provisioning in shipped deployment manifests', () => {

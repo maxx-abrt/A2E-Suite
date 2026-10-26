@@ -4,7 +4,7 @@ import { buildTemplateGalleryItems } from '@/template-gallery/utils/buildTemplat
 import { collectTemplateDescriptorLogicFunctions } from '@/template-gallery/utils/collectTemplateDescriptorLogicFunctions';
 import { HOST_TEMPLATE_DESCRIPTOR_GROUPS } from '@/template-gallery/constants/HostTemplateDescriptorGroups';
 import { type TemplateGalleryDescriptorGroup } from '@/template-gallery/types/TemplateGalleryDescriptorGroup';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ExecuteOneLogicFunctionDocument,
   type ExecuteOneLogicFunctionMutation,
@@ -25,6 +25,7 @@ export const useTemplateGalleryItems = (): {
   items: ReturnType<typeof buildTemplateGalleryItems>;
   isLoading: boolean;
   hasError: boolean;
+  retry: () => void;
 } => {
   const applications = useAtomStateValue(applicationsSelector);
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
@@ -38,6 +39,11 @@ export const useTemplateGalleryItems = (): {
   >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const retry = useCallback(
+    () => setRetryCount((previous) => previous + 1),
+    [],
+  );
 
   const targets = useMemo(
     () =>
@@ -52,31 +58,27 @@ export const useTemplateGalleryItems = (): {
       setIsLoading(true);
       setHasError(false);
 
-      const groups: TemplateGalleryDescriptorGroup[] = [];
-      let encounteredError = false;
-
-      for (const target of targets) {
-        try {
+      const results = await Promise.allSettled(
+        targets.map(async (target) => {
           const result = await executeOneLogicFunction({
-            variables: {
-              input: { id: target.logicFunctionId, payload: {} },
-            },
+            variables: { input: { id: target.logicFunctionId, payload: {} } },
           });
-
-          const templates = extractTemplateDescriptors(
-            result.data?.executeOneLogicFunction?.data,
-          );
-
-          groups.push({
+          return {
             applicationUniversalIdentifier:
               target.application.universalIdentifier,
             applicationName: target.application.name,
-            templates,
-          });
-        } catch {
-          encounteredError = true;
-        }
-      }
+            templates: extractTemplateDescriptors(
+              result.data?.executeOneLogicFunction?.data,
+            ),
+          } satisfies TemplateGalleryDescriptorGroup;
+        }),
+      );
+      const groups = results.flatMap((result) =>
+        result.status === 'fulfilled' ? [result.value] : [],
+      );
+      const encounteredError = results.some(
+        (result) => result.status === 'rejected',
+      );
 
       if (!isCancelled) {
         setDescriptorGroups(groups);
@@ -90,14 +92,20 @@ export const useTemplateGalleryItems = (): {
     return () => {
       isCancelled = true;
     };
-  }, [targets, executeOneLogicFunction]);
+  }, [targets, executeOneLogicFunction, retryCount]);
 
   const items = useMemo(
     () =>
       buildTemplateGalleryItems({
         descriptorGroups: [
           ...HOST_TEMPLATE_DESCRIPTOR_GROUPS,
-          ...descriptorGroups,
+          ...descriptorGroups.filter((group) =>
+            applications.some(
+              (application) =>
+                application.universalIdentifier ===
+                group.applicationUniversalIdentifier,
+            ),
+          ),
         ],
         installedApplicationUniversalIdentifiers: applications.map(
           (application) => application.universalIdentifier,
@@ -106,7 +114,7 @@ export const useTemplateGalleryItems = (): {
     [descriptorGroups, applications],
   );
 
-  return { items, isLoading, hasError };
+  return { items, isLoading, hasError, retry };
 };
 
 // A logic function returns plain JSON across the boundary; only well-formed C1

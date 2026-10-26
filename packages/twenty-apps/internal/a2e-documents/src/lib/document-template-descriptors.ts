@@ -22,18 +22,18 @@ export const DOCUMENTS_REQUIRED_APPS: string[] = [];
 // entry here falls back to its French title, which keeps the contract valid
 // (fr+en non-empty) without inventing a translation at runtime.
 const DOCUMENT_TEMPLATE_EN_LABELS: Record<string, string> = {
-  'notes-reunion': 'Meeting notes',
-  'brief-projet': 'Project brief',
+  'notes-de-reunion': 'Meeting notes',
+  'brief-de-projet': 'Project brief',
   'specifications-produit-prd': 'Product spec (PRD)',
   'entretien-individuel': 'One-on-one',
   journal: 'Journal',
   'revue-hebdomadaire': 'Weekly review',
   'note-quotidienne': 'Daily note',
   okr: 'OKRs',
-  'accueil-wiki-equipe': 'Team wiki home',
-  'guide-integration': 'Onboarding guide',
+  'accueil-du-wiki-d-equipe': 'Team wiki home',
+  'guide-d-integration': 'Onboarding guide',
   'ordre-du-jour-recurrent': 'Recurring meeting agenda',
-  'journal-decisions-adr': 'Decision log (ADR)',
+  'journal-de-decisions-adr': 'Decision log (ADR)',
   retrospective: 'Retrospective',
   brainstorming: 'Brainstorming',
   'liste-de-lecture': 'Reading list',

@@ -12,6 +12,7 @@ import {
   type DateFilter,
   type EmailsFilter,
   type FloatFilter,
+  type FilesFilter,
   type FullNameFilter,
   type IsFilter,
   type LeafObjectRecordFilter,
@@ -37,6 +38,7 @@ import {
   isMatchingCurrencyFilter,
   isMatchingDateFilter,
   isMatchingFloatFilter,
+  isMatchingFilesFilter,
   isMatchingMultiSelectFilter,
   isMatchingRatingFilter,
   isMatchingRawJsonFilter,
@@ -269,6 +271,12 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
           value: recordFieldValue,
         });
       }
+      case FieldMetadataType.FILES: {
+        return isMatchingFilesFilter({
+          filesFilter: filterValue as FilesFilter,
+          value: recordFieldValue,
+        });
+      }
       case FieldMetadataType.RAW_JSON: {
         return isMatchingRawJsonFilter({
           rawJsonFilter: filterValue as RawJsonFilter,
@@ -338,7 +346,11 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       case FieldMetadataType.DATE_TIME: {
         return isMatchingDateFilter({
           dateFilter: filterValue as DateFilter,
-          value: recordFieldValue,
+          // ORM events carry Date objects; the shared matcher expects wire values.
+          value:
+            recordFieldValue instanceof Date
+              ? recordFieldValue.toISOString()
+              : recordFieldValue,
         });
       }
       case FieldMetadataType.NUMBER:

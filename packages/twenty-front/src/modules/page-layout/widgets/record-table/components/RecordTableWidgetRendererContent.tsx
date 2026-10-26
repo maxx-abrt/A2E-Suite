@@ -19,6 +19,7 @@ import { constructViewFromRecordTableWidgetViewSnapshot } from '@/page-layout/wi
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useViewById } from '@/views/hooks/useViewById';
 import { type ReactNode } from 'react';
+import { type View } from '@/views/types/View';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewCalendarLayout, ViewType } from '~/generated-metadata/graphql';
 
@@ -32,6 +33,8 @@ type RecordTableWidgetRendererContentProps = {
   instanceIdSuffix?: string;
   nestedRelationCreateThrough?: RecordTableWidgetNestedRelationCreateThrough;
   junctionCreateThrough?: RecordTableWidgetJunctionCreateThrough;
+  viewOverride?: View;
+  isCreationEnabled?: boolean;
 };
 
 export const RecordTableWidgetRendererContent = ({
@@ -44,6 +47,8 @@ export const RecordTableWidgetRendererContent = ({
   instanceIdSuffix,
   nestedRelationCreateThrough,
   junctionCreateThrough,
+  viewOverride,
+  isCreationEnabled = true,
 }: RecordTableWidgetRendererContentProps) => {
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId,
@@ -61,7 +66,7 @@ export const RecordTableWidgetRendererContent = ({
   const widgetView =
     isPageLayoutInEditMode && isDefined(draftSnapshot)
       ? constructViewFromRecordTableWidgetViewSnapshot(draftSnapshot)
-      : persistedView;
+      : (viewOverride ?? persistedView);
 
   const widgetViewLayout = getRecordTableWidgetLayout(widgetView?.type);
 
@@ -84,6 +89,7 @@ export const RecordTableWidgetRendererContent = ({
   const renderWidgetForLayout = {
     [ViewType.TABLE]: () => (
       <RecordTableWidget
+        isCreationEnabled={isCreationEnabled}
         isUIEditable={isUIEditable}
         isEmptyStateHidden={isEmptyStateHidden}
       />
@@ -104,6 +110,7 @@ export const RecordTableWidgetRendererContent = ({
       instanceIdSuffix={instanceIdSuffix}
       nestedRelationCreateThrough={nestedRelationCreateThrough}
       junctionCreateThrough={junctionCreateThrough}
+      viewOverride={viewOverride}
       contextStoreViewType={getContextStoreViewType(widgetViewLayout)}
     >
       {renderWidgetForLayout[widgetViewLayout]()}

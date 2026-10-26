@@ -204,7 +204,10 @@ export const applyDocumentTemplateByKey = async (
     };
   }
 
-  const installedApplications = await dependencies.getInstalledApplications();
+  // Own-app templates do not require access to workspace application settings.
+  const installedApplications = descriptor.requiredApps.length === 0
+    ? { names: [], universalIdentifiers: [] }
+    : await dependencies.getInstalledApplications();
 
   return applyResolvedDocumentTemplate(
     client,

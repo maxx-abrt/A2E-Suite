@@ -5,11 +5,14 @@
 
 ## Product judgment
 
-The strongest opportunity is a calm operating workspace for small teams that
-connects **knowledge → decisions → commitments → delivery → money**. Start with
-one audience and prove that whole journey. Associations and small service teams
-are promising candidates because Bureau, CRM and Bilan already supply pieces of
-their work. This is a product hypothesis, not evidence of customer demand.
+The strongest opportunity is a calm workspace connecting **knowledge → decisions
+→ commitments → delivery → money**, with relevant entry points for individuals,
+students, small teams, non-profits and small businesses. These are the intended
+audiences, not optional secondary markets. Keep a shared native core and make
+each audience’s first useful workflow obvious. Associations and service teams
+can exercise the finance connection; students and individuals need a useful
+product without CRM or finance. These are product hypotheses, not evidence of
+customer demand.
 
 Trying to exceed every competitor's feature count would make navigation,
 configuration and maintenance worse. A project manager should be able to answer
@@ -76,10 +79,22 @@ retroplanning, funding dossiers and evidence collection as relevant workflows.
 | 7 | Transparent assistance: evidence-linked suggestions, editable previews, reviewed writes, run history and cost visibility | AI becomes an accountable accelerator rather than an unpredictable second interface | M10, P9 |
 | 8 | Mobile/offline capture: explicit local draft state, workspace-scoped replay and conflict recovery | Valuable for field work and associations; it is a storage/synchronization project, not a localStorage patch | P10, C4/C5 |
 
-Choose the initial sector through observed interviews and paid/pilot use. A
-useful first test is whether a team completes a real project cycle and returns
-without help configuring it. Student/personal presets can stay supported;
-they should not force simultaneous investment in unrelated domain workflows.
+Validate each audience through observed interviews and pilot use. Test whether
+someone completes a real cycle and returns without configuration help:
+
+| Audience | First useful cycle | Optional depth |
+| --- | --- | --- |
+| Individual | Capture an idea → plan today → complete/review | Personal goals and journals |
+| Student | Course notes → semester work → deadlines → weekly review | Reading lists and thesis planning |
+| Small team | Meeting → clear owners → delivery review | Shared wiki, dependencies and automation |
+| Non-profit | Meeting/funding deadline → project → budget → evidence | Grant applications and official forms |
+| Small business | Client brief → delivery → invoice → collection | CRM, expenses and cash planning |
+
+Prioritize complete cycles over adding unrelated configuration to every preset.
+A daily task focus follows the established personal-work patterns in
+[Asana My Tasks](https://help.asana.com/s/article/my-tasks),
+[ClickUp Personal List](https://help.clickup.com/hc/en-us/articles/18377842006167-Use-Personal-List)
+and [Notion Home](https://www.notion.com/it/help/home-and-my-tasks).
 
 ## Changes implemented from this audit
 
@@ -101,6 +116,28 @@ The phase report records the actual checks and limits for these increments.
   the existing deadline helper; healthy results survive another provider
   stalling. Results are capped at five per provider. This bounds waiting for
   the provider, not its underlying execution or the whole search endpoint.
+
+## Daily work and starter improvements — 2026-10-25
+
+- Bureau has My tasks, Today, Next 7 days, Overdue and All tasks, plus an
+  explicit return to the chosen saved view. Personal scopes use the current
+  workspace member. Filters use native view state and records, never another
+  task store. Preferences stay scoped to the workspace object and member.
+- Today follows the member’s time zone and midnight/DST boundaries; Next 7 days
+  starts tomorrow. Overdue means before the start of today and disables creation
+  in that review table. Completion uses Projects status when set, otherwise
+  native task status. Show completed is explicit. Existing saved views are kept.
+- A five-audience starter chooser opens existing C1 page/project templates.
+  Project suggestions require Projects; otherwise page alternatives remain.
+  This changes recommendations, not workspace permissions or installed apps.
+- Saved page templates occupy a collapsed sidebar section rather than flooding
+  Pages after an installation or upgrade. They remain editable and accessible.
+- Gallery loads are concurrent with independent app failures and a visible
+  retry. Apply failures are explicit, successful copies have an Open action,
+  and each descriptor keeps its own retry identity. Rapid duplicate applies
+  share an in-flight request.
+
+The broader finance review is in [Qonto-inspired Bilan audit](bilan-qonto-audit-2026-10-25.md).
 
 ## Release and performance measures
 

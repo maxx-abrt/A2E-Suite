@@ -1,6 +1,7 @@
 import { BureauSidebarAction } from '@/bureau/components/BureauSidebarAction';
 import { BureauTreeItem } from '@/bureau/components/BureauTreeItem';
 import { BUREAU_LANDING_TEMPLATE_CATEGORY } from '@/bureau/constants/BureauLandingTemplateCategory';
+import { HOME_DOCUMENT_TEMPLATE_KIND } from '@/home-dashboard/utils/selectRecentPages';
 import { BUREAU_IMPORT_MODAL_ID } from '@/bureau/constants/BureauImportModalId';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { BureauWorkspaceContext } from '@/bureau/contexts/BureauWorkspaceContext';
@@ -43,6 +44,23 @@ const StyledTree = styled.ul`
   padding: 0;
 `;
 
+const StyledSavedTemplates = styled.details`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  > summary {
+    border-radius: ${themeCssVariables.border.radius.sm};
+    cursor: pointer;
+    padding: ${themeCssVariables.spacing[2]};
+    &:hover {
+      background: ${themeCssVariables.background.transparent.light};
+    }
+    &:focus-visible {
+      outline: 2px solid ${themeCssVariables.color.blue};
+      outline-offset: -2px;
+    }
+  }
+`;
+
 // The drawer retains the workspace switcher, app navigation and mobile controls.
 export const BureauNavigation = () => {
   const workspace = useContext(BureauWorkspaceContext);
@@ -70,6 +88,10 @@ const BureauNavigationContent = () => {
   const { openTemplateGallery } = useOpenTemplateGallery();
   const { openModal } = useModal();
   const { pathname } = useLocation();
+  const rootPages = tree.childrenByParentId.get(null) ?? [];
+  const savedTemplates = rootPages.filter(
+    (page) => page.kind === HOME_DOCUMENT_TEMPLATE_KIND,
+  );
 
   return (
     <StyledSection aria-label={t`Bureau pages`}>
@@ -130,10 +152,37 @@ const BureauNavigationContent = () => {
         />
       ) : null}
       <StyledTree role="tree" aria-label={t`Pages`}>
-        {(tree.childrenByParentId.get(null) ?? []).map((page) => (
-          <BureauTreeItem key={page.id} page={page} depth={0} section="pages" />
-        ))}
+        {rootPages
+          .filter((page) => page.kind !== HOME_DOCUMENT_TEMPLATE_KIND)
+          .map((page) => (
+            <BureauTreeItem
+              key={page.id}
+              page={page}
+              depth={0}
+              section="pages"
+            />
+          ))}
       </StyledTree>
+      {savedTemplates.length > 0 && (
+        <StyledSavedTemplates
+          open={
+            savedTemplates.some((page) => page.id === activeDocumentId) ||
+            undefined
+          }
+        >
+          <summary>{t`Saved templates`}</summary>
+          <StyledTree role="tree" aria-label={t`Saved templates`}>
+            {savedTemplates.map((page) => (
+              <BureauTreeItem
+                key={page.id}
+                page={page}
+                depth={0}
+                section="pages"
+              />
+            ))}
+          </StyledTree>
+        </StyledSavedTemplates>
+      )}
       {draggedPageId && (
         <div
           onDragOver={(event) => {

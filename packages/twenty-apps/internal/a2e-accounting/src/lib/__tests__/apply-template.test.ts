@@ -153,3 +153,12 @@ test('re-applying the same operation id creates no duplicate', async () => {
 
   assert.equal(created.length, 1);
 });
+
+test('own-app templates work without application-settings permission', async () => {
+  const { client, created } = buildClient();
+  const result = await applyFicheTemplateByKey(client, { key: 'BUDGET_MENSUEL_PERSONNEL' }, {
+    getInstalledApplications: async () => { throw new Error('Application settings permission denied'); },
+  });
+  assert.equal(result.status, 'applied');
+  assert.ok(created.length > 0);
+});

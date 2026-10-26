@@ -6,12 +6,14 @@ import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/rec
 import { isRecordTableEmptyStateHiddenComponentState } from '@/object-record/record-table/states/isRecordTableEmptyStateHiddenComponentState';
 import { useStore } from 'jotai';
 import { useLayoutEffect } from 'react';
+import { isRecordTableCreationDisabledComponentState } from '@/object-record/record-table/states/isRecordTableCreationDisabledComponentState';
 
 type RecordTableWidgetStatesEffectProps = {
   recordTableId: string;
   isUIEditable?: boolean;
   isPageLayoutInEditMode?: boolean;
   isEmptyStateHidden?: boolean;
+  isCreationEnabled?: boolean;
 };
 
 export const RecordTableWidgetStatesEffect = ({
@@ -19,10 +21,17 @@ export const RecordTableWidgetStatesEffect = ({
   isUIEditable = false,
   isPageLayoutInEditMode = false,
   isEmptyStateHidden = false,
+  isCreationEnabled = true,
 }: RecordTableWidgetStatesEffectProps) => {
   const store = useStore();
 
   useLayoutEffect(() => {
+    store.set(
+      isRecordTableCreationDisabledComponentState.atomFamily({
+        instanceId: recordTableId,
+      }),
+      !isUIEditable || !isCreationEnabled,
+    );
     store.set(
       isRecordTableColumnHeadersReadOnlyComponentState.atomFamily({
         instanceId: recordTableId,
@@ -67,6 +76,12 @@ export const RecordTableWidgetStatesEffect = ({
 
     return () => {
       store.set(
+        isRecordTableCreationDisabledComponentState.atomFamily({
+          instanceId: recordTableId,
+        }),
+        false,
+      );
+      store.set(
         isRecordTableColumnHeadersReadOnlyComponentState.atomFamily({
           instanceId: recordTableId,
         }),
@@ -109,6 +124,7 @@ export const RecordTableWidgetStatesEffect = ({
     isUIEditable,
     isPageLayoutInEditMode,
     isEmptyStateHidden,
+    isCreationEnabled,
   ]);
 
   return null;

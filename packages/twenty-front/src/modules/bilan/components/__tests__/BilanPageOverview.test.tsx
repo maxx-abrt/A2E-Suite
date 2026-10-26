@@ -1,6 +1,6 @@
 import { BilanPageOverview } from '@/bilan/components/BilanPageOverview';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useBilanPageLayouts } from '@/bilan/hooks/useBilanPageLayouts';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
@@ -9,10 +9,20 @@ import { Provider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
+jest.mock(
+  '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
+  () => ({
+    useAtomComponentStateValue: () => ({
+      id: 'workspace-dashboard',
+      universalIdentifier: 'b11a0000-0014-4000-8000-000000000001',
+    }),
+  }),
+);
 const mockOpenTemplates = jest.fn();
-jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
-  useAtomStateValue: jest.fn(),
+jest.mock('@/bilan/components/BilanProfileSetup', () => ({
+  BilanProfileSetup: () => null,
 }));
+jest.mock('@/bilan/hooks/useBilanPageLayouts');
 jest.mock('@/object-metadata/hooks/useReadableObjectMetadataItems', () => ({
   useReadableObjectMetadataItems: jest.fn(),
 }));
@@ -65,7 +75,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   i18n.load('en', {});
   i18n.activate('en');
-  jest.mocked(useAtomStateValue).mockReturnValue([
+  jest.mocked(useBilanPageLayouts).mockReturnValue([
     {
       id: 'workspace-dashboard',
       universalIdentifier: 'b11a0000-0014-4000-8000-000000000001',
@@ -114,4 +124,18 @@ it('leaves unrelated native dashboards alone', () => {
   expect(
     screen.queryByRole('region', { name: 'Bilan overview' }),
   ).not.toBeInTheDocument();
+});
+
+it('links the funding explorer using standalone metadata rather than record layouts', () => {
+  jest.mocked(useBilanPageLayouts).mockReturnValue([
+    {
+      id: 'funding-layout',
+      universalIdentifier: 'b11a0000-0014-4000-8000-000000000002',
+    },
+  ]);
+  renderOverview();
+  expect(screen.getByRole('link', { name: 'Find funding' })).toHaveAttribute(
+    'href',
+    '/page/funding-layout',
+  );
 });

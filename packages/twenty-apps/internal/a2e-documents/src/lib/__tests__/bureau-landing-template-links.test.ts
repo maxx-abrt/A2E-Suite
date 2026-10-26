@@ -77,3 +77,12 @@ test('every featured Bureau landing key resolves to a shipped descriptor', () =>
     );
   }
 });
+
+
+test('all audience page suggestions resolve to shipped C1 templates', () => {
+  const source = readFileSync(join(findRepositoryRoot(), 'packages/twenty-front/src/modules/bureau/constants/BureauStarterProfiles.ts'), 'utf8');
+  const descriptors = new Set(buildDocumentTemplateDescriptors().map((descriptor) => descriptor.key));
+  const keys = [...source.matchAll(/descriptorKey:\s*'([^']+)'/g)].map((match) => match[1]);
+  assert.ok(keys.length >= 12);
+  for (const key of keys) assert.ok(descriptors.has(key), `Unknown audience page template: ${key}`);
+});

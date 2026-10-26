@@ -1,3 +1,4 @@
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { BureauTaskSheet } from '@/bureau/components/BureauTaskSheet';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -14,6 +15,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 jest.mock('@/object-metadata/hooks/useReadableObjectMetadataItems');
+jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue');
 const mockMountCommand = jest.fn();
 jest.mock('@/command-menu-item/engine-command/hooks/useMountCommand', () => ({
   useMountCommand: () => mockMountCommand,
@@ -47,6 +49,19 @@ beforeAll(async () => {
 });
 
 describe('BureauTaskSheet', () => {
+  const originalPointerEvent = window.PointerEvent;
+  beforeAll(() =>
+    Object.defineProperty(window, 'PointerEvent', {
+      configurable: true,
+      value: MouseEvent,
+    }),
+  );
+  afterAll(() =>
+    Object.defineProperty(window, 'PointerEvent', {
+      configurable: true,
+      value: originalPointerEvent,
+    }),
+  );
   it('starts quick entry in the selected embedded view without leaving Bureau', async () => {
     const user = userEvent.setup();
     mockedUseReadableObjects.mockReturnValue({
@@ -66,15 +81,17 @@ describe('BureauTaskSheet', () => {
     await user.click(screen.getByRole('button', { name: 'New task' }));
     expect(mockMountCommand).toHaveBeenCalledWith(
       expect.objectContaining({
-        recordIndexId: 'tasks-project-sheet-bureau-task-sheet-task-object',
+        recordIndexId: 'tasks-project-sheet-bureau-task-sheet-task-object-view',
         contextStoreInstanceId:
-          'record-table-widget-bureau-task-sheet-task-object-bureau-task-sheet-task-object',
+          'record-table-widget-bureau-task-sheet-task-object-bureau-task-sheet-task-object-view',
         engineComponentKey: 'CREATE_NEW_RECORD',
       }),
     );
   });
   beforeEach(() => {
     jest.clearAllMocks();
+    localStorage.clear();
+    jest.mocked(useAtomStateValue).mockReturnValue(null);
     mockedUseReadableObjects.mockReturnValue({
       readableObjectMetadataItems: [
         { id: 'task-object', nameSingular: 'task', readableFields: [] },
@@ -302,5 +319,67 @@ describe('BureauTaskSheet', () => {
       screen.queryByText('Native view: project-sheet'),
     ).not.toBeInTheDocument();
     expect(screen.getByRole('combobox')).toHaveValue('other-index');
+  });
+  it('keeps personal focus and completed visibility across visits, without changing the saved view', async () => {
+    const user = userEvent.setup();
+    jest.mocked(useAtomStateValue).mockReturnValue({ id: 'member-one' });
+    mockedUseReadableObjects.mockReturnValue({
+      readableObjectMetadataItems: [
+        {
+          id: 'task-object',
+          nameSingular: 'task',
+          isUICreatable: true,
+          isUIEditable: true,
+          writability: 'OPEN',
+          readableFields: ['assignee', 'dueAt', 'status'].map((name) => ({
+            id: name,
+            name,
+          })),
+        },
+      ],
+    } as unknown as ReturnType<typeof useReadableObjectMetadataItems>);
+    const { unmount } = render(<BureauTaskSheet />, { wrapper: Wrapper });
+    expect(screen.getByRole('button', { name: 'My tasks' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await user.click(screen.getByRole('button', { name: 'Today' }));
+    await user.click(screen.getByRole('checkbox', { name: 'Show completed' }));
+    expect(mockedNativeTable).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        viewOverride: expect.objectContaining({
+          viewFilters: expect.arrayContaining([
+            expect.objectContaining({ fieldMetadataId: 'dueAt' }),
+          ]),
+        }),
+      }),
+      undefined,
+    );
+    unmount();
+    render(<BureauTaskSheet />, { wrapper: Wrapper });
+    expect(screen.getByRole('button', { name: 'Today' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(
+      screen.getByRole('checkbox', { name: 'Show completed' }),
+    ).toBeChecked();
+    await user.click(screen.getByRole('button', { name: 'Overdue' }));
+    expect(
+      screen.queryByRole('button', { name: 'New task' }),
+    ).not.toBeInTheDocument();
+    expect(mockedNativeTable).toHaveBeenLastCalledWith(
+      expect.objectContaining({ isCreationEnabled: false, isUIEditable: true }),
+      undefined,
+    );
+    await user.selectOptions(screen.getByRole('combobox'), 'project-sheet');
+    expect(mockedNativeTable).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        isCreationEnabled: true,
+        viewOverride: expect.objectContaining({ id: 'project-sheet' }),
+      }),
+      undefined,
+    );
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
   });
 });

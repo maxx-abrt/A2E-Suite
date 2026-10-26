@@ -1,5 +1,6 @@
 // Stable identities from the Bilan application manifest, not workspace IDs.
 export const BILAN_METADATA_UNIVERSAL_IDENTIFIERS = {
+  quickEntry: 'b11a0000-0013-4000-8000-000000000006',
   dashboard: 'b11a0000-0014-4000-8000-000000000001',
   invoice: 'b11a0100-0000-4000-8000-000000000000',
   financeEntry: 'b11a0400-0000-4000-8000-000000000000',

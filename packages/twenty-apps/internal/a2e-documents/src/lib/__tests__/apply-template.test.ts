@@ -90,6 +90,7 @@ test('applying a page descriptor creates one fresh document from the template', 
   assert.deepEqual(mutationNames, ['createDocuments']);
   assert.equal(created[0]?.data.title, 'Notes de réunion');
   assert.equal(created[0]?.data.kind, 'DOCUMENT');
+  assert.equal(created[0]?.data.position, 'last');
   assert.ok(
     String((created[0]?.data.content as { markdown?: string }).markdown).includes(
       '# Notes de réunion',
@@ -162,4 +163,14 @@ test('re-applying the same operation id creates no duplicate', async () => {
     first.status === 'applied' ? first.created[0]?.id : null,
     second.status === 'applied' ? second.created[0]?.id : null,
   );
+});
+
+
+test('own-app templates work without application-settings permission', async () => {
+  const { client, created } = buildClient();
+  const result = await applyDocumentTemplateByKey(client, { key: 'notes-de-cours-cornell' }, {
+    getInstalledApplications: async () => { throw new Error('Application settings permission denied'); },
+  });
+  assert.equal(result.status, 'applied');
+  assert.ok(created.length > 0);
 });

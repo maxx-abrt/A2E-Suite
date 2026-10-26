@@ -1,3 +1,5 @@
+import { isRecordTableCreationDisabledComponentState } from '@/object-record/record-table/states/isRecordTableCreationDisabledComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { A2eContextualEmptyState } from '@/a2e-empty-state/components/A2eContextualEmptyState';
 import { useA2eRecordIndexSurfaceKey } from '@/a2e-empty-state/hooks/useA2eRecordIndexSurfaceKey';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -64,7 +66,13 @@ export const RecordIndexEmptyState = ({
     isLayoutCustomizationModeEnabledState,
   );
 
+  const isRecordTableCreationDisabled = useAtomComponentStateValue(
+    isRecordTableCreationDisabledComponentState,
+    recordIndexId,
+  );
+
   const canCreateRecords =
+    !isRecordTableCreationDisabled &&
     !isLayoutCustomizationModeEnabled &&
     !hasAnySoftDeleteFilterOnView &&
     canCreateRecordsForObjectMetadataItem({

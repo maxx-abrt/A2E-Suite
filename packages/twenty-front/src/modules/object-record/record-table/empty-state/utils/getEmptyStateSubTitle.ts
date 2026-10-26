@@ -5,6 +5,9 @@ export const getEmptyStateSubTitle = (
   objectNameSingular: string,
   objectLabel: string,
 ) => {
+  if (objectNameSingular === 'financeEntry')
+    return t`Add a transaction or upload an invoice to get started.`;
+
   if (objectNameSingular === CoreObjectNameSingular.WorkflowVersion) {
     return t`Create a workflow and return here to view its versions`;
   }

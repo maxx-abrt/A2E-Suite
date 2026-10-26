@@ -1,3 +1,13 @@
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useBureauDayBoundaries } from '@/bureau/hooks/useBureauDayBoundaries';
+import { bureauTaskPreferencesState } from '@/bureau/states/bureauTaskPreferencesState';
+import {
+  BUREAU_TASK_SCOPES,
+  type BureauTaskScope,
+} from '@/bureau/types/BureauTaskScope';
+import { buildBureauTaskFocusView } from '@/bureau/utils/buildBureauTaskFocusView';
+import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
@@ -12,11 +22,11 @@ import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/select
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
+import { Button, Checkbox } from 'twenty-ui/input';
 import { IconCheckbox, IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -73,6 +83,52 @@ const StyledSelect = styled.select`
     outline: 2px solid ${themeCssVariables.color.blue};
     outline-offset: 2px;
   }
+`;
+
+const StyledFocusBar = styled.div`
+  align-items: center;
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: space-between;
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[4]};
+`;
+
+const StyledFocusButtons = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  max-width: 100%;
+  overflow-x: auto;
+`;
+
+const StyledFocusButton = styled.button`
+  background: transparent;
+  border: none;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.secondary};
+  cursor: pointer;
+  flex-shrink: 0;
+  font: inherit;
+  font-size: ${themeCssVariables.font.size.sm};
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+
+  &[aria-pressed='true'] {
+    background: ${themeCssVariables.background.tertiary};
+    color: ${themeCssVariables.font.color.primary};
+  }
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: -2px;
+  }
+`;
+
+const StyledCompletedControl = styled.label`
+  align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledTable = styled.div`
@@ -134,7 +190,48 @@ const BureauTaskSheetContent = ({
     viewsFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataId },
   ).filter((view) => view.type === ViewType.TABLE);
-  const [selectedViewId, setSelectedViewId] = useState<string>();
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const { today } = useBureauDayBoundaries();
+  const [preferences, setPreferences] = useAtomFamilyState(
+    bureauTaskPreferencesState,
+    {
+      objectMetadataId,
+      workspaceMemberId: currentWorkspaceMember?.id ?? 'anonymous',
+    },
+  );
+  const selectedViewId = preferences?.viewId;
+  const showCompleted = preferences?.showCompleted === true;
+  const canFilterMine =
+    isDefined(currentWorkspaceMember?.id) &&
+    objectMetadataItem.readableFields.some(
+      (field) => field.name === 'assignee',
+    );
+  const canFilterDates =
+    canFilterMine &&
+    objectMetadataItem.readableFields.some((field) => field.name === 'dueAt');
+  const canFilterCompletion = objectMetadataItem.readableFields.some((field) =>
+    ['status', 'projectStatus'].includes(field.name),
+  );
+  const availableScopes = BUREAU_TASK_SCOPES.filter(
+    (scope) =>
+      scope === 'all' || (scope === 'mine' ? canFilterMine : canFilterDates),
+  );
+  const preferredScope = preferences?.scope;
+  const scope: BureauTaskScope =
+    preferredScope === 'view' ||
+    availableScopes.some((candidate) => candidate === preferredScope)
+      ? preferredScope
+      : canFilterMine
+        ? 'mine'
+        : 'all';
+  const scopeLabels = {
+    mine: t`My tasks`,
+    today: t`Today`,
+    upcoming: t`Next 7 days`,
+    overdue: t`Overdue`,
+    all: t`All tasks`,
+    view: t`Saved view`,
+  };
   const compactView = views
     .filter(
       (view) =>
@@ -165,6 +262,28 @@ const BureauTaskSheetContent = ({
     views.find((view) => view.key === ViewKey.INDEX) ??
     views.at(0);
   const taskSheetId = `bureau-task-sheet-${objectMetadataId}`;
+  const instanceIdSuffix = `${taskSheetId}-${scope}`;
+  const focusView = useMemo(
+    () =>
+      isDefined(selectedView)
+        ? buildBureauTaskFocusView({
+            view: selectedView,
+            scope,
+            readableFields: objectMetadataItem.readableFields,
+            workspaceMemberId: currentWorkspaceMember?.id,
+            today,
+            showCompleted,
+          })
+        : undefined,
+    [
+      selectedView,
+      scope,
+      objectMetadataItem.readableFields,
+      currentWorkspaceMember?.id,
+      today,
+      showCompleted,
+    ],
+  );
   const tasksPath = isDefined(selectedView)
     ? getAppPath(
         AppPath.RecordIndexPage,
@@ -182,6 +301,7 @@ const BureauTaskSheetContent = ({
         </StyledTitle>
         <StyledActions>
           {isDefined(selectedView) &&
+            scope !== 'overdue' &&
             canCreateRecordsForObjectMetadataItem({
               objectMetadataItem,
               objectPermissions: permissions,
@@ -198,7 +318,7 @@ const BureauTaskSheetContent = ({
                       objectNamePlural: 'tasks',
                       viewId: selectedView.id,
                       widgetId: taskSheetId,
-                      instanceIdSuffix: taskSheetId,
+                      instanceIdSuffix,
                     });
                   void mountCommand({
                     engineCommandId: `quick-create-${recordIndexId}`,
@@ -213,7 +333,13 @@ const BureauTaskSheetContent = ({
             <StyledSelect
               aria-label={t`Task view`}
               value={selectedView?.id}
-              onChange={(event) => setSelectedViewId(event.target.value)}
+              onChange={(event) =>
+                setPreferences((previous) => ({
+                  ...previous,
+                  viewId: event.target.value,
+                  scope: 'view',
+                }))
+              }
             >
               {views.map((view) => (
                 <option key={view.id} value={view.id}>
@@ -231,6 +357,45 @@ const BureauTaskSheetContent = ({
           />
         </StyledActions>
       </StyledHeader>
+      <StyledFocusBar>
+        <StyledFocusButtons role="group" aria-label={t`Task focus`}>
+          {[
+            ...availableScopes,
+            ...(views.length > 0 ? ['view' as const] : []),
+          ].map((taskScope) => (
+            <StyledFocusButton
+              key={taskScope}
+              type="button"
+              aria-pressed={scope === taskScope}
+              onClick={() =>
+                setPreferences((previous) => ({
+                  ...previous,
+                  scope: taskScope,
+                }))
+              }
+            >
+              {scopeLabels[taskScope]}
+            </StyledFocusButton>
+          ))}
+        </StyledFocusButtons>
+        {scope !== 'view' && canFilterCompletion && (
+          <StyledCompletedControl>
+            <Checkbox
+              checked={showCompleted}
+              onCheckedChange={(checked) =>
+                setPreferences((previous) => ({
+                  ...previous,
+                  showCompleted: checked,
+                }))
+              }
+            />
+            {t`Show completed`}
+          </StyledCompletedControl>
+        )}
+      </StyledFocusBar>
+      {scope === 'overdue' && (
+        <StyledMessage>{t`Review overdue work here. Choose Today or My tasks to add a new task.`}</StyledMessage>
+      )}
       {isDefined(selectedView) ? (
         <PageLayoutEditModeProviderContext value={{ isInEditMode: false }}>
           <PageLayoutComponentInstanceContext.Provider
@@ -238,15 +403,17 @@ const BureauTaskSheetContent = ({
           >
             <ErrorBoundary
               FallbackComponent={TaskSheetError}
-              resetKeys={[objectMetadataId, selectedView.id]}
+              resetKeys={[objectMetadataId, selectedView.id, scope]}
             >
               <StyledTable>
                 <RecordTableWidgetRendererContent
-                  key={selectedView.id}
+                  key={`${selectedView.id}-${scope}`}
+                  viewOverride={focusView}
+                  isCreationEnabled={scope !== 'overdue'}
                   objectMetadataId={objectMetadataId}
                   viewId={selectedView.id}
                   widgetId={taskSheetId}
-                  instanceIdSuffix={taskSheetId}
+                  instanceIdSuffix={instanceIdSuffix}
                   isUIEditable={permissions.canUpdateObjectRecords}
                 />
               </StyledTable>

@@ -12,17 +12,20 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { type View } from '@/views/types/View';
 
 type RecordTableWidgetViewLoadEffectProps = {
   viewId: string;
   widgetId: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
+  viewOverride?: View;
 };
 
 export const RecordTableWidgetViewLoadEffect = ({
   viewId,
   widgetId,
   objectMetadataItem,
+  viewOverride,
 }: RecordTableWidgetViewLoadEffectProps) => {
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
@@ -50,7 +53,7 @@ export const RecordTableWidgetViewLoadEffect = ({
     { viewId },
   );
 
-  const currentView = viewFromDraft ?? viewFromSelector;
+  const currentView = viewFromDraft ?? viewOverride ?? viewFromSelector;
 
   const viewHasFields =
     isDefined(currentView) && currentView.viewFields.length > 0;

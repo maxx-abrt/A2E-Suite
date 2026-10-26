@@ -342,4 +342,57 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
       }),
     ).toBe(false);
   });
+  it.each([FieldMetadataType.DATE_TIME, FieldMetadataType.DATE])(
+    'matches ORM dates inside live filters for %s',
+    (type) => {
+      const dateField = createMockFlatFieldMetadata(
+        'date-field',
+        'dueAt',
+        type,
+      );
+      const flatObjectMetadata = createMockFlatObjectMetadata([
+        dateField.universalIdentifier,
+      ]);
+      const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([dateField]);
+      const matches = (dueAt: Date | string | null) =>
+        isRecordMatchingRLSRowLevelPermissionPredicate({
+          record: { ...baseRecord, dueAt },
+          filter: {
+            and: [
+              { dueAt: { gte: '2026-10-24T22:00:00Z' } },
+              { dueAt: { lt: '2026-10-25T23:00:00Z' } },
+            ],
+          },
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        });
+      expect(matches(new Date('2026-10-25T12:00:00Z'))).toBe(true);
+      expect(matches('2026-10-25T12:00:00Z')).toBe(true);
+      expect(matches(new Date('2026-10-25T23:00:00Z'))).toBe(false);
+      expect(matches(null)).toBe(false);
+    },
+  );
+
+  it.each([null, [], [{ fileId: 'receipt' }]])(
+    'matches file review filters against ORM events (%j)',
+    (receipts) => {
+      const field = createMockFlatFieldMetadata(
+        'receipt-field',
+        'receipts',
+        FieldMetadataType.FILES,
+      );
+      expect(
+        isRecordMatchingRLSRowLevelPermissionPredicate({
+          record: { ...baseRecord, receipts },
+          filter: {
+            or: [{ receipts: { is: 'NULL' } }, { receipts: { like: '[]' } }],
+          },
+          flatObjectMetadata: createMockFlatObjectMetadata([
+            field.universalIdentifier,
+          ]),
+          flatFieldMetadataMaps: buildFlatFieldMetadataMaps([field]),
+        }),
+      ).toBe(receipts === null || receipts.length === 0);
+    },
+  );
 });
