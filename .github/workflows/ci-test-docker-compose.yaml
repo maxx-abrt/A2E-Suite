@@ -23,6 +23,7 @@ jobs:
         .github/workflows/ci-test-docker-compose.yaml
         .github/workflows/cd-docker-image.yaml
         packages/twenty-server/src/database/commands/**
+        packages/twenty-server/scripts/**
         packages/twenty-server/src/engine/core-modules/application/**
         packages/twenty-server/src/engine/core-modules/logic-function/**
         packages/twenty-server/src/engine/core-modules/twenty-config/**

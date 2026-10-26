@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 import { STARTER_DOCUMENT_TEMPLATES } from '../../twenty-apps/internal/a2e-documents/src/lib/starter-templates.ts';
 import { STARTER_PROJECT_TEMPLATES } from '../../twenty-apps/internal/a2e-projects/src/lib/starter-projects.ts';
+import { COLUMN_SLOTS_QUERY } from '../../twenty-server/scripts/recover-column-slots.mjs';
 
 import { buildStarterContentQuery } from './build-starter-content-query.mjs';
 import { BUNDLED_APPLICATION_NAMES } from './build-bundled-apps.mjs';
@@ -260,6 +261,8 @@ export const smokeCoolifyImage = async ({
       await waitForRetry(2_000);
     }
     phases.push('worker-post-install-content');
+    const columnSlotsQuery = `SELECT coalesce(json_agg(column_slots), '[]'::json) FROM (${COLUMN_SLOTS_QUERY}) column_slots`;
+    const columnSlotsBeforeRestart = queryDatabase(columnSlotsQuery);
     compose(['stop', 'worker', 'server']);
     compose(
       [
@@ -278,6 +281,11 @@ export const smokeCoolifyImage = async ({
     const restartedContent = JSON.parse(queryDatabase(starterContentQuery));
     if (JSON.stringify(starterContent) !== JSON.stringify(restartedContent))
       throw new Error('Restart duplicated or removed starter content');
+    if (columnSlotsBeforeRestart !== queryDatabase(columnSlotsQuery))
+      throw new Error(
+        'Restart changed physical column slots; inspect repeated schema creation or deletion',
+      );
+    phases.push('stable-column-slots');
   } catch (error) {
     failure = error;
   } finally {
