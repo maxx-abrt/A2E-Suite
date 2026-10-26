@@ -127,7 +127,7 @@ jobs:
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
-          npx nx run twenty-server:database:reset
+          npx nx run twenty-server:database:reset --configuration=seed
 
       # Cookie sessions are credentialed, so the front only authenticates from
       # the API's own origin, workspace subdomains included.

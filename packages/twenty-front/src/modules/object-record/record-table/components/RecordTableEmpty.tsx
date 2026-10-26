@@ -28,6 +28,8 @@ import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledEmptyStateContainer = styled.div<{ width: number }>`
+  display: flex;
+  flex-direction: column;
   height: 100%;
   overflow: hidden;
   width: ${({ width }) => width}px;

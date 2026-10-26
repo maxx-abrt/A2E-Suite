@@ -142,7 +142,7 @@ jobs:
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
 
       - name: Setup database
-        run: npx nx run twenty-server:database:reset
+        run: npx nx run twenty-server:database:reset --configuration=seed
 
       - name: Start server
         run: nohup npx nx start:ci twenty-server &

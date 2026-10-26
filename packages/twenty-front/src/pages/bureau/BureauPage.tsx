@@ -6,6 +6,7 @@ import { BureauTrashModal } from '@/bureau/components/BureauTrashModal';
 import { useBureauWorkspace } from '@/bureau/hooks/useBureauWorkspace';
 import { useIsBureauAvailable } from '@/bureau/hooks/useIsBureauAvailable';
 import { getBureauPagePath } from '@/bureau/utils/getBureauPagePath';
+import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -31,6 +32,7 @@ export const BureauPage = () => {
   if (!isAvailable)
     return (
       <StyledBureauPage>
+        <PageTitle title={t`Bureau`} />
         <p>{t`Install Bureau to start writing and organizing your pages. If it is already installed, check its status in Applications.`}</p>
         <Button
           title={t`Open Applications`}
@@ -43,12 +45,14 @@ export const BureauPage = () => {
 };
 
 const BureauWorkspaceContent = () => {
+  const { t } = useLingui();
   const { documentId } = useParams();
   const navigate = useNavigate();
   const { actions } = useBureauWorkspace();
 
   return (
     <StyledBureauPage data-testid="bureau-page">
+      <PageTitle title={t`Bureau`} />
       {documentId ? (
         <BureauPageView key={documentId} documentId={documentId} />
       ) : (

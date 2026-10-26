@@ -1,5 +1,6 @@
+import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   AnimatedPlaceholder,
@@ -13,8 +14,16 @@ import { type IconComponent } from 'twenty-ui/icon';
 import { Button, type ButtonVariant } from 'twenty-ui/input';
 
 const StyledEmptyStateContainer = styled.div`
+  flex: 1;
   height: 100%;
+  min-height: 0;
+  overflow: auto;
   width: 100%;
+`;
+
+const StyledPlaceholderContainer = styled(AnimatedPlaceholderEmptyContainer)`
+  height: auto;
+  min-height: 100%;
 `;
 
 type RecordIndexEmptyStateDisplayProps = {
@@ -47,28 +56,32 @@ export const RecordIndexEmptyStateDisplay = ({
   footer,
   width,
   dataTestId,
-}: RecordIndexEmptyStateDisplayProps) => (
-  <StyledEmptyStateContainer data-testid={dataTestId}>
-    <AnimatedPlaceholderEmptyContainer width={width}>
-      <AnimatedPlaceholder type={animatedPlaceholderType} />
-      <AnimatedPlaceholderEmptyTextContainer>
-        <AnimatedPlaceholderEmptyTitle>{title}</AnimatedPlaceholderEmptyTitle>
-        {isDefined(subTitle) && (
-          <AnimatedPlaceholderEmptySubTitle>
-            {subTitle}
-          </AnimatedPlaceholderEmptySubTitle>
+}: RecordIndexEmptyStateDisplayProps) => {
+  const isInWidget = isDefined(useContext(RecordTableWidgetContext));
+
+  return (
+    <StyledEmptyStateContainer data-testid={dataTestId}>
+      <StyledPlaceholderContainer width={width}>
+        {!isInWidget && <AnimatedPlaceholder type={animatedPlaceholderType} />}
+        <AnimatedPlaceholderEmptyTextContainer>
+          <AnimatedPlaceholderEmptyTitle>{title}</AnimatedPlaceholderEmptyTitle>
+          {isDefined(subTitle) && (
+            <AnimatedPlaceholderEmptySubTitle>
+              {subTitle}
+            </AnimatedPlaceholderEmptySubTitle>
+          )}
+        </AnimatedPlaceholderEmptyTextContainer>
+        {isDefined(onButtonClick) && (
+          <Button
+            Icon={ButtonIcon}
+            title={buttonTitle}
+            variant={buttonVariant}
+            onClick={onButtonClick}
+            dataTestId={buttonDataTestId}
+          />
         )}
-      </AnimatedPlaceholderEmptyTextContainer>
-      {isDefined(onButtonClick) && (
-        <Button
-          Icon={ButtonIcon}
-          title={buttonTitle}
-          variant={buttonVariant}
-          onClick={onButtonClick}
-          dataTestId={buttonDataTestId}
-        />
-      )}
-      {isDefined(footer) && footer}
-    </AnimatedPlaceholderEmptyContainer>
-  </StyledEmptyStateContainer>
-);
+        {isDefined(footer) && footer}
+      </StyledPlaceholderContainer>
+    </StyledEmptyStateContainer>
+  );
+};

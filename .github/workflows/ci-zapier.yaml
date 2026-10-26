@@ -65,7 +65,7 @@ jobs:
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
-          npx nx run twenty-server:database:reset
+          npx nx run twenty-server:database:reset --configuration=seed
 
       - name: Server / Start
         run: |
@@ -89,7 +89,7 @@ jobs:
           tasks: test
 
   zapier-test:
-    needs: server-setup
+    needs: [changed-files-check, server-setup]
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
     runs-on: ubuntu-latest

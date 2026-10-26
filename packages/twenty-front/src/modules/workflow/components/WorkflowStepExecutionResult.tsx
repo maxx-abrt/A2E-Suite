@@ -1,4 +1,5 @@
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
+import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
@@ -20,6 +21,27 @@ const StyledCodeEditorWrapper = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
+`;
+
+const StyledPlainTextOutput = styled.pre<{ height: string | number }>`
+  box-sizing: border-box;
+  color: ${themeCssVariables.font.color.primary};
+  flex: 1;
+  font-family: ${MONOSPACE_FONT_FAMILY};
+  font-size: ${themeCssVariables.font.size.md};
+  height: ${({ height }) =>
+    typeof height === 'number' ? `${height}px` : height};
+  margin: 0;
+  min-height: 0;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  padding: ${themeCssVariables.spacing[3]};
+  white-space: pre-wrap;
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: -2px;
+  }
 `;
 
 type OutputAccent = 'default' | 'success' | 'error';
@@ -132,15 +154,26 @@ export const WorkflowStepExecutionResult = ({
         rightNodes={[<LightCopyIconButton copyText={result} />]}
       />
       <StyledCodeEditorWrapper>
-        <CodeEditor
-          resizable={true}
-          value={result}
-          language={language}
-          height={height}
-          options={{ readOnly: true, domReadOnly: true }}
-          isLoading={isTesting}
-          variant="with-header"
-        />
+        {language === 'plaintext' && !isTesting ? (
+          <StyledPlainTextOutput
+            height={height}
+            role="region"
+            aria-label={t`Output`}
+            tabIndex={0}
+          >
+            {result}
+          </StyledPlainTextOutput>
+        ) : (
+          <CodeEditor
+            resizable={true}
+            value={result}
+            language={language}
+            height={height}
+            options={{ readOnly: true, domReadOnly: true }}
+            isLoading={isTesting}
+            variant="with-header"
+          />
+        )}
       </StyledCodeEditorWrapper>
     </StyledContainer>
   );

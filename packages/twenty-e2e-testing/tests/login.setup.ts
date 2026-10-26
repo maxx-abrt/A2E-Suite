@@ -12,7 +12,7 @@ const test = base.extend<{ loginPage: LoginPage }>({
 
 test('Login test', async ({ loginPage, page }) => {
   await test.step('Navigated to login page', async () => {
-    await page.goto('/');
+    await page.goto('/welcome');
   });
   await test.step(
     'Logging in '.concat(page.url(), ' as ', process.env.DEFAULT_LOGIN),
@@ -31,10 +31,14 @@ test('Login test', async ({ loginPage, page }) => {
       // only walk the chooser/verify flow when it actually appears.
       const chooseWorkspace = page.getByText('Choose a workspace');
       if (await chooseWorkspace.isVisible().catch(() => false)) {
-        await chooseWorkspace.waitFor({state: 'visible'});
-        await page.getByText('Apple', {exact: true}).click();
-        await page.waitForFunction(() => window.location.href.includes('verify'));
-        await page.waitForFunction(() => !window.location.href.includes('verify'));
+        await chooseWorkspace.waitFor({ state: 'visible' });
+        await page.getByText('Apple', { exact: true }).click();
+        await page.waitForFunction(() =>
+          window.location.href.includes('verify'),
+        );
+        await page.waitForFunction(
+          () => !window.location.href.includes('verify'),
+        );
       }
       process.env.LINK = page.url();
     },

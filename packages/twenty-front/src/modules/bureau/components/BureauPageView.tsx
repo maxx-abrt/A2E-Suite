@@ -14,6 +14,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
 import { useRecordSeededDraft } from '@/object-record/record-seeded-draft/hooks/useRecordSeededDraft';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
@@ -218,6 +219,9 @@ const BureauPageViewContent = ({ page }: { page: BureauPageRecord }) => {
 
   return (
     <StyledPage data-testid="bureau-document">
+      <PageTitle
+        title={`${page.title?.trim() || t`Untitled`} — ${t`Bureau`}`}
+      />
       <StyledTopBar>
         <BureauBreadcrumbs page={page} />
         <StyledActions>

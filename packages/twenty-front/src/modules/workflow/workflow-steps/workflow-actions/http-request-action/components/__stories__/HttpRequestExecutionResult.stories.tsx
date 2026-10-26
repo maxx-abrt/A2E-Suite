@@ -224,6 +224,7 @@ export const NetworkError: Story = {
   args: {
     httpRequestTestData: {
       ...successTestData,
+      language: 'plaintext',
       output: {
         error: 'Network connection failed: timeout after 30 seconds',
         headers: {},
@@ -237,8 +238,8 @@ export const NetworkError: Story = {
     expect(await canvas.findByText('Request Failed')).toBeVisible();
     expect(await canvas.findByText('An error occurred')).toBeVisible();
 
-    const codeEditorValue = await canvas.findByTestId('code-editor-value');
-    expect(codeEditorValue).toHaveValue(
+    const output = await canvas.findByRole('region', { name: 'Output' });
+    expect(output).toHaveTextContent(
       'Network connection failed: timeout after 30 seconds',
     );
   },

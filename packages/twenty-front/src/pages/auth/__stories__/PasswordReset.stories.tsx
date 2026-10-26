@@ -72,9 +72,10 @@ export const ChangePassword: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
+    await canvas.findByText('Reset your password');
     await canvas.findByRole(
       'button',
-      { name: 'Change Password' },
+      { name: 'Save password' },
       { timeout: 3000 },
     );
   },
@@ -94,9 +95,10 @@ export const SetPassword: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
+    await canvas.findByText('Set your password');
     await canvas.findByRole(
       'button',
-      { name: 'Set Password' },
+      { name: 'Save password' },
       { timeout: 3000 },
     );
   },

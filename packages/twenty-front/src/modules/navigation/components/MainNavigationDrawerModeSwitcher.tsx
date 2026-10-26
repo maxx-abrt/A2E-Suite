@@ -43,21 +43,25 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
   color: ${({ isActive }) =>
     isActive
       ? themeCssVariables.font.color.primary
-      : themeCssVariables.font.color.tertiary};
+      : themeCssVariables.font.color.secondary};
   corner-shape: round;
   cursor: pointer;
   display: flex;
-  flex-shrink: 0;
+  flex-shrink: 1;
   font-family: inherit;
-  font-size: ${themeCssVariables.font.size.md};
+  font-size: ${({ isExpanded }) =>
+    isExpanded
+      ? themeCssVariables.font.size.sm
+      : themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${({ isActive, isExpanded }) =>
-    isActive && isExpanded ? themeCssVariables.spacing[1] : '0'};
+  gap: ${({ isExpanded }) =>
+    isExpanded ? themeCssVariables.spacing['0.5'] : '0'};
   height: ${themeCssVariables.spacing[7]};
   justify-content: ${({ isExpanded }) =>
     isExpanded ? 'flex-start' : 'center'};
+  min-width: 0;
   padding: ${({ isExpanded }) =>
-    isExpanded ? `0 ${themeCssVariables.spacing['1.5']}` : '0'};
+    isExpanded ? `0 ${themeCssVariables.spacing[1]}` : '0'};
   transition:
     background calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
     color calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
@@ -72,6 +76,11 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
         : themeCssVariables.background.transparent.lighter};
     color: ${themeCssVariables.font.color.primary};
   }
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: 2px;
+  }
 `;
 
 const StyledModeIcon = styled.span`
@@ -85,7 +94,9 @@ const StyledModeIcon = styled.span`
 
 const StyledModeLabelBase = styled.span`
   display: block;
+  min-width: 0;
   overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
@@ -107,7 +118,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
     return null;
   }
 
-  const shouldShowTooltips = !isExpanded && !isMobile;
+  const shouldShowTooltips = !isMobile;
 
   return (
     <>
@@ -135,7 +146,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
               </StyledModeIcon>
               <StyledModeLabel
                 initial={false}
-                animate={{ width: isExpanded && isActive ? 'auto' : 0 }}
+                animate={{ width: isExpanded ? 'auto' : 0 }}
                 transition={{
                   duration: shouldReduceMotion
                     ? 0

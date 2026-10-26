@@ -41,7 +41,7 @@
         "with-db-reset": {
           "cwd": "packages/twenty-server",
           "commands": [
-            "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=12288 --import tsx/esm\" nx database:reset > reset-logs.log && NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=6144\" nx jest --config ./jest-integration.config.ts --logHeapUsage"
+            "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=12288 --import tsx/esm\" nx database:reset --configuration=seed > reset-logs.log && NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=6144\" nx jest --config ./jest-integration.config.ts --logHeapUsage"
           ]
         }
       }
@@ -269,18 +269,28 @@
           ],
           "parallel": false
         },
+        "light": {
+          "cwd": "packages/twenty-server",
+          "commands": [
+            "node dist/database/scripts/truncate-db.js",
+            "nx database:init",
+            "nx command-no-deps -- cache:flush",
+            "nx command-no-deps -- workspace:seed:dev --light"
+          ],
+          "parallel": false
+        },
         "seed": {
           "cwd": "packages/twenty-server",
           "commands": [
             "node dist/database/scripts/truncate-db.js",
             "nx database:init",
             "nx command-no-deps -- cache:flush",
-            "nx command-no-deps -- workspace:seed:dev"
+            "nx command-no-deps -- workspace:seed:dev --full-fixtures"
           ],
           "parallel": false
         }
       },
-      "defaultConfiguration": "seed"
+      "defaultConfiguration": "light"
     },
     "clickhouse:migrate": {
       "executor": "nx:run-commands",
