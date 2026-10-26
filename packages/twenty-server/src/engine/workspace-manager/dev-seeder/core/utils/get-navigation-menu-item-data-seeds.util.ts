@@ -7,11 +7,17 @@ import { generateSeedId } from 'src/engine/workspace-manager/dev-seeder/core/uti
 
 export const getNavigationMenuItemFlatEntitySeeds = ({
   workspaceId,
+  light = false,
   flatApplication,
 }: {
   workspaceId: string;
+  light?: boolean;
   flatApplication: FlatApplication;
 }): FlatNavigationMenuItem[] => {
+  if (light) {
+    return [];
+  }
+
   const now = new Date().toISOString();
 
   return [

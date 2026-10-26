@@ -11,6 +11,7 @@ import { DevSeederService } from 'src/engine/workspace-manager/dev-seeder/servic
 
 type DataSeedWorkspaceOptions = {
   light?: boolean;
+  fullFixtures?: boolean;
 };
 
 @Command({
@@ -34,23 +35,37 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     return true;
   }
 
+  @Option({
+    flags: '--full-fixtures',
+    description:
+      'Seed both demo workspaces and unrelated custom objects for automated tests',
+  })
+  parseFullFixtures(): boolean {
+    return true;
+  }
+
   async run(
     _passedParams: string[],
     options: DataSeedWorkspaceOptions,
   ): Promise<void> {
-    const workspaceIds: SeededWorkspacesIds[] = options.light
+    if (options.light && options.fullFixtures) {
+      throw new Error('--light and --full-fixtures cannot be used together');
+    }
+
+    const light = options.fullFixtures !== true;
+    const workspaceIds: SeededWorkspacesIds[] = light
       ? [SEED_APPLE_WORKSPACE_ID]
       : [SEED_APPLE_WORKSPACE_ID, SEED_YCOMBINATOR_WORKSPACE_ID];
 
     try {
       for (const workspaceId of workspaceIds) {
         await this.devSeederService.seedDev(workspaceId, {
-          light: options.light,
+          light,
         });
       }
     } catch (error) {
       this.logger.error(error);
-      this.logger.error(error.stack);
+      throw error;
     }
   }
 }

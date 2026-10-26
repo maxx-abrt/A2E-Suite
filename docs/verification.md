@@ -28,6 +28,19 @@ The setup script creates/configures development services and initializes the
 DB. Its reset option and Nx database-reset targets are destructive. Confirm
 the target before running them; do not start the full app for prose-only work.
 
+Development seeding now defaults to a small Apple workspace, without unrelated
+custom demo objects or the technical Star History shortcut. The optional
+`--light` flag keeps the same behavior. Automated tests that need both full
+demo workspaces must request `workspace:seed:dev --full-fixtures`; do not pass
+it together with `--light`. Seeding errors fail the command instead of being
+logged as a successful run.
+
+The destructive `database:reset` target defaults to its `light` configuration.
+Use `npx nx run twenty-server:database:reset --configuration=seed` only on a
+disposable database when full fixtures are required. Current CI consumers
+select that configuration explicitly. Upgrade tests invoking older published
+images retain those images' original full-seed command.
+
 ## Checks by change type
 
 Commands below are run from the root unless noted. Replace placeholders with

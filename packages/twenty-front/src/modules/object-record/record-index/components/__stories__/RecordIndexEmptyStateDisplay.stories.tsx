@@ -1,4 +1,5 @@
 import { RecordIndexEmptyStateDisplay } from '@/object-record/record-index/components/RecordIndexEmptyStateDisplay';
+import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { IconFilterOff, IconPlus, IconSettings } from 'twenty-ui/icon';
@@ -79,4 +80,40 @@ export const SoftDelete: Story = {
     buttonTitle: 'Remove Deleted filter',
   },
   play: playRenderAndClick,
+};
+
+export const CompactWidget: Story = {
+  args: {
+    animatedPlaceholderType: 'noMatchRecord',
+    title: 'No tasks found',
+    subTitle: 'No records matching the filter criteria were found.',
+    ButtonIcon: IconPlus,
+    buttonTitle: 'Add a task',
+  },
+  render: (args) => (
+    <RecordTableWidgetContext.Provider
+      value={{
+        widgetId: 'compact-task-widget',
+        isPageLayoutInEditMode: false,
+        updateViewDraftField: fn(),
+        updateViewDraft: fn(),
+      }}
+    >
+      <section aria-label="Task widget" style={{ height: 220, width: 320 }}>
+        <RecordIndexEmptyStateDisplay {...args} />
+      </section>
+    </RecordTableWidgetContext.Provider>
+  ),
+  play: async (context) => {
+    await playRenderAndClick(context);
+    const canvas = within(context.canvasElement);
+    const widget = canvas.getByRole('region', { name: 'Task widget' });
+    const button = canvas.getByRole('button', { name: /Add a task/ });
+    expect(button.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+      widget.getBoundingClientRect().top,
+    );
+    expect(button.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      widget.getBoundingClientRect().bottom,
+    );
+  },
 };

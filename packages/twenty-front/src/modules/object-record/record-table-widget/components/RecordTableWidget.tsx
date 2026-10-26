@@ -8,6 +8,8 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 
 const StyledTableContainer = styled.div`
+  flex: 1;
+  height: 100%;
   min-height: 0;
   overflow: hidden;
 `;

@@ -64,6 +64,7 @@ import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatRecordCalendarWeekRange } from '@/object-record/record-calendar/utils/formatRecordCalendarWeekRange';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 const StyledPage = styled.div`
@@ -876,6 +877,7 @@ export const CalendarPage = () => {
 
   return (
     <StyledPage data-testid="calendar-page">
+      <PageTitle title={t`Agenda`} />
       <AgendaLanding
         onCreateEvent={handleCreateEvent}
         isRecordEmpty={isAgendaEmpty}

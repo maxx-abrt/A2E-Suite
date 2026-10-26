@@ -361,9 +361,25 @@ workspace while the worker is stopped, then recreates the server and worker.
 It requires every bundled app to install before readiness, and verifies that
 the worker actually creates the shipped document templates, twelve starter
 projects with their tasks and milestones, and two discussion channels through
-the internal API. Template/task/milestone counts come from the shipped bundles. Another restart checks that
-content counts stay stable. Database registration IDs and a file-volume marker
+the internal API. Template/task/milestone counts come from the shipped bundles.
+Another restart checks that content counts stay stable. Database registration IDs and a file-volume marker
 must survive recreation; frontend/backend revisions must match the tested SHA.
+
+The content query reuses the ORM's native table/relationship naming helpers:
+app objects live in `_document`, `_project`, `_milestone` and `_chatChannel`;
+Projects extends the standard `task` table through `projectId`. A missing table
+still fails acceptance. A local PostgreSQL regression exercises the real query
+with session-local fixtures, decoy unprefixed tables and a missing-table failure:
+
+```sh
+A2E_SMOKE_SQL_TEST_URL='<local PostgreSQL URL ending in /test>' \
+  node --test packages/twenty-docker/scripts/__tests__/starter-content-query.integration.mjs
+```
+
+This explicit regression requires installed root dependencies and the local
+`test` database; it rolls back its temporary tables and changes no workspace.
+The standard dependency-free release-tooling tests remain available before the
+image build; the full Docker smoke executes the query on the installed workspace.
 
 CD tests the build's immutable registry digest before promoting that same digest
 to release tags. A failed smoke check prevents promotion and the optional

@@ -9,11 +9,13 @@ import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/wo
 
 export const seedPageLayouts = async ({
   workspaceId,
+  light = false,
   flatApplication,
   objectMetadataItems,
   workspaceMigrationValidateBuildAndRunService,
 }: {
   workspaceId: string;
+  light?: boolean;
   flatApplication: FlatApplication;
   objectMetadataItems: ObjectMetadataEntity[];
   workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService;
@@ -36,6 +38,7 @@ export const seedPageLayouts = async ({
 
   const navigationMenuItems = getNavigationMenuItemFlatEntitySeeds({
     workspaceId,
+    light,
     flatApplication,
   });
 

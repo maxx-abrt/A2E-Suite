@@ -1,7 +1,7 @@
 name: GraphQL and OpenAPI Breaking Changes Detection
 
 on:
- pull_request:
+  pull_request:
     types: [opened, synchronize, edited]
     branches:
       - main
@@ -54,7 +54,7 @@ jobs:
         image: clickhouse/clickhouse-server:25.8.8
         env:
           CLICKHOUSE_PASSWORD: clickhousePassword
-          CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
+          CLICKHOUSE_URL: 'http://default:clickhousePassword@localhost:8123/twenty'
         ports:
           - 8123:8123
           - 9000:9000
@@ -149,7 +149,7 @@ jobs:
 
       - name: Seed current branch database with test data
         run: |
-          npx nx command-no-deps twenty-server -- workspace:seed:dev
+          npx nx command-no-deps twenty-server -- workspace:seed:dev --full-fixtures
 
       - name: Start current branch server in background
         run: |
@@ -239,7 +239,6 @@ jobs:
           echo "Current branch files downloaded:"
           ls -la current-*
 
-
       - name: Preserve current branch files
         run: |
           # Create a temp directory to store current branch files
@@ -324,7 +323,12 @@ jobs:
 
       - name: Seed main branch database with test data
         run: |
-          npx nx command-no-deps twenty-server -- workspace:seed:dev
+          # The comparison branch may predate the explicit full-fixture option.
+          if grep -q -- '--full-fixtures' packages/twenty-server/src/database/commands/data-seed-dev-workspace.command.ts; then
+            npx nx command-no-deps twenty-server -- workspace:seed:dev --full-fixtures
+          else
+            npx nx command-no-deps twenty-server -- workspace:seed:dev
+          fi
 
       - name: Start main branch server in background
         run: |
@@ -413,7 +417,6 @@ jobs:
           # Verify the downloads
           echo "Main branch files downloaded:"
           ls -la main-*
-
 
       - name: Restore current branch files
         run: |

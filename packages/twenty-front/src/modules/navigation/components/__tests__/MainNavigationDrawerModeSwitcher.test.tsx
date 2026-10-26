@@ -87,6 +87,26 @@ describe('MainNavigationDrawerModeSwitcher', () => {
     );
   });
 
+  it('allows keyboard navigation between named modes', async () => {
+    const user = userEvent.setup();
+    renderModeSwitcher();
+
+    await user.tab();
+    expect(screen.getByRole('button', { name: 'Home' })).toHaveFocus();
+    expect(screen.getByRole('button', { name: 'Home' })).toHaveAttribute(
+      'aria-current',
+      'true',
+    );
+    await user.tab();
+    await user.tab();
+    expect(screen.getByRole('button', { name: 'Settings' })).toHaveFocus();
+    await user.keyboard('{Enter}');
+
+    expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledWith(
+      NAVIGATION_DRAWER_TABS.SETTINGS,
+    );
+  });
+
   it('renders nothing when no mode is available', () => {
     jest.mocked(useNavigationDrawerModes).mockReturnValue([]);
 

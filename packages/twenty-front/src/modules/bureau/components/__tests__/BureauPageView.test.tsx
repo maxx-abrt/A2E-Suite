@@ -2,6 +2,7 @@ import { BureauPageView } from '@/bureau/components/BureauPageView';
 import { type BureauPageRecord } from '@/bureau/types/BureauPageRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
+import { HelmetProvider } from '@dr.pogodin/react-helmet';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -111,7 +112,9 @@ const page: BureauPageRecord = {
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <I18nProvider i18n={i18n}>
-    <MemoryRouter>{children}</MemoryRouter>
+    <HelmetProvider>
+      <MemoryRouter>{children}</MemoryRouter>
+    </HelmetProvider>
   </I18nProvider>
 );
 
@@ -137,6 +140,7 @@ describe('Bureau full-page writing', () => {
     expect(
       await screen.findByRole('textbox', { name: 'Document body' }),
     ).toHaveTextContent('Existing writing');
+    await waitFor(() => expect(document.title).toBe('Meeting notes — Bureau'));
     const title = screen.getByRole('textbox', { name: 'Page title' });
     await user.clear(title);
     await user.type(title, 'Product brief');

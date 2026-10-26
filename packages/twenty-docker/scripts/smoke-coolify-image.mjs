@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { STARTER_DOCUMENT_TEMPLATES } from '../../twenty-apps/internal/a2e-documents/src/lib/starter-templates.ts';
 import { STARTER_PROJECT_TEMPLATES } from '../../twenty-apps/internal/a2e-projects/src/lib/starter-projects.ts';
 
+import { buildStarterContentQuery } from './build-starter-content-query.mjs';
 import { BUNDLED_APPLICATION_NAMES } from './build-bundled-apps.mjs';
 import { verifyAccountEntry } from './verify-account-entry.mjs';
 
@@ -242,7 +243,7 @@ export const smokeCoolifyImage = async ({
       throw new Error(
         'Workspace startup did not install every bundled application',
       );
-    const starterContentQuery = `SELECT json_build_object('templates', (SELECT count(*) FROM "${fixture.schema}".document WHERE kind = 'TEMPLATE'), 'projects', (SELECT count(*) FROM "${fixture.schema}".project), 'projectTasks', (SELECT count(*) FROM "${fixture.schema}".task WHERE "projectId" IS NOT NULL), 'milestones', (SELECT count(*) FROM "${fixture.schema}".milestone), 'channels', (SELECT count(*) FROM "${fixture.schema}"."chatChannel"))`;
+    const starterContentQuery = buildStarterContentQuery(fixture.schema);
     let starterContent;
     for (let attempt = 0; attempt < 90; attempt++) {
       starterContent = JSON.parse(queryDatabase(starterContentQuery));

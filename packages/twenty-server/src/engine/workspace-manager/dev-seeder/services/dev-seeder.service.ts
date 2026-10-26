@@ -86,7 +86,7 @@ export class DevSeederService {
     workspaceId: SeededWorkspacesIds,
     options?: { light?: boolean },
   ): Promise<void> {
-    const light = options?.light ?? false;
+    const light = options?.light ?? true;
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
     const appVersion = this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
@@ -206,6 +206,7 @@ export class DevSeederService {
 
     await seedPageLayouts({
       workspaceId,
+      light,
       flatApplication: twentyStandardFlatApplication,
       objectMetadataItems,
       workspaceMigrationValidateBuildAndRunService:
