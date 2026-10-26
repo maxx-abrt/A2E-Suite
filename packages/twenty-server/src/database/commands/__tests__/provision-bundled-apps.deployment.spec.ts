@@ -62,6 +62,10 @@ const runEntrypoint = (environment: Record<string, string>): EntrypointRun => {
   writeFileSync(join(binDirectory, 'psql'), '#!/bin/sh\necho t\n');
   chmodSync(join(binDirectory, 'yarn'), 0o755);
   chmodSync(join(binDirectory, 'psql'), 0o755);
+  writeFileSync(join(binDirectory, 'node'), '#!/bin/sh\necho "RECOVERY_NODE:$*"\nexit "${STUB_RECOVERY_EXIT:-0}"\n');
+  writeFileSync(join(binDirectory, 'tail'), '#!/bin/sh\necho RECOVERY_OFFLINE\n');
+  chmodSync(join(binDirectory, 'node'), 0o755);
+  chmodSync(join(binDirectory, 'tail'), 0o755);
 
   try {
     const output = execFileSync('/bin/sh', [entrypointPath, 'true'], {
@@ -90,6 +94,32 @@ const PROVISION_BUNDLED = 'command:prod app:provision-bundled';
 const INSTALL_PRE_INSTALLED =
   'command:prod install-pre-installed-apps --defer-post-install';
 const UPGRADE = 'command:prod upgrade';
+
+describe('column recovery maintenance startup', () => {
+  it('plans recovery before migrations or app provisioning and keeps HTTP offline', () => {
+    const { yarnCalls, output } = runEntrypoint({ A2E_RECOVERY_TARGET_DATABASE: 'bureau_recovered' });
+    expect(yarnCalls).toEqual([]);
+    expect(output).toContain('RECOVERY_NODE:/app/packages/twenty-server/scripts/recover-column-slots.mjs');
+    expect(output).not.toContain('--apply');
+    expect(output).toContain('RECOVERY_OFFLINE');
+  });
+
+  it.each(['0', '1'])('requires explicit apply and stays offline after recovery exit %s', (exitCode) => {
+    const { yarnCalls, output } = runEntrypoint({ A2E_RECOVERY_TARGET_DATABASE: 'bureau_recovered', A2E_RECOVERY_APPLY: 'true', STUB_RECOVERY_EXIT: exitCode });
+    expect(yarnCalls).toEqual([]);
+    expect(output).toContain('recover-column-slots.mjs --apply');
+    expect(output).toContain('RECOVERY_OFFLINE');
+    expect(output).toContain(exitCode === '0' ? 'status=succeeded' : 'Source database was preserved');
+  });
+
+  it('never runs recovery in a worker or replica', () => {
+    const { yarnCalls, output } = runEntrypoint({ A2E_RECOVERY_TARGET_DATABASE: 'bureau_recovered', A2E_RECOVERY_APPLY: 'true', DISABLE_DB_MIGRATIONS: 'true' });
+    expect(yarnCalls).toEqual([]);
+    expect(output).not.toContain('RECOVERY_NODE:');
+    expect(output).toContain('Refusing recovery in a worker or replica');
+    expect(output).toContain('RECOVERY_OFFLINE');
+  });
+});
 
 type ComposeService = {
   name: string;

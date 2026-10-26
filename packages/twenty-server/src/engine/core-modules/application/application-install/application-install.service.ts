@@ -191,7 +191,9 @@ export class ApplicationInstallService {
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
   }): Promise<boolean> {
-    const isVersionUpgrade = isDefined(existingApplication);
+    const isVersionUpgrade =
+      isDefined(existingApplication) &&
+      existingApplication.state !== ApplicationState.INSTALLING;
 
     const attributes = {
       universal_identifier: appRegistration.universalIdentifier,
@@ -282,9 +284,14 @@ export class ApplicationInstallService {
       }
     }
 
-    const isVersionUpgrade = isDefined(existingApplication);
+    const isResumingInstall =
+      existingApplication?.state === ApplicationState.INSTALLING;
+    const isVersionUpgrade =
+      isDefined(existingApplication) && !isResumingInstall;
 
-    const previousVersion = existingApplication?.version ?? undefined;
+    const previousVersion = isVersionUpgrade
+      ? (existingApplication?.version ?? undefined)
+      : undefined;
 
     const newVersion = resolvedPackage.packageJson.version;
 
@@ -311,9 +318,6 @@ export class ApplicationInstallService {
     const isUpgradeOfInstalledApplication =
       isVersionUpgrade && application.state === ApplicationState.INSTALLED;
 
-    const hasNeverCompletedInstall =
-      isVersionUpgrade && application.state === ApplicationState.INSTALLING;
-
     const incomingVersion = resolvedPackage.packageJson.version;
 
     // An installed application re-requested at a version it cannot move to
@@ -329,9 +333,6 @@ export class ApplicationInstallService {
       });
     }
 
-    // Rollback is scoped to the work after the application row exists: reaching
-    // this catch means creation succeeded, so only an application that never
-    // finished installing needs uninstalling.
     try {
       if (isUpgradeOfInstalledApplication) {
         await this.applicationService.update(application.id, {
@@ -340,11 +341,7 @@ export class ApplicationInstallService {
         });
       }
 
-      if (
-        isVersionUpgrade &&
-        isDefined(application.version) &&
-        isDefined(incomingVersion)
-      ) {
+      if (isDefined(application.version) && isDefined(incomingVersion)) {
         const progression =
           this.applicationVersionValidationService.validateVersionProgression({
             incomingVersion,
@@ -353,7 +350,10 @@ export class ApplicationInstallService {
             action: 'install',
           });
 
-        if (!progression.allowed) {
+        if (
+          !progression.allowed &&
+          !(isResumingInstall && progression.reason === 'SAME_VERSION')
+        ) {
           throw new ApplicationException(
             progression.message,
             VERSION_PROGRESSION_REASON_TO_INSTALL_EXCEPTION_CODE[
@@ -445,18 +445,10 @@ export class ApplicationInstallService {
         });
       }
 
-      if (!isVersionUpgrade || hasNeverCompletedInstall) {
-        // Rollback of a failed fresh install: the app never finished
-        // installing, so the uninstall hook must not run.
-        await this.applicationSyncService.uninstallApplication({
-          applicationUniversalIdentifier: universalIdentifier,
-          workspaceId: params.workspaceId,
-          shouldRunUninstallHook: false,
-          // Failed fresh install rollback: the app never finished installing,
-          // so data-loss refusal would deadlock the rollback itself.
-          shouldRunDataLossPreflight: false,
-        });
-      }
+      // A manifest can have committed before SDK generation or a hook fails.
+      // Automatic uninstall loses that data and consumes PostgreSQL column slots
+      // on every retry, because dropped columns still count toward its limit.
+      // Keep INSTALLING metadata so the next attempt can reconcile it in place.
 
       throw error;
     }

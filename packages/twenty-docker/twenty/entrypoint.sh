@@ -18,6 +18,24 @@ run_startup_step() {
     fi
 }
 
+if [ -n "${A2E_RECOVERY_TARGET_DATABASE:-}" ]; then
+    if [ "${DISABLE_DB_MIGRATIONS:-}" = "true" ]; then
+        echo "[recovery] Refusing recovery in a worker or replica; keep this container offline."
+    else
+        if [ "${A2E_RECOVERY_APPLY:-false}" = "true" ]; then
+            if ! run_startup_step database-column-recovery node /app/packages/twenty-server/scripts/recover-column-slots.mjs --apply; then
+                echo "[recovery] Failed. Source database was preserved; do not switch to an unverified target."
+            fi
+        else
+            if ! run_startup_step database-column-recovery-plan node /app/packages/twenty-server/scripts/recover-column-slots.mjs; then
+                echo "[recovery] Plan failed. No recovery was applied."
+            fi
+        fi
+    fi
+    echo "[recovery] Maintenance mode: API, migrations and app installs remain stopped. After a verified clone, set PG_DATABASE_NAME to the target and clear both A2E_RECOVERY variables before redeploying."
+    exec tail -f /dev/null
+fi
+
 setup_and_migrate_db() {
     if [ "${DISABLE_DB_MIGRATIONS}" = "true" ]; then
         echo "Database setup and migrations are disabled, skipping..."

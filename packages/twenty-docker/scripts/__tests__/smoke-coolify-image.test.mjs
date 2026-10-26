@@ -46,7 +46,10 @@ const withFixture = async (operation, overrides = {}) => {
     if (command.includes('curl')) return overrides.workerReadiness ?? 'READY';
     if (command.includes('psql')) {
       const query = command.at(-1);
-      if (query.includes('json_agg'))
+      if (
+        query.includes('json_agg') &&
+        query.includes('core."applicationRegistration"')
+      )
         return JSON.stringify(
           overrides.registrations ??
             (overrides.changedIdentity && starts > 1
@@ -62,6 +65,16 @@ const withFixture = async (operation, overrides = {}) => {
         );
       if (query.startsWith('SELECT count(*) FROM core.application'))
         return starts === 1 ? '0' : String(registrations.length);
+      if (query.includes('pg_catalog.pg_attribute'))
+        return JSON.stringify([
+          {
+            schema: 'workspace_smoke',
+            table: 'task',
+            slots: overrides.changedColumnSlots && starts === 3 ? 100 : 40,
+            active: 40,
+            dropped: overrides.changedColumnSlots && starts === 3 ? 60 : 0,
+          },
+        ]);
       if (query.includes('TEMPLATE'))
         return JSON.stringify({
           templates: overrides.missingContent
@@ -156,6 +169,7 @@ test('checks fresh startup, boot-time app installs, worker seeds and a populated
         'workspace-install-restart',
         'worker-post-install-content',
         'populated-restart',
+        'stable-column-slots',
       ]);
       assert.ok(
         calls.some((arguments_) =>
@@ -198,6 +212,11 @@ for (const [name, overrides, message] of [
   ],
   ['unhealthy server', { startFailure: true }, /server unhealthy/],
   ['lost file volume', { lostStorage: true }, /File volume did not survive/],
+  [
+    'repeated schema churn',
+    { changedColumnSlots: true },
+    /Restart changed physical column slots/,
+  ],
   [
     'changed registration identities',
     { changedIdentity: true },

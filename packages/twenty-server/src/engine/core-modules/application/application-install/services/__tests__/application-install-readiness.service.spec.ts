@@ -4,6 +4,7 @@ import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/appl
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 
 const WORKSPACE_ID = 'workspace-1';
 const APP_UNIVERSAL_IDENTIFIER = '11111111-1111-4111-8111-111111111111';
@@ -143,6 +144,7 @@ describe('ApplicationInstallReadinessService', () => {
       .mocked(applicationService.findByUniversalIdentifier)
       .mockResolvedValue({
         id: 'application-1',
+        state: ApplicationState.INSTALLED,
       } as unknown as ApplicationEntity);
 
     const [readiness] = await readinessService.getInstallReadiness({
@@ -154,6 +156,33 @@ describe('ApplicationInstallReadinessService', () => {
     expect(readiness.ready).toBe(true);
     expect(readiness.blockedReason).toBeNull();
   });
+
+  it.each([
+    ApplicationState.INSTALLING,
+    ApplicationState.UPGRADING,
+    ApplicationState.UNINSTALLING,
+  ])(
+    'does not report an application in %s state as installed',
+    async (state) => {
+      jest
+        .mocked(
+          applicationRegistrationService.findOneByUniversalIdentifierGlobal,
+        )
+        .mockResolvedValue(
+          buildRegistration({ requiredServerVersionRange: null }),
+        );
+      jest
+        .mocked(applicationService.findByUniversalIdentifier)
+        .mockResolvedValue({ id: 'application-1', state } as ApplicationEntity);
+
+      const [readiness] = await readinessService.getInstallReadiness({
+        workspaceId: WORKSPACE_ID,
+        universalIdentifiers: [APP_UNIVERSAL_IDENTIFIER],
+      });
+      expect(readiness.currentlyInstalled).toBe(false);
+      expect(readiness.ready).toBe(true);
+    },
+  );
 
   it('reports each requested identifier independently', async () => {
     jest

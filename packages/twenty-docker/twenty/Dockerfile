@@ -120,6 +120,7 @@ RUN apk add --no-cache \
     'libcrypto3>=3.5.8-r0' \
     'libssl3>=3.5.8-r0' \
     'postgresql18-client>=18.5-r0' \
+    'postgresql16-client>=16.15-r0' \
     jq
 
 COPY ./packages/twenty-docker/twenty/entrypoint.sh /app/entrypoint.sh

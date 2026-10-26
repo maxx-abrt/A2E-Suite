@@ -6,6 +6,7 @@ import { ApplicationInstallReadinessDTO } from 'src/engine/core-modules/applicat
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 
 @Injectable()
 export class ApplicationInstallReadinessService {
@@ -33,12 +34,13 @@ export class ApplicationInstallReadinessService {
           universalIdentifier,
         );
 
-      const currentlyInstalled = isDefined(
+      const application =
         await this.applicationService.findByUniversalIdentifier({
           universalIdentifier,
           workspaceId,
-        }),
-      );
+        });
+      const currentlyInstalled =
+        application?.state === ApplicationState.INSTALLED;
 
       let versionCompatible = false;
 

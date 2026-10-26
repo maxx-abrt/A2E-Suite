@@ -26,9 +26,13 @@ const buildService = ({
   installedVersion,
   incomingVersion,
   postInstall,
+  applicationState = ApplicationState.INSTALLED,
+  isFreshInstall = false,
 }: {
   installedVersion: string;
   incomingVersion: string;
+  applicationState?: ApplicationState;
+  isFreshInstall?: boolean;
   postInstall?: {
     shouldRunSynchronously: boolean;
     shouldRunOnVersionUpgrade: boolean;
@@ -44,14 +48,22 @@ const buildService = ({
     findOne: jest.fn().mockResolvedValue(registration),
   };
 
+  const application = {
+    id: 'application-id',
+    universalIdentifier: UNIVERSAL_IDENTIFIER,
+    version: isFreshInstall ? null : installedVersion,
+    state: applicationState,
+    logoFileId: null,
+  };
+  const findByUniversalIdentifier = jest.fn().mockResolvedValue(application);
+
+  if (isFreshInstall) {
+    findByUniversalIdentifier.mockResolvedValueOnce(null);
+  }
+
   const applicationService = {
-    findByUniversalIdentifier: jest.fn().mockResolvedValue({
-      id: 'application-id',
-      universalIdentifier: UNIVERSAL_IDENTIFIER,
-      version: installedVersion,
-      state: ApplicationState.INSTALLED,
-      logoFileId: null,
-    }),
+    findByUniversalIdentifier,
+    create: jest.fn().mockResolvedValue(application),
     update: jest.fn().mockResolvedValue(undefined),
     revertStateToInstalledBestEffort: jest.fn().mockResolvedValue(undefined),
   };
@@ -83,7 +95,9 @@ const buildService = ({
   };
 
   const applicationManifestApplyService = {
-    applyManifestToWorkspace: jest.fn().mockResolvedValue(undefined),
+    applyManifestToWorkspace: jest.fn().mockImplementation(async () => {
+      application.version = incomingVersion;
+    }),
     refreshRegistrationFromManifest: jest.fn().mockResolvedValue(undefined),
   };
 
@@ -305,5 +319,97 @@ describe('ApplicationInstallService post-install scheduling', () => {
       code: ApplicationExceptionCode.POST_INSTALL_ERROR,
     });
     expect(enqueue).not.toHaveBeenCalled();
+  });
+});
+
+describe('ApplicationInstallService interrupted first installs', () => {
+  it.each([false, true])(
+    'preserves committed metadata when the first hook fails (fresh row: %s)',
+    async (isFreshInstall) => {
+      const {
+        service,
+        execute,
+        applicationService,
+        applicationSyncService,
+        applicationManifestApplyService,
+        metricsService,
+      } = buildService({
+        installedVersion: '0.1.0',
+        incomingVersion: '0.1.0',
+        applicationState: ApplicationState.INSTALLING,
+        isFreshInstall,
+        postInstall: {
+          shouldRunSynchronously: true,
+          shouldRunOnVersionUpgrade: false,
+        },
+      });
+      execute.mockResolvedValueOnce({
+        error: { errorMessage: 'API unavailable' },
+      });
+
+      await expect(install(service)).rejects.toMatchObject({
+        code: ApplicationExceptionCode.POST_INSTALL_ERROR,
+      });
+      expect(
+        applicationSyncService.uninstallApplication,
+      ).not.toHaveBeenCalled();
+      expect(applicationService.update).not.toHaveBeenCalledWith(
+        'application-id',
+        expect.objectContaining({ state: ApplicationState.INSTALLED }),
+      );
+
+      await expect(install(service)).resolves.toBe(true);
+
+      expect(
+        applicationManifestApplyService.applyManifestToWorkspace,
+      ).toHaveBeenCalledTimes(2);
+      expect(
+        applicationSyncService.uninstallApplication,
+      ).not.toHaveBeenCalled();
+      expect(applicationService.create).toHaveBeenCalledTimes(
+        isFreshInstall ? 1 : 0,
+      );
+      expect(execute).toHaveBeenCalledTimes(2);
+      expect(execute).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          payload: { previousVersion: undefined, newVersion: '0.1.0' },
+        }),
+      );
+      expect(metricsService.incrementCounterBy).toHaveBeenLastCalledWith(
+        expect.objectContaining({ key: MetricsKeys.AppInstallSucceeded }),
+      );
+    },
+  );
+
+  it('keeps pending metadata after schema or SDK failure', async () => {
+    const { service, applicationManifestApplyService, applicationSyncService } =
+      buildService({
+        installedVersion: '0.1.0',
+        incomingVersion: '0.1.0',
+        applicationState: ApplicationState.INSTALLING,
+      });
+    applicationManifestApplyService.applyManifestToWorkspace.mockRejectedValue(
+      new Error('schema unavailable'),
+    );
+
+    await expect(install(service)).rejects.toThrow('schema unavailable');
+    expect(applicationSyncService.uninstallApplication).not.toHaveBeenCalled();
+  });
+
+  it('still refuses a downgrade of an interrupted installation', async () => {
+    const { service, applicationManifestApplyService, applicationSyncService } =
+      buildService({
+        installedVersion: '0.2.0',
+        incomingVersion: '0.1.0',
+        applicationState: ApplicationState.INSTALLING,
+      });
+
+    await expect(install(service)).rejects.toMatchObject({
+      code: ApplicationExceptionCode.CANNOT_DOWNGRADE_APPLICATION,
+    });
+    expect(
+      applicationManifestApplyService.applyManifestToWorkspace,
+    ).not.toHaveBeenCalled();
+    expect(applicationSyncService.uninstallApplication).not.toHaveBeenCalled();
   });
 });
