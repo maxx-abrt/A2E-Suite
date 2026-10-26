@@ -85,9 +85,10 @@ provision_bundled_apps() {
     fi
 
     # Install newly-registered pre-installed apps on all existing workspaces.
-    # This is idempotent — already-installed apps are skipped by the install service.
+    # Hooks need HTTP, which starts after this step; the worker consumes them once ready.
+    # Already-installed apps are skipped by the install service.
     echo "Installing pre-installed apps on all workspaces..."
-    if run_startup_step bundled-app-installation yarn command:prod install-pre-installed-apps; then
+    if run_startup_step bundled-app-installation yarn command:prod install-pre-installed-apps --defer-post-install; then
         echo "Successfully installed pre-installed apps!"
     else
         echo "ERROR: Pre-installed app installation failed. Check the app and workspace errors above, then restart to retry."

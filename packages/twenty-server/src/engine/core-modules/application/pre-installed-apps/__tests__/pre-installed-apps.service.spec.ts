@@ -57,6 +57,24 @@ describe('PreInstalledAppsService.installOnWorkspace', () => {
     expect([...installed].sort()).toEqual(['chat', 'documents', 'projects']);
   });
 
+  it('forwards startup hook deferral to every installation', async () => {
+    const installApplication = jest.fn().mockResolvedValue(true);
+    const service = buildService({
+      registrations: [{ id: 'documents', name: 'Documents' }],
+      installApplication,
+    });
+
+    await service.installOnWorkspace('workspace-id', {
+      shouldDeferPostInstall: true,
+    });
+
+    expect(installApplication).toHaveBeenCalledWith({
+      appRegistrationId: 'documents',
+      workspaceId: 'workspace-id',
+      shouldDeferPostInstall: true,
+    });
+  });
+
   it('stops when a pass makes no progress', async () => {
     const installApplication = jest
       .fn()

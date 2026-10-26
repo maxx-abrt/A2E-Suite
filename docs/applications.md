@@ -30,8 +30,11 @@ These are separate states. From **HEAD (2026-09-22+)**, building the production
 Docker image **does** provision the A2E apps: the `twenty-apps-build` Dockerfile
 stage builds each app's tarball; `entrypoint.sh` runs `app:provision-bundled`
 at every boot, which registers any unregistered bundled app and marks it
-`isPreInstalled=true`; then `install-pre-installed-apps` auto-installs it on
-all workspaces. Set `DISABLE_BUNDLED_APP_PROVISIONING=true` to opt out.
+`isPreInstalled=true`; then `install-pre-installed-apps --defer-post-install` installs its metadata on
+all provisioned workspaces. Startup hooks are queued because HTTP is not yet
+listening; the worker executes them after server readiness. Interactive app
+installation retains synchronous hook behavior. A ready HTTP process alone
+does not confirm starter content has finished. Set `DISABLE_BUNDLED_APP_PROVISIONING=true` to opt out.
 Provisioning runs only in the container that owns migrations (the server):
 every shipped worker definition sets `DISABLE_BUNDLED_APP_PROVISIONING=true`,
 and a container started with `DISABLE_DB_MIGRATIONS=true` skips it unless

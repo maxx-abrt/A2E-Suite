@@ -12,9 +12,11 @@ this checkout publishes there or that those resources are public.
 [Documentation home](docs/README.md) · [Applications provisioning](docs/applications.md)
 
 - Platform deployment now includes A2E app provisioning: the production image
-  contains built tarballs for all 6 A2E apps (Documents, Bilan, Projects,
-  Chat, Drive, CRM assistant); the `app:provision-bundled`
-  startup command registers and auto-installs them on every workspace.
+  contains built tarballs for seven A2E apps (Documents, Bilan, Projects,
+  Chat, Drive, CRM assistant and Links). `app:provision-bundled` registers
+  them; `install-pre-installed-apps --defer-post-install` installs their
+  metadata before HTTP starts. Post-install hooks run through the worker
+  after API readiness. Interactive installations still wait for synchronous hooks.
   Set `DISABLE_BUNDLED_APP_PROVISIONING=true` to opt out (e.g. for pinned-version
   deployments); every compose file passes it through to the server. Provisioning
   runs on the server only — workers set `DISABLE_BUNDLED_APP_PROVISIONING=true`,
@@ -64,8 +66,10 @@ actually runs if your source of truth is GitLab.
 Then wait for the build to finish **before** touching Coolify:
 
 1. Open https://github.com/maxx-abrt/A2E-Suite/actions
-2. Watch **"CD Docker image"** until the image build/push succeeds. This
-   publishes the image; it does not by itself prove the running service updated.
+2. Watch **"CD Docker image"** through **Test candidate with the Coolify stack**
+   and **Promote tested image**. The build first uploads a candidate; only the
+   tested digest receives `latest`, package-version and commit-SHA tags. This
+   does not by itself prove the running Coolify service updated.
    The first build can take 30–40 minutes; caching speeds up later builds.
 3. Check the image exists: https://github.com/maxx-abrt?tab=packages
    → package `a2e-suite`.
@@ -336,9 +340,48 @@ Check the first failed or unfinished startup step before changing timeouts.
 The worker waiting for `service_healthy` is expected while the server is
 unhealthy. Preserve the service, database/file volumes and existing secrets.
 
-The 2026-10-26 supplied log excerpt ends after two successful workspace
-upgrades. It contains neither a server startup error nor the failing probe;
-that excerpt alone cannot establish the deployment's root cause.
+The initial 2026-10-26 excerpt ended after successful upgrades. Later logs
+showed Cloudflare 502 during pre-installed app hooks: those synchronous hooks
+called the public API before the entrypoint had launched HTTP. Startup now
+queues post-install hooks in the existing logic-function queue. A metadata or
+queueing failure still fails startup; starter content completes with the worker.
+
+The Coolify Compose files also set `LOGIC_FUNCTION_LOCAL_API_URL=http://server:3000`
+on both services. Local SDK calls stay on the Docker network, while `SERVER_URL`
+continues to control public links. Outside this Compose stack, the optional
+setting defaults to `SERVER_URL`. Lambda functions continue to use `SERVER_URL`
+and ignore this local-only setting.
+
+### Image acceptance before publication
+
+Both Docker CI and CD use the real Coolify Compose file and its readiness grace
+period, rather than the older general-purpose Compose configuration. The smoke
+check starts an isolated fresh database, creates a native light development
+workspace while the worker is stopped, then recreates the server and worker.
+It requires every bundled app to install before readiness, and verifies that
+the worker actually creates the shipped document templates, twelve starter
+projects with their tasks and milestones, and two discussion channels through
+the internal API. Template/task/milestone counts come from the shipped bundles. Another restart checks that
+content counts stay stable. Database registration IDs and a file-volume marker
+must survive recreation; frontend/backend revisions must match the tested SHA.
+
+CD tests the build's immutable registry digest before promoting that same digest
+to release tags. A failed smoke check prevents promotion and the optional
+Coolify webhook. Diagnostics are uploaded as an Actions artifact, including
+startup logs, container health/exit/OOM state and resource usage. These checks
+run on disposable CI volumes; their cleanup never targets production volumes.
+The native development workspace and its sample accounts exist only in that
+isolated test stack. This startup check does not replace browser acceptance or
+a database/file backup restore drill.
+
+For an existing Empty Compose resource, update the saved configuration from
+[`docker-compose.coolify.yml`](docker-compose.coolify.yml), preserving its
+existing volume mappings and secrets. Wait for the new CD acceptance steps to
+pass, select its full commit SHA as `TAG`, then deploy the existing resource.
+Both the rebuilt image and updated saved Compose are needed for this correction.
+When terminal access is unavailable, use the server/worker Logs tabs and the
+Actions diagnostics artifact; a Cloudflare HTML page is not container health
+output.
 
 | Symptom                                  | Cause / fix                                                            |
 | ---------------------------------------- | ---------------------------------------------------------------------- |

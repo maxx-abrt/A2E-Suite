@@ -18,6 +18,10 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 
+type PreInstalledAppsOptions = {
+  shouldDeferPostInstall?: boolean;
+};
+
 @Injectable()
 export class PreInstalledAppsService {
   private readonly logger = new Logger(PreInstalledAppsService.name);
@@ -45,7 +49,10 @@ export class PreInstalledAppsService {
   // (projects → documents, chat → projects) and registrations carry no
   // dependency graph, so installs run in passes: each pass retries what
   // failed in the previous one for as long as that pass made progress.
-  async installOnWorkspace(workspaceId: string): Promise<void> {
+  async installOnWorkspace(
+    workspaceId: string,
+    options: PreInstalledAppsOptions = {},
+  ): Promise<void> {
     const registrations = await this.applicationRegistrationRepository.find({
       where: { isPreInstalled: true },
     });
@@ -56,7 +63,11 @@ export class PreInstalledAppsService {
       const outcomes = await Promise.all(
         pendingRegistrations.map(async (registration) => ({
           registration,
-          failure: await this.tryInstallRegistration(registration, workspaceId),
+          failure: await this.tryInstallRegistration(
+            registration,
+            workspaceId,
+            options,
+          ),
         })),
       );
 
@@ -96,11 +107,15 @@ export class PreInstalledAppsService {
   private async tryInstallRegistration(
     registration: ApplicationRegistrationEntity,
     workspaceId: string,
+    options: PreInstalledAppsOptions,
   ): Promise<string | null> {
     try {
       await this.applicationInstallService.installApplication({
         appRegistrationId: registration.id,
         workspaceId,
+        ...(options.shouldDeferPostInstall === true
+          ? { shouldDeferPostInstall: true }
+          : {}),
       });
 
       return null;
