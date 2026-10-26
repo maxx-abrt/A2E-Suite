@@ -73,6 +73,7 @@ export class ApplicationInstallService {
     version?: string;
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
+    shouldDeferPostInstall?: boolean;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: params.appRegistrationId },
@@ -112,6 +113,7 @@ export class ApplicationInstallService {
       () =>
         this.doInstallApplication(appRegistration, {
           version: params.version,
+          shouldDeferPostInstall: params.shouldDeferPostInstall,
           workspaceId: params.workspaceId,
           skipWorkspaceCompatibilityCheck:
             params.skipWorkspaceCompatibilityCheck,
@@ -127,6 +129,7 @@ export class ApplicationInstallService {
       version?: string;
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
+      shouldDeferPostInstall?: boolean;
     },
   ): Promise<boolean> {
     // Re-read inside the lock so a concurrent tarball upload cannot make us
@@ -183,6 +186,7 @@ export class ApplicationInstallService {
       version?: string;
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
+      shouldDeferPostInstall?: boolean;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
@@ -249,6 +253,7 @@ export class ApplicationInstallService {
       version?: string;
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
+      shouldDeferPostInstall?: boolean;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
@@ -398,6 +403,7 @@ export class ApplicationInstallService {
       });
 
       await this.runPostInstallHook({
+        shouldDeferPostInstall: params.shouldDeferPostInstall,
         manifest: resolvedPackage.manifest,
         workspaceId: params.workspaceId,
         previousVersion,
@@ -577,6 +583,7 @@ export class ApplicationInstallService {
   }
 
   private async runPostInstallHook(params: {
+    shouldDeferPostInstall?: boolean;
     manifest: Manifest;
     workspaceId: string;
     previousVersion?: string;
@@ -635,7 +642,8 @@ export class ApplicationInstallService {
       JSON.stringify(payload),
     );
 
-    if (!shouldRunSynchronously) {
+    // Startup installs run before HTTP listens; the worker starts after API readiness.
+    if (!shouldRunSynchronously || params.shouldDeferPostInstall === true) {
       await this.messageQueueService.add<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
         {

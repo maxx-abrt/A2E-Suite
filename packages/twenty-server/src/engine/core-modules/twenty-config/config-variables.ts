@@ -697,6 +697,17 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
+    description:
+      'API URL reachable by local logic functions; defaults to SERVER_URL',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsUrl({ require_tld: false, require_protocol: true })
+  @IsOptional()
+  LOGIC_FUNCTION_LOCAL_API_URL: string | undefined = undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description: 'Throttle limit for logic function execution',
     type: ConfigVariableType.NUMBER,
   })

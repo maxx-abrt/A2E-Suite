@@ -87,7 +87,8 @@ const runEntrypoint = (environment: Record<string, string>): EntrypointRun => {
 };
 
 const PROVISION_BUNDLED = 'command:prod app:provision-bundled';
-const INSTALL_PRE_INSTALLED = 'command:prod install-pre-installed-apps';
+const INSTALL_PRE_INSTALLED =
+  'command:prod install-pre-installed-apps --defer-post-install';
 const UPGRADE = 'command:prod upgrade';
 
 type ComposeService = {

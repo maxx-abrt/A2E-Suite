@@ -18,6 +18,7 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
+  LogicFunctionDriverType,
   type LogicFunctionExecuteResult,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
@@ -432,7 +433,14 @@ export class LogicFunctionExecutorService {
         : null,
     ]);
 
-    const baseUrl = cleanServerUrl(this.twentyConfigService.get('SERVER_URL'));
+    const localApiUrl =
+      this.twentyConfigService.get('LOGIC_FUNCTION_TYPE') ===
+      LogicFunctionDriverType.LOCAL
+        ? this.twentyConfigService.get('LOGIC_FUNCTION_LOCAL_API_URL')
+        : undefined;
+    const baseUrl = cleanServerUrl(
+      localApiUrl ?? this.twentyConfigService.get('SERVER_URL'),
+    );
     const functionsBaseUrl = await this.buildFunctionsBaseUrl({
       workspaceId,
       flatApplication,

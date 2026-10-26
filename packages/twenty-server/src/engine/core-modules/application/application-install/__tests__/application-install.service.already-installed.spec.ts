@@ -25,9 +25,14 @@ const UNIVERSAL_IDENTIFIER = 'b11cd01f-0000-4000-8000-000000000001';
 const buildService = ({
   installedVersion,
   incomingVersion,
+  postInstall,
 }: {
   installedVersion: string;
   incomingVersion: string;
+  postInstall?: {
+    shouldRunSynchronously: boolean;
+    shouldRunOnVersionUpgrade: boolean;
+  };
 }) => {
   const registration = {
     id: 'registration-id',
@@ -53,7 +58,19 @@ const buildService = ({
 
   const applicationPackageFetcherService = {
     resolvePackage: jest.fn().mockResolvedValue({
-      manifest: { application: { displayName: 'A2E Drive' } },
+      manifest: {
+        application: {
+          displayName: 'A2E Drive',
+          ...(postInstall
+            ? {
+                postInstallLogicFunction: {
+                  universalIdentifier: 'post-install-identifier',
+                  ...postInstall,
+                },
+              }
+            : {}),
+        },
+      },
       packageJson: { version: incomingVersion },
       extractedDir: '/tmp/extracted',
       cleanupDir: '/tmp/extracted',
@@ -74,6 +91,9 @@ const buildService = ({
     incrementCounterBy: jest.fn(),
   };
 
+  const execute = jest.fn().mockResolvedValue({});
+  const enqueue = jest.fn().mockResolvedValue(undefined);
+
   const service = new ApplicationInstallService(
     appRegistrationRepository as unknown as Repository<ApplicationRegistrationEntity>,
     applicationService as unknown as ApplicationService,
@@ -84,22 +104,26 @@ const buildService = ({
     applicationSyncService as unknown as ApplicationSyncService,
     applicationManifestApplyService as unknown as ApplicationManifestApplyService,
     {} as unknown as FileStorageService,
-    {} as unknown as LogicFunctionExecutorService,
+    { execute } as unknown as LogicFunctionExecutorService,
     {
       withLock: jest.fn().mockImplementation((callback) => callback()),
     } as unknown as CacheLockService,
-    {} as unknown as MessageQueueService,
-    {} as unknown as WorkspaceCacheService,
+    { add: enqueue } as unknown as MessageQueueService,
+    {
+      getOrRecompute: jest.fn().mockResolvedValue({
+        flatLogicFunctionMaps: {
+          byUniversalIdentifier: {
+            'post-install-identifier': { id: 'post-install-id' },
+          },
+        },
+      }),
+    } as unknown as WorkspaceCacheService,
     metricsService as unknown as MetricsService,
   );
 
   const internals = service as unknown as Record<string, jest.Mock>;
 
-  for (const privateStep of [
-    'writeFilesToStorage',
-    'runPreInstallHook',
-    'runPostInstallHook',
-  ]) {
+  for (const privateStep of ['writeFilesToStorage', 'runPreInstallHook']) {
     jest.spyOn(internals, privateStep).mockResolvedValue(undefined);
   }
 
@@ -114,6 +138,8 @@ const buildService = ({
 
   return {
     service,
+    execute,
+    enqueue,
     applicationService,
     applicationSyncService,
     applicationManifestApplyService,
@@ -201,5 +227,83 @@ describe('ApplicationInstallService — already-installed version', () => {
       expect.objectContaining({ key: MetricsKeys.AppUpgradeSucceeded }),
     );
     expect(loggerErrorSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe('ApplicationInstallService post-install scheduling', () => {
+  const buildPostInstallService = () =>
+    buildService({
+      installedVersion: '0.1.0',
+      incomingVersion: '0.2.0',
+      postInstall: {
+        shouldRunSynchronously: true,
+        shouldRunOnVersionUpgrade: true,
+      },
+    });
+
+  it('waits for synchronous hooks during an interactive install', async () => {
+    const { service, execute, enqueue } = buildPostInstallService();
+
+    await expect(install(service)).resolves.toBe(true);
+
+    expect(execute).toHaveBeenCalledWith({
+      logicFunctionId: 'post-install-id',
+      workspaceId: WORKSPACE_ID,
+      payload: { previousVersion: '0.1.0', newVersion: '0.2.0' },
+    });
+    expect(enqueue).not.toHaveBeenCalled();
+  });
+
+  it('queues synchronous hooks during startup without making an HTTP call', async () => {
+    const { service, execute, enqueue } = buildPostInstallService();
+
+    await expect(
+      service.installApplication({
+        appRegistrationId: 'registration-id',
+        workspaceId: WORKSPACE_ID,
+        skipWorkspaceCompatibilityCheck: true,
+        shouldDeferPostInstall: true,
+      }),
+    ).resolves.toBe(true);
+
+    expect(execute).not.toHaveBeenCalled();
+    expect(enqueue).toHaveBeenCalledWith(
+      'LogicFunctionTriggerJob',
+      {
+        logicFunctionId: 'post-install-id',
+        workspaceId: WORKSPACE_ID,
+        payload: { previousVersion: '0.1.0', newVersion: '0.2.0' },
+      },
+      expect.objectContaining({ retryLimit: 3 }),
+    );
+  });
+
+  it('fails startup installation if the hook cannot be durably queued', async () => {
+    const { service, enqueue, applicationService } = buildPostInstallService();
+    enqueue.mockRejectedValue(new Error('queue unavailable'));
+
+    await expect(
+      service.installApplication({
+        appRegistrationId: 'registration-id',
+        workspaceId: WORKSPACE_ID,
+        skipWorkspaceCompatibilityCheck: true,
+        shouldDeferPostInstall: true,
+      }),
+    ).rejects.toThrow('queue unavailable');
+
+    expect(applicationService.update).not.toHaveBeenCalledWith(
+      'application-id',
+      expect.objectContaining({ state: ApplicationState.INSTALLED }),
+    );
+  });
+
+  it('preserves synchronous hook failures for interactive installs', async () => {
+    const { service, execute, enqueue } = buildPostInstallService();
+    execute.mockResolvedValue({ error: { errorMessage: 'API unavailable' } });
+
+    await expect(install(service)).rejects.toMatchObject({
+      code: ApplicationExceptionCode.POST_INSTALL_ERROR,
+    });
+    expect(enqueue).not.toHaveBeenCalled();
   });
 });

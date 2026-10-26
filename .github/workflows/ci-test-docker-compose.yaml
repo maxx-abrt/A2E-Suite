@@ -19,10 +19,19 @@ jobs:
       files: |
         packages/twenty-docker/**
         docker-compose.yml
+        docker-compose.coolify.yml
+        .github/workflows/ci-test-docker-compose.yaml
+        .github/workflows/cd-docker-image.yaml
+        packages/twenty-server/src/database/commands/**
+        packages/twenty-server/src/engine/core-modules/application/**
+        packages/twenty-server/src/engine/core-modules/logic-function/**
+        packages/twenty-server/src/engine/core-modules/twenty-config/**
+        packages/twenty-server/src/command/**
+        packages/twenty-apps/internal/a2e-*/**
   test-compose:
     needs: changed-files-check
-    if: needs.changed-files-check.outputs.any_changed == 'true'
-    timeout-minutes: 30
+    if: always() && !cancelled() && (github.event_name == 'merge_group' || needs.changed-files-check.outputs.any_changed == 'true')
+    timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -33,71 +42,41 @@ jobs:
         run: |
           echo '{"registry-mirrors":["https://mirror.gcr.io"]}' | sudo tee /etc/docker/daemon.json
           sudo systemctl restart docker
-      - name: Run compose
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24
+      - name: Free disk space
+        run: sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /usr/local/share/boost
+      - name: Build production image
+        env:
+          A2E_SMOKE_REVISION: ${{ github.sha }}
         run: |
-          echo "Patching docker-compose.yml..."
-          yq eval 'del(.services.server.image)' -i docker-compose.yml
-          yq eval '.services.server.build.context = "../../"' -i docker-compose.yml
-          yq eval '.services.server.build.dockerfile = "./packages/twenty-docker/twenty/Dockerfile"' -i docker-compose.yml
-          yq eval '.services.server.build.target = "twenty"' -i docker-compose.yml
-          yq eval '.services.server.restart = "no"' -i docker-compose.yml
-
-          echo "Setting up .env file..."
-          cp .env.example .env
-          echo "Generating secrets..."
-          echo "" >> .env
-          echo "# === Randomly generated secrets ===" >>.env
-          echo "APP_SECRET=$(openssl rand -base64 32)" >>.env
-          echo "PGPASSWORD_SUPERUSER=$(openssl rand -hex 16)" >>.env
-
-          echo "Docker compose up..."
-          docker compose up -d || {
-              echo "Docker compose failed to start"
-              docker compose logs
-              exit 1
-          }
-          docker compose logs db server -f &
-          pid=$!
-
-          echo "Waiting for database to start..."
-          count=0
-          while [ ! $(docker inspect --format='{{.State.Health.Status}}' twenty-db-1) = "healthy" ]; do
-              sleep 1;
-              count=$((count+1));
-              if [ $(docker inspect --format='{{.State.Status}}' twenty-db-1) = "exited" ]; then
-                  echo "Database exited"
-                  docker compose logs db
-                  exit 1
-              fi
-              if [ $count -gt 300 ]; then
-                  echo "Failed to start database after 5 minutes"
-                  docker compose logs db
-                  exit 1
-              fi
-              echo "Still waiting for database... (${count}/60)"
-          done
-
-          echo "Waiting for server to start..."
-          count=0
-          while [ ! $(docker inspect --format='{{.State.Health.Status}}' twenty-server-1) = "healthy" ]; do
-              sleep 1;
-              count=$((count+1));
-              if [ $(docker inspect --format='{{.State.Status}}' twenty-server-1) = "exited" ]; then
-                  echo "Server exited"
-                  docker compose logs server
-                  exit 1
-              fi
-              if [ $count -gt 300 ]; then
-                  echo "Failed to start server after 5 minutes"
-                  docker compose logs server
-                  exit 1
-              fi
-              echo "Still waiting for server... (${count}/300s)"
-          done
-        working-directory: ./packages/twenty-docker/
+          docker build \
+            --target twenty \
+            --build-arg "APP_VERSION=$(jq -r .version package.json)" \
+            --build-arg "APP_REVISION=$A2E_SMOKE_REVISION" \
+            -f packages/twenty-docker/twenty/Dockerfile \
+            -t "a2e-compose-ci:$A2E_SMOKE_REVISION" \
+            .
+      - name: Test the Coolify stack
+        timeout-minutes: 35
+        env:
+          A2E_SMOKE_IMAGE: a2e-compose-ci:${{ github.sha }}
+          A2E_SMOKE_REVISION: ${{ github.sha }}
+          A2E_SMOKE_REPORT_DIR: ${{ runner.temp }}/a2e-deployment-smoke
+        run: node packages/twenty-docker/scripts/smoke-coolify-image.mjs
+      - name: Upload deployment diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: compose-smoke-${{ github.sha }}
+          path: ${{ runner.temp }}/a2e-deployment-smoke
+          if-no-files-found: ignore
+          retention-days: 7
   test-app-dev:
     needs: changed-files-check
-    if: needs.changed-files-check.outputs.any_changed == 'true'
+    if: always() && !cancelled() && (github.event_name == 'merge_group' || needs.changed-files-check.outputs.any_changed == 'true')
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:

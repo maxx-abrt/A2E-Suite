@@ -37,6 +37,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24
+
       - name: Verify release tooling
         run: node --test packages/twenty-docker/scripts/__tests__/*.test.mjs
 
@@ -47,6 +52,11 @@ jobs:
         run: |
           sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /usr/local/share/boost
           sudo docker image prune -af
+
+      - name: Configure Docker Hub mirror
+        run: |
+          echo '{"registry-mirrors":["https://mirror.gcr.io"]}' | sudo tee /etc/docker/daemon.json
+          sudo systemctl restart docker
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -70,7 +80,8 @@ jobs:
         id: version
         run: echo "version=$(jq -r .version package.json)" >> "$GITHUB_OUTPUT"
 
-      - name: Build and push image
+      - name: Build and push candidate image
+        id: build
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -80,12 +91,40 @@ jobs:
           build-args: |
             APP_VERSION=${{ steps.version.outputs.version }}
             APP_REVISION=${{ github.sha }}
-          tags: |
-            ${{ env.IMAGE }}:latest
-            ${{ env.IMAGE }}:${{ steps.version.outputs.version }}
-            ${{ env.IMAGE }}:${{ github.sha }}
+          tags: ${{ env.IMAGE }}:candidate-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Test candidate with the Coolify stack
+        timeout-minutes: 35
+        env:
+          A2E_SMOKE_IMAGE: ${{ env.IMAGE }}@${{ steps.build.outputs.digest }}
+          A2E_SMOKE_REVISION: ${{ github.sha }}
+          A2E_SMOKE_REPORT_DIR: ${{ runner.temp }}/a2e-deployment-smoke
+        run: |
+          docker pull "$A2E_SMOKE_IMAGE"
+          node packages/twenty-docker/scripts/smoke-coolify-image.mjs
+
+      - name: Upload deployment diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: deployment-smoke-${{ github.sha }}
+          path: ${{ runner.temp }}/a2e-deployment-smoke
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Promote tested image
+        env:
+          APP_VERSION: ${{ steps.version.outputs.version }}
+          TESTED_REVISION: ${{ github.sha }}
+          TESTED_DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          docker buildx imagetools create \
+            --tag "$IMAGE:latest" \
+            --tag "$IMAGE:$APP_VERSION" \
+            --tag "$IMAGE:$TESTED_REVISION" \
+            "$IMAGE@$TESTED_DIGEST"
 
       # Optional zero-touch deploys: set the repo secret COOLIFY_DEPLOY_WEBHOOK
       # to the "Deploy Webhook" URL Coolify shows on the resource, and every

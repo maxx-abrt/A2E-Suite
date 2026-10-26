@@ -24,7 +24,7 @@ services:
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
     ports:
-      - "${SERVER_PORT:-3000}:3000"
+      - '${SERVER_PORT:-3000}:3000'
     environment:
       NODE_PORT: 3000
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:?required}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/${PG_DATABASE_NAME:-default}
@@ -37,6 +37,8 @@ services:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       STORAGE_TYPE: ${STORAGE_TYPE:-local}
       LOGIC_FUNCTION_TYPE: ${LOGIC_FUNCTION_TYPE:-LOCAL}
+      # Local functions use Docker DNS; Lambda and public links keep SERVER_URL.
+      LOGIC_FUNCTION_LOCAL_API_URL: ${LOGIC_FUNCTION_LOCAL_API_URL:-http://server:3000}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:?required}
       FALLBACK_ENCRYPTION_KEY: ${FALLBACK_ENCRYPTION_KEY}
       # APP_SECRET falls back to ENCRYPTION_KEY when unset or empty; an empty
@@ -99,6 +101,8 @@ services:
       DISABLE_BUNDLED_APP_PROVISIONING: 'true' # it already runs on the server
       STORAGE_TYPE: ${STORAGE_TYPE:-local}
       LOGIC_FUNCTION_TYPE: ${LOGIC_FUNCTION_TYPE:-LOCAL}
+      # Local functions use Docker DNS; Lambda and public links keep SERVER_URL.
+      LOGIC_FUNCTION_LOCAL_API_URL: ${LOGIC_FUNCTION_LOCAL_API_URL:-http://server:3000}
       WORKER_HEALTH_PORT: 3099
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:?required}
       FALLBACK_ENCRYPTION_KEY: ${FALLBACK_ENCRYPTION_KEY}
