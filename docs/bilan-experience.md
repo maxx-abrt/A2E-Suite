@@ -12,10 +12,19 @@ applications, the book and the installed funding explorer. Missing or unreadable
 objects do not become dead action links. Native dashboard charts, tabs and
 customization remain underneath the overview, in the same scroll area.
 
-This host change accompanies **a2e-accounting 0.1.7**. Build, publish and upgrade
+This host change accompanies **a2e-accounting 0.1.9**. Build, publish and upgrade
 the application as described in the installation guide; updating host source
 alone does not update installed logic functions. No core database schema or
 object identity changes are required by this delivery.
+
+The dashboard includes a compact native transaction review table with personal
+Missing details, Missing receipts, Uncategorized and All transactions filters.
+Missing receipts exposes the existing attachment column. Add transaction opens
+the installed quick-entry component; incomplete receipt captures remain outside
+the cash book. An unconfigured financial profile links directly to its existing
+native record. Upgrades rerun idempotent starter preparation, preserving real
+settings and adding no demonstration financial transactions. See the
+[Qonto comparison and remaining finance gaps](bilan-qonto-audit-2026-10-25.md).
 
 ## Upload an invoice
 

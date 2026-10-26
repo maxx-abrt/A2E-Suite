@@ -5,20 +5,18 @@ import { BureauTodayProgress } from '@/bureau/components/BureauTodayProgress';
 import { BureauWorkspaceShortcuts } from '@/bureau/components/BureauWorkspaceShortcuts';
 import { useContext } from 'react';
 import { A2eContextualEmptyState } from '@/a2e-empty-state/components/A2eContextualEmptyState';
-import { BUREAU_LANDING_TEMPLATE_CATEGORY } from '@/bureau/constants/BureauLandingTemplateCategory';
-import { BUREAU_LANDING_TEMPLATE_LINKS } from '@/bureau/constants/BureauLandingTemplates';
+import { BureauStarterTemplates } from '@/bureau/components/BureauStarterTemplates';
 import { A2eLearnMoreLink } from '@/a2e-help/components/A2eLearnMoreLink';
 import { RecentPagesWidget } from '@/home-dashboard/components/RecentPagesWidget';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useCreateNewPage } from '@/quick-capture/hooks/useCreateNewPage';
 import { useIsDocumentApplicationInstalled } from '@/quick-capture/hooks/useIsDocumentApplicationInstalled';
-import { useOpenTemplateGallery } from '@/template-gallery/hooks/useOpenTemplateGallery';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
-import { IconFileText, IconPlus } from 'twenty-ui/icon';
+import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -132,13 +130,6 @@ const StyledSectionTitle = styled.h2`
   margin: 0;
 `;
 
-const StyledTemplateRow = styled.div`
-  align-items: flex-start;
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
 const BUREAU_DOCUMENT_OBJECT_NAME_SINGULAR = 'document';
 
 type BureauLandingProps = {
@@ -172,7 +163,6 @@ const BureauLandingContent = ({
 }: BureauLandingContentProps) => {
   const { t } = useLingui();
   const { createNewPage } = useCreateNewPage();
-  const { openTemplateGallery } = useOpenTemplateGallery();
   const workspace = useContext(BureauWorkspaceContext);
   const {
     totalCount: queriedTotalCount,
@@ -260,24 +250,7 @@ const BureauLandingContent = ({
         </StyledSection>
         <StyledSection>
           <StyledSectionTitle>{t`Starter templates`}</StyledSectionTitle>
-          <StyledTemplateRow>
-            {BUREAU_LANDING_TEMPLATE_LINKS.map((templateLink) => (
-              <Button
-                key={templateLink.descriptorKey}
-                Icon={IconFileText}
-                title={t(templateLink.label)}
-                ariaLabel={t(templateLink.label)}
-                variant="secondary"
-                onClick={() =>
-                  openTemplateGallery({
-                    category: BUREAU_LANDING_TEMPLATE_CATEGORY,
-                    templateKey: templateLink.descriptorKey,
-                  })
-                }
-                dataTestId={`bureau-template-${templateLink.descriptorKey}`}
-              />
-            ))}
-          </StyledTemplateRow>
+          <BureauStarterTemplates />
         </StyledSection>
       </StyledResources>
     </StyledContainer>

@@ -3,9 +3,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { UserContext } from '@/users/contexts/UserContext';
-import { useContext, useEffect, useState } from 'react';
-import { Temporal } from 'temporal-polyfill';
+import { useBureauDayBoundaries } from '@/bureau/hooks/useBureauDayBoundaries';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -16,28 +14,7 @@ export const useBureauTodayProgress = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.Task,
   });
-  const { timeZone } = useContext(UserContext);
-  const [now, setNow] = useState(() => Date.now());
-  const today = Temporal.Instant.fromEpochMilliseconds(now)
-    .toZonedDateTimeISO(timeZone ?? Temporal.Now.timeZoneId())
-    .startOfDay();
-  const tomorrow = today.add({ days: 1 });
-  const tomorrowEpochMilliseconds = tomorrow.epochMilliseconds;
-
-  // A home left open overnight must follow the member's time zone, including DST.
-  useEffect(() => {
-    const refreshDay = () => setNow(Date.now());
-    const timeout = window.setTimeout(
-      refreshDay,
-      Math.max(0, tomorrowEpochMilliseconds - Date.now()) + 1,
-    );
-    window.addEventListener('focus', refreshDay);
-
-    return () => {
-      window.clearTimeout(timeout);
-      window.removeEventListener('focus', refreshDay);
-    };
-  }, [tomorrowEpochMilliseconds]);
+  const { today, tomorrow } = useBureauDayBoundaries();
 
   const filter = {
     assigneeId: { eq: currentWorkspaceMember?.id },

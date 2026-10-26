@@ -40,10 +40,8 @@ export type TemplateCopyPayload = {
 
 export const TEMPLATE_TITLE_PREFIX = 'Modèle — ';
 
-// Same opening position the browser uses for every new root document; callers
-// pass a fractional index (twenty-shared generateFractionalIndexBetween) when
-// they want deterministic interleaving instead.
-export const DEFAULT_TEMPLATE_COPY_POSITION = 'V';
+// Let the native API allocate a numeric position after the current records.
+export const DEFAULT_TEMPLATE_COPY_POSITION = 'last';
 
 const BLOCK_ID_LENGTH = 8;
 

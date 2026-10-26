@@ -1,6 +1,9 @@
 import { definePostInstallLogicFunction } from 'twenty-sdk/define';
 
-import { runInstallStep, type InstallStepOutcome } from '../lib/install-steps.ts';
+import {
+  runInstallStep,
+  type InstallStepOutcome,
+} from '../lib/install-steps.ts';
 import { LOGIC_FUNCTION_IDS } from '../constants/universal-identifiers.ts';
 import { ensureLedgerSheet } from './handlers/ledger-handler.ts';
 import { refreshSubventions } from './handlers/refresh-subventions-handler.ts';
@@ -35,14 +38,19 @@ const handler = async () => {
     return outcome;
   };
 
-  const [categoriesOutcome, ledgerOutcome, orgProfileOutcome, sheetsOutcome, fichesOutcome] =
-    await Promise.all([
-      step('financeCategories', () => seedCategories(client)),
-      step('ledgerSheet', () => ensureLedgerSheet(client)),
-      step('orgProfile', () => seedOrgProfile(client)),
-      step('starterSheets', () => seedStarterSheets(client)),
-      step('starterFiches', () => seedStarterFiches(client)),
-    ]);
+  const [
+    categoriesOutcome,
+    ledgerOutcome,
+    orgProfileOutcome,
+    sheetsOutcome,
+    fichesOutcome,
+  ] = await Promise.all([
+    step('financeCategories', () => seedCategories(client)),
+    step('ledgerSheet', () => ensureLedgerSheet(client)),
+    step('orgProfile', () => seedOrgProfile(client)),
+    step('starterSheets', () => seedStarterSheets(client)),
+    step('starterFiches', () => seedStarterFiches(client)),
+  ]);
 
   // The catalogue is filled at install: a treasurer opening Subventions for
   // the first time must see real aids, not an empty table waiting for a cron.
@@ -63,11 +71,16 @@ const handler = async () => {
       step: outcome.step,
       error: outcome.error ?? 'Erreur inconnue.',
     })),
-    categoriesCreated: categoriesOutcome.status === 'OK' ? categoriesOutcome.result : null,
-    ledgerSheetId: ledgerOutcome.status === 'OK' ? ledgerOutcome.result?.id : null,
-    orgProfileCreated: orgProfileOutcome.status === 'OK' ? orgProfileOutcome.result : null,
-    starterSheetsCreated: sheetsOutcome.status === 'OK' ? sheetsOutcome.result : null,
-    starterFichesCreated: fichesOutcome.status === 'OK' ? fichesOutcome.result : null,
+    categoriesCreated:
+      categoriesOutcome.status === 'OK' ? categoriesOutcome.result : null,
+    ledgerSheetId:
+      ledgerOutcome.status === 'OK' ? ledgerOutcome.result?.id : null,
+    orgProfileCreated:
+      orgProfileOutcome.status === 'OK' ? orgProfileOutcome.result : null,
+    starterSheetsCreated:
+      sheetsOutcome.status === 'OK' ? sheetsOutcome.result : null,
+    starterFichesCreated:
+      fichesOutcome.status === 'OK' ? fichesOutcome.result : null,
     catalogue:
       catalogueOutcome.status === 'OK'
         ? catalogueOutcome.result
@@ -86,5 +99,6 @@ export default definePostInstallLogicFunction({
     'Prépare Bilan : catégories du plan comptable, journal automatique, feuilles de démarrage (trésorerie, dons, subventions), fiches budget et demande, fiche de structure, et première ingestion du catalogue de subventions.',
   timeoutSeconds: 300,
   shouldRunSynchronously: false,
+  shouldRunOnVersionUpgrade: true,
   handler,
 });

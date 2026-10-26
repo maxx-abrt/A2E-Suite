@@ -1,3 +1,4 @@
+import { isRecordTableCreationDisabledComponentState } from '@/object-record/record-table/states/isRecordTableCreationDisabledComponentState';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
@@ -31,6 +32,10 @@ export const RecordTableNoRecordGroupAddNew = () => {
 
   const isRecordTableCellsNonEditable = useAtomComponentStateValue(
     isRecordTableCellsNonEditableComponentState,
+  );
+
+  const isRecordTableCreationDisabled = useAtomComponentStateValue(
+    isRecordTableCreationDisabledComponentState,
   );
 
   const { createNewIndexRecord } = useCreateNewIndexRecord({
@@ -79,7 +84,7 @@ export const RecordTableNoRecordGroupAddNew = () => {
     ],
   );
 
-  if (isRecordTableCellsNonEditable) {
+  if (isRecordTableCellsNonEditable || isRecordTableCreationDisabled) {
     return null;
   }
 

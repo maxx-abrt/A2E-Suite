@@ -72,10 +72,13 @@ export const isMatchingCurrencyFilter = ({
   value,
 }: {
   currencyFilter: CurrencyFilter;
-  value: {
-    amountMicros?: number | null;
-    currencyCode?: string | null;
-  };
+  value:
+    | {
+        amountMicros?: number | null;
+        currencyCode?: string | null;
+      }
+    | null
+    | undefined;
 }) => {
   const shouldMatchCurrencyCodeFilter = isDefined(currencyFilter.currencyCode);
   const shouldMatchAmountMicrosFilter = isDefined(currencyFilter.amountMicros);
@@ -84,22 +87,22 @@ export const isMatchingCurrencyFilter = ({
     return (
       isMatchingAmountMicrosFilter(
         currencyFilter.amountMicros,
-        value.amountMicros,
+        value?.amountMicros ?? null,
       ) &&
       isMatchingCurrencyCodeFilter(
         currencyFilter.currencyCode,
-        value.currencyCode,
+        value?.currencyCode ?? null,
       )
     );
   } else if (shouldMatchAmountMicrosFilter) {
     return isMatchingAmountMicrosFilter(
       currencyFilter.amountMicros,
-      value.amountMicros,
+      value?.amountMicros ?? null,
     );
   } else if (shouldMatchCurrencyCodeFilter) {
     return isMatchingCurrencyCodeFilter(
       currencyFilter.currencyCode,
-      value.currencyCode,
+      value?.currencyCode ?? null,
     );
   }
 

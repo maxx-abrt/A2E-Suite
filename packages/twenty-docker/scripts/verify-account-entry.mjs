@@ -27,11 +27,20 @@ export const verifyAccountEntry = async ({
       );
     }
   };
-  const [configuration, frontendRelease] = await Promise.all([
+  const [configuration, frontendRelease, readiness] = await Promise.all([
     readJson('/client-config'),
     readJson('/release.json'),
+    readJson('/readyz'),
   ]);
   const problems = [];
+  if (
+    readiness.status !== 'ok' ||
+    readiness.details?.database?.status !== 'up' ||
+    readiness.details?.redis?.status !== 'up'
+  )
+    problems.push(
+      'Server readiness must confirm healthy database and Redis connections',
+    );
   if (configuration.appRevision !== revision)
     problems.push(
       `Backend revision is ${configuration.appRevision ?? 'missing'}, expected ${revision}`,

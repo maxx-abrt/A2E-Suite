@@ -144,7 +144,9 @@ describe('getEmptyRecordGqlOperationFilter', () => {
         makeParams(FieldMetadataType.FILES),
       );
 
-      expect(result).toHaveProperty('or');
+      expect(result).toEqual({
+        or: [{ testField: { is: 'NULL' } }, { testField: { like: '[]' } }],
+      });
     });
 
     it('should handle FULL_NAME type without subfield', () => {

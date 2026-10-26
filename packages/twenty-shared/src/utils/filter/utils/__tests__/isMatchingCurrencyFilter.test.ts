@@ -325,4 +325,33 @@ describe('isMatchingCurrencyFilter', () => {
       );
     });
   });
+  it.each([null, undefined, {}])(
+    'treats an absent composite currency as empty (%j)',
+    (value) => {
+      expect(
+        isMatchingCurrencyFilter({
+          currencyFilter: { amountMicros: { is: 'NULL' } },
+          value,
+        }),
+      ).toBe(true);
+      expect(
+        isMatchingCurrencyFilter({
+          currencyFilter: { currencyCode: { is: 'NULL' } },
+          value,
+        }),
+      ).toBe(true);
+      expect(
+        isMatchingCurrencyFilter({
+          currencyFilter: { amountMicros: { gte: 0 } },
+          value,
+        }),
+      ).toBe(false);
+      expect(
+        isMatchingCurrencyFilter({
+          currencyFilter: { amountMicros: { is: 'NOT_NULL' } },
+          value,
+        }),
+      ).toBe(false);
+    },
+  );
 });

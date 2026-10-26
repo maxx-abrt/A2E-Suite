@@ -41,7 +41,7 @@ export class ChatResolver {
     private readonly chatUnreadCountService: ChatUnreadCountService,
   ) {}
 
-  @Query(() => ChatMessageConnectionDTO)
+  @Query(() => ChatMessageConnectionDTO, { name: 'workspaceChatMessages' })
   async chatMessages(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { channelId, limit, after }: ChatMessagesArgs,

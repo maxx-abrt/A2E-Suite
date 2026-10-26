@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { readFileSync } from 'node:fs';
 
 import {
   isTemplateDescriptor,
@@ -67,4 +68,12 @@ test('the grant-application template notes its Bilan link without requiring Bila
 
   assert.ok(grantDescriptor, 'the grant-application template must ship');
   assert.deepEqual(grantDescriptor.requiredApps, []);
+});
+
+
+test('audience project suggestions resolve to shipped project templates', () => {
+  const source = readFileSync(new URL('../../../../../../twenty-front/src/modules/bureau/constants/BureauStarterProfiles.ts', import.meta.url), 'utf8');
+  const keys = [...source.matchAll(/projectTemplateKey:\s*'([^']+)'/g)].map((match) => match[1]);
+  assert.equal(keys.length, 5);
+  for (const key of keys) assert.ok(descriptors.some((descriptor) => descriptor.key === key), `Unknown audience project template: ${key}`);
 });

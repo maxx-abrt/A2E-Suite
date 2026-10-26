@@ -2,13 +2,14 @@ import { gql } from '@apollo/client';
 
 import { type ChatMessage } from '@/chat/types/ChatMessage';
 
-// Hand-written rather than generated: `chatMessages` is a server custom
-// resolver (keyset connection scoped to one channel), so it is not part of the
-// metadata GraphQL codegen surface. Switch to the generated Document once a
-// `modules/chat/graphql` glob is added to codegen-metadata.cjs.
+// The alias preserves channel results while Syna owns chatMessages(threadId).
 export const CHAT_MESSAGES_QUERY = gql`
   query ChatMessages($channelId: UUID!, $limit: Int, $after: String) {
-    chatMessages(channelId: $channelId, limit: $limit, after: $after) {
+    chatMessages: workspaceChatMessages(
+      channelId: $channelId
+      limit: $limit
+      after: $after
+    ) {
       edges {
         node {
           id

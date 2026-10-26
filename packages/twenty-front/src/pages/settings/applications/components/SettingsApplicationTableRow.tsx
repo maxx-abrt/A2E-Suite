@@ -4,7 +4,8 @@ import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { t } from '@lingui/core/macro';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg, t } from '@lingui/core/macro';
 import { Tag } from 'twenty-ui/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -26,11 +27,15 @@ export type SettingsApplicationTableRowProps = {
 export const APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
   '164px 80px minmax(0, 1fr) 36px';
 
-const SOURCE_TYPE_LABELS: Record<ApplicationRegistrationSourceType, string> = {
-  [ApplicationRegistrationSourceType.LOCAL]: 'Local',
-  [ApplicationRegistrationSourceType.NPM]: 'NPM',
-  [ApplicationRegistrationSourceType.OAUTH_ONLY]: 'OAuth',
-  [ApplicationRegistrationSourceType.TARBALL]: 'Tarball',
+const SOURCE_TYPE_LABELS: Record<
+  ApplicationRegistrationSourceType,
+  MessageDescriptor
+> = {
+  [ApplicationRegistrationSourceType.BUNDLED]: msg`Included`,
+  [ApplicationRegistrationSourceType.LOCAL]: msg`Local`,
+  [ApplicationRegistrationSourceType.NPM]: msg`NPM`,
+  [ApplicationRegistrationSourceType.OAUTH_ONLY]: msg`OAuth`,
+  [ApplicationRegistrationSourceType.TARBALL]: msg`Tarball`,
 };
 
 export const SettingsApplicationTableRow = ({
@@ -54,7 +59,7 @@ export const SettingsApplicationTableRow = ({
         <ApplicationDisplay application={application} />
       </StyledNameTableCell>
       <TableCell color={themeCssVariables.font.color.tertiary}>
-        {sourceType ? SOURCE_TYPE_LABELS[sourceType] : t`Seeded`}
+        {sourceType ? t(SOURCE_TYPE_LABELS[sourceType]) : t`Seeded`}
       </TableCell>
       <TableCell gap={themeCssVariables.spacing[2]} minWidth="0">
         <OverflowingTextWithTooltip text={descriptionSummary} />

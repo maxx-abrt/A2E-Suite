@@ -85,10 +85,8 @@ test('the duplicate plan copies the page and every child in parent-first order',
       ['Décisions', 0],
     ],
   );
-  assert.ok(
-    plan.nodes[0].position < plan.nodes[1].position &&
-      plan.nodes[1].position < plan.nodes[2].position,
-  );
+  assert.equal(plan.nodes[0].position, 'last');
+  assert.ok(plan.nodes[1].position < plan.nodes[2].position);
 });
 
 test('duplicated content gets fresh block ids, never the source anchors', () => {

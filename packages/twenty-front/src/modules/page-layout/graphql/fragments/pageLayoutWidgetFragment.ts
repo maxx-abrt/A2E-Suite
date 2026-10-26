@@ -194,6 +194,9 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       ... on FilesConfiguration {
         configurationType
       }
+      ... on DiscussionsConfiguration {
+        configurationType
+      }
       ... on NotesConfiguration {
         configurationType
       }

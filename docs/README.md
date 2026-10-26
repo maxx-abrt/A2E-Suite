@@ -28,6 +28,7 @@ explains the fork; upstream product documentation lives in
 | Deploy the platform | [Deployment guide](../DEPLOY.md) | [App provisioning](applications.md) is separate |
 | Configure Resend account emails | [Transactional email](resend-email.md) | Native queue, Resend REST, sender DNS and delivery checks |
 | Use or verify Bilan's connected finance experience | [Bilan experience](bilan-experience.md) | Capture, review, native books, catalogue, language foundation and release gates |
+| Compare Bilan with Qonto and prioritize finance work | [2026-10-25 Bilan audit](bilan-qonto-audit-2026-10-25.md) | Source-backed gaps, implemented review/setup work and remaining finance limits |
 
 ## Document ownership and precedence
 

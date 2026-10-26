@@ -19,12 +19,52 @@ const release = {
   accountEntry: 'shared-domain',
   artifactFormat: 1,
 };
+const readiness = {
+  status: 'ok',
+  details: { database: { status: 'up' }, redis: { status: 'up' } },
+};
 const fetchFixture =
-  (config = configuration, metadata = release) =>
+  (config = configuration, metadata = release, health = readiness) =>
   async (url) =>
     new Response(
-      JSON.stringify(url.pathname === '/client-config' ? config : metadata),
+      JSON.stringify(
+        url.pathname === '/client-config'
+          ? config
+          : url.pathname === '/readyz'
+            ? health
+            : metadata,
+      ),
     );
+
+test('rejects a matching release whose database or Redis is not ready', async () => {
+  for (const dependency of ['database', 'redis']) {
+    await assert.rejects(
+      verifyAccountEntry({
+        url: 'https://bureau.example.com',
+        revision: REVISION,
+        fetchResponse: fetchFixture(configuration, release, {
+          ...readiness,
+          details: { ...readiness.details, [dependency]: { status: 'down' } },
+        }),
+      }),
+      /Server readiness/,
+    );
+  }
+});
+
+test('rejects an unavailable readiness endpoint despite matching release files', async () => {
+  await assert.rejects(
+    verifyAccountEntry({
+      url: 'https://bureau.example.com',
+      revision: REVISION,
+      fetchResponse: async (url) =>
+        url.pathname === '/readyz'
+          ? new Response('Unavailable', { status: 503 })
+          : fetchFixture()(url),
+    }),
+    /\/readyz: HTTP 503/,
+  );
+});
 
 test('verifies the same tested frontend/backend and shared account mode', async () => {
   assert.deepEqual(

@@ -165,3 +165,13 @@ test('re-applying the same operation id creates no duplicate', async () => {
 
   assert.equal(projectIds.length, 1);
 });
+
+
+test('own-app templates work without application-settings permission', async () => {
+  const { client, created } = buildClient();
+  const result = await applyProjectTemplateByKey(client, { key: 'SEM' }, {
+    getInstalledApplications: async () => { throw new Error('Application settings permission denied'); },
+  });
+  assert.equal(result.status, 'applied');
+  assert.ok(created.length > 0);
+});

@@ -9,7 +9,8 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Provider as JotaiProvider } from 'jotai';
+import { Provider as JotaiProvider, createStore } from 'jotai';
+import { isRecordTableCreationDisabledComponentState } from '@/object-record/record-table/states/isRecordTableCreationDisabledComponentState';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -177,6 +178,35 @@ describe('RecordIndexEmptyState', () => {
 
     expect(
       screen.queryByTestId('a2e-empty-state-primary-documents'),
+    ).not.toBeInTheDocument();
+  });
+  it('does not offer creation in a review-only widget, even for an editable object', () => {
+    mockedUseA2eRecordIndexSurfaceKey.mockReturnValue('tasks');
+    const store = createStore();
+    store.set(
+      isRecordTableCreationDisabledComponentState.atomFamily({
+        instanceId: 'tasks-view-bureau',
+      }),
+      true,
+    );
+    render(
+      <I18nProvider i18n={i18n}>
+        <JotaiProvider store={store}>
+          <MemoryRouter>
+            <RecordIndexEmptyState
+              objectMetadataItem={objectMetadataItem}
+              objectPermissions={objectPermissions}
+              isSoftDeleteFilterActive={false}
+            />
+          </MemoryRouter>
+        </JotaiProvider>
+      </I18nProvider>,
+    );
+    expect(
+      screen.queryByRole('button', { name: /Add/ }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId('a2e-empty-state-primary-tasks'),
     ).not.toBeInTheDocument();
   });
 });

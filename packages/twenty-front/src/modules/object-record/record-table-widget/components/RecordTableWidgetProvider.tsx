@@ -22,6 +22,7 @@ import { useComponentInstanceStateContext } from '@/ui/utilities/state/component
 import { getRecordTableWidgetInstanceIds } from '@/object-record/record-table-widget/utils/getRecordTableWidgetInstanceIds';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { type PropsWithChildren, useCallback, useMemo } from 'react';
+import { type View } from '@/views/types/View';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
@@ -34,6 +35,7 @@ type RecordTableWidgetProviderProps = PropsWithChildren<{
   contextStoreViewType?: ContextStoreViewType;
   nestedRelationCreateThrough?: RecordTableWidgetNestedRelationCreateThrough;
   junctionCreateThrough?: RecordTableWidgetJunctionCreateThrough;
+  viewOverride?: View;
 }>;
 
 export const RecordTableWidgetProvider = ({
@@ -45,6 +47,7 @@ export const RecordTableWidgetProvider = ({
   contextStoreViewType,
   nestedRelationCreateThrough,
   junctionCreateThrough,
+  viewOverride,
   children,
 }: RecordTableWidgetProviderProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -168,6 +171,7 @@ export const RecordTableWidgetProvider = ({
               componentInstanceId={recordIndexId}
             >
               <RecordTableWidgetViewLoadEffect
+                viewOverride={viewOverride}
                 viewId={viewId}
                 widgetId={widgetId}
                 objectMetadataItem={objectMetadataItem}

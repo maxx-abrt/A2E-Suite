@@ -1,3 +1,4 @@
+import { isRecordTableCreationDisabledComponentState } from '@/object-record/record-table/states/isRecordTableCreationDisabledComponentState';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { RecordTableInlineCreateRow } from '@/object-record/record-table/components/RecordTableInlineCreateRow';
@@ -35,6 +36,10 @@ export const RecordTableRecordGroupSectionAddNew = () => {
     isRecordTableCellsNonEditableComponentState,
   );
 
+  const isRecordTableCreationDisabled = useAtomComponentStateValue(
+    isRecordTableCreationDisabledComponentState,
+  );
+
   const currentRecordGroupId = useCurrentRecordGroupId();
 
   const recordGroupDefinition = useAtomFamilyStateValue(
@@ -60,7 +65,7 @@ export const RecordTableRecordGroupSectionAddNew = () => {
     objectMetadataItem.id,
   );
 
-  if (isRecordTableCellsNonEditable) {
+  if (isRecordTableCellsNonEditable || isRecordTableCreationDisabled) {
     return null;
   }
 

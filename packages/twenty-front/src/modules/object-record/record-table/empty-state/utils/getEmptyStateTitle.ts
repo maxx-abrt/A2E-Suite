@@ -5,6 +5,8 @@ export const getEmptyStateTitle = (
   objectNameSingular: string,
   objectLabel: string,
 ) => {
+  if (objectNameSingular === 'financeEntry') return t`No transactions yet`;
+
   if (objectNameSingular === CoreObjectNameSingular.WorkflowVersion) {
     return t`No workflow versions yet`;
   }

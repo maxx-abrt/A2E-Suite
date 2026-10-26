@@ -71,10 +71,10 @@ test('the payload tolerates a template without content', () => {
 test('the caller can override the insertion position', () => {
   const payload = buildTemplateCopyPayload(
     { title: 'Modèle — X' },
-    { position: 'a0' },
+    { position: 'first' },
   );
 
-  assert.equal(payload.position, 'a0');
+  assert.equal(payload.position, 'first');
 });
 
 test('the copy re-keys every block anchor', () => {

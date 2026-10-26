@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { msg } from '@lingui/core/macro';
 import { Link } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
-import { getAppPath } from 'twenty-shared/utils';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import {
   IconCalendarDue,
@@ -18,10 +18,14 @@ import { A2eLearnMoreLink } from '@/a2e-help/components/A2eLearnMoreLink';
 import { HomeDashboardCard } from '@/home-dashboard/components/HomeDashboardCard';
 import { PendingBilanWidget } from '@/home-dashboard/components/PendingBilanWidget';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
-import { pageLayoutsWithRelationsSelector } from '@/page-layout/states/pageLayoutsWithRelationsSelector';
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useBilanPageLayouts } from '@/bilan/hooks/useBilanPageLayouts';
 import { useOpenTemplateGallery } from '@/template-gallery/hooks/useOpenTemplateGallery';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { BILAN_METADATA_UNIVERSAL_IDENTIFIERS } from '@/bilan/constants/BilanMetadata';
+import { BilanProfileSetup } from '@/bilan/components/BilanProfileSetup';
+import { BilanQuickEntryAction } from '@/bilan/components/BilanQuickEntryAction';
+import { BilanTransactionReview } from '@/bilan/components/BilanTransactionReview';
 import { BilanCaptureActions } from '@/bilan/components/BilanCaptureActions';
 
 const BILAN_WORK_SECTIONS = [
@@ -156,25 +160,23 @@ const StyledLink = styled(Link)`
 type BilanPageOverviewProps = { pageLayoutId: string };
 
 export const BilanPageOverview = ({ pageLayoutId }: BilanPageOverviewProps) => {
-  const pageLayoutsWithRelations = useAtomStateValue(
-    pageLayoutsWithRelationsSelector,
+  const pageLayoutPersisted = useAtomComponentStateValue(
+    pageLayoutPersistedComponentState,
   );
-  const isBilanDashboard = pageLayoutsWithRelations.some(
-    (pageLayout) =>
-      pageLayout.id === pageLayoutId &&
-      pageLayout.universalIdentifier ===
-        BILAN_METADATA_UNIVERSAL_IDENTIFIERS.dashboard,
-  );
-
-  const catalog = pageLayoutsWithRelations.find(
-    (pageLayout) =>
-      pageLayout.universalIdentifier ===
+  const pageLayouts = useBilanPageLayouts();
+  const isBilanDashboard =
+    pageLayoutPersisted?.id === pageLayoutId &&
+    pageLayoutPersisted?.universalIdentifier ===
+      BILAN_METADATA_UNIVERSAL_IDENTIFIERS.dashboard;
+  const catalog = pageLayouts.find(
+    (layout) =>
+      layout.universalIdentifier ===
       BILAN_METADATA_UNIVERSAL_IDENTIFIERS.catalog,
   );
   return isBilanDashboard ? (
     <BilanOverviewContent
       catalogPath={
-        catalog
+        isDefined(catalog?.id)
           ? getAppPath(AppPath.PageLayoutPage, { pageLayoutId: catalog.id })
           : null
       }
@@ -224,7 +226,10 @@ const BilanOverviewContent = ({ catalogPath }: BilanOverviewContentProps) => {
         </div>
         <StyledActions>
           {financeEntry && (
-            <BilanCaptureActions objectMetadataItem={financeEntry} />
+            <>
+              <BilanQuickEntryAction objectMetadataItem={financeEntry} />
+              <BilanCaptureActions objectMetadataItem={financeEntry} />
+            </>
           )}
           {bookEntry && (
             <Button
@@ -263,6 +268,10 @@ const BilanOverviewContent = ({ catalogPath }: BilanOverviewContentProps) => {
           />
         </StyledActions>
       </StyledHeader>
+      {organization && <BilanProfileSetup objectMetadataItem={organization} />}
+      {financeEntry && (
+        <BilanTransactionReview objectMetadataItem={financeEntry} />
+      )}
       <StyledCards>
         {sections.map((section) => (
           <HomeDashboardCard

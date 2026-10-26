@@ -15,11 +15,13 @@ const StyledTableContainer = styled.div`
 type RecordTableWidgetProps = {
   isUIEditable?: boolean;
   isEmptyStateHidden?: boolean;
+  isCreationEnabled?: boolean;
 };
 
 export const RecordTableWidget = ({
   isUIEditable = false,
   isEmptyStateHidden = false,
+  isCreationEnabled = true,
 }: RecordTableWidgetProps) => {
   const { objectNameSingular, recordIndexId, viewBarInstanceId } =
     useRecordIndexContextOrThrow();
@@ -28,6 +30,7 @@ export const RecordTableWidget = ({
   return (
     <RecordTableWidgetCommandMenu>
       <RecordTableWidgetStatesEffect
+        isCreationEnabled={isCreationEnabled}
         recordTableId={recordIndexId}
         isUIEditable={isUIEditable}
         isPageLayoutInEditMode={
