@@ -30,4 +30,4 @@ cd my-twenty-app
 yarn twenty dev
 \`\`\`
 
-See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the \`defineApplication\` / \`defineEntity\` APIs.`;
+See the [Getting Started guide](https://github.com/maxx-abrt/A2E-Suite/blob/main/packages/twenty-docs/developers/extend/apps/getting-started/quick-start.mdx) for the full walkthrough, and [Building Apps](https://github.com/maxx-abrt/A2E-Suite/blob/main/packages/twenty-apps/README-A2E.md) for the \`defineApplication\` / \`defineEntity\` APIs.`;

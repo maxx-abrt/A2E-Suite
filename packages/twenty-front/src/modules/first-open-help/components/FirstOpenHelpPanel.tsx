@@ -1,3 +1,4 @@
+import { getA2eHelpDocUrl } from '@/a2e-help/utils/getA2eHelpDocUrl';
 import { useMemo, useState } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -6,10 +7,7 @@ import { IconBook, IconRestore, IconX } from 'twenty-ui/icon';
 import { Button, IconButton, SearchInput } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import {
-  A2E_HELP_DOC_PAGES,
-  getA2eHelpDocUrl,
-} from '@/a2e-help/constants/A2eHelpDocPages';
+import { A2E_HELP_DOC_PAGES } from '@/a2e-help/constants/A2eHelpDocPages';
 import {
   type FirstOpenHelpLaunchAction,
   type FirstOpenHelpContext,

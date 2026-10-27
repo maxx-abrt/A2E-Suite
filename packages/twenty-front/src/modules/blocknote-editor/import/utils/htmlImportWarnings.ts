@@ -11,7 +11,9 @@ export type HtmlImportWarningKind =
   | 'unsafe-attribute-removed'
   | 'unsafe-url-removed'
   | 'attachment-unmapped'
-  | 'link-unmapped';
+  | 'link-unmapped'
+  | 'page-link-unmapped'
+  | 'mention-unmapped';
 
 export type HtmlImportWarning = {
   kind: HtmlImportWarningKind;

@@ -24,6 +24,7 @@ export const parseHtmlWithBlockNote = (html: string): readonly unknown[] => {
     {
       resolveAttachmentUrl: prepared.restoreUrl,
       resolveLinkUrl: prepared.restoreUrl,
+      allowArchiveRelativeUrls: true,
     },
   ).blocks;
 };

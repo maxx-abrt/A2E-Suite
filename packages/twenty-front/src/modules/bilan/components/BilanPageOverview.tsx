@@ -1,3 +1,4 @@
+import { IconBilan } from '@/a2e-workspace/components/A2eAppLogo';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { msg } from '@lingui/core/macro';
@@ -108,9 +109,12 @@ const StyledHeader = styled.header`
 `;
 
 const StyledTitle = styled.h1`
+  align-items: center;
   color: ${themeCssVariables.font.color.primary};
+  display: flex;
   font-size: ${themeCssVariables.font.size.xxl};
   font-weight: ${themeCssVariables.font.weight.semiBold};
+  gap: ${themeCssVariables.spacing[3]};
   margin: 0 0 ${themeCssVariables.spacing[2]};
 `;
 
@@ -220,7 +224,10 @@ const BilanOverviewContent = ({ catalogPath }: BilanOverviewContentProps) => {
     <StyledOverview aria-label={t`Bilan overview`}>
       <StyledHeader>
         <div>
-          <StyledTitle>{t`Bilan`}</StyledTitle>
+          <StyledTitle>
+            <IconBilan size={40} />
+            {t`Bilan`}
+          </StyledTitle>
           <StyledDescription>{t`Your finances, connected to the work behind them.`}</StyledDescription>
           <A2eLearnMoreLink appKey="bilan" />
         </div>

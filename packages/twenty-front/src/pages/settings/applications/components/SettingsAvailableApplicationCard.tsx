@@ -1,3 +1,4 @@
+import { getA2eApplicationLogo } from '@/a2e-workspace/utils/getA2eApplicationLogo';
 import {
   StyledSettingsCardContent,
   StyledSettingsCardThirdLine,
@@ -61,7 +62,10 @@ export const SettingsAvailableApplicationCard = ({
         <Card rounded fullWidth>
           <StyledSettingsCardContent alignItems="flex-start" fullHeight>
             <Avatar
-              avatarUrl={getAbsoluteImageUrl(application.logoUrl || null)}
+              avatarUrl={
+                getA2eApplicationLogo(application.id) ??
+                getAbsoluteImageUrl(application.logoUrl || null)
+              }
               placeholder={application.name}
               placeholderColorSeed={application.name}
               size="lg"

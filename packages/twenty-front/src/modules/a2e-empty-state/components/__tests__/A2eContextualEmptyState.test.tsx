@@ -1,9 +1,9 @@
+import { getA2eHelpDocUrl } from '@/a2e-help/utils/getA2eHelpDocUrl';
 import { A2eContextualEmptyState } from '@/a2e-empty-state/components/A2eContextualEmptyState';
 import {
   A2E_EMPTY_STATE_SURFACES,
   type A2eEmptyStateSurfaceKey,
 } from '@/a2e-empty-state/constants/A2eEmptyStateSurfaces';
-import { getA2eHelpDocUrl } from '@/a2e-help/constants/A2eHelpDocPages';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';

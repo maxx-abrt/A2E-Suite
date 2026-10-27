@@ -1,3 +1,7 @@
+import {
+  A2E_SUITE_HELP_PAGES,
+  A2E_SUITE_IDENTITY,
+} from 'twenty-shared/constants';
 import { Injectable } from '@nestjs/common';
 
 import { isAxiosError } from 'axios';
@@ -13,7 +17,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 @Injectable()
 export class SearchHelpCenterTool implements Tool {
   description =
-    'Search Twenty documentation and help center to find information about features, setup, usage, and troubleshooting.';
+    'Search A2E Suite documentation and help center to find information about features, setup, usage, and troubleshooting.';
   inputSchema = SearchHelpCenterInputZodSchema;
 
   constructor(
@@ -25,7 +29,7 @@ export class SearchHelpCenterTool implements Tool {
     parameters: ToolInput,
     _context: ToolExecutionContext,
   ): Promise<ToolOutput> {
-    const { query } = parameters;
+    const { query } = this.inputSchema.parse(parameters);
 
     try {
       const MINTLIFY_API_KEY = this.twentyConfigService.get('MINTLIFY_API_KEY');
@@ -34,9 +38,30 @@ export class SearchHelpCenterTool implements Tool {
 
       const useDirectApi = MINTLIFY_API_KEY && MINTLIFY_SUBDOMAIN;
 
-      const endpoint = useDirectApi
-        ? `https://api-dsc.mintlify.com/v1/search/${MINTLIFY_SUBDOMAIN}`
-        : 'https://twenty-help-search.com/search/twenty';
+      if (!useDirectApi) {
+        const words = query
+          .toLowerCase()
+          .split(/\s+/)
+          .filter((word) => word.length > 2);
+        const pages = Object.values(A2E_SUITE_HELP_PAGES).filter((page) =>
+          words.some((word) =>
+            `${page.title} ${page.content}`.toLowerCase().includes(word),
+          ),
+        );
+        const results = (
+          pages.length > 0 ? pages : [A2E_SUITE_HELP_PAGES.gettingStarted]
+        ).map((page) => ({
+          title: page.title,
+          content: page.content,
+          url: `${A2E_SUITE_IDENTITY.publicUrl}${page.path}`,
+        }));
+        return {
+          success: true,
+          message: 'A2E Suite guides for this request',
+          result: results,
+        };
+      }
+      const endpoint = `https://api-dsc.mintlify.com/v1/search/${MINTLIFY_SUBDOMAIN}`;
 
       const headers = {
         'Content-Type': 'application/json',

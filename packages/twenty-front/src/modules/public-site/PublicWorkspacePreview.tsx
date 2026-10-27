@@ -1,3 +1,9 @@
+import {
+  IconAgenda,
+  IconBilan,
+  IconBureau,
+  IconSyna,
+} from '@/a2e-workspace/components/A2eAppLogo';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useRef, useState } from 'react';
@@ -6,9 +12,7 @@ import {
   IconChevronDown,
   IconChevronRight,
   IconFileText,
-  IconCalendarEvent,
   IconCheckbox,
-  IconCoins,
   IconSearch,
   IconFolder,
   IconUsers,
@@ -283,13 +287,13 @@ export const PublicWorkspacePreview = ({
 }: PublicWorkspacePreviewProps = {}) => {
   const { t } = useLingui();
   const tabs = [
-    { id: 'bureau', label: t`Bureau`, Icon: IconFileText },
+    { id: 'bureau', label: t`Bureau`, Icon: IconBureau },
     { id: 'projects', label: t`Projects`, Icon: IconCheckbox },
-    { id: 'agenda', label: t`Agenda`, Icon: IconCalendarEvent },
-    { id: 'bilan', label: t`Bilan`, Icon: IconCoins },
+    { id: 'agenda', label: t`Agenda`, Icon: IconAgenda },
+    { id: 'bilan', label: t`Bilan`, Icon: IconBilan },
     { id: 'archive', label: t`Archive`, Icon: IconFolder },
     { id: 'crm', label: t`CRM`, Icon: IconUsers },
-    { id: 'syna', label: t`Syna`, Icon: IconSparkles },
+    { id: 'syna', label: t`Syna`, Icon: IconSyna },
   ];
   const [activeId, setActiveId] = useState(
     tabs.some((tab) => tab.id === initialTabId) ? initialTabId : 'bureau',
@@ -397,7 +401,7 @@ export const PublicWorkspacePreview = ({
           <article key={activeId}>
             {activeId === 'bureau' && !currentNote && (
               <>
-                <IconFileText size={32} />
+                <IconBureau size={48} />
                 <h3>{t`A little space to think.`}</h3>
                 <p>{t`Good work starts with a clear idea. Collect it here, give it a little structure, and see where it takes you.`}</p>
                 <StyledCallout>
@@ -470,6 +474,7 @@ export const PublicWorkspacePreview = ({
                       <span>
                         <input
                           type="checkbox"
+                          aria-label={label}
                           checked={completedTasks.includes(id)}
                           onChange={() =>
                             setCompletedTasks((previous) =>
@@ -491,7 +496,7 @@ export const PublicWorkspacePreview = ({
             )}
             {activeId === 'agenda' && (
               <>
-                <IconCalendarEvent size={32} />
+                <IconAgenda size={48} />
                 <h3>{t`Make room for what matters.`}</h3>
                 <p>{t`A little perspective on the week ahead.`}</p>
                 <StyledCalendar>
@@ -528,7 +533,7 @@ export const PublicWorkspacePreview = ({
             )}
             {activeId === 'bilan' && (
               <>
-                <IconCoins size={32} />
+                <IconBilan size={48} />
                 <h3>{t`A clearer view of the numbers.`}</h3>
                 <p>{t`Keep financial documents beside the work they support. Example data for the optional Bilan application.`}</p>
                 <StyledRows>
@@ -601,7 +606,7 @@ export const PublicWorkspacePreview = ({
             )}
             {activeId === 'syna' && (
               <>
-                <IconSparkles size={32} />
+                <IconSyna size={48} />
                 <h3>{t`A little help with the next step.`}</h3>
                 <p>{t`Ask questions and work with an AI assistant when your instance has a provider configured. Available tools depend on your access.`}</p>
                 <h4>{t`Example conversation`}</h4>

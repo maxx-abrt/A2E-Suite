@@ -1,3 +1,4 @@
+import { getA2eHelpDocUrl } from '@/a2e-help/utils/getA2eHelpDocUrl';
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
@@ -7,7 +8,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type A2eHelpAppKey,
   A2E_HELP_DOC_PAGES,
-  getA2eHelpDocUrl,
 } from '@/a2e-help/constants/A2eHelpDocPages';
 
 export type A2eLearnMoreLinkProps = {

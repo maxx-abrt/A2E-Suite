@@ -143,7 +143,8 @@ const StyledCard = styled.article`
   > div:last-child {
     padding: 28px;
   }
-  > div:last-child > svg {
+  > div:last-child > svg,
+  > div:last-child > img {
     color: ${color('blue')};
     margin-bottom: 20px;
   }
@@ -382,7 +383,9 @@ export const PublicSiteHero = ({
           />
         </StyledActions>
       </StyledCenteredIntro>
-      {children && <StyledHeroVisual>{children}</StyledHeroVisual>}
+      {children !== undefined && children !== null && (
+        <StyledHeroVisual>{children}</StyledHeroVisual>
+      )}
     </SectionShell>
   );
 };
@@ -615,19 +618,11 @@ export const PublicSiteApplications = ({
                     data-tone={['green', 'pink', 'yellow'][index % 3]}
                     aria-hidden="true"
                   >
-                    <PublicAsciiArt
-                      variant={
-                        index % 3 === 0
-                          ? 'blocks'
-                          : index % 3 === 1
-                            ? 'stack'
-                            : 'cube'
-                      }
-                    />
+                    <Icon size={144} aria-hidden={true} />
                   </StyledIllustration>
                 )}
                 <div>
-                  {compact && <Icon size={24} aria-hidden="true" />}
+                  <Icon size={40} aria-hidden={true} />
                   <Eyebrow>{i18n._(name)}</Eyebrow>
                   <h3>{i18n._(heading)}</h3>
                   <p>{i18n._(body)}</p>

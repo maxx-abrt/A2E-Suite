@@ -1,7 +1,9 @@
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { sanitizeImportedHtml } from '@/blocknote-editor/import/utils/sanitizeImportedHtml';
 import { v4 } from 'uuid';
+import { isNonEmptyString } from '@sniptt/guards';
 import { preserveNotionFormatting } from '@/blocknote-editor/import/utils/preserveNotionFormatting';
+import { decodeEntryTarget } from '@/blocknote-editor/import/utils/documentsTransferEntries';
 
 type PreparedNotionHtml = {
   html: string;
@@ -68,6 +70,126 @@ export const prepareNotionHtml = (html: string): PreparedNotionHtml => {
     );
     return block;
   };
+
+  // The schema has a native table-of-contents block; anchors cannot jump to
+  // anything once the page is a serialized editor document, so the nav converts
+  // and its anchor links disappear with it.
+  sanitizedDocument
+    .querySelectorAll('nav[data-notion-toc], nav.table_of_contents')
+    .forEach((nav) => {
+      const block = sanitizedDocument.createElement('div');
+      block.setAttribute('data-content-type', 'tableOfContents');
+      nav.replaceWith(block);
+    });
+
+  // BlockNote cannot represent in-page jump targets, and the rich-text API
+  // rejects `#` hrefs. The link text stays; only the dead protocol is removed.
+  sanitizedDocument.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    const parent = anchor.parentElement;
+    if (!parent) return;
+    const children = [...anchor.childNodes];
+    anchor.replaceWith(...children);
+    parent.normalize();
+  });
+
+  // Inside table cells a page link is a relation; Notion renders it as a chip.
+  // The native schema's inline mention carries the same placeholder contract as
+  // the page-link block, so the runner resolves both to real record ids.
+  sanitizedDocument
+    .querySelectorAll('td a[href], th a[href]')
+    .forEach((anchor) => {
+      const pageId = anchor.getAttribute('data-notion-page-id');
+      const href = anchor.getAttribute('href') ?? '';
+      const labelSource = anchor.cloneNode(true) as HTMLElement;
+      labelSource
+        .querySelectorAll<HTMLElement>('.icon, .page-symbol, img')
+        .forEach((icon) => icon.remove());
+      const label =
+        labelSource.textContent?.replace(/\s+/g, ' ').trim() ??
+        anchor.getAttribute('title') ??
+        '';
+      const hasPageTarget =
+        isNonEmptyString(pageId ?? undefined) ||
+        (!/^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(href) &&
+          /\.html?$/i.test(decodeEntryTarget(href.split(/[?#]/)[0])));
+      if (label === '' || !hasPageTarget) return;
+      const mention = sanitizedDocument.createElement('span');
+      mention.setAttribute('data-content-type', 'mention');
+      mention.setAttribute(
+        'data-record-id',
+        isNonEmptyString(pageId ?? undefined) ? `notion:${pageId}` : href,
+      );
+      mention.setAttribute('data-object-name-singular', 'document');
+      mention.setAttribute('data-label', label);
+      anchor.replaceWith(mention);
+    });
+
+  // Native page links render as the schema's own chip instead of a plain URL
+  // link. The target travels as a placeholder; the import runner resolves it to
+  // the created record id once every page exists. The exported chip keeps the
+  // page icon inside its label, mirroring Notion's icon+title rendering.
+  sanitizedDocument
+    .querySelectorAll('figure.link-to-page')
+    .forEach((figure) => {
+      const anchor = figure.querySelector('a[href]');
+      if (!anchor) return;
+      const target =
+        anchor.getAttribute('data-notion-page-id') ??
+        anchor.getAttribute('href');
+      if (!target) return;
+      const icon = figure.querySelector<HTMLElement>('a > .icon');
+      const iconText = icon?.dataset.emoji || icon?.textContent?.trim() || '';
+      const labelSource = anchor.cloneNode(true) as HTMLElement;
+      labelSource
+        .querySelectorAll<HTMLElement>('.icon, .page-symbol')
+        .forEach((icon) => icon.remove());
+      const title =
+        `${iconText ? `${iconText} ` : ''}${
+          labelSource.textContent?.replace(/\s+/g, ' ').trim() ?? ''
+        }`.trim() ?? '';
+      const targetKind = anchor.getAttribute('data-notion-page-id')
+        ? `notion:${anchor.getAttribute('data-notion-page-id')}`
+        : (anchor.getAttribute('href') ?? '');
+      const block = sanitizedDocument.createElement('div');
+      block.setAttribute('data-content-type', 'pageLink');
+      block.setAttribute('data-document-id', targetKind);
+      block.setAttribute('data-title', title);
+      figure.replaceWith(block);
+    });
+
+  // BlockNote reads column widths from per-cell `colwidth` attributes, while the
+  // export declares them once in `<colgroup>`. Copying them preserves the
+  // exported column proportions in the editable table.
+  sanitizedDocument.querySelectorAll('table').forEach((table) => {
+    const columns = [...table.querySelectorAll(':scope > colgroup > col')].map(
+      (col) => {
+        const width = /^\s*(?:width\s*:\s*)?([\d.]+)(px|%)/i.exec(
+          col.getAttribute('style') ?? '',
+        );
+        if (!width) return null;
+        const value = parseFloat(width[1]);
+        if (!Number.isFinite(value) || value <= 0) return null;
+        return Math.round(width[2].toLowerCase() === 'px' ? value : value * 10);
+      },
+    );
+    if (columns.every((value) => value === null)) return;
+    const rows = [...table.querySelectorAll('tr')].filter(
+      (row) => row.closest('table') === table,
+    );
+    rows.forEach((row) => {
+      let columnIndex = 0;
+      row.querySelectorAll(':scope > td, :scope > th').forEach((cell) => {
+        const span = Math.max(
+          1,
+          parseInt(cell.getAttribute('colspan') ?? '1', 10) || 1,
+        );
+        const widths = columns.slice(columnIndex, columnIndex + span);
+        if (widths.length === span && widths.every((width) => width !== null))
+          cell.setAttribute('colwidth', widths.join(','));
+        columnIndex += span;
+      });
+    });
+  });
 
   // Native media captions are plain strings. Keep rich caption links and marks
   // in an adjacent editable paragraph rather than flattening that information.

@@ -49,7 +49,7 @@ export type DpaResolveContext = {
   signatory?: DpaSignatory;
   // Passed in (never read from the clock here) so the resolver stays pure.
   executedAt?: string;
-  // Twenty is not the Processor for self-hosted deployments, so the resolved
+  // Separately operated deployments need their actual operator’s terms, so the resolved
   // document carries a prominent "not a valid agreement" notice.
   isSelfHosted?: boolean;
 };

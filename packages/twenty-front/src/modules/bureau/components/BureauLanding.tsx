@@ -1,3 +1,4 @@
+import { IconBureau } from '@/a2e-workspace/components/A2eAppLogo';
 import { A2eCustomizeAction } from '@/a2e-customize/components/A2eCustomizeAction';
 import { BureauWorkspaceContext } from '@/bureau/contexts/BureauWorkspaceContext';
 import { BureauTaskSheet } from '@/bureau/components/BureauTaskSheet';
@@ -81,9 +82,12 @@ const StyledTitleGroup = styled.div`
 `;
 
 const StyledTitle = styled.h1`
+  align-items: center;
   color: ${themeCssVariables.font.color.primary};
+  display: flex;
   font-size: ${themeCssVariables.font.size.xxl};
   font-weight: ${themeCssVariables.font.weight.semiBold};
+  gap: ${themeCssVariables.spacing[3]};
   margin: 0;
 `;
 
@@ -175,7 +179,11 @@ const BureauLandingContent = ({
     skip: workspace !== null,
   });
   const totalCount = workspace?.documents.length ?? queriedTotalCount;
-  const isLoading = workspace ? workspace.isLoading : isQueryLoading;
+  // Rows already decided by the reconciled tree; the query fallback only
+  // applies outside a workspace context.
+  const hasLoadedPages = (workspace?.documents.length ?? 0) > 0;
+  const isLoading =
+    (workspace ? workspace.isLoading : isQueryLoading) && !hasLoadedPages;
   const error = workspace ? workspace.error : queryError;
   const canCreatePage = workspace?.permissions.canUpdateObjectRecords ?? true;
   const handleCreatePage = () => {
@@ -188,7 +196,10 @@ const BureauLandingContent = ({
       <StyledOverview>
         <StyledHeader>
           <StyledTitleGroup>
-            <StyledTitle>{t`Bureau`}</StyledTitle>
+            <StyledTitle>
+              <IconBureau size={40} />
+              {t`Bureau`}
+            </StyledTitle>
             <StyledSubtitle>
               {t`A clear view of your day. A place for your ideas.`}
             </StyledSubtitle>

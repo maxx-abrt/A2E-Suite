@@ -227,6 +227,26 @@ describe('BureauImportModal workspace and retry boundary', () => {
     );
   });
 
+  it('offers retry when content was saved but the original export could not be attached', async () => {
+    const user = userEvent.setup();
+    renderModal();
+    await uploadMarkdown(user);
+    mockUploadAttachmentFile.mockRejectedValueOnce(
+      new Error('Storage offline'),
+    );
+    await user.click(screen.getByRole('button', { name: 'Import pages' }));
+    await screen.findByText(/Import complete: 1 pages/);
+    expect(screen.getByText(/1 page\(s\) need retry/)).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Open imported pages' }),
+    ).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Retry import' }));
+    await screen.findByRole('button', { name: 'Open imported pages' });
+    expect(mockCreateOneRecord).toHaveBeenCalledTimes(1);
+    expect(mockUploadAttachmentFile).toHaveBeenCalledTimes(2);
+    expect(screen.queryByText(/page\(s\) need retry/)).not.toBeInTheDocument();
+  });
+
   it('allows choosing a different destination before import', async () => {
     mockDocuments = [
       {

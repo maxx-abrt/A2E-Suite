@@ -34,7 +34,7 @@ export const BillingTrialConvertingEmail = ({
   });
 
   return (
-    <BaseEmail width={333} locale={locale}>
+    <BaseEmail width={333} locale={locale} publicUrl={link}>
       <Title value={i18n._('A heads up before your trial ends')} />
       <MainText>
         {userName?.length > 1 ? (
@@ -77,7 +77,7 @@ BillingTrialConvertingEmail.PreviewProps = {
   workspaceDisplayName: 'Acme Inc.',
   trialEndsAt: new Date('2026-07-02'),
   interval: 'month',
-  link: 'https://acme.twenty.com/settings/billing',
+  link: 'https://a2esuite.com/settings/billing',
   locale: 'en',
 } as BillingTrialConvertingEmailProps;
 

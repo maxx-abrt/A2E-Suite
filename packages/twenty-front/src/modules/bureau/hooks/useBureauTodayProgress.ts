@@ -55,12 +55,22 @@ export const useBureauTodayProgress = () => {
 
   const totalCount = total.data.id?.COUNT;
   const completedCount = completed.data.id?.COUNT;
+  const totalCountValue = isDefined(totalCount)
+    ? Number(totalCount)
+    : undefined;
+  const completedCountValue = isDefined(completedCount)
+    ? Number(completedCount)
+    : undefined;
 
   return {
-    totalCount: isDefined(totalCount) ? Number(totalCount) : undefined,
-    completedCount: isDefined(completedCount)
-      ? Number(completedCount)
-      : undefined,
+    totalCount: totalCountValue,
+    completedCount: completedCountValue,
+    // Next action, not percentage: sidebar and dashboard both read the number
+    // of open tasks while the completion share is derived downstream.
+    openCount:
+      isDefined(totalCountValue) && isDefined(completedCountValue)
+        ? totalCountValue - Math.min(totalCountValue, completedCountValue)
+        : undefined,
     isLoading: skip || total.loading || completed.loading,
     hasError: isDefined(total.error) || isDefined(completed.error),
   };

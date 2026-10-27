@@ -1,3 +1,4 @@
+import { getA2eApplicationLogo } from '@/a2e-workspace/utils/getA2eApplicationLogo';
 import { useRefetchOnApplicationRegistrationChange } from '@/applications/hooks/useRefetchOnApplicationRegistrationChange';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
@@ -101,7 +102,10 @@ export const SettingsApplicationRegistrationDetails = () => {
         <Avatar
           type="app"
           size="md"
-          avatarUrl={getAbsoluteImageUrl(registration.logoUrl ?? undefined)}
+          avatarUrl={
+            getA2eApplicationLogo(registration.universalIdentifier) ??
+            getAbsoluteImageUrl(registration.logoUrl ?? undefined)
+          }
           placeholder={registration.name}
           placeholderColorSeed={registration.name}
         />

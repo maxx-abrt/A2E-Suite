@@ -80,6 +80,9 @@ export const FocusedAppNavigationDrawerContent = ({
             (item) => !workspace || item.link !== AppPath.Bureau,
           )}
           hideBackButton
+          // Inside Bureau the page tree leads; app shortcuts fold away (Huly/
+          // Notion-style) instead of pushing the notes below the fold.
+          collapsibleSectionLabel={workspace ? t`Shortcuts` : undefined}
         />
       )}
       <BureauNavigation />

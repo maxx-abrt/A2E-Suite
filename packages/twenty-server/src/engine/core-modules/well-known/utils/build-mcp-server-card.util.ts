@@ -13,12 +13,12 @@ export const buildMcpServerCard = ({
     'https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json',
   name: 'com.twenty/twenty',
   version,
-  title: 'Twenty CRM',
+  title: 'A2E Suite',
   description:
-    'Read and write your Twenty CRM data - companies, people, opportunities, tasks, notes and any custom objects - from AI assistants. Tools are discovered at runtime and scoped to the authenticated workspace.',
-  websiteUrl: 'https://twenty.com',
+    'Read and write your A2E Suite workspace data - companies, people, opportunities, tasks, notes and any custom objects - from AI assistants. Tools are discovered at runtime and scoped to the authenticated workspace.',
+  websiteUrl: baseUrl,
   repository: {
-    url: 'https://github.com/twentyhq/twenty',
+    url: 'https://github.com/maxx-abrt/A2E-Suite',
     source: 'github',
   },
   remotes: [

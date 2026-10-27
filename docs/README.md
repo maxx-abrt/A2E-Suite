@@ -14,6 +14,7 @@ explains the fork; upstream product documentation lives in
 | Understand the product and naming | [Product experience](product-experience.md) | [Delivery plan](../PLAN.md) |
 | See what each app and surface does | [Feature surfaces](features.md) | The linked app `README.md` and its source |
 | Evaluate product gaps and differentiation | [2026-10-24 product audit](product-strategy-2026-10-24.md) | Source evidence, competitive baseline and root-plan priorities |
+| Plan Notion-style databases and connected student workflows | [Bureau and connected workspace plan](NOTION_WORKSPACE_PLAN.md) | Dependency-scoped slices, source corrections and executor/orchestrator prompts |
 | Find Bilan, Bureau or the app installer | [Applications runbook](applications.md) | The linked catalog, installer and preset source |
 | Continue the full-page Bureau workspace or Notion import | [Bureau delivery checklist](BUREAU_PLAN.md) | PLAN M8 + the dated phase-13 verification report |
 | Select or manage several Bureau pages | [Bulk page actions](bureau-bulk-actions.md) | Selection, moves, trash, Undo and partial-failure recovery |

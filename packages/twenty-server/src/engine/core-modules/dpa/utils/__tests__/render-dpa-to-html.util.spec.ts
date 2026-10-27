@@ -43,8 +43,8 @@ describe('renderDpaToHtml', () => {
   it('renders the title and last-updated line', () => {
     const html = renderDpaToHtml(resolveDpa(baseContext));
 
-    expect(html).toContain('Twenty Data Processing Agreement (DPA)');
-    expect(html).toContain('Last Updated: August 2026');
+    expect(html).toContain('A2E Suite Data Processing Agreement (DPA)');
+    expect(html).toContain('Last Updated: 27 October 2026');
   });
 
   it('contains no unresolved {{ }} merge fields in the output', () => {
@@ -77,7 +77,7 @@ describe('renderDpaToHtml', () => {
     expect(html).toContain('&lt;script&gt;');
   });
 
-  it('renders the executed signatory and both Twenty entities in signed mode', () => {
+  it('renders customer acceptance and the actual association in signed mode', () => {
     const html = renderDpaToHtml(
       resolveDpa({
         region: DpaRegion.EU,
@@ -90,8 +90,9 @@ describe('renderDpaToHtml', () => {
 
     expect(html).toContain('Acme GmbH');
     expect(html).toContain('Jane Doe');
-    expect(html).toContain('Twenty.com PBC');
-    expect(html).toContain('Twenty.com SAS');
+    expect(html).toContain('ASSOCIATION D&#39;ENTRAIDE ETUDIANTE');
+    expect(html).not.toContain('pre-signed');
+    expect(html).not.toContain('Twenty');
   });
 
   it('renders a clean cloud DPA: no merge tokens, drafting notes, placeholders, or self-hosted banner', () => {
@@ -118,9 +119,9 @@ describe('renderDpaToHtml', () => {
       expect(html).not.toContain(forbidden);
     }
 
-    expect(html).toContain('Stéphanie Joly');
+    expect(html).toContain('contact@association2e.org');
     expect(
-      html.match(/7\.1 Data Hosting and Localization:/g) ?? [],
+      html.match(/6\. Processing location and international transfers/g) ?? [],
     ).toHaveLength(1);
   });
 

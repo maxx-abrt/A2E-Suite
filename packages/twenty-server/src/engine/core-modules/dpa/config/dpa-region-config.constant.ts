@@ -1,46 +1,37 @@
+import { A2E_SUITE_IDENTITY } from 'twenty-shared/constants';
 import { DpaRegion } from 'src/engine/core-modules/dpa/enums/dpa-region.enum';
 import { type DpaRegionConfig } from 'src/engine/core-modules/dpa/types/dpa.types';
 
 export const DEFAULT_DPA_REGION: DpaRegion = DpaRegion.EU;
 
 const DPA_COMMON_VALUES = {
-  PROCESSOR_ENTITY: 'Twenty.com PBC',
-  PROCESSOR_LEGAL_FORM:
-    'a public benefit corporation under the laws of Delaware, USA',
-  // Registered office is the Delaware registered agent; the SF notices
-  // address is kept distinct so the two are not conflated under one label.
-  PROCESSOR_ADDRESS:
-    'c/o National Registered Agents, Inc., 1209 Orange Street, Wilmington, Delaware 19801, USA. For notices: 2261 Market Street #5275, San Francisco, California 94114, USA',
-  EU_AFFILIATE_ENTITY: 'Twenty.com SAS',
-  EU_AFFILIATE_LEGAL_FORM:
-    'a société par actions simplifiée under the laws of France',
-  EU_AFFILIATE_ADDRESS: '9 Rue des Colonnes, 75002 Paris, France',
-  GOVERNING_LAW: 'the State of Delaware, USA',
-  DPO_NAME_AND_CONTACT: 'Stéphanie Joly, privacy@twenty.com',
+  PROCESSOR_ENTITY: A2E_SUITE_IDENTITY.operator.legalName,
+  PROCESSOR_LEGAL_FORM: A2E_SUITE_IDENTITY.operator.legalForm,
+  PROCESSOR_ADDRESS: A2E_SUITE_IDENTITY.operator.address,
+  EU_AFFILIATE_ENTITY: '',
+  EU_AFFILIATE_LEGAL_FORM: '',
+  EU_AFFILIATE_ADDRESS: '',
+  GOVERNING_LAW: 'France, subject to mandatory applicable data protection law',
+  DPO_NAME_AND_CONTACT: A2E_SUITE_IDENTITY.operator.email,
 };
 
 export const DPA_REGION_CONFIGS: Record<DpaRegion, DpaRegionConfig> = {
   [DpaRegion.EU]: {
     region: DpaRegion.EU,
-    sccSectionActive: true,
+    sccSectionActive: false,
     values: {
       ...DPA_COMMON_VALUES,
-      HOSTING_REGION: 'EU (Frankfurt, Germany)',
+      HOSTING_REGION: 'European Union',
     },
   },
   [DpaRegion.US]: {
     region: DpaRegion.US,
-    sccSectionActive: true,
+    sccSectionActive: false,
     values: {
       ...DPA_COMMON_VALUES,
       HOSTING_REGION: 'United States',
     },
   },
-};
-
-export const TWENTY_PRESIGNED_SIGNATORY = {
-  name: 'Félix Malfait',
-  title: 'Chief Executive Officer',
 };
 
 export const getDpaRegionConfig = (region: DpaRegion): DpaRegionConfig =>

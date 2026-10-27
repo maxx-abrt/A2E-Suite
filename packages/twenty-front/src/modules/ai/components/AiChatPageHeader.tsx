@@ -1,3 +1,4 @@
+import { IconSyna } from '@/a2e-workspace/components/A2eAppLogo';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
@@ -57,7 +58,11 @@ export const AiChatPageHeader = ({ isOnboarding }: AiChatPageHeaderProps) => {
         <NavigationDrawerCollapseButton direction="right" />
       )}
       <StyledHeaderTitle>
-        <IconSparkles size={theme.icon.size.md} />
+        {isOnboarding ? (
+          <IconSparkles size={theme.icon.size.md} />
+        ) : (
+          <IconSyna size={24} />
+        )}
         {isOnboarding ? t`Onboarding` : t`Syna`}
       </StyledHeaderTitle>
       {/* The onboarding conversation is single-threaded: switching or

@@ -1,12 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
-// Canonical doc destinations for in-app help. Slugs mirror
-// `packages/twenty-docs/navigation/base-structure.json` under the `a2eSuite`
-// group (and its `l/fr` mirror), so a missing page is a docs-nav change, never
-// a guessed URL. The docs site canonicalises to `https://docs.twenty.com`.
-export const A2E_HELP_DOCS_BASE_URL = 'https://docs.twenty.com';
-
 export type A2eHelpAppKey = 'bureau' | 'agenda' | 'bilan' | 'syna' | 'archive';
 
 export type A2eHelpDocPageKey =
@@ -69,6 +63,3 @@ export const A2E_HELP_DOC_PAGES: Record<A2eHelpDocPageKey, A2eHelpDocPage> = {
     label: msg`FAQ & troubleshooting`,
   },
 };
-
-export const getA2eHelpDocUrl = (key: A2eHelpDocPageKey): string =>
-  `${A2E_HELP_DOCS_BASE_URL}/${A2E_HELP_DOC_PAGES[key].slug}`;

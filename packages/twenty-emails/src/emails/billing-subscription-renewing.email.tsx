@@ -32,7 +32,7 @@ export const BillingSubscriptionRenewingEmail = ({
   });
 
   return (
-    <BaseEmail width={333} locale={locale}>
+    <BaseEmail width={333} locale={locale} publicUrl={link}>
       <Title value={i18n._('Your plan renews soon')} />
       <MainText>
         {userName?.length > 1 ? (
@@ -66,7 +66,7 @@ BillingSubscriptionRenewingEmail.PreviewProps = {
   userName: 'John Doe',
   workspaceDisplayName: 'Acme Inc.',
   renewsAt: new Date('2027-07-02'),
-  link: 'https://acme.twenty.com/settings/billing',
+  link: 'https://a2esuite.com/settings/billing',
   locale: 'en',
 } as BillingSubscriptionRenewingEmailProps;
 

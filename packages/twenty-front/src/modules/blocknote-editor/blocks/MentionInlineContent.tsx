@@ -104,6 +104,48 @@ export const MentionInlineContent = createReactInlineContentSpec(
     content: 'none',
   },
   {
+    // Imported rich text carries record chips as data-attribute spans; without
+    // a parse function the parser drops them silently on import. The tag rule
+    // is global (`tag: '*'`), so it must decline every other element.
+    parse: (element) => {
+      if (element.getAttribute('data-content-type') === 'mention') {
+        return {
+          recordId: element.getAttribute('data-record-id') ?? '',
+          objectMetadataId:
+            element.getAttribute('data-object-metadata-id') ?? '',
+          objectNameSingular:
+            element.getAttribute('data-object-name-singular') ?? '',
+          label: element.getAttribute('data-label') ?? '',
+          imageUrl: element.getAttribute('data-image-url') ?? '',
+        };
+      }
+      const recordId = element.getAttribute('data-record-id') ?? '';
+      const objectNameSingular =
+        element.getAttribute('data-object-name-singular') ?? '';
+      if (recordId === '' || objectNameSingular === '') return undefined;
+      return {
+        recordId,
+        objectMetadataId: element.getAttribute('data-object-metadata-id') ?? '',
+        objectNameSingular,
+        label: element.getAttribute('data-label') ?? '',
+        imageUrl: element.getAttribute('data-image-url') ?? '',
+      };
+    },
+    toExternalHTML: ({ inlineContent: { props } }) => {
+      const attributes: Record<string, string> = {
+        'data-content-type': 'mention',
+        'data-record-id': props.recordId ?? '',
+      };
+      if (isNonEmptyString(props.objectNameSingular ?? ''))
+        attributes['data-object-name-singular'] =
+          props.objectNameSingular ?? '';
+      if (isNonEmptyString(props.label ?? ''))
+        attributes['data-label'] = props.label ?? '';
+      if (isNonEmptyString(props.imageUrl ?? ''))
+        attributes['data-image-url'] = props.imageUrl ?? '';
+      // oxlint-disable-next-line eslint-plugin-react/jsx-props-no-spreading -- keys come from a dynamic prop bag
+      return <span {...attributes} />;
+    },
     render: (props) => {
       const {
         recordId,

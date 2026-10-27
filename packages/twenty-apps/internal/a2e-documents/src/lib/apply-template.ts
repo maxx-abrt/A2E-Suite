@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import type { CoreApiClient } from 'twenty-client-sdk/core';
 import {
   resolveTemplateApplyRequestError,
@@ -35,6 +36,7 @@ export type ApplyTemplateClient = Pick<CoreApiClient, 'query' | 'mutation'>;
 
 export type ApplyTemplateRequest = {
   key: string;
+  locale?: string | null;
   inputs?: Record<string, unknown> | null;
   operationId?: string | null;
 };
@@ -175,7 +177,12 @@ export const applyResolvedDocumentTemplate = async (
 
   const created = await createDocumentFromTemplate(
     client,
-    starterTemplate,
+    // Older callers omit locale and retain their existing French content.
+    isDefined(request.locale) &&
+    !/^fr(?:[-_]|$)/i.test(request.locale) &&
+    isDefined(starterTemplate.english)
+      ? starterTemplate.english
+      : starterTemplate,
     operationId,
   );
 

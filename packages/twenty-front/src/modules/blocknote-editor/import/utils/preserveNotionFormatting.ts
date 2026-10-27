@@ -88,7 +88,7 @@ export const preserveNotionFormatting = (document: Document) => {
       element.textContent = element.dataset.emoji ?? '';
   });
   document
-    .querySelectorAll('.property-icon, .status-dot, img.notion-static-icon')
+    .querySelectorAll('.property-icon, .status-dot')
     .forEach((element) => element.remove());
   document
     .querySelectorAll<HTMLElement>('[data-notion-equation]')

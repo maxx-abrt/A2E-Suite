@@ -1,18 +1,17 @@
-import { msg } from '@lingui/core/macro';
 import {
-  IconCalendarEvent,
-  IconFileText,
-  IconCoins,
-  IconFolder,
-  IconUsers,
-  IconSparkles,
-} from 'twenty-ui/icon';
+  IconAgenda,
+  IconBilan,
+  IconBureau,
+  IconSyna,
+} from '@/a2e-workspace/components/A2eAppLogo';
+import { msg } from '@lingui/core/macro';
+import { IconFolder, IconUsers } from 'twenty-ui/icon';
 
 export const PUBLIC_SITE_APPLICATIONS = [
   {
     id: 'bureau',
     name: msg`Bureau`,
-    Icon: IconFileText,
+    Icon: IconBureau,
     heading: msg`A home for every idea.`,
     body: msg`Write rich pages, organize nested notes and keep project knowledge close. Bureau brings Pages, Projects and Discussions into the same workspace.`,
     details: [
@@ -27,7 +26,7 @@ export const PUBLIC_SITE_APPLICATIONS = [
   {
     id: 'agenda',
     name: msg`Agenda`,
-    Icon: IconCalendarEvent,
+    Icon: IconAgenda,
     heading: msg`Find a little more time.`,
     body: msg`See events and task deadlines together. Plan the week with a calendar that belongs to your workspace.`,
     details: [
@@ -42,7 +41,7 @@ export const PUBLIC_SITE_APPLICATIONS = [
   {
     id: 'bilan',
     name: msg`Bilan`,
-    Icon: IconCoins,
+    Icon: IconBilan,
     heading: msg`Give your numbers a place.`,
     body: msg`An optional finance application for quotes, invoices, budgets and financial documents, in the same workspace.`,
     details: [
@@ -87,7 +86,7 @@ export const PUBLIC_SITE_APPLICATIONS = [
   {
     id: 'syna',
     name: msg`Syna`,
-    Icon: IconSparkles,
+    Icon: IconSyna,
     heading: msg`A helping hand, in context.`,
     body: msg`Ask your workspace assistant for help with ideas and everyday work. Availability depends on the AI providers configured for your instance.`,
     details: [

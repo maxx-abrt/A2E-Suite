@@ -96,6 +96,7 @@ export const OnboardingStartFromScratchContent = ({
             key={app.key}
             data-testid={`onboarding-app-catalogue-${app.key}`}
           >
+            <app.Icon size={32} />
             <StyledAppText>
               <StyledAppLabel>{t(app.label)}</StyledAppLabel>
               <StyledAppDescription>{t(app.description)}</StyledAppDescription>

@@ -1,3 +1,8 @@
+import {
+  IconAgenda,
+  IconBilan,
+  IconBureau,
+} from '@/a2e-workspace/components/A2eAppLogo';
 import { PublicAsciiArt } from '@/public-site/PublicAsciiArt';
 import {
   color,
@@ -15,14 +20,7 @@ import { SectionStack } from '@/public-site/ui/SectionStack';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import {
-  IconCheck,
-  IconPlus,
-  IconFileText,
-  IconUsers,
-  IconCoins,
-  IconCalendarEvent,
-} from 'twenty-ui/icon';
+import { IconCheck, IconPlus, IconUsers } from 'twenty-ui/icon';
 
 const StyledLayout = styled.div`
   display: grid;
@@ -236,7 +234,7 @@ export const PublicWorkspaceComposition = () => {
                   ) : (
                     <>
                       <li>
-                        <IconFileText size={18} />
+                        <IconBureau size={24} />
                         <span>{t`Bureau Pages`}</span>
                         <IconCheck size={16} />
                       </li>
@@ -252,7 +250,7 @@ export const PublicWorkspaceComposition = () => {
                       </li>
                       {includesBilan && (
                         <li>
-                          <IconCoins size={18} />
+                          <IconBilan size={24} />
                           <span>{t`Bilan`}</span>
                           <IconCheck size={16} />
                         </li>
@@ -260,7 +258,7 @@ export const PublicWorkspaceComposition = () => {
                     </>
                   )}
                   <li>
-                    <IconCalendarEvent size={18} />
+                    <IconAgenda size={24} />
                     <span>{t`Agenda`}</span>
                     <IconCheck size={16} />
                   </li>

@@ -1,17 +1,12 @@
-import { Img } from 'react-email';
+import { Img, Text } from 'react-email';
 
-const logoStyle = {
-  marginBottom: '40px',
-};
+type LogoProps = { logoUrl?: string };
 
-export const Logo = () => {
-  return (
-    <Img
-      src="https://app.twenty.com/images/icons/windows11/Square150x150Logo.scale-100.png"
-      alt="A2E Suite logo"
-      width="40"
-      height="40"
-      style={logoStyle}
-    />
-  );
-};
+export const Logo = ({ logoUrl }: LogoProps) => (
+  <>
+    {logoUrl && <Img src={logoUrl} alt="" width="48" height="48" />}
+    <Text style={{ fontSize: '18px', fontWeight: 600, marginBottom: '40px' }}>
+      A2E Suite
+    </Text>
+  </>
+);

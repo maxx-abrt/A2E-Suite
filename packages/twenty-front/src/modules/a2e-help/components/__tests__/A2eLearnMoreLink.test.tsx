@@ -19,10 +19,7 @@ describe('A2eLearnMoreLink', () => {
 
     const link = screen.getByTestId('a2e-learn-more-bureau');
 
-    expect(link).toHaveAttribute(
-      'href',
-      'https://docs.twenty.com/user-guide/a2e-suite/bureau',
-    );
+    expect(link).toHaveAttribute('href', 'https://a2esuite.com/apps/bureau');
     expect(link).toHaveAttribute('target', '_blank');
     expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   });

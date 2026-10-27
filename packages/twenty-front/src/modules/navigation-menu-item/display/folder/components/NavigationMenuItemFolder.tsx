@@ -1,6 +1,13 @@
+import { A2eAppLogo } from '@/a2e-workspace/components/A2eAppLogo';
+import { useA2eApplicationLogo } from '@/a2e-workspace/hooks/useA2eApplicationLogo';
 import { Suspense, lazy, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, IconChevronRight, useIcons } from 'twenty-ui/icon';
+import {
+  type IconComponentProps,
+  IconChevronDown,
+  IconChevronRight,
+  useIcons,
+} from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -54,6 +61,7 @@ export const NavigationMenuItemFolder = ({
   if (readOnly) {
     return (
       <NavigationMenuItemFolderReadOnlyContent
+        applicationId={item.applicationId}
         folderId={folderId}
         folderName={folderName}
         folderIconKey={folderIconKey}
@@ -68,6 +76,7 @@ export const NavigationMenuItemFolder = ({
     <Suspense
       fallback={
         <NavigationMenuItemFolderReadOnlyContent
+          applicationId={item.applicationId}
           folderId={folderId}
           folderName={folderName}
           folderIconKey={folderIconKey}
@@ -78,6 +87,7 @@ export const NavigationMenuItemFolder = ({
       }
     >
       <LazyNavigationMenuItemFolderDnd
+        applicationId={item.applicationId}
         folderId={folderId}
         folderName={folderName}
         folderIconKey={folderIconKey}
@@ -95,6 +105,7 @@ export const NavigationMenuItemFolder = ({
 };
 
 type NavigationMenuItemFolderReadOnlyContentProps = {
+  applicationId?: string | null;
   folderId: string;
   folderName: string;
   folderIconKey?: string | null;
@@ -104,6 +115,7 @@ type NavigationMenuItemFolderReadOnlyContentProps = {
 };
 
 const NavigationMenuItemFolderReadOnlyContent = ({
+  applicationId,
   folderId,
   folderName,
   folderIconKey,
@@ -115,6 +127,7 @@ const NavigationMenuItemFolderReadOnlyContent = ({
   const isMobile = useIsMobile();
   const { theme } = useContext(ThemeContext);
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
+  const applicationLogo = useA2eApplicationLogo(applicationId);
 
   const { isOpen, handleToggle, hasActiveChild, activeChildIndex } =
     useNavigationMenuItemFolderOpenState({
@@ -127,11 +140,24 @@ const NavigationMenuItemFolderReadOnlyContent = ({
       header={
         <NavigationDrawerItem
           label={folderName}
-          Icon={FolderIcon}
+          Icon={
+            applicationLogo
+              ? ({ size, className, style }: IconComponentProps) => (
+                  <A2eAppLogo
+                    size={size}
+                    className={className}
+                    style={style}
+                    src={applicationLogo}
+                  />
+                )
+              : FolderIcon
+          }
           iconColor={
-            isDefined(folderColor)
-              ? folderColor
-              : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER
+            applicationLogo
+              ? undefined
+              : isDefined(folderColor)
+                ? folderColor
+                : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER
           }
           active={!isOpen && hasActiveChild}
           onClick={handleToggle}
