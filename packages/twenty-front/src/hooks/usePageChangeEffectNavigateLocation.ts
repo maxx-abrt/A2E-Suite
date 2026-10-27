@@ -1,3 +1,4 @@
+import { isPublicSitePath } from '@/public-site/PublicSitePages';
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
 import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
@@ -102,7 +103,10 @@ export const usePageChangeEffectNavigateLocation = () => {
     isOnboardingCheckoutPendingState,
   );
 
-  if (!isLogged && isMatchingLocation(location, AppPath.Index)) {
+  if (
+    isPublicSitePath(location.pathname) &&
+    (!isLogged || location.pathname !== AppPath.Index)
+  ) {
     return;
   }
 

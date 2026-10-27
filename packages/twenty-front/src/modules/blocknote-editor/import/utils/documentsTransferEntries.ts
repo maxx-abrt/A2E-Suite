@@ -41,10 +41,16 @@ export const joinEntryPath = (...segments: string[]): string =>
 // two pages with the same title don't collide. The title the user sees is the
 // name without that suffix.
 export const stripNotionEntryHash = (name: string): string => {
-  const stripped = name.replace(/\s+[0-9a-f]{32}$/i, '').trim();
+  const stripped = name.replace(/\s+[0-9a-f]{32}(?:_all)?$/i, '').trim();
 
   return /^[0-9a-f]{32}$/i.test(stripped) ? '' : stripped;
 };
+
+export const getNotionEntryId = (path: string): string | undefined =>
+  /([a-f\d]{32}|[a-f\d]{8}(?:-[a-f\d]{4}){3}-[a-f\d]{12})(?:_all)?(?:\.(?:html?|md|markdown|csv))?$/i
+    .exec(path)?.[1]
+    ?.replaceAll('-', '')
+    .toLowerCase();
 
 export const decodeEntryTarget = (target: string): string => {
   try {

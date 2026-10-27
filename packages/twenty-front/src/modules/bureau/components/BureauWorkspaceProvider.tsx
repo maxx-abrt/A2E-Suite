@@ -1,3 +1,4 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { BureauWorkspaceContext } from '@/bureau/contexts/BureauWorkspaceContext';
 import { useBureauWorkspaceValue } from '@/bureau/hooks/useBureauWorkspaceValue';
 import { useIsBureauAvailable } from '@/bureau/hooks/useIsBureauAvailable';
@@ -15,6 +16,7 @@ type BureauWorkspaceProviderProps = { children: ReactNode };
 export const BureauWorkspaceProvider = ({
   children,
 }: BureauWorkspaceProviderProps) => {
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const match = useMatch('/bureau/:documentId?');
   const isAvailable = useIsBureauAvailable();
 
@@ -41,6 +43,7 @@ export const BureauWorkspaceProvider = ({
 
   return (
     <OpenedBureauWorkspaceProvider
+      key={currentWorkspace?.id}
       activeDocumentId={match?.params.documentId ?? null}
     >
       {children}

@@ -6,6 +6,7 @@ import { type HtmlImportWarning } from '@/blocknote-editor/import/utils/htmlImpo
 export type ImportedBlock = Record<string, unknown>;
 
 export type ImportedUrlResolvers = {
+  preserveUnmappedAttachments?: boolean;
   // Returns the workspace URL a remote attachment resolves to, or null when it
   // cannot be imported (the block is then dropped, fail-closed).
   resolveAttachmentUrl?: (url: string) => string | null;
@@ -93,8 +94,19 @@ export const mapImportedAttachmentsAndLinks = (
 
       if (isNonEmptyString(url) && !isNonEmptyString(resolvedUrl)) {
         warnings.push({ kind: 'attachment-unmapped', element: blockType });
+        if (!resolvers.preserveUnmappedAttachments) return undefined;
 
-        return undefined;
+        const label = [props.name, props.caption, url]
+          .filter(isNonEmptyString)
+          .join(' — ');
+        return {
+          ...(typeof block.id === 'string' ? { id: block.id } : {}),
+          type: 'paragraph',
+          content: [{ type: 'text', text: label }],
+          children: Array.isArray(block.children)
+            ? block.children.map(mapBlock).filter(isDefined)
+            : [],
+        };
       }
 
       if (isNonEmptyString(resolvedUrl)) {

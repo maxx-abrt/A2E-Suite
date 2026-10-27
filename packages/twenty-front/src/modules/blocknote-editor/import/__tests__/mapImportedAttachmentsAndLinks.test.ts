@@ -64,14 +64,17 @@ describe('mapImportedAttachmentsAndLinks', () => {
     expect(warnings).toEqual([]);
   });
 
-  it('drops unmapped attachments and warns', () => {
+  it('keeps a readable reference for unmapped attachments and warns', () => {
     const { blocks, warnings } = mapImportedAttachmentsAndLinks(
       [image('https://external.example/a.png'), paragraph('keep')],
-      { resolveAttachmentUrl: () => null },
+      { resolveAttachmentUrl: () => null, preserveUnmappedAttachments: true },
     );
 
-    expect(blocks).toHaveLength(1);
-    expect(blocks[0].type).toBe('paragraph');
+    expect(blocks).toHaveLength(2);
+    expect(blocks[0]).toMatchObject({
+      type: 'paragraph',
+      content: [{ type: 'text', text: 'https://external.example/a.png' }],
+    });
     expect(warnings).toEqual([
       { kind: 'attachment-unmapped', element: 'image' },
     ]);

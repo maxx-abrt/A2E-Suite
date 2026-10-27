@@ -1,0 +1,18 @@
+@font-face {
+  font-family: 'A2E Host Grotesk';
+  src: url('/website/fonts/host-grotesk-latin-variable.woff2') format('woff2');
+  font-weight: 300 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'A2E Aleo';
+  src: url('/website/fonts/aleo-latin-300.woff2') format('woff2');
+  font-weight: 300;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'A2E Azeret Mono';
+  src: url('/website/fonts/azeret-mono-latin-variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}

@@ -1,3 +1,4 @@
+import { PUBLIC_SITE_ROUTES } from '@/public-site/PublicSitePages';
 import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
@@ -660,4 +661,27 @@ describe('shared-domain workspace-switch continuation', () => {
     );
     expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
   });
+});
+
+describe('public marketing pages', () => {
+  it.each(PUBLIC_SITE_ROUTES.map((page) => page.path))(
+    'keeps %s open for a signed-out visitor',
+    (pathname) => {
+      setupMockIsMatchingLocation(pathname);
+      setupMockOnboardingStatus(undefined);
+      setupMockIsWorkspaceActivationStatusEqualsTo(false);
+      setupMockIsLogged(false);
+      setupMockIsOnAWorkspace(false);
+      setupMockUseQuery();
+      jest.mocked(useLocation).mockReturnValueOnce({
+        pathname,
+        search: '',
+        hash: '',
+        state: null,
+        key: 'public-page',
+      });
+      setupMockState(undefined, undefined, undefined, null);
+      expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
+    },
+  );
 });

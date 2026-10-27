@@ -20,7 +20,11 @@ export const getBureauDropPlacement = ({
   zone: BureauDropZone;
   tree: BureauTree;
 }): BureauDropPlacement | null => {
-  if (draggedId === targetId || !tree.documentsById.has(draggedId)) {
+  if (
+    draggedId === targetId ||
+    !tree.documentsById.has(draggedId) ||
+    (isDefined(targetId) && !tree.documentsById.has(targetId))
+  ) {
     return null;
   }
 

@@ -67,6 +67,7 @@ jest.mock('@/blocknote-editor/import/adapters/parseHtmlWithBlockNote', () => ({
   parseHtmlWithBlockNote: () => [
     { type: 'image', props: { url: 'photo.png' } },
   ],
+  importedBlocksToMarkdown: async () => 'Imported content',
   parseMarkdownWithBlockNote: () => [
     {
       type: 'paragraph',
@@ -111,6 +112,9 @@ const uploadMarkdown = async (user: ReturnType<typeof userEvent.setup>) => {
 describe('BureauImportModal workspace and retry boundary', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUploadAttachmentFile.mockResolvedValue({
+      attachmentAbsoluteURL: 'https://files.example/source-export',
+    });
     mockCanCreate = true;
     mockActiveDocumentId = null;
     mockDocuments = [];
@@ -191,6 +195,36 @@ describe('BureauImportModal workspace and retry boundary', () => {
       'Choose one export file at a time.',
     );
     expect(mockCreateOneRecord).not.toHaveBeenCalled();
+  });
+
+  it('keeps the recovery ZIP separate from an attachment with the same filename', async () => {
+    const user = userEvent.setup();
+    renderModal();
+    const bytes = zipSync({
+      'Home.md': strToU8('# Home'),
+      'Workspace.zip': strToU8('Nested attachment bytes'),
+    });
+    const file = new File([new Uint8Array(bytes)], 'Workspace.zip', {
+      type: 'application/zip',
+    });
+    Object.defineProperty(file, 'arrayBuffer', {
+      value: async () => bytes.buffer,
+    });
+    fireEvent.drop(screen.getByLabelText('Drop export here'), {
+      dataTransfer: { files: [file] },
+    });
+    await screen.findByText('1 pages ready to import');
+    await user.click(screen.getByRole('button', { name: 'Import pages' }));
+    await screen.findByText('Import complete: 1 pages.');
+    const uploads = mockUploadAttachmentFile.mock.calls;
+    expect(uploads).toHaveLength(2);
+    expect(uploads[0][0].name).toBe('Workspace.zip');
+    expect(uploads[1][0].name).toBe('Workspace.zip');
+    expect(uploads[0][0].size).toBe(strToU8('Nested attachment bytes').length);
+    expect(uploads[1][0].size).toBe(file.size);
+    expect(uploads[0][2].session.attachmentId).not.toBe(
+      uploads[1][2].session.attachmentId,
+    );
   });
 
   it('allows choosing a different destination before import', async () => {
@@ -291,7 +325,7 @@ describe('BureauImportModal workspace and retry boundary', () => {
         fetchPolicy: 'network-only',
       }),
     );
-    expect(mockUpdateOneRecord).toHaveBeenCalledTimes(1);
+    expect(mockUpdateOneRecord).toHaveBeenCalledTimes(2);
   });
 
   it('does not overwrite a mismatched record when creation fails', async () => {

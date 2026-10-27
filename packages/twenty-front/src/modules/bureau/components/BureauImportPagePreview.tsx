@@ -77,6 +77,7 @@ export const BureauImportPagePreview = ({
           ? parseHtmlWithBlockNote(page.content)
           : parseMarkdownWithBlockNote(page.content);
       const mapped = mapImportedAttachmentsAndLinks(blocks, {
+        preserveUnmappedAttachments: true,
         resolveAttachmentUrl: (target) => {
           const path = resolveBureauArchivePath(page.path, target);
           if (path === null)

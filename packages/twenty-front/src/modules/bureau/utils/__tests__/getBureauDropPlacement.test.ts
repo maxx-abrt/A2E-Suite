@@ -82,3 +82,14 @@ describe('getBureauDropPlacement', () => {
     });
   });
 });
+
+it('refuses a stale destination that no longer exists', () => {
+  expect(
+    getBureauDropPlacement({
+      draggedId: 'a',
+      targetId: 'deleted',
+      zone: 'inside',
+      tree,
+    }),
+  ).toBeNull();
+});

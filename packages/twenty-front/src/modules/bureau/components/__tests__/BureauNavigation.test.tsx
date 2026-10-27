@@ -44,6 +44,8 @@ it('keeps starter templates out of Pages while making them available in a collap
     },
     permissions: { canUpdateObjectRecords: true },
     favoriteDocuments: [],
+    draggedPageIds: [],
+    trashingPageIds: [],
     actions: {},
     activeDocumentId: null,
   } as unknown as ReturnType<typeof useBureauWorkspace>;

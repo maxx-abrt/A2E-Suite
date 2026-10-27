@@ -1,3 +1,4 @@
+import { type AttachmentUploadSession } from '@/activities/files/types/AttachmentUploadSession';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { mapImportedAttachmentsAndLinks } from '@/blocknote-editor/import/utils/mapImportedAttachmentsAndLinks';
@@ -151,6 +152,10 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
     recordGqlFields: { id: true, title: true, parentId: true, kind: true },
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [attachmentUploads] = useState(
+    () => new Map<string, AttachmentUploadSession>(),
+  );
+  const [activeOperation, setActiveOperation] = useState('');
   const [source, setSource] = useState<'notion' | 'files'>('notion');
   const [destinationParentId, setDestinationParentId] = useState<string | null>(
     activeDocumentId,
@@ -171,6 +176,9 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
   // workspace is opened again; this guard never participates in rendering.
   // oxlint-disable-next-line twenty/no-state-useref
   const isActive = useRef(true);
+  // Prevent overlapping mutation runs before React can disable the import action.
+  // oxlint-disable-next-line twenty/no-state-useref
+  const isRunning = useRef(false);
   useEffect(() => {
     isActive.current = true;
     return () => {
@@ -191,6 +199,8 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
     setErrorMessage('');
     setPlan(null);
     setSession(null);
+    attachmentUploads.clear();
+    setActiveOperation('');
     setCompletedCount(0);
     setWarningCount(0);
     setFileName(file.name);
@@ -203,6 +213,7 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
         ? readZipEntries(bytes)
         : [{ path: file.name, bytes }];
       const nextPlan = planBureauArchiveImport(entries);
+      nextPlan.sourceFile = { path: file.name, bytes };
       if (nextPlan.pages.length === 0) throw new Error('No pages');
       setPlan(nextPlan);
       setSession({
@@ -236,28 +247,40 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
       !destinationExists ||
       isLoading ||
       treeError ||
-      isBusy
+      isBusy ||
+      isRunning.current
     )
       return;
+    isRunning.current = true;
     setHasStartedImport(true);
     setStatus('importing');
     onBusyChange(true);
     setErrorMessage('');
+    let operationPath = '';
     try {
       assertCanContinue();
-      const { parseHtmlWithBlockNote, parseMarkdownWithBlockNote } =
+      const {
+        parseHtmlWithBlockNote,
+        parseMarkdownWithBlockNote,
+        importedBlocksToMarkdown,
+      } =
         await import('@/blocknote-editor/import/adapters/parseHtmlWithBlockNote');
       const result = await runBureauArchiveImport({
         plan,
         session,
         assertCanContinue,
         destinationParentId,
+        onOperation: (path) => {
+          operationPath = path;
+          setActiveOperation(path);
+        },
         createPage: async (page, id, parentId) => {
           try {
             await createOneRecord({
               id,
               title: page.title,
               kind: 'DOCUMENT',
+              ...(page.icon ? { icon: page.icon } : {}),
               parentId,
               position:
                 getBureauAppendPosition(
@@ -297,6 +320,7 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
             : parseMarkdownWithBlockNote(page.content),
         mapBlocks: (blocks, resolveUrl) =>
           mapImportedAttachmentsAndLinks(blocks, {
+            preserveUnmappedAttachments: true,
             resolveAttachmentUrl: resolveUrl,
             resolveLinkUrl: resolveUrl,
           }),
@@ -305,10 +329,15 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
             [new Uint8Array(entry.bytes)],
             entry.path.split('/').pop() ?? 'attachment',
           );
+          const attachmentKey = `${documentId}:${entry === plan.sourceFile ? 'original-export' : 'archive-entry'}:${entry.path}`;
+          const uploadSession = attachmentUploads.get(attachmentKey) ?? {
+            attachmentId: v4(),
+          };
+          attachmentUploads.set(attachmentKey, uploadSession);
           const uploaded = await uploadAttachmentFile(
             file,
             { id: documentId, targetObjectNameSingular: 'document' },
-            { assertCanContinue },
+            { assertCanContinue, session: uploadSession },
           );
           return uploaded.attachmentAbsoluteURL;
         },
@@ -318,7 +347,10 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
             idToUpdate: documentId,
             recordGqlFields: { id: true, content: true, updatedAt: true },
             updateOneRecordInput: {
-              content: { blocknote: JSON.stringify(blocks), markdown: null },
+              content: {
+                blocknote: JSON.stringify(blocks),
+                markdown: await importedBlocksToMarkdown(blocks),
+              },
             },
           });
         },
@@ -329,14 +361,18 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
       setStatus('complete');
       if (destinationParentId) expandPageIds([destinationParentId]);
       resyncDocuments();
-    } catch {
+    } catch (error) {
       if (!isCurrentWorkspace()) return;
       setStatus('failed');
       resyncDocuments();
+      const detail = error instanceof Error ? error.message : t`Unknown error`;
       setErrorMessage(
-        t`Import paused. Your completed pages are saved. Retry to continue without creating duplicate pages. If you close this window, review the imported pages before starting a new import.`,
+        t`Could not finish ${operationPath}: ${detail}` +
+          ' ' +
+          t`Import paused. Your completed pages are saved. Retry to continue without creating duplicate pages. If you close this window, review the imported pages before starting a new import.`,
       );
     } finally {
+      isRunning.current = false;
       onBusyChange(false);
     }
   };
@@ -359,7 +395,7 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
   const canChooseFile = !isBusy && !hasStartedImport;
   const attachmentCount = plan
     ? [...plan.entriesByPath.keys()].filter(
-        (path) => !session?.documentIdsByPath.has(path) || /\.csv$/i.test(path),
+        (path) => !plan.canonicalPathByPath?.has(path) || /\.csv$/i.test(path),
       ).length
     : 0;
 
@@ -462,7 +498,7 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
           <BureauImportReview key={fileName} plan={plan} />
           <details>
             <summary>{t`Compatibility and review`}</summary>
-            <StyledDescription>{t`Page structure, supported formatting, columns, tables, checklists, local media and page links are preserved. CSV databases become editable table snapshots with the original CSV attached. Large or malformed CSVs stay as attachments. Formulas, relations, database views, comments and sharing permissions are not recreated. Preview links are disabled until import.`}</StyledDescription>
+            <StyledDescription>{t`The original export is kept as an attachment for recovery. Page structure, supported formatting, columns, tables, checklists, local media and page links are preserved. CSV databases become editable table snapshots with the original CSV attached. Large or malformed CSVs stay as attachments. Formulas, relations, database views, comments and sharing permissions are not recreated. Preview links are disabled until import.`}</StyledDescription>
             {plan.unsupportedPaths.length > 0 && (
               <ul>
                 {plan.unsupportedPaths.map((path) => (
@@ -475,6 +511,9 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
       )}
       {isBusy && (
         <div role="status" aria-live="polite">
+          {activeOperation && (
+            <StyledDescription>{activeOperation}</StyledDescription>
+          )}
           <p>
             {status === 'reading'
               ? t`Reading export…`
