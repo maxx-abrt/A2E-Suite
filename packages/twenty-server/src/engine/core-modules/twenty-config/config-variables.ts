@@ -2145,6 +2145,28 @@ export class ConfigVariables {
   APP_REVISION?: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'GitHub Actions build number and attempt baked into the image',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+    isHiddenInAdminPanel: true,
+  })
+  @IsOptionalOrEmptyString()
+  @IsString()
+  APP_BUILD_ID?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'UTC build timestamp baked into the image',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+    isHiddenInAdminPanel: true,
+  })
+  @IsOptionalOrEmptyString()
+  @IsDateString()
+  APP_BUILD_DATE?: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Enable or disable google map api usage',
     type: ConfigVariableType.BOOLEAN,

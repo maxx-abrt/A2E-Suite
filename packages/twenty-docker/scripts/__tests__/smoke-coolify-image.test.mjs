@@ -24,16 +24,20 @@ const withFixture = async (operation, overrides = {}) => {
   const fetchedUrls = [];
   let starts = 0;
   let marker;
+  let redisMarker;
   let override;
   let sandboxPath;
   const runDocker = (arguments_, options) => {
     calls.push(arguments_);
     assert.ok(options.timeout > 0);
     if (arguments_[0] !== 'compose') return '{}';
-    const overrideIndex = arguments_.lastIndexOf('--file') + 1;
+    const overrideIndex =
+      arguments_.indexOf('--file', arguments_.indexOf('--file') + 1) + 1;
     sandboxPath = arguments_[overrideIndex];
     override = JSON.parse(readFileSync(sandboxPath, 'utf8'));
     const command = arguments_.slice(overrideIndex + 1);
+    if (command.includes('pg_restore') && overrides.restoreFailure)
+      throw new Error('pg_restore failed');
     if (command[0] === 'up') {
       starts++;
       if (overrides.startFailure) throw new Error('server unhealthy');
@@ -44,8 +48,22 @@ const withFixture = async (operation, overrides = {}) => {
     if (command[0] === 'ps' && command.includes('--quiet'))
       return 'a'.repeat(64);
     if (command.includes('curl')) return overrides.workerReadiness ?? 'READY';
+    if (command.includes('redis-cli')) {
+      if (command.includes('SET')) {
+        redisMarker = command.at(-1);
+        return 'OK';
+      }
+      return overrides.lostRedis ? '' : redisMarker;
+    }
     if (command.includes('psql')) {
       const query = command.at(-1);
+      if (query.includes("current_setting('fsync')"))
+        return JSON.stringify({
+          fsync: overrides.unsafeDatabase ? 'off' : 'on',
+          full_page_writes: 'on',
+          synchronous_commit: 'on',
+          data_checksums: 'on',
+        });
       if (
         query.includes('json_agg') &&
         query.includes('core."applicationRegistration"')
@@ -99,6 +117,14 @@ const withFixture = async (operation, overrides = {}) => {
       throw new Error(`Unexpected query: ${query}`);
     }
     if (command.includes('node')) {
+      if (
+        command.some((argument) =>
+          argument.includes('JSON.stringify({revision:'),
+        )
+      )
+        return JSON.stringify({
+          revision: overrides.workerRevision ?? REVISION,
+        });
       if (command.some((argument) => argument.includes('writeFileSync')))
         marker = command.at(-1);
       else return overrides.lostStorage ? 'missing-marker' : marker;
@@ -169,7 +195,9 @@ test('checks fresh startup, boot-time app installs, worker seeds and a populated
         'workspace-install-restart',
         'worker-post-install-content',
         'populated-restart',
+        'persistent-queue-storage',
         'stable-column-slots',
+        'restored-database',
       ]);
       assert.ok(
         calls.some((arguments_) =>
@@ -189,7 +217,13 @@ test('checks fresh startup, boot-time app installs, worker seeds and a populated
         Object.values(override().services).map((service) => service.image),
         [IMAGE, IMAGE],
       );
-      assert.equal(fetchedUrls.length, 9);
+      assert.equal(fetchedUrls.length, 12);
+      assert.ok(
+        calls
+          .filter((arguments_) => arguments_.includes('--force-recreate'))
+          .at(-2)
+          .includes('redis'),
+      );
       assert.ok(
         fetchedUrls.every((url) => url.origin === 'http://127.0.0.1:45678'),
       );
@@ -211,7 +245,17 @@ for (const [name, overrides, message] of [
     /Worker did not create starter content/,
   ],
   ['unhealthy server', { startFailure: true }, /server unhealthy/],
+  [
+    'unsafe database settings',
+    { unsafeDatabase: true },
+    /PostgreSQL durability settings/,
+  ],
   ['lost file volume', { lostStorage: true }, /File volume did not survive/],
+  [
+    'lost queue storage',
+    { lostRedis: true },
+    /Redis data did not survive recreation/,
+  ],
   [
     'repeated schema churn',
     { changedColumnSlots: true },
@@ -229,6 +273,16 @@ for (const [name, overrides, message] of [
   ],
   ['cleanup failure', { cleanupFailure: true }, /Smoke stack cleanup failed/],
   ['unready worker', { workerReadiness: 'NOT READY' }, /Worker is not ready/],
+  [
+    'mismatched worker image',
+    { workerRevision: 'b'.repeat(40) },
+    /Worker image identity differs/,
+  ],
+  [
+    'unrestorable database backup',
+    { restoreFailure: true },
+    /pg_restore failed/,
+  ],
   ['mixed release', { revision: 'b'.repeat(40) }, /Backend revision/],
   [
     'missing registrations',

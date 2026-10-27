@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-echo "A2E Suite starting: version=${APP_VERSION:-unknown} revision=${APP_REVISION:-unknown} command=$*"
+echo "A2E Suite starting: version=${APP_VERSION:-unknown} build=${APP_BUILD_ID:-unknown} revision=${APP_REVISION:-unknown} built_at=${APP_BUILD_DATE:-unknown} command=$*"
 
 run_startup_step() {
     startup_step=$1

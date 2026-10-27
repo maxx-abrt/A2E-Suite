@@ -1,0 +1,57 @@
+name: Deployment health
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: deployment-health
+  cancel-in-progress: false
+
+jobs:
+  verify-deployment:
+    if: vars.A2E_PUBLIC_URL != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      A2E_PUBLIC_URL: ${{ vars.A2E_PUBLIC_URL }}
+      EXPECTED_REVISION: ${{ vars.A2E_EXPECTED_REVISION }}
+      EXPECTED_BUILD_ID: ${{ vars.A2E_EXPECTED_BUILD_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24
+      - name: Check running release and dependency readiness
+        shell: bash --noprofile --norc -euo pipefail {0}
+        run: |
+          revision="$EXPECTED_REVISION"
+          build_id="$EXPECTED_BUILD_ID"
+          if [ -z "$revision" ] && [ -n "$build_id" ]; then
+            echo 'A pinned build ID requires A2E_EXPECTED_REVISION.' >&2
+            exit 1
+          fi
+          if [ -z "$revision" ]; then
+            latest=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/cd-docker-image.yaml/runs?branch=main&status=success&per_page=1" --jq '.workflow_runs[0]')
+            revision=$(jq -r .head_sha <<< "$latest")
+            build_id=$(jq -r '[.run_number, .run_attempt] | map(tostring) | join(".")' <<< "$latest")
+          fi
+          arguments=(--url "$A2E_PUBLIC_URL" --revision "$revision")
+          if [ -n "$build_id" ]; then arguments+=(--build-id "$build_id"); fi
+          for attempt in 1 2 3; do
+            if node packages/twenty-docker/scripts/verify-account-entry.mjs "${arguments[@]}"; then
+              echo "Verified release $revision, build ${build_id:-unspecified}, frontend/backend identity and database/Redis readiness." >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then sleep 15; fi
+          done
+          echo 'Deployment is unavailable, serves another release, or failed identity/readiness checks. No deployment was triggered.' >> "$GITHUB_STEP_SUMMARY"
+          exit 1

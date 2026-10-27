@@ -46,8 +46,7 @@ export class LoginPage {
     this.privacyPolicyLink = page.getByRole('link', { name: 'Privacy Policy' });
     this.emailField = page.getByPlaceholder('Email');
     this.continueButton = page.getByRole('button', {
-      name: 'Continue',
-      exact: true,
+      name: /^Continue(?: with Email)?$/,
     });
     this.forgotPasswordButton = page.getByText('Forgot your password?');
     this.passwordField = page.getByPlaceholder('Password');
@@ -97,10 +96,14 @@ export class LoginPage {
   }
 
   async clickLoginWithEmailIfVisible() {
-    try {
-      await this.loginWithEmailButton.click({ timeout: 3000 });
-    } catch {
-      // Button not found - email field might already be visible (SSO-only or different auth flow)
+    await this.emailField.or(this.loginWithEmailButton).first().waitFor({
+      state: 'visible',
+    });
+
+    // The native form already shows email; submitting here discovers a
+    // prefilled account before the caller has entered the requested address.
+    if (!(await this.emailField.isVisible())) {
+      await this.loginWithEmailButton.click();
     }
   }
 

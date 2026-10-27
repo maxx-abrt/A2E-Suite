@@ -38,6 +38,7 @@ const STORAGE_MARKER_PATH =
 export const smokeCoolifyImage = async ({
   image,
   revision,
+  buildId,
   reportDirectory = join(tmpdir(), `a2e-smoke-report-${randomUUID()}`),
   runDocker = (arguments_, options) =>
     execFileSync('docker', arguments_, {
@@ -70,6 +71,8 @@ export const smokeCoolifyImage = async ({
     STORAGE_TYPE: 'local',
     LOGIC_FUNCTION_TYPE: 'LOCAL',
     DISABLE_BUNDLED_APP_PROVISIONING: 'false',
+    A2E_RECOVERY_TARGET_DATABASE: '',
+    A2E_RECOVERY_APPLY: 'false',
     IS_SHARED_DOMAIN_WORKSPACE_ENABLED: 'true',
     IS_MULTIWORKSPACE_ENABLED: 'false',
     IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS: 'false',
@@ -109,7 +112,7 @@ export const smokeCoolifyImage = async ({
       '-U',
       'postgres',
       '-d',
-      'default',
+      environment.PG_DATABASE_NAME,
       '--set',
       'ON_ERROR_STOP=1',
       '-tAc',
@@ -119,12 +122,29 @@ export const smokeCoolifyImage = async ({
   let failure;
 
   const verifyRuntime = async (phase) => {
+    const durability = JSON.parse(
+      queryDatabase(
+        "SELECT json_build_object('fsync', current_setting('fsync'), 'full_page_writes', current_setting('full_page_writes'), 'synchronous_commit', current_setting('synchronous_commit'), 'data_checksums', current_setting('data_checksums'))",
+      ),
+    );
+    if (
+      [
+        'fsync',
+        'full_page_writes',
+        'synchronous_commit',
+        'data_checksums',
+      ].some((key) => durability[key] !== 'on')
+    )
+      throw new Error(
+        'PostgreSQL durability settings or data checksums are disabled',
+      );
     const binding = compose(['port', 'server', '3000']).trim().split('\n')[0];
     const port = binding.match(/:(\d+)$/)?.[1];
     if (!port) throw new Error(`Unexpected server port binding: ${binding}`);
     await verifyAccountEntry({
       url: environment.SERVER_URL,
       revision,
+      buildId,
       fetchResponse: (endpoint, options) => {
         const localEndpoint = new URL(endpoint);
         localEndpoint.hostname = '127.0.0.1';
@@ -144,6 +164,23 @@ export const smokeCoolifyImage = async ({
     ]).trim();
     if (workerReadiness !== 'READY')
       throw new Error(`Worker is not ready: ${workerReadiness}`);
+    const workerRelease = JSON.parse(
+      compose([
+        'exec',
+        '-T',
+        'worker',
+        'node',
+        '-p',
+        'JSON.stringify({revision: process.env.APP_REVISION, buildId: process.env.APP_BUILD_ID})',
+      ]),
+    );
+    if (
+      workerRelease.revision !== revision ||
+      (buildId && workerRelease.buildId !== buildId)
+    )
+      throw new Error(
+        'Worker image identity differs from the tested server/frontend build',
+      );
     const registrations = JSON.parse(queryDatabase(REGISTRATIONS_QUERY));
     if (
       registrations.length !== BUNDLED_APPLICATION_NAMES.length ||
@@ -261,9 +298,106 @@ export const smokeCoolifyImage = async ({
       await waitForRetry(2_000);
     }
     phases.push('worker-post-install-content');
+    compose([
+      'exec',
+      '-T',
+      'redis',
+      'redis-cli',
+      'SET',
+      'a2e:deployment-smoke',
+      marker,
+    ]);
     const columnSlotsQuery = `SELECT coalesce(json_agg(column_slots), '[]'::json) FROM (${COLUMN_SLOTS_QUERY}) column_slots`;
     const columnSlotsBeforeRestart = queryDatabase(columnSlotsQuery);
     compose(['stop', 'worker', 'server']);
+    compose(
+      [
+        'up',
+        '--detach',
+        '--force-recreate',
+        '--wait',
+        '--wait-timeout',
+        '600',
+        'redis',
+        'server',
+        'worker',
+      ],
+      630_000,
+    );
+    await verifyRuntime('populated-restart');
+    const redisMarker = compose([
+      'exec',
+      '-T',
+      'redis',
+      'redis-cli',
+      '--raw',
+      'GET',
+      'a2e:deployment-smoke',
+    ]).trim();
+    if (redisMarker !== marker)
+      throw new Error(
+        'Redis data did not survive recreation; background queues need persistent storage',
+      );
+    phases.push('persistent-queue-storage');
+    const restartedContent = JSON.parse(queryDatabase(starterContentQuery));
+    if (JSON.stringify(starterContent) !== JSON.stringify(restartedContent))
+      throw new Error('Restart duplicated or removed starter content');
+    if (columnSlotsBeforeRestart !== queryDatabase(columnSlotsQuery))
+      throw new Error(
+        'Restart changed physical column slots; inspect repeated schema creation or deletion',
+      );
+    phases.push('stable-column-slots');
+    compose(['stop', 'worker', 'server']);
+    compose(
+      [
+        'exec',
+        '-T',
+        'db',
+        'pg_dump',
+        '-U',
+        'postgres',
+        '-d',
+        environment.PG_DATABASE_NAME,
+        '--format=custom',
+        '--file',
+        '/tmp/a2e-restore-drill.dump',
+      ],
+      120_000,
+    );
+    compose([
+      'exec',
+      '-T',
+      'db',
+      'createdb',
+      '-U',
+      'postgres',
+      'a2e_restore_drill',
+    ]);
+    compose(
+      [
+        'exec',
+        '-T',
+        'db',
+        'pg_restore',
+        '-U',
+        'postgres',
+        '-d',
+        'a2e_restore_drill',
+        '--exit-on-error',
+        '/tmp/a2e-restore-drill.dump',
+      ],
+      120_000,
+    );
+    environment.PG_DATABASE_NAME = 'a2e_restore_drill';
+    if (
+      JSON.stringify(initialRegistrations) !==
+        JSON.stringify(JSON.parse(queryDatabase(REGISTRATIONS_QUERY))) ||
+      JSON.stringify(starterContent) !==
+        JSON.stringify(JSON.parse(queryDatabase(starterContentQuery)))
+    )
+      throw new Error(
+        'Restored database does not contain the original registrations and starter records',
+      );
     compose(
       [
         'up',
@@ -277,15 +411,16 @@ export const smokeCoolifyImage = async ({
       ],
       630_000,
     );
-    await verifyRuntime('populated-restart');
-    const restartedContent = JSON.parse(queryDatabase(starterContentQuery));
-    if (JSON.stringify(starterContent) !== JSON.stringify(restartedContent))
-      throw new Error('Restart duplicated or removed starter content');
-    if (columnSlotsBeforeRestart !== queryDatabase(columnSlotsQuery))
+    await verifyRuntime('restored-database');
+    if (
+      queryDatabase(installedAppsQuery) !==
+        String(BUNDLED_APPLICATION_NAMES.length) ||
+      JSON.stringify(starterContent) !==
+        JSON.stringify(JSON.parse(queryDatabase(starterContentQuery)))
+    )
       throw new Error(
-        'Restart changed physical column slots; inspect repeated schema creation or deletion',
+        'Restored application boot lost or duplicated installed apps or starter records',
       );
-    phases.push('stable-column-slots');
   } catch (error) {
     failure = error;
   } finally {
@@ -335,6 +470,7 @@ export const smokeCoolifyImage = async ({
           image,
           revision,
           project,
+          buildId,
           phases,
           passed: failure === undefined,
           error: failure === undefined ? undefined : failure.message,
@@ -353,6 +489,7 @@ if (resolve(process.argv[1] ?? '') === fileURLToPath(import.meta.url)) {
     await smokeCoolifyImage({
       image: process.env.A2E_SMOKE_IMAGE,
       revision: process.env.A2E_SMOKE_REVISION,
+      buildId: process.env.A2E_SMOKE_BUILD_ID,
       reportDirectory: process.env.A2E_SMOKE_REPORT_DIR,
     });
   } catch (error) {

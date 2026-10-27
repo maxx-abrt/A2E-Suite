@@ -17,12 +17,20 @@ jobs:
     uses: ./.github/workflows/changed-files.yaml
     with:
       files: |
+        .dockerignore
         packages/twenty-docker/**
         docker-compose.yml
         docker-compose.coolify.yml
         .github/workflows/ci-test-docker-compose.yaml
         .github/workflows/cd-docker-image.yaml
         packages/twenty-server/src/database/commands/**
+        packages/twenty-server/src/main.ts
+        packages/twenty-server/src/queue-worker/**
+        packages/twenty-server/src/engine/core-modules/health/**
+        packages/twenty-server/src/engine/core-modules/message-queue/**
+        packages/twenty-server/src/engine/core-modules/client-config/**
+        packages/twenty-server/src/engine/core-modules/admin-panel/services/admin-panel-version.service.ts
+        packages/twenty-server/src/engine/core-modules/admin-panel/dtos/version-info.dto.ts
         packages/twenty-server/scripts/**
         packages/twenty-server/src/engine/core-modules/application/**
         packages/twenty-server/src/engine/core-modules/logic-function/**
@@ -32,7 +40,7 @@ jobs:
   test-compose:
     needs: changed-files-check
     if: always() && !cancelled() && (github.event_name == 'merge_group' || needs.changed-files-check.outputs.any_changed == 'true')
-    timeout-minutes: 60
+    timeout-minutes: 90
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -57,21 +65,24 @@ jobs:
             --target twenty \
             --build-arg "APP_VERSION=$(jq -r .version package.json)" \
             --build-arg "APP_REVISION=$A2E_SMOKE_REVISION" \
+            --build-arg "APP_BUILD_ID=${{ github.run_number }}.${{ github.run_attempt }}" \
+            --build-arg "APP_BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
             -f packages/twenty-docker/twenty/Dockerfile \
             -t "a2e-compose-ci:$A2E_SMOKE_REVISION" \
             .
       - name: Test the Coolify stack
-        timeout-minutes: 35
+        timeout-minutes: 55
         env:
           A2E_SMOKE_IMAGE: a2e-compose-ci:${{ github.sha }}
           A2E_SMOKE_REVISION: ${{ github.sha }}
+          A2E_SMOKE_BUILD_ID: ${{ github.run_number }}.${{ github.run_attempt }}
           A2E_SMOKE_REPORT_DIR: ${{ runner.temp }}/a2e-deployment-smoke
         run: node packages/twenty-docker/scripts/smoke-coolify-image.mjs
       - name: Upload deployment diagnostics
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: compose-smoke-${{ github.sha }}
+          name: compose-smoke-${{ github.sha }}-${{ github.run_number }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/a2e-deployment-smoke
           if-no-files-found: ignore
           retention-days: 7

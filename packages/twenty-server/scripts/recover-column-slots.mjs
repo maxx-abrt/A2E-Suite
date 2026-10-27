@@ -100,7 +100,7 @@ export const recoverColumnSlots = async ({
   ),
   apply = false,
   postgresBinDirectory,
-  log = console.log,
+  log = (message) => process.stdout.write(`${message}\n`),
 }) => {
   const { sourceDatabase, targetUrl, administrationUrl } =
     validateRecoveryTarget(connectionString, targetDatabase);
@@ -153,17 +153,24 @@ export const recoverColumnSlots = async ({
       'SELECT 1 FROM pg_catalog.pg_db_role_setting WHERE setdatabase = $1',
       [database.oid],
     );
-    const { rows: foreignTables } = await source.query(
-      'SELECT 1 FROM pg_catalog.pg_foreign_table LIMIT 1',
-    );
+    const { rows: unsupportedObjects } = await source.query(`
+      SELECT 1 FROM pg_catalog.pg_foreign_table
+      UNION ALL SELECT 1 FROM pg_catalog.pg_publication
+      UNION ALL SELECT 1 FROM pg_catalog.pg_subscription
+      UNION ALL SELECT 1 FROM pg_catalog.pg_largeobject_metadata
+      UNION ALL SELECT 1 FROM pg_catalog.pg_extension extension
+        JOIN pg_catalog.pg_available_extensions available ON available.name = extension.extname
+        WHERE extension.extversion <> available.default_version
+      LIMIT 1
+    `);
     if (
       database.datlocprovider !== 'c' ||
       database.datacl !== null ||
       customSettings.length ||
-      foreignTables.length
+      unsupportedObjects.length
     )
       throw new Error(
-        'Custom database locale, privileges, settings or foreign tables require a DBA-reviewed logical restore',
+        'Custom locale, privileges, settings, replication, large objects, foreign tables or non-default extensions require a DBA-reviewed logical restore',
       );
     await assertNoOtherConnections(source);
     const {
@@ -240,7 +247,7 @@ export const recoverColumnSlots = async ({
               PGDATABASE: decodeURIComponent(authentication.pathname.slice(1)),
               PGOPTIONS: '-c timezone=UTC -c datestyle=ISO',
             },
-            stdio: ['ignore', 'pipe', 'pipe'],
+            stdio: ['ignore', 'ignore', 'pipe'],
             timeout: 30 * 60 * 1000,
           },
         );
@@ -301,6 +308,18 @@ export const recoverColumnSlots = async ({
         'ON_ERROR_STOP=1',
         '--file',
         restoreSql,
+      ],
+      targetUrl,
+    );
+    runPostgresTool(
+      'psql',
+      [
+        '--no-password',
+        '--no-psqlrc',
+        '--set',
+        'ON_ERROR_STOP=1',
+        '--command',
+        'ANALYZE',
       ],
       targetUrl,
     );
@@ -378,8 +397,8 @@ if (
       apply: process.argv.includes('--apply'),
     });
   } catch (error) {
-    console.error(
-      error instanceof Error ? error.message : 'Database recovery failed',
+    process.stderr.write(
+      `${error instanceof Error ? error.message : 'Database recovery failed'}\n`,
     );
     process.exitCode = 1;
   }
