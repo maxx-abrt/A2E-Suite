@@ -1,3 +1,4 @@
+import { IconSyna } from '@/a2e-workspace/components/A2eAppLogo';
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
@@ -58,9 +59,12 @@ const StyledTitleGroup = styled.div`
 `;
 
 const StyledTitle = styled.h1`
+  align-items: center;
   color: ${themeCssVariables.font.color.primary};
+  display: flex;
   font-size: ${themeCssVariables.font.size.lg};
   font-weight: ${themeCssVariables.font.weight.semiBold};
+  gap: ${themeCssVariables.spacing[3]};
   margin: 0;
 `;
 
@@ -149,7 +153,10 @@ export const SynaLanding = () => {
     <StyledLanding data-testid="syna-landing">
       <StyledHeader>
         <StyledTitleGroup>
-          <StyledTitle>{t`Syna`}</StyledTitle>
+          <StyledTitle>
+            <IconSyna size={40} />
+            {t`Syna`}
+          </StyledTitle>
           <StyledSubtitle>
             {t`Your assistant, its recent runs and every action in one place.`}
           </StyledSubtitle>

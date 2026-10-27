@@ -1,5 +1,6 @@
 import { FocusedAppNavigationDrawerContent } from '@/navigation/components/FocusedAppNavigationDrawerContent';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { BureauWorkspaceContext } from '@/bureau/contexts/BureauWorkspaceContext';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
@@ -88,13 +89,18 @@ jest.mock(
       folderName,
       navigationMenuItems,
       hideBackButton,
+      collapsibleSectionLabel,
     }: {
       folderName: string;
       navigationMenuItems: { link: string }[];
       hideBackButton?: boolean;
+      collapsibleSectionLabel?: string;
     }) => (
       <nav>
         {!hideBackButton && <span>{folderName}</span>}
+        {collapsibleSectionLabel && (
+          <span data-testid="shortcuts-group">{collapsibleSectionLabel}</span>
+        )}
         {navigationMenuItems.map((item) => (
           <a key={item.link} href={item.link}>
             {item.link}
@@ -120,13 +126,17 @@ jest.mock('@/bureau/components/BureauNavigation', () => ({
   BureauNavigation: () => <div>Page tree</div>,
 }));
 
-const renderDrawer = (path: string) =>
+const renderDrawer = (path: string, withBureauWorkspace = false) =>
   render(
     <I18nProvider i18n={i18n}>
       <MemoryRouter initialEntries={[path]}>
-        <FocusedAppNavigationDrawerContent>
-          <nav>All workspace apps</nav>
-        </FocusedAppNavigationDrawerContent>
+        <BureauWorkspaceContext.Provider
+          value={withBureauWorkspace ? ({} as never) : null}
+        >
+          <FocusedAppNavigationDrawerContent>
+            <nav>All workspace apps</nav>
+          </FocusedAppNavigationDrawerContent>
+        </BureauWorkspaceContext.Provider>
       </MemoryRouter>
     </I18nProvider>,
   );
@@ -154,6 +164,21 @@ describe('native focused app navigation', () => {
     expect(
       screen.queryByRole('link', { name: '/objects/invoices' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('folds app shortcuts under a collapsible group while the Bureau workspace is open', () => {
+    renderDrawer('/bureau/page-id', true);
+
+    expect(screen.getByTestId('shortcuts-group')).toHaveTextContent(
+      'Shortcuts',
+    );
+    expect(screen.getByRole('link', { name: '/objects/projects' }));
+  });
+
+  it('does not fold shortcuts outside the Bureau workspace', () => {
+    renderDrawer('/objects/invoices');
+
+    expect(screen.queryByTestId('shortcuts-group')).not.toBeInTheDocument();
   });
 
   it('lets a user browse all apps and return to the focused app without leaving their page', async () => {

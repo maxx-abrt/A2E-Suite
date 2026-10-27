@@ -116,4 +116,119 @@ describe('prepareNotionHtml', () => {
       document.querySelector('iframe, script, a[href^="javascript:"]'),
     ).toBeNull();
   });
+
+  it('converts the exported table of contents into the native block without anchor links', () => {
+    const document = read(
+      prepareNotionHtml(
+        '<nav class="table_of_contents" data-notion-toc=""><div class="table_of_contents-item"><a href="#27f9393d">Notes</a></div></nav><p><a href="#reference-1">jump</a></p>',
+      ).html,
+    );
+    const tocBlocks = document.querySelectorAll(
+      '[data-content-type="tableOfContents"]',
+    );
+    expect(tocBlocks).toHaveLength(1);
+    // In-page anchors cannot survive as jump targets and would be rejected by
+    // the rich-text API, so their text stays without a protocol.
+    expect(document.querySelectorAll('a[href^="#"]')).toHaveLength(0);
+    // The nav entries are re-derived from document headings at render time,
+    // while an arbitrary anchor keeps only its visible text.
+    expect(document.querySelector('nav')).toBeNull();
+    expect(document.body.textContent).toContain('jump');
+  });
+
+  it('converts link-to-page figures into native page-link chips', () => {
+    const document = read(
+      prepareNotionHtml(`<figure class="link-to-page">
+        <a href="Courses/Philo.html" data-notion-page-id="dec832a4-83b7-4ea6-a09c-0dab32125442">
+          <span class="icon" data-emoji="📚">📚</span>Philo</a></figure>`).html,
+    );
+    const chip = document.querySelector('[data-content-type="pageLink"]');
+    expect(chip?.getAttribute('data-document-id')).toBe(
+      'notion:dec832a4-83b7-4ea6-a09c-0dab32125442',
+    );
+    expect(chip?.getAttribute('data-title')).toBe('📚 Philo');
+    expect(document.querySelector('figure.link-to-page')).toBeNull();
+  });
+
+  it('converts page links without a notion id from their archive path', () => {
+    const document = read(
+      prepareNotionHtml(
+        '<figure class="link-to-page"><a href="Child%20page.html">Child page</a></figure>',
+      ).html,
+    );
+    const chip = document.querySelector('[data-content-type="pageLink"]');
+    expect(chip?.getAttribute('data-document-id')).toBe('Child%20page.html');
+    expect(chip?.getAttribute('data-title')).toBe('Child page');
+  });
+
+  it('converts page links inside table cells into native relation chips', () => {
+    const document = read(
+      prepareNotionHtml(`<table><tbody><tr>
+        <td class="cell-title"><a href="Tasks/2%2011%20row.html" data-notion-page-id="27f9393d-44ea-8063-9545-cb8bed10f716">2.11</a></td>
+        <td><a href="https://example.com/plain">Keep plain links</a></td>
+      </tr></tbody></table>`).html,
+    );
+    const mention = document.querySelector('[data-content-type="mention"]');
+    expect(mention?.getAttribute('data-record-id')).toBe(
+      'notion:27f9393d-44ea-8063-9545-cb8bed10f716',
+    );
+    expect(mention?.getAttribute('data-label')).toBe('2.11');
+    expect(mention?.getAttribute('data-object-name-singular')).toBe('document');
+    // Non-page anchors keep their URL semantics inside cells.
+    expect(
+      document.querySelector('td a[href="https://example.com/plain"]'),
+    ).not.toBeNull();
+  });
+
+  it('keeps external HTML links as links and tolerates literal percent signs in table URLs', () => {
+    const prepared = prepareNotionHtml(
+      '<table><tr><td><a href="https://example.com/report.html">External report</a></td><td><a href="Progress% report.html#notes">Progress</a></td></tr></table>',
+    );
+    const document = read(prepared.html);
+    expect(document.querySelector('a')?.getAttribute('href')).toBe(
+      'https://example.com/report.html',
+    );
+    expect(
+      document
+        .querySelector('[data-content-type="mention"]')
+        ?.getAttribute('data-record-id'),
+    ).toBe('Progress% report.html#notes');
+  });
+
+  it('does not shift column widths when an earlier column has no exported width', () => {
+    const document = read(
+      prepareNotionHtml(
+        '<table><colgroup><col/><col style="width:160px"/></colgroup><tr><td>First</td><td>Second</td></tr></table>',
+      ).html,
+    );
+    const cells = document.querySelectorAll('td');
+    expect(cells[0].getAttribute('colwidth')).toBeNull();
+    expect(cells[1].getAttribute('colwidth')).toBe('160');
+  });
+
+  it('copies export column widths onto table cells for editable resizing', () => {
+    const document = read(
+      prepareNotionHtml(`<table><colgroup><col style="width:58.333333%"/><col style="width:41.666667%"/></colgroup>
+        <thead><tr><th>A</th><th>B</th></tr></thead><tbody><tr><td>1</td><td>2</td></tr></tbody></table>`)
+        .html,
+    );
+    const header = document.querySelectorAll('thead th');
+    expect(header[0].getAttribute('colwidth')).toBe('583');
+    expect(header[1].getAttribute('colwidth')).toBe('417');
+    const body = document.querySelectorAll('tbody td');
+    expect(body[0].getAttribute('colwidth')).toBe('583');
+    expect(body[1].getAttribute('colwidth')).toBe('417');
+  });
+
+  it('keeps absolute table widths untouched by percentage scaling', () => {
+    const document = read(
+      prepareNotionHtml(
+        '<table><colgroup><col style="width:120px"/><col/></colgroup><tr><th>A</th><td>B</td></tr></table>',
+      ).html,
+    );
+    expect(document.querySelector('th')?.getAttribute('colwidth')).toBe('120');
+    expect(
+      document.querySelectorAll('td')[0].getAttribute('colwidth'),
+    ).toBeNull();
+  });
 });

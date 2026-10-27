@@ -11,6 +11,20 @@ jest.mock('@/bureau/hooks/useBureauWorkspace');
 jest.mock('@/navigation/hooks/useIsNavigationDrawerContentExpanded', () => ({
   useIsNavigationDrawerContentExpanded: () => true,
 }));
+jest.mock('@/bureau/hooks/useBureauTodayProgress', () => ({
+  useBureauTodayProgress: () => ({
+    totalCount: 5,
+    completedCount: 2,
+    openCount: 3,
+    isLoading: false,
+    hasError: false,
+  }),
+}));
+jest.mock('@/object-metadata/hooks/useReadableObjectMetadataItems', () => ({
+  useReadableObjectMetadataItems: () => ({
+    readableObjectMetadataItems: [{ id: 'task-object', nameSingular: 'task' }],
+  }),
+}));
 jest.mock('@/template-gallery/hooks/useOpenTemplateGallery', () => ({
   useOpenTemplateGallery: () => ({ openTemplateGallery: jest.fn() }),
 }));
@@ -62,6 +76,12 @@ it('keeps starter templates out of Pages while making them available in a collap
   expect(
     within(screen.getByRole('tree', { name: 'Pages' })).getByRole('treeitem'),
   ).toHaveTextContent('My notes');
+  expect(
+    within(screen.getByTestId('bureau-sidebar-tasks')).getByRole('button'),
+  ).toHaveTextContent('To do');
+  expect(
+    within(screen.getByTestId('bureau-sidebar-tasks')).getByRole('progressbar'),
+  ).toBeInTheDocument();
   expect(screen.getByText('Reusable blueprint')).not.toBeVisible();
   await userEvent.setup().click(screen.getByText('Saved templates'));
   expect(

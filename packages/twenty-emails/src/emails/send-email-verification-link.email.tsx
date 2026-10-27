@@ -29,7 +29,7 @@ export const SendEmailVerificationLinkEmail = ({
     : i18n._('Verify Email');
 
   return (
-    <BaseEmail width={333} locale={locale}>
+    <BaseEmail width={333} locale={locale} publicUrl={link}>
       <Title value={title} />
       <MainText>
         <Trans id={bodyId} />
@@ -43,7 +43,7 @@ export const SendEmailVerificationLinkEmail = ({
 };
 
 SendEmailVerificationLinkEmail.PreviewProps = {
-  link: 'https://app.twenty.com/verify-email/123',
+  link: 'https://a2esuite.com/verify-email/123',
   locale: 'en',
   isEmailUpdate: false,
 };

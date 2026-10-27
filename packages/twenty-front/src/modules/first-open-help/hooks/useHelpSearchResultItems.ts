@@ -1,3 +1,4 @@
+import { getA2eHelpDocUrl } from '@/a2e-help/utils/getA2eHelpDocUrl';
 import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { msg } from '@lingui/core/macro';
@@ -7,7 +8,6 @@ import { AppPath } from 'twenty-shared/types';
 import {
   A2E_HELP_DOC_PAGES,
   type A2eHelpDocPageKey,
-  getA2eHelpDocUrl,
 } from '@/a2e-help/constants/A2eHelpDocPages';
 import { type GroupableSearchResultItem } from '@/side-panel/pages/search/utils/groupSearchResultItems';
 

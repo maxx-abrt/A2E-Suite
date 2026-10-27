@@ -78,6 +78,11 @@ export const BureauImportPagePreview = ({
           : parseMarkdownWithBlockNote(page.content);
       const mapped = mapImportedAttachmentsAndLinks(blocks, {
         preserveUnmappedAttachments: true,
+        // The preview precedes record ids: unresolved page links degrade to
+        // their title text instead of a creation-input chip.
+        flattenUnresolvedPageLinks: true,
+        // Only the preview may serve local media through object URLs.
+        allowTemporaryObjectUrls: true,
         resolveAttachmentUrl: (target) => {
           const path = resolveBureauArchivePath(page.path, target);
           if (path === null)

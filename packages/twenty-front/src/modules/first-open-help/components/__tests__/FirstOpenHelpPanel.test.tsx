@@ -175,10 +175,7 @@ describe('FirstOpenHelpPanel', () => {
 
     expect(
       screen.getByTestId('first-open-help-topic-doc-bureau-doc'),
-    ).toHaveAttribute(
-      'href',
-      'https://docs.twenty.com/user-guide/a2e-suite/bureau',
-    );
+    ).toHaveAttribute('href', 'https://a2esuite.com/apps/bureau');
   });
 
   it('hides the doc link when the target page does not exist yet', () => {

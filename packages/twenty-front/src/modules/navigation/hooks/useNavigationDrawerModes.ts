@@ -1,11 +1,7 @@
+import { IconSyna } from '@/a2e-workspace/components/A2eAppLogo';
 import { useLingui } from '@lingui/react/macro';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import {
-  type IconComponent,
-  IconComment,
-  IconHome,
-  IconSettings,
-} from 'twenty-ui/icon';
+import { type IconComponent, IconHome, IconSettings } from 'twenty-ui/icon';
 
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import {
@@ -45,7 +41,7 @@ export const useNavigationDrawerModes = (): NavigationDrawerMode[] => {
     ...(hasAiPermission
       ? [
           {
-            Icon: IconComment,
+            Icon: IconSyna,
             label: t`Syna`,
             mode: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
           },

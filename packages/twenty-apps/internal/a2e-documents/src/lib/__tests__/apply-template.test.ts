@@ -72,6 +72,7 @@ const runApply = (
   client: ApplyTemplateClient,
   request: {
     key: string;
+    locale?: string | null;
     inputs?: Record<string, unknown> | null;
     operationId?: string | null;
   },
@@ -174,3 +175,61 @@ test('own-app templates work without application-settings permission', async () 
   assert.equal(result.status, 'applied');
   assert.ok(created.length > 0);
 });
+
+for (const [key, title, section] of [
+  ['notes-de-cours-cornell', 'Course notes (Cornell)', '## Cues and questions'],
+  ['plan-de-these', 'Thesis planner', '## Research question'],
+  ['liste-de-lecture', 'Reading list', '## To read'],
+]) {
+  test(`student template ${key} applies English title and body for non-French locales`, async () => {
+    for (const locale of ['en', 'en-US', 'de']) {
+      const { client, created } = buildClient();
+      await runApply(client, { key, locale });
+      assert.equal(created[0]?.data.title, title);
+      assert.ok((created[0]?.data.content as { markdown: string }).markdown.includes(section!));
+    }
+  });
+}
+
+test('French regional locales and legacy clients preserve the original student content', async () => {
+  for (const locale of ['fr', 'fr-CA', 'fr_FR', undefined, null]) {
+    const { client, created } = buildClient();
+    await runApply(client, { key: 'notes-de-cours-cornell', locale });
+    assert.equal(created[0]?.data.title, 'Notes de cours (Cornell)');
+    assert.ok((created[0]?.data.content as { markdown: string }).markdown.includes('## Indices et questions'));
+  }
+});
+
+test('retrying in a different locale returns the original document without rewriting it', async () => {
+  const { client, created } = buildClient();
+  await runApply(client, { key: 'notes-de-cours-cornell', locale: 'en', operationId: 'student-copy' });
+  await runApply(client, { key: 'notes-de-cours-cornell', locale: 'fr', operationId: 'student-copy' });
+  assert.equal(created.length, 1);
+  assert.equal(created[0]?.data.title, 'Course notes (Cornell)');
+});
+
+for (const [key, title, section] of [
+  ['notes-de-reunion', 'Meeting notes', '## Decisions'],
+  ['ordre-du-jour-recurrent', 'Recurring meeting agenda', '## Action follow-up'],
+  ['entretien-individuel', 'One-on-one', '## Obstacles'],
+]) {
+  test(`meeting template ${key} applies its localized content`, async () => {
+    const { client, created } = buildClient();
+    await runApply(client, { key, locale: 'en-US' });
+    assert.equal(created[0]?.data.title, title);
+    assert.ok((created[0]?.data.content as { markdown: string }).markdown.includes(section!));
+  });
+}
+
+for (const [key, title, section] of [
+  ['journal', 'Journal', '## What I learned'],
+  ['revue-hebdomadaire', 'Weekly review', '## Priorities for next week'],
+  ['note-quotidienne', 'Daily note', '## Today’s priorities'],
+]) {
+  test(`personal planning template ${key} applies its localized content`, async () => {
+    const { client, created } = buildClient();
+    await runApply(client, { key, locale: 'en-US' });
+    assert.equal(created[0]?.data.title, title);
+    assert.ok((created[0]?.data.content as { markdown: string }).markdown.includes(section!));
+  });
+}

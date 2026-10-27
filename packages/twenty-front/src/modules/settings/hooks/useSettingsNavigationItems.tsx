@@ -1,3 +1,4 @@
+import { IconSyna } from '@/a2e-workspace/components/A2eAppLogo';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -33,7 +34,6 @@ import {
   IconPlug,
   IconServer,
   IconSettings,
-  IconSparkles,
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui/icon';
@@ -171,7 +171,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
         {
           label: t`Syna`,
           path: SettingsPath.AI,
-          Icon: IconSparkles,
+          Icon: IconSyna,
           isHidden: !permissionMap[PermissionFlagType.AI_SETTINGS],
           subItems: [
             {

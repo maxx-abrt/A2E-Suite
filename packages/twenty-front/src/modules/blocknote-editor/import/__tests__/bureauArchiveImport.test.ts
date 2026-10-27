@@ -22,6 +22,7 @@ describe('Notion archive import', () => {
         workspacePath,
         '<article><header><span class="icon" data-emoji="📚"></span><h1 class="page-title">Workspace</h1><img class="page-cover-image" src="Workspace/cover.png"></header><div class="page-body"><p>Welcome</p></div></article>',
       ),
+      entry('Export/Workspace/cover.png', 'cover bytes'),
       entry(csvPath, 'Name,Status\nAssignment,Done'),
       entry(
         databasePath,
@@ -36,9 +37,73 @@ describe('Notion archive import', () => {
     ]);
     expect(plan.canonicalPathByPath?.get(csvPath)).toBe(databasePath);
     expect(plan.pages[0].icon).toBe('📚');
-    expect(plan.pages[0].content).toContain('Workspace/cover.png');
+    // Covers become record attributes, not body content (resolved relative to
+    // the page's own directory).
+    expect(plan.pages[0].coverSource).toBe('Export/Workspace/cover.png');
+    expect(plan.pages[0].content).not.toContain('Workspace/cover.png');
     expect(plan.pages[1].content).toContain('October 27, 2026');
     expect(plan.pages[1].content).toContain('Database description');
+  });
+
+  it('preserves exported comments and metadata outside the main page body exactly once', () => {
+    const plan = planBureauArchiveImport([
+      entry(
+        'Home.html',
+        `<article><header>
+        <h1 class="page-title">Home</h1><span class="page-icon">📚</span>
+        <p class="page-description">Description</p><p>Extra metadata</p>
+        <table class="properties"><tr><td>Property value</td></tr></table>
+        </header><div class="page-body"><p>Body</p></div>
+        <footer><p>Ada: exported comment</p></footer></article>
+        <section><p>Resolved discussion</p></section>`,
+      ),
+    ]);
+    const document = new DOMParser().parseFromString(
+      plan.pages[0].content,
+      'text/html',
+    );
+    for (const text of [
+      'Description',
+      'Extra metadata',
+      'Property value',
+      'Body',
+      'Ada: exported comment',
+      'Resolved discussion',
+    ]) {
+      expect(document.body.textContent?.split(text)).toHaveLength(2);
+    }
+    expect(document.querySelector('.page-title, .page-icon')).toBeNull();
+  });
+
+  it('preserves image page icons as content without putting image URLs in the emoji field', () => {
+    const plan = planBureauArchiveImport([
+      entry(
+        'Home.html',
+        '<article data-notion-page-icon="https://www.notion.so/icons/book_gray.svg"><header><img class="page-icon" src="https://www.notion.so/icons/book_gray.svg"><h1 class="page-title">Home</h1></header><div class="page-body"><p>Body</p></div></article>',
+      ),
+      entry(
+        'Custom.html',
+        '<article><header><span class="page-icon"><img src="Custom/icon.png"></span></header><div class="page-body"><p>Custom body</p></div></article>',
+      ),
+      entry('Custom/icon.png', 'icon bytes'),
+    ]);
+    expect(plan.pages[0].icon).toBeUndefined();
+    expect(plan.pages[0].content).toContain(
+      'https://www.notion.so/icons/book_gray.svg',
+    );
+    expect(plan.pages[1].content).toContain('Custom/icon.png');
+  });
+
+  it('keeps a missing cover visible for review instead of silently dropping its reference', () => {
+    const plan = planBureauArchiveImport([
+      entry(
+        'Home.html',
+        '<article><header><img class="page-cover-image" src="missing.png"></header><div class="page-body"><p>Body</p></div></article>',
+      ),
+    ]);
+    expect(plan.pages[0].coverSource).toBeUndefined();
+    expect(plan.pages[0].content).toContain('missing.png');
+    expect(plan.reviewCountsByPath?.get('Home.html')).toBeGreaterThan(0);
   });
 
   it('retains source folder grouping when there is no page for that folder', () => {
@@ -51,6 +116,24 @@ describe('Notion archive import', () => {
       ['Courses', 'Export/Hidden/.bureau-import-folder.md'],
       ['Lesson', 'Export/Hidden/Courses.csv'],
     ]);
+  });
+
+  it('falls back to the article-level page icon when the header is iconless', () => {
+    const plan = planBureauArchiveImport([
+      entry(
+        'Export/Emoji page.html',
+        '<article data-notion-page-icon="🚀"><header><h1 class="page-title">Emoji page</h1></header><div class="page-body"><p>x</p></div></article>',
+      ),
+      entry(
+        'Export/Glyph page.html',
+        '<article data-notion-page-icon="/icons/translate_orange.svg"><header><h1 class="page-title">Glyph page</h1></header><div class="page-body"><p>x</p></div></article>',
+      ),
+    ]);
+    expect(plan.pages[0].icon).toBe('🚀');
+    expect(plan.pages[1].icon).toBeUndefined();
+    expect(plan.pages[1].content).toContain(
+      'https://www.notion.so/icons/translate_orange.svg',
+    );
   });
 
   it('preserves readable content and other pages after a file failure, then retries only the failed work', async () => {
@@ -111,9 +194,8 @@ describe('Notion archive import', () => {
       getPageUrl: (id: string) => `/bureau/${id}`,
       onProgress: jest.fn(),
     };
-    await expect(runBureauArchiveImport(options)).rejects.toThrow(
-      'file upload(s) need retry',
-    );
+    const firstResult = await runBureauArchiveImport(options);
+    expect(firstResult.failedPageCount).toBe(1);
     expect(savePage).toHaveBeenCalledWith(
       'home-id',
       expect.arrayContaining([
@@ -127,9 +209,16 @@ describe('Notion archive import', () => {
     );
     expect(session.completedPaths.has('Home/Child.md')).toBe(true);
     expect(session.completedPaths.has('Home.md')).toBe(false);
-    await runBureauArchiveImport(options);
+    expect(session.failedPagesByPath?.get('Home.md')).toContain(
+      'file upload(s) need retry',
+    );
+    const result = await runBureauArchiveImport(options);
+    expect(result.failedPageCount ?? session.failedPagesByPath?.size ?? 0).toBe(
+      0,
+    );
     expect(createPage).toHaveBeenCalledTimes(2);
     expect(session.completedPaths.size).toBe(2);
+    expect(session.failedPagesByPath?.size).toBe(0);
     expect(
       uploadAttachment.mock.calls.filter(
         ([source]) => source.path === 'Original.zip',
@@ -391,7 +480,10 @@ describe('Notion archive import', () => {
       getPageUrl: (id: string) => `/bureau/${id}`,
       onProgress: jest.fn(),
     };
-    await expect(runBureauArchiveImport(options)).rejects.toThrow('offline');
+    const firstResult = await runBureauArchiveImport(options);
+    expect(firstResult.failedPageCount).toBe(1);
+    expect(createPage).toHaveBeenCalledTimes(1);
+    expect(uploadAttachment).toHaveBeenCalledTimes(1);
     await runBureauArchiveImport(options);
     expect(createPage).toHaveBeenCalledTimes(1);
     expect(uploadAttachment).toHaveBeenCalledTimes(1);
@@ -406,6 +498,7 @@ describe('Notion archive import', () => {
         },
       }),
     ]);
+    expect(session.failedPagesByPath?.size).toBe(0);
   });
   it('preserves nested pages, strips Notion hashes and sanitizes exported HTML', () => {
     const hash = 'a'.repeat(32);
@@ -511,7 +604,10 @@ describe('Notion archive import', () => {
       getPageUrl: (id: string) => `/bureau/${id}`,
       onProgress: jest.fn(),
     };
-    await expect(runBureauArchiveImport(options)).rejects.toThrow('offline');
+    await expect(runBureauArchiveImport(options)).resolves.toMatchObject({
+      failedPageCount: 1,
+    });
+    await runBureauArchiveImport(options);
     expect(createPage).toHaveBeenCalledTimes(2);
     expect(createPage).toHaveBeenNthCalledWith(
       2,
@@ -532,5 +628,277 @@ describe('Notion archive import', () => {
       }),
     ]);
     expect(session.completedPaths.size).toBe(2);
+  });
+
+  it('applies native page covers from the archive and keeps remote ones as-is', async () => {
+    const plan = planBureauArchiveImport([
+      entry(
+        'Home.html',
+        '<article><header><img class="page-cover-image" src="Home/cover.png"><h1 class="page-title">Home</h1></header><div class="page-body"><p>Hi</p></div></article>',
+      ),
+      entry(
+        'Remote.html',
+        '<article><header><img class="page-cover-image" src="https://images.unsplash.com/photo-1"><h1 class="page-title">Remote</h1></header><div class="page-body"><p>Hi</p></div></article>',
+      ),
+      entry('Home/cover.png', 'cover bytes'),
+    ]);
+    const session: BureauArchiveImportSession = {
+      documentIdsByPath: new Map([
+        ['Home.html', 'home-id'],
+        ['Remote.html', 'remote-id'],
+      ]),
+      createdPaths: new Set(),
+      completedPaths: new Set(),
+      attachmentUrls: new Map(),
+    };
+    const uploadAttachment = jest
+      .fn()
+      .mockResolvedValue('https://files.example/cover.png');
+    const applyPageCover = jest.fn().mockResolvedValue(undefined);
+    const options = {
+      plan,
+      session,
+      createPage: jest.fn(),
+      uploadAttachment,
+      applyPageCover,
+      savePage: jest.fn(),
+      parsePage: async () => [],
+      mapBlocks: () => ({ blocks: [], warnings: [] }),
+      getPageUrl: (id: string) => `/bureau/${id}`,
+      onProgress: jest.fn(),
+    };
+    await runBureauArchiveImport(options);
+    expect(applyPageCover).toHaveBeenCalledWith(
+      plan.pages[0],
+      'home-id',
+      'https://files.example/cover.png',
+    );
+    expect(applyPageCover).toHaveBeenCalledWith(
+      plan.pages[1],
+      'remote-id',
+      'https://images.unsplash.com/photo-1',
+    );
+    expect(uploadAttachment).toHaveBeenCalledWith(
+      expect.objectContaining({ path: 'Home/cover.png' }),
+      'home-id',
+    );
+    // A retry keeps covers idempotent.
+    const secondApply = applyPageCover.mock.calls.length;
+    await runBureauArchiveImport(options);
+    expect(applyPageCover.mock.calls.length).toBe(secondApply);
+  });
+
+  it('isolates a failing page so the rest keeps importing, then retries it', async () => {
+    const plan = planBureauArchiveImport([
+      entry('A.md', '# A'),
+      entry('B.md', '# B'),
+      entry('C.md', '# C'),
+    ]);
+    const session: BureauArchiveImportSession = {
+      documentIdsByPath: new Map(
+        plan.pages.map((page) => [page.path, `${page.path}-id`]),
+      ),
+      createdPaths: new Set(),
+      completedPaths: new Set(),
+      attachmentUrls: new Map(),
+    };
+    const savePage = jest
+      .fn()
+      .mockResolvedValueOnce(undefined)
+      .mockRejectedValueOnce(new Error('Save failed'))
+      .mockResolvedValue(undefined);
+    const options = {
+      plan,
+      session,
+      createPage: jest.fn(),
+      uploadAttachment: jest.fn(),
+      savePage,
+      parsePage: async (page: { path: string }) => [
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: `Content ${page.path}` }],
+        },
+      ],
+      mapBlocks: (blocks: readonly unknown[]) =>
+        mapImportedAttachmentsAndLinks(blocks),
+      getPageUrl: (id: string) => `/bureau/${id}`,
+      onProgress: jest.fn(),
+    };
+    const result = await runBureauArchiveImport(options);
+    // One failing page no longer stops the whole import.
+    expect(result.failedPageCount).toBe(1);
+    expect(session.completedPaths.has('A.md')).toBe(true);
+    expect(session.completedPaths.has('B.md')).toBe(false);
+    expect(session.completedPaths.has('C.md')).toBe(true);
+    expect(session.failedPagesByPath?.get('B.md')).toBe('Save failed');
+    await runBureauArchiveImport(options);
+    expect(session.completedPaths.size).toBe(3);
+    expect(
+      savePage.mock.calls.filter((call) => call[0] === 'B.md-id'),
+    ).toHaveLength(2);
+  });
+
+  it('resolves page-link placeholders to imported record ids and keeps title text for unknown targets', async () => {
+    const sourceId = 'f'.repeat(32);
+    const plan = planBureauArchiveImport([
+      entry('Home.md', '# Home'),
+      entry(`Home/Child ${sourceId}.html`, '<p>Child</p>'),
+    ]);
+    const session: BureauArchiveImportSession = {
+      documentIdsByPath: new Map([
+        ['Home.md', 'home-id'],
+        [`Home/Child ${sourceId}.html`, 'child-id'],
+      ]),
+      createdPaths: new Set(),
+      completedPaths: new Set(),
+      attachmentUrls: new Map(),
+    };
+    const savePage = jest.fn();
+    await runBureauArchiveImport({
+      plan,
+      session,
+      createPage: jest.fn(),
+      uploadAttachment: jest.fn(),
+      savePage,
+      parsePage: async () => [
+        {
+          type: 'pageLink',
+          props: {
+            documentId: `notion:${sourceId}`,
+            title: '📚 Child',
+          },
+        },
+        {
+          type: 'pageLink',
+          props: { documentId: 'notion:deadbeef', title: 'External' },
+        },
+      ],
+      mapBlocks: (blocks, resolveUrl, pageLinkResolvers) =>
+        mapImportedAttachmentsAndLinks(blocks, {
+          resolveAttachmentUrl: resolveUrl,
+          preserveUnmappedAttachments: true,
+          resolveLinkUrl: resolveUrl,
+          ...(pageLinkResolvers ?? {}),
+        }),
+      getPageUrl: (id) => `/bureau/${id}`,
+      onProgress: jest.fn(),
+    });
+    expect(savePage.mock.calls[0][1][0]).toMatchObject({
+      type: 'pageLink',
+      props: { documentId: 'child-id', title: '📚 Child' },
+    });
+    expect(savePage.mock.calls[0][1][1]).toMatchObject({
+      type: 'paragraph',
+      content: [{ type: 'text', text: 'External' }],
+    });
+  });
+
+  it('resolves relation chips inside table cells to imported record ids', async () => {
+    const sourceId = 'e'.repeat(32);
+    const plan = planBureauArchiveImport([
+      entry('Home.md', '# Home'),
+      entry(`Tasks/2.11 ${sourceId}.html`, '<p>Row page</p>'),
+    ]);
+    const session: BureauArchiveImportSession = {
+      documentIdsByPath: new Map([
+        ...plan.pages.map((page): [string, string] => [
+          page.path,
+          `${page.path}-id`,
+        ]),
+        ['Home.md', 'home-id'],
+        [`Tasks/2.11 ${sourceId}.html`, 'relation-id'],
+      ]),
+      createdPaths: new Set(),
+      completedPaths: new Set(),
+      attachmentUrls: new Map(),
+    };
+    const savePage = jest.fn();
+    await runBureauArchiveImport({
+      plan,
+      session,
+      createPage: jest.fn(),
+      uploadAttachment: jest.fn(),
+      savePage,
+      parsePage: async () => [
+        {
+          type: 'table',
+          content: {
+            type: 'tableContent',
+            rows: [
+              {
+                cells: [
+                  [
+                    {
+                      type: 'mention',
+                      props: {
+                        recordId: `notion:${sourceId}`,
+                        objectNameSingular: 'document',
+                        label: '2.11',
+                      },
+                    },
+                  ],
+                ],
+              },
+            ],
+          },
+        },
+      ],
+      mapBlocks: (blocks, resolveUrl, pageLinkResolvers) =>
+        mapImportedAttachmentsAndLinks(blocks, {
+          resolveAttachmentUrl: resolveUrl,
+          preserveUnmappedAttachments: true,
+          resolveLinkUrl: resolveUrl,
+          ...(pageLinkResolvers ?? {}),
+        }),
+      getPageUrl: (id) => `/bureau/${id}`,
+      onProgress: jest.fn(),
+    });
+    const saved = JSON.stringify(savePage.mock.calls[0][1]);
+    expect(saved).toContain('"relation-id"');
+    expect(saved).toContain('"type":"mention"');
+  });
+
+  it('does not let failing cover uploads fail the page content', async () => {
+    const plan = planBureauArchiveImport([
+      entry(
+        'Home.html',
+        '<article><header><img class="page-cover-image" src="Home/cover.png"><h1 class="page-title">Home</h1></header><div class="page-body"><p>Hi</p></div></article>',
+      ),
+      entry('Home/cover.png', 'cover bytes'),
+    ]);
+    const session: BureauArchiveImportSession = {
+      documentIdsByPath: new Map([['Home.html', 'home-id']]),
+      createdPaths: new Set(),
+      completedPaths: new Set(),
+      attachmentUrls: new Map(),
+    };
+    const applyPageCover = jest
+      .fn()
+      .mockRejectedValueOnce(new Error('Cover upload failed'))
+      .mockResolvedValue(undefined);
+    const options = {
+      plan,
+      session,
+      createPage: jest.fn(),
+      uploadAttachment: jest
+        .fn()
+        .mockResolvedValue('https://files.example/cover.png'),
+      applyPageCover,
+      savePage: jest.fn(),
+      parsePage: async () => [
+        { type: 'paragraph', content: [{ type: 'text', text: 'Body' }] },
+      ],
+      mapBlocks: (blocks: readonly unknown[]) =>
+        mapImportedAttachmentsAndLinks(blocks),
+      getPageUrl: (id: string) => `/bureau/${id}`,
+      onProgress: jest.fn(),
+    };
+    const result = await runBureauArchiveImport(options);
+    expect(result.failedPageCount).toBe(1);
+    expect(session.completedPaths.has('Home.html')).toBe(true);
+    expect(session.pendingCoverPaths?.has('Home.html')).toBe(true);
+    await runBureauArchiveImport(options);
+    expect(applyPageCover).toHaveBeenCalledTimes(2);
+    expect(session.pendingCoverPaths?.has('Home.html')).toBe(false);
   });
 });

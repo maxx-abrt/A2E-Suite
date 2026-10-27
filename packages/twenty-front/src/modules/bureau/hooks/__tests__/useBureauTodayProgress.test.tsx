@@ -71,6 +71,7 @@ describe('useBureauTodayProgress', () => {
     expect(result.current).toEqual({
       totalCount: 10,
       completedCount: 4,
+      openCount: 6,
       isLoading: false,
       hasError: false,
     });

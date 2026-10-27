@@ -1,3 +1,4 @@
+import { PUBLIC_LEGAL_PAGES } from '@/public-site/PublicLegalPages';
 import { usePublicSiteMotion } from '@/public-site/usePublicSiteMotion';
 import { PUBLIC_SITE_PAGES } from '@/public-site/PublicSitePages';
 import { PublicSiteBrand } from '@/public-site/PublicSiteBrand';
@@ -310,6 +311,11 @@ export const PublicSiteShell = ({ children }: PublicSiteShellProps) => {
                 <Link to="/getting-started">{t`Getting started`}</Link>
                 <Link to="/getting-started#import">{t`Bring your notes`}</Link>
                 <Link to="/getting-started#questions">{t`Questions & answers`}</Link>
+                {PUBLIC_LEGAL_PAGES.map((page) => (
+                  <Link key={page.id} to={page.path}>
+                    {t(page.label)}
+                  </Link>
+                ))}
               </nav>
               <div>
                 <h3>{t`Make space for what’s next`}</h3>

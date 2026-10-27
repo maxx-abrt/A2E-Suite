@@ -23,6 +23,7 @@ export const ApplicationDisplay = ({
       logoUrl={application?.logoUrl}
       fallbackApplicationData={{
         name: application?.name,
+        universalIdentifier: application?.universalIdentifier,
       }}
     />
   );

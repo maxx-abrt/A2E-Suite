@@ -12,7 +12,7 @@ export const baseSchema = (
   return {
     openapi: '3.1.1',
     info: {
-      title: 'Twenty Api',
+      title: 'A2E Suite API',
       description: `Use this page to explore and call the **REST API**.
 
 ## Authentication
@@ -125,14 +125,13 @@ curl -H 'Authorization: Bearer <token>' \\
   ${serverUrl}/${ApiPath.Rest}/open-api/${schemaName} > twenty-${schemaName}.json
 \`\`\`
 `,
-      termsOfService:
-        'https://github.com/twentyhq/twenty?tab=coc-ov-file#readme',
+      termsOfService: 'https://github.com/maxx-abrt/A2E-Suite',
       contact: {
         email: 'felix@twenty.com',
       },
       license: {
         name: 'AGPL-3.0',
-        url: 'https://github.com/twentyhq/twenty?tab=License-1-ov-file#readme',
+        url: 'https://github.com/maxx-abrt/A2E-Suite/blob/main/LICENSE',
       },
       version: API_Version,
     },
@@ -160,7 +159,7 @@ curl -H 'Authorization: Bearer <token>' \\
     ],
     externalDocs: {
       description: 'Find out more about **Twenty**',
-      url: 'https://twenty.com',
+      url: 'https://a2esuite.com',
     },
     paths: { [`/open-api/${schemaName}`]: computeOpenApiPath(serverUrl) },
   };

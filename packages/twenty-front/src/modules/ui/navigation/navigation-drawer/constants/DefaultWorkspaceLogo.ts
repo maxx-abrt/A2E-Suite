@@ -1,2 +1,4 @@
-export const DEFAULT_WORKSPACE_LOGO =
-  'https://twentyhq.github.io/placeholder-images/workspaces/twenty-logo.png';
+export const DEFAULT_WORKSPACE_LOGO = new URL(
+  '/branding/suite.png',
+  window.location.origin,
+).href;

@@ -45,10 +45,10 @@ export const buildMcpSetupCategories = ({
     cards: [
       {
         title: t`ChatGPT`,
-        badge: t`Official app`,
-        description: t`Open A2E Suite's official ChatGPT integration for your workspace.`,
+        badge: t`MCP client`,
+        description: t`Open ChatGPT to connect your workspace using its MCP URL.`,
         ctaLabel: t`Open`,
-        href: MCP_SETUP.chatGptTwentyAppUrl,
+        href: MCP_SETUP.chatGptUrl,
         logo: <McpClientLogo src={OpenAiLogo} invertInDarkMode />,
       },
       {

@@ -1,6 +1,6 @@
+import { getA2eHelpDocUrl } from '@/a2e-help/utils/getA2eHelpDocUrl';
 import { A2E_EMPTY_STATE_SURFACES } from '@/a2e-empty-state/constants/A2eEmptyStateSurfaces';
 import { getA2eEmptyStateSurfaceForObject } from '@/a2e-empty-state/utils/getA2eEmptyStateSurfaceForObject';
-import { getA2eHelpDocUrl } from '@/a2e-help/constants/A2eHelpDocPages';
 import { HOST_TEMPLATE_DESCRIPTOR_GROUPS } from '@/template-gallery/constants/HostTemplateDescriptorGroups';
 import { i18n } from '@lingui/core';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -32,7 +32,7 @@ describe('A2E_EMPTY_STATE_SURFACES', () => {
       );
       expect(surface.primaryActionIcon).toBeDefined();
       expect(getA2eHelpDocUrl(surface.appKey)).toContain(
-        '/user-guide/a2e-suite/',
+        'https://a2esuite.com/',
       );
     });
   });

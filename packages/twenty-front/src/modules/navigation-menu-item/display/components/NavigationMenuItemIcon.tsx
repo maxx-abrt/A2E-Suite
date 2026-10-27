@@ -1,5 +1,7 @@
-import { NavigationMenuItemType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { A2eAppLogo } from '@/a2e-workspace/components/A2eAppLogo';
+import { A2E_BRAND_LOGOS } from '@/a2e-workspace/constants/A2eBrandLogos';
+import { AppPath, NavigationMenuItemType } from 'twenty-shared/types';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import {
   Avatar,
   StyledTintedIconTileContainer,
@@ -102,6 +104,17 @@ export const NavigationMenuItemIcon = ({
       objectMetadataItems,
       views,
     });
+    const applicationLogo =
+      computedLink === AppPath.Bureau
+        ? A2E_BRAND_LOGOS.bureau
+        : computedLink === AppPath.Calendar
+          ? A2E_BRAND_LOGOS.agenda
+          : computedLink === getAppPath(AppPath.AiChat)
+            ? A2E_BRAND_LOGOS.syna
+            : undefined;
+    if (applicationLogo) {
+      return <A2eAppLogo src={applicationLogo} size={20} />;
+    }
     return (
       <LinkIconWithLinkOverlay
         link={computedLink}

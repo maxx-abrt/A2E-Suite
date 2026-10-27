@@ -7,6 +7,7 @@ import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsS
 import { collectTemplateApplyLogicFunctions } from '@/template-gallery/utils/collectTemplateApplyLogicFunctions';
 import { type TemplateGalleryItem } from '@/template-gallery/types/TemplateGalleryItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useLingui } from '@lingui/react/macro';
 import { useMutation } from '@apollo/client/react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import {
@@ -23,6 +24,8 @@ import { v4 as uuidv4, v5 as uuidv5 } from 'uuid';
 // Each descriptor keeps its own retry identity within the gallery session.
 // A shared identity would make another template resolve to the previous copy.
 export const useApplyTemplate = () => {
+  const { i18n } = useLingui();
+  const locale = i18n.locale;
   const applications = useAtomStateValue(applicationsSelector);
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
   const [executeOneLogicFunction] =
@@ -78,6 +81,7 @@ export const useApplyTemplate = () => {
                 id: target.logicFunctionId,
                 payload: {
                   key: item.descriptor.key,
+                  locale,
                   inputs: null,
                   operationId,
                 },
@@ -102,6 +106,7 @@ export const useApplyTemplate = () => {
       applyAgendaTemplateItem,
       applySynaRecipeItem,
       executeOneLogicFunction,
+      locale,
       sessionId,
       targets,
     ],

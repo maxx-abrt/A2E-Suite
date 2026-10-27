@@ -39,22 +39,37 @@ Bureau's Documents application and native document write permission are required
 | --- | --- |
 | Pages and subpages | Reconstructed from hashed filenames and hash-free child folders; grouping directories without a page become container pages. HTML/CSV companions share one native page identity; source ordering is retained |
 | Headings, rich text, lists and code | Parsed by the existing BlockNote editor; bold, italic, strike, inline code, text colors and highlights are retained. Export CSS color values are converted to native inline styles |
-| Page properties | Kept as an editable table, including date text, status/select labels, links and file references outside the exported page body |
+| Page covers | Become the native page cover (`coverImage` on the record): remote cover URLs pass through unchanged, cover files inside the ZIP are uploaded through workspace storage. The cover image no longer occupies a content block |
+| Page icons | Emoji icons are retained on the record. Image icons, including Notion's built-in glyphs, are retained as native image blocks near the page header; local images use workspace storage. They do not populate Bureau's emoji/icon-name field. Remote glyphs still depend on the source host |
+| Page properties and exported comments | Properties stay in editable tables, including date text, status/select labels, links and file references. Header metadata, comments and other exported text outside the main page body are also retained as document content, in source order; this does not recreate native comment threads |
+| Relations (page links inside database cells and property rows) | Become native inline record chips (`mention` of the imported document): unresolved targets degrade to their label text and are reported for review, resolved ones navigate like page-link blocks. A target whose creation failed keeps the referring page pending so Retry restores the chip after creation succeeds |
 | Equations | Original exported LaTeX is retained as editable code, rather than importing flattened KaTeX rendering. Typeset native math editing is not implemented |
 | HTML column layouts | Native editable columns, including nested columns and relative widths |
 | Callouts | Native callout with source emoji, background/text colors, inline formatting and nested blocks |
 | Checkboxes and toggles | Native checklist state and nested toggle content; imported checkboxes do not automatically create task records |
-| Simple tables | Native editable tables; links inside cells are rewritten |
+| Table of contents | The exported nav becomes the native table-of-contents block, which re-derives entries from headings so anchor links are no longer needed |
+| Simple tables and database views | Native editable tables; links inside cells are rewritten. Exported `<colgroup>` widths are copied onto cells so `columnWidths` and relative column proportions are preserved (104/104 tables in the audited export) |
 | Local images, audio, video and file figures | Uploaded through native workspace file storage and related to the imported document; rich captions retained as adjacent paragraphs when native media captions cannot carry their links/formatting |
-| Page links | Relative archive links and matching absolute Notion page URLs point to new documents; fragments are retained, but block-anchor scrolling is not certified |
+| Page links | Exported `link-to-page` chips become native `pageLink` blocks with the source icon preserved in the label and resolve to the imported record; unresolved targets degrade to their title text and are reported for review. Relative archive links and matching absolute Notion page URLs point to new documents, but block-anchor scrolling is not certified |
 | External links/media | Retained as external references; remote files are not downloaded or made permanent |
 | Executable embeds | Safe iframe destinations become links; active content is removed |
 | Original export and unreferenced files | The original ZIP/HTML/Markdown input is attached to the first imported page for recovery. Other files go to their nearest owning page; source CSVs stay on their canonical database page |
 | CSV databases | Editable table snapshots (up to 1,000 rows including the header and 20,000 cells), with the original CSV attached to its database page. When HTML and CSV describe the same source page, CSV data is retained in an expandable table snapshot on that page, including columns hidden by the HTML view. Larger/malformed files retain their parent page and original attachment; review is required. These are not live databases |
 | JSON and nested ZIPs | Preserved as attachments; not recursively extracted |
 | macOS export metadata | `__MACOSX`, resource forks and `.DS_Store` are ignored |
-| Formulas, rollups, database relations/views, comments, sharing and history | Not migrated as native behavior |
-| Page covers/icons and arbitrary Notion-only blocks | Full visual/semantic fidelity is not certified; keep the export and review the result |
+| Formulas, rollups, database relations/views, comment threads, sharing and history | Not migrated as native behavior. Exported values and comment text are document snapshots; the original export is retained for recovery |
+| In-page anchor links and arbitrary Notion-only blocks | Anchor links cannot be jump targets in a serialized editor document, so their text is kept as unlinked content. Full Notion-only fidelity is not certified; keep the export and review the result |
+
+The rich-text API's shared `isSafeUrl` validator checks every
+resolved `href`/attachment URL before saving. Archive paths are permitted only during the intermediate parser pass, and in-page `#` anchors are
+unlinked during conversion. Unsafe links flatten to readable text (or a labeled
+paragraph for media), so a single unusual URL can no longer pause an import
+with "Dangerous URL protocol in blocknote content";
+
+one page failing to parse or
+save is recorded under "pages need retry" and the remaining pages continue
+importing. A complete run whose pages carried errors keeps the structure and
+offers **Retry import** for the missing content.
 
 The completion dialog lists page/file paths needing review. Sanitizer removals
 and missing attachment/link mappings contribute to this report. This is a
@@ -66,8 +81,18 @@ conversion report, not an assertion that every Notion feature has an equivalent.
   Unsafe and normalized duplicate file paths are rejected before extraction.
   Empty page files are retained.
 - A failed file upload retains a readable reference and caption, saves other page
-  content and continues importing other pages. The error identifies the source
-  path and transport detail; Retry returns to pending work.
+  content and continues importing other pages. Original-export attachments,
+  unreferenced files and covers also contribute to the per-page retry report;
+  saving the body alone does not dismiss this pending work. Known successful
+  cover uploads are reused if applying the cover needs retry. The error identifies
+  the source path and transport detail; Retry returns to pending work.
+- A page whose content cannot be parsed or saved no longer pauses the whole
+  import: other pages keep importing, and the completion view lists the page its
+  error message under "pages need retry" with a **Retry import** action that
+  touches only the missing work.
+- Files are uploaded only after their owning page exists and its body has parsed.
+  A parsing failure cannot replace the body with an attachment-only document.
+  Missing source cover files remain visible as references and review items.
 - The open dialog retains allocated page IDs, completed pages and known upload
   results. Retry continues that session. A lost create response is checked
   against the exact allocated ID and expected page properties before continuing.
@@ -94,8 +119,13 @@ The 2026-10-27 follow-up audited the supplied 305-entry customer ZIP locally:
 pairs become one page each. The resulting tree has 286 pages (including one
 container), 284 nested pages and all 36 exported property tables. All local
 references resolve and all pages parse and reload through the real native
-parser. The audit uses storage/mutation callbacks, so it does not certify live
-server uploads. The private archive is not included in the repository.
+parser. The audit also verifies saved blocks against the server URL policy and
+now reports native-structure conversion counts; the supplied export converts
+into 104 tables (all with matching widths), 253 native page-link chips,
+55 inline relation chips, 6 native table-of-contents blocks, 16 native covers,
+64 callouts, 15 column layouts, 6 checklists and 19 toggles. The audit uses
+storage/mutation callbacks, so it does not certify live server uploads. The
+private archive is not included in the repository.
 
 Run the reusable offline audit from the repository root:
 
@@ -104,10 +134,25 @@ node packages/twenty-front/scripts/audit-notion-export.mjs /path/to/export.zip
 ```
 
 The audit checks parent-first creation, unique block IDs, source text character
-inventories, formatting inventories, local reference resolution, byte-identical
-file handoff and serialized editor reload. It reports word-boundary differences
+inventories (including exported text outside the page body and chip labels),
+formatting inventories, local reference resolution, byte-identical file handoff,
+cover application and serialized editor reload. Missing attachment handoffs,
+pending pages or unapplied covers fail the audit, as do saved URLs rejected by
+the shared server validator. It reports word-boundary differences
 separately; these inventory checks do not certify pixel-perfect rendering or
 full semantic equivalence.
+
+The subsequent recovery hardening is covered by synthetic archive tests: one
+ZIP exercises HTML/CSV companions, relation/page chips, image icons, exported
+comments, columns, callouts, checklists, toggles, equations, media, covers and
+unreferenced files through the offline runner. A separate negative fixture proves
+that omitted text outside the page body fails the audit. This is separate from
+the earlier customer-archive measurements above; that private archive was not
+rerun for this hardening slice.
+
+The two `Reportsmettait` word-joint notes in the customer audit originate in
+Notion's exported HTML (`</a>mettait`). The importer preserves those boundaries;
+it does not invent spaces that could change intentional source text.
 
 Rendered light/dark/mobile review, live two-account
 server/storage isolation, production permissions and import recovery after a

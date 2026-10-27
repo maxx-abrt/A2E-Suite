@@ -185,9 +185,11 @@ describe('public account landing', () => {
         'id',
         `preview-tab-${applicationId}`,
       );
-      expect(screen.getByRole('navigation', { name: 'Main' })).toContainElement(
-        screen.getByRole('link', { name: 'Applications', current: 'location' }),
-      );
+      expect(
+        within(
+          screen.getByRole('navigation', { name: 'Main navigation' }),
+        ).getByRole('link', { name: 'Applications', current: 'location' }),
+      ).toBeVisible();
     },
   );
 
@@ -197,6 +199,25 @@ describe('public account landing', () => {
       renderLanding(path);
       expect(screen.getByRole('heading', { level: 1 })).toBeVisible();
       expect(screen.queryByText(/Twenty/)).not.toBeInTheDocument();
+    },
+  );
+
+  it.each(['/legal/terms', '/legal/privacy', '/legal/dpa'])(
+    'publishes the association identity and a contact link at %s',
+    (path) => {
+      renderLanding(path);
+      expect(
+        screen.getByText(
+          'Association d’Entraide Étudiante · Association déclarée',
+        ),
+      ).toBeVisible();
+      expect(
+        screen.getByRole('link', { name: 'contact@association2e.org' }),
+      ).toHaveAttribute('href', 'mailto:contact@association2e.org');
+      expect(
+        screen.getByText('SIREN 994 936 789 · SIRET 994 936 789 00019'),
+      ).toBeVisible();
+      expect(document.querySelector('a[href*="twenty.com"]')).toBeNull();
     },
   );
 

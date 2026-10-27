@@ -1,3 +1,4 @@
+import { PUBLIC_SITE_ROUTES } from '@/public-site/PublicSitePages';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { renderHook } from '@testing-library/react';
@@ -28,12 +29,14 @@ describe('useHelpSearchResultItems', () => {
     expect(docEntries).toHaveLength(9);
     expect(docEntries[0].label).toContain('Help:');
     expect(docEntries[0].externalUrl).toBe(
-      'https://docs.twenty.com/user-guide/a2e-suite/getting-started',
+      'https://a2esuite.com/getting-started',
     );
 
     for (const entry of docEntries) {
-      expect(entry.externalUrl).toMatch(
-        /^https:\/\/docs\.twenty\.com\/user-guide\/a2e-suite\//,
+      const destination = new URL(entry.externalUrl ?? '');
+      expect(destination.origin).toBe('https://a2esuite.com');
+      expect(PUBLIC_SITE_ROUTES.map((page) => page.path)).toContain(
+        destination.pathname,
       );
     }
   });

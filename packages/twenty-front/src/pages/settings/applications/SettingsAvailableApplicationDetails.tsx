@@ -1,3 +1,4 @@
+import { getA2eApplicationLogo } from '@/a2e-workspace/utils/getA2eApplicationLogo';
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { AppChip } from '@/applications/components/AppChip';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
@@ -300,6 +301,7 @@ export const SettingsAvailableApplicationDetails = () => {
             logoUrl={detail?.logoUrl}
             fallbackApplicationData={{
               name: displayName,
+              universalIdentifier: detail?.universalIdentifier,
             }}
             size="md"
             chipOnly
@@ -325,7 +327,11 @@ export const SettingsAvailableApplicationDetails = () => {
       <SettingsApplicationInstallPermissionValidationModal
         modalInstanceId={modalInstanceId}
         appDisplayName={displayName}
-        appLogoUrl={detail?.logoUrl ?? undefined}
+        appLogoUrl={
+          getA2eApplicationLogo(detail?.universalIdentifier) ??
+          detail?.logoUrl ??
+          undefined
+        }
         defaultRole={defaultRole}
         onAuthorize={handleInstall}
         isInstalling={isInstalling}

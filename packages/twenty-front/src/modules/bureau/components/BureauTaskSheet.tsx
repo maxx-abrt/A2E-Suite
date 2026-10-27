@@ -1,12 +1,11 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useBureauDayBoundaries } from '@/bureau/hooks/useBureauDayBoundaries';
-import { bureauTaskPreferencesState } from '@/bureau/states/bureauTaskPreferencesState';
+import { useBureauTaskSheetPreferences } from '@/bureau/hooks/useBureauTaskSheetPreferences';
 import {
   BUREAU_TASK_SCOPES,
   type BureauTaskScope,
 } from '@/bureau/types/BureauTaskScope';
 import { buildBureauTaskFocusView } from '@/bureau/utils/buildBureauTaskFocusView';
-import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -192,13 +191,8 @@ const BureauTaskSheetContent = ({
   ).filter((view) => view.type === ViewType.TABLE);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { today } = useBureauDayBoundaries();
-  const [preferences, setPreferences] = useAtomFamilyState(
-    bureauTaskPreferencesState,
-    {
-      objectMetadataId,
-      workspaceMemberId: currentWorkspaceMember?.id ?? 'anonymous',
-    },
-  );
+  const [preferences, setPreferences] =
+    useBureauTaskSheetPreferences(objectMetadataId);
   const selectedViewId = preferences?.viewId;
   const showCompleted = preferences?.showCompleted === true;
   const canFilterMine =
@@ -293,7 +287,7 @@ const BureauTaskSheetContent = ({
     : AppPath.TasksPage;
 
   return (
-    <StyledSection aria-label={t`Task sheet`}>
+    <StyledSection aria-label={t`Task sheet`} id={taskSheetId}>
       <StyledHeader>
         <StyledTitle>
           <IconCheckbox size={18} />

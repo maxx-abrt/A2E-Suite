@@ -1,14 +1,16 @@
+import {
+  IconAgenda,
+  IconBilan,
+  IconSyna,
+} from '@/a2e-workspace/components/A2eAppLogo';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { type TemplateDescriptorCategory } from 'twenty-shared/application';
 import {
   IconArchive,
   IconBriefcase,
-  IconCalendarEvent,
-  IconCoins,
   IconFileText,
   IconSettingsAutomation,
-  IconSparkles,
   type IconComponent,
 } from 'twenty-ui/icon';
 
@@ -27,9 +29,9 @@ export const TEMPLATE_GALLERY_CATEGORY_CONFIG: Record<
 > = {
   Pages: { label: msg`Pages`, Icon: IconFileText },
   Projets: { label: msg`Projects`, Icon: IconBriefcase },
-  Bilan: { label: msg`Bilan`, Icon: IconCoins },
+  Bilan: { label: msg`Bilan`, Icon: IconBilan },
   Archive: { label: msg`Archive`, Icon: IconArchive },
-  Agenda: { label: msg`Agenda`, Icon: IconCalendarEvent },
-  Syna: { label: msg`Syna`, Icon: IconSparkles },
+  Agenda: { label: msg`Agenda`, Icon: IconAgenda },
+  Syna: { label: msg`Syna`, Icon: IconSyna },
   Automatisations: { label: msg`Automations`, Icon: IconSettingsAutomation },
 };

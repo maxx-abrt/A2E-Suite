@@ -1,6 +1,8 @@
+import { IconBureau } from '@/a2e-workspace/components/A2eAppLogo';
 import { BureauBulkActions } from '@/bureau/components/BureauBulkActions';
 import { BureauTrashDropTarget } from '@/bureau/components/BureauTrashDropTarget';
 import { BureauSidebarAction } from '@/bureau/components/BureauSidebarAction';
+import { BureauSidebarTasks } from '@/bureau/components/BureauSidebarTasks';
 import { BureauTreeItem } from '@/bureau/components/BureauTreeItem';
 import { BUREAU_LANDING_TEMPLATE_CATEGORY } from '@/bureau/constants/BureauLandingTemplateCategory';
 import { HOME_DOCUMENT_TEMPLATE_KIND } from '@/home-dashboard/utils/selectRecentPages';
@@ -15,7 +17,6 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import {
-  IconHome,
   IconLayout,
   IconPlus,
   IconSearch,
@@ -97,11 +98,13 @@ const BureauNavigationContent = () => {
   const savedTemplates = rootPages.filter(
     (page) => page.kind === HOME_DOCUMENT_TEMPLATE_KIND,
   );
+  const recordCount = rootPages.length + favoriteDocuments.length;
+  const recordsNotLoadedYet = isLoading && recordCount === 0;
 
   return (
     <StyledSection aria-label={t`Bureau pages`}>
       <BureauSidebarAction
-        Icon={IconHome}
+        Icon={IconBureau}
         label={t`Bureau`}
         testId="bureau-home"
         to={AppPath.Bureau}
@@ -131,6 +134,9 @@ const BureauNavigationContent = () => {
           openTemplateGallery({ category: BUREAU_LANDING_TEMPLATE_CATEGORY })
         }
       />
+      {/* To-do reminder sits with the workspace actions, Huly-style, so the
+          day's load stays visible while the page tree gets the space below. */}
+      <BureauSidebarTasks />
       {favoriteDocuments.length > 0 && (
         <>
           <StyledHeading>{t`Favorites`}</StyledHeading>
@@ -158,7 +164,9 @@ const BureauNavigationContent = () => {
           />
         )}
       <BureauBulkActions />
-      {isLoading && <span role="status">{t`Loading pages…`}</span>}
+      {/* Only the very first load shows a progress label; refetches of a fully
+          rendered tree must not flash anything (see useBureauDocuments). */}
+      {recordsNotLoadedYet && <span role="status">{t`Loading pages…`}</span>}
       {error ? (
         <BureauSidebarAction
           Icon={IconSearch}
@@ -210,7 +218,6 @@ const BureauNavigationContent = () => {
       {draggedPageId &&
         permissions.canUpdateObjectRecords &&
         !isBulkActionPending &&
-        !isLoading &&
         !error && (
           <div
             onDragOver={(event) => {

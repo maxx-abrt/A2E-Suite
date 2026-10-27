@@ -27,7 +27,7 @@ try {
         'export {planBureauArchiveImport,runBureauArchiveImport,resolveBureauArchivePath} from "./packages/twenty-front/src/modules/blocknote-editor/import/utils/bureauArchiveImport.ts";',
         'export {readZipEntries} from "./packages/twenty-front/src/modules/blocknote-editor/import/utils/zipArchiveCodec.ts";',
         'export {prepareNotionHtml} from "./packages/twenty-front/src/modules/blocknote-editor/import/utils/prepareNotionHtml.ts";',
-        'export {mapImportedAttachmentsAndLinks} from "./packages/twenty-front/src/modules/blocknote-editor/import/utils/mapImportedAttachmentsAndLinks.ts";',
+        'export {mapImportedAttachmentsAndLinks,isUsableImportUrl} from "./packages/twenty-front/src/modules/blocknote-editor/import/utils/mapImportedAttachmentsAndLinks.ts";',
       ].join('\n'),
       resolveDir: root,
       loader: 'ts',
@@ -64,7 +64,9 @@ try {
     BlockNoteEditor,
     BlockNoteSchema,
     defaultBlockSpecs,
+    defaultInlineContentSpecs,
     createBlockSpec,
+    createInlineContentSpec,
   } = await import('@blocknote/core');
   const { withMultiColumn } = await import('@blocknote/xl-multi-column');
   const callout = createBlockSpec(
@@ -100,9 +102,72 @@ try {
       },
     },
   );
+  // Imported pages can now produce these native blocks; mirror their propSchema.
+  const tableOfContents = createBlockSpec(
+    { type: 'tableOfContents', propSchema: {}, content: 'none' },
+    {
+      render() {
+        return { dom: document.createElement('div') };
+      },
+    },
+  );
+  const pageLink = createBlockSpec(
+    {
+      type: 'pageLink',
+      propSchema: { documentId: { default: '' }, title: { default: '' } },
+      content: 'none',
+    },
+    {
+      render() {
+        return { dom: document.createElement('div') };
+      },
+    },
+  );
+  // Relation chips inside table cells parse through the mention inline spec.
+  const mention = createInlineContentSpec(
+    {
+      type: 'mention',
+      propSchema: {
+        recordId: { default: '' },
+        objectMetadataId: { default: '' },
+        objectNameSingular: { default: '' },
+        label: { default: '' },
+        imageUrl: { default: '' },
+      },
+      content: 'none',
+    },
+    {
+      parse: (element) => {
+        const recordId = element.getAttribute('data-record-id');
+        if (!recordId) return undefined;
+        return {
+          recordId,
+          objectMetadataId:
+            element.getAttribute('data-object-metadata-id') ?? undefined,
+          objectNameSingular:
+            element.getAttribute('data-object-name-singular') ?? undefined,
+          label: element.getAttribute('data-label') ?? undefined,
+          imageUrl: element.getAttribute('data-image-url') ?? undefined,
+        };
+      },
+      render() {
+        return { dom: document.createElement('span') };
+      },
+    },
+  );
   const schema = withMultiColumn(
     BlockNoteSchema.create({
-      blockSpecs: { ...defaultBlockSpecs, callout: callout(), file: file() },
+      blockSpecs: {
+        ...defaultBlockSpecs,
+        callout: callout(),
+        file: file(),
+        tableOfContents: tableOfContents(),
+        pageLink: pageLink(),
+      },
+      inlineContentSpecs: {
+        ...defaultInlineContentSpecs,
+        mention,
+      },
     }),
   );
   const editor = BlockNoteEditor.create({ schema });
@@ -113,6 +178,7 @@ try {
     prepareNotionHtml,
     mapImportedAttachmentsAndLinks,
     resolveBureauArchivePath,
+    isUsableImportUrl,
   } = require(modulePath);
   const archive = new Uint8Array(readFileSync(archivePath));
   const entries = readZipEntries(archive);
@@ -129,6 +195,7 @@ try {
   let propertyTables = 0;
   const blockIds = new Set();
   let duplicateBlockIds = 0;
+  const inlineTypeCounts = {};
   const parse = (page) => {
     if (parses.has(page.path)) return parses.get(page.path);
     const prepared = prepareNotionHtml(
@@ -141,6 +208,7 @@ try {
       {
         resolveAttachmentUrl: prepared.restoreUrl,
         resolveLinkUrl: prepared.restoreUrl,
+        allowArchiveRelativeUrls: true,
       },
     ).blocks;
     parses.set(page.path, blocks);
@@ -170,6 +238,8 @@ try {
                 ),
                 value.props?.caption ?? '',
                 value.props?.emoji ?? '',
+                value.props?.title ?? '',
+                value.props?.label ?? '',
               ].join(' ')
           : '';
   const words = (text) =>
@@ -182,6 +252,13 @@ try {
   const styleInventory = (sourceDocument, blocks) => {
     const expected = {},
       actual = {};
+    // Converted native structures carry no exported styling anymore; their
+    // source markup would otherwise inflate the expected counts.
+    sourceDocument
+      .querySelectorAll(
+        'nav[data-notion-toc], nav.table_of_contents, figure.link-to-page, .page-cover-image',
+      )
+      .forEach((element) => element.remove());
     const add = (inventory, style, count) => {
       inventory[style] = (inventory[style] ?? 0) + count;
     };
@@ -290,6 +367,12 @@ try {
           sourceDoc
             .querySelectorAll('script,style,.property-icon,.status-dot')
             .forEach((element) => element.remove());
+          // The record holds its title/icon and the native contents block
+          // derives its entries from headings. All other exported text counts,
+          // including comments outside the main body and page-link labels.
+          sourceDoc
+            .querySelectorAll('nav[data-notion-toc], nav.table_of_contents')
+            .forEach((element) => element.remove());
           sourceDoc
             .querySelectorAll('[data-notion-equation]')
             .forEach(
@@ -302,22 +385,15 @@ try {
             if (!element.textContent.trim())
               element.textContent = element.getAttribute('data-emoji');
           });
-          const body = sourceDoc.querySelector('.page-body');
-          const sourceElements = body
-            ? [
-                body,
-                ...sourceDoc.querySelectorAll(
-                  'table.properties,header .page-description',
-                ),
-              ].filter(
-                (element, index, array) =>
-                  array.indexOf(element) === index &&
-                  !array.some(
-                    (parent) => parent !== element && parent.contains(element),
-                  ),
+          if (sourceDoc.querySelector('.page-body')) {
+            sourceDoc.querySelector('.page-title')?.remove();
+            sourceDoc
+              .querySelectorAll(
+                'article > header .page-icon, article > header .icon, article > header .page-cover-image',
               )
-            : [sourceDoc.body];
-          sourceParts.push(...sourceElements.map(sourceText));
+              .forEach((element) => element.remove());
+          }
+          sourceParts.push(sourceText(sourceDoc.body));
         } else if (/\.csv$/i.test(path))
           sourceParts.push(
             Papa.parse(new TextDecoder().decode(entry.bytes), {
@@ -366,6 +442,12 @@ try {
       const inline = (value) => {
         if (Array.isArray(value)) value.forEach(inline);
         else if (value && typeof value === 'object') {
+          if (typeof value.type === 'string') {
+            // Inline content (mentions, links) does not appear in the block
+            // walk; counting here keeps the saved-content inventory complete.
+            inlineTypeCounts[value.type] =
+              (inlineTypeCounts[value.type] ?? 0) + 1;
+          }
           if (value.styles)
             for (const key of Object.keys(value.styles))
               styleCounts[key] = (styleCounts[key] ?? 0) + 1;
@@ -397,7 +479,25 @@ try {
   }
   const uploads = new Set(),
     creates = new Set(),
-    saves = new Set();
+    saves = new Set(),
+    unsafeSavedUrls = [];
+  // Off-model check: the rich-text API rejects unknown URL protocols, so the
+  // audit fails if a saved block still carries one (this is what previously
+  // paused imports on `#`-anchor page links).
+  const scanUrls = (value) => {
+    if (Array.isArray(value)) return value.forEach(scanUrls);
+    if (!value || typeof value !== 'object') return;
+    for (const [key, item] of Object.entries(value)) {
+      if ((key === 'href' || key === 'url') && typeof item === 'string') {
+        if (item !== '' && !isUsableImportUrl(item))
+          unsafeSavedUrls.push({ key, url: item.slice(0, 120) });
+      }
+      if (item && typeof item === 'object') scanUrls(item);
+    }
+  };
+  const collectSaved = (blocks) => {
+    scanUrls(blocks);
+  };
   const session = {
     documentIdsByPath: new Map(
       plan.pages.map((p, index) => [p.path, `document-${index}`]),
@@ -406,7 +506,8 @@ try {
     completedPaths: new Set(),
     attachmentUrls: new Map(),
   };
-  await runBureauArchiveImport({
+  const covers = new Set();
+  const importResult = await runBureauArchiveImport({
     plan,
     session,
     createPage: async (page, id, parent) => {
@@ -415,25 +516,32 @@ try {
       creates.add(id);
     },
     parsePage: async (page) => parse(page),
-    mapBlocks: (blocks, resolveUrl) =>
+    mapBlocks: (blocks, resolveUrl, pageLinkResolvers) =>
       mapImportedAttachmentsAndLinks(blocks, {
         resolveAttachmentUrl: resolveUrl,
         preserveUnmappedAttachments: true,
         resolveLinkUrl: resolveUrl,
+        ...(pageLinkResolvers ?? {}),
       }),
     uploadAttachment: async (entry, id) => {
       uploads.add(entry.path);
       assert.deepEqual(
         entry.bytes,
-        (entry.path === plan.sourceFile.path
+        (entry === plan.sourceFile
           ? plan.sourceFile
           : plan.entriesByPath.get(entry.path)
         ).bytes,
       );
       return `https://files.example/${encodeURIComponent(entry.path)}`;
     },
+    applyPageCover: async (page, id, url) => {
+      assert.ok(creates.has(id));
+      assert.ok(isUsableImportUrl(url));
+      covers.add(page.path);
+    },
     savePage: async (id, blocks) => {
       saves.add(id);
+      collectSaved(blocks);
       BlockNoteEditor.create({
         schema,
         initialContent: JSON.parse(JSON.stringify(blocks)),
@@ -442,6 +550,13 @@ try {
     getPageUrl: (id) => `/bureau/${id}`,
     onProgress: () => {},
   });
+  const missingAttachmentPaths = [...plan.entriesByPath.keys()].filter(
+    (path) =>
+      (!plan.canonicalPathByPath.has(path) || /\.csv$/i.test(path)) &&
+      !uploads.has(path),
+  );
+  if (!uploads.has(plan.sourceFile.path))
+    missingAttachmentPaths.push(plan.sourceFile.path);
   console.log(
     JSON.stringify(
       {
@@ -463,6 +578,11 @@ try {
         missingTextCharacters,
         missingReferences,
         duplicateBlockIds,
+        unsafeSavedUrls,
+        missingAttachmentPaths,
+        failedPages: [...(session.failedPagesByPath ?? [])],
+        appliedCovers: covers.size,
+        inlineTypeCounts,
         typeCounts,
         styleCounts,
         created: creates.size,
@@ -483,7 +603,13 @@ try {
     formattingDifferences.length ||
     missingTextCharacters.length ||
     missingReferences.length ||
-    duplicateBlockIds
+    duplicateBlockIds ||
+    unsafeSavedUrls.length ||
+    missingAttachmentPaths.length ||
+    importResult.failedPageCount ||
+    session.completedPaths.size !== plan.pages.length ||
+    covers.size !==
+      plan.pages.filter((page) => page.coverSource !== undefined).length
   )
     process.exitCode = 1;
 } finally {

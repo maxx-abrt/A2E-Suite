@@ -1,3 +1,4 @@
+import { PUBLIC_LEGAL_PAGES } from '@/public-site/PublicLegalPages';
 import { msg } from '@lingui/core/macro';
 
 export const PUBLIC_SITE_PAGES = [
@@ -14,6 +15,7 @@ export const PUBLIC_SITE_PAGES = [
 
 export const PUBLIC_SITE_ROUTES = [
   ...PUBLIC_SITE_PAGES,
+  ...PUBLIC_LEGAL_PAGES,
   ...['bureau', 'agenda', 'bilan', 'archive', 'crm', 'syna'].map(
     (applicationId) => ({
       id: `app-${applicationId}`,

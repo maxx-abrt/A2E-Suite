@@ -1,3 +1,4 @@
+import { getA2eApplicationLogo } from '@/a2e-workspace/utils/getA2eApplicationLogo';
 import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
 import {
   StyledSettingsCardContent,
@@ -75,7 +76,11 @@ export const A2eSuiteApplicationCard = ({
       <Card rounded fullWidth>
         <StyledSettingsCardContent alignItems="flex-start" fullHeight>
           <Avatar
-            avatarUrl={application.logoUrl ?? null}
+            avatarUrl={
+              getA2eApplicationLogo(application.id) ??
+              application.logoUrl ??
+              null
+            }
             placeholder={application.name}
             placeholderColorSeed={application.name}
             size="lg"

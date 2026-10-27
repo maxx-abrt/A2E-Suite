@@ -9,6 +9,7 @@ import {
   type BureauArchiveImportSession,
 } from '@/blocknote-editor/import/utils/bureauArchiveImport';
 import { readZipEntries } from '@/blocknote-editor/import/utils/zipArchiveCodec';
+import { stripNotionEntryHash } from '@/blocknote-editor/import/utils/documentsTransferEntries';
 import { BureauImportReview } from '@/bureau/components/BureauImportReview';
 import { BUREAU_TREE_RECORD_GQL_FIELDS } from '@/bureau/constants/BureauTreeRecordGqlFields';
 import { getBureauAncestors } from '@/bureau/utils/getBureauAncestors';
@@ -318,11 +319,12 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
           page.format === 'html'
             ? parseHtmlWithBlockNote(page.content)
             : parseMarkdownWithBlockNote(page.content),
-        mapBlocks: (blocks, resolveUrl) =>
+        mapBlocks: (blocks, resolveUrl, pageLinkResolvers) =>
           mapImportedAttachmentsAndLinks(blocks, {
             preserveUnmappedAttachments: true,
             resolveAttachmentUrl: resolveUrl,
             resolveLinkUrl: resolveUrl,
+            ...(pageLinkResolvers ?? {}),
           }),
         uploadAttachment: async (entry, documentId) => {
           const file = new File(
@@ -341,6 +343,19 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
           );
           return uploaded.attachmentAbsoluteURL;
         },
+        applyPageCover: async (page, documentId, url) => {
+          // Attachment host URLs are absolute; anything else would not render
+          // as a cover image, so it is treated as unavailable.
+          if (!/^https?:\/\//i.test(url)) {
+            throw new Error('Cover URL is not renderable');
+          }
+          await updateOneRecord({
+            objectNameSingular: 'document',
+            idToUpdate: documentId,
+            recordGqlFields: { id: true, coverImage: true },
+            updateOneRecordInput: { coverImage: url },
+          });
+        },
         savePage: async (documentId, blocks) => {
           await updateOneRecord({
             objectNameSingular: 'document',
@@ -358,7 +373,12 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
         onProgress: (completed) => setCompletedCount(completed),
       });
       setWarningCount(result.warningCount);
-      setStatus('complete');
+      const allPagesFailed = session.completedPaths.size === 0;
+      setStatus(allPagesFailed ? 'failed' : 'complete');
+      if (allPagesFailed)
+        setErrorMessage(
+          t`None of the pages received their content. The page structure was created; Retry import continues without duplicates once the import can reach the workspace.`,
+        );
       if (destinationParentId) expandPageIds([destinationParentId]);
       resyncDocuments();
     } catch (error) {
@@ -531,7 +551,30 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
       {errorMessage && <StyledError role="alert">{errorMessage}</StyledError>}
       {status === 'complete' && (
         <>
-          <p role="status">{t`Import complete: ${completedCount} pages.`}</p>
+          <p role="status">
+            {t`Import complete: ${completedCount} pages.`}
+            {(session?.failedPagesByPath?.size ?? 0) > 0 &&
+              t` ${session?.failedPagesByPath?.size ?? 0} page(s) need retry.`}
+          </p>
+          {(session?.failedPagesByPath?.size ?? 0) > 0 && (
+            <details>
+              <summary>
+                {t`${session?.failedPagesByPath?.size} pages need retry`}
+              </summary>
+              <StyledDescription>
+                {t`These pages have pending content, links, files or covers. Retry import continues the missing work without duplicating completed uploads or pages.`}
+              </StyledDescription>
+              <ul>
+                {[...(session?.failedPagesByPath?.entries() ?? [])].map(
+                  ([path, message]) => (
+                    <li
+                      key={path}
+                    >{`${stripNotionEntryHash(path)} — ${message}`}</li>
+                  ),
+                )}
+              </ul>
+            </details>
+          )}
           {warningCount > 0 && (
             <details>
               <summary>{t`${warningCount} items need review`}</summary>
@@ -566,7 +609,8 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
           disabled={isBusy}
           onClick={() => closeModal(BUREAU_IMPORT_MODAL_ID)}
         />
-        {status === 'complete' ? (
+        {status === 'complete' &&
+        (session?.failedPagesByPath?.size ?? 0) === 0 ? (
           <Button
             title={t`Open imported pages`}
             ariaLabel={t`Open imported pages`}
@@ -581,12 +625,8 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
           />
         ) : (
           <Button
-            title={
-              status === 'failed' && plan ? t`Retry import` : t`Import pages`
-            }
-            ariaLabel={
-              status === 'failed' && plan ? t`Retry import` : t`Import pages`
-            }
+            title={hasStartedImport ? t`Retry import` : t`Import pages`}
+            ariaLabel={hasStartedImport ? t`Retry import` : t`Import pages`}
             accent="blue"
             disabled={
               !plan ||

@@ -1,11 +1,8 @@
+import { getA2eHelpDocUrl } from '@/a2e-help/utils/getA2eHelpDocUrl';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import {
-  A2E_HELP_DOC_PAGES,
-  A2E_HELP_DOCS_BASE_URL,
-  getA2eHelpDocUrl,
-} from '@/a2e-help/constants/A2eHelpDocPages';
+import { A2E_HELP_DOC_PAGES } from '@/a2e-help/constants/A2eHelpDocPages';
 
 const BASE_STRUCTURE_PATH = join(
   __dirname,
@@ -33,10 +30,10 @@ const readA2eSuiteSlugs = (): string[] => {
 };
 
 describe('A2eHelpDocPages', () => {
-  it('links to the docs site canonical base without a trailing slash', () => {
-    expect(A2E_HELP_DOCS_BASE_URL).toBe('https://docs.twenty.com');
+  it('links to the fork-owned documentation source', () => {
+    expect(getA2eHelpDocUrl('bureau')).toBe('https://a2esuite.com/apps/bureau');
     expect(getA2eHelpDocUrl('gettingStarted')).toBe(
-      'https://docs.twenty.com/user-guide/a2e-suite/getting-started',
+      'https://a2esuite.com/getting-started',
     );
   });
 

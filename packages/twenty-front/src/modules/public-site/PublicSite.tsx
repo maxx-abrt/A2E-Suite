@@ -1,3 +1,5 @@
+import { PublicLegalPage } from '@/public-site/PublicLegalPage';
+import { PUBLIC_LEGAL_PAGES } from '@/public-site/PublicLegalPages';
 import { PublicWorkspaceComposition } from '@/public-site/PublicWorkspaceComposition';
 import { PUBLIC_SITE_APPLICATIONS } from '@/public-site/PublicSiteContent';
 import { PublicSiteShell } from '@/public-site/PublicSiteShell';
@@ -21,6 +23,10 @@ import { Helmet } from '@dr.pogodin/react-helmet';
 export const PublicSite = () => {
   const { t, i18n } = useLingui();
   const { pathname } = useLocation();
+  const legalPage = PUBLIC_LEGAL_PAGES.find(
+    (entry) => entry.path === pathname.replace(/\/$/, ''),
+  );
+  if (legalPage) return <PublicLegalPage page={legalPage} />;
   const page = PUBLIC_SITE_PAGES.find(
     (entry) => entry.path === pathname.replace(/\/$/, ''),
   );
@@ -61,11 +67,12 @@ export const PublicSite = () => {
     <PublicSiteShell>
       <Helmet>
         <title>{pageTitle}</title>
+        <link rel="canonical" href={`https://a2esuite.com${pathname}`} />
         <meta name="description" content={description} />
         <meta property="og:site_name" content="A2E Suite" />
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={description} />
-        <link rel="icon" type="image/svg+xml" href="/website/a2e-mark.svg" />
+        <link rel="icon" type="image/png" href="/branding/favicon-32.png" />
       </Helmet>
       <PublicSiteHero
         eyebrow={

@@ -9,10 +9,10 @@ import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
-  IconBrandX,
+  IconBrandGithub,
+  IconHelpCircle,
   IconBriefcase,
   IconTransform,
-  useIcons,
   type IconComponent,
 } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
@@ -57,21 +57,19 @@ type SettingsCommunityLink = {
 
 export const SettingsCommunity = () => {
   const { theme } = useContext(ThemeContext);
-  const { getIcon } = useIcons();
-  const IconBrandDiscord = getIcon('IconBrandDiscord');
 
   const socialLinks: SettingsCommunityLink[] = [
     {
-      href: 'https://discord.com/invite/cx5n4Jzs57',
-      Icon: IconBrandDiscord,
+      href: 'https://github.com/maxx-abrt/A2E-Suite/issues',
+      Icon: IconHelpCircle,
       iconColor: themeCssVariables.color.blue9,
-      cardTitle: t`Join our Discord`,
+      cardTitle: t`Get help and report an issue`,
     },
     {
-      href: 'https://x.com/twentycrm',
-      Icon: IconBrandX,
+      href: 'https://github.com/maxx-abrt/A2E-Suite',
+      Icon: IconBrandGithub,
       iconColor: themeCssVariables.font.color.primary,
-      cardTitle: t`Follow us on X`,
+      cardTitle: t`Explore A2E Suite on GitHub`,
     },
   ];
 
@@ -126,11 +124,11 @@ export const SettingsCommunity = () => {
 
         <Section>
           <H2Title
-            title={t`Partners`}
-            description={t`Hire a partner to help you implement and customize A2E Suite.`}
+            title={t`Setup and support`}
+            description={t`Find guides to set up and customize A2E Suite.`}
           />
           <StyledCardLink
-            href="https://twenty.com/partners/list"
+            href="https://github.com/maxx-abrt/A2E-Suite/tree/main/docs"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -141,7 +139,7 @@ export const SettingsCommunity = () => {
                   stroke={theme.icon.stroke.sm}
                 />
               }
-              title={t`Browse partners`}
+              title={t`Browse guides`}
             />
           </StyledCardLink>
         </Section>
@@ -154,7 +152,7 @@ export const SettingsCommunity = () => {
           <StyledFeaturesContent>
             <SettingsLabContent />
             <StyledCardLink
-              href="https://twenty.com/releases"
+              href="https://github.com/maxx-abrt/A2E-Suite/commits/main"
               target="_blank"
               rel="noopener noreferrer"
             >

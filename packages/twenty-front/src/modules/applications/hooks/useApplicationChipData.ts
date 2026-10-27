@@ -1,3 +1,5 @@
+import { A2E_BRAND_LOGOS } from '@/a2e-workspace/constants/A2eBrandLogos';
+import { getA2eApplicationLogo } from '@/a2e-workspace/utils/getA2eApplicationLogo';
 import {
   type ApplicationAvatarColors,
   useApplicationAvatarColors,
@@ -15,6 +17,7 @@ type UseApplicationChipDataArgs = {
   applicationId?: string | null;
   fallbackApplicationData?: {
     logoUrl?: string | null;
+    universalIdentifier?: string | null;
     name?: string | null;
   };
 };
@@ -24,6 +27,7 @@ type ApplicationChipData = {
   seed: string;
   colors?: ApplicationAvatarColors;
   logo?: string;
+  brandLogo?: string;
 };
 
 type UseApplicationChipDataReturnType = {
@@ -45,6 +49,9 @@ export const useApplicationChipData = ({
   if (!isDefined(application)) {
     return {
       applicationChipData: {
+        brandLogo: isTwentyStandardApplication(fallbackApplicationData)
+          ? A2E_BRAND_LOGOS.suite
+          : getA2eApplicationLogo(fallbackApplicationData?.universalIdentifier),
         name: fallbackApplicationData?.name ?? '',
         logo: fallbackApplicationData?.logoUrl ?? '',
         seed: fallbackApplicationData?.name ?? '',
@@ -70,6 +77,9 @@ export const useApplicationChipData = ({
 
   return {
     applicationChipData: {
+      brandLogo: isStandard
+        ? A2E_BRAND_LOGOS.suite
+        : getA2eApplicationLogo(application.universalIdentifier),
       name: displayName,
       seed: application.name,
       colors,

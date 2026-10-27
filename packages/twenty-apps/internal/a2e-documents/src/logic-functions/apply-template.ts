@@ -34,6 +34,7 @@ const handler = async (payload: ApplyTemplateRequest) =>
     new CoreApiClient(),
     {
       key: typeof payload?.key === 'string' ? payload.key : '',
+      locale: typeof payload?.locale === 'string' ? payload.locale : null,
       inputs: payload?.inputs ?? null,
       operationId: payload?.operationId ?? null,
     },

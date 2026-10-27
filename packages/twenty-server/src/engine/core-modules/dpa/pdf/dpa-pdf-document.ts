@@ -150,6 +150,28 @@ export const buildDpaPdfDocumentElement = (
     createElement(Text, {}, `Last Updated: ${resolved.lastUpdatedLabel}`),
   );
 
+  const executionStartIndex = resolved.blocks.findIndex(
+    (block) => block.kind === 'heading' && block.text === 'Execution',
+  );
+  // Keep the accepting person and timestamp together in printed copies.
+  const documentBlocks =
+    executionStartIndex < 0
+      ? resolved.blocks.map((block, index) => renderBlock(block, index))
+      : [
+          ...resolved.blocks
+            .slice(0, executionStartIndex)
+            .map((block, index) => renderBlock(block, index)),
+          createElement(
+            View,
+            { key: 'acceptance', wrap: false },
+            ...resolved.blocks
+              .slice(executionStartIndex)
+              .map((block, index) =>
+                renderBlock(block, executionStartIndex + index),
+              ),
+          ),
+        ];
+
   const page = createElement(
     Page,
     { size: 'A4', style: styles.page, wrap: true },
@@ -160,7 +182,7 @@ export const buildDpaPdfDocumentElement = (
       { style: styles.lastUpdated },
       `Last Updated: ${resolved.lastUpdatedLabel}`,
     ),
-    ...resolved.blocks.map((block, index) => renderBlock(block, index)),
+    ...documentBlocks,
     footer,
   );
 

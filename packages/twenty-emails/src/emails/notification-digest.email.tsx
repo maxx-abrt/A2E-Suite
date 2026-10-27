@@ -16,7 +16,7 @@ export const NotificationDigestEmail = ({
   const i18n = createI18nInstance(locale);
 
   return (
-    <BaseEmail width={333} locale={locale}>
+    <BaseEmail width={333} locale={locale} publicUrl={link}>
       <Title value={i18n._('New notifications')} />
       <>
         {items.map((item, index) => (

@@ -1,3 +1,4 @@
+import { getA2eApplicationLogo } from '@/a2e-workspace/utils/getA2eApplicationLogo';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
@@ -178,7 +179,10 @@ export const InstallAppsContent = ({
               return (
                 <StyledAppRow key={app.universalIdentifier}>
                   <Avatar
-                    avatarUrl={getAbsoluteImageUrl(app.logoUrl)}
+                    avatarUrl={
+                      getA2eApplicationLogo(app.universalIdentifier) ??
+                      getAbsoluteImageUrl(app.logoUrl)
+                    }
                     placeholder={labelText}
                     placeholderColorSeed={app.universalIdentifier}
                     size="lg"

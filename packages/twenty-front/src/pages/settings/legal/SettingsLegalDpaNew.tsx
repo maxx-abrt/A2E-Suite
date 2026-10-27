@@ -140,7 +140,7 @@ export const SettingsLegalDpaNew = () => {
         <Section>
           <H2Title
             title={t`Your details`}
-            description={t`The PDF is pre-signed by A2E Suite and executed with your legal entity and authorized signatory.`}
+            description={t`The PDF records your acceptance of the A2E Suite processing terms with your legal entity and authorized representative. It does not generate a signature for the service operator.`}
           />
           <SettingsTextInput
             instanceId="dpa-legal-entity-name"

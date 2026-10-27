@@ -6,11 +6,17 @@
 export type StarterDocumentTemplate = {
   title: string;
   markdown: string;
+  english?: { title: string; markdown: string };
 };
 
 export const STARTER_DOCUMENT_TEMPLATES: StarterDocumentTemplate[] = [
   {
     title: 'Modèle — Notes de réunion',
+    english: {
+      title: 'Meeting notes',
+      markdown:
+        '# Meeting notes\n\n## Participants\n\n## Agenda\n\n## Decisions\n\n## Actions\n',
+    },
     markdown:
       '# Notes de réunion\n\n## Participants\n\n## Ordre du jour\n\n## Décisions\n\n## Actions\n',
   },
@@ -26,21 +32,41 @@ export const STARTER_DOCUMENT_TEMPLATES: StarterDocumentTemplate[] = [
   },
   {
     title: 'Modèle — Entretien individuel',
+    english: {
+      title: 'One-on-one',
+      markdown:
+        '# One-on-one\n\n## Agenda\n\n## Follow-up from last time\n\n## Progress\n\n## Obstacles\n\n## Actions\n\n## Next meeting\n',
+    },
     markdown:
       '# Entretien individuel\n\n## Agenda\n\n## Points de la dernière fois\n\n## Ce qui avance\n\n## Obstacles\n\n## Actions\n\n## Prochain rendez-vous\n',
   },
   {
     title: 'Modèle — Journal',
+    english: {
+      title: 'Journal',
+      markdown:
+        '# Journal\n\n## Date\n\n## Mood\n\n## Highlights\n\n## What I learned\n\n## Gratitude\n\n## Tomorrow\n',
+    },
     markdown:
       '# Journal\n\n## Date\n\n## Humeur\n\n## Faits marquants\n\n## Ce que j’ai appris\n\n## Gratitude\n\n## Demain\n',
   },
   {
     title: 'Modèle — Revue hebdomadaire',
+    english: {
+      title: 'Weekly review',
+      markdown:
+        '# Weekly review\n\n## Progress\n\n## Blockers\n\n## Lessons\n\n## Priorities for next week\n',
+    },
     markdown:
       '# Revue hebdomadaire\n\n## Ce qui a avancé\n\n## Ce qui a bloqué\n\n## Leçons\n\n## Priorités de la semaine prochaine\n',
   },
   {
     title: 'Modèle — Note quotidienne',
+    english: {
+      title: 'Daily note',
+      markdown:
+        '# Daily note\n\n## Date\n\n## Today’s priorities\n\n## Notes\n\n## Ideas\n\n## Tomorrow\n',
+    },
     markdown:
       '# Note quotidienne\n\n## Date\n\n## Priorités du jour\n\n## Notes\n\n## Idées\n\n## Demain\n',
   },
@@ -61,6 +87,11 @@ export const STARTER_DOCUMENT_TEMPLATES: StarterDocumentTemplate[] = [
   },
   {
     title: 'Modèle — Ordre du jour récurrent',
+    english: {
+      title: 'Recurring meeting agenda',
+      markdown:
+        '# Recurring meeting agenda\n\n## Participants\n\n## Recurring topics\n\n## Action follow-up\n\n## New topics\n\n## Next meeting\n',
+    },
     markdown:
       '# Ordre du jour récurrent\n\n## Participants\n\n## Points récurrents\n\n## Suivi des actions\n\n## Nouveaux sujets\n\n## Prochaine réunion\n',
   },
@@ -81,16 +112,31 @@ export const STARTER_DOCUMENT_TEMPLATES: StarterDocumentTemplate[] = [
   },
   {
     title: 'Modèle — Liste de lecture',
+    english: {
+      title: 'Reading list',
+      markdown:
+        '# Reading list\n\n## To read\n\n## In progress\n\n## Finished\n\n## Notes\n',
+    },
     markdown:
       '# Liste de lecture\n\n## À lire\n\n## En cours\n\n## Terminé\n\n## Notes\n',
   },
   {
     title: 'Modèle — Notes de cours (Cornell)',
+    english: {
+      title: 'Course notes (Cornell)',
+      markdown:
+        '# Course notes (Cornell)\n\n## Cues and questions\n\n## Notes\n\n## Summary\n',
+    },
     markdown:
       '# Notes de cours (Cornell)\n\n## Indices et questions\n\n## Notes\n\n## Résumé\n',
   },
   {
     title: 'Modèle — Plan de thèse',
+    english: {
+      title: 'Thesis planner',
+      markdown:
+        '# Thesis planner\n\n## Topic\n\n## Research question\n\n## Hypotheses\n\n## Methodology\n\n## Chapters\n\n## Deadlines\n\n## Bibliography\n',
+    },
     markdown:
       '# Plan de thèse\n\n## Sujet\n\n## Question de recherche\n\n## Hypothèses\n\n## Méthodologie\n\n## Chapitres\n\n## Échéances\n\n## Bibliographie\n',
   },

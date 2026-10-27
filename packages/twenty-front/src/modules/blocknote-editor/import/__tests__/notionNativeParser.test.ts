@@ -21,6 +21,7 @@ it('parses and reloads Notion structure with the real BlockNote and multi-column
       const modulePath = join(directory, 'import.cjs');
       buildSync({
         stdin: {contents: [
+          'export {planBureauArchiveImport} from "./packages/twenty-front/src/modules/blocknote-editor/import/utils/bureauArchiveImport.ts";',
           'export {prepareNotionHtml} from "./packages/twenty-front/src/modules/blocknote-editor/import/utils/prepareNotionHtml.ts";',
           'export {mapImportedAttachmentsAndLinks} from "./packages/twenty-front/src/modules/blocknote-editor/import/utils/mapImportedAttachmentsAndLinks.ts";',
         ].join('\n'), resolveDir: root, loader: 'ts'},
@@ -32,21 +33,37 @@ it('parses and reloads Notion structure with the real BlockNote and multi-column
         if (dom.window[name]) globalThis[name] = dom.window[name];
       }
       Object.defineProperty(globalThis, 'navigator', {value: dom.window.navigator, configurable: true});
-      const {BlockNoteEditor, BlockNoteSchema, defaultBlockSpecs, createBlockSpec} = await import('@blocknote/core');
+      const {BlockNoteEditor, BlockNoteSchema, defaultBlockSpecs, defaultInlineContentSpecs, createBlockSpec, createInlineContentSpec} = await import('@blocknote/core');
       const {withMultiColumn} = await import('@blocknote/xl-multi-column');
-      const {prepareNotionHtml, mapImportedAttachmentsAndLinks} = require(modulePath);
+      const {prepareNotionHtml, mapImportedAttachmentsAndLinks, planBureauArchiveImport} = require(modulePath);
       const callout = createBlockSpec({type: 'callout', propSchema: {emoji: {default: '💡'}, backgroundColor: {default: 'default'}, textColor: {default: 'default'}}, content: 'inline'}, {
         render() { const element = document.createElement('div'); return {dom: element, contentDOM: element}; },
       });
       const file = createBlockSpec({type: 'file', propSchema: {url: {default: ''}, name: {default: ''}, fileCategory: {default: 'OTHER'}}, content: 'none'}, {
         render() { return {dom: document.createElement('div')}; },
       });
-      const schema = withMultiColumn(BlockNoteSchema.create({blockSpecs: {...defaultBlockSpecs, callout: callout(), file: file()}}));
+      const mention = createInlineContentSpec(
+        {type: 'mention', propSchema: {recordId: {default: ''}, objectNameSingular: {default: ''}, label: {default: ''}, imageUrl: {default: ''}}, content: 'none'},
+        {
+          parse: (element) => {
+            const recordId = element.getAttribute('data-record-id');
+            if (!recordId) return undefined;
+            return {
+              recordId,
+              objectNameSingular: element.getAttribute('data-object-name-singular') ?? undefined,
+              label: element.getAttribute('data-label') ?? undefined,
+              imageUrl: element.getAttribute('data-image-url') ?? undefined,
+            };
+          },
+          render() { return {dom: document.createElement('span')}; },
+        },
+      );
+      const schema = withMultiColumn(BlockNoteSchema.create({blockSpecs: {...defaultBlockSpecs, callout: callout(), file: file()}, inlineContentSpecs: {...defaultInlineContentSpecs, mention}}));
       const editor = BlockNoteEditor.create({schema});
       const parse = (html) => {
         const prepared = prepareNotionHtml(html);
         return mapImportedAttachmentsAndLinks(editor.tryParseHTMLToBlocks(prepared.html), {
-          resolveAttachmentUrl: prepared.restoreUrl, resolveLinkUrl: prepared.restoreUrl,
+          resolveAttachmentUrl: prepared.restoreUrl, resolveLinkUrl: prepared.restoreUrl, allowArchiveRelativeUrls: true,
         }).blocks;
       };
       const blocks = parse('<div class="column-list"><div class="column" style="width:30%"><h2>Left</h2><figure class="callout"><div><span class="icon">⚠️</span></div><div><p>Keep <strong>bold</strong></p><table><tbody><tr><td><a href="Child.html">Child</a></td></tr></tbody></table></div></figure></div><div class="column" style="width:70%"><ul class="to-do-list"><li><span class="checkbox checkbox-on"></span>Done<ul><li>Nested</li></ul></li></ul><details><summary>Toggle</summary><p>Hidden content</p></details><figure class="file"><a href="report.pdf">Report.pdf</a></figure><video><source src="demo.mp4"></video><audio><source src="voice.mp3"></audio><figure><img src="photo.png"><figcaption>Photo caption</figcaption></figure><pre><code class="language-js">const value = 1;\n</code></pre></div></div>');
@@ -58,6 +75,11 @@ it('parses and reloads Notion structure with the real BlockNote and multi-column
       assert.equal(find('callout').props.emoji, '⚠️');
       assert.ok(find('callout').content.some((item) => item.styles?.bold));
       assert.equal(find('callout').children[0].type, 'table');
+      // A page link inside a table cell is a relation chip; the placeholder
+      // keeps the archive target for the import runner to resolve.
+      assert.ok(
+        JSON.stringify(find('table')).includes('"type":"mention"'),
+      );
       assert.ok(JSON.stringify(find('table')).includes('Child.html'));
       assert.equal(find('checkListItem').props.checked, true);
       assert.ok(JSON.stringify(find('checkListItem').children).includes('Nested'));
@@ -88,6 +110,14 @@ it('parses and reloads Notion structure with the real BlockNote and multi-column
       assert.ok(fidelity.includes('https://example.com'));
       assert.ok(fidelity.includes('frac{1}{2}'));
       assert.ok(!fidelity.includes('rendered formula fallback'));
+      const plan = planBureauArchiveImport([{path: 'Home.html', bytes: new TextEncoder().encode('<article><header><h1 class="page-title">Home</h1><img class="page-icon notion-static-icon" src="https://www.notion.so/icons/book_gray.svg"><p>Header metadata</p></header><div class="page-body"><p>Reports<a href="https://example.com">link</a>mettait</p><table><tr><td><a href="Progress% report.html#notes">Progress</a></td></tr></table></div><footer><p>Exported comment</p></footer></article>')}]);
+      const retained = parse(plan.pages[0].content);
+      const serialized = JSON.stringify(retained);
+      assert.ok(serialized.includes('https://www.notion.so/icons/book_gray.svg'));
+      assert.ok(serialized.includes('Header metadata'));
+      assert.ok(serialized.includes('Exported comment'));
+      assert.ok(serialized.includes('Progress% report.html#notes'));
+      assert.deepEqual(BlockNoteEditor.create({schema, initialContent: JSON.parse(serialized)}).document, retained);
       console.log('PASS native Notion parser and serialized reload');
     } finally { rmSync(directory, {recursive: true, force: true}); }
   `;

@@ -1,3 +1,4 @@
+import { IconAgenda } from '@/a2e-workspace/components/A2eAppLogo';
 import { A2eCustomizeAction } from '@/a2e-customize/components/A2eCustomizeAction';
 import { A2eContextualEmptyState } from '@/a2e-empty-state/components/A2eContextualEmptyState';
 import { AGENDA_LANDING_TEMPLATE_CATEGORY } from '@/calendar/constants/AgendaLandingTemplateCategory';
@@ -38,9 +39,12 @@ const StyledTitleGroup = styled.div`
 `;
 
 const StyledTitle = styled.h1`
+  align-items: center;
   color: ${themeCssVariables.font.color.primary};
+  display: flex;
   font-size: ${themeCssVariables.font.size.lg};
   font-weight: ${themeCssVariables.font.weight.semiBold};
+  gap: ${themeCssVariables.spacing[3]};
   margin: 0;
 `;
 
@@ -80,7 +84,10 @@ export const AgendaLanding = ({
   return (
     <StyledLanding data-testid="agenda-landing">
       <StyledTitleGroup>
-        <StyledTitle>{t`Agenda`}</StyledTitle>
+        <StyledTitle>
+          <IconAgenda size={40} />
+          {t`Agenda`}
+        </StyledTitle>
         <StyledSubtitle>
           {t`Your week at a glance, with starters to shape it.`}
         </StyledSubtitle>

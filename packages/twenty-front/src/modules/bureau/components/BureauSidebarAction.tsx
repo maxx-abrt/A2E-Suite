@@ -10,6 +10,7 @@ type BureauSidebarActionProps = {
   onClick?: () => void;
   isActive?: boolean;
   hint?: ReactNode;
+  alwaysShowHint?: boolean;
 };
 
 export const BureauSidebarAction = ({
@@ -20,6 +21,7 @@ export const BureauSidebarAction = ({
   onClick,
   isActive = false,
   hint,
+  alwaysShowHint = false,
 }: BureauSidebarActionProps) => (
   <div data-testid={testId}>
     <NavigationDrawerItem
@@ -29,6 +31,7 @@ export const BureauSidebarAction = ({
       onClick={onClick}
       active={isActive}
       rightOptions={hint}
+      alwaysShowRightOptions={alwaysShowHint}
       triggerEvent="CLICK"
     />
   </div>

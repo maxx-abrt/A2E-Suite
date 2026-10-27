@@ -44,7 +44,7 @@ export const SendInviteLinkEmail = ({
   const workspaceName = workspace.name;
 
   return (
-    <BaseEmail width={333} locale={locale}>
+    <BaseEmail width={333} locale={locale} publicUrl={link}>
       <Title value={i18n._('Join your team on A2E Suite')} />
       <MainText>
         <Trans
@@ -83,13 +83,13 @@ export const SendInviteLinkEmail = ({
 };
 
 SendInviteLinkEmail.PreviewProps = {
-  link: 'https://app.twenty.com/invite/123',
+  link: 'https://a2esuite.com/invite/123',
   workspace: {
     name: 'Acme Inc.',
     logo: 'https://fakeimg.pl/200x200/?text=ACME&font=lobster',
   },
   sender: { email: 'john.doe@example.com', firstName: 'John', lastName: 'Doe' },
-  serverUrl: 'https://app.twenty.com',
+  serverUrl: 'https://a2esuite.com',
   locale: 'en',
 } as SendInviteLinkEmailProps;
 

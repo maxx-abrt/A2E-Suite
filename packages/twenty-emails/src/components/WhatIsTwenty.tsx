@@ -12,7 +12,7 @@ export const WhatIsTwenty = ({ i18n }: WhatIsTwentyProps) => {
       <SubTitle value={i18n._('What is A2E Suite?')} />
       <MainText>
         {i18n._(
-          "It's a CRM, a software to help businesses manage their customer data and relationships efficiently.",
+          'A connected workspace for knowledge, projects, calendars and finances. Choose the applications that fit your work.',
         )}
       </MainText>
     </>

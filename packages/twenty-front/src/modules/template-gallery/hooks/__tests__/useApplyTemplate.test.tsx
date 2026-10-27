@@ -4,6 +4,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { type TemplateGalleryItem } from '@/template-gallery/types/TemplateGalleryItem';
 import { act, renderHook } from '@testing-library/react';
 
+jest.mock('@lingui/react', () => ({
+  useLingui: () => ({ i18n: { locale: 'en-US' } }),
+}));
+
 const mockExecute = jest.fn();
 const mockAgendaApply = jest.fn();
 const mockSynaApply = jest.fn();
@@ -63,6 +67,16 @@ describe('useApplyTemplate', () => {
         state === applicationsSelector ? applications : functions,
       );
     mockExecute.mockResolvedValue(applied());
+  });
+  it('passes the selected locale to the installed template function', async () => {
+    const { result } = renderHook(useApplyTemplate);
+    await act(async () => {
+      await result.current.applyTemplate(item('notes-de-cours-cornell'));
+    });
+    expect(mockExecute.mock.calls[0][0].variables.input.payload).toMatchObject({
+      key: 'notes-de-cours-cornell',
+      locale: 'en-US',
+    });
   });
   it('keeps retries idempotent while giving different templates separate identities', async () => {
     const { result } = renderHook(useApplyTemplate);
