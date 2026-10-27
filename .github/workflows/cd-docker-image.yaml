@@ -31,10 +31,11 @@ env:
 
 jobs:
   build-and-push:
-    timeout-minutes: 90
+    timeout-minutes: 120
     runs-on: ubuntu-latest
     env:
       HAS_COOLIFY_DEPLOY_WEBHOOK: ${{ secrets.COOLIFY_DEPLOY_WEBHOOK != '' }}
+      HAS_COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -175,20 +176,41 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
-      # Optional zero-touch deploys: set the repo secret COOLIFY_DEPLOY_WEBHOOK
-      # to the "Deploy Webhook" URL Coolify shows on the resource, and every
-      # green run redeploys the stack right after the image is pushed.
-      # Only the presence flag is job-wide; build scripts must not receive the webhook secret.
+      - name: Deploy tested release to Coolify
+        id: deploy-api
+        if: steps.promote.outputs.channel_promoted == 'true' && env.HAS_COOLIFY_API_TOKEN == 'true'
+        timeout-minutes: 35
+        env:
+          COOLIFY_URL: ${{ vars.COOLIFY_URL }}
+          COOLIFY_APPLICATION_UUID: ${{ vars.COOLIFY_APPLICATION_UUID }}
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+          A2E_RELEASE_IMAGE: ${{ env.IMAGE }}@${{ steps.build.outputs.digest }}
+          A2E_RELEASE_REVISION: ${{ github.sha }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          A2E_PUBLIC_URL: ${{ vars.A2E_PUBLIC_URL }}
+        run: |
+          if [ -z "$A2E_PUBLIC_URL" ]; then
+            echo "A2E_PUBLIC_URL is required for production release verification" >&2
+            exit 1
+          fi
+          current_main=$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)
+          if [ "$current_main" != "$A2E_RELEASE_REVISION" ]; then
+            echo 'Main advanced after promotion; refusing to deploy stale code.' >&2
+            exit 1
+          fi
+          node packages/twenty-docker/scripts/deploy-coolify-release.mjs
+
+      # Retained for existing installations; the authenticated digest path takes precedence.
       - name: Trigger Coolify redeploy
         id: deploy
-        if: steps.promote.outputs.channel_promoted == 'true' && env.HAS_COOLIFY_DEPLOY_WEBHOOK == 'true'
+        if: steps.promote.outputs.channel_promoted == 'true' && env.HAS_COOLIFY_API_TOKEN != 'true' && env.HAS_COOLIFY_DEPLOY_WEBHOOK == 'true'
         env:
           COOLIFY_DEPLOY_WEBHOOK: ${{ secrets.COOLIFY_DEPLOY_WEBHOOK }}
         run: curl --fail --silent --show-error --max-time 60 -X POST "$COOLIFY_DEPLOY_WEBHOOK"
 
       - name: Verify deployed account entry
         timeout-minutes: 10
-        if: steps.deploy.outcome == 'success' && vars.A2E_PUBLIC_URL != ''
+        if: (steps.deploy-api.outcome == 'success' || steps.deploy.outcome == 'success') && vars.A2E_PUBLIC_URL != ''
         env:
           A2E_PUBLIC_URL: ${{ vars.A2E_PUBLIC_URL }}
           EXPECTED_REVISION: ${{ github.sha }}
@@ -204,6 +226,6 @@ jobs:
           exit 1
 
       - name: Report deployment verification configuration
-        if: steps.deploy.outcome != 'success' || vars.A2E_PUBLIC_URL == ''
+        if: (steps.deploy-api.outcome != 'success' && steps.deploy.outcome != 'success') || vars.A2E_PUBLIC_URL == ''
         run: |
-          echo 'Image published; live deployment is unverified. Configure COOLIFY_DEPLOY_WEBHOOK and A2E_PUBLIC_URL to verify it automatically.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Image published; live deployment is unverified. Configure COOLIFY_API_TOKEN, COOLIFY_URL, COOLIFY_APPLICATION_UUID and A2E_PUBLIC_URL to deploy and verify automatically.' >> "$GITHUB_STEP_SUMMARY"

@@ -60,6 +60,46 @@ main reruns publish identity tags without rolling back the channel; release tags
 do not move `latest`. A release tag must match `package.json`. Unique build tags
 are also published; production should still use the digest to distinguish reruns.
 
+## Automatic digest-pinned main deployments
+
+The CD workflow supports an authenticated Coolify API path. Set these repository
+Actions settings once; never place the token in a repository variable:
+
+| Kind | Name | Value |
+| --- | --- | --- |
+| Secret | `COOLIFY_API_TOKEN` | Dedicated team token with `read`, `write`, and `deploy`; it updates the image variable/application revision and queues a deployment. |
+| Variable | `COOLIFY_URL` | Coolify HTTPS origin, without `/api/v1` or `/mcp`. |
+| Variable | `COOLIFY_APPLICATION_UUID` | Exactly one existing production application UUID. |
+| Variable | `A2E_PUBLIC_URL` | The application's public HTTPS origin. Required before an API deployment can begin. |
+
+Turn off Coolify's Git-push auto-deploy on this application. The CD workflow must
+own deployment after candidate acceptance; Git-push auto-deploy can run before a
+new image exists. Keep the existing digest until the first automated release.
+Do not change database credentials, encryption keys or volume names for releases.
+
+After promotion, CD rechecks current main and the deploy script verifies the
+selected application belongs to `maxx-abrt/A2E-Suite`, uses `main`, and is a Compose
+application. It updates only production `A2E_IMAGE` to the tested digest, pins the
+application's Git commit to that same revision, and requests a deployment for
+that UUID alone. It waits up to approximately 30 minutes for Coolify completion;
+the existing public verifier then checks frontend/backend build identity and
+PostgreSQL/Redis readiness. No digest editing is needed for subsequent merges.
+
+The API route takes precedence over the legacy optional deploy webhook. The
+workflow's image tests gate release; independent repository CI workflows are not
+implicitly dependencies. Configure required PR checks separately when needed.
+A failed API response never prints its body, which may contain secrets or logs.
+A failed/ambiguous deployment is not automatically retried or rolled back: schema
+upgrades can make an automatic image downgrade unsafe. Inspect the deployment
+UUID and recover deliberately. A published image is not a successful deployment.
+
+For activation, integrate this workflow and script through a reviewed feature
+branch, configure the settings above, then observe a real main delivery. Confirm
+both `Deploy tested release to Coolify` and `Verify deployed account entry` pass;
+inspect server/worker health in Coolify. Until then automation is prepared, not
+verified active. Semantic version remains deliberate in package.json; commit,
+build number/attempt, timestamp and image digest identify each automatic build.
+
 ## Review a fresh resource's environment
 
 Use the [production template](../packages/twenty-docker/coolify.production.env.example)
