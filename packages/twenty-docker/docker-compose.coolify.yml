@@ -8,23 +8,41 @@
 #   SERVER_URL             public URL, e.g. https://crm.example.com
 #   ENCRYPTION_KEY         generate with: openssl rand -base64 32
 #   PG_DATABASE_PASSWORD   strong password, no special characters
+#   APP_SECRET             recommended independent secret for a fresh production
 #
 # Optional environment:
-#   TAG                    image tag (default: latest)
-#   SERVER_PORT            host port for direct (non-proxied) access (default: 3000)
+#   A2E_IMAGE              full image reference; prefer a tested @sha256 digest
+#   TAG                    fallback image tag (default: latest)
+#   SERVER_BIND_ADDRESS    host binding (default: 127.0.0.1; Coolify uses its proxy)
+#   SERVER_PORT            host port (default: 3000); 0 is ephemeral, not disabled
 #   LANDING_PAGE_URL       optional public marketing landing page
 #   FALLBACK_ENCRYPTION_KEY, APP_SECRET, STORAGE_S3_*, EMAIL_* / SMTP vars
 #   DISABLE_BUNDLED_APP_PROVISIONING=true  set to skip auto-registration of A2E apps on boot
 name: a2e-suite
 
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: '10m'
+    max-file: '3'
+
 services:
   server:
-    image: ghcr.io/maxx-abrt/a2e-suite:${TAG:-latest}
+    image: ${A2E_IMAGE:-ghcr.io/maxx-abrt/a2e-suite:${TAG:-latest}}
     pull_policy: always
+    init: true
+    stop_grace_period: 120s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging: *default-logging
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
+    expose:
+      - '3000'
     ports:
-      - '${SERVER_PORT:-3000}:3000'
+      - '${SERVER_BIND_ADDRESS:-127.0.0.1}:${SERVER_PORT:-3000}:3000'
     environment:
       NODE_PORT: 3000
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:?required}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/${PG_DATABASE_NAME:-default}
@@ -38,6 +56,9 @@ services:
       DEFAULT_SUBDOMAIN: ${DEFAULT_SUBDOMAIN:-app}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       STORAGE_TYPE: ${STORAGE_TYPE:-local}
+      STORAGE_S3_PRESIGNED_URL_ENABLED: ${STORAGE_S3_PRESIGNED_URL_ENABLED:-false}
+      STORAGE_S3_PRESIGNED_URL_BASE: ${STORAGE_S3_PRESIGNED_URL_BASE:-}
+      STORAGE_S3_PRESIGNED_URL_EXPIRES_IN: ${STORAGE_S3_PRESIGNED_URL_EXPIRES_IN:-900}
       LOGIC_FUNCTION_TYPE: ${LOGIC_FUNCTION_TYPE:-LOCAL}
       # Local functions use Docker DNS; Lambda and public links keep SERVER_URL.
       LOGIC_FUNCTION_LOCAL_API_URL: ${LOGIC_FUNCTION_LOCAL_API_URL:-http://server:3000}
@@ -47,12 +68,12 @@ services:
       # value reaching the server makes JWT app-secret derivation throw at runtime
       APP_SECRET: ${APP_SECRET:-${ENCRYPTION_KEY}}
       # bundled A2E app provisioning runs here, never on the worker; `true` opts out
-      DISABLE_BUNDLED_APP_PROVISIONING: ${DISABLE_BUNDLED_APP_PROVISIONING:-}
-      # STORAGE_S3_REGION: ${STORAGE_S3_REGION}
-      # STORAGE_S3_NAME: ${STORAGE_S3_NAME}
-      # STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
-      # STORAGE_S3_ACCESS_KEY_ID: ${STORAGE_S3_ACCESS_KEY_ID}
-      # STORAGE_S3_SECRET_ACCESS_KEY: ${STORAGE_S3_SECRET_ACCESS_KEY}
+      DISABLE_BUNDLED_APP_PROVISIONING: ${DISABLE_BUNDLED_APP_PROVISIONING:-false}
+      STORAGE_S3_REGION: ${STORAGE_S3_REGION:-}
+      STORAGE_S3_NAME: ${STORAGE_S3_NAME:-}
+      STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT:-}
+      STORAGE_S3_ACCESS_KEY_ID: ${STORAGE_S3_ACCESS_KEY_ID:-}
+      STORAGE_S3_SECRET_ACCESS_KEY: ${STORAGE_S3_SECRET_ACCESS_KEY:-}
       EMAIL_DRIVER: ${EMAIL_DRIVER:-LOGGER}
       EMAIL_SMTP_HOST: ${EMAIL_SMTP_HOST:-}
       EMAIL_SMTP_PORT: ${EMAIL_SMTP_PORT:-587}
@@ -76,20 +97,31 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      # /readyz checks database and redis; /healthz stays a liveness-only probe
-      test: curl --fail http://localhost:3000/readyz
+      # /readyz checks database and redis; /healthz stays a liveness-only probe.
+      # start_period must cover the first-boot migration + bundled-app
+      # provisioning window; a slow VPS can exceed the default 5 min, and a
+      # premature "unhealthy" fails the worker's service_healthy dependency
+      # before the API ever comes up.
+      test: ['CMD', 'curl', '--fail', '--silent', '--show-error', '--max-time', '8', 'http://localhost:3000/readyz']
       interval: 5s
       timeout: 10s
-      retries: 20
-      start_period: 300s
+      retries: 60
+      start_period: 900s
     restart: always
 
   worker:
-    image: ghcr.io/maxx-abrt/a2e-suite:${TAG:-latest}
+    image: ${A2E_IMAGE:-ghcr.io/maxx-abrt/a2e-suite:${TAG:-latest}}
     pull_policy: always
+    init: true
+    stop_grace_period: 120s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging: *default-logging
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
-    command: ['yarn', 'worker:prod']
+    command: ['node', 'dist/queue-worker/queue-worker']
     environment:
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:?required}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/${PG_DATABASE_NAME:-default}
       SERVER_URL: ${SERVER_URL:?required}
@@ -102,6 +134,9 @@ services:
       DISABLE_CRON_JOBS_REGISTRATION: 'true' # it already runs on the server
       DISABLE_BUNDLED_APP_PROVISIONING: 'true' # it already runs on the server
       STORAGE_TYPE: ${STORAGE_TYPE:-local}
+      STORAGE_S3_PRESIGNED_URL_ENABLED: ${STORAGE_S3_PRESIGNED_URL_ENABLED:-false}
+      STORAGE_S3_PRESIGNED_URL_BASE: ${STORAGE_S3_PRESIGNED_URL_BASE:-}
+      STORAGE_S3_PRESIGNED_URL_EXPIRES_IN: ${STORAGE_S3_PRESIGNED_URL_EXPIRES_IN:-900}
       LOGIC_FUNCTION_TYPE: ${LOGIC_FUNCTION_TYPE:-LOCAL}
       # Local functions use Docker DNS; Lambda and public links keep SERVER_URL.
       LOGIC_FUNCTION_LOCAL_API_URL: ${LOGIC_FUNCTION_LOCAL_API_URL:-http://server:3000}
@@ -111,11 +146,11 @@ services:
       # APP_SECRET falls back to ENCRYPTION_KEY when unset or empty; an empty
       # value reaching the server makes JWT app-secret derivation throw at runtime
       APP_SECRET: ${APP_SECRET:-${ENCRYPTION_KEY}}
-      # STORAGE_S3_REGION: ${STORAGE_S3_REGION}
-      # STORAGE_S3_NAME: ${STORAGE_S3_NAME}
-      # STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
-      # STORAGE_S3_ACCESS_KEY_ID: ${STORAGE_S3_ACCESS_KEY_ID}
-      # STORAGE_S3_SECRET_ACCESS_KEY: ${STORAGE_S3_SECRET_ACCESS_KEY}
+      STORAGE_S3_REGION: ${STORAGE_S3_REGION:-}
+      STORAGE_S3_NAME: ${STORAGE_S3_NAME:-}
+      STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT:-}
+      STORAGE_S3_ACCESS_KEY_ID: ${STORAGE_S3_ACCESS_KEY_ID:-}
+      STORAGE_S3_SECRET_ACCESS_KEY: ${STORAGE_S3_SECRET_ACCESS_KEY:-}
       EMAIL_DRIVER: ${EMAIL_DRIVER:-LOGGER}
       EMAIL_SMTP_HOST: ${EMAIL_SMTP_HOST:-}
       EMAIL_SMTP_PORT: ${EMAIL_SMTP_PORT:-587}
@@ -134,21 +169,24 @@ services:
     healthcheck:
       # /healthz is liveness-only; /readyz exercises the worker's own database
       # and redis connections (node:http server on WORKER_HEALTH_PORT, 3099)
-      test: curl --fail http://localhost:3099/readyz
+      test: ['CMD', 'curl', '--fail', '--silent', '--show-error', '--max-time', '8', 'http://localhost:3099/readyz']
       interval: 5s
       timeout: 10s
-      retries: 20
-      start_period: 60s
+      retries: 60
+      start_period: 300s
     restart: always
 
   db:
     image: postgres:16
+    stop_grace_period: 60s
+    logging: *default-logging
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: ${PG_DATABASE_NAME:-default}
       POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD:?required}
       POSTGRES_USER: ${PG_DATABASE_USER:-postgres}
+      POSTGRES_INITDB_ARGS: '--data-checksums'
     healthcheck:
       test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h localhost -d postgres
       interval: 5s
@@ -158,8 +196,12 @@ services:
 
   redis:
     image: redis:7
+    stop_grace_period: 60s
+    logging: *default-logging
     restart: always
-    command: ['--maxmemory-policy', 'noeviction']
+    volumes:
+      - redis-data:/data
+    command: ['--maxmemory-policy', 'noeviction', '--appendonly', 'yes', '--appendfsync', 'everysec']
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
@@ -169,3 +211,4 @@ services:
 volumes:
   db-data:
   server-local-data:
+  redis-data:

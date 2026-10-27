@@ -264,6 +264,12 @@ export class ClientConfig {
 
   appRevision?: string;
 
+  @Field(() => String, { nullable: true })
+  appBuildId?: string;
+
+  @Field(() => String, { nullable: true })
+  appBuiltAt?: string;
+
   @Field(() => AuthProvidersDTO, { nullable: false })
   authProviders: AuthProvidersDTO;
 

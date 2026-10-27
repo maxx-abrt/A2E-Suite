@@ -162,3 +162,95 @@ test('writes release metadata only after a real frontend entry exists', () => {
     rmSync(directory, { recursive: true, force: true });
   }
 });
+
+test('rejects old or mixed builds even when the Git revision matches', async () => {
+  for (const [backendBuild, frontendBuild] of [
+    ['51.1', '51.1'],
+    ['51.2', '51.1'],
+    [undefined, undefined],
+  ]) {
+    await assert.rejects(
+      verifyAccountEntry({
+        url: 'https://bureau.example.com',
+        revision: REVISION,
+        buildId: '51.2',
+        fetchResponse: async (url) =>
+          new Response(
+            JSON.stringify(
+              url.pathname === '/client-config'
+                ? { ...configuration, appBuildId: backendBuild }
+                : url.pathname === '/release.json'
+                  ? { ...release, buildId: frontendBuild }
+                  : {
+                      status: 'ok',
+                      details: {
+                        database: { status: 'up' },
+                        redis: { status: 'up' },
+                      },
+                    },
+            ),
+          ),
+      }),
+      /build identities differ|Running build/,
+    );
+  }
+});
+
+test('accepts the expected build with coherent frontend and backend metadata', async () => {
+  const result = await verifyAccountEntry({
+    url: 'https://bureau.example.com',
+    revision: REVISION,
+    buildId: '51.2',
+    fetchResponse: async (url) =>
+      new Response(
+        JSON.stringify(
+          url.pathname === '/client-config'
+            ? {
+                ...configuration,
+                appVersion: '0.2.1',
+                appBuildId: '51.2',
+                appBuiltAt: '2026-10-27T00:00:00Z',
+              }
+            : url.pathname === '/release.json'
+              ? {
+                  ...release,
+                  version: '0.2.1',
+                  buildId: '51.2',
+                  builtAt: '2026-10-27T00:00:00Z',
+                }
+              : {
+                  status: 'ok',
+                  details: {
+                    database: { status: 'up' },
+                    redis: { status: 'up' },
+                  },
+                },
+        ),
+      ),
+  });
+  assert.equal(result.buildId, '51.2');
+});
+
+test('rejects a different frontend application version even with matching revisions', async () => {
+  await assert.rejects(
+    verifyAccountEntry({
+      url: 'https://bureau.example.com',
+      revision: REVISION,
+      fetchResponse: fetchFixture(
+        { ...configuration, appVersion: '0.2.1' },
+        { ...release, version: '0.2.2' },
+      ),
+    }),
+    /application versions differ/,
+  );
+});
+
+test('can audit a pinned legacy revision without inventing missing build metadata', async () => {
+  const result = await verifyAccountEntry({
+    url: 'https://bureau.example.com',
+    revision: REVISION,
+    fetchResponse: fetchFixture({ ...configuration, appVersion: '0.2.1' }),
+  });
+  assert.equal(result.revision, REVISION);
+  assert.equal(result.buildId, undefined);
+});

@@ -1,5 +1,9 @@
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
-import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import {
+  type Form,
+  useSignInUpForm,
+} from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -7,7 +11,7 @@ import {
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider, createStore } from 'jotai';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -15,6 +19,7 @@ import { MemoryRouter, useLocation } from 'react-router-dom';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 const mockContinueWithCredentials = jest.fn();
+const mockSubmitCredentials = jest.fn();
 let mockSignInUpMode = SignInUpMode.SignIn;
 
 jest.mock('@/auth/sign-in-up/hooks/useSignInUp', () => ({
@@ -22,7 +27,7 @@ jest.mock('@/auth/sign-in-up/hooks/useSignInUp', () => ({
     signInUpMode: mockSignInUpMode,
     continueWithEmail: jest.fn(),
     continueWithCredentials: mockContinueWithCredentials,
-    submitCredentials: jest.fn(),
+    submitCredentials: mockSubmitCredentials,
   }),
 }));
 
@@ -47,9 +52,20 @@ const CredentialsForm = () => {
   );
 };
 
-const renderCredentials = (step: SignInUpStep) => {
+const NativeCredentialsForm = () => {
+  const { form } = useSignInUpForm();
+  return (
+    // oxlint-disable-next-line react/jsx-props-no-spreading
+    <FormProvider {...form}>
+      <SignInUpWithCredentials />
+    </FormProvider>
+  );
+};
+
+const renderCredentials = (step: SignInUpStep, nativeForm = false) => {
   const store = createStore();
   store.set(signInUpStepState.atom, step);
+  store.set(isDeveloperDefaultSignInPrefilledState.atom, nativeForm);
   render(
     <Provider store={store}>
       <MemoryRouter
@@ -59,7 +75,7 @@ const renderCredentials = (step: SignInUpStep) => {
       >
         <ThemeProvider colorScheme="light">
           <I18nProvider i18n={i18n}>
-            <CredentialsForm />
+            {nativeForm ? <NativeCredentialsForm /> : <CredentialsForm />}
           </I18nProvider>
         </ThemeProvider>
       </MemoryRouter>
@@ -71,6 +87,7 @@ const renderCredentials = (step: SignInUpStep) => {
 describe('SignInUpWithCredentials', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockContinueWithCredentials.mockReset();
     i18n.load('en', {});
     i18n.activate('en');
     mockSignInUpMode = SignInUpMode.SignIn;
@@ -85,6 +102,53 @@ describe('SignInUpWithCredentials', () => {
     await userEvent.click(
       screen.getByRole('button', { name: 'Continue with Email' }),
     );
+    expect(mockContinueWithCredentials).toHaveBeenCalledTimes(1);
+  });
+
+  it('enables native sign-in with prefilled credentials without editing the password', async () => {
+    const store = renderCredentials(SignInUpStep.Init, true);
+    mockContinueWithCredentials.mockImplementation(async () => {
+      store.set(signInUpStepState.atom, SignInUpStep.Password);
+    });
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Continue with Email' }),
+    );
+    expect(
+      await screen.findByRole('button', { name: 'Sign in' }),
+    ).toBeEnabled();
+    await userEvent.click(screen.getByRole('button', { name: 'Sign in' }));
+    await waitFor(() => expect(mockSubmitCredentials).toHaveBeenCalledTimes(1));
+  });
+
+  it('explains invalid input and allows correction without submitting invalid credentials', async () => {
+    renderCredentials(SignInUpStep.Password, true);
+    const password = screen.getByLabelText('Password');
+    await userEvent.clear(password);
+    await userEvent.type(password, 'short');
+    await userEvent.click(screen.getByRole('button', { name: 'Sign in' }));
+    expect(
+      await screen.findByText('Password must be between 8 and 50 characters'),
+    ).toBeVisible();
+    expect(mockSubmitCredentials).not.toHaveBeenCalled();
+    await userEvent.type(password, '-valid-password');
+    expect(screen.getByRole('button', { name: 'Sign in' })).toBeEnabled();
+    await userEvent.click(screen.getByRole('button', { name: 'Sign in' }));
+    await waitFor(() => expect(mockSubmitCredentials).toHaveBeenCalledTimes(1));
+  });
+
+  it('lets an invalid email be corrected and submitted again', async () => {
+    renderCredentials(SignInUpStep.Email, true);
+    const email = screen.getByLabelText('Email');
+    await userEvent.clear(email);
+    await userEvent.type(email, 'invalid@example');
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }));
+    expect(
+      await screen.findByText('Email must be a valid email'),
+    ).toBeVisible();
+    expect(mockContinueWithCredentials).not.toHaveBeenCalled();
+    await userEvent.clear(email);
+    await userEvent.type(email, 'corrected@example.com');
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }));
     expect(mockContinueWithCredentials).toHaveBeenCalledTimes(1);
   });
 

@@ -26,6 +26,8 @@ explains the fork; upstream product documentation lives in
 | Scope work or leave a handoff | [Task template](templates/task.md) | [Handoff template](templates/handoff.md) |
 | Run several executor slices in one session | [Batch executor prompt](templates/executor-batch-prompt.md) | [Execution contract](../PROMPT.md) |
 | Deploy the platform | [Deployment guide](../DEPLOY.md) | [App provisioning](applications.md) is separate |
+| Prepare an isolated production on Coolify | [Production runbook](production-coolify.md) | Resource boundaries, persistent queues, release and restore acceptance |
+| Verify releases and configure automatic backups | [Operations runbook](coolify-operations.md) | Build identity, GitHub audit, native Coolify schedules and restore checks |
 | Configure Resend account emails | [Transactional email](resend-email.md) | Native queue, Resend REST, sender DNS and delivery checks |
 | Use or verify Bilan's connected finance experience | [Bilan experience](bilan-experience.md) | Capture, review, native books, catalogue, language foundation and release gates |
 | Compare Bilan with Qonto and prioritize finance work | [2026-10-25 Bilan audit](bilan-qonto-audit-2026-10-25.md) | Source-backed gaps, implemented review/setup work and remaining finance limits |

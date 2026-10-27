@@ -13,6 +13,8 @@ export const MAINTAINED_DOCUMENTS = [
   'docs/applications.md',
   'docs/features.md',
   'docs/product-experience.md',
+  'docs/production-coolify.md',
+  'docs/coolify-operations.md',
   'docs/verification.md',
   'docs/plan/01-codebase-map.md',
   'docs/plan/02-reference-analysis.md',

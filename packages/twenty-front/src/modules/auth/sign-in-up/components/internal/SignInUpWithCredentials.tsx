@@ -136,17 +136,14 @@ export const SignInUpWithCredentials = ({
     isDefined(captcha?.provider) &&
     isRequestingCaptchaToken;
 
+  // Validation runs on submit so untouched/autofilled credentials can be
+  // submitted and invalid input gets an explanation instead of a dead button.
   const isEmailStepSubmitButtonDisabledCondition =
-    signInUpStep === SignInUpStep.Email &&
-    (isDefined(form.formState.errors['email']) || shouldWaitForCaptchaToken);
+    signInUpStep === SignInUpStep.Email && shouldWaitForCaptchaToken;
 
-  // TODO: isValid is actually a proxy function. If it is not rendered the first time, react might not trigger re-renders
-  // We make the isValid check synchronous and update a reactState to make sure this does not happen
   const isPasswordStepSubmitButtonDisabledCondition =
     signInUpStep === SignInUpStep.Password &&
-    (!form.formState.isValid ||
-      form.formState.isSubmitting ||
-      shouldWaitForCaptchaToken);
+    (form.formState.isSubmitting || shouldWaitForCaptchaToken);
 
   const isSignUpBlockedByDDLLock =
     isDDLLocked &&

@@ -6,6 +6,7 @@ type SettingsAdminVersionDisplayProps = {
   version: string | undefined | null;
   loading: boolean;
   noVersionMessage: string;
+  href?: string;
 };
 
 const StyledActionLink = styled.a`
@@ -33,6 +34,7 @@ export const SettingsAdminVersionDisplay = ({
   version,
   loading,
   noVersionMessage,
+  href,
 }: SettingsAdminVersionDisplayProps) => {
   if (loading) {
     return <StyledSpan>{t`Loading...`}</StyledSpan>;
@@ -42,12 +44,10 @@ export const SettingsAdminVersionDisplay = ({
     return <StyledSpan>{noVersionMessage}</StyledSpan>;
   }
 
+  if (!href) return <StyledSpan>{version}</StyledSpan>;
+
   return (
-    <StyledActionLink
-      href={`https://hub.docker.com/r/twentycrm/twenty/tags?name=${version}`}
-      target="_blank"
-      rel="noreferrer"
-    >
+    <StyledActionLink href={href} target="_blank" rel="noreferrer">
       {version}
     </StyledActionLink>
   );

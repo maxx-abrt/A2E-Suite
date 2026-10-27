@@ -166,6 +166,9 @@ export const SettingsAdminApps = () => {
     registration: ApplicationRegistrationFragmentFragment,
   ) => {
     switch (registration.sourceType) {
+      case ApplicationRegistrationSourceType.BUNDLED: {
+        return t`Bundled`;
+      }
       case ApplicationRegistrationSourceType.TARBALL: {
         return 'Tarball';
       }

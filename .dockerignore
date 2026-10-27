@@ -10,3 +10,15 @@ packages/twenty-front/build
 packages/twenty-server/dist
 **/.env.*.local
 .env.resend.local
+
+# Keep credentials, uploaded data and browser sessions out of build/cache layers.
+**/.env
+**/.env.*
+!**/.env.example
+**/.local-storage
+**/.auth
+**/run_results
+**/playwright-report
+Inspiration apps (bureaubilan)
+.yarn/install-state.gz
+.yarn/unplugged

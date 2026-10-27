@@ -11,6 +11,12 @@ this checkout publishes there or that those resources are public.
 
 [Documentation home](docs/README.md) · [Applications provisioning](docs/applications.md)
 
+For a fresh production resource separate from the disposable test deployment,
+follow the [production runbook](docs/production-coolify.md). It covers isolated
+volumes/secrets, pinned releases, queue persistence and target-host acceptance.
+See [release and backup operations](docs/coolify-operations.md) for automatic build
+identity, deployment auditing, native scheduled backups and the production template.
+
 - Platform deployment now includes A2E app provisioning: the production image
   contains built tarballs for seven A2E apps (Documents, Bilan, Projects,
   Chat, Drive, CRM assistant and Links). `app:provision-bundled` registers
@@ -364,6 +370,11 @@ projects with their tasks and milestones, and two discussion channels through
 the internal API. Template/task/milestone counts come from the shipped bundles.
 Another restart checks that content counts stay stable. Database registration IDs and a file-volume marker
 must survive recreation; frontend/backend revisions must match the tested SHA.
+The populated restart also recreates Redis and checks a persisted marker. Both
+Coolify manifests now use a named Redis volume with AOF/every-second fsync;
+existing queues require a planned drain/migration before adopting that new mount.
+Physical column slots must remain unchanged across a normal restart, preventing
+silent repeated add/drop cycles from passing image acceptance.
 
 The content query reuses the ORM's native table/relationship naming helpers:
 app objects live in `_document`, `_project`, `_milestone` and `_chatChannel`;
@@ -407,7 +418,54 @@ output.
 | `server` crash-loops about ENCRYPTION_KEY| Var missing or changed after first boot → restore original value       |
 | 502 / certificate error                  | Domain not attached to service `server` port 3000, or DNS not propagated |
 | Migrations seem stuck                    | Watch logs; first boot can take 3 min on a small VPS — it finishes     |
+| `server` unhealthy / `dependency failed to start` | Inspect startup stages and health output. Current server grace is 900s; a timeout alone cannot distinguish slow boot, blocked commands, failed DB/app migrations, OOM or a probe error. Do not treat extra grace as a repair. |
+| `tables can have at most 1600 columns` on `task` | Dropped PostgreSQL columns still consume physical slots. Stop automatic uninstall/reinstall retries; use a fresh isolated test/production resource or the optional logical recovery below. Raising healthcheck timeouts cannot repair this table. |
 | OAuth/SSO redirect errors                | `SERVER_URL` must match the public URL exactly (scheme + host)         |
+
+### Optional recovery of an exhausted database
+
+For disposable test data, prefer the new isolated resource described in the
+[production runbook](docs/production-coolify.md). Do not reuse its exhausted
+database for production. No deletion of the old resource is required.
+
+If existing data must be retained, the image contains
+[`recover-column-slots.mjs`](packages/twenty-server/scripts/recover-column-slots.mjs).
+It uses a logical dump/restore into a **new database on the same PostgreSQL
+instance**, checks per-table row counts/data fingerprints and reclaimed slots,
+and leaves the source and private backup intact. It never overwrites an existing
+target, edits PostgreSQL catalogs or automatically switches the application.
+This addresses PostgreSQL's [dropped-column limit](https://www.postgresql.org/docs/16/limits.html).
+
+The maintenance flow can be driven through Coolify's environment page:
+
+1. Use a reviewed image containing the recovery tool and the matching PostgreSQL
+   16 clients. Stop the **whole resource**, including workers/replicas and any
+   other client writing to that database. Keep the database/file volumes and
+   original encryption keys. Plan sufficient downtime and storage.
+2. Set `A2E_RECOVERY_TARGET_DATABASE` to a new lowercase database name, such as
+   `bureau_recovered_20261027`, and leave `A2E_RECOVERY_APPLY=false`. Deploy and
+   inspect the `phase=plan` JSON line in server logs. This is read-only.
+   HTTP stays offline and the worker remains gated; an unhealthy deployment is
+   expected in this explicit maintenance mode.
+3. Stop the resource again, set `A2E_RECOVERY_APPLY=true`, and deploy. The tool
+   requires exclusive application access, available backup space and matching
+   client/server major versions. Custom locales/privileges/settings, replication,
+   large objects, foreign tables and non-default extension versions require a
+   DBA-reviewed restore instead. It refuses these cases before creating a target.
+4. Wait for `"phase":"verified"` and the successful recovery startup step.
+   The private backup/report path is logged inside the persistent file volume.
+   Copy the backup off-host. A failure or an existing target is **not** success;
+   leave the source selected and inspect the error. Failed targets are retained.
+5. Only after verification, stop the resource, change `PG_DATABASE_NAME` to the
+   verified target, clear `A2E_RECOVERY_TARGET_DATABASE`, set
+   `A2E_RECOVERY_APPLY=false`, and deploy server/worker together. Keep secrets,
+   file storage and original database unchanged. Confirm migrations, installation,
+   user records, downloads, permissions and queued work on the selected database.
+
+This tool reclaims physical slots and preserves currently available data; it
+cannot reconstruct rows removed by an earlier failed installation. A successful
+local fixture is not certification of an unseen production database. Do not
+repeatedly apply recovery into the same target or bypass its verification guards.
 
 ## Private registry (only if you kept the GHCR package private)
 

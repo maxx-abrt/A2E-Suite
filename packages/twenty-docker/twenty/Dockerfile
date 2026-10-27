@@ -95,12 +95,18 @@ COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 COPY ./packages/twenty-client-sdk /app/packages/twenty-client-sdk
 RUN npx nx run twenty-front:lingui:extract && \
     npx nx run twenty-front:lingui:compile
+# Docker may reuse an identical source layer; Nx must not reuse a host build.
+RUN NODE_OPTIONS="--max-old-space-size=8192" npx nx build twenty-front --skip-nx-cache
+
 ARG APP_REVISION=unknown
+ARG APP_VERSION
+ARG APP_BUILD_ID
+ARG APP_BUILD_DATE
 ENV APP_REVISION=$APP_REVISION
+ENV APP_VERSION=$APP_VERSION APP_BUILD_ID=$APP_BUILD_ID APP_BUILD_DATE=$APP_BUILD_DATE
 COPY ./packages/twenty-docker/scripts/write-frontend-release.mjs /app/write-frontend-release.mjs
-# Release images must compile this checkout, never an old host build or an Nx cache hit.
-RUN NODE_OPTIONS="--max-old-space-size=8192" npx nx build twenty-front --skip-nx-cache && \
-    node /app/write-frontend-release.mjs /app/packages/twenty-front/build
+# Stamp each build without invalidating the expensive source compilation layer.
+RUN node /app/write-frontend-release.mjs /app/packages/twenty-front/build
 
 
 # ===========================================================================
@@ -123,14 +129,14 @@ RUN apk add --no-cache \
     'postgresql16-client>=16.15-r0' \
     jq
 
+RUN /usr/libexec/postgresql16/pg_dump --version \
+ && /usr/libexec/postgresql16/pg_restore --version \
+ && /usr/libexec/postgresql16/psql --version
+
 COPY ./packages/twenty-docker/twenty/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 WORKDIR /app/packages/twenty-server
 
-ARG APP_VERSION
-ARG APP_REVISION=unknown
-ENV APP_VERSION=$APP_VERSION
-ENV APP_REVISION=$APP_REVISION
 ENV NODE_ENV=production
 # Existing saved Compose files may not yet pass the new account-routing flag.
 ENV IS_SHARED_DOMAIN_WORKSPACE_ENABLED=true
@@ -167,10 +173,6 @@ COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-client-sdk/dis
 # the container that owns migrations (never the worker): see entrypoint.sh.
 COPY --chown=1000 --from=twenty-apps-build /apps/dist /app/packages/twenty-apps/dist
 
-LABEL org.opencontainers.image.source=https://github.com/maxx-abrt/A2E-Suite
-LABEL org.opencontainers.image.revision=$APP_REVISION
-LABEL org.opencontainers.image.description="Twenty server image (no frontend)."
-
 # Remove unused, unpatchable components the scanner flags (none are executed at
 # runtime, and none can be fixed by upgrading our deps or Node):
 #  - the bundled npm CLI: the app uses yarn via corepack and never invokes npm,
@@ -194,6 +196,19 @@ RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
 
 RUN mkdir -p /app/.local-storage /app/packages/twenty-server/.local-storage && \
     chown 1000:1000 /app/.local-storage /app/packages/twenty-server/.local-storage
+
+ARG APP_VERSION
+ARG APP_REVISION=unknown
+ARG APP_BUILD_ID
+ARG APP_BUILD_DATE
+ENV APP_VERSION=$APP_VERSION APP_REVISION=$APP_REVISION
+ENV APP_BUILD_ID=$APP_BUILD_ID APP_BUILD_DATE=$APP_BUILD_DATE
+LABEL org.opencontainers.image.source=https://github.com/maxx-abrt/A2E-Suite
+LABEL org.opencontainers.image.revision=$APP_REVISION
+LABEL org.opencontainers.image.version=$APP_VERSION
+LABEL org.opencontainers.image.created=$APP_BUILD_DATE
+LABEL io.a2e.build.id=$APP_BUILD_ID
+LABEL org.opencontainers.image.description="A2E Suite server image (no frontend)."
 
 USER 1000
 
@@ -222,7 +237,7 @@ FROM twenty-server AS twenty
 
 COPY --chown=1000 --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
 
-LABEL org.opencontainers.image.description="Twenty image with backend and frontend."
+LABEL org.opencontainers.image.description="A2E Suite with backend and frontend."
 
 
 # ===========================================================================

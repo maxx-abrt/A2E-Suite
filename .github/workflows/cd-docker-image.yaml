@@ -21,8 +21,8 @@ defaults:
     shell: bash --noprofile --norc -euo pipefail {0}
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 
 env:
   # Package name is fixed so a repo rename does not break pinned image refs in
@@ -33,6 +33,8 @@ jobs:
   build-and-push:
     timeout-minutes: 90
     runs-on: ubuntu-latest
+    env:
+      HAS_COOLIFY_DEPLOY_WEBHOOK: ${{ secrets.COOLIFY_DEPLOY_WEBHOOK != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -59,7 +61,7 @@ jobs:
           sudo systemctl restart docker
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
         with:
           # Shared runner IPs exhaust Docker Hub's anonymous pull rate limit
           # within minutes; route base image pulls through Google's mirror
@@ -70,7 +72,7 @@ jobs:
               mirrors = ["mirror.gcr.io"]
 
       - name: Log in to GHCR
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -78,11 +80,21 @@ jobs:
 
       - name: Resolve app version
         id: version
-        run: echo "version=$(jq -r .version package.json)" >> "$GITHUB_OUTPUT"
+        env:
+          RELEASE_REF_TYPE: ${{ github.ref_type }}
+          RELEASE_REF_NAME: ${{ github.ref_name }}
+        run: |
+          version=$(jq -r .version package.json)
+          if [ "$RELEASE_REF_TYPE" = tag ] && [ "$RELEASE_REF_NAME" != "v$version" ]; then
+            echo 'Release tag must match package.json version' >&2
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "built_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
 
       - name: Build and push candidate image
         id: build
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         with:
           context: .
           file: packages/twenty-docker/twenty/Dockerfile
@@ -91,48 +103,85 @@ jobs:
           build-args: |
             APP_VERSION=${{ steps.version.outputs.version }}
             APP_REVISION=${{ github.sha }}
+            APP_BUILD_ID=${{ github.run_number }}.${{ github.run_attempt }}
+            APP_BUILD_DATE=${{ steps.version.outputs.built_at }}
           tags: ${{ env.IMAGE }}:candidate-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Test candidate with the Coolify stack
-        timeout-minutes: 35
+        timeout-minutes: 55
         env:
           A2E_SMOKE_IMAGE: ${{ env.IMAGE }}@${{ steps.build.outputs.digest }}
           A2E_SMOKE_REVISION: ${{ github.sha }}
+          A2E_SMOKE_BUILD_ID: ${{ github.run_number }}.${{ github.run_attempt }}
           A2E_SMOKE_REPORT_DIR: ${{ runner.temp }}/a2e-deployment-smoke
         run: |
           docker pull "$A2E_SMOKE_IMAGE"
           node packages/twenty-docker/scripts/smoke-coolify-image.mjs
 
+      - name: Record tested release identity
+        env:
+          RELEASE_REVISION: ${{ github.sha }}
+          RELEASE_DIGEST: ${{ steps.build.outputs.digest }}
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+          RELEASE_BUILD_ID: ${{ github.run_number }}.${{ github.run_attempt }}
+          RELEASE_BUILT_AT: ${{ steps.version.outputs.built_at }}
+          RELEASE_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          A2E_SMOKE_REPORT_DIR: ${{ runner.temp }}/a2e-deployment-smoke
+        run: node packages/twenty-docker/scripts/write-release-manifest.mjs
+
       - name: Upload deployment diagnostics
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: deployment-smoke-${{ github.sha }}
+          name: deployment-smoke-${{ github.sha }}-${{ github.run_number }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/a2e-deployment-smoke
           if-no-files-found: ignore
           retention-days: 7
 
       - name: Promote tested image
+        id: promote
         env:
           APP_VERSION: ${{ steps.version.outputs.version }}
           TESTED_REVISION: ${{ github.sha }}
           TESTED_DIGEST: ${{ steps.build.outputs.digest }}
+          RELEASE_REF: ${{ github.ref }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_BUILD_ID: ${{ github.run_number }}.${{ github.run_attempt }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          docker buildx imagetools create \
-            --tag "$IMAGE:latest" \
-            --tag "$IMAGE:$APP_VERSION" \
-            --tag "$IMAGE:$TESTED_REVISION" \
-            "$IMAGE@$TESTED_DIGEST"
+          tags=(--tag "$IMAGE:$TESTED_REVISION" --tag "$IMAGE:build-$RELEASE_BUILD_ID")
+          channel_promoted=false
+          if [ "$RELEASE_REF" = refs/heads/main ]; then
+            main_revision=$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)
+            if [ "$main_revision" = "$TESTED_REVISION" ]; then
+              tags+=(--tag "$IMAGE:latest" --tag "$IMAGE:$APP_VERSION")
+              channel_promoted=true
+            else
+              echo 'Historical build published by identity only; latest and deployment left unchanged.' >> "$GITHUB_STEP_SUMMARY"
+            fi
+          elif [[ "$RELEASE_REF" == refs/tags/v* ]]; then
+            tags+=(--tag "$IMAGE:$RELEASE_TAG" --tag "$IMAGE:$APP_VERSION")
+          fi
+          docker buildx imagetools create "${tags[@]}" "$IMAGE@$TESTED_DIGEST"
+          echo "channel_promoted=$channel_promoted" >> "$GITHUB_OUTPUT"
+
+      - name: Keep tested release identity
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: release-${{ github.sha }}-${{ github.run_number }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/a2e-deployment-smoke/release.json
+          if-no-files-found: error
+          retention-days: 90
 
       # Optional zero-touch deploys: set the repo secret COOLIFY_DEPLOY_WEBHOOK
       # to the "Deploy Webhook" URL Coolify shows on the resource, and every
       # green run redeploys the stack right after the image is pushed.
-      # (secrets are not readable in `if:` directly, hence the env round-trip)
+      # Only the presence flag is job-wide; build scripts must not receive the webhook secret.
       - name: Trigger Coolify redeploy
         id: deploy
-        if: env.COOLIFY_DEPLOY_WEBHOOK != ''
+        if: steps.promote.outputs.channel_promoted == 'true' && env.HAS_COOLIFY_DEPLOY_WEBHOOK == 'true'
         env:
           COOLIFY_DEPLOY_WEBHOOK: ${{ secrets.COOLIFY_DEPLOY_WEBHOOK }}
         run: curl --fail --silent --show-error --max-time 60 -X POST "$COOLIFY_DEPLOY_WEBHOOK"
@@ -143,9 +192,10 @@ jobs:
         env:
           A2E_PUBLIC_URL: ${{ vars.A2E_PUBLIC_URL }}
           EXPECTED_REVISION: ${{ github.sha }}
+          EXPECTED_BUILD_ID: ${{ github.run_number }}.${{ github.run_attempt }}
         run: |
           for attempt in {1..12}; do
-            if node packages/twenty-docker/scripts/verify-account-entry.mjs --url "$A2E_PUBLIC_URL" --revision "$EXPECTED_REVISION"; then
+            if node packages/twenty-docker/scripts/verify-account-entry.mjs --url "$A2E_PUBLIC_URL" --revision "$EXPECTED_REVISION" --build-id "$EXPECTED_BUILD_ID"; then
               exit 0
             fi
             if [ "$attempt" -lt 12 ]; then sleep 30; fi

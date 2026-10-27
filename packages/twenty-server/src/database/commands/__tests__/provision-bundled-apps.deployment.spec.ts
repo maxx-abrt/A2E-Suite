@@ -62,8 +62,14 @@ const runEntrypoint = (environment: Record<string, string>): EntrypointRun => {
   writeFileSync(join(binDirectory, 'psql'), '#!/bin/sh\necho t\n');
   chmodSync(join(binDirectory, 'yarn'), 0o755);
   chmodSync(join(binDirectory, 'psql'), 0o755);
-  writeFileSync(join(binDirectory, 'node'), '#!/bin/sh\necho "RECOVERY_NODE:$*"\nexit "${STUB_RECOVERY_EXIT:-0}"\n');
-  writeFileSync(join(binDirectory, 'tail'), '#!/bin/sh\necho RECOVERY_OFFLINE\n');
+  writeFileSync(
+    join(binDirectory, 'node'),
+    '#!/bin/sh\necho "RECOVERY_NODE:$*"\nexit "${STUB_RECOVERY_EXIT:-0}"\n',
+  );
+  writeFileSync(
+    join(binDirectory, 'tail'),
+    '#!/bin/sh\necho RECOVERY_OFFLINE\n',
+  );
   chmodSync(join(binDirectory, 'node'), 0o755);
   chmodSync(join(binDirectory, 'tail'), 0o755);
 
@@ -97,23 +103,40 @@ const UPGRADE = 'command:prod upgrade';
 
 describe('column recovery maintenance startup', () => {
   it('plans recovery before migrations or app provisioning and keeps HTTP offline', () => {
-    const { yarnCalls, output } = runEntrypoint({ A2E_RECOVERY_TARGET_DATABASE: 'bureau_recovered' });
+    const { yarnCalls, output } = runEntrypoint({
+      A2E_RECOVERY_TARGET_DATABASE: 'bureau_recovered',
+    });
     expect(yarnCalls).toEqual([]);
-    expect(output).toContain('RECOVERY_NODE:/app/packages/twenty-server/scripts/recover-column-slots.mjs');
+    expect(output).toContain(
+      'RECOVERY_NODE:/app/packages/twenty-server/scripts/recover-column-slots.mjs',
+    );
     expect(output).not.toContain('--apply');
     expect(output).toContain('RECOVERY_OFFLINE');
   });
 
-  it.each(['0', '1'])('requires explicit apply and stays offline after recovery exit %s', (exitCode) => {
-    const { yarnCalls, output } = runEntrypoint({ A2E_RECOVERY_TARGET_DATABASE: 'bureau_recovered', A2E_RECOVERY_APPLY: 'true', STUB_RECOVERY_EXIT: exitCode });
-    expect(yarnCalls).toEqual([]);
-    expect(output).toContain('recover-column-slots.mjs --apply');
-    expect(output).toContain('RECOVERY_OFFLINE');
-    expect(output).toContain(exitCode === '0' ? 'status=succeeded' : 'Source database was preserved');
-  });
+  it.each(['0', '1'])(
+    'requires explicit apply and stays offline after recovery exit %s',
+    (exitCode) => {
+      const { yarnCalls, output } = runEntrypoint({
+        A2E_RECOVERY_TARGET_DATABASE: 'bureau_recovered',
+        A2E_RECOVERY_APPLY: 'true',
+        STUB_RECOVERY_EXIT: exitCode,
+      });
+      expect(yarnCalls).toEqual([]);
+      expect(output).toContain('recover-column-slots.mjs --apply');
+      expect(output).toContain('RECOVERY_OFFLINE');
+      expect(output).toContain(
+        exitCode === '0' ? 'status=succeeded' : 'Source database was preserved',
+      );
+    },
+  );
 
   it('never runs recovery in a worker or replica', () => {
-    const { yarnCalls, output } = runEntrypoint({ A2E_RECOVERY_TARGET_DATABASE: 'bureau_recovered', A2E_RECOVERY_APPLY: 'true', DISABLE_DB_MIGRATIONS: 'true' });
+    const { yarnCalls, output } = runEntrypoint({
+      A2E_RECOVERY_TARGET_DATABASE: 'bureau_recovered',
+      A2E_RECOVERY_APPLY: 'true',
+      DISABLE_DB_MIGRATIONS: 'true',
+    });
     expect(yarnCalls).toEqual([]);
     expect(output).not.toContain('RECOVERY_NODE:');
     expect(output).toContain('Refusing recovery in a worker or replica');
@@ -231,14 +254,17 @@ describe('bundled app provisioning boot contract (entrypoint.sh)', () => {
     expect(output).toContain('[startup] step=runtime status=starting');
   });
 
-  it('treats the empty value rendered by a compose passthrough as enabled', () => {
-    const { yarnCalls } = runEntrypoint({
-      DISABLE_BUNDLED_APP_PROVISIONING: '',
-    });
+  it.each(['', 'false'])(
+    'keeps provisioning enabled for the Compose value "%s"',
+    (value) => {
+      const { yarnCalls } = runEntrypoint({
+        DISABLE_BUNDLED_APP_PROVISIONING: value,
+      });
 
-    expect(yarnCalls).toContain(PROVISION_BUNDLED);
-    expect(yarnCalls).toContain(INSTALL_PRE_INSTALLED);
-  });
+      expect(yarnCalls).toContain(PROVISION_BUNDLED);
+      expect(yarnCalls).toContain(INSTALL_PRE_INSTALLED);
+    },
+  );
 
   it('honours the explicit opt-out on the server without skipping the upgrade', () => {
     const { yarnCalls } = runEntrypoint({
@@ -333,7 +359,9 @@ describe('bundled app provisioning in shipped deployment manifests', () => {
     '%s disables bundled provisioning on every worker service',
     (relativePath) => {
       const workerServices = readComposeServices(relativePath).filter(
-        (service) => service.command.includes('worker:prod'),
+        (service) =>
+          service.command.includes('worker:prod') ||
+          service.command.includes('dist/queue-worker/queue-worker'),
       );
 
       expect(workerServices.length).toBeGreaterThan(0);
@@ -357,7 +385,7 @@ describe('bundled app provisioning in shipped deployment manifests', () => {
       expect(serverService).toBeDefined();
       expect(
         serverService?.environment.DISABLE_BUNDLED_APP_PROVISIONING,
-      ).toMatch(/^\$\{DISABLE_BUNDLED_APP_PROVISIONING(:-)?\}$/);
+      ).toMatch(/^\$\{DISABLE_BUNDLED_APP_PROVISIONING(?::-(?:false)?)?\}$/);
     },
   );
 
