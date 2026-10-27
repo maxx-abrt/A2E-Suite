@@ -24,12 +24,14 @@ type BureauModalProps = {
   modalId: string;
   children: ReactNode;
   isBusy?: boolean;
+  width?: string;
 };
 
 export const BureauModal = ({
   modalId,
   children,
   isBusy = false,
+  width,
 }: BureauModalProps) => {
   const scopedModalId = useWorkspaceSurfaceScopedComponentInstanceId(modalId);
   const isModalOpened = useAtomComponentStateValue(
@@ -40,6 +42,7 @@ export const BureauModal = ({
   return (
     <ModalStatefulWrapper
       modalInstanceId={modalId}
+      width={width}
       isClosable
       renderInDocumentBody
       shouldCloseModalOnClickOutsideOrEscape={!isBusy}

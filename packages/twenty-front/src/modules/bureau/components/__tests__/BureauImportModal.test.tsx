@@ -5,9 +5,19 @@ import {
 import { BureauImportModal } from '@/bureau/components/BureauImportModal';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
+import { zipSync, strToU8 } from 'fflate';
+import { buildBureauTree } from '@/bureau/utils/buildBureauTree';
+import { type BureauDocument } from '@/bureau/types/BureauDocument';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -17,6 +27,8 @@ const mockUploadAttachmentFile = jest.fn();
 const mockFindPage = jest.fn();
 const mockResync = jest.fn();
 let mockCanCreate = true;
+let mockActiveDocumentId: string | null = null;
+let mockDocuments: BureauDocument[] = [];
 
 jest.mock('@/bureau/components/BureauModal', () => ({
   BureauModal: ({ children }: { children: ReactNode }) => <div>{children}</div>,
@@ -25,6 +37,10 @@ jest.mock('@/bureau/hooks/useBureauWorkspace', () => ({
   useBureauWorkspace: () => ({
     permissions: { canUpdateObjectRecords: mockCanCreate },
     resyncDocuments: mockResync,
+    activeDocumentId: mockActiveDocumentId,
+    tree: buildBureauTree(mockDocuments),
+    expandPageIds: jest.fn(),
+    isLoading: false,
   }),
 }));
 jest.mock('@/object-record/hooks/useCreateOneRecord', () => ({
@@ -59,6 +75,12 @@ jest.mock('@/blocknote-editor/import/adapters/parseHtmlWithBlockNote', () => ({
   ],
 }));
 
+jest.mock('@/bureau/components/BureauImportPagePreview', () => ({
+  BureauImportPagePreview: ({ page }: { page: { title: string } }) => (
+    <div>{page.title}</div>
+  ),
+}));
+
 const renderModal = () => {
   const store = createStore();
   store.set(currentWorkspaceState.atom, {
@@ -82,7 +104,7 @@ const uploadMarkdown = async (user: ReturnType<typeof userEvent.setup>) => {
   Object.defineProperty(file, 'arrayBuffer', {
     value: async () => bytes.buffer,
   });
-  await user.upload(screen.getByLabelText('Notion export file'), file);
+  await user.upload(screen.getByLabelText('Export file'), file);
   await screen.findByText('1 pages ready to import');
 };
 
@@ -90,9 +112,106 @@ describe('BureauImportModal workspace and retry boundary', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockCanCreate = true;
+    mockActiveDocumentId = null;
+    mockDocuments = [];
     mockCreateOneRecord.mockResolvedValue(undefined);
     mockUpdateOneRecord.mockResolvedValue(undefined);
     mockFindPage.mockResolvedValue({ data: { document: null } });
+  });
+
+  it('previews a dropped ZIP tree without writes, then imports beneath the open page', async () => {
+    mockActiveDocumentId = 'destination';
+    mockDocuments = [
+      {
+        id: 'destination',
+        title: 'My workspace notes',
+        parentId: null,
+        position: 10,
+      } as BureauDocument,
+    ];
+    const user = userEvent.setup();
+    renderModal();
+    const bytes = zipSync({
+      'Home.md': strToU8('# Home'),
+      'Home/Child.md': strToU8('# Child'),
+    });
+    const file = new File([new Uint8Array(bytes)], 'Workspace.zip', {
+      type: 'application/zip',
+    });
+    Object.defineProperty(file, 'arrayBuffer', {
+      value: async () => bytes.buffer,
+    });
+    fireEvent.drop(screen.getByLabelText('Drop export here'), {
+      dataTransfer: { files: [file] },
+    });
+    await screen.findByText('2 pages ready to import');
+    const tree = screen.getByRole('navigation', { name: 'Pages in export' });
+    await user.click(within(tree).getByRole('button', { name: 'Child' }));
+    expect(
+      await within(
+        screen.getByRole('region', { name: 'Page preview' }),
+      ).findByText('Child'),
+    ).toBeInTheDocument();
+    expect(mockCreateOneRecord).not.toHaveBeenCalled();
+    expect(mockUploadAttachmentFile).not.toHaveBeenCalled();
+    await user.type(screen.getByRole('searchbox'), 'Child');
+    expect(
+      within(tree).queryByRole('button', { name: 'Home' }),
+    ).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Import pages' }));
+    await screen.findByText('Import complete: 2 pages.');
+    expect(mockCreateOneRecord).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        parentId: 'destination',
+        title: 'Home',
+        position: 0,
+      }),
+    );
+    expect(mockCreateOneRecord).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        parentId: mockCreateOneRecord.mock.calls[0][0].id,
+        title: 'Child',
+      }),
+    );
+  });
+
+  it('offers a source choice and rejects multiple dropped exports without creating pages', async () => {
+    const user = userEvent.setup();
+    renderModal();
+    await user.click(screen.getByRole('button', { name: 'Markdown & HTML' }));
+    expect(
+      screen.getByText(/Folders matching a page name/),
+    ).toBeInTheDocument();
+    fireEvent.drop(screen.getByLabelText('Drop export here'), {
+      dataTransfer: { files: [new File([], 'a.zip'), new File([], 'b.zip')] },
+    });
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Choose one export file at a time.',
+    );
+    expect(mockCreateOneRecord).not.toHaveBeenCalled();
+  });
+
+  it('allows choosing a different destination before import', async () => {
+    mockDocuments = [
+      {
+        id: 'destination',
+        title: 'My workspace notes',
+        parentId: null,
+        position: 10,
+      } as BureauDocument,
+    ];
+    const user = userEvent.setup();
+    renderModal();
+    await uploadMarkdown(user);
+    await user.click(screen.getByText('Bureau root'));
+    await user.click(await screen.findByText('My workspace notes'));
+    await user.click(screen.getByRole('button', { name: 'Import pages' }));
+    await screen.findByText('Import complete: 1 pages.');
+    expect(mockCreateOneRecord).toHaveBeenCalledWith(
+      expect.objectContaining({ parentId: 'destination' }),
+    );
   });
 
   it('imports through native records with a fresh page identity in each workspace', async () => {

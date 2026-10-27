@@ -12,5 +12,9 @@ export const compareBureauDocuments = (
     return firstPosition - secondPosition;
   }
 
-  return first.createdAt.localeCompare(second.createdAt);
+  // Optimistic records can enter the tree before server timestamps arrive.
+  return (
+    (first.createdAt ?? '').localeCompare(second.createdAt ?? '') ||
+    first.id.localeCompare(second.id)
+  );
 };

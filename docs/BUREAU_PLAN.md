@@ -6,6 +6,19 @@ Updated **2026-10-22**, starting from `2741c7e2`. PLAN.md remains the release
 acceptance reference. This replaces the Emergent handoff and its estimated
 completion percentage; the old preview environment is not the local runtime.
 
+## 2026-10-27 import review increment
+
+**Import** now offers Notion and HTML/Markdown sources, ZIP drag-and-drop, a
+searchable hierarchy and a read-only preview using the existing editor/parser.
+Users choose Bureau root or an existing page before accepting; imports append
+there and preserve exported descendants. Retry keeps the destination fixed.
+CSV databases become bounded editable table snapshots with originals attached
+to their own pages; malformed/large CSVs retain their container and source file.
+The tree and recent-page search tolerate null optimistic timestamps, and import
+creates request the same fields and explicit positioning as ordinary pages.
+The import modal uses native buttons/selects and theme tokens. See the updated
+[compatibility guide](notion-import.md) and dated phase report for verification.
+
 ## 2026-10-23 home increment
 
 The Bureau home now combines a small animated pixel progress card, a native

@@ -100,6 +100,11 @@ inspect server/worker health in Coolify. Until then automation is prepared, not
 verified active. Semantic version remains deliberate in package.json; commit,
 build number/attempt, timestamp and image digest identify each automatic build.
 
+This Compose application recreates the stack during a deployment. Public requests
+can return 503 while the API upgrades and starts; this path does not provide
+zero-downtime rolling upgrades. Avoid concurrent manual redeploys while CD owns
+a release. Persistent database, queue and file volumes retain their identities.
+
 ## Review a fresh resource's environment
 
 Use the [production template](../packages/twenty-docker/coolify.production.env.example)

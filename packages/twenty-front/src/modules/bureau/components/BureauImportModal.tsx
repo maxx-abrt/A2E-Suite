@@ -8,6 +8,14 @@ import {
   type BureauArchiveImportSession,
 } from '@/blocknote-editor/import/utils/bureauArchiveImport';
 import { readZipEntries } from '@/blocknote-editor/import/utils/zipArchiveCodec';
+import { BureauImportReview } from '@/bureau/components/BureauImportReview';
+import { BUREAU_TREE_RECORD_GQL_FIELDS } from '@/bureau/constants/BureauTreeRecordGqlFields';
+import { getBureauAncestors } from '@/bureau/utils/getBureauAncestors';
+import { getBureauAppendPosition } from '@/bureau/utils/getBureauAppendPosition';
+import { Select } from '@/ui/input/components/Select';
+import { styled } from '@linaria/react';
+import { IconUpload } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { BureauModal } from '@/bureau/components/BureauModal';
 import { BUREAU_IMPORT_MODAL_ID } from '@/bureau/constants/BureauImportModalId';
 import { useBureauWorkspace } from '@/bureau/hooks/useBureauWorkspace';
@@ -25,6 +33,70 @@ import { useNavigate } from 'react-router-dom';
 import { v4 } from 'uuid';
 import { Button } from 'twenty-ui/input';
 
+const StyledDescription = styled.p`
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
+  line-height: 1.5;
+  margin: 0;
+`;
+const StyledChoices = styled.div`
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[3]};
+`;
+const StyledDestination = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+const StyledDropZone = styled.div`
+  align-items: center;
+  background: ${themeCssVariables.background.secondary};
+  border: 1px dashed ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[4]};
+  &[data-has-preview='true'] {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: ${themeCssVariables.spacing[3]};
+    strong {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    > p {
+      display: none;
+    }
+  }
+  &:focus-within {
+    border-color: ${themeCssVariables.color.blue};
+  }
+`;
+const StyledFooter = styled.footer`
+  align-items: center;
+  border-top: 1px solid ${themeCssVariables.border.color.light};
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[2]};
+  padding-top: ${themeCssVariables.spacing[3]};
+  > p {
+    flex: 1;
+    min-width: 180px;
+  }
+`;
+const StyledError = styled.p`
+  color: ${themeCssVariables.color.red};
+`;
+const StyledProgress = styled.progress`
+  accent-color: ${themeCssVariables.color.blue};
+  width: 100%;
+`;
+
 const MAX_IMPORT_FILE_BYTES = 100 * 1024 * 1024;
 
 export const BureauImportModal = () => {
@@ -39,7 +111,11 @@ const WorkspaceBureauImportModal = () => {
   const [isImporting, setIsImporting] = useState(false);
 
   return (
-    <BureauModal modalId={BUREAU_IMPORT_MODAL_ID} isBusy={isImporting}>
+    <BureauModal
+      modalId={BUREAU_IMPORT_MODAL_ID}
+      isBusy={isImporting}
+      width="min(1040px, calc(100vw - 32px))"
+    >
       <BureauImportContent onBusyChange={setIsImporting} />
     </BureauModal>
   );
@@ -49,12 +125,21 @@ type BureauImportContentProps = { onBusyChange: (isBusy: boolean) => void };
 
 const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
   const { t } = useLingui();
-  const { permissions, resyncDocuments } = useBureauWorkspace();
+  const {
+    permissions,
+    resyncDocuments,
+    tree,
+    activeDocumentId,
+    isLoading,
+    error: treeError,
+    expandPageIds,
+  } = useBureauWorkspace();
   const navigate = useNavigate();
   const { closeModal } = useModal();
   const { createOneRecord } = useCreateOneRecord({
     objectNameSingular: 'document',
-    recordGqlFields: { id: true, title: true, parentId: true },
+    recordGqlFields: BUREAU_TREE_RECORD_GQL_FIELDS,
+    shouldMatchRootQueryFilter: true,
   });
   const { updateOneRecord } = useUpdateOneRecord();
   const { uploadAttachmentFile } = useUploadAttachmentFile();
@@ -65,6 +150,13 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
     objectNameSingular: 'document',
     recordGqlFields: { id: true, title: true, parentId: true, kind: true },
   });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [source, setSource] = useState<'notion' | 'files'>('notion');
+  const [destinationParentId, setDestinationParentId] = useState<string | null>(
+    activeDocumentId,
+  );
+  const [fileName, setFileName] = useState('');
+  const [hasStartedImport, setHasStartedImport] = useState(false);
   const [plan, setPlan] = useState<BureauArchiveImportPlan | null>(null);
   const [session, setSession] = useState<BureauArchiveImportSession | null>(
     null,
@@ -100,6 +192,8 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
     setPlan(null);
     setSession(null);
     setCompletedCount(0);
+    setWarningCount(0);
+    setFileName(file.name);
     try {
       assertCanContinue();
       if (file.size > MAX_IMPORT_FILE_BYTES) throw new Error('File too large');
@@ -131,8 +225,21 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
     }
   };
 
+  const destinationExists =
+    destinationParentId === null || tree.documentsById.has(destinationParentId);
+
   const startImport = async () => {
-    if (!plan || !session || !permissions.canUpdateObjectRecords) return;
+    if (
+      !plan ||
+      !session ||
+      !permissions.canUpdateObjectRecords ||
+      !destinationExists ||
+      isLoading ||
+      treeError ||
+      isBusy
+    )
+      return;
+    setHasStartedImport(true);
     setStatus('importing');
     onBusyChange(true);
     setErrorMessage('');
@@ -144,6 +251,7 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
         plan,
         session,
         assertCanContinue,
+        destinationParentId,
         createPage: async (page, id, parentId) => {
           try {
             await createOneRecord({
@@ -151,6 +259,10 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
               title: page.title,
               kind: 'DOCUMENT',
               parentId,
+              position:
+                getBureauAppendPosition(
+                  tree.childrenByParentId.get(parentId) ?? [],
+                ) + plan.pages.indexOf(page),
             });
           } catch (error) {
             assertCanContinue();
@@ -215,6 +327,7 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
       });
       setWarningCount(result.warningCount);
       setStatus('complete');
+      if (destinationParentId) expandPageIds([destinationParentId]);
       resyncDocuments();
     } catch {
       if (!isCurrentWorkspace()) return;
@@ -231,35 +344,153 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
   const isBusy = status === 'reading' || status === 'importing';
   const destinationName = currentWorkspace?.displayName ?? t`This workspace`;
 
+  const destinationOptions = [
+    { value: '', label: t`Bureau root` },
+    ...[...tree.documentsById.values()]
+      .filter((page) => page.kind !== 'TEMPLATE' && !page.deletedAt)
+      .map((page) => ({
+        value: page.id,
+        label: [...getBureauAncestors(page.id, tree), page]
+          .map((ancestor) => ancestor.title?.trim() || t`Untitled`)
+          .join(' / '),
+      }))
+      .sort((first, second) => first.label.localeCompare(second.label)),
+  ];
+  const canChooseFile = !isBusy && !hasStartedImport;
+  const attachmentCount = plan
+    ? [...plan.entriesByPath.keys()].filter(
+        (path) => !session?.documentIdsByPath.has(path) || /\.csv$/i.test(path),
+      ).length
+    : 0;
+
   return (
     <>
-      <h2>{t`Import from Notion`}</h2>
-      <p>{t`Destination: ${destinationName}`}</p>
-      <p>{t`In the workspace where you want these pages, choose a Notion HTML export with sub-pages and files included. HTML preserves more layout information, including columns. Markdown files and ZIP exports are also supported.`}</p>
-      <p>{t`Pages, nested structure, supported blocks, local images, attachments and page links are imported. Extra files are attached to the first page. Notion permissions, comments, database formulas and view settings are not converted. CSV databases remain attachments.`}</p>
-      <input
-        type="file"
-        accept=".zip,.html,.htm,.md,.markdown"
-        aria-label={t`Notion export file`}
-        disabled={isBusy || (session?.createdPaths.size ?? 0) > 0}
-        onChange={(event) => {
-          const file = event.target.files?.[0];
-          if (file) void readFile(file);
+      <header>
+        <h2>{t`Import`}</h2>
+        <StyledDescription>{t`Bring your pages into Bureau. Preview everything before importing.`}</StyledDescription>
+      </header>
+      <StyledChoices aria-label={t`Import source`}>
+        <Button
+          title={t`Notion`}
+          ariaLabel={t`Notion`}
+          variant={source === 'notion' ? 'primary' : 'secondary'}
+          disabled={!canChooseFile}
+          onClick={() => setSource('notion')}
+        />
+        <Button
+          title={t`Markdown & HTML`}
+          ariaLabel={t`Markdown & HTML`}
+          variant={source === 'files' ? 'primary' : 'secondary'}
+          disabled={!canChooseFile}
+          onClick={() => setSource('files')}
+        />
+      </StyledChoices>
+      <StyledDescription>
+        {source === 'notion'
+          ? t`In Notion, export as HTML or Markdown & CSV with subpages and files included. Drop the ZIP below. HTML preserves more layout information.`
+          : t`Drop a ZIP containing HTML or Markdown pages and their files, or choose a single page. Folders matching a page name become its children.`}
+      </StyledDescription>
+      <StyledDestination>
+        <span>{t`Destination: ${destinationName}`}</span>
+        <Select
+          dropdownId="bureau-import-destination"
+          label={t`Import into`}
+          fullWidth
+          withSearchInput
+          isDropdownInModal
+          disabled={isBusy || hasStartedImport || isLoading || !!treeError}
+          value={destinationParentId ?? ''}
+          options={destinationOptions}
+          onChange={(value) => setDestinationParentId(value || null)}
+        />
+        {!destinationExists && (
+          <p role="alert">{t`The destination page is no longer available. Choose another destination.`}</p>
+        )}
+        {treeError && (
+          <p role="alert">{t`Could not load destination pages. Close this window and retry after reloading Bureau.`}</p>
+        )}
+      </StyledDestination>
+      <StyledDropZone
+        aria-label={t`Drop export here`}
+        aria-disabled={!canChooseFile}
+        onDragOver={(event) => {
+          event.preventDefault();
+          event.dataTransfer.dropEffect = canChooseFile ? 'copy' : 'none';
         }}
-      />
-      {plan && <p>{t`${plan.pages.length} pages ready to import`}</p>}
-      {plan && plan.unsupportedPaths.length > 0 && (
-        <p>{t`This archive includes CSV, JSON or nested ZIP files. These are preserved as attachments; their database behavior is not converted.`}</p>
+        onDrop={(event) => {
+          event.preventDefault();
+          if (!canChooseFile) return;
+          if (event.dataTransfer.files.length !== 1) {
+            setErrorMessage(t`Choose one export file at a time.`);
+            return;
+          }
+          const file = event.dataTransfer.files[0];
+          void readFile(file);
+        }}
+        data-has-preview={!!plan}
+      >
+        <IconUpload size={24} />
+        <strong>{fileName || t`Drop your export here`}</strong>
+        <StyledDescription>{t`ZIP, HTML or Markdown · Up to 100 MB`}</StyledDescription>
+        <Button
+          title={t`Choose file`}
+          ariaLabel={t`Choose file`}
+          variant="secondary"
+          disabled={!canChooseFile}
+          onClick={() => fileInputRef.current?.click()}
+        />
+        <input
+          ref={fileInputRef}
+          hidden
+          type="file"
+          accept=".zip,.html,.htm,.md,.markdown"
+          aria-label={t`Export file`}
+          disabled={!canChooseFile}
+          onChange={(event) => {
+            const file = event.target.files?.[0];
+            event.target.value = '';
+            if (file) void readFile(file);
+          }}
+        />
+      </StyledDropZone>
+      {plan && (
+        <>
+          <StyledChoices>
+            <strong>{t`${plan.pages.length} pages ready to import`}</strong>
+            <span>{t`${attachmentCount} files`}</span>
+          </StyledChoices>
+          <BureauImportReview key={fileName} plan={plan} />
+          <details>
+            <summary>{t`Compatibility and review`}</summary>
+            <StyledDescription>{t`Page structure, supported formatting, columns, tables, checklists, local media and page links are preserved. CSV databases become editable table snapshots with the original CSV attached. Large or malformed CSVs stay as attachments. Formulas, relations, database views, comments and sharing permissions are not recreated. Preview links are disabled until import.`}</StyledDescription>
+            {plan.unsupportedPaths.length > 0 && (
+              <ul>
+                {plan.unsupportedPaths.map((path) => (
+                  <li key={path}>{path}</li>
+                ))}
+              </ul>
+            )}
+          </details>
+        </>
       )}
       {isBusy && (
-        <p role="status">
-          {status === 'reading'
-            ? t`Reading export…`
-            : t`Imported ${completedCount} of ${plan?.pages.length ?? 0} pages…`}
-        </p>
+        <div role="status" aria-live="polite">
+          <p>
+            {status === 'reading'
+              ? t`Reading export…`
+              : t`Imported ${completedCount} of ${plan?.pages.length ?? 0} pages…`}
+          </p>
+          {status === 'importing' && (
+            <StyledProgress
+              aria-label={t`Import progress`}
+              max={plan?.pages.length ?? 1}
+              value={completedCount}
+            />
+          )}
+        </div>
       )}
-      {errorMessage && <p role="alert">{errorMessage}</p>}
-      {status === 'complete' ? (
+      {errorMessage && <StyledError role="alert">{errorMessage}</StyledError>}
+      {status === 'complete' && (
         <>
           <p role="status">{t`Import complete: ${completedCount} pages.`}</p>
           {warningCount > 0 && (
@@ -281,9 +512,26 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
               </ul>
             </details>
           )}
+        </>
+      )}
+      <StyledFooter>
+        <StyledDescription>
+          {hasStartedImport
+            ? t`Keep this window open until the import finishes.`
+            : t`Nothing is created until you accept the import.`}
+        </StyledDescription>
+        <Button
+          title={t`Close`}
+          ariaLabel={t`Close`}
+          variant="secondary"
+          disabled={isBusy}
+          onClick={() => closeModal(BUREAU_IMPORT_MODAL_ID)}
+        />
+        {status === 'complete' ? (
           <Button
             title={t`Open imported pages`}
             ariaLabel={t`Open imported pages`}
+            accent="blue"
             onClick={() => {
               const firstId = session?.documentIdsByPath.get(
                 plan?.pages[0]?.path ?? '',
@@ -292,17 +540,29 @@ const BureauImportContent = ({ onBusyChange }: BureauImportContentProps) => {
               if (firstId) navigate(getBureauPagePath(firstId));
             }}
           />
-        </>
-      ) : (
-        <Button
-          title={status === 'failed' ? t`Retry import` : t`Import pages`}
-          ariaLabel={status === 'failed' ? t`Retry import` : t`Import pages`}
-          disabled={!plan || isBusy || !permissions.canUpdateObjectRecords}
-          onClick={() => {
-            void startImport();
-          }}
-        />
-      )}
+        ) : (
+          <Button
+            title={
+              status === 'failed' && plan ? t`Retry import` : t`Import pages`
+            }
+            ariaLabel={
+              status === 'failed' && plan ? t`Retry import` : t`Import pages`
+            }
+            accent="blue"
+            disabled={
+              !plan ||
+              isBusy ||
+              !permissions.canUpdateObjectRecords ||
+              !destinationExists ||
+              isLoading ||
+              !!treeError
+            }
+            onClick={() => {
+              void startImport();
+            }}
+          />
+        )}
+      </StyledFooter>
     </>
   );
 };

@@ -10,6 +10,35 @@ import {
 import { sanitizeNotionHtml } from '@/blocknote-editor/import/utils/prepareNotionHtml';
 import { collectHtmlImportWarnings } from '@/blocknote-editor/import/utils/htmlImportWarnings';
 import { isDefined } from 'twenty-shared/utils';
+import Papa from 'papaparse';
+
+const MAX_CSV_TABLE_ROWS = 1000;
+const MAX_CSV_TABLE_CELLS = 20000;
+
+const csvToTableHtml = (content: string) => {
+  const document = new DOMParser().parseFromString('', 'text/html');
+  const table = document.createElement('table');
+  const { data, errors } = Papa.parse<string[]>(content, {
+    skipEmptyLines: true,
+    delimiter: ',',
+    preview: MAX_CSV_TABLE_ROWS + 1,
+  });
+  if (
+    errors.length > 0 ||
+    data.length > MAX_CSV_TABLE_ROWS ||
+    data.reduce((count, row) => count + row.length, 0) > MAX_CSV_TABLE_CELLS
+  )
+    return null;
+  data.forEach((row, index) => {
+    const tableRow = table.insertRow();
+    row.forEach((value) => {
+      const cell = document.createElement(index === 0 ? 'th' : 'td');
+      cell.textContent = value;
+      tableRow.appendChild(cell);
+    });
+  });
+  return table.outerHTML;
+};
 
 export type BureauArchivePage = {
   path: string;
@@ -55,6 +84,11 @@ export const planBureauArchiveImport = (
   const entriesByPath = new Map<string, DocumentsTransferEntry>();
 
   for (const entry of entries) {
+    if (
+      entry.path.split('/').some((segment) => segment === '__MACOSX') ||
+      /(?:^|\/)\._|(?:^|\/)\.DS_Store$/.test(entry.path)
+    )
+      continue;
     if (/^(?:[\\/]|[a-z]:)/i.test(entry.path))
       throw new Error('Unsafe archive path');
     const path = normalizeEntryPath(entry.path);
@@ -75,15 +109,20 @@ export const planBureauArchiveImport = (
       ? 'html'
       : hasMarkdownExtension(path)
         ? 'markdown'
-        : null;
+        : /\.csv$/i.test(path)
+          ? 'html'
+          : null;
     if (format === null) continue;
-    const content = new TextDecoder().decode(entry.bytes);
+    const sourceContent = new TextDecoder().decode(entry.bytes);
+    const content = /\.csv$/i.test(path)
+      ? csvToTableHtml(sourceContent)
+      : sourceContent;
     const fileTitle = stripNotionEntryHash(
-      getEntryBaseName(path).replace(/\.(html?|md|markdown)$/i, ''),
+      getEntryBaseName(path).replace(/\.(html?|md|markdown|csv)$/i, ''),
     );
     const parsedDocument =
       format === 'html'
-        ? new DOMParser().parseFromString(content, 'text/html')
+        ? new DOMParser().parseFromString(content ?? '', 'text/html')
         : null;
     const title =
       parsedDocument?.querySelector('.page-title')?.textContent?.trim() ||
@@ -91,21 +130,25 @@ export const planBureauArchiveImport = (
       fileTitle ||
       'Untitled';
     const bodyHtml =
-      parsedDocument?.querySelector('.page-body')?.innerHTML ?? content;
+      parsedDocument?.querySelector('.page-body')?.innerHTML ?? content ?? '';
     if (format === 'html')
-      reviewCountsByPath.set(path, collectHtmlImportWarnings(bodyHtml).length);
+      reviewCountsByPath.set(
+        path,
+        collectHtmlImportWarnings(bodyHtml).length + (content === null ? 1 : 0),
+      );
     pages.push({
       path,
       title,
       parentPath: null,
       format,
-      content: format === 'html' ? sanitizeNotionHtml(bodyHtml) : content,
+      content:
+        format === 'html' ? sanitizeNotionHtml(bodyHtml) : (content ?? ''),
     });
   }
 
   const pageByFolder = new Map(
     pages.map((page) => [
-      page.path.replace(/\.(html?|md|markdown)$/i, ''),
+      page.path.replace(/\.(html?|md|markdown|csv)$/i, ''),
       page,
     ]),
   );
@@ -173,6 +216,7 @@ type RunBureauArchiveImportOptions = {
   getPageUrl: (documentId: string) => string;
   onProgress: (completedCount: number, totalCount: number) => void;
   assertCanContinue?: () => void;
+  destinationParentId?: string | null;
 };
 
 export const runBureauArchiveImport = async (
@@ -184,7 +228,7 @@ export const runBureauArchiveImport = async (
   const documentIdsByNotionId = new Map<string, string>();
   for (const page of plan.pages) {
     const sourceId =
-      /([a-f\d]{32}|[a-f\d]{8}(?:-[a-f\d]{4}){3}-[a-f\d]{12})\.(?:html?|md|markdown)$/i.exec(
+      /([a-f\d]{32}|[a-f\d]{8}(?:-[a-f\d]{4}){3}-[a-f\d]{12})\.(?:html?|md|markdown|csv)$/i.exec(
         page.path,
       )?.[1];
     const documentId = session.documentIdsByPath.get(page.path);
@@ -225,7 +269,7 @@ export const runBureauArchiveImport = async (
     if (!id) throw new Error('Missing import identity');
     const parentId = page.parentPath
       ? session.documentIdsByPath.get(page.parentPath)
-      : null;
+      : (options.destinationParentId ?? null);
     if (page.parentPath && !parentId) throw new Error('Missing import parent');
     await options.createPage(page, id, parentId ?? null);
     options.assertCanContinue?.();
@@ -298,28 +342,38 @@ export const runBureauArchiveImport = async (
     );
     session.extraFilePaths ??= [...plan.entriesByPath.keys()].filter(
       (path) =>
-        !session.documentIdsByPath.has(path) && !referencedPaths.has(path),
+        (!session.documentIdsByPath.has(path) || /\.csv$/i.test(path)) &&
+        !referencedPaths.has(path),
     );
-    const extraBlocks: Record<string, unknown>[] = [];
+    const extraBlocksByPagePath = new Map<string, Record<string, unknown>[]>();
     for (const path of session.extraFilePaths) {
       options.assertCanContinue?.();
       const entry = plan.entriesByPath.get(path);
       if (!entry) continue;
-      const attachmentKey = `${firstDocumentId}:${path}`;
+      const ownerPagePath = session.documentIdsByPath.has(path)
+        ? path
+        : firstPage.path;
+      const ownerDocumentId =
+        session.documentIdsByPath.get(ownerPagePath) ?? firstDocumentId;
+      const attachmentKey = `${ownerDocumentId}:${path}`;
       const url =
         session.attachmentUrls.get(attachmentKey) ??
-        (await options.uploadAttachment(entry, firstDocumentId));
+        (await options.uploadAttachment(entry, ownerDocumentId));
       options.assertCanContinue?.();
       session.attachmentUrls.set(attachmentKey, url);
+      const extraBlocks = extraBlocksByPagePath.get(ownerPagePath) ?? [];
       extraBlocks.push({
         type: 'file',
         props: { url, name: entry.path, fileCategory: 'OTHER' },
       });
+      extraBlocksByPagePath.set(ownerPagePath, extraBlocks);
     }
-    if (extraBlocks.length > 0) {
+    for (const [pagePath, extraBlocks] of extraBlocksByPagePath) {
       options.assertCanContinue?.();
-      await options.savePage(firstDocumentId, [
-        ...(session.mappedBlocksByPath.get(firstPage.path) ?? []),
+      const documentId = session.documentIdsByPath.get(pagePath);
+      if (!documentId) throw new Error('Missing attachment owner');
+      await options.savePage(documentId, [
+        ...(session.mappedBlocksByPath.get(pagePath) ?? []),
         ...extraBlocks,
       ]);
       options.assertCanContinue?.();

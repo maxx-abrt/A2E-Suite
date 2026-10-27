@@ -70,7 +70,12 @@ export const FileBlock = createReactBlockSpec(
           handleUploadAttachment?.(e.target.files[0]);
       };
 
-      const safeUrl = getSafeUrl(block.props.url);
+      // Archive previews use same-origin object URLs before any files are uploaded.
+      const safeUrl =
+        !editor.isEditable &&
+        block.props.url.startsWith(`blob:${window.location.origin}/`)
+          ? block.props.url
+          : getSafeUrl(block.props.url);
 
       if (safeUrl) {
         // Media the browser can play inline is embedded; documents, PDF and
