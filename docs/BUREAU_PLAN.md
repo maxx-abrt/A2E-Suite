@@ -6,6 +6,18 @@ Updated **2026-10-22**, starting from `2741c7e2`. PLAN.md remains the release
 acceptance reference. This replaces the Emergent handoff and its estimated
 completion percentage; the old preview environment is not the local runtime.
 
+## 2026-10-27 customer-export fidelity follow-up
+
+A real 305-entry export exposed hash-free folders, HTML/CSV companion pages,
+properties outside `.page-body`, color classes, rich captions and file references
+that the earlier synthetic checks missed. The importer now reconstructs those
+parents, preserves missing directory containers, folds companions into one page,
+keeps full CSV snapshots and property data, translates export colors, and retains
+LaTeX and the original archive for recovery. Failed files keep readable content
+and can retry after other pages are saved. Native attachment retries reuse the
+completed upload and verify a lost response against the allocated identity.
+The compatibility guide records the offline audit and live-verification boundary.
+
 ## 2026-10-27 import review increment
 
 **Import** now offers Notion and HTML/Markdown sources, ZIP drag-and-drop, a

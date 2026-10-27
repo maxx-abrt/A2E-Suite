@@ -1,9 +1,17 @@
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
+import { type AttachmentUploadSession } from '@/activities/files/types/AttachmentUploadSession';
 import { renderHook } from '@testing-library/react';
 
 const mockUploadFile = jest.fn();
 const mockCreateAttachment = jest.fn();
+const mockFindAttachment = jest.fn();
 
+jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
+  useApolloCoreClient: () => ({ query: mockFindAttachment }),
+}));
+jest.mock('@/object-record/hooks/useFindOneRecordQuery', () => ({
+  useFindOneRecordQuery: () => ({ findOneRecordQuery: {} }),
+}));
 jest.mock('@/file/hooks/useDirectFileUpload', () => ({
   useDirectFileUpload: () => ({ uploadFile: mockUploadFile }),
 }));
@@ -21,6 +29,7 @@ jest.mock('@/object-record/hooks/useCreateOneRecord', () => ({
 describe('useUploadAttachmentFile import context', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockFindAttachment.mockResolvedValue({ data: { attachment: null } });
     mockUploadFile.mockResolvedValue({
       id: 'file-one',
       url: 'https://workspace.example/files/one',
@@ -72,5 +81,56 @@ describe('useUploadAttachmentFile import context', () => {
     ).rejects.toThrow('Workspace changed');
 
     expect(mockCreateAttachment).not.toHaveBeenCalled();
+  });
+
+  it('reuses the completed file and attachment identity when attaching must be retried', async () => {
+    mockCreateAttachment.mockRejectedValueOnce(new Error('Offline'));
+    const session: AttachmentUploadSession = {
+      attachmentId: 'allocated-attachment',
+    };
+    const { result } = renderHook(useUploadAttachmentFile);
+    const file = new File(['bytes'], 'photo.png');
+    const target = { id: 'document-one', targetObjectNameSingular: 'document' };
+    await expect(
+      result.current.uploadAttachmentFile(file, target, { session }),
+    ).rejects.toThrow('Offline');
+    await result.current.uploadAttachmentFile(file, target, { session });
+    expect(mockUploadFile).toHaveBeenCalledTimes(1);
+    expect(mockCreateAttachment).toHaveBeenCalledTimes(2);
+    expect(
+      mockCreateAttachment.mock.calls.map(([record]) => record.id),
+    ).toEqual(['allocated-attachment', 'allocated-attachment']);
+    expect(session.isAttached).toBe(true);
+  });
+
+  it('recovers a committed attachment with a lost response using its exact file identity', async () => {
+    mockCreateAttachment.mockRejectedValueOnce(new Error('Response lost'));
+    mockFindAttachment.mockResolvedValueOnce({
+      data: {
+        attachment: {
+          id: 'allocated-attachment',
+          name: 'photo.png',
+          file: [{ fileId: 'file-one' }],
+        },
+      },
+    });
+    const session: AttachmentUploadSession = {
+      attachmentId: 'allocated-attachment',
+    };
+    const { result } = renderHook(useUploadAttachmentFile);
+    const file = new File(['bytes'], 'photo.png');
+    await expect(
+      result.current.uploadAttachmentFile(
+        file,
+        { id: 'document-one', targetObjectNameSingular: 'document' },
+        { session },
+      ),
+    ).resolves.toEqual({
+      attachmentAbsoluteURL: 'https://workspace.example/files/one',
+      attachmentFileId: 'file-one',
+    });
+    expect(session.isAttached).toBe(true);
+    expect(mockUploadFile).toHaveBeenCalledTimes(1);
+    expect(mockCreateAttachment).toHaveBeenCalledTimes(1);
   });
 });

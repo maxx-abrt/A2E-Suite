@@ -12,6 +12,134 @@ const entry = (path: string, text: string) => ({
 });
 
 describe('Notion archive import', () => {
+  it('joins hash-free child folders and HTML/CSV companions without duplicating a source page', () => {
+    const workspacePath = `Export/Workspace ${'a'.repeat(32)}.html`;
+    const databasePath = `Export/Workspace/Tasks ${'b'.repeat(32)}.html`;
+    const csvPath = databasePath.replace('.html', '.csv');
+    const childPath = `Export/Workspace/Tasks/Assignment ${'c'.repeat(32)}.html`;
+    const plan = planBureauArchiveImport([
+      entry(
+        workspacePath,
+        '<article><header><span class="icon" data-emoji="📚"></span><h1 class="page-title">Workspace</h1><img class="page-cover-image" src="Workspace/cover.png"></header><div class="page-body"><p>Welcome</p></div></article>',
+      ),
+      entry(csvPath, 'Name,Status\nAssignment,Done'),
+      entry(
+        databasePath,
+        '<article><header><table class="properties"><tr><th>Due date</th><td><time datetime="2026-10-27">October 27, 2026</time></td></tr></table></header><div class="page-body"><p>Database description</p></div></article>',
+      ),
+      entry(childPath, '<div class="page-body"><p>Course notes</p></div>'),
+    ]);
+    expect(plan.pages.map((page) => [page.path, page.parentPath])).toEqual([
+      [workspacePath, null],
+      [databasePath, workspacePath],
+      [childPath, databasePath],
+    ]);
+    expect(plan.canonicalPathByPath?.get(csvPath)).toBe(databasePath);
+    expect(plan.pages[0].icon).toBe('📚');
+    expect(plan.pages[0].content).toContain('Workspace/cover.png');
+    expect(plan.pages[1].content).toContain('October 27, 2026');
+    expect(plan.pages[1].content).toContain('Database description');
+  });
+
+  it('retains source folder grouping when there is no page for that folder', () => {
+    const plan = planBureauArchiveImport([
+      entry('Export/Hidden/Courses.csv', 'Name\nLesson'),
+      entry('Export/Hidden/Courses/Lesson.md', '# Lesson'),
+    ]);
+    expect(plan.pages.map((page) => [page.title, page.parentPath])).toEqual([
+      ['Hidden', null],
+      ['Courses', 'Export/Hidden/.bureau-import-folder.md'],
+      ['Lesson', 'Export/Hidden/Courses.csv'],
+    ]);
+  });
+
+  it('preserves readable content and other pages after a file failure, then retries only the failed work', async () => {
+    const plan = planBureauArchiveImport([
+      entry('Home.md', '# Home'),
+      entry('Home/Child.md', '# Child'),
+      entry('Home/photo.png', 'png'),
+    ]);
+    plan.sourceFile = entry('Original.zip', 'original archive bytes');
+    const session: BureauArchiveImportSession = {
+      documentIdsByPath: new Map([
+        ['Home.md', 'home-id'],
+        ['Home/Child.md', 'child-id'],
+      ]),
+      createdPaths: new Set(),
+      completedPaths: new Set(),
+      attachmentUrls: new Map(),
+    };
+    const createPage = jest.fn();
+    const uploadAttachment = jest
+      .fn()
+      .mockRejectedValueOnce(new Error('Offline'))
+      .mockResolvedValue('https://files.example/stored');
+    const savePage = jest.fn();
+    const options = {
+      plan,
+      session,
+      createPage,
+      uploadAttachment,
+      savePage,
+      parsePage: async (page: { path: string }) =>
+        page.path === 'Home.md'
+          ? [
+              {
+                type: 'paragraph',
+                content: [{ type: 'text', text: 'Keep my notes' }],
+              },
+              {
+                type: 'image',
+                props: { url: 'Home/photo.png', caption: 'My diagram' },
+              },
+            ]
+          : [
+              {
+                type: 'paragraph',
+                content: [{ type: 'text', text: 'Child notes' }],
+              },
+            ],
+      mapBlocks: (
+        blocks: readonly unknown[],
+        resolveUrl: (url: string) => string | null,
+      ) =>
+        mapImportedAttachmentsAndLinks(blocks, {
+          resolveAttachmentUrl: resolveUrl,
+          preserveUnmappedAttachments: true,
+          resolveLinkUrl: resolveUrl,
+        }),
+      getPageUrl: (id: string) => `/bureau/${id}`,
+      onProgress: jest.fn(),
+    };
+    await expect(runBureauArchiveImport(options)).rejects.toThrow(
+      'file upload(s) need retry',
+    );
+    expect(savePage).toHaveBeenCalledWith(
+      'home-id',
+      expect.arrayContaining([
+        expect.objectContaining({
+          content: [{ type: 'text', text: 'Keep my notes' }],
+        }),
+        expect.objectContaining({
+          content: [{ type: 'text', text: 'My diagram — Home/photo.png' }],
+        }),
+      ]),
+    );
+    expect(session.completedPaths.has('Home/Child.md')).toBe(true);
+    expect(session.completedPaths.has('Home.md')).toBe(false);
+    await runBureauArchiveImport(options);
+    expect(createPage).toHaveBeenCalledTimes(2);
+    expect(session.completedPaths.size).toBe(2);
+    expect(
+      uploadAttachment.mock.calls.filter(
+        ([source]) => source.path === 'Original.zip',
+      ),
+    ).toHaveLength(1);
+    expect(JSON.stringify(savePage.mock.calls.at(-1))).toContain(
+      'Keep my notes',
+    );
+  });
+
   it('keeps an oversized database as its own parent and attachment without truncating it', async () => {
     const plan = planBureauArchiveImport([
       entry('A.md', '# A'),
@@ -123,10 +251,12 @@ describe('Notion archive import', () => {
       entry('Broken.csv', 'Name\n"unterminated'),
     ]);
     expect(plan.pages.map((page) => page.path)).toEqual([
-      'Broken.csv',
       'Home.md',
+      'Broken.csv',
     ]);
-    expect(plan.pages[0].content).toBe('');
+    expect(plan.pages.find((page) => page.path === 'Broken.csv')?.content).toBe(
+      '',
+    );
     expect(plan.unsupportedPaths).toEqual(['Broken.csv']);
   });
 
@@ -178,6 +308,7 @@ describe('Notion archive import', () => {
         mapImportedAttachmentsAndLinks(blocks, {
           resolveLinkUrl: resolveUrl,
           resolveAttachmentUrl: resolveUrl,
+          preserveUnmappedAttachments: true,
         }),
       getPageUrl: (id) => `/bureau/${id}`,
       onProgress: jest.fn(),
@@ -290,12 +421,12 @@ describe('Notion archive import', () => {
       entry('Export/Database.csv', 'Name,Status\nTask,Done'),
     ]);
     expect(plan.pages.map((page) => [page.title, page.parentPath])).toEqual([
-      ['Database', null],
       ['Team space', null],
       ['Meeting', `Export/Team ${hash}.html`],
+      ['Database', null],
     ]);
-    expect(plan.pages[2].content).toContain('<h2>Agenda</h2>');
-    expect(plan.pages[2].content).not.toMatch(/script|onerror/);
+    expect(plan.pages[1].content).toContain('<h2>Agenda</h2>');
+    expect(plan.pages[1].content).not.toMatch(/script|onerror/);
     expect(plan.unsupportedPaths).toEqual(['Export/Database.csv']);
   });
 
@@ -374,6 +505,7 @@ describe('Notion archive import', () => {
       ) =>
         mapImportedAttachmentsAndLinks(blocks, {
           resolveAttachmentUrl: resolveUrl,
+          preserveUnmappedAttachments: true,
           resolveLinkUrl: resolveUrl,
         }),
       getPageUrl: (id: string) => `/bureau/${id}`,

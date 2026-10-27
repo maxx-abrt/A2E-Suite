@@ -31,6 +31,8 @@ export const CalloutBlock = createReactBlockSpec(
   {
     type: 'callout',
     propSchema: {
+      backgroundColor: { default: 'default' },
+      textColor: { default: 'default' },
       emoji: {
         default: '💡',
       },
@@ -44,6 +46,7 @@ export const CalloutBlock = createReactBlockSpec(
       );
 
       const handleEmojiClick = () => {
+        if (!editor.isEditable) return;
         editor.updateBlock(block.id, {
           props: {
             emoji:
@@ -53,7 +56,18 @@ export const CalloutBlock = createReactBlockSpec(
       };
 
       return (
-        <StyledCallout>
+        <StyledCallout
+          style={{
+            backgroundColor:
+              block.props.backgroundColor === 'default'
+                ? undefined
+                : block.props.backgroundColor,
+            color:
+              block.props.textColor === 'default'
+                ? undefined
+                : block.props.textColor,
+          }}
+        >
           <StyledEmoji onClick={handleEmojiClick}>
             {block.props.emoji}
           </StyledEmoji>

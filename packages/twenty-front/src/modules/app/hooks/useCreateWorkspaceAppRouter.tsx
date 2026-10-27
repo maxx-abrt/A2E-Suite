@@ -3,6 +3,7 @@ import { lazy, useMemo } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 
+import { PUBLIC_SITE_ROUTES } from '@/public-site/PublicSitePages';
 import { LazyRoute } from '@/app/components/LazyRoute';
 import { WorkspaceAppProviders } from '@/app/components/WorkspaceAppProviders';
 import { WorkspaceRouteObjectsProvider } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
@@ -180,6 +181,14 @@ const createWorkspaceAppRouter = ({
                     </LazyRoute>
                   ),
                 },
+                ...PUBLIC_SITE_ROUTES.map((page) => ({
+                  path: page.path,
+                  element: (
+                    <LazyRoute fallback={null}>
+                      <PublicLandingPage />
+                    </LazyRoute>
+                  ),
+                })),
                 {
                   element: <OnboardingTransitionOutlet />,
                   loader: preloadOnboardingPages,

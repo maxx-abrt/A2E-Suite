@@ -19,7 +19,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { Checkbox, LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRowActions = styled.div`
@@ -48,8 +48,10 @@ const StyledRow = styled.div`
   );
   padding-right: ${themeCssVariables.spacing[1]};
   position: relative;
-  transition: background calc(${themeCssVariables.animation.duration.fast} * 1s)
-    ease;
+  transition:
+    background 160ms ease,
+    opacity 160ms ease,
+    transform 160ms ease;
   user-select: none;
 
   &:hover,
@@ -70,6 +72,15 @@ const StyledRow = styled.div`
 
   &[data-dragging='true'] {
     opacity: 0.4;
+  }
+  &[data-trashing='true'] {
+    opacity: 0.25;
+    transform: translateX(8px) scale(0.98);
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    transform: none !important;
   }
 
   &[data-drop-zone='inside'] {
@@ -211,6 +222,17 @@ export const BureauTreeItem = ({
     activeDocumentId,
     expandedPageIds,
     toggleExpandedPageId,
+    draggedPageIds,
+    trashingPageIds,
+    moveDraggedPages,
+    selectedPageIds,
+    togglePageSelection,
+    clearPageSelection,
+    selectAllPages,
+    isSelectingPages,
+    isBulkActionPending,
+    isLoading,
+    error,
     draggedPageId,
     setDraggedPageId,
     invalidDropTargetIds,
@@ -229,6 +251,7 @@ export const BureauTreeItem = ({
   const expandedKey = isTreeSection ? page.id : `${section}:${page.id}`;
   const isExpanded = expandedPageIds.includes(expandedKey);
   const isActive = activeDocumentId === page.id;
+  const isSelected = isTreeSection && selectedPageIds.includes(page.id);
   const isRenaming = isDefined(renameDraft);
   const pageTitle = page.title?.trim() ?? '';
   const rowStyle = { '--bureau-tree-depth': depth } as CSSProperties;
@@ -242,7 +265,12 @@ export const BureauTreeItem = ({
   };
 
   const startRename = () => {
-    if (!permissions.canUpdateObjectRecords) return;
+    if (
+      !permissions.canUpdateObjectRecords ||
+      isSelectingPages ||
+      isBulkActionPending
+    )
+      return;
     setRenameDraft(page.title ?? '');
   };
 
@@ -275,13 +303,30 @@ export const BureauTreeItem = ({
   };
 
   const handleRowKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.target !== event.currentTarget) {
+    if (
+      (event.metaKey || event.ctrlKey) &&
+      event.key.toLowerCase() === 'a' &&
+      isTreeSection
+    ) {
+      event.preventDefault();
+      selectAllPages();
       return;
     }
-
+    if (event.key === 'Escape' && isSelectingPages && !isBulkActionPending) {
+      event.preventDefault();
+      clearPageSelection();
+      return;
+    }
+    if (event.target !== event.currentTarget) return;
+    if (event.key === ' ' && isTreeSection) {
+      event.preventDefault();
+      togglePageSelection(page.id, event.shiftKey);
+    }
     if (event.key === 'Enter') {
       event.preventDefault();
-      openPage();
+      if (isSelectingPages && isTreeSection)
+        togglePageSelection(page.id, event.shiftKey);
+      else openPage();
     }
 
     if (event.key === 'F2') {
@@ -302,13 +347,20 @@ export const BureauTreeItem = ({
 
   const canAcceptDrop =
     permissions.canUpdateObjectRecords &&
+    !isBulkActionPending &&
+    !isLoading &&
+    !error &&
     isTreeSection &&
     isDefined(draggedPageId) &&
     !invalidDropTargetIds.has(page.id);
 
   const handleDragStart = (event: DragEvent<HTMLDivElement>) => {
     event.dataTransfer.effectAllowed = 'move';
-    event.dataTransfer.setData('text/plain', page.id);
+    event.dataTransfer.setData(
+      'text/plain',
+      (isSelected ? selectedPageIds : [page.id]).join('\n'),
+    );
+    event.dataTransfer.setData('application/x-bureau-pages', page.id);
     setDraggedPageId(page.id);
   };
 
@@ -336,7 +388,7 @@ export const BureauTreeItem = ({
     setDropZone(null);
 
     if (canAcceptDrop && isDefined(draggedPageId)) {
-      void actions.movePage(draggedPageId, page.id, zone);
+      void moveDraggedPages(page.id, zone);
     }
 
     setDraggedPageId(null);
@@ -347,20 +399,41 @@ export const BureauTreeItem = ({
       <StyledRow
         role="treeitem"
         tabIndex={0}
-        aria-selected={isActive}
+        aria-selected={
+          isTreeSection && isSelectingPages ? isSelected : isActive
+        }
         aria-expanded={childPages.length > 0 ? isExpanded : undefined}
         aria-level={depth + 1}
-        data-active={isActive}
-        data-dragging={draggedPageId === page.id}
+        data-active={isSelected || isActive}
+        data-trashing={trashingPageIds.includes(page.id)}
+        data-dragging={draggedPageIds.includes(page.id)}
         data-drop-zone={canAcceptDrop ? (dropZone ?? undefined) : undefined}
         data-testid={testIdPrefix}
         style={rowStyle}
         draggable={
-          isTreeSection && !isRenaming && permissions.canUpdateObjectRecords
+          isTreeSection &&
+          !isRenaming &&
+          !isBulkActionPending &&
+          !isLoading &&
+          !error &&
+          (permissions.canUpdateObjectRecords ||
+            permissions.canSoftDeleteObjectRecords)
         }
         // oxlint-disable-next-line twenty/no-navigate-prefer-link
-        onClick={openPage}
-        onDoubleClick={startRename}
+        onClick={(event) => {
+          if (
+            isTreeSection &&
+            (isSelectingPages ||
+              event.metaKey ||
+              event.ctrlKey ||
+              event.shiftKey)
+          )
+            togglePageSelection(page.id, event.shiftKey);
+          else openPage();
+        }}
+        onDoubleClick={() => {
+          if (!isSelectingPages && !isBulkActionPending) startRename();
+        }}
         onKeyDown={handleRowKeyDown}
         onDragStart={handleDragStart}
         onDragEnd={() => {
@@ -384,6 +457,21 @@ export const BureauTreeItem = ({
         >
           <IconChevronRight size={14} stroke={2} />
         </StyledToggle>
+        {isTreeSection && isSelectingPages && (
+          <span onClick={(event) => event.stopPropagation()}>
+            <Checkbox
+              aria-label={t`Select ${pageTitle || t`Untitled`}`}
+              checked={isSelected}
+              disabled={isBulkActionPending}
+              onChange={(event) =>
+                togglePageSelection(
+                  page.id,
+                  'shiftKey' in event && event.shiftKey === true,
+                )
+              }
+            />
+          </span>
+        )}
         <BureauPageIcon icon={page.icon} />
         {isRenaming ? (
           <StyledRenameInput
@@ -405,28 +493,30 @@ export const BureauTreeItem = ({
             {pageTitle === '' ? t`Untitled` : pageTitle}
           </StyledTitle>
         )}
-        <StyledRowActions
-          onClick={(event) => event.stopPropagation()}
-          onDoubleClick={(event) => event.stopPropagation()}
-        >
-          <BureauPageActionsDropdown
-            page={page}
-            dropdownId={`bureau-${section}-item-menu-${page.id}`}
-            onRename={startRename}
-          />
-          {permissions.canUpdateObjectRecords && (
-            <LightIconButton
-              Icon={IconPlus}
-              accent="tertiary"
-              size="small"
-              aria-label={t`Add a sub-page`}
-              testId={`${testIdPrefix}-add`}
-              onClick={() => {
-                void actions.createPage({ parentId: page.id });
-              }}
+        {!isSelectingPages && !isBulkActionPending && (
+          <StyledRowActions
+            onClick={(event) => event.stopPropagation()}
+            onDoubleClick={(event) => event.stopPropagation()}
+          >
+            <BureauPageActionsDropdown
+              page={page}
+              dropdownId={`bureau-${section}-item-menu-${page.id}`}
+              onRename={startRename}
             />
-          )}
-        </StyledRowActions>
+            {permissions.canUpdateObjectRecords && (
+              <LightIconButton
+                Icon={IconPlus}
+                accent="tertiary"
+                size="small"
+                aria-label={t`Add a sub-page`}
+                testId={`${testIdPrefix}-add`}
+                onClick={() => {
+                  void actions.createPage({ parentId: page.id });
+                }}
+              />
+            )}
+          </StyledRowActions>
+        )}
       </StyledRow>
       {isExpanded ? (
         childPages.length > 0 ? (

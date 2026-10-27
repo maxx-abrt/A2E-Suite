@@ -1,3 +1,4 @@
+import { type BureauDropZone } from '@/bureau/types/BureauDropZone';
 import { BUREAU_SEARCH_MODAL_ID } from '@/bureau/constants/BureauSearchModalId';
 import { BUREAU_TRASH_MODAL_ID } from '@/bureau/constants/BureauTrashModalId';
 import { useBureauDocuments } from '@/bureau/hooks/useBureauDocuments';
@@ -6,6 +7,11 @@ import { useBureauPageActions } from '@/bureau/hooks/useBureauPageActions';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { bureauExpandedPageIdsState } from '@/bureau/states/bureauExpandedPageIdsState';
+import {
+  getBureauVisiblePageIds,
+  getBureauSelectionRoots,
+  toggleBureauSelection,
+} from '@/bureau/utils/getBureauSelection';
 import { getBureauAncestors } from '@/bureau/utils/getBureauAncestors';
 import { getBureauDescendantIds } from '@/bureau/utils/getBureauDescendantIds';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -25,6 +31,41 @@ export const useBureauWorkspaceValue = (activeDocumentId: string | null) => {
     bureauExpandedPageIdsState,
   );
   const [draggedPageId, setDraggedPageId] = useState<string | null>(null);
+  const [selection, setSelection] = useState<{
+    pageIds: string[];
+    anchorId: string | null;
+    enabled: boolean;
+  }>({ pageIds: [], anchorId: null, enabled: false });
+  const [isBulkActionPending, setIsBulkActionPending] = useState(false);
+  const [trashingPageIds, setTrashingPageIds] = useState<string[]>([]);
+  const selectedPageIds = selection.pageIds.filter((pageId) =>
+    tree.documentsById.has(pageId),
+  );
+  const isSelectingPages = selection.enabled || selectedPageIds.length > 0;
+  const clearPageSelection = () =>
+    setSelection({ pageIds: [], anchorId: null, enabled: false });
+  const togglePageSelection = (pageId: string, extend = false) => {
+    if (isBulkActionPending) return;
+    setSelection((previous) => ({
+      enabled: true,
+      anchorId: extend ? (previous.anchorId ?? pageId) : pageId,
+      pageIds: toggleBureauSelection({
+        selectedIds: previous.pageIds.filter((selectedId) =>
+          tree.documentsById.has(selectedId),
+        ),
+        pageId,
+        anchorId: previous.anchorId,
+        visibleIds: getBureauVisiblePageIds(tree, bureauExpandedPageIds, false),
+        extend,
+      }),
+    }));
+  };
+  const draggedPageIds =
+    draggedPageId === null
+      ? []
+      : selectedPageIds.includes(draggedPageId)
+        ? selectedPageIds
+        : [draggedPageId];
   const { openModal } = useModal();
 
   const expandPageIds = useCallback(
@@ -73,7 +114,7 @@ export const useBureauWorkspaceValue = (activeDocumentId: string | null) => {
     activeDocumentId,
     resyncDocuments,
     expandPageIds,
-    isTreeLoading: isLoading,
+    isTreeLoading: isLoading || isDefined(error),
   });
 
   const favoriteDocuments = useMemo(
@@ -85,15 +126,11 @@ export const useBureauWorkspaceValue = (activeDocumentId: string | null) => {
   );
 
   // A page can never be dropped onto itself or anywhere inside its subtree.
-  const invalidDropTargetIds = useMemo(
-    () =>
-      isDefined(draggedPageId)
-        ? new Set([
-            draggedPageId,
-            ...getBureauDescendantIds(draggedPageId, tree.childrenByParentId),
-          ])
-        : new Set<string>(),
-    [draggedPageId, tree],
+  const invalidDropTargetIds = new Set(
+    getBureauSelectionRoots(draggedPageIds, tree).flatMap((pageId) => [
+      pageId,
+      ...getBureauDescendantIds(pageId, tree.childrenByParentId),
+    ]),
   );
 
   const openSearch = useCallback(
@@ -118,8 +155,43 @@ export const useBureauWorkspaceValue = (activeDocumentId: string | null) => {
     expandedPageIds: bureauExpandedPageIds,
     expandPageIds,
     toggleExpandedPageId,
+    trashingPageIds,
+    setTrashingPageIds,
+    selectedPageIds,
+    isSelectingPages,
+    isBulkActionPending,
+    setIsBulkActionPending,
+    togglePageSelection,
+    clearPageSelection,
+    startPageSelection: () => {
+      if (!isBulkActionPending)
+        setSelection((previous) => ({ ...previous, enabled: true }));
+    },
+    selectAllPages: () => {
+      if (isBulkActionPending) return;
+      setSelection({
+        pageIds: getBureauVisiblePageIds(
+          tree,
+          [...tree.documentsById.keys()],
+          false,
+        ),
+        anchorId: null,
+        enabled: true,
+      });
+    },
+    draggedPageIds,
     draggedPageId,
     setDraggedPageId,
+    moveDraggedPages: async (targetId: string | null, zone: BureauDropZone) => {
+      if (isBulkActionPending) return;
+      setIsBulkActionPending(true);
+      try {
+        await actions.movePages(draggedPageIds, targetId, zone);
+      } finally {
+        setDraggedPageId(null);
+        setIsBulkActionPending(false);
+      }
+    },
     invalidDropTargetIds,
     actions,
     permissions,

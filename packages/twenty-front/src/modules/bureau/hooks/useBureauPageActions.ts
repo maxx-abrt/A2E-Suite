@@ -2,6 +2,9 @@ import { BUREAU_TREE_RECORD_GQL_FIELDS } from '@/bureau/constants/BureauTreeReco
 import { type BureauDocument } from '@/bureau/types/BureauDocument';
 import { type BureauDropZone } from '@/bureau/types/BureauDropZone';
 import { type BureauTree } from '@/bureau/types/BureauTree';
+import { useRef } from 'react';
+import { buildBureauTree } from '@/bureau/utils/buildBureauTree';
+import { getBureauSelectionRoots } from '@/bureau/utils/getBureauSelection';
 import { getBureauAppendPosition } from '@/bureau/utils/getBureauAppendPosition';
 import { getBureauDescendantIds } from '@/bureau/utils/getBureauDescendantIds';
 import { getBureauDropPlacement } from '@/bureau/utils/getBureauDropPlacement';
@@ -39,6 +42,9 @@ export const useBureauPageActions = ({
   isTreeLoading?: boolean;
 }) => {
   const { t } = useLingui();
+  // Native drops and repeated clicks can arrive before the pending state renders.
+  // oxlint-disable-next-line twenty/no-state-useref
+  const mutationPending = useRef(false);
   const navigate = useNavigate();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
@@ -114,55 +120,92 @@ export const useBureauPageActions = ({
     }
   };
 
-  const movePage = async (
-    draggedId: string,
+  const movePages = async (
+    pageIds: string[],
     targetId: string | null,
     zone: BureauDropZone,
   ) => {
-    if (isTreeLoading) {
+    if (mutationPending.current || isTreeLoading) {
       enqueueErrorSnackBar({
-        message: t`Please wait until all pages have loaded.`,
+        message: t`Please wait until all pages have loaded and the current action has finished.`,
       });
-      return;
+      return [];
     }
-    const placement = getBureauDropPlacement({
-      draggedId,
-      targetId,
-      zone,
-      tree,
-    });
-
-    if (!isDefined(placement)) {
-      return;
-    }
-
-    const draggedPage = tree.documentsById.get(draggedId);
-
+    const roots = getBureauSelectionRoots(pageIds, tree);
     if (
-      draggedPage?.parentId === placement.parentId &&
-      draggedPage?.position === placement.position &&
-      placement.siblingRepositions.length === 0
-    ) {
-      return;
+      roots.length === 0 ||
+      roots.some(
+        (pageId) =>
+          !getBureauDropPlacement({ draggedId: pageId, targetId, zone, tree }),
+      )
+    )
+      return [];
+    mutationPending.current = true;
+    const movedIds: string[] = [];
+    let workingTree = tree;
+    // Recompute positions after every save: a bulk move must not give all siblings the same position.
+    try {
+      for (const pageId of zone === 'after' ? [...roots].reverse() : roots) {
+        const placement = getBureauDropPlacement({
+          draggedId: pageId,
+          targetId,
+          zone,
+          tree: workingTree,
+        });
+        if (!placement) break;
+        let didSaveSiblings = true;
+        for (const sibling of placement.siblingRepositions) {
+          if (!(await updatePage(sibling.id, { position: sibling.position }))) {
+            didSaveSiblings = false;
+            break;
+          }
+          workingTree = buildBureauTree(
+            [...workingTree.documentsById.values()].map((page) =>
+              page.id === sibling.id
+                ? { ...page, position: sibling.position }
+                : page,
+            ),
+          );
+        }
+        if (
+          !didSaveSiblings ||
+          !(await updatePage(pageId, {
+            parentId: placement.parentId,
+            position: placement.position,
+          }))
+        )
+          break;
+        movedIds.push(pageId);
+        workingTree = buildBureauTree(
+          [...workingTree.documentsById.values()].map((page) =>
+            page.id === pageId
+              ? {
+                  ...page,
+                  parentId: placement.parentId,
+                  position: placement.position,
+                }
+              : page,
+          ),
+        );
+        if (isDefined(placement.parentId)) expandPageIds([placement.parentId]);
+      }
+    } finally {
+      mutationPending.current = false;
+      resyncDocuments();
     }
-
-    for (const siblingReposition of placement.siblingRepositions) {
-      const didSave = await updatePage(siblingReposition.id, {
-        position: siblingReposition.position,
+    if (movedIds.length > 0 && movedIds.length < roots.length) {
+      enqueueErrorSnackBar({
+        message: t`Some pages moved. Review their locations before retrying the remaining pages.`,
       });
-
-      if (!didSave) return;
     }
-
-    const didMove = await updatePage(draggedId, {
-      parentId: placement.parentId,
-      position: placement.position,
-    });
-
-    if (didMove && isDefined(placement.parentId)) {
-      expandPageIds([placement.parentId]);
-    }
+    return movedIds;
   };
+
+  const movePage = async (
+    pageId: string,
+    targetId: string | null,
+    zone: BureauDropZone,
+  ) => movePages([pageId], targetId, zone);
 
   const restorePageIds = async (pageIds: string[]) => {
     await restoreManyRecords({ idsToRestore: pageIds });
@@ -171,26 +214,53 @@ export const useBureauPageActions = ({
 
   // A page goes to the trash with its whole subtree, so no child is left
   // pointing at a trashed parent.
-  const trashPage = async (documentId: string) => {
-    if (isTreeLoading) {
+  const trashPages = async (documentIds: string[]) => {
+    if (isTreeLoading || mutationPending.current) {
       enqueueErrorSnackBar({
-        message: t`Please wait until all pages have loaded.`,
+        message: t`Please wait until all pages have loaded and the current action has finished.`,
       });
-      return;
+      return false;
     }
+    const roots = getBureauSelectionRoots(documentIds, tree);
     const pageIds = [
-      documentId,
-      ...getBureauDescendantIds(documentId, tree.childrenByParentId),
+      ...new Set(
+        roots.flatMap((pageId) => [
+          pageId,
+          ...getBureauDescendantIds(pageId, tree.childrenByParentId),
+        ]),
+      ),
     ];
-
+    if (pageIds.length === 0) return false;
+    mutationPending.current = true;
     try {
-      await deleteManyRecords({ recordIdsToDelete: pageIds });
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Could not move the page to the trash. Please try again.`,
+      const deletedRecords = await deleteManyRecords({
+        recordIdsToDelete: [...pageIds].reverse(),
+        skipOptimisticEffect: true,
       });
-
-      return;
+      if (
+        new Set(deletedRecords.map((record) => record.id)).size !==
+        pageIds.length
+      ) {
+        throw new Error('The server did not delete every requested page');
+      }
+    } catch {
+      resyncDocuments();
+      enqueueErrorSnackBar({
+        message: t`The action could not finish. Some pages may have moved to the trash. Check the trash before retrying.`,
+        options: {
+          buttonLabel: t`Undo`,
+          buttonOnClick: () => {
+            void restorePageIds(pageIds).catch(() =>
+              enqueueErrorSnackBar({
+                message: t`Could not restore the pages. Please try again from the trash.`,
+              }),
+            );
+          },
+        },
+      });
+      return false;
+    } finally {
+      mutationPending.current = false;
     }
 
     resyncDocuments();
@@ -200,7 +270,10 @@ export const useBureauPageActions = ({
     }
 
     enqueueSuccessSnackBar({
-      message: t`Page moved to the trash`,
+      message:
+        pageIds.length === 1
+          ? t`Page moved to the trash`
+          : t`${pageIds.length} pages moved to the trash`,
       options: {
         buttonLabel: t`Undo`,
         buttonOnClick: () => {
@@ -212,7 +285,11 @@ export const useBureauPageActions = ({
         },
       },
     });
+
+    return true;
   };
+
+  const trashPage = async (documentId: string) => trashPages([documentId]);
 
   // Restores a trashed page with its trashed subtree; a page whose parent is
   // gone is re-homed at the root instead of disappearing from the tree.
@@ -287,7 +364,9 @@ export const useBureauPageActions = ({
     createPage,
     updatePage,
     movePage,
+    movePages,
     trashPage,
+    trashPages,
     restorePage,
     destroyPage,
   };

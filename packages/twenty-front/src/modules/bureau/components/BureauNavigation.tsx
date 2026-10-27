@@ -1,3 +1,5 @@
+import { BureauBulkActions } from '@/bureau/components/BureauBulkActions';
+import { BureauTrashDropTarget } from '@/bureau/components/BureauTrashDropTarget';
 import { BureauSidebarAction } from '@/bureau/components/BureauSidebarAction';
 import { BureauTreeItem } from '@/bureau/components/BureauTreeItem';
 import { BUREAU_LANDING_TEMPLATE_CATEGORY } from '@/bureau/constants/BureauLandingTemplateCategory';
@@ -17,7 +19,7 @@ import {
   IconLayout,
   IconPlus,
   IconSearch,
-  IconTrash,
+  IconCheckbox,
   IconUpload,
 } from 'twenty-ui/icon';
 import { useLocation } from 'react-router-dom';
@@ -77,7 +79,10 @@ const BureauNavigationContent = () => {
     tree,
     favoriteDocuments,
     openSearch,
-    openTrash,
+    startPageSelection,
+    isSelectingPages,
+    isBulkActionPending,
+    moveDraggedPages,
     draggedPageId,
     setDraggedPageId,
     isLoading,
@@ -142,6 +147,17 @@ const BureauNavigationContent = () => {
         </>
       )}
       <StyledHeading>{t`Pages`}</StyledHeading>
+      {(permissions.canUpdateObjectRecords ||
+        permissions.canSoftDeleteObjectRecords) &&
+        !isSelectingPages && (
+          <BureauSidebarAction
+            Icon={IconCheckbox}
+            label={t`Select pages`}
+            testId="bureau-select-pages"
+            onClick={startPageSelection}
+          />
+        )}
+      <BureauBulkActions />
       {isLoading && <span role="status">{t`Loading pages…`}</span>}
       {error ? (
         <BureauSidebarAction
@@ -151,7 +167,11 @@ const BureauNavigationContent = () => {
           onClick={resyncDocuments}
         />
       ) : null}
-      <StyledTree role="tree" aria-label={t`Pages`}>
+      <StyledTree
+        role="tree"
+        aria-label={t`Pages`}
+        aria-multiselectable={isSelectingPages}
+      >
         {rootPages
           .filter((page) => page.kind !== HOME_DOCUMENT_TEMPLATE_KIND)
           .map((page) => (
@@ -171,7 +191,11 @@ const BureauNavigationContent = () => {
           }
         >
           <summary>{t`Saved templates`}</summary>
-          <StyledTree role="tree" aria-label={t`Saved templates`}>
+          <StyledTree
+            role="tree"
+            aria-label={t`Saved templates`}
+            aria-multiselectable={isSelectingPages}
+          >
             {savedTemplates.map((page) => (
               <BureauTreeItem
                 key={page.id}
@@ -183,27 +207,26 @@ const BureauNavigationContent = () => {
           </StyledTree>
         </StyledSavedTemplates>
       )}
-      {draggedPageId && (
-        <div
-          onDragOver={(event) => {
-            event.preventDefault();
-            event.dataTransfer.dropEffect = 'move';
-          }}
-          onDrop={(event) => {
-            event.preventDefault();
-            void actions.movePage(draggedPageId, null, 'inside');
-            setDraggedPageId(null);
-          }}
-        >
-          <StyledHeading>{t`Move to top level`}</StyledHeading>
-        </div>
-      )}
-      <BureauSidebarAction
-        Icon={IconTrash}
-        label={t`Trash`}
-        testId="bureau-trash"
-        onClick={openTrash}
-      />
+      {draggedPageId &&
+        permissions.canUpdateObjectRecords &&
+        !isBulkActionPending &&
+        !isLoading &&
+        !error && (
+          <div
+            onDragOver={(event) => {
+              event.preventDefault();
+              event.dataTransfer.dropEffect = 'move';
+            }}
+            onDrop={(event) => {
+              event.preventDefault();
+              void moveDraggedPages(null, 'inside');
+              setDraggedPageId(null);
+            }}
+          >
+            <StyledHeading>{t`Move to top level`}</StyledHeading>
+          </div>
+        )}
+      <BureauTrashDropTarget />
       {permissions.canUpdateObjectRecords && (
         <BureauSidebarAction
           Icon={IconUpload}

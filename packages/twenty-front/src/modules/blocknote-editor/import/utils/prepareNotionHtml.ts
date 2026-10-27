@@ -1,6 +1,7 @@
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { sanitizeImportedHtml } from '@/blocknote-editor/import/utils/sanitizeImportedHtml';
 import { v4 } from 'uuid';
+import { preserveNotionFormatting } from '@/blocknote-editor/import/utils/preserveNotionFormatting';
 
 type PreparedNotionHtml = {
   html: string;
@@ -9,6 +10,7 @@ type PreparedNotionHtml = {
 
 export const sanitizeNotionHtml = (html: string): string => {
   const parsedDocument = new DOMParser().parseFromString(html, 'text/html');
+  preserveNotionFormatting(parsedDocument);
 
   // An executable embed cannot become an editor block; retain its destination.
   parsedDocument.querySelectorAll('iframe[src]').forEach((frame) => {
@@ -67,6 +69,21 @@ export const prepareNotionHtml = (html: string): PreparedNotionHtml => {
     return block;
   };
 
+  // Native media captions are plain strings. Keep rich caption links and marks
+  // in an adjacent editable paragraph rather than flattening that information.
+  sanitizedDocument
+    .querySelectorAll('figure > figcaption')
+    .forEach((caption) => {
+      if (
+        !caption.querySelector('a, strong, em, b, i, u, s, mark, span[style]')
+      )
+        return;
+      const paragraph = sanitizedDocument.createElement('p');
+      paragraph.append(...caption.childNodes);
+      caption.parentElement?.after(paragraph);
+      caption.remove();
+    });
+
   [...sanitizedDocument.querySelectorAll<HTMLElement>('aside, figure.callout')]
     .reverse()
     .forEach((callout) => {
@@ -82,7 +99,11 @@ export const prepareNotionHtml = (html: string): PreparedNotionHtml => {
           : callout;
       const container = sanitizedDocument.createElement('div');
       container.setAttribute('data-node-type', 'blockContainer');
-      const block = makeBlock('callout', { emoji });
+      const block = makeBlock('callout', {
+        emoji,
+        'background-color': callout.style.backgroundColor || 'default',
+        'text-color': callout.style.color || 'default',
+      });
       const inline = sanitizedDocument.createElement('span');
       inline.className = 'bn-inline-content';
       const firstElement = content.firstElementChild;

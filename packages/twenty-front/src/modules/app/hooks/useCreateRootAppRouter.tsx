@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 
+import { PUBLIC_SITE_ROUTES } from '@/public-site/PublicSitePages';
 import { LazyRoute } from '@/app/components/LazyRoute';
 import { RootAppProviders } from '@/app/components/RootAppProviders';
 import { RootAuthorizeRedirect } from '@/app/components/RootAuthorizeRedirect';
@@ -53,6 +54,17 @@ const createRootAppRouter = () =>
               </LazyRoute>
             }
           />
+          {PUBLIC_SITE_ROUTES.map((page) => (
+            <Route
+              key={page.id}
+              path={page.path}
+              element={
+                <LazyRoute fallback={null}>
+                  <PublicLandingPage />
+                </LazyRoute>
+              }
+            />
+          ))}
           <Route element={<OnboardingTransitionOutlet />}>
             <Route
               path={AppPath.SignInUp}

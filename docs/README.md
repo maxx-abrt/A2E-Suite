@@ -16,6 +16,8 @@ explains the fork; upstream product documentation lives in
 | Evaluate product gaps and differentiation | [2026-10-24 product audit](product-strategy-2026-10-24.md) | Source evidence, competitive baseline and root-plan priorities |
 | Find Bilan, Bureau or the app installer | [Applications runbook](applications.md) | The linked catalog, installer and preset source |
 | Continue the full-page Bureau workspace or Notion import | [Bureau delivery checklist](BUREAU_PLAN.md) | PLAN M8 + the dated phase-13 verification report |
+| Select or manage several Bureau pages | [Bulk page actions](bureau-bulk-actions.md) | Selection, moves, trash, Undo and partial-failure recovery |
+| Continue the public marketing site | [Public site](public-site.md) | Native routes, website design reuse and account entry boundaries |
 | Import a Notion workspace export | [Notion import compatibility](notion-import.md) | Supported blocks, workspace boundaries, limits and recovery |
 | Locate the code for a change | [Codebase map](plan/01-codebase-map.md) | One adjacent implementation and its tests |
 | Build a native feature | [Integration blueprint](plan/03-integration-blueprint.md) | [Native patterns](plan/04-twenty-native-law.md), [app authoring](../packages/twenty-apps/README-A2E.md) |

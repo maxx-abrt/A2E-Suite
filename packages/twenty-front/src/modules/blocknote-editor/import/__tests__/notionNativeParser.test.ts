@@ -28,14 +28,14 @@ it('parses and reloads Notion structure with the real BlockNote and multi-column
         tsconfig: join(root, 'packages/twenty-front/tsconfig.json'),
       });
       const dom = new JSDOM('<!doctype html><html><body></body></html>', {url: 'https://app.example/bureau'});
-      for (const name of ['window', 'document', 'DOMParser', 'Node', 'Element', 'HTMLElement', 'HTMLInputElement', 'MutationObserver', 'DOMRect', 'getComputedStyle']) {
+      for (const name of ['window', 'document', 'DOMParser', 'Node', 'NodeFilter', 'Element', 'HTMLElement', 'HTMLInputElement', 'MutationObserver', 'DOMRect', 'getComputedStyle']) {
         if (dom.window[name]) globalThis[name] = dom.window[name];
       }
       Object.defineProperty(globalThis, 'navigator', {value: dom.window.navigator, configurable: true});
       const {BlockNoteEditor, BlockNoteSchema, defaultBlockSpecs, createBlockSpec} = await import('@blocknote/core');
       const {withMultiColumn} = await import('@blocknote/xl-multi-column');
       const {prepareNotionHtml, mapImportedAttachmentsAndLinks} = require(modulePath);
-      const callout = createBlockSpec({type: 'callout', propSchema: {emoji: {default: '💡'}}, content: 'inline'}, {
+      const callout = createBlockSpec({type: 'callout', propSchema: {emoji: {default: '💡'}, backgroundColor: {default: 'default'}, textColor: {default: 'default'}}, content: 'inline'}, {
         render() { const element = document.createElement('div'); return {dom: element, contentDOM: element}; },
       });
       const file = createBlockSpec({type: 'file', propSchema: {url: {default: ''}, name: {default: ''}, fileCategory: {default: 'OTHER'}}, content: 'none'}, {
@@ -77,6 +77,17 @@ it('parses and reloads Notion structure with the real BlockNote and multi-column
       assert.equal(markdownBlocks.find((block) => block.type === 'checkListItem').props.checked, true);
       assert.ok(markdownBlocks.some((block) => block.type === 'table'));
       assert.ok(markdownBlocks.some((block) => block.type === 'callout'));
+      const fidelityBlocks = parse('<p><mark class="highlight-teal"><strong>Bold color</strong></mark> <mark class="highlight-yellow_background">Highlight</mark> <em>Italic</em> <del>Strike</del></p><figure class="image"><img src="photo.png"><figcaption><a href="https://example.com">Linked caption</a></figcaption></figure><figure data-notion-equation="x = \\frac{1}{2}"><div>rendered formula fallback</div></figure>');
+      const fidelity = JSON.stringify(fidelityBlocks);
+      assert.ok(fidelity.includes('textColor'));
+      assert.ok(fidelity.includes('backgroundColor'));
+      assert.ok(fidelity.includes('"bold":true'));
+      assert.ok(fidelity.includes('"italic":true'));
+      assert.ok(fidelity.includes('"strike":true'));
+      assert.ok(fidelity.includes('Linked caption'));
+      assert.ok(fidelity.includes('https://example.com'));
+      assert.ok(fidelity.includes('frac{1}{2}'));
+      assert.ok(!fidelity.includes('rendered formula fallback'));
       console.log('PASS native Notion parser and serialized reload');
     } finally { rmSync(directory, {recursive: true, force: true}); }
   `;

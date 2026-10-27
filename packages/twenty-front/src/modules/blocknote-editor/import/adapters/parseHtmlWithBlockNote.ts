@@ -36,3 +36,12 @@ export const parseMarkdownWithBlockNote = (
     marked.parse(markdown, { async: false, gfm: true }),
   );
 };
+
+export const importedBlocksToMarkdown = async (
+  blocks: readonly unknown[],
+): Promise<string> => {
+  sharedDocumentEditor ??= createDocumentEditor();
+  return sharedDocumentEditor.blocksToMarkdownLossy(
+    blocks as (typeof BLOCK_SCHEMA.PartialBlock)[],
+  );
+};
