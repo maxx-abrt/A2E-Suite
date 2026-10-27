@@ -53,3 +53,30 @@ no horizontal overflow at 320/375/768px, and A2E-only visible branding.
 The public site is served by the native SPA. This change does not add server-side
 prerendering, deploy a release, or certify live account and workspace operations.
 Those require the normal running-app acceptance checks.
+
+## Supplied identity and legal pages (2026-10-27)
+
+The Suite, Bureau, Bilan, Agenda and Syna artwork is served locally from
+`twenty-front/public/branding`. First-party application marks resolve through
+stable universal identifiers, including Bureau's constituent applications;
+renaming a folder or translating its label does not change its logo. Personal
+folders and third-party applications retain their existing icons. Browser/PWA
+exports use the supplied Suite assets.
+
+`/legal/terms`, `/legal/privacy` and `/legal/dpa` are registered in both native
+routers and the public-route guard. Account-entry legal links target
+`https://a2esuite.com/legal/…`; footer navigation links to the same public pages.
+The operator information supplied by the maintainer is shared through
+`A2E_SUITE_IDENTITY`: Association d’Entraide Étudiante, SIREN 994 936 789,
+65 avenue Maréchal Lyautey, 21000 Dijon, contact@association2e.org.
+
+The public DPA and generated document share `A2E_DPA_TERMS`. New acceptance
+records snapshot version `2026-10-27` and the association's legal name. The
+acceptance PDF records the customer's representative and timestamp; it does not
+generate an association representative's signature. Existing agreement records
+and stored PDFs remain historical evidence. Hosting/provider schedules must
+reflect the actual deployment; upstream corporate affiliations, certifications,
+pre-signed executives and assumed AWS locations are not A2E commitments.
+
+In-app help and the default assistant help lookup use public A2E Suite routes.
+An explicitly configured documentation search provider remains supported.
