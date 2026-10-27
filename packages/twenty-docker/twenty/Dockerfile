@@ -93,6 +93,11 @@ COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 COPY ./packages/twenty-client-sdk /app/packages/twenty-client-sdk
+# twenty-front's public-site reuses the website design tokens through a
+# cross-package import (src/modules/public-site/tokens.ts); the in-image
+# Vite/Linaria build evaluates those sources, so they must be copied too.
+# Only the tokens tree is needed — the rest of twenty-website never runs here.
+COPY ./packages/twenty-website/src/tokens /app/packages/twenty-website/src/tokens
 RUN npx nx run twenty-front:lingui:extract && \
     npx nx run twenty-front:lingui:compile
 # Docker may reuse an identical source layer; Nx must not reuse a host build.
