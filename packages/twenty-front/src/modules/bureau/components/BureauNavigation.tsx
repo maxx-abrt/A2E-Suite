@@ -207,7 +207,7 @@ const BureauNavigationContent = () => {
       {permissions.canUpdateObjectRecords && (
         <BureauSidebarAction
           Icon={IconUpload}
-          label={t`Import from Notion`}
+          label={t`Import`}
           testId="bureau-import"
           onClick={() => openModal(BUREAU_IMPORT_MODAL_ID)}
         />

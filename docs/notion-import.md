@@ -4,11 +4,24 @@
 
 ## Import a workspace export
 
-Open the destination A2E workspace, then **Bureau → Import from Notion**.
+Open the destination A2E workspace, then **Bureau → Import** and choose
+**Notion** (or **Markdown & HTML** for another source).
 The dialog identifies the destination workspace. Export the source Notion
 workspace or pages as **HTML**, including subpages and files, and select the ZIP.
 Markdown exports and individual HTML/Markdown files also work. HTML carries
 more layout information than plain Markdown.
+
+Drop one ZIP or use **Choose file**. Before accepting, browse/search the nested
+page list and select pages to preview their converted content with Bureau's
+read-only BlockNote editor, including local media. Previewing does not create
+records or upload files. Missing media and conversion warnings are shown; page
+links stay inactive until import. The preview uses temporary local URLs that
+are released when switching pages or closing the window.
+
+Choose **Bureau root** or an existing page in **Import into**. Opening import
+from a page preselects that page; the selection can be changed before starting.
+Imported roots are appended beneath the chosen destination and descendants stay
+beneath their imported parents. The destination stays fixed during retries.
 
 Notion documents its export options and notes that inaccessible/private pages
 and some teamspace content can be absent from an export. An importer cannot
@@ -34,8 +47,10 @@ Bureau's Documents application and native document write permission are required
 | Page links | Relative archive links and matching absolute Notion page URLs point to new documents; fragments are retained, but block-anchor scrolling is not certified |
 | External links/media | Retained as external references; remote files are not downloaded or made permanent |
 | Executable embeds | Safe iframe destinations become links; active content is removed |
-| Unreferenced files | Preserved as attachments on the first imported page |
-| CSV databases, JSON and nested ZIPs | Preserved as attachments; not converted into live databases or recursively extracted |
+| Unreferenced files | Preserved as attachments on the first imported page (source CSVs stay on their own database pages) |
+| CSV databases | Editable table snapshots (up to 1,000 rows including the header and 20,000 cells), with the original CSV attached to its database page. Larger/malformed files retain their parent page and original attachment; review is required. These are not live databases |
+| JSON and nested ZIPs | Preserved as attachments; not recursively extracted |
+| macOS export metadata | `__MACOSX`, resource forks and `.DS_Store` are ignored |
 | Formulas, rollups, database relations/views, comments, sharing and history | Not migrated as native behavior |
 | Page covers/icons and arbitrary Notion-only blocks | Full visual/semantic fidelity is not certified; keep the export and review the result |
 

@@ -40,6 +40,29 @@ describe('buildBureauTree', () => {
     ]);
   });
 
+  it('keeps optimistic pages with null timestamps stable while server fields arrive', () => {
+    const first = {
+      ...makeDocument('a', null, 0),
+      createdAt: null,
+      updatedAt: null,
+    };
+    const second = {
+      ...makeDocument('b', null, 0),
+      createdAt: null,
+      updatedAt: null,
+    };
+    const tree = buildBureauTree([
+      second,
+      first,
+      makeDocument('saved', null, 0),
+    ]);
+    expect(tree.childrenByParentId.get(null)?.map(({ id }) => id)).toEqual([
+      'a',
+      'b',
+      'saved',
+    ]);
+  });
+
   it('attaches orphans and cycles to the root', () => {
     const tree = buildBureauTree([
       makeDocument('orphan', 'missing', 0),

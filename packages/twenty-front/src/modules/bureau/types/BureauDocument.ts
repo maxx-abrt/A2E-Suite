@@ -10,7 +10,7 @@ export type BureauDocument = {
   position: number | null;
   coverColor: string | null;
   coverImage: string | null;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: string | null;
+  updatedAt: string | null;
   deletedAt: string | null;
 };

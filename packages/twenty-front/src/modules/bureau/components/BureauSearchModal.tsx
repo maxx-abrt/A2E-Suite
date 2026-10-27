@@ -76,7 +76,7 @@ const BureauSearchContent = () => {
       ? records
       : [...documents]
           .sort((first, second) =>
-            second.updatedAt.localeCompare(first.updatedAt),
+            (second.updatedAt ?? '').localeCompare(first.updatedAt ?? ''),
           )
           .slice(0, SEARCH_RESULT_LIMIT);
   const activeIndex = Math.min(selectedIndex, results.length - 1);
