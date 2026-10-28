@@ -550,3 +550,14 @@ regressions and 32 frontend tests passed across focused runs. Local updated work
 initialized and processed queue jobs; readiness returned READY. Full Nx build was
 stopped after local barrel-generation stalled. Docker unavailable locally. Latest
 image build and production redeploy remain unverified; no production data changed.
+
+## 2026-10-28 12:45 UTC — executor
+**Task:** User-requested README identity refresh · **Slice:** root presentation, screenshots and rights notice · **Claim:** done-for-review
+**Base:** `99944bac`; local macOS, Node 24.20.0; no application/database changes.
+**Changed:** `README.md`, `COPYRIGHT.md`, `docs/assets/readme/README.md`, five PNG captures, `docs/scripts/check-docs.mjs` maintained-document list and formatter output.
+**Decisions:** Use supplied A2E artwork and fresh Chromium captures of the existing isolated public-site preview, with fictional data and explicit preview labels. Remove upstream promotional/community/sponsor content; retain truthful attribution and source-license notices. Reserve original A2E presentation materials only to the extent compatible with existing licenses and statutory rights; do not replace AGPL/MIT/Enterprise terms.
+**Checks:** From repository root: `node --test docs/scripts/check-docs.test.mjs` → 6/6; `node docs/scripts/check-docs.mjs` → 37 documents / 356 local links pass; `node --check docs/scripts/check-docs.mjs`, `npx oxlint docs/scripts/check-docs.mjs`, `npx oxfmt --check docs/scripts/check-docs.mjs`, `git diff --check` → pass.
+**Visual checks:** Playwright Chromium renders of GFM + README HTML at 1080px light/dark and 375px light → all 9 images/badges loaded, local HTML targets exist, no page overflow; correct light/dark hero selected. Manually inspected desktop header, screenshot gallery, mobile header and source captures. Five preview captures produced no browser errors.
+**Missing for tick:** No release/runtime claim; captures came from the same-day prebuilt public preview, not authenticated installed-app workflows. Package typechecks are not applicable to documentation/assets and the checker list update. GitHub-hosted rendering was approximated locally, not published.
+**Do not redo:** Keep the supplied logo files unchanged and preserve upstream licenses/trademark notices. Capture provenance and refresh instructions live beside the images.
+**Next:** Maintainer review; no PLAN.md edits or commit performed.
