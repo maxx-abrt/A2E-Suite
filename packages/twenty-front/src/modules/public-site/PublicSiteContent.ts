@@ -1,15 +1,18 @@
 import {
   IconAgenda,
+  IconArchive,
   IconBilan,
   IconBureau,
   IconSyna,
 } from '@/a2e-workspace/components/A2eAppLogo';
+import { A2E_BRAND_ASCII_LOGOS } from '@/a2e-workspace/constants/A2eBrandAsciiLogos';
 import { msg } from '@lingui/core/macro';
-import { IconFolder, IconUsers } from 'twenty-ui/icon';
+import { IconUsers } from 'twenty-ui/icon';
 
 export const PUBLIC_SITE_APPLICATIONS = [
   {
     id: 'bureau',
+    illustration: A2E_BRAND_ASCII_LOGOS.bureau,
     name: msg`Bureau`,
     Icon: IconBureau,
     heading: msg`A home for every idea.`,
@@ -25,6 +28,7 @@ export const PUBLIC_SITE_APPLICATIONS = [
   },
   {
     id: 'agenda',
+    illustration: A2E_BRAND_ASCII_LOGOS.agenda,
     name: msg`Agenda`,
     Icon: IconAgenda,
     heading: msg`Find a little more time.`,
@@ -40,6 +44,7 @@ export const PUBLIC_SITE_APPLICATIONS = [
   },
   {
     id: 'bilan',
+    illustration: A2E_BRAND_ASCII_LOGOS.bilan,
     name: msg`Bilan`,
     Icon: IconBilan,
     heading: msg`Give your numbers a place.`,
@@ -55,8 +60,9 @@ export const PUBLIC_SITE_APPLICATIONS = [
   },
   {
     id: 'archive',
+    illustration: A2E_BRAND_ASCII_LOGOS.archive,
     name: msg`Archive`,
-    Icon: IconFolder,
+    Icon: IconArchive,
     heading: msg`Keep the useful things close.`,
     body: msg`Organize files in folders, find the right document and preview it without losing your place.`,
     details: [
@@ -70,6 +76,7 @@ export const PUBLIC_SITE_APPLICATIONS = [
   },
   {
     id: 'crm',
+    illustration: undefined,
     name: msg`CRM`,
     Icon: IconUsers,
     heading: msg`Remember the people behind the work.`,
@@ -85,6 +92,7 @@ export const PUBLIC_SITE_APPLICATIONS = [
   },
   {
     id: 'syna',
+    illustration: A2E_BRAND_ASCII_LOGOS.syna,
     name: msg`Syna`,
     Icon: IconSyna,
     heading: msg`A helping hand, in context.`,

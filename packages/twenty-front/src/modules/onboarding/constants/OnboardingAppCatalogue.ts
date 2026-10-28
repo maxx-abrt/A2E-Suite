@@ -1,10 +1,11 @@
 import {
   IconAgenda,
+  IconArchive,
   IconBilan,
   IconBureau,
   IconSyna,
 } from '@/a2e-workspace/components/A2eAppLogo';
-import { IconFolder, type IconComponent } from 'twenty-ui/icon';
+import { type IconComponent } from 'twenty-ui/icon';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
@@ -49,7 +50,7 @@ export const ONBOARDING_APP_CATALOGUE: OnboardingAppCatalogueEntry[] = [
   },
   {
     key: 'archive',
-    Icon: IconFolder,
+    Icon: IconArchive,
     label: msg`Archive`,
     description: msg`Drive folders, file upload, previews, sharing and storage usage.`,
   },

@@ -27,6 +27,12 @@ describe('application identity', () => {
           logoUrl: 'https://example.com/old.png',
         },
         {
+          id: 'archive-app',
+          universalIdentifier: 'b11cd01f-75de-4acd-8e67-0e9c484fde02',
+          name: 'Renamed file library',
+          logoUrl: 'https://example.com/old-archive.png',
+        },
+        {
           id: 'third-party',
           universalIdentifier: 'other-app',
           name: 'Bureau',
@@ -39,6 +45,11 @@ describe('application identity', () => {
   it('keeps the Bureau logo when the workspace app is renamed', () => {
     const { result } = renderHook(() => useA2eApplicationLogo('local-app'));
     expect(result.current).toBe('/branding/bureau.png');
+  });
+
+  it('keeps the Archive logo when the workspace app is renamed', () => {
+    const { result } = renderHook(() => useA2eApplicationLogo('archive-app'));
+    expect(result.current).toBe('/branding/archive.png');
   });
 
   it('preserves another application even when it has the same display name', () => {
