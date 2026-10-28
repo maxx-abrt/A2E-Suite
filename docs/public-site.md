@@ -158,3 +158,26 @@ Archive ownership resolves through the installed application's universal
 identifier, including renamed workspace installations. Sidebar folders use
 stable logo components with the existing cached workspace state; they do not
 poll or fetch application metadata to resolve a logo.
+
+## English and French (2026-10-28)
+
+The public header provides an accessible English / Français selector on every
+page, including mobile and legal pages. It uses the application's existing Lingui
+activation and saved `locale` preference. Public links and account-entry CTAs carry
+`?locale=en` or `?locale=fr-FR`, so copied links and reloads keep the language;
+`?locale=fr` is also accepted. Switching preserves the page, other query parameters,
+section anchor and local preview state. Download failures leave English available,
+show a retry message and do not save an unsuccessful choice. Browser storage is
+optional; the current page and its links remain usable when storage is blocked.
+
+English and French catalogs cover the homepage, all product/application/use-case
+subpages, legal pages, navigation, accessibility labels, interactive previews and
+the shared calendar toolbar. Dates and euro amounts follow the active locale.
+Page titles and descriptions are translated, with language-specific canonical and
+alternate links. These remain client-rendered SPA metadata.
+
+The frontend Lingui extractor also collects the canonical shared DPA terms when
+extracting the public legal page. This preserves a single agreement source shared
+with acceptance PDFs and translates the hosting-region placeholder after lookup.
+Translation coverage tests compare extracted message IDs with both source and
+compiled English/French catalogs; new untranslated public messages fail the check.

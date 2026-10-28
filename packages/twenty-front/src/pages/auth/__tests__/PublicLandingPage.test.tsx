@@ -1,8 +1,9 @@
 import { HelmetProvider } from '@dr.pogodin/react-helmet';
 import { PUBLIC_SITE_ROUTES } from '@/public-site/PublicSitePages';
+import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
@@ -40,8 +41,10 @@ const renderLanding = (path = '/') =>
 
 describe('public account landing', () => {
   const originalPointerEvent = window.PointerEvent;
+  const originalScrollIntoView = Element.prototype.scrollIntoView;
 
   beforeAll(() => {
+    Element.prototype.scrollIntoView = jest.fn();
     Object.defineProperty(window, 'PointerEvent', {
       configurable: true,
       value: MouseEvent,
@@ -49,17 +52,125 @@ describe('public account landing', () => {
   });
 
   afterAll(() => {
+    Element.prototype.scrollIntoView = originalScrollIntoView;
     Object.defineProperty(window, 'PointerEvent', {
       configurable: true,
       value: originalPointerEvent,
     });
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await dynamicActivate('en');
+    localStorage.removeItem('locale');
     jest.mocked(useIsLogged).mockReturnValue(false);
     jest
       .mocked(useIsCurrentLocationOnDefaultDomain)
       .mockReturnValue({ isDefaultDomain: true });
+  });
+
+  it('switches the full page, preserves its section and saves French across navigation', async () => {
+    renderLanding('/?campaign=test#public-main');
+    const user = userEvent.setup();
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Language' }),
+      'fr-FR',
+    );
+    expect(
+      await screen.findByRole('heading', {
+        level: 1,
+        name: 'Un peu plus d’espace pour vos idées.',
+      }),
+    ).toBeVisible();
+    expect(screen.getByRole('combobox', { name: 'Langue' })).toHaveValue(
+      'fr-FR',
+    );
+    expect(document.documentElement.lang).toBe('fr-FR');
+    expect(localStorage.getItem('locale')).toBe('fr-FR');
+    expect(
+      screen.getByRole('navigation', { name: 'Navigation principale' }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole('button', { name: 'Mettre les animations en pause' }),
+    ).toBeVisible();
+    await user.click(
+      screen.getByRole('link', { name: 'Vue d’ensemble du produit' }),
+    );
+    expect(
+      screen.getByRole('heading', {
+        level: 1,
+        name: 'Moins de changements d’outil. Plus d’action.',
+      }),
+    ).toBeVisible();
+    await user.click(
+      screen.getByRole('link', { name: 'Politique de confidentialité' }),
+    );
+    expect(
+      screen.getByRole('heading', { name: 'Cookies et stockage local' }),
+    ).toBeVisible();
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Langue' }),
+      'en',
+    );
+    expect(
+      await screen.findByRole('heading', { name: 'Cookies and local storage' }),
+    ).toBeVisible();
+    expect(localStorage.getItem('locale')).toBe('en');
+  });
+
+  it('keeps preview changes while translating its records, currency and calendar', async () => {
+    renderLanding();
+    const user = userEvent.setup();
+    await user.click(
+      screen.getByRole('checkbox', { name: 'Gather the first ideas' }),
+    );
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Language' }),
+      'fr-FR',
+    );
+    expect(
+      await screen.findByRole('checkbox', {
+        name: 'Rassembler les premières idées',
+      }),
+    ).toBeChecked();
+    expect(screen.getByText('2 étapes sur 5 terminées')).toBeVisible();
+    await user.click(screen.getByRole('tab', { name: 'Bilan' }));
+    expect(screen.getByRole('cell', { name: /2\s400\s€/ })).toBeVisible();
+    await user.click(screen.getByRole('tab', { name: 'Agenda' }));
+    expect(screen.getByRole('button', { name: "Aujourd'hui" })).toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'Mois' }));
+    expect(screen.getByRole('heading', { name: /octobre 2026/ })).toBeVisible();
+  });
+
+  it('renders the canonical processing agreement in French, including the hosting placeholder', async () => {
+    await act(async () => {
+      await dynamicActivate('fr-FR');
+    });
+    renderLanding('/legal/dpa');
+    expect(
+      screen.getByRole('heading', { name: '1. Parties et périmètre' }),
+    ).toBeVisible();
+    expect(
+      screen.getByText(
+        /La région de déploiement configurée est la région documentée pour votre déploiement/,
+      ),
+    ).toBeVisible();
+    expect(screen.queryByText(/HOSTING_REGION/)).toBeNull();
+  });
+
+  it('applies an explicit French URL on client navigation', async () => {
+    renderLanding('/apps/bilan?locale=fr');
+    await waitFor(() =>
+      expect(screen.getByRole('combobox', { name: 'Langue' })).toHaveValue(
+        'fr-FR',
+      ),
+    );
+    expect(
+      screen.getByRole('heading', {
+        level: 1,
+        name: 'Une place pour vos chiffres.',
+      }),
+    ).toBeVisible();
+    expect(localStorage.getItem('locale')).toBe('fr-FR');
   });
 
   it('shows a public product page and sends workspace creation to native account entry', async () => {

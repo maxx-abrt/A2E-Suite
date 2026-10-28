@@ -1,6 +1,12 @@
-import { NavigationDrawerAiChatContent } from '@/ai/components/NavigationDrawerAiChatContent';
+import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { lazy, type ReactNode, Suspense, useState } from 'react';
+
+const NavigationDrawerAiChatContent = lazy(() =>
+  import('@/ai/components/NavigationDrawerAiChatContent').then((module) => ({
+    default: module.NavigationDrawerAiChatContent,
+  })),
+);
 
 type NavigationDrawerTabbedContentProps = {
   showAiChatContent: boolean;
@@ -17,14 +23,28 @@ export const NavigationDrawerTabbedContent = ({
   shouldMountAiChatContent,
   navigationContent,
 }: NavigationDrawerTabbedContentProps) => {
+  const [hasOpenedAiChat, setHasOpenedAiChat] = useState(showAiChatContent);
+
+  if (showAiChatContent && !hasOpenedAiChat) {
+    setHasOpenedAiChat(true);
+  }
+
   return (
     <>
-      <StyledTabContent isHidden={showAiChatContent}>
+      <StyledTabContent
+        isHidden={showAiChatContent}
+        aria-hidden={showAiChatContent}
+      >
         {navigationContent}
       </StyledTabContent>
-      {shouldMountAiChatContent && (
-        <StyledTabContent isHidden={!showAiChatContent}>
-          <NavigationDrawerAiChatContent />
+      {shouldMountAiChatContent && hasOpenedAiChat && (
+        <StyledTabContent
+          isHidden={!showAiChatContent}
+          aria-hidden={!showAiChatContent}
+        >
+          <Suspense fallback={<AiChatSkeletonLoader />}>
+            <NavigationDrawerAiChatContent />
+          </Suspense>
         </StyledTabContent>
       )}
     </>

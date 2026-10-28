@@ -319,7 +319,7 @@ export const BlockEditor = ({
           formattingToolbar={false}
           editable={!readonly}
         >
-          <CustomSideMenu editor={editor} />
+          <CustomSideMenu />
           {!readonly ? <SynaFormattingToolbar /> : null}
           <SynaSlashMenuItem>
             {(synaItems) => (

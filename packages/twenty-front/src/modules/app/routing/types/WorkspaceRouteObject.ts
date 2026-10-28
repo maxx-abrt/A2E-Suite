@@ -13,6 +13,7 @@ export type WorkspaceRouteObject = Omit<
   NonIndexRouteObject,
   'children' | 'handle'
 > & {
+  preloadComponent?: () => void;
   children?: WorkspaceRouteObject[];
   handle?: WorkspaceRouteHandle;
 };

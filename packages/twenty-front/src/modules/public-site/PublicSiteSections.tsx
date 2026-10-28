@@ -24,7 +24,7 @@ import { SectionStack } from '@/public-site/ui/SectionStack';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useId } from 'react';
-import { Link } from 'react-router-dom';
+import { PublicSiteLink } from '@/public-site/ui/PublicSiteLink';
 import { AppPath } from 'twenty-shared/types';
 import {
   IconCheck,
@@ -408,10 +408,10 @@ export const PublicSiteAppStrip = () => {
         <CornerMarkers />
         <span>{t`One suite. Your way.`}</span>
         {PUBLIC_SITE_APPLICATIONS.map(({ id, name, Icon }) => (
-          <Link key={id} to={`/apps/${id}`}>
+          <PublicSiteLink key={id} to={`/apps/${id}`}>
             <Icon size={18} />
             {i18n._(name)}
-          </Link>
+          </PublicSiteLink>
         ))}
       </StyledStrip>
     </SectionShell>

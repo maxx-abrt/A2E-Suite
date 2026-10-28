@@ -1,3 +1,5 @@
+import { Helmet } from '@dr.pogodin/react-helmet';
+import { PublicSiteLanguageSelector } from '@/public-site/PublicSiteLanguageSelector';
 import { PUBLIC_LEGAL_PAGES } from '@/public-site/PublicLegalPages';
 import { usePublicSiteMotion } from '@/public-site/usePublicSiteMotion';
 import { PUBLIC_SITE_PAGES } from '@/public-site/PublicSitePages';
@@ -15,7 +17,8 @@ import { NotchedCardShape } from '@/public-site/ui/NotchedCardShape';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useRef, useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { PublicSiteLink } from '@/public-site/ui/PublicSiteLink';
+import { useLocation } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { safeDecodeURIComponent } from 'twenty-shared/utils';
 import '@/public-site/publicSite.css';
@@ -52,6 +55,7 @@ const StyledPage = styled.div`
   }
   a:focus-visible,
   button:focus-visible,
+  select:focus-visible,
   summary:focus-visible,
   [tabindex='0']:focus-visible {
     outline: 2px solid ${color('blue')};
@@ -87,7 +91,8 @@ const StyledHeader = styled.header`
 const StyledHeaderRow = styled.div`
   align-items: center;
   display: flex;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
   justify-content: space-between;
   min-height: 72px;
   > a {
@@ -241,7 +246,7 @@ export const PublicSiteShell = ({ children }: PublicSiteShellProps) => {
   }, [pathname, hash]);
   const menuRef = useRef<HTMLDetailsElement>(null);
   const navigation = PUBLIC_SITE_PAGES.map((page) => (
-    <Link
+    <PublicSiteLink
       key={page.id}
       to={page.path}
       aria-current={
@@ -256,7 +261,7 @@ export const PublicSiteShell = ({ children }: PublicSiteShellProps) => {
       }}
     >
       {i18n._(page.label)}
-    </Link>
+    </PublicSiteLink>
   ));
   return (
     <StyledPage
@@ -264,14 +269,42 @@ export const PublicSiteShell = ({ children }: PublicSiteShellProps) => {
       ref={pageRef}
       data-motion-paused={isMotionPaused}
     >
+      <Helmet>
+        <link
+          rel="canonical"
+          href={`https://a2esuite.com${pathname}?locale=${i18n.locale}`}
+        />
+        <link
+          rel="alternate"
+          hrefLang="en"
+          href={`https://a2esuite.com${pathname}?locale=en`}
+        />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href={`https://a2esuite.com${pathname}?locale=fr-FR`}
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href={`https://a2esuite.com${pathname}`}
+        />
+        <meta
+          property="og:locale"
+          content={
+            i18n.locale === 'en' ? 'en_US' : i18n.locale.replace('-', '_')
+          }
+        />
+      </Helmet>
       <StyledSkip href="#public-main">{t`Skip to content`}</StyledSkip>
       <StyledHeader>
         <Container>
           <StyledHeaderRow>
-            <Link to="/" aria-label={t`A2E Suite home`}>
+            <PublicSiteLink to="/" aria-label={t`A2E Suite home`}>
               <PublicSiteBrand />
-            </Link>
+            </PublicSiteLink>
             <nav aria-label={t`Main navigation`}>{navigation}</nav>
+            <PublicSiteLanguageSelector />
             <StyledAccount aria-label={t`Account`} role="navigation">
               <Button
                 href={AppPath.SignInUp}
@@ -303,25 +336,25 @@ export const PublicSiteShell = ({ children }: PublicSiteShellProps) => {
             <StyledFooterGrid>
               <nav aria-label={t`Product links`}>
                 <h3>{t`The suite`}</h3>
-                <Link to="/product">{t`Product overview`}</Link>
-                <Link to="/apps">{t`Applications`}</Link>
-                <Link to="/why-a2e">{t`Why A2E`}</Link>
+                <PublicSiteLink to="/product">{t`Product overview`}</PublicSiteLink>
+                <PublicSiteLink to="/apps">{t`Applications`}</PublicSiteLink>
+                <PublicSiteLink to="/why-a2e">{t`Why A2E`}</PublicSiteLink>
               </nav>
               <nav aria-label={t`Ways to work`}>
                 <h3>{t`Made for your day`}</h3>
-                <Link to="/use-cases#individuals">{t`Individuals & students`}</Link>
-                <Link to="/use-cases#teams">{t`Teams & projects`}</Link>
-                <Link to="/use-cases#organizations">{t`Organizations & small businesses`}</Link>
+                <PublicSiteLink to="/use-cases#individuals">{t`Individuals & students`}</PublicSiteLink>
+                <PublicSiteLink to="/use-cases#teams">{t`Teams & projects`}</PublicSiteLink>
+                <PublicSiteLink to="/use-cases#organizations">{t`Organizations & small businesses`}</PublicSiteLink>
               </nav>
               <nav aria-label={t`Resources`}>
                 <h3>{t`Start here`}</h3>
-                <Link to="/getting-started">{t`Getting started`}</Link>
-                <Link to="/getting-started#import">{t`Bring your notes`}</Link>
-                <Link to="/getting-started#questions">{t`Questions & answers`}</Link>
+                <PublicSiteLink to="/getting-started">{t`Getting started`}</PublicSiteLink>
+                <PublicSiteLink to="/getting-started#import">{t`Bring your notes`}</PublicSiteLink>
+                <PublicSiteLink to="/getting-started#questions">{t`Questions & answers`}</PublicSiteLink>
                 {PUBLIC_LEGAL_PAGES.map((page) => (
-                  <Link key={page.id} to={page.path}>
+                  <PublicSiteLink key={page.id} to={page.path}>
                     {t(page.label)}
-                  </Link>
+                  </PublicSiteLink>
                 ))}
               </nav>
               <div>

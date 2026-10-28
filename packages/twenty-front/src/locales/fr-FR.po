@@ -2133,12 +2133,12 @@ msgstr "Après un temps défini"
 #: src/modules/template-gallery/constants/TemplateGalleryCategoryConfig.ts
 #: src/utils/title-utils.ts
 msgid "Agenda"
-msgstr ""
+msgstr "Agenda"
 
 #. js-lingui-id: euLz7N
 #: src/modules/calendar/components/CalendarToolbar.tsx
 msgid "Agenda view"
-msgstr ""
+msgstr "Vue agenda"
 
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -3732,7 +3732,7 @@ msgstr "entre le {startOrdinal} et le {endOrdinal} du mois"
 #: src/modules/onboarding/constants/OnboardingInstallableApps.ts
 #: src/modules/template-gallery/constants/TemplateGalleryCategoryConfig.ts
 msgid "Bilan"
-msgstr ""
+msgstr "Bilan"
 
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -3981,7 +3981,7 @@ msgstr "Fourni avec {applicationName}"
 #: src/modules/onboarding/constants/OnboardingInstallableApps.ts
 #: src/utils/title-utils.ts
 msgid "Bureau"
-msgstr ""
+msgstr "Bureau"
 
 #. js-lingui-id: SJ5VwE
 #: src/modules/onboarding/constants/OnboardingInstallableApps.ts
@@ -6759,7 +6759,7 @@ msgstr "Cramoisi"
 #: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
 #: src/modules/drive/components/DriveToolbar.tsx
 msgid "CRM"
-msgstr ""
+msgstr "CRM"
 
 #. js-lingui-id: TM2WPs
 #: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
@@ -11198,12 +11198,12 @@ msgstr "Tirez le meilleur parti de votre espace de travail en invitant votre éq
 #. js-lingui-id: 7hktsm
 #: src/modules/a2e-help/constants/A2eHelpDocPages.ts
 msgid "Getting started"
-msgstr ""
+msgstr "Premiers pas"
 
 #. js-lingui-id: KceNRo
 #: src/modules/first-open-help/components/FirstOpenHelpPanel.tsx
 msgid "Getting started guide"
-msgstr ""
+msgstr "Guide de démarrage"
 
 #. js-lingui-id: XXtAx5
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
@@ -12337,7 +12337,7 @@ msgstr "Index"
 #. js-lingui-id: fByw/g
 #: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
 msgid "Individual"
-msgstr ""
+msgstr "Particulier"
 
 #. js-lingui-id: hG711D
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -14273,7 +14273,7 @@ msgstr ""
 #. js-lingui-id: Dye3l9
 #: src/modules/bureau/constants/BureauLandingTemplates.ts
 msgid "Meeting notes"
-msgstr ""
+msgstr "Compte rendu"
 
 #. js-lingui-id: wo7rEi
 #: src/modules/ai/constants/SynaLandingTemplates.ts
@@ -16288,7 +16288,7 @@ msgstr "Paramètres du nœud"
 #. js-lingui-id: snxeRr
 #: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
 msgid "Non-profit"
-msgstr ""
+msgstr "Association"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
@@ -17092,7 +17092,7 @@ msgstr "Opérationnel"
 #. js-lingui-id: 4MyDFl
 #: src/modules/drive/components/DriveToolbar.tsx
 msgid "Opportunities"
-msgstr ""
+msgstr "Opportunités"
 
 #. js-lingui-id: lVa1Xn
 #: src/modules/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues.ts
@@ -18226,13 +18226,13 @@ msgstr ""
 #. js-lingui-id: ZZh/lQ
 #: src/modules/bureau/constants/BureauLandingTemplates.ts
 msgid "Project brief"
-msgstr ""
+msgstr "Note de cadrage"
 
 #. js-lingui-id: +0B+ue
 #: src/modules/chat/components/ChatSidebar.tsx
 #: src/modules/template-gallery/constants/TemplateGalleryCategoryConfig.ts
 msgid "Projects"
-msgstr ""
+msgstr "Projets"
 
 #. js-lingui-id: W9uQXX
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
@@ -21249,7 +21249,7 @@ msgstr "Ciel"
 #. js-lingui-id: x472HU
 #: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
 msgid "Small business"
-msgstr ""
+msgstr "Petite entreprise"
 
 #. js-lingui-id: Ik7fz5
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -21784,7 +21784,7 @@ msgstr "Abonnement Stripe"
 #. js-lingui-id: a0qEkS
 #: src/modules/a2e-workspace/constants/A2eWorkspaceTemplates.ts
 msgid "Student"
-msgstr ""
+msgstr "Étudiant"
 
 #. js-lingui-id: 1CalO6
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
@@ -22160,7 +22160,7 @@ msgstr "Basculé vers une instance de production."
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "Syna"
-msgstr ""
+msgstr "Syna"
 
 #. js-lingui-id: YElbiA
 #: src/modules/onboarding/constants/OnboardingInstallableApps.ts
@@ -22341,7 +22341,7 @@ msgstr "Sous-domaine cible de l'espace de travail"
 #. js-lingui-id: Q3P/4s
 #: src/modules/quick-capture/components/QuickCaptureSidePanelPage.tsx
 msgid "Task"
-msgstr ""
+msgstr "Tâche"
 
 #. js-lingui-id: cI8fS/
 #: src/pages/calendar/CalendarPage.tsx
@@ -22351,7 +22351,7 @@ msgstr ""
 #. js-lingui-id: BMiweT
 #: src/modules/calendar/components/CalendarToolbar.tsx
 msgid "Task due dates"
-msgstr ""
+msgstr "Échéances des tâches"
 
 #. js-lingui-id: kCuG8l
 #: src/modules/calendar/components/CalendarTaskDueChip.tsx
@@ -23727,7 +23727,7 @@ msgstr "Sujets"
 #: src/modules/page-layout/widgets/graph/graph-widget-pie-chart/hooks/usePieChartCenterMetricData.ts
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Total"
-msgstr ""
+msgstr "Total"
 
 #. js-lingui-id: hg5QeV
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
@@ -27252,3 +27252,2048 @@ msgstr "Votre travail, simplement connecté"
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Your workspace"
 msgstr "Votre espace de travail"
+
+#. js-lingui-id: Sx078e
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "{0} example companies"
+msgstr "{0, plural, one {# entreprise d’exemple} other {# entreprises d’exemple}}"
+
+#. js-lingui-id: 8uxJpD
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "{0} example records"
+msgstr "{0, plural, one {# enregistrement d’exemple} other {# enregistrements d’exemple}}"
+
+#. js-lingui-id: BaQ5Y3
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "{0} KB"
+msgstr "{0} Ko"
+
+#. js-lingui-id: bg876U
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "{0} of 5 steps complete"
+msgstr "{0, plural, one {# étape sur 5 terminée} other {# étapes sur 5 terminées}}"
+
+#. js-lingui-id: GvFN2v
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "1. Export from Notion"
+msgstr "1. Exportez depuis Notion"
+
+#. js-lingui-id: KTXReF
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "2. Preview in Bureau"
+msgstr "2. Prévisualisez dans Bureau"
+
+#. js-lingui-id: 3YaA1H
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "3. Choose a destination"
+msgstr "3. Choisissez une destination"
+
+#. js-lingui-id: wW+0zE
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "A clear goal, a shared outline and a home for the decisions that matter."
+msgstr "Un objectif clair, une trame partagée et un espace pour les décisions qui comptent."
+
+#. js-lingui-id: bXyEvb
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A closer look at {0}."
+msgstr "Découvrez {0} de plus près."
+
+#. js-lingui-id: J4sPQd
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A different day for everyone."
+msgstr "À chacun son quotidien."
+
+#. js-lingui-id: U3CCtd
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "A draft quote for the next project, with the client and scope kept together."
+msgstr "Un brouillon de devis pour le prochain projet, avec le client et le périmètre réunis."
+
+#. js-lingui-id: rrA/OQ
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A familiar place for different kinds of work."
+msgstr "Un espace familier pour toutes vos activités."
+
+#. js-lingui-id: ifoiqf
+#: src/modules/public-site/PublicSite.tsx
+msgid "A few small steps. *A fresh start.*"
+msgstr "Quelques petits pas. *Un nouveau départ.*"
+
+#. js-lingui-id: cQElXX
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A few things you might wonder."
+msgstr "Les questions que vous vous posez peut-être."
+
+#. js-lingui-id: kQTZ2X
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "A first conversation about a practical workshop, with the team and their goals in view."
+msgstr "Un premier échange autour d’un atelier pratique, avec l’équipe et ses objectifs en vue."
+
+#. js-lingui-id: uUU33v
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "A follow-up proposal for project documentation and ongoing support."
+msgstr "Une proposition de suivi pour la documentation du projet et l’accompagnement au quotidien."
+
+#. js-lingui-id: eQl9hB
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A foundation to grow"
+msgstr "Des bases pour grandir"
+
+#. js-lingui-id: GW9Zc+
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "A helping hand, in context."
+msgstr "Un coup de main, en contexte."
+
+#. js-lingui-id: 09KS7E
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "A home for every idea."
+msgstr "Une place pour chaque idée."
+
+#. js-lingui-id: yilp5F
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A little clarity. *Then, a fresh start.*"
+msgstr "Un peu de clarté. *Puis, un nouveau départ.*"
+
+#. js-lingui-id: Wzius+
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "A little help with the next step."
+msgstr "Un coup de main pour la suite."
+
+#. js-lingui-id: j505La
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A little more connected."
+msgstr "Un peu plus de liens."
+
+#. js-lingui-id: 74GCQ8
+#: src/modules/public-site/PublicSite.tsx
+msgid "A little more space *for your ideas.*"
+msgstr "Un peu plus d’espace *pour vos idées.*"
+
+#. js-lingui-id: pL+Okk
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "A little space to think."
+msgstr "Un peu d’espace pour réfléchir."
+
+#. js-lingui-id: SoTaAE
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "A modular workspace for knowledge, projects, calendars, files and client work, with optional finance and AI applications. Start with the tools that fit your work and add more when you need them."
+msgstr "Un espace de travail modulaire pour vos connaissances, projets, calendriers, fichiers et relations clients, avec des applications de finance et d’IA en option. Commencez avec les outils adaptés à votre activité et ajoutez-en selon vos besoins."
+
+#. js-lingui-id: hE/SuL
+#: src/modules/public-site/PublicSite.tsx
+msgid "A modular workspace for notes, projects, calendars and files. Bring in finance, client work and AI when you need them, on your own or with your team."
+msgstr "Un espace de travail modulaire pour vos notes, projets, calendriers et fichiers. Ajoutez la finance, les relations clients et l’IA selon vos besoins, en solo ou en équipe."
+
+#. js-lingui-id: eRsMUf
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "A new collaboration, with the people and their goals kept in context."
+msgstr "Une nouvelle collaboration, avec les personnes et leurs objectifs en contexte."
+
+#. js-lingui-id: jku7Eb
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "A new website project. Keep meeting notes, the project brief and the next conversation attached to the opportunity."
+msgstr "Un nouveau projet de site web. Gardez les comptes rendus, la note de cadrage et le prochain échange liés à l’opportunité."
+
+#. js-lingui-id: 762qaR
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A next step with a home"
+msgstr "Une place pour la prochaine étape"
+
+#. js-lingui-id: 5T3LjG
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "A personal home for notes, projects and your week."
+msgstr "Un espace personnel pour vos notes, projets et votre semaine."
+
+#. js-lingui-id: /aGFTf
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A personal notebook, a course hub, a weekly plan. Keep study notes and everyday projects in a space that is easy to return to."
+msgstr "Un carnet personnel, un espace de cours, un planning hebdomadaire. Retrouvez facilement vos notes et vos projets du quotidien."
+
+#. js-lingui-id: 1GpO93
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "A project index, with a clear goal and owner for each project."
+msgstr "Un répertoire de projets, avec un objectif et un responsable pour chacun."
+
+#. js-lingui-id: 6IZzc6
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A rhythm to work"
+msgstr "Un rythme de travail"
+
+#. js-lingui-id: 3zyDoP
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "A sample quote awaiting the client's reply."
+msgstr "Un devis d’exemple en attente de la réponse du client."
+
+#. js-lingui-id: 2nTF66
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "A shared home for client work and useful project references."
+msgstr "Un espace partagé pour les relations clients et les références utiles aux projets."
+
+#. js-lingui-id: vyKl/3
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "A shared home for team knowledge, projects and discussions."
+msgstr "Un espace partagé pour les connaissances, les projets et les discussions de l’équipe."
+
+#. js-lingui-id: wKHtFS
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "A shared place for recurring meeting notes and decisions."
+msgstr "Un espace commun pour les comptes rendus réguliers et les décisions."
+
+#. js-lingui-id: FkKLdG
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "A shared place for the next chapter. Capture the goal, the people involved and the decisions that shape the project."
+msgstr "Un espace partagé pour la suite. Notez l’objectif, les personnes impliquées et les décisions qui orientent le projet."
+
+#. js-lingui-id: cAjwz+
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "A shared project, from the first idea to the next review."
+msgstr "Un projet partagé, de la première idée à la prochaine revue."
+
+#. js-lingui-id: jXMLEe
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "A shared workspace for the team. The proposal covers onboarding, knowledge structure and project setup."
+msgstr "Un espace de travail partagé pour l’équipe. La proposition couvre l’accueil, la structure des connaissances et la mise en place des projets."
+
+#. js-lingui-id: QaveMb
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "A short conversation to share progress and unblock the next piece of work."
+msgstr "Un échange rapide pour partager les avancées et débloquer la suite du travail."
+
+#. js-lingui-id: x12b8D
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A space to think"
+msgstr "Un espace pour réfléchir"
+
+#. js-lingui-id: hBeSR0
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "A starting point for course notes, assignments and study plans."
+msgstr "Un point de départ pour les notes de cours, les devoirs et les révisions."
+
+#. js-lingui-id: 3b8kHa
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A team home, a project brief, a place for meeting notes. Give each project a little structure and invite the people who make it happen."
+msgstr "Un espace d’équipe, une note de cadrage, une place pour les comptes rendus. Structurez chaque projet et invitez les personnes qui le font avancer."
+
+#. js-lingui-id: NEC0y8
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "A team workspace project, from the first conversation to onboarding."
+msgstr "Un projet d’espace d’équipe, du premier échange à l’accueil des membres."
+
+#. js-lingui-id: hEItbw
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "A welcome page and the team's ways of working."
+msgstr "Une page d’accueil et les méthodes de travail de l’équipe."
+
+#. js-lingui-id: f+62nc
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "A workshop bringing people together around a shared goal."
+msgstr "Un atelier pour réunir les personnes autour d’un objectif commun."
+
+#. js-lingui-id: 8cvNLr
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "A workspace that starts with you."
+msgstr "Un espace de travail qui part de vous."
+
+#. js-lingui-id: 1/7/AR
+#: src/modules/public-site/PublicSite.tsx
+msgid "A2E Suite — A little more space for your ideas"
+msgstr "A2E Suite — Un peu plus d’espace pour vos idées"
+
+#. js-lingui-id: XiSwuC
+#: src/modules/public-site/PublicSite.tsx
+msgid "A2E Suite brings everyday work into a modular workspace. Useful structure, familiar tools and room for your team to make it their own."
+msgstr "A2E Suite réunit le travail du quotidien dans un espace modulaire. Une structure utile, des outils familiers et la liberté de les adapter à votre équipe."
+
+#. js-lingui-id: qTm5FC
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "A2E Suite connects pages, projects, calendars, files and optional applications. Access to a workspace is granted by its owner or administrators. Keep your account credentials private, use only access granted to you and tell your administrator if you suspect unauthorized access."
+msgstr "A2E Suite relie pages, projets, calendriers, fichiers et applications facultatives. L’accès à un espace de travail est accordé par son propriétaire ou ses administrateurs. Gardez vos identifiants confidentiels, utilisez uniquement les accès qui vous sont accordés et prévenez votre administrateur en cas de soupçon d’accès non autorisé."
+
+#. js-lingui-id: Zyj8RK
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Acceptable use"
+msgstr "Utilisation acceptable"
+
+#. js-lingui-id: xY5iiK
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Account and session information support sign-in, authorization and workspace administration. Workspace content is processed to provide the features you request. Operational records support security, troubleshooting and service maintenance. The association processes account information to provide the service you request and operational information for its legitimate interests in security and reliability. The organisation responsible for your workspace determines the purposes and legal basis for the content it adds."
+msgstr "Les informations de compte et de session permettent la connexion, l’autorisation et l’administration de l’espace. Le contenu de l’espace est traité pour fournir les fonctionnalités demandées. Les journaux de fonctionnement servent à la sécurité, au diagnostic et à la maintenance du service. L’association traite les informations de compte pour fournir le service demandé et les informations de fonctionnement au titre de ses intérêts légitimes en matière de sécurité et de fiabilité. L’organisme responsable de votre espace détermine les finalités et la base légale des contenus qu’il y ajoute."
+
+#. js-lingui-id: idn/Ip
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Account and workspace information"
+msgstr "Informations de compte et d’espace de travail"
+
+#. js-lingui-id: Hy1lfH
+#: src/modules/public-site/preview/PreviewCrm.tsx
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Account owner"
+msgstr "Responsable du compte"
+
+#. js-lingui-id: 1pGVp5
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Add files, client work, finance or AI when your team needs them. Shape the workspace around the way you work."
+msgstr "Ajoutez des fichiers, les relations clients, la finance ou l’IA lorsque votre équipe en a besoin. Adaptez l’espace à votre façon de travailler."
+
+#. js-lingui-id: h3t0tp
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Add the tools, and the people, you need."
+msgstr "Ajoutez les outils et les personnes dont vous avez besoin."
+
+#. js-lingui-id: rIfar1
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Agree on the next steps and record them in the meeting notes."
+msgstr "Convenez des prochaines étapes et consignez-les dans le compte rendu."
+
+#. js-lingui-id: pzNJtv
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "AI chat in your workspace"
+msgstr "Discussion avec l’IA dans votre espace"
+
+#. js-lingui-id: HqCSw9
+#: src/modules/public-site/preview/PreviewCrm.tsx
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Alex Rivera"
+msgstr "Alex Rivera"
+
+#. js-lingui-id: 3CpU6J
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "All companies"
+msgstr "Toutes les entreprises"
+
+#. js-lingui-id: 3aeN7X
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "All files"
+msgstr "Tous les fichiers"
+
+#. js-lingui-id: Y6JRLz
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "An AI provider and appropriate workspace permissions are required."
+msgstr "Un fournisseur d’IA et les autorisations adaptées dans l’espace de travail sont nécessaires."
+
+#. js-lingui-id: oNQpCb
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "An idea worth keeping"
+msgstr "Une idée à garder"
+
+#. js-lingui-id: dhbmVi
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "An interactive example with sample data. Explore the tabs to look around."
+msgstr "Un exemple interactif avec des données fictives. Parcourez les onglets pour le découvrir."
+
+#. js-lingui-id: 9KtRbS
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "An optional finance application for quotes, invoices, budgets and financial documents, in the same workspace."
+msgstr "Une application de finance facultative pour les devis, factures, budgets et documents financiers, dans le même espace de travail."
+
+#. js-lingui-id: 58m5/F
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "An organisation's data processing agreement must identify the organisation responsible for its workspace and the service operator processing data on its behalf. Review the versioned processing terms in Settings → Legal before accepting them on behalf of your organisation. The downloadable record captures your acceptance and does not generate a signature for the association or execute separate international transfer clauses."
+msgstr "L’accord de traitement des données d’un organisme doit identifier le responsable de l’espace de travail et l’opérateur du service qui traite les données pour son compte. Consultez la version des conditions de traitement dans Paramètres → Informations légales avant de les accepter au nom de votre organisme. Le document téléchargeable consigne votre acceptation ; il ne génère pas de signature pour l’association et ne conclut pas de clauses distinctes de transfert international."
+
+#. js-lingui-id: BsTkaI
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Applications and features depend on the workspace configuration. Any subscription, service commitment or support arrangement must be confirmed with the service operator. Before leaving a workspace, arrange access to the content you need with its administrator."
+msgstr "Les applications et fonctionnalités dépendent de la configuration de l’espace. Tout abonnement, engagement de service ou dispositif d’assistance doit être confirmé auprès de l’opérateur du service. Avant de quitter un espace, organisez avec son administrateur l’accès aux contenus dont vous avez besoin."
+
+#. js-lingui-id: KD8abx
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Applications are available according to your instance configuration and workspace installation."
+msgstr "La disponibilité des applications dépend de la configuration de votre instance et de leur installation dans l’espace."
+
+#. js-lingui-id: XCqWkt
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Archive is available when the file management application is installed."
+msgstr "Archive est disponible lorsque l’application de gestion des fichiers est installée."
+
+#. js-lingui-id: i1XoR6
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Ask your workspace assistant for help with ideas and everyday work. Availability depends on the AI providers configured for your instance."
+msgstr "Demandez à l’assistant de votre espace de vous aider dans vos idées et votre travail quotidien. Sa disponibilité dépend des fournisseurs d’IA configurés pour votre instance."
+
+#. js-lingui-id: ojKCLU
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Assignee"
+msgstr "Responsable"
+
+#. js-lingui-id: wOtvoI
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Availability, billing and leaving a workspace"
+msgstr "Disponibilité, facturation et départ d’un espace"
+
+#. js-lingui-id: WmAMZ3
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Available when installed by your administrator"
+msgstr "Disponible après installation par votre administrateur"
+
+#. js-lingui-id: 3wF4Q/
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Awaiting payment"
+msgstr "En attente de paiement"
+
+#. js-lingui-id: +1xfow
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Awaiting reply"
+msgstr "En attente de réponse"
+
+#. js-lingui-id: TVGVCw
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Back to parent page"
+msgstr "Retour à la page parente"
+
+#. js-lingui-id: gpCYVr
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Begin"
+msgstr "Commencer"
+
+#. js-lingui-id: 8K9SFD
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Bilan is included in non-profit and small-business starting points, subject to application availability."
+msgstr "Bilan est inclus dans les configurations de départ pour les associations et les petites entreprises, sous réserve de disponibilité de l’application."
+
+#. js-lingui-id: QD8opX
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Board"
+msgstr "Tableau kanban"
+
+#. js-lingui-id: 1ycmMQ
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Bring an organization’s knowledge and client work together. Add Bilan when finance belongs in the workflow, and keep access suited to each person’s role."
+msgstr "Réunissez les connaissances et les relations clients de votre organisation. Ajoutez Bilan lorsque la finance fait partie du travail et adaptez les accès au rôle de chaque personne."
+
+#. js-lingui-id: FkxOW2
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Bring tasks, projects and plans into the same workspace. Keep the next step visible and the details close."
+msgstr "Réunissez tâches, projets et planning dans le même espace. Gardez la prochaine étape visible et les détails à portée de main."
+
+#. js-lingui-id: /QCp8p
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Bring the team together to review the handbook and agree on the next steps."
+msgstr "Réunissez l’équipe pour relire le guide et convenir des prochaines étapes."
+
+#. js-lingui-id: MZcC7S
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Bring the work you already care about."
+msgstr "Retrouvez ce qui compte déjà pour vous."
+
+#. js-lingui-id: 2n/NSM
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Bring your knowledge along."
+msgstr "Emportez vos connaissances."
+
+#. js-lingui-id: AONx5l
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Bring your notes"
+msgstr "Importez vos notes"
+
+#. js-lingui-id: LmziF+
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Budgets and cash movements"
+msgstr "Budgets et mouvements de trésorerie"
+
+#. js-lingui-id: 2o6gfl
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Build your own rhythm. *Keep everything in reach.*"
+msgstr "Trouvez votre rythme. *Gardez tout à portée de main.*"
+
+#. js-lingui-id: ++u/rQ
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Bureau and Bilan together for an organization's work and finance documents."
+msgstr "Bureau et Bilan réunis pour le travail et les documents financiers d’une organisation."
+
+#. js-lingui-id: edajw+
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Bureau can be added later when your workspace needs notes and projects."
+msgstr "Bureau peut être ajouté plus tard lorsque votre espace a besoin de notes et de projets."
+
+#. js-lingui-id: aK8XZQ
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Bureau example sections"
+msgstr "Sections d’exemple de Bureau"
+
+#. js-lingui-id: GoDoo5
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Bureau Pages"
+msgstr "Pages Bureau"
+
+#. js-lingui-id: VwIaS4
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Bureau Pages, Projects and Discussions are included in the personal, student and team starting points."
+msgstr "Pages, Projets et Discussions de Bureau sont inclus dans les configurations de départ personnelles, étudiantes et d’équipe."
+
+#. js-lingui-id: 03dovi
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Calendar views and recurring events"
+msgstr "Vues calendrier et événements récurrents"
+
+#. js-lingui-id: FAmDIX
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Can I bring my Notion pages?"
+msgstr "Puis-je importer mes pages Notion ?"
+
+#. js-lingui-id: c1IQC9
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Can I work in more than one workspace?"
+msgstr "Puis-je travailler dans plusieurs espaces ?"
+
+#. js-lingui-id: w+JBqp
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Check the page structure with the team before sharing the final handbook."
+msgstr "Vérifiez la structure des pages avec l’équipe avant de partager le guide final."
+
+#. js-lingui-id: sWP/M/
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Choose a starting point. *Make room to grow.*"
+msgstr "Choisissez un point de départ. *Gardez de la place pour grandir.*"
+
+#. js-lingui-id: I6dBjf
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Choose a workspace that feels right today. Add applications as your work grows, with one account and familiar navigation."
+msgstr "Choisissez un espace adapté à vos besoins actuels. Ajoutez des applications au fil de vos projets, avec un seul compte et une navigation familière."
+
+#. js-lingui-id: Z4nssh
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Choose HTML or Markdown & CSV. Include subpages and files, then keep the export as a ZIP. HTML retains more formatting."
+msgstr "Choisissez HTML ou Markdown & CSV. Incluez les sous-pages et les fichiers, puis conservez l’export au format ZIP. Le HTML préserve davantage la mise en forme."
+
+#. js-lingui-id: axhwF0
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Choose Import, select Notion and drop the ZIP. Browse the page tree, inspect the content and check any reported limitations."
+msgstr "Choisissez Importer, sélectionnez Notion et déposez le ZIP. Parcourez l’arborescence, inspectez le contenu et vérifiez les limites signalées."
+
+#. js-lingui-id: quCjdc
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Choose the CRM starting point or enable CRM navigation when client work becomes part of your day."
+msgstr "Choisissez la configuration CRM ou activez sa navigation lorsque les relations clients entrent dans votre quotidien."
+
+#. js-lingui-id: yyZjOQ
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Client work, with the people and the next step in view."
+msgstr "Les relations clients, avec les personnes et la prochaine étape en vue."
+
+#. js-lingui-id: ot0WOb
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Client workspace"
+msgstr "Espace client"
+
+#. js-lingui-id: n5fb8M
+#: src/modules/public-site/preview/PreviewPrimitives.tsx
+msgid "Close details"
+msgstr "Fermer les détails"
+
+#. js-lingui-id: dTdkOm
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Collect references and useful links in Ideas & inspiration before the next review."
+msgstr "Rassemblez les références et les liens utiles dans Idées et inspiration avant la prochaine revue."
+
+#. js-lingui-id: 7byBXz
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Collect the brief, the rough idea and the meeting note. Give your knowledge a clear, reusable structure."
+msgstr "Rassemblez la note de cadrage, l’idée en cours et le compte rendu. Donnez à vos connaissances une structure claire et réutilisable."
+
+#. js-lingui-id: 7i8j3G
+#: src/modules/public-site/preview/PreviewCrm.tsx
+#: src/modules/public-site/preview/PreviewCrm.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Company"
+msgstr "Entreprise"
+
+#. js-lingui-id: 2ROZCk
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Complete task"
+msgstr "Terminer la tâche"
+
+#. js-lingui-id: N5z4JY
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Configurable model providers"
+msgstr "Fournisseurs de modèles configurables"
+
+#. js-lingui-id: Af8Upv
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Confirm the security measures, authorized personnel, hosting locations, sub-processors and any international transfer arrangements with the service operator. A workspace's configured providers do not by themselves establish contractual safeguards or a certification."
+msgstr "Confirmez avec l’opérateur du service les mesures de sécurité, le personnel autorisé, les lieux d’hébergement, les sous-traitants ultérieurs et les éventuels dispositifs de transfert international. Les fournisseurs configurés dans un espace ne constituent pas à eux seuls des garanties contractuelles ou une certification."
+
+#. js-lingui-id: AxZ1UU
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Connected project overview"
+msgstr "Vue d’ensemble des projets liés"
+
+#. js-lingui-id: bHxSrq
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Connected services and AI"
+msgstr "Services connectés et IA"
+
+#. js-lingui-id: 6BEyVr
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Connected work"
+msgstr "Travail connecté"
+
+#. js-lingui-id: fyUAUf
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Contact Association d’Entraide Étudiante at contact@association2e.org to request the agreement for the service at a2esuite.com. For another deployment, contact its operator. Use only a document that names the actual parties and reflects the services and providers in use."
+msgstr "Contactez l’Association d’Entraide Étudiante à contact@association2e.org pour demander l’accord relatif au service a2esuite.com. Pour un autre déploiement, contactez son opérateur. Utilisez uniquement un document qui nomme les parties réelles et reflète les services et fournisseurs utilisés."
+
+#. js-lingui-id: gt2k5E
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Contacts, companies & opportunities"
+msgstr "Contacts, entreprises et opportunités"
+
+#. js-lingui-id: jcL1KE
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Contacts, companies and opportunities"
+msgstr "Contacts, entreprises et opportunités"
+
+#. js-lingui-id: PaBkh3
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Cookies and local storage"
+msgstr "Cookies et stockage local"
+
+#. js-lingui-id: KXVuZF
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Create or join a workspace. Choose a starting template for your own work, study, team or organization, or begin with an empty space."
+msgstr "Créez ou rejoignez un espace. Choisissez un modèle de départ pour votre activité personnelle, vos études, votre équipe ou votre organisation, ou commencez avec un espace vide."
+
+#. js-lingui-id: f4ILyt
+#: src/modules/public-site/PublicSite.tsx
+msgid "Create your account, find your workspace and bring your first idea. Here is how to make yourself at home."
+msgstr "Créez votre compte, trouvez votre espace et apportez votre première idée. Voici comment prendre vos marques."
+
+#. js-lingui-id: 5VHjeZ
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "CRM example sections"
+msgstr "Sections d’exemple du CRM"
+
+#. js-lingui-id: Bjsjlh
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "CRM navigation stays hidden in these starting points. You can enable it when you need it."
+msgstr "La navigation CRM reste masquée dans ces configurations de départ. Vous pouvez l’activer selon vos besoins."
+
+#. js-lingui-id: yB2pZR
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Data processing arrangements for organisations using A2E Suite."
+msgstr "Dispositions de traitement des données pour les organismes utilisant A2E Suite."
+
+#. js-lingui-id: O4ofRA
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Decision: begin with a small handbook. Next step: gather the first ideas and review the project brief together."
+msgstr "Décision : commencer par un petit guide. Prochaine étape : rassembler les premières idées et relire ensemble la note de cadrage."
+
+#. js-lingui-id: ZA21ZR
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Design and development · 2 milestones. Example invoice linked to the client project."
+msgstr "Conception et développement · 2 jalons. Facture d’exemple liée au projet client."
+
+#. js-lingui-id: l+jLVo
+#: src/modules/public-site/PublicSite.tsx
+msgid "Discover the applications that bring notes, plans, files, relationships and finances into a shared workspace. Choose what fits; add more as you grow."
+msgstr "Découvrez les applications qui réunissent notes, planning, fichiers, relations et finances dans un espace partagé. Choisissez ce qui vous convient ; ajoutez-en au fil de vos besoins."
+
+#. js-lingui-id: 7oGBMv
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Discussions"
+msgstr "Discussions"
+
+#. js-lingui-id: hJbwKC
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Do I need every application?"
+msgstr "Ai-je besoin de toutes les applications ?"
+
+#. js-lingui-id: flv9Tm
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Do not use the service for unlawful activity, infringement, harassment, malicious software or attempts to access another person's account or workspace without permission. Do not interfere with the service or bypass its access controls."
+msgstr "N’utilisez pas le service pour des activités illégales, des atteintes aux droits, du harcèlement, des logiciels malveillants ou des tentatives d’accès non autorisé au compte ou à l’espace d’une autre personne. Ne perturbez pas le service et ne contournez pas ses contrôles d’accès."
+
+#. js-lingui-id: XicmhT
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Due date"
+msgstr "Échéance"
+
+#. js-lingui-id: hyItj7
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Enable contacts, companies and opportunities when you need client management. Choose the views that fit your team."
+msgstr "Activez les contacts, entreprises et opportunités lorsque vous avez besoin de gérer vos relations clients. Choisissez les vues adaptées à votre équipe."
+
+#. js-lingui-id: EWqzLJ
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Example board"
+msgstr "Tableau d’exemple"
+
+#. js-lingui-id: 0J4v95
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "Example calendar"
+msgstr "Calendrier d’exemple"
+
+#. js-lingui-id: 5h5QFP
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Example companies"
+msgstr "Entreprises d’exemple"
+
+#. js-lingui-id: Dr9BTx
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Example conversation"
+msgstr "Conversation d’exemple"
+
+#. js-lingui-id: jO1jKp
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Example document totals"
+msgstr "Totaux du document d’exemple"
+
+#. js-lingui-id: hhefsV
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Example prompts"
+msgstr "Exemples de questions"
+
+#. js-lingui-id: cN3O3R
+#: src/modules/public-site/preview/PreviewPrimitives.tsx
+msgid "Example record details"
+msgstr "Détails de l’enregistrement d’exemple"
+
+#. js-lingui-id: EJh9Z7
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Example views"
+msgstr "Vues d’exemple"
+
+#. js-lingui-id: yzCfRB
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Example workspace"
+msgstr "Espace de travail d’exemple"
+
+#. js-lingui-id: MKXQmE
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Explore {0}"
+msgstr "Découvrir {0}"
+
+#. js-lingui-id: u9UmH9
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Explore a prepared conversation with Syna, in the context of your work."
+msgstr "Découvrez une conversation préparée avec Syna, dans le contexte de votre travail."
+
+#. js-lingui-id: QLrze3
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Explore A2E Suite"
+msgstr "Découvrir A2E Suite"
+
+#. js-lingui-id: 4tzvyn
+#: src/modules/public-site/PublicSite.tsx
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Explore applications"
+msgstr "Découvrir les applications"
+
+#. js-lingui-id: 9dZFtT
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Explore the applications"
+msgstr "Découvrir les applications"
+
+#. js-lingui-id: z7WlQu
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Explore the example pages"
+msgstr "Explorer les pages d’exemple"
+
+#. js-lingui-id: aBQbDW
+#: src/modules/public-site/PublicSite.tsx
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Explore the suite"
+msgstr "Découvrir la suite"
+
+#. js-lingui-id: RR1RR0
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Explore workspace starting points"
+msgstr "Découvrir les configurations de départ"
+
+#. js-lingui-id: zTHnl4
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Files & folders"
+msgstr "Fichiers et dossiers"
+
+#. js-lingui-id: Y4IQgP
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Find a little more time."
+msgstr "Trouvez un peu plus de temps."
+
+#. js-lingui-id: LWaXps
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Find your starting point"
+msgstr "Trouvez votre point de départ"
+
+#. js-lingui-id: mGk+sx
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Folders and workspace files"
+msgstr "Dossiers et fichiers de l’espace"
+
+#. js-lingui-id: bYJbEa
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "For a bigger picture."
+msgstr "Pour une vue d’ensemble."
+
+#. js-lingui-id: hGxhrx
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "For the work you share."
+msgstr "Pour le travail partagé."
+
+#. js-lingui-id: GcYWBn
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "For your own ideas."
+msgstr "Pour vos propres idées."
+
+#. js-lingui-id: 6/Gz8h
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Gather the first ideas"
+msgstr "Rassembler les premières idées"
+
+#. js-lingui-id: 59ZO9T
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Give unfinished ideas a place to grow. Group research, useful links and sketches before turning them into a plan."
+msgstr "Donnez aux idées en cours une place pour grandir. Regroupez recherches, liens utiles et croquis avant d’en faire un plan."
+
+#. js-lingui-id: uo5Ot9
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Give your numbers a place."
+msgstr "Une place pour vos chiffres."
+
+#. js-lingui-id: dJDhKw
+#: src/modules/public-site/PublicSite.tsx
+msgid "Good tools should *give you space.*"
+msgstr "De bons outils devraient *vous donner de l’espace.*"
+
+#. js-lingui-id: Xykdlg
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Good work starts with a clear idea. Collect it here, give it a little structure, and see where it takes you."
+msgstr "Un bon travail commence par une idée claire. Notez-la ici, donnez-lui un peu de structure et voyez où elle vous mène."
+
+#. js-lingui-id: 5DdjZ9
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Grow"
+msgstr "Grandir"
+
+#. js-lingui-id: 2//zvG
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "How could I structure a team handbook?"
+msgstr "Comment structurer un guide d’équipe ?"
+
+#. js-lingui-id: 3WPjsD
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "How do I get started?"
+msgstr "Comment commencer ?"
+
+#. js-lingui-id: q7Odnq
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "How information is used in an A2E Suite workspace."
+msgstr "Comment les informations sont utilisées dans un espace A2E Suite."
+
+#. js-lingui-id: WI/SBi
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "How it fits into your day"
+msgstr "Sa place dans votre quotidien"
+
+#. js-lingui-id: nVXa2V
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "How workspace setup works"
+msgstr "Comment configurer votre espace"
+
+#. js-lingui-id: FYDAG0
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Ideas & inspiration"
+msgstr "Idées et inspiration"
+
+#. js-lingui-id: e8OIR3
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Ideas become pages, pages support projects, and plans make room in your calendar. Find the thread without retracing every step."
+msgstr "Les idées deviennent des pages, les pages nourrissent les projets et les plannings trouvent leur place dans votre calendrier. Retrouvez le fil sans tout reconstituer."
+
+#. js-lingui-id: qttT28
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Illustrative answer. This preview does not send a request to an AI service."
+msgstr "Réponse illustrative. Cet aperçu n’envoie aucune requête à un service d’IA."
+
+#. js-lingui-id: z/zdF1
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Import at the top of Bureau or inside an existing page. Pages and supported attachments keep their structure. Notion permissions, comments, formulas and database views are not transferred."
+msgstr "Importez à la racine de Bureau ou dans une page existante. Les pages et les pièces jointes prises en charge conservent leur structure. Les autorisations, commentaires, formules et vues de bases de données Notion ne sont pas transférés."
+
+#. js-lingui-id: /LCAwL
+#: src/modules/public-site/preview/PreviewBureau.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "In progress"
+msgstr "En cours"
+
+#. js-lingui-id: XJy8Ka
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "In this document"
+msgstr "Dans ce document"
+
+#. js-lingui-id: HdjVKr
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Individuals & students"
+msgstr "Particuliers et étudiants"
+
+#. js-lingui-id: yLx9zg
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Interactive example workspace"
+msgstr "Espace de travail d’exemple interactif"
+
+#. js-lingui-id: YdzNNm
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Invite your team and choose their access. Open the applications installed for your workspace and shape the navigation around your day."
+msgstr "Invitez votre équipe et choisissez ses accès. Ouvrez les applications installées dans votre espace et adaptez la navigation à votre quotidien."
+
+#. js-lingui-id: 0gAffY
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Is my workspace public?"
+msgstr "Mon espace est-il public ?"
+
+#. js-lingui-id: cR2/Ue
+#: src/modules/public-site/preview/PreviewCrm.tsx
+#: src/modules/public-site/preview/PreviewCrm.tsx
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Jonas Leroy"
+msgstr "Jonas Leroy"
+
+#. js-lingui-id: cFt0lD
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Keep people and companies in table views, then follow opportunities through a pipeline. Open a record to find its related activities and tasks."
+msgstr "Gardez personnes et entreprises dans des tableaux, puis suivez les opportunités dans un pipeline. Ouvrez une fiche pour retrouver ses activités et tâches liées."
+
+#. js-lingui-id: Nrk00+
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Keep the context."
+msgstr "Gardez le contexte."
+
+#. js-lingui-id: DhMk11
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Keep the structure simple: a welcome page, a project index and a place to record what we learn along the way."
+msgstr "Gardez une structure simple : une page d’accueil, un répertoire de projets et un espace pour consigner ce que nous apprenons en chemin."
+
+#. js-lingui-id: wJ+9Dl
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Keep the useful things close."
+msgstr "Gardez l’utile à portée de main."
+
+#. js-lingui-id: 0FEiuC
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Knowledge structure and team onboarding. A draft stays editable until it is ready to send."
+msgstr "Structure des connaissances et accueil de l’équipe. Un brouillon reste modifiable jusqu’à son envoi."
+
+#. js-lingui-id: AgC0PB
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Knowledge structure, project context and the next review."
+msgstr "Structure des connaissances, contexte du projet et prochaine revue."
+
+#. js-lingui-id: ajHjgm
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Knowledge, projects and financial documents in one workspace."
+msgstr "Connaissances, projets et documents financiers dans un même espace."
+
+#. js-lingui-id: 15eNG2
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "Legal information"
+msgstr "Informations légales"
+
+#. js-lingui-id: 54UlqW
+#: src/modules/public-site/PublicSite.tsx
+msgid "Less switching. *More doing.*"
+msgstr "Moins de changements d’outil. *Plus d’action.*"
+
+#. js-lingui-id: wsEGKe
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Live assistant availability depends on your instance's provider configuration and your access."
+msgstr "La disponibilité de l’assistant dépend des fournisseurs configurés sur votre instance et de vos accès."
+
+#. js-lingui-id: bhoeTs
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Made for your day"
+msgstr "Pour votre quotidien"
+
+#. js-lingui-id: HRha/x
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Main navigation"
+msgstr "Navigation principale"
+
+#. js-lingui-id: UsN0CM
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Make it yours"
+msgstr "Personnaliser"
+
+#. js-lingui-id: TeWkIe
+#: src/modules/public-site/PublicSite.tsx
+msgid "Make room for *your kind of work.*"
+msgstr "Faites de la place pour *votre façon de travailler.*"
+
+#. js-lingui-id: pKbjBN
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "Make room for what matters."
+msgstr "Faites de la place à l’essentiel."
+
+#. js-lingui-id: BD72+N
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Make the first day easier with a welcome page and links to the team's everyday tools."
+msgstr "Facilitez le premier jour avec une page d’accueil et des liens vers les outils quotidiens de l’équipe."
+
+#. js-lingui-id: SbuvhW
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Mark incomplete"
+msgstr "Marquer comme non terminée"
+
+#. js-lingui-id: Ca5MCe
+#: src/modules/public-site/preview/PreviewBureau.tsx
+#: src/modules/public-site/preview/PreviewCrm.tsx
+#: src/modules/public-site/preview/PreviewCrm.tsx
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Maya Laurent"
+msgstr "Maya Laurent"
+
+#. js-lingui-id: oE8Gmu
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Meeting"
+msgstr "Réunion"
+
+#. js-lingui-id: LRj17z
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Mobile navigation"
+msgstr "Navigation mobile"
+
+#. js-lingui-id: AujMGt
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Monthly project follow-up and documentation. Example paid invoice."
+msgstr "Suivi mensuel du projet et documentation. Facture d’exemple réglée."
+
+#. js-lingui-id: alUyFq
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "More possibilities, at your pace"
+msgstr "Plus de possibilités, à votre rythme"
+
+#. js-lingui-id: y2qoN8
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "My accounts"
+msgstr "Mes comptes"
+
+#. js-lingui-id: HFBUVf
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Nested pages, favorites and reusable templates"
+msgstr "Pages imbriquées, favoris et modèles réutilisables"
+
+#. js-lingui-id: 6FXL2X
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "No example events in this range."
+msgstr "Aucun événement d’exemple sur cette période."
+
+#. js-lingui-id: CLfW85
+#: src/modules/public-site/preview/PreviewCrm.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "No example records match your search."
+msgstr "Aucun enregistrement d’exemple ne correspond à votre recherche."
+
+#. js-lingui-id: f3QZ0h
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "No. Choose a starting workspace template or begin from scratch. Applications depend on what your administrator has made available and installed. CRM navigation is optional."
+msgstr "Non. Choisissez un modèle d’espace de départ ou partez de zéro. Les applications dépendent de ce que votre administrateur a rendu disponible et installé. La navigation CRM est facultative."
+
+#. js-lingui-id: LFPqEU
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Nov 10"
+msgstr "10 nov."
+
+#. js-lingui-id: 630lgf
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Nov 2"
+msgstr "2 nov."
+
+#. js-lingui-id: qLvJeG
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Nov 4"
+msgstr "4 nov."
+
+#. js-lingui-id: JfsBmV
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Nov 5"
+msgstr "5 nov."
+
+#. js-lingui-id: rRqzNB
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Nov 6"
+msgstr "6 nov."
+
+#. js-lingui-id: TBr3eO
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Nov 7"
+msgstr "7 nov."
+
+#. js-lingui-id: Yiujiy
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Oct 20"
+msgstr "20 oct."
+
+#. js-lingui-id: Ot0s7A
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Oct 24"
+msgstr "24 oct."
+
+#. js-lingui-id: BrEExX
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Oct 26"
+msgstr "26 oct."
+
+#. js-lingui-id: QYEymW
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Oct 27"
+msgstr "27 oct."
+
+#. js-lingui-id: IC2LcY
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Oct 28"
+msgstr "28 oct."
+
+#. js-lingui-id: xsPe0r
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Oct 29"
+msgstr "29 oct."
+
+#. js-lingui-id: SHtiKL
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Oct 30"
+msgstr "30 oct."
+
+#. js-lingui-id: EKWyWl
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "One place for the brief, the meeting notes and the next step. Everything stays connected."
+msgstr "Un espace pour la note de cadrage, les comptes rendus et la prochaine étape. Tout reste connecté."
+
+#. js-lingui-id: edRe+r
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "One starting point. *Many ways to work.*"
+msgstr "Un point de départ. *Mille façons de travailler.*"
+
+#. js-lingui-id: SEHNXj
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "One suite. Your way."
+msgstr "Une suite. À votre façon."
+
+#. js-lingui-id: u/Pswa
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Ongoing support"
+msgstr "Accompagnement continu"
+
+#. js-lingui-id: OjSoNt
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Open Agenda to see your week. Create an event, choose its date and recurrence, and set a reminder. Task deadlines appear alongside your planning."
+msgstr "Ouvrez Agenda pour voir votre semaine. Créez un événement, choisissez sa date et sa récurrence, puis ajoutez un rappel. Les échéances des tâches apparaissent à côté de votre planning."
+
+#. js-lingui-id: 3Oamux
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Open Archive, create a folder and upload your files. Browse the folder tree, preview supported files and check storage usage from the same place."
+msgstr "Ouvrez Archive, créez un dossier et importez vos fichiers. Parcourez l’arborescence, prévisualisez les fichiers pris en charge et consultez l’utilisation du stockage au même endroit."
+
+#. js-lingui-id: t1ZvI+
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Open Syna, choose an available model and ask for help. Use its answers as a starting point, and review any suggested changes to your work."
+msgstr "Ouvrez Syna, choisissez un modèle disponible et demandez de l’aide. Utilisez ses réponses comme point de départ et vérifiez les changements suggérés pour votre travail."
+
+#. js-lingui-id: SV/iis
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Opportunity"
+msgstr "Opportunité"
+
+#. js-lingui-id: D8+K15
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Optional integrations and AI providers have their own terms. Only connect services you are authorized to use. Review generated suggestions and financial documents before acting on them; an assistant response is not a substitute for professional judgment."
+msgstr "Les intégrations facultatives et les fournisseurs d’IA ont leurs propres conditions. Ne connectez que les services que vous êtes autorisé à utiliser. Vérifiez les suggestions générées et les documents financiers avant d’agir ; une réponse d’assistant ne remplace pas un jugement professionnel."
+
+#. js-lingui-id: +19oqL
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Optional navigation for client work"
+msgstr "Navigation facultative pour les relations clients"
+
+#. js-lingui-id: f/JnuC
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Organizations & small businesses"
+msgstr "Organisations et petites entreprises"
+
+#. js-lingui-id: oMYufu
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Organize files in folders, find the right document and preview it without losing your place."
+msgstr "Organisez les fichiers en dossiers, trouvez le bon document et prévisualisez-le sans perdre le fil."
+
+#. js-lingui-id: RD0KMr
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Our goal: create a useful team handbook. Start with onboarding, project context and a clear home for recurring meeting notes."
+msgstr "Notre objectif : créer un guide d’équipe utile. Commençons par l’accueil, le contexte des projets et un espace clair pour les comptes rendus réguliers."
+
+#. js-lingui-id: /Bo5PT
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Our next chapter"
+msgstr "Notre prochain chapitre"
+
+#. js-lingui-id: v4nCHK
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Paid"
+msgstr "Réglée"
+
+#. js-lingui-id: MZHPuB
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "Participants"
+msgstr "Participants"
+
+#. js-lingui-id: tlhIX6
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Pause animations"
+msgstr "Mettre les animations en pause"
+
+#. js-lingui-id: svK01T
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "PDF only"
+msgstr "PDF uniquement"
+
+#. js-lingui-id: w+na4K
+#: src/modules/public-site/PublicSite.tsx
+msgid "Personal knowledge, course notes, shared projects or an organization’s next chapter. Start with a space that fits the way you work."
+msgstr "Connaissances personnelles, notes de cours, projets partagés ou nouvelle étape pour votre organisation. Commencez par un espace adapté à votre façon de travailler."
+
+#. js-lingui-id: Zp1cO9
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Plan the next review"
+msgstr "Planifier la prochaine revue"
+
+#. js-lingui-id: Iqh0Uv
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Planned"
+msgstr "Prévu"
+
+#. js-lingui-id: 8V0Ek5
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "Plans, meetings and task deadlines, with a clear view of the week."
+msgstr "Planning, réunions et échéances, avec une vue claire de la semaine."
+
+#. js-lingui-id: bP/O+D
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Prepare the review"
+msgstr "Préparer la revue"
+
+#. js-lingui-id: sivplO
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Prepare the welcome page"
+msgstr "Préparer la page d’accueil"
+
+#. js-lingui-id: n0sg6Y
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Preview and import Notion exports"
+msgstr "Prévisualisation et import des exports Notion"
+
+#. js-lingui-id: HMTaCc
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Previews and attachments"
+msgstr "Aperçus et pièces jointes"
+
+#. js-lingui-id: K47k8R
+#: src/modules/public-site/PublicSitePages.ts
+msgid "Product"
+msgstr "Produit"
+
+#. js-lingui-id: j3IoTI
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Product links"
+msgstr "Liens du produit"
+
+#. js-lingui-id: ma6BDr
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Product overview"
+msgstr "Vue d’ensemble du produit"
+
+#. js-lingui-id: e0NrBM
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Project"
+msgstr "Projet"
+
+#. js-lingui-id: IK1rrU
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Project documents"
+msgstr "Documents du projet"
+
+#. js-lingui-id: yohrDM
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Project follow-up"
+msgstr "Suivi du projet"
+
+#. js-lingui-id: b98ysV
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Project overview"
+msgstr "Vue d’ensemble du projet"
+
+#. js-lingui-id: q2u3Tq
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Project planning and documentation for a growing team."
+msgstr "Planification et documentation de projets pour une équipe qui grandit."
+
+#. js-lingui-id: 7Bf7v8
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Project quote"
+msgstr "Devis du projet"
+
+#. js-lingui-id: vxe5JO
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "Project review"
+msgstr "Revue du projet"
+
+#. js-lingui-id: PuEulq
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Project sketch.png"
+msgstr "Croquis du projet.png"
+
+#. js-lingui-id: OXtPVd
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Projects & tasks"
+msgstr "Projets et tâches"
+
+#. js-lingui-id: qcybNQ
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Proposal"
+msgstr "Proposition"
+
+#. js-lingui-id: 6g1gi0
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Proposals"
+msgstr "Propositions"
+
+#. js-lingui-id: HHx/fU
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Questions & answers"
+msgstr "Questions et réponses"
+
+#. js-lingui-id: Jhj9tB
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Quotes and invoice drafts"
+msgstr "Devis et brouillons de factures"
+
+#. js-lingui-id: HwNuv8
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Quotes, invoices and payments, connected to your client work."
+msgstr "Devis, factures et paiements, liés à vos relations clients."
+
+#. js-lingui-id: N2C89m
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Reference"
+msgstr "Référence"
+
+#. js-lingui-id: 2O4zjB
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Related pages"
+msgstr "Pages liées"
+
+#. js-lingui-id: SD9R57
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Remember the people behind the work."
+msgstr "N’oubliez pas les personnes derrière le travail."
+
+#. js-lingui-id: 0tAq0u
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Reminders and task deadlines"
+msgstr "Rappels et échéances des tâches"
+
+#. js-lingui-id: zeuehs
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Request your agreement"
+msgstr "Demandez votre accord"
+
+#. js-lingui-id: rnLhad
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Requests, incidents and the end of service"
+msgstr "Demandes, incidents et fin du service"
+
+#. js-lingui-id: s+MGs7
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Resources"
+msgstr "Ressources"
+
+#. js-lingui-id: c/L3Ux
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Resume animations"
+msgstr "Reprendre les animations"
+
+#. js-lingui-id: Tq7vGn
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Retention and your choices"
+msgstr "Conservation et vos choix"
+
+#. js-lingui-id: lKeYIy
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Retention depends on the workspace settings, the service operator's policy and any applicable agreement. Backups can have a separate retention period. Contact the association about access, correction, export, deletion, restriction or objection concerning your account information. For workspace content, contact the organisation responsible for that workspace. You can also raise a concern with the French data protection authority, CNIL."
+msgstr "La conservation dépend des paramètres de l’espace, de la politique de l’opérateur du service et des accords applicables. Les sauvegardes peuvent avoir une durée de conservation distincte. Contactez l’association pour toute demande d’accès, de rectification, d’export, de suppression, de limitation ou d’opposition concernant vos informations de compte. Pour le contenu d’un espace, contactez l’organisme qui en est responsable. Vous pouvez également saisir la CNIL, autorité française de protection des données."
+
+#. js-lingui-id: OSRoEQ
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Reverse company order"
+msgstr "Inverser l’ordre des entreprises"
+
+#. js-lingui-id: NFbWR/
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Reverse record order"
+msgstr "Inverser l’ordre des enregistrements"
+
+#. js-lingui-id: +LFJs/
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Review suggestions before applying changes"
+msgstr "Vérifier les suggestions avant d’appliquer les changements"
+
+#. js-lingui-id: pML4FC
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "Review the shared priorities and make room for focused work this week."
+msgstr "Faites le point sur les priorités communes et réservez du temps de concentration cette semaine."
+
+#. js-lingui-id: /T98kv
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "Review the team handbook, gather feedback and agree on the next steps."
+msgstr "Relisez le guide d’équipe, recueillez les retours et convenez des prochaines étapes."
+
+#. js-lingui-id: LO3w5f
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Review what is complete, what is in progress and what needs help."
+msgstr "Passez en revue ce qui est terminé, en cours et ce qui demande de l’aide."
+
+#. js-lingui-id: F9jcAz
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Revisit the goal and the decisions recorded in the brief."
+msgstr "Reprenez l’objectif et les décisions consignées dans la note de cadrage."
+
+#. js-lingui-id: VYvceg
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Rich text, tables, checklists and files"
+msgstr "Texte enrichi, tableaux, listes de tâches et fichiers"
+
+#. js-lingui-id: ZSWA4X
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Room to focus."
+msgstr "De la place pour se concentrer."
+
+#. js-lingui-id: 7ERC4i
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Sales documents"
+msgstr "Documents commerciaux"
+
+#. js-lingui-id: z/iOsV
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Sample data · Changes stay in this preview"
+msgstr "Données fictives · Les modifications restent dans cet aperçu"
+
+#. js-lingui-id: oXGQ8k
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Scope and instructions"
+msgstr "Périmètre et instructions"
+
+#. js-lingui-id: LTchm4
+#: src/modules/public-site/preview/PreviewPrimitives.tsx
+msgid "Search example records"
+msgstr "Rechercher dans les enregistrements d’exemple"
+
+#. js-lingui-id: TroxPn
+#: src/modules/public-site/preview/PreviewPrimitives.tsx
+msgid "Search records…"
+msgstr "Rechercher des enregistrements…"
+
+#. js-lingui-id: sdl89h
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Security and service providers"
+msgstr "Sécurité et prestataires"
+
+#. js-lingui-id: BmICy1
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "See events and task deadlines together. Plan the week with a calendar that belongs to your workspace."
+msgstr "Retrouvez événements et échéances des tâches ensemble. Organisez votre semaine avec un calendrier intégré à votre espace."
+
+#. js-lingui-id: lSyK5C
+#: src/modules/public-site/PublicSite.tsx
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "See how to begin"
+msgstr "Découvrez comment commencer"
+
+#. js-lingui-id: b9Cjex
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "Service operator"
+msgstr "Opérateur du service"
+
+#. js-lingui-id: JIjwGJ
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Share the team handbook"
+msgstr "Partager le guide d’équipe"
+
+#. js-lingui-id: sxQ89S
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Shared with A2E Studio"
+msgstr "Partagé avec A2E Studio"
+
+#. js-lingui-id: lhU8sA
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Sharing and connected providers"
+msgstr "Partage et fournisseurs connectés"
+
+#. js-lingui-id: 59ZB7S
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Simple beginnings. More possibilities."
+msgstr "Des débuts simples. Plus de possibilités."
+
+#. js-lingui-id: L2CVk3
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Skip to content"
+msgstr "Aller au contenu"
+
+#. js-lingui-id: NH9Z1R
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Start here"
+msgstr "Commencez ici"
+
+#. js-lingui-id: b7EXvv
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Start on the Bureau home, open a recent page or create a new one. Organize its subpages, use a saved template, or open Projects and Discussions from the workspace navigation."
+msgstr "Depuis l’accueil de Bureau, ouvrez une page récente ou créez-en une. Organisez ses sous-pages, utilisez un modèle enregistré ou ouvrez Projets et Discussions depuis la navigation de l’espace."
+
+#. js-lingui-id: Ql8LKc
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Start with a quote or invoice draft, organize your financial documents and review budgets and cash movements. Available screens depend on the installed Bilan application."
+msgstr "Commencez par un devis ou un brouillon de facture, organisez vos documents financiers et consultez budgets et mouvements de trésorerie. Les écrans disponibles dépendent de l’application Bilan installée."
+
+#. js-lingui-id: Aaup8e
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Start with a small structure that is easy to keep useful."
+msgstr "Commencez par une petite structure qui reste facile à utiliser."
+
+#. js-lingui-id: b2eTEU
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Start with a useful little space."
+msgstr "Commencez par un petit espace utile."
+
+#. js-lingui-id: 6A1KZp
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Start with a useful set of tools or an empty workspace. Add available applications later, and keep CRM navigation optional."
+msgstr "Commencez avec des outils utiles ou un espace vide. Ajoutez ensuite les applications disponibles et gardez la navigation CRM facultative."
+
+#. js-lingui-id: CvYtDS
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Start with contacts, companies and opportunities for client work."
+msgstr "Commencez par les contacts, entreprises et opportunités pour vos relations clients."
+
+#. js-lingui-id: e2qLdJ
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Start with what you need."
+msgstr "Commencez par l’essentiel."
+
+#. js-lingui-id: JHJ1oS
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Starting point preview"
+msgstr "Aperçu de la configuration de départ"
+
+#. js-lingui-id: 0guQnR
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Storage usage at a glance"
+msgstr "Utilisation du stockage en un coup d’œil"
+
+#. js-lingui-id: 5H2zZk
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Structure a handbook"
+msgstr "Structurer un guide"
+
+#. js-lingui-id: 7Z3/pk
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Table and pipeline views"
+msgstr "Vues tableau et pipeline"
+
+#. js-lingui-id: 2r7CY0
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Team calendar"
+msgstr "Calendrier d’équipe"
+
+#. js-lingui-id: m59+RN
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "Team catch-up"
+msgstr "Point d’équipe"
+
+#. js-lingui-id: mnXsqq
+#: src/modules/public-site/preview/PreviewBureau.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Team handbook"
+msgstr "Guide d’équipe"
+
+#. js-lingui-id: n+JkZ4
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Team handbook.pdf"
+msgstr "Guide d’équipe.pdf"
+
+#. js-lingui-id: M9ncAN
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Team knowledge"
+msgstr "Connaissances de l’équipe"
+
+#. js-lingui-id: mqwxba
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Team onboarding and a clear place for recurring meeting notes."
+msgstr "Accueil de l’équipe et espace clair pour les comptes rendus réguliers."
+
+#. js-lingui-id: AKngk+
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Team workshop"
+msgstr "Atelier d’équipe"
+
+#. js-lingui-id: Q9wCfh
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Team workspace"
+msgstr "Espace d’équipe"
+
+#. js-lingui-id: QIM/9s
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Teams & projects"
+msgstr "Équipes et projets"
+
+#. js-lingui-id: S22jnw
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "The agreement should describe the service, the processing purposes and duration, the categories of information and people concerned, and the documented instructions of the responsible organisation. Optional applications and connected providers should be included where they process that information."
+msgstr "L’accord doit décrire le service, les finalités et la durée du traitement, les catégories d’informations et de personnes concernées ainsi que les instructions documentées de l’organisme responsable. Les applications facultatives et les fournisseurs connectés doivent y figurer lorsqu’ils traitent ces informations."
+
+#. js-lingui-id: da8dAg
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "The applicable agreement should define assistance with personal information requests and incidents, the handling of service providers, audit information, and how information is returned or deleted when the service ends, including backup retention."
+msgstr "L’accord applicable doit définir l’assistance relative aux demandes concernant les données personnelles et aux incidents, la gestion des prestataires, les informations d’audit et les modalités de restitution ou de suppression des informations à la fin du service, y compris la conservation des sauvegardes."
+
+#. js-lingui-id: 2eWYQr
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "The application uses authentication cookies and browser storage for sessions, preferences and workspace navigation. Clearing that storage can sign you out or reset preferences. Connected services may set their own cookies when you visit their websites."
+msgstr "L’application utilise des cookies d’authentification et le stockage du navigateur pour les sessions, les préférences et la navigation dans les espaces. Effacer ce stockage peut vous déconnecter ou réinitialiser vos préférences. Les services connectés peuvent déposer leurs propres cookies lorsque vous visitez leurs sites."
+
+#. js-lingui-id: ULhu1A
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "The calendar is part of the workspace. Navigation and connected calendars depend on your setup."
+msgstr "Le calendrier fait partie de l’espace de travail. La navigation et les calendriers connectés dépendent de votre configuration."
+
+#. js-lingui-id: T9CIta
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "The context in your head"
+msgstr "Le contexte dans votre tête"
+
+#. js-lingui-id: 8grMNr
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "The files behind your projects, with their context close by."
+msgstr "Les fichiers de vos projets, avec leur contexte à portée de main."
+
+#. js-lingui-id: BGYwns
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "The notes in one place"
+msgstr "Les notes d’un côté"
+
+#. js-lingui-id: W34ibX
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "The parties to your agreement"
+msgstr "Les parties à votre accord"
+
+#. js-lingui-id: usSDrC
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "The people, projects and conversations behind every relationship."
+msgstr "Les personnes, projets et échanges derrière chaque relation."
+
+#. js-lingui-id: dWSy4p
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "The plan in another"
+msgstr "Le planning de l’autre"
+
+#. js-lingui-id: GLXSJw
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "The project brief, handbook and visual references, collected in one place."
+msgstr "La note de cadrage, le guide et les références visuelles réunis au même endroit."
+
+#. js-lingui-id: 44y4wc
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "the region documented for your deployment"
+msgstr "la région documentée pour votre déploiement"
+
+#. js-lingui-id: Lzwwsw
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "The right people, in the loop"
+msgstr "Les bonnes personnes, dans la boucle"
+
+#. js-lingui-id: kUWsPt
+#: src/modules/public-site/PublicSite.tsx
+msgid "The right tools. *In the right place.*"
+msgstr "Les bons outils. *Au bon endroit.*"
+
+#. js-lingui-id: 9OhKWh
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "The service processes account details, workspace memberships, access permissions and the content you choose to add. Depending on enabled applications, that content can include documents, tasks, contacts, calendar entries, files and financial records."
+msgstr "Le service traite les informations de compte, les appartenances aux espaces, les autorisations d’accès et les contenus que vous choisissez d’ajouter. Selon les applications activées, ces contenus peuvent inclure documents, tâches, contacts, événements, fichiers et données financières."
+
+#. js-lingui-id: ErRdgP
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "The suite"
+msgstr "La suite"
+
+#. js-lingui-id: kDYJEc
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "This is an illustration of setup. You review app availability and installation when creating your workspace. Archive and AI availability are configured separately."
+msgstr "Ceci illustre la configuration. Vous vérifiez la disponibilité et l’installation des applications lors de la création de votre espace. La disponibilité d’Archive et de l’IA est configurée séparément."
+
+#. js-lingui-id: rZ9HZq
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "To do"
+msgstr "À faire"
+
+#. js-lingui-id: yoRBWV
+#: src/modules/public-site/PublicSiteLanguageSelector.tsx
+msgid "Translations could not be loaded. Please try again."
+msgstr "Les traductions n’ont pas pu être chargées. Réessayez."
+
+#. js-lingui-id: 5kAKAc
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Try a view, open a record, or explore another application."
+msgstr "Essayez une vue, ouvrez une fiche ou découvrez une autre application."
+
+#. js-lingui-id: FvET+4
+#: src/modules/public-site/PublicSitePages.ts
+msgid "Use cases"
+msgstr "Cas d’usage"
+
+#. js-lingui-id: yrAY19
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Use dark preview"
+msgstr "Activer l’aperçu sombre"
+
+#. js-lingui-id: e9cK6T
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Use Get started to open the account page. Sign in or create an account, then create or join a workspace. Your instance administrator manages application availability and hosting."
+msgstr "Cliquez sur Commencer pour ouvrir la page de compte. Connectez-vous ou créez un compte, puis créez ou rejoignez un espace. L’administrateur de votre instance gère la disponibilité des applications et l’hébergement."
+
+#. js-lingui-id: sz3tQl
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Use light preview"
+msgstr "Activer l’aperçu clair"
+
+#. js-lingui-id: 1iP8wA
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Use the project brief and the latest meeting notes to keep the review focused."
+msgstr "Appuyez-vous sur la note de cadrage et les derniers comptes rendus pour cibler la revue."
+
+#. js-lingui-id: KDFyth
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Useful details. *A familiar way to work.*"
+msgstr "Des détails utiles. *Une façon familière de travailler.*"
+
+#. js-lingui-id: ym/wWo
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Using A2E Suite and your workspace responsibly."
+msgstr "Utiliser A2E Suite et votre espace de manière responsable."
+
+#. js-lingui-id: dgs13/
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Visual research for the next chapter. A sample file with its type, size and owner shown in context."
+msgstr "Recherches visuelles pour la suite du projet. Un fichier d’exemple avec son type, sa taille et son propriétaire en contexte."
+
+#. js-lingui-id: u4+OBO
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Ways to work"
+msgstr "Façons de travailler"
+
+#. js-lingui-id: 67vchT
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Website project"
+msgstr "Projet de site web"
+
+#. js-lingui-id: sDwhnB
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Website project and ongoing support. Keep the brief, proposal and follow-up attached to the company."
+msgstr "Projet de site web et accompagnement continu. Gardez la note de cadrage, la proposition et le suivi liés à l’entreprise."
+
+#. js-lingui-id: b47efg
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "Weekly planning"
+msgstr "Planning hebdomadaire"
+
+#. js-lingui-id: CrDePn
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Weekly review"
+msgstr "Revue hebdomadaire"
+
+#. js-lingui-id: 45LSj8
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Weekly review · Design and planning"
+msgstr "Revue hebdomadaire · Conception et planification"
+
+#. js-lingui-id: Uhudoi
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Welcome · Our ways of working · Projects · Meeting notes"
+msgstr "Bienvenue · Nos méthodes de travail · Projets · Comptes rendus"
+
+#. js-lingui-id: tIUlsn
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Welcome to A2E Studio. Our shared handbook brings the team's ways of working, project context and meeting notes together."
+msgstr "Bienvenue chez A2E Studio. Notre guide partagé rassemble les méthodes de travail de l’équipe, le contexte des projets et les comptes rendus."
+
+#. js-lingui-id: K9sYtH
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "What is A2E Suite?"
+msgstr "Qu’est-ce qu’A2E Suite ?"
+
+#. js-lingui-id: GO9DAT
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "What should we cover in the next project review?"
+msgstr "Que devrions-nous aborder lors de la prochaine revue du projet ?"
+
+#. js-lingui-id: 1ZF9KQ
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "When"
+msgstr "Quand"
+
+#. js-lingui-id: axZCpk
+#: src/modules/public-site/PublicSitePages.ts
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Why A2E"
+msgstr "Pourquoi A2E"
+
+#. js-lingui-id: SwmK8J
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Why information is processed"
+msgstr "Pourquoi les informations sont traitées"
+
+#. js-lingui-id: uvIqcj
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Workshop"
+msgstr "Atelier"
+
+#. js-lingui-id: qbmX9j
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Workshop notes: agree on the goal, collect the first ideas and plan a useful review."
+msgstr "Notes d’atelier : convenir de l’objectif, rassembler les premières idées et planifier une revue utile."
+
+#. js-lingui-id: OGmM0e
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Workshop notes.md"
+msgstr "Notes d’atelier.md"
+
+#. js-lingui-id: gCrKuV
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Workshop preparation and facilitation. Example payment recorded against the invoice."
+msgstr "Préparation et animation d’atelier. Paiement d’exemple enregistré sur la facture."
+
+#. js-lingui-id: 2gzz0t
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Workspace setup"
+msgstr "Configuration de l’espace"
+
+#. js-lingui-id: z8N/Cu
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Write rich pages, organize nested notes and keep project knowledge close. Bureau brings Pages, Projects and Discussions into the same workspace."
+msgstr "Rédigez des pages riches, organisez des notes imbriquées et gardez les connaissances du projet à portée de main. Bureau réunit Pages, Projets et Discussions dans le même espace."
+
+#. js-lingui-id: gN0PKh
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Write the project brief"
+msgstr "Rédiger la note de cadrage"
+
+#. js-lingui-id: sZ7hpL
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Write your first page, preview a Notion export, or plan your next project. Organize your pages and keep useful templates close."
+msgstr "Rédigez votre première page, prévisualisez un export Notion ou planifiez votre prochain projet. Organisez vos pages et gardez les modèles utiles à portée de main."
+
+#. js-lingui-id: V7bgvp
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Yes. An account can belong to several workspaces. Switch between them from the workspace menu; membership and permissions apply separately in each workspace."
+msgstr "Oui. Un compte peut appartenir à plusieurs espaces. Passez de l’un à l’autre depuis le menu des espaces ; les appartenances et autorisations s’appliquent séparément à chaque espace."
+
+#. js-lingui-id: hk4J6E
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Yes. In Bureau, choose Import, select Notion and drop an HTML or Markdown & CSV export ZIP. Preview the pages and hierarchy, then choose a destination. Include subpages and files in the export; HTML preserves more formatting. Permissions, comments, database formulas and Notion view settings are not recreated."
+msgstr "Oui. Dans Bureau, choisissez Importer, sélectionnez Notion et déposez un ZIP exporté en HTML ou Markdown & CSV. Prévisualisez les pages et leur hiérarchie, puis choisissez une destination. Incluez les sous-pages et fichiers dans l’export ; le HTML préserve davantage la mise en forme. Les autorisations, commentaires, formules de bases de données et paramètres des vues Notion ne sont pas recréés."
+
+#. js-lingui-id: kWJmRL
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "You"
+msgstr "Vous"
+
+#. js-lingui-id: chB4kC
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "You remain responsible for the content you upload and for having permission to use and share it. Workspace administrators manage membership, permissions, application installation and retention settings. Check those permissions before sharing personal or confidential information."
+msgstr "Vous restez responsable des contenus importés et des autorisations nécessaires pour les utiliser et les partager. Les administrateurs de l’espace gèrent les membres, les autorisations, l’installation des applications et les paramètres de conservation. Vérifiez ces autorisations avant de partager des informations personnelles ou confidentielles."
+
+#. js-lingui-id: ae0MJZ
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Your account and workspace"
+msgstr "Votre compte et votre espace"
+
+#. js-lingui-id: qroZR5
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Your content"
+msgstr "Vos contenus"
+
+#. js-lingui-id: 3n43kx
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Your everyday essentials. *One shared workspace.*"
+msgstr "Vos essentiels du quotidien. *Un espace partagé.*"
+
+#. js-lingui-id: GJM+Q4
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Your notes deserve *a good new home.*"
+msgstr "Vos notes méritent *un nouvel espace.*"
+
+#. js-lingui-id: y7/07q
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Your plans beside your knowledge"
+msgstr "Votre planning à côté de vos connaissances"
+
+#. js-lingui-id: YzxtR7
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Your work is connected. *Your tools should be, too.*"
+msgstr "Votre travail est connecté. *Vos outils devraient l’être aussi.*"
+
+#. js-lingui-id: CgQ1Dd
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Your workspace permissions determine who can access its records. Document sharing is a separate action. Email, calendar, file storage and AI integrations can process information through providers configured by the operator or your administrator. Review a provider and the information being shared before connecting or using it."
+msgstr "Les autorisations de votre espace déterminent qui peut accéder à ses enregistrements. Le partage de documents est une action distincte. Les intégrations de messagerie, calendrier, stockage et IA peuvent traiter des informations via des fournisseurs configurés par l’opérateur ou votre administrateur. Examinez le fournisseur et les informations partagées avant de le connecter ou de l’utiliser."
+
+#. js-lingui-id: GWMTNW
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Your workspace requires an account and the appropriate access permissions. Sharing a document is a separate, explicit action. Invite only the people who need access and choose their role."
+msgstr "Votre espace nécessite un compte et les autorisations d’accès adaptées. Le partage d’un document est une action distincte et explicite. N’invitez que les personnes qui ont besoin d’un accès et choisissez leur rôle."
+
+#. js-lingui-id: i/Qrfm
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Your workspace, taking shape"
+msgstr "Votre espace prend forme"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "1. Parties and scope"
+msgstr "1. Parties et périmètre"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "This Data Processing Agreement applies between ASSOCIATION D'ENTRAIDE ETUDIANTE, Association déclarée, registered at 65 avenue Maréchal Lyautey, 21000 Dijon, France (the Processor), and the organisation accepting it for its A2E Suite workspace (the Controller). The Processor operates A2E Suite at a2esuite.com. The Controller determines the purposes and lawful basis of the personal data it places in the workspace. The Processor processes that data on the Controller’s documented instructions to provide the requested workspace service."
+msgstr "Le présent accord de traitement des données s’applique entre ASSOCIATION D'ENTRAIDE ETUDIANTE, Association déclarée, domiciliée au 65 avenue Maréchal Lyautey, 21000 Dijon, France (le Sous-traitant), et l’organisme qui l’accepte pour son espace A2E Suite (le Responsable du traitement). Le Sous-traitant exploite A2E Suite sur a2esuite.com. Le Responsable du traitement détermine les finalités et la base légale des données personnelles qu’il place dans l’espace. Le Sous-traitant traite ces données sur instructions documentées du Responsable du traitement afin de fournir le service d’espace de travail demandé."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "2. Processing description"
+msgstr "2. Description du traitement"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "Processing consists of collecting, storing, organising, retrieving, displaying, sharing, exporting and deleting workspace information through the enabled applications. Information may include names, business contact details, membership information, documents, tasks, calendar entries, attachments and financial records supplied by the Controller or its authorised users. Data subjects may include members, employees, students, customers, suppliers and other people whose information the Controller chooses to add. Processing lasts for the service relationship and any agreed return, deletion or backup-retention period."
+msgstr "Le traitement consiste à collecter, stocker, organiser, consulter, afficher, partager, exporter et supprimer des informations de l’espace au moyen des applications activées. Ces informations peuvent inclure noms, coordonnées professionnelles, informations d’adhésion, documents, tâches, événements, pièces jointes et données financières fournis par le Responsable du traitement ou ses utilisateurs autorisés. Les personnes concernées peuvent être des membres, salariés, étudiants, clients, fournisseurs et toute autre personne dont le Responsable du traitement choisit d’ajouter les informations. Le traitement dure pendant la relation de service et toute période convenue de restitution, de suppression ou de conservation des sauvegardes."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "3. Controller instructions and responsibilities"
+msgstr "3. Instructions et responsabilités du Responsable du traitement"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "The Controller is responsible for the lawfulness of its content and instructions, notices to data subjects, required consents or other legal bases, and permissions granted to its users. Workspace settings and authorised use of the service constitute documented instructions. The Processor will inform the Controller if, in its opinion, an instruction infringes applicable data protection law. Processing required by law will be communicated to the Controller unless the law prohibits that communication."
+msgstr "Le Responsable du traitement est responsable de la licéité de ses contenus et instructions, de l’information des personnes concernées, des consentements requis ou autres bases légales et des autorisations accordées à ses utilisateurs. Les paramètres de l’espace et l’utilisation autorisée du service constituent des instructions documentées. Le Sous-traitant informe le Responsable du traitement si, selon lui, une instruction enfreint le droit applicable en matière de protection des données. Les traitements imposés par la loi sont communiqués au Responsable du traitement, sauf interdiction légale."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "4. Confidentiality and security"
+msgstr "4. Confidentialité et sécurité"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "The Processor will ensure that personnel authorised to process workspace personal data are bound by confidentiality obligations and have access appropriate to their responsibilities. The Processor will implement technical and organisational measures appropriate to the risks of processing. The measures and service configuration relevant to a deployment must be documented with the Controller; this agreement does not represent a certification or a guarantee of uninterrupted service."
+msgstr "Le Sous-traitant veille à ce que les personnes autorisées à traiter les données personnelles de l’espace soient soumises à des obligations de confidentialité et disposent d’accès adaptés à leurs responsabilités. Il met en œuvre des mesures techniques et organisationnelles adaptées aux risques du traitement. Les mesures et la configuration du service applicables à un déploiement doivent être documentées avec le Responsable du traitement ; cet accord ne constitue ni une certification ni une garantie de service ininterrompu."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "5. Service providers and optional integrations"
+msgstr "5. Prestataires et intégrations facultatives"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "The Processor will engage another processor only with the Controller’s prior specific or general written authorisation. Where general authorisation is used, the Processor will inform the Controller of intended additions or replacements and give a reasonable opportunity to object before the change takes effect. Each authorised sub-processor must be bound by data protection obligations equivalent to those applicable to its processing under this agreement. The Processor remains responsible for the performance of those obligations. The current provider inventory and processing locations are available from contact@association2e.org. Integrations selected directly by the Controller must be assessed according to their actual role and separate terms."
+msgstr "Le Sous-traitant ne fait appel à un autre sous-traitant qu’avec l’autorisation écrite préalable, spécifique ou générale, du Responsable du traitement. En cas d’autorisation générale, il informe celui-ci des ajouts ou remplacements envisagés et lui laisse une possibilité raisonnable de s’y opposer avant leur prise d’effet. Chaque sous-traitant ultérieur autorisé doit être soumis à des obligations de protection des données équivalentes à celles applicables à son traitement au titre de cet accord. Le Sous-traitant reste responsable de l’exécution de ces obligations. La liste actuelle des prestataires et les lieux de traitement sont disponibles auprès de contact@association2e.org. Les intégrations choisies directement par le Responsable du traitement doivent être évaluées selon leur rôle réel et leurs conditions propres."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "6. Processing location and international transfers"
+msgstr "6. Lieu du traitement et transferts internationaux"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "The configured deployment region is {{HOSTING_REGION}}. The parties must confirm the actual hosting locations and authorised providers for their deployment. Personal data may be transferred outside the European Economic Area only on documented instructions and with an applicable lawful transfer mechanism. No standard contractual clauses, adequacy decision or framework certification are represented as already executed by this document. Where required, the parties must put the appropriate transfer terms in place before the transfer."
+msgstr "La région de déploiement configurée est {hostingRegion}. Les parties doivent confirmer les lieux d’hébergement réels et les prestataires autorisés pour leur déploiement. Les données personnelles ne peuvent être transférées hors de l’Espace économique européen que sur instructions documentées et avec un mécanisme de transfert licite applicable. Ce document ne présente aucune clause contractuelle type, décision d’adéquation ou certification de cadre comme déjà conclue. Lorsque cela est nécessaire, les parties doivent mettre en place les conditions de transfert adaptées avant le transfert."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "7. Assistance and personal data requests"
+msgstr "7. Assistance et demandes relatives aux données personnelles"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "Taking into account the nature of processing and the information available to it, the Processor will assist the Controller with requests concerning data subject rights, security obligations, impact assessments and consultation with supervisory authorities. Requests received directly from a data subject concerning workspace content will be referred to the Controller unless otherwise required by law."
+msgstr "Compte tenu de la nature du traitement et des informations dont il dispose, le Sous-traitant aide le Responsable du traitement à répondre aux demandes relatives aux droits des personnes, aux obligations de sécurité, aux analyses d’impact et à la consultation des autorités de contrôle. Les demandes reçues directement d’une personne concernée au sujet du contenu de l’espace sont transmises au Responsable du traitement, sauf obligation légale contraire."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "8. Personal data breaches"
+msgstr "8. Violations de données personnelles"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "The Processor will notify the Controller without undue delay after becoming aware of a personal data breach affecting workspace personal data. It will provide available information about the nature and likely consequences of the breach, affected information, relevant contacts and measures taken or proposed, and provide further information as it becomes available. The Controller remains responsible for notifications it is required to make to authorities or individuals."
+msgstr "Le Sous-traitant informe le Responsable du traitement dans les meilleurs délais après avoir pris connaissance d’une violation affectant les données personnelles de l’espace. Il fournit les informations disponibles sur la nature et les conséquences probables de la violation, les informations touchées, les contacts utiles et les mesures prises ou proposées, puis les complète à mesure qu’elles deviennent disponibles. Le Responsable du traitement reste responsable des notifications qu’il doit adresser aux autorités ou aux personnes."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "9. Return and deletion"
+msgstr "9. Restitution et suppression"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "At the end of the processing service, the Processor will, at the Controller’s choice, return or delete the workspace personal data and delete existing copies unless retention is required by law. The parties must agree the export procedure, deletion timing and treatment of backups for the deployment. Until deletion, retained copies remain subject to confidentiality and security obligations and may be used only for the permitted retention purpose."
+msgstr "À la fin du service de traitement, le Sous-traitant restitue ou supprime, au choix du Responsable du traitement, les données personnelles de l’espace et supprime les copies existantes, sauf obligation légale de conservation. Les parties doivent convenir de la procédure d’export, du calendrier de suppression et du traitement des sauvegardes pour le déploiement. Jusqu’à leur suppression, les copies conservées restent soumises aux obligations de confidentialité et de sécurité et ne peuvent être utilisées qu’aux fins de conservation autorisées."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "10. Information and audits"
+msgstr "10. Informations et audits"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "The Processor will make available information necessary to demonstrate compliance with its obligations under this agreement and allow and contribute to audits, including inspections, by the Controller or an auditor it mandates. Audit arrangements must protect other customers’ information, confidentiality and service security without preventing the exercise of statutory rights."
+msgstr "Le Sous-traitant met à disposition les informations nécessaires pour démontrer le respect de ses obligations au titre de cet accord et permet les audits, y compris les inspections, effectués par le Responsable du traitement ou un auditeur mandaté, et y contribue. Les modalités d’audit doivent protéger les informations des autres clients, la confidentialité et la sécurité du service sans empêcher l’exercice des droits légaux."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "11. Contact, acceptance and changes"
+msgstr "11. Contact, acceptation et modifications"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "Questions and requests under this agreement should be addressed to contact@association2e.org. The Controller’s authorised representative may accept the published processing terms electronically; the service records the accepting account, time and template version. No handwritten or electronic signature of the association’s representative is created or represented by the generated document. Material changes to processing arrangements must be communicated and agreed as required by applicable law. The governing law is France, subject to mandatory applicable data protection law."
+msgstr "Les questions et demandes au titre de cet accord doivent être adressées à contact@association2e.org. Le représentant autorisé du Responsable du traitement peut accepter les conditions de traitement publiées par voie électronique ; le service enregistre le compte ayant accepté, la date et l’heure ainsi que la version du modèle. Aucune signature manuscrite ou électronique du représentant de l’association n’est créée ou représentée par le document généré. Les modifications substantielles des modalités de traitement doivent être communiquées et convenues conformément au droit applicable. Le droit français s’applique, sous réserve des dispositions impératives applicables en matière de protection des données."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "12. Operator identification"
+msgstr "12. Identification de l’opérateur"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "SIREN 994 936 789. SIRET 994 936 789 00019. RNA W212015637. Address: 65 avenue Maréchal Lyautey, 21000 Dijon, France. Contact: contact@association2e.org."
+msgstr "SIREN 994 936 789. SIRET 994 936 789 00019. RNA W212015637. Adresse : 65 avenue Maréchal Lyautey, 21000 Dijon, France. Contact : contact@association2e.org."
