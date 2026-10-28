@@ -1,3 +1,4 @@
+import { usePreloadWorkspaceRoute } from '@/app/routing/hooks/usePreloadWorkspaceRoute';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
@@ -10,7 +11,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type JSX, type ReactNode, useContext } from 'react';
+import { type JSX, type MouseEvent, type ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Pill, TintedIconTile } from 'twenty-ui/data-display';
@@ -272,6 +273,7 @@ export const NavigationDrawerItem = ({
   variant = 'default',
 }: NavigationDrawerItemProps) => {
   const { theme } = useContext(ThemeContext);
+  const preloadWorkspaceRoute = usePreloadWorkspaceRoute();
   const isMobile = useIsMobile();
   const isExpanded = useIsNavigationDrawerContentExpanded();
   const setIsNavigationDrawerExpanded = useSetAtomState(
@@ -300,6 +302,12 @@ export const NavigationDrawerItem = ({
     isDefined(to) && (to.startsWith('http://') || to.startsWith('https://'));
   const isInternalLink = isDefined(to) && !isExternalLink;
 
+  const handleNavigationIntent = () => {
+    if (isInternalLink && !isSoon && !isDragging) {
+      preloadWorkspaceRoute(to);
+    }
+  };
+
   const handleExternalLinkClick = () => {
     handleMobileNavigation();
     if (isDefined(to)) {
@@ -317,6 +325,14 @@ export const NavigationDrawerItem = ({
     triggerEvent,
   });
 
+  const handleClick = (event: MouseEvent<HTMLElement>) => {
+    // Keyboard activation has no mouse-down event to perform navigation.
+    if (event.detail === 0) {
+      handleMouseDown(event);
+    }
+    handleMouseDownNavigationClickClick(event);
+  };
+
   const elementType = isExternalLink
     ? 'a'
     : isInternalLink
@@ -330,8 +346,11 @@ export const NavigationDrawerItem = ({
       <StyledItem
         id={navigationItemId}
         className={`navigation-drawer-item ${className || ''}`}
-        onClick={handleMouseDownNavigationClickClick}
+        onClick={handleClick}
         onMouseDown={handleMouseDown}
+        onMouseEnter={handleNavigationIntent}
+        onFocus={handleNavigationIntent}
+        onTouchStart={handleNavigationIntent}
         active={active}
         aria-current={isDefined(to) && active ? 'page' : undefined}
         isSoon={isSoon}

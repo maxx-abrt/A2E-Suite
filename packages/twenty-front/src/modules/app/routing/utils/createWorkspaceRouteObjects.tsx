@@ -4,6 +4,7 @@ import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { LazyRoute } from '@/app/components/LazyRoute';
+import { lazyWithPreload } from '~/utils/lazyWithPreload';
 import { BUREAU_PAGE_PATH } from '@/bureau/constants/BureauPagePath';
 import {
   createSettingsRouteObjects,
@@ -12,67 +13,67 @@ import {
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 
-const WorkflowCoreIndexPage = lazy(() =>
+const WorkflowCoreIndexPage = lazyWithPreload(() =>
   import('~/pages/object-core/WorkflowCoreIndexPage').then((module) => ({
     default: module.WorkflowCoreIndexPage,
   })),
 );
 
-const RecordIndexPage = lazy(() =>
+const RecordIndexPage = lazyWithPreload(() =>
   import('~/pages/object-record/RecordIndexPage').then((module) => ({
     default: module.RecordIndexPage,
   })),
 );
 
-const RecordShowPage = lazy(() =>
+const RecordShowPage = lazyWithPreload(() =>
   import('~/pages/object-record/RecordShowPage').then((module) => ({
     default: module.RecordShowPage,
   })),
 );
 
-const StandalonePageLayoutPage = lazy(() =>
+const StandalonePageLayoutPage = lazyWithPreload(() =>
   import('~/pages/page-layout/StandalonePageLayoutPage').then((module) => ({
     default: module.StandalonePageLayoutPage,
   })),
 );
 
-const AiChatPage = lazy(() =>
+const AiChatPage = lazyWithPreload(() =>
   import('~/pages/ai-chat/AiChatPage').then((module) => ({
     default: module.AiChatPage,
   })),
 );
 
-const ChatPage = lazy(() =>
+const ChatPage = lazyWithPreload(() =>
   import('~/pages/chat/ChatPage').then((module) => ({
     default: module.ChatPage,
   })),
 );
 
-const InboxPage = lazy(() =>
+const InboxPage = lazyWithPreload(() =>
   import('~/pages/inbox/InboxPage').then((module) => ({
     default: module.InboxPage,
   })),
 );
 
-const BureauPage = lazy(() =>
+const BureauPage = lazyWithPreload(() =>
   import('~/pages/bureau/BureauPage').then((module) => ({
     default: module.BureauPage,
   })),
 );
 
-const DrivePage = lazy(() =>
+const DrivePage = lazyWithPreload(() =>
   import('~/pages/drive/DrivePage').then((module) => ({
     default: module.DrivePage,
   })),
 );
 
-const CalendarPage = lazy(() =>
+const CalendarPage = lazyWithPreload(() =>
   import('~/pages/calendar/CalendarPage').then((module) => ({
     default: module.CalendarPage,
   })),
 );
 
-const MobileHomePage = lazy(() =>
+const MobileHomePage = lazyWithPreload(() =>
   import('~/pages/mobile-home/MobileHomePage').then((module) => ({
     default: module.MobileHomePage,
   })),
@@ -105,6 +106,7 @@ export const createWorkspaceRouteObjects = ({
       ? [
           {
             path: AppPath.WorkflowCoreIndexPage,
+            preloadComponent: WorkflowCoreIndexPage.preload,
             element: (
               <LazyRoute>
                 <WorkflowCoreIndexPage />
@@ -123,6 +125,7 @@ export const createWorkspaceRouteObjects = ({
     },
     {
       path: AppPath.RecordIndexPage,
+      preloadComponent: RecordIndexPage.preload,
       element: (
         <LazyRoute fallback={<RecordIndexSkeletonLoader />}>
           <RecordIndexPage />
@@ -135,6 +138,7 @@ export const createWorkspaceRouteObjects = ({
     },
     {
       path: AppPath.RecordShowPage,
+      preloadComponent: RecordShowPage.preload,
       element: (
         <LazyRoute>
           <RecordShowPage />
@@ -144,6 +148,7 @@ export const createWorkspaceRouteObjects = ({
     },
     {
       path: AppPath.PageLayoutPage,
+      preloadComponent: StandalonePageLayoutPage.preload,
       element: (
         <LazyRoute>
           <StandalonePageLayoutPage />
@@ -152,6 +157,7 @@ export const createWorkspaceRouteObjects = ({
     },
     {
       path: AppPath.AiChat,
+      preloadComponent: AiChatPage.preload,
       element: (
         <LazyRoute>
           <AiChatPage />
@@ -160,6 +166,7 @@ export const createWorkspaceRouteObjects = ({
     },
     {
       path: AppPath.Discussions,
+      preloadComponent: ChatPage.preload,
       element: (
         <LazyRoute>
           <ChatPage />
@@ -168,6 +175,7 @@ export const createWorkspaceRouteObjects = ({
     },
     {
       path: AppPath.Inbox,
+      preloadComponent: InboxPage.preload,
       element: (
         <LazyRoute>
           <InboxPage />
@@ -176,6 +184,7 @@ export const createWorkspaceRouteObjects = ({
     },
     {
       path: BUREAU_PAGE_PATH,
+      preloadComponent: BureauPage.preload,
       element: (
         <LazyRoute>
           <BureauPage />
@@ -184,6 +193,7 @@ export const createWorkspaceRouteObjects = ({
     },
     {
       path: AppPath.Bureau,
+      preloadComponent: BureauPage.preload,
       element: (
         <LazyRoute>
           <BureauPage />
@@ -192,6 +202,7 @@ export const createWorkspaceRouteObjects = ({
     },
     {
       path: AppPath.Drive,
+      preloadComponent: DrivePage.preload,
       element: (
         <LazyRoute>
           <DrivePage />
@@ -200,6 +211,7 @@ export const createWorkspaceRouteObjects = ({
     },
     {
       path: AppPath.Calendar,
+      preloadComponent: CalendarPage.preload,
       element: (
         <LazyRoute>
           <CalendarPage />
@@ -208,6 +220,7 @@ export const createWorkspaceRouteObjects = ({
     },
     {
       path: AppPath.Home,
+      preloadComponent: MobileHomePage.preload,
       element: (
         <LazyRoute>
           <MobileHomePage />

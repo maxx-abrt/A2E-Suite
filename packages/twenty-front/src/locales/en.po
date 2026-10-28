@@ -27277,3 +27277,2048 @@ msgstr "Your work, beautifully connected"
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Your workspace"
 msgstr "Your workspace"
+
+#. js-lingui-id: Sx078e
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "{0} example companies"
+msgstr "{0} example companies"
+
+#. js-lingui-id: 8uxJpD
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "{0} example records"
+msgstr "{0} example records"
+
+#. js-lingui-id: BaQ5Y3
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "{0} KB"
+msgstr "{0} KB"
+
+#. js-lingui-id: bg876U
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "{0} of 5 steps complete"
+msgstr "{0} of 5 steps complete"
+
+#. js-lingui-id: GvFN2v
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "1. Export from Notion"
+msgstr "1. Export from Notion"
+
+#. js-lingui-id: KTXReF
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "2. Preview in Bureau"
+msgstr "2. Preview in Bureau"
+
+#. js-lingui-id: 3YaA1H
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "3. Choose a destination"
+msgstr "3. Choose a destination"
+
+#. js-lingui-id: wW+0zE
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "A clear goal, a shared outline and a home for the decisions that matter."
+msgstr "A clear goal, a shared outline and a home for the decisions that matter."
+
+#. js-lingui-id: bXyEvb
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A closer look at {0}."
+msgstr "A closer look at {0}."
+
+#. js-lingui-id: J4sPQd
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A different day for everyone."
+msgstr "A different day for everyone."
+
+#. js-lingui-id: U3CCtd
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "A draft quote for the next project, with the client and scope kept together."
+msgstr "A draft quote for the next project, with the client and scope kept together."
+
+#. js-lingui-id: rrA/OQ
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A familiar place for different kinds of work."
+msgstr "A familiar place for different kinds of work."
+
+#. js-lingui-id: ifoiqf
+#: src/modules/public-site/PublicSite.tsx
+msgid "A few small steps. *A fresh start.*"
+msgstr "A few small steps. *A fresh start.*"
+
+#. js-lingui-id: cQElXX
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A few things you might wonder."
+msgstr "A few things you might wonder."
+
+#. js-lingui-id: kQTZ2X
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "A first conversation about a practical workshop, with the team and their goals in view."
+msgstr "A first conversation about a practical workshop, with the team and their goals in view."
+
+#. js-lingui-id: uUU33v
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "A follow-up proposal for project documentation and ongoing support."
+msgstr "A follow-up proposal for project documentation and ongoing support."
+
+#. js-lingui-id: eQl9hB
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A foundation to grow"
+msgstr "A foundation to grow"
+
+#. js-lingui-id: GW9Zc+
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "A helping hand, in context."
+msgstr "A helping hand, in context."
+
+#. js-lingui-id: 09KS7E
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "A home for every idea."
+msgstr "A home for every idea."
+
+#. js-lingui-id: yilp5F
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A little clarity. *Then, a fresh start.*"
+msgstr "A little clarity. *Then, a fresh start.*"
+
+#. js-lingui-id: Wzius+
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "A little help with the next step."
+msgstr "A little help with the next step."
+
+#. js-lingui-id: j505La
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A little more connected."
+msgstr "A little more connected."
+
+#. js-lingui-id: 74GCQ8
+#: src/modules/public-site/PublicSite.tsx
+msgid "A little more space *for your ideas.*"
+msgstr "A little more space *for your ideas.*"
+
+#. js-lingui-id: pL+Okk
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "A little space to think."
+msgstr "A little space to think."
+
+#. js-lingui-id: SoTaAE
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "A modular workspace for knowledge, projects, calendars, files and client work, with optional finance and AI applications. Start with the tools that fit your work and add more when you need them."
+msgstr "A modular workspace for knowledge, projects, calendars, files and client work, with optional finance and AI applications. Start with the tools that fit your work and add more when you need them."
+
+#. js-lingui-id: hE/SuL
+#: src/modules/public-site/PublicSite.tsx
+msgid "A modular workspace for notes, projects, calendars and files. Bring in finance, client work and AI when you need them, on your own or with your team."
+msgstr "A modular workspace for notes, projects, calendars and files. Bring in finance, client work and AI when you need them, on your own or with your team."
+
+#. js-lingui-id: eRsMUf
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "A new collaboration, with the people and their goals kept in context."
+msgstr "A new collaboration, with the people and their goals kept in context."
+
+#. js-lingui-id: jku7Eb
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "A new website project. Keep meeting notes, the project brief and the next conversation attached to the opportunity."
+msgstr "A new website project. Keep meeting notes, the project brief and the next conversation attached to the opportunity."
+
+#. js-lingui-id: 762qaR
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A next step with a home"
+msgstr "A next step with a home"
+
+#. js-lingui-id: 5T3LjG
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "A personal home for notes, projects and your week."
+msgstr "A personal home for notes, projects and your week."
+
+#. js-lingui-id: /aGFTf
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A personal notebook, a course hub, a weekly plan. Keep study notes and everyday projects in a space that is easy to return to."
+msgstr "A personal notebook, a course hub, a weekly plan. Keep study notes and everyday projects in a space that is easy to return to."
+
+#. js-lingui-id: 1GpO93
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "A project index, with a clear goal and owner for each project."
+msgstr "A project index, with a clear goal and owner for each project."
+
+#. js-lingui-id: 6IZzc6
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A rhythm to work"
+msgstr "A rhythm to work"
+
+#. js-lingui-id: 3zyDoP
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "A sample quote awaiting the client's reply."
+msgstr "A sample quote awaiting the client's reply."
+
+#. js-lingui-id: 2nTF66
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "A shared home for client work and useful project references."
+msgstr "A shared home for client work and useful project references."
+
+#. js-lingui-id: vyKl/3
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "A shared home for team knowledge, projects and discussions."
+msgstr "A shared home for team knowledge, projects and discussions."
+
+#. js-lingui-id: wKHtFS
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "A shared place for recurring meeting notes and decisions."
+msgstr "A shared place for recurring meeting notes and decisions."
+
+#. js-lingui-id: FkKLdG
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "A shared place for the next chapter. Capture the goal, the people involved and the decisions that shape the project."
+msgstr "A shared place for the next chapter. Capture the goal, the people involved and the decisions that shape the project."
+
+#. js-lingui-id: cAjwz+
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "A shared project, from the first idea to the next review."
+msgstr "A shared project, from the first idea to the next review."
+
+#. js-lingui-id: jXMLEe
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "A shared workspace for the team. The proposal covers onboarding, knowledge structure and project setup."
+msgstr "A shared workspace for the team. The proposal covers onboarding, knowledge structure and project setup."
+
+#. js-lingui-id: QaveMb
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "A short conversation to share progress and unblock the next piece of work."
+msgstr "A short conversation to share progress and unblock the next piece of work."
+
+#. js-lingui-id: x12b8D
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A space to think"
+msgstr "A space to think"
+
+#. js-lingui-id: hBeSR0
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "A starting point for course notes, assignments and study plans."
+msgstr "A starting point for course notes, assignments and study plans."
+
+#. js-lingui-id: 3b8kHa
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "A team home, a project brief, a place for meeting notes. Give each project a little structure and invite the people who make it happen."
+msgstr "A team home, a project brief, a place for meeting notes. Give each project a little structure and invite the people who make it happen."
+
+#. js-lingui-id: NEC0y8
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "A team workspace project, from the first conversation to onboarding."
+msgstr "A team workspace project, from the first conversation to onboarding."
+
+#. js-lingui-id: hEItbw
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "A welcome page and the team's ways of working."
+msgstr "A welcome page and the team's ways of working."
+
+#. js-lingui-id: f+62nc
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "A workshop bringing people together around a shared goal."
+msgstr "A workshop bringing people together around a shared goal."
+
+#. js-lingui-id: 8cvNLr
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "A workspace that starts with you."
+msgstr "A workspace that starts with you."
+
+#. js-lingui-id: 1/7/AR
+#: src/modules/public-site/PublicSite.tsx
+msgid "A2E Suite — A little more space for your ideas"
+msgstr "A2E Suite — A little more space for your ideas"
+
+#. js-lingui-id: XiSwuC
+#: src/modules/public-site/PublicSite.tsx
+msgid "A2E Suite brings everyday work into a modular workspace. Useful structure, familiar tools and room for your team to make it their own."
+msgstr "A2E Suite brings everyday work into a modular workspace. Useful structure, familiar tools and room for your team to make it their own."
+
+#. js-lingui-id: qTm5FC
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "A2E Suite connects pages, projects, calendars, files and optional applications. Access to a workspace is granted by its owner or administrators. Keep your account credentials private, use only access granted to you and tell your administrator if you suspect unauthorized access."
+msgstr "A2E Suite connects pages, projects, calendars, files and optional applications. Access to a workspace is granted by its owner or administrators. Keep your account credentials private, use only access granted to you and tell your administrator if you suspect unauthorized access."
+
+#. js-lingui-id: Zyj8RK
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Acceptable use"
+msgstr "Acceptable use"
+
+#. js-lingui-id: xY5iiK
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Account and session information support sign-in, authorization and workspace administration. Workspace content is processed to provide the features you request. Operational records support security, troubleshooting and service maintenance. The association processes account information to provide the service you request and operational information for its legitimate interests in security and reliability. The organisation responsible for your workspace determines the purposes and legal basis for the content it adds."
+msgstr "Account and session information support sign-in, authorization and workspace administration. Workspace content is processed to provide the features you request. Operational records support security, troubleshooting and service maintenance. The association processes account information to provide the service you request and operational information for its legitimate interests in security and reliability. The organisation responsible for your workspace determines the purposes and legal basis for the content it adds."
+
+#. js-lingui-id: idn/Ip
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Account and workspace information"
+msgstr "Account and workspace information"
+
+#. js-lingui-id: Hy1lfH
+#: src/modules/public-site/preview/PreviewCrm.tsx
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Account owner"
+msgstr "Account owner"
+
+#. js-lingui-id: 1pGVp5
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Add files, client work, finance or AI when your team needs them. Shape the workspace around the way you work."
+msgstr "Add files, client work, finance or AI when your team needs them. Shape the workspace around the way you work."
+
+#. js-lingui-id: h3t0tp
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Add the tools, and the people, you need."
+msgstr "Add the tools, and the people, you need."
+
+#. js-lingui-id: rIfar1
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Agree on the next steps and record them in the meeting notes."
+msgstr "Agree on the next steps and record them in the meeting notes."
+
+#. js-lingui-id: pzNJtv
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "AI chat in your workspace"
+msgstr "AI chat in your workspace"
+
+#. js-lingui-id: HqCSw9
+#: src/modules/public-site/preview/PreviewCrm.tsx
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Alex Rivera"
+msgstr "Alex Rivera"
+
+#. js-lingui-id: 3CpU6J
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "All companies"
+msgstr "All companies"
+
+#. js-lingui-id: 3aeN7X
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "All files"
+msgstr "All files"
+
+#. js-lingui-id: Y6JRLz
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "An AI provider and appropriate workspace permissions are required."
+msgstr "An AI provider and appropriate workspace permissions are required."
+
+#. js-lingui-id: oNQpCb
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "An idea worth keeping"
+msgstr "An idea worth keeping"
+
+#. js-lingui-id: dhbmVi
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "An interactive example with sample data. Explore the tabs to look around."
+msgstr "An interactive example with sample data. Explore the tabs to look around."
+
+#. js-lingui-id: 9KtRbS
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "An optional finance application for quotes, invoices, budgets and financial documents, in the same workspace."
+msgstr "An optional finance application for quotes, invoices, budgets and financial documents, in the same workspace."
+
+#. js-lingui-id: 58m5/F
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "An organisation's data processing agreement must identify the organisation responsible for its workspace and the service operator processing data on its behalf. Review the versioned processing terms in Settings → Legal before accepting them on behalf of your organisation. The downloadable record captures your acceptance and does not generate a signature for the association or execute separate international transfer clauses."
+msgstr "An organisation's data processing agreement must identify the organisation responsible for its workspace and the service operator processing data on its behalf. Review the versioned processing terms in Settings → Legal before accepting them on behalf of your organisation. The downloadable record captures your acceptance and does not generate a signature for the association or execute separate international transfer clauses."
+
+#. js-lingui-id: BsTkaI
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Applications and features depend on the workspace configuration. Any subscription, service commitment or support arrangement must be confirmed with the service operator. Before leaving a workspace, arrange access to the content you need with its administrator."
+msgstr "Applications and features depend on the workspace configuration. Any subscription, service commitment or support arrangement must be confirmed with the service operator. Before leaving a workspace, arrange access to the content you need with its administrator."
+
+#. js-lingui-id: KD8abx
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Applications are available according to your instance configuration and workspace installation."
+msgstr "Applications are available according to your instance configuration and workspace installation."
+
+#. js-lingui-id: XCqWkt
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Archive is available when the file management application is installed."
+msgstr "Archive is available when the file management application is installed."
+
+#. js-lingui-id: i1XoR6
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Ask your workspace assistant for help with ideas and everyday work. Availability depends on the AI providers configured for your instance."
+msgstr "Ask your workspace assistant for help with ideas and everyday work. Availability depends on the AI providers configured for your instance."
+
+#. js-lingui-id: ojKCLU
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Assignee"
+msgstr "Assignee"
+
+#. js-lingui-id: wOtvoI
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Availability, billing and leaving a workspace"
+msgstr "Availability, billing and leaving a workspace"
+
+#. js-lingui-id: WmAMZ3
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Available when installed by your administrator"
+msgstr "Available when installed by your administrator"
+
+#. js-lingui-id: 3wF4Q/
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Awaiting payment"
+msgstr "Awaiting payment"
+
+#. js-lingui-id: +1xfow
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Awaiting reply"
+msgstr "Awaiting reply"
+
+#. js-lingui-id: TVGVCw
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Back to parent page"
+msgstr "Back to parent page"
+
+#. js-lingui-id: gpCYVr
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Begin"
+msgstr "Begin"
+
+#. js-lingui-id: 8K9SFD
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Bilan is included in non-profit and small-business starting points, subject to application availability."
+msgstr "Bilan is included in non-profit and small-business starting points, subject to application availability."
+
+#. js-lingui-id: QD8opX
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Board"
+msgstr "Board"
+
+#. js-lingui-id: 1ycmMQ
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Bring an organization’s knowledge and client work together. Add Bilan when finance belongs in the workflow, and keep access suited to each person’s role."
+msgstr "Bring an organization’s knowledge and client work together. Add Bilan when finance belongs in the workflow, and keep access suited to each person’s role."
+
+#. js-lingui-id: FkxOW2
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Bring tasks, projects and plans into the same workspace. Keep the next step visible and the details close."
+msgstr "Bring tasks, projects and plans into the same workspace. Keep the next step visible and the details close."
+
+#. js-lingui-id: /QCp8p
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Bring the team together to review the handbook and agree on the next steps."
+msgstr "Bring the team together to review the handbook and agree on the next steps."
+
+#. js-lingui-id: MZcC7S
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Bring the work you already care about."
+msgstr "Bring the work you already care about."
+
+#. js-lingui-id: 2n/NSM
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Bring your knowledge along."
+msgstr "Bring your knowledge along."
+
+#. js-lingui-id: AONx5l
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Bring your notes"
+msgstr "Bring your notes"
+
+#. js-lingui-id: LmziF+
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Budgets and cash movements"
+msgstr "Budgets and cash movements"
+
+#. js-lingui-id: 2o6gfl
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Build your own rhythm. *Keep everything in reach.*"
+msgstr "Build your own rhythm. *Keep everything in reach.*"
+
+#. js-lingui-id: ++u/rQ
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Bureau and Bilan together for an organization's work and finance documents."
+msgstr "Bureau and Bilan together for an organization's work and finance documents."
+
+#. js-lingui-id: edajw+
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Bureau can be added later when your workspace needs notes and projects."
+msgstr "Bureau can be added later when your workspace needs notes and projects."
+
+#. js-lingui-id: aK8XZQ
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Bureau example sections"
+msgstr "Bureau example sections"
+
+#. js-lingui-id: GoDoo5
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Bureau Pages"
+msgstr "Bureau Pages"
+
+#. js-lingui-id: VwIaS4
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Bureau Pages, Projects and Discussions are included in the personal, student and team starting points."
+msgstr "Bureau Pages, Projects and Discussions are included in the personal, student and team starting points."
+
+#. js-lingui-id: 03dovi
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Calendar views and recurring events"
+msgstr "Calendar views and recurring events"
+
+#. js-lingui-id: FAmDIX
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Can I bring my Notion pages?"
+msgstr "Can I bring my Notion pages?"
+
+#. js-lingui-id: c1IQC9
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Can I work in more than one workspace?"
+msgstr "Can I work in more than one workspace?"
+
+#. js-lingui-id: w+JBqp
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Check the page structure with the team before sharing the final handbook."
+msgstr "Check the page structure with the team before sharing the final handbook."
+
+#. js-lingui-id: sWP/M/
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Choose a starting point. *Make room to grow.*"
+msgstr "Choose a starting point. *Make room to grow.*"
+
+#. js-lingui-id: I6dBjf
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Choose a workspace that feels right today. Add applications as your work grows, with one account and familiar navigation."
+msgstr "Choose a workspace that feels right today. Add applications as your work grows, with one account and familiar navigation."
+
+#. js-lingui-id: Z4nssh
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Choose HTML or Markdown & CSV. Include subpages and files, then keep the export as a ZIP. HTML retains more formatting."
+msgstr "Choose HTML or Markdown & CSV. Include subpages and files, then keep the export as a ZIP. HTML retains more formatting."
+
+#. js-lingui-id: axhwF0
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Choose Import, select Notion and drop the ZIP. Browse the page tree, inspect the content and check any reported limitations."
+msgstr "Choose Import, select Notion and drop the ZIP. Browse the page tree, inspect the content and check any reported limitations."
+
+#. js-lingui-id: quCjdc
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Choose the CRM starting point or enable CRM navigation when client work becomes part of your day."
+msgstr "Choose the CRM starting point or enable CRM navigation when client work becomes part of your day."
+
+#. js-lingui-id: yyZjOQ
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Client work, with the people and the next step in view."
+msgstr "Client work, with the people and the next step in view."
+
+#. js-lingui-id: ot0WOb
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Client workspace"
+msgstr "Client workspace"
+
+#. js-lingui-id: n5fb8M
+#: src/modules/public-site/preview/PreviewPrimitives.tsx
+msgid "Close details"
+msgstr "Close details"
+
+#. js-lingui-id: dTdkOm
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Collect references and useful links in Ideas & inspiration before the next review."
+msgstr "Collect references and useful links in Ideas & inspiration before the next review."
+
+#. js-lingui-id: 7byBXz
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Collect the brief, the rough idea and the meeting note. Give your knowledge a clear, reusable structure."
+msgstr "Collect the brief, the rough idea and the meeting note. Give your knowledge a clear, reusable structure."
+
+#. js-lingui-id: 7i8j3G
+#: src/modules/public-site/preview/PreviewCrm.tsx
+#: src/modules/public-site/preview/PreviewCrm.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Company"
+msgstr "Company"
+
+#. js-lingui-id: 2ROZCk
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Complete task"
+msgstr "Complete task"
+
+#. js-lingui-id: N5z4JY
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Configurable model providers"
+msgstr "Configurable model providers"
+
+#. js-lingui-id: Af8Upv
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Confirm the security measures, authorized personnel, hosting locations, sub-processors and any international transfer arrangements with the service operator. A workspace's configured providers do not by themselves establish contractual safeguards or a certification."
+msgstr "Confirm the security measures, authorized personnel, hosting locations, sub-processors and any international transfer arrangements with the service operator. A workspace's configured providers do not by themselves establish contractual safeguards or a certification."
+
+#. js-lingui-id: AxZ1UU
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Connected project overview"
+msgstr "Connected project overview"
+
+#. js-lingui-id: bHxSrq
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Connected services and AI"
+msgstr "Connected services and AI"
+
+#. js-lingui-id: 6BEyVr
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Connected work"
+msgstr "Connected work"
+
+#. js-lingui-id: fyUAUf
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Contact Association d’Entraide Étudiante at contact@association2e.org to request the agreement for the service at a2esuite.com. For another deployment, contact its operator. Use only a document that names the actual parties and reflects the services and providers in use."
+msgstr "Contact Association d’Entraide Étudiante at contact@association2e.org to request the agreement for the service at a2esuite.com. For another deployment, contact its operator. Use only a document that names the actual parties and reflects the services and providers in use."
+
+#. js-lingui-id: gt2k5E
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Contacts, companies & opportunities"
+msgstr "Contacts, companies & opportunities"
+
+#. js-lingui-id: jcL1KE
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Contacts, companies and opportunities"
+msgstr "Contacts, companies and opportunities"
+
+#. js-lingui-id: PaBkh3
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Cookies and local storage"
+msgstr "Cookies and local storage"
+
+#. js-lingui-id: KXVuZF
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Create or join a workspace. Choose a starting template for your own work, study, team or organization, or begin with an empty space."
+msgstr "Create or join a workspace. Choose a starting template for your own work, study, team or organization, or begin with an empty space."
+
+#. js-lingui-id: f4ILyt
+#: src/modules/public-site/PublicSite.tsx
+msgid "Create your account, find your workspace and bring your first idea. Here is how to make yourself at home."
+msgstr "Create your account, find your workspace and bring your first idea. Here is how to make yourself at home."
+
+#. js-lingui-id: 5VHjeZ
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "CRM example sections"
+msgstr "CRM example sections"
+
+#. js-lingui-id: Bjsjlh
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "CRM navigation stays hidden in these starting points. You can enable it when you need it."
+msgstr "CRM navigation stays hidden in these starting points. You can enable it when you need it."
+
+#. js-lingui-id: yB2pZR
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Data processing arrangements for organisations using A2E Suite."
+msgstr "Data processing arrangements for organisations using A2E Suite."
+
+#. js-lingui-id: O4ofRA
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Decision: begin with a small handbook. Next step: gather the first ideas and review the project brief together."
+msgstr "Decision: begin with a small handbook. Next step: gather the first ideas and review the project brief together."
+
+#. js-lingui-id: ZA21ZR
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Design and development · 2 milestones. Example invoice linked to the client project."
+msgstr "Design and development · 2 milestones. Example invoice linked to the client project."
+
+#. js-lingui-id: l+jLVo
+#: src/modules/public-site/PublicSite.tsx
+msgid "Discover the applications that bring notes, plans, files, relationships and finances into a shared workspace. Choose what fits; add more as you grow."
+msgstr "Discover the applications that bring notes, plans, files, relationships and finances into a shared workspace. Choose what fits; add more as you grow."
+
+#. js-lingui-id: 7oGBMv
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Discussions"
+msgstr "Discussions"
+
+#. js-lingui-id: hJbwKC
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Do I need every application?"
+msgstr "Do I need every application?"
+
+#. js-lingui-id: flv9Tm
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Do not use the service for unlawful activity, infringement, harassment, malicious software or attempts to access another person's account or workspace without permission. Do not interfere with the service or bypass its access controls."
+msgstr "Do not use the service for unlawful activity, infringement, harassment, malicious software or attempts to access another person's account or workspace without permission. Do not interfere with the service or bypass its access controls."
+
+#. js-lingui-id: XicmhT
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Due date"
+msgstr "Due date"
+
+#. js-lingui-id: hyItj7
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Enable contacts, companies and opportunities when you need client management. Choose the views that fit your team."
+msgstr "Enable contacts, companies and opportunities when you need client management. Choose the views that fit your team."
+
+#. js-lingui-id: EWqzLJ
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Example board"
+msgstr "Example board"
+
+#. js-lingui-id: 0J4v95
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "Example calendar"
+msgstr "Example calendar"
+
+#. js-lingui-id: 5h5QFP
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Example companies"
+msgstr "Example companies"
+
+#. js-lingui-id: Dr9BTx
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Example conversation"
+msgstr "Example conversation"
+
+#. js-lingui-id: jO1jKp
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Example document totals"
+msgstr "Example document totals"
+
+#. js-lingui-id: hhefsV
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Example prompts"
+msgstr "Example prompts"
+
+#. js-lingui-id: cN3O3R
+#: src/modules/public-site/preview/PreviewPrimitives.tsx
+msgid "Example record details"
+msgstr "Example record details"
+
+#. js-lingui-id: EJh9Z7
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Example views"
+msgstr "Example views"
+
+#. js-lingui-id: yzCfRB
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Example workspace"
+msgstr "Example workspace"
+
+#. js-lingui-id: MKXQmE
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Explore {0}"
+msgstr "Explore {0}"
+
+#. js-lingui-id: u9UmH9
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Explore a prepared conversation with Syna, in the context of your work."
+msgstr "Explore a prepared conversation with Syna, in the context of your work."
+
+#. js-lingui-id: QLrze3
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Explore A2E Suite"
+msgstr "Explore A2E Suite"
+
+#. js-lingui-id: 4tzvyn
+#: src/modules/public-site/PublicSite.tsx
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Explore applications"
+msgstr "Explore applications"
+
+#. js-lingui-id: 9dZFtT
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Explore the applications"
+msgstr "Explore the applications"
+
+#. js-lingui-id: z7WlQu
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Explore the example pages"
+msgstr "Explore the example pages"
+
+#. js-lingui-id: aBQbDW
+#: src/modules/public-site/PublicSite.tsx
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Explore the suite"
+msgstr "Explore the suite"
+
+#. js-lingui-id: RR1RR0
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Explore workspace starting points"
+msgstr "Explore workspace starting points"
+
+#. js-lingui-id: zTHnl4
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Files & folders"
+msgstr "Files & folders"
+
+#. js-lingui-id: Y4IQgP
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Find a little more time."
+msgstr "Find a little more time."
+
+#. js-lingui-id: LWaXps
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Find your starting point"
+msgstr "Find your starting point"
+
+#. js-lingui-id: mGk+sx
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Folders and workspace files"
+msgstr "Folders and workspace files"
+
+#. js-lingui-id: bYJbEa
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "For a bigger picture."
+msgstr "For a bigger picture."
+
+#. js-lingui-id: hGxhrx
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "For the work you share."
+msgstr "For the work you share."
+
+#. js-lingui-id: GcYWBn
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "For your own ideas."
+msgstr "For your own ideas."
+
+#. js-lingui-id: 6/Gz8h
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Gather the first ideas"
+msgstr "Gather the first ideas"
+
+#. js-lingui-id: 59ZO9T
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Give unfinished ideas a place to grow. Group research, useful links and sketches before turning them into a plan."
+msgstr "Give unfinished ideas a place to grow. Group research, useful links and sketches before turning them into a plan."
+
+#. js-lingui-id: uo5Ot9
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Give your numbers a place."
+msgstr "Give your numbers a place."
+
+#. js-lingui-id: dJDhKw
+#: src/modules/public-site/PublicSite.tsx
+msgid "Good tools should *give you space.*"
+msgstr "Good tools should *give you space.*"
+
+#. js-lingui-id: Xykdlg
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Good work starts with a clear idea. Collect it here, give it a little structure, and see where it takes you."
+msgstr "Good work starts with a clear idea. Collect it here, give it a little structure, and see where it takes you."
+
+#. js-lingui-id: 5DdjZ9
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Grow"
+msgstr "Grow"
+
+#. js-lingui-id: 2//zvG
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "How could I structure a team handbook?"
+msgstr "How could I structure a team handbook?"
+
+#. js-lingui-id: 3WPjsD
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "How do I get started?"
+msgstr "How do I get started?"
+
+#. js-lingui-id: q7Odnq
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "How information is used in an A2E Suite workspace."
+msgstr "How information is used in an A2E Suite workspace."
+
+#. js-lingui-id: WI/SBi
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "How it fits into your day"
+msgstr "How it fits into your day"
+
+#. js-lingui-id: nVXa2V
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "How workspace setup works"
+msgstr "How workspace setup works"
+
+#. js-lingui-id: FYDAG0
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Ideas & inspiration"
+msgstr "Ideas & inspiration"
+
+#. js-lingui-id: e8OIR3
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Ideas become pages, pages support projects, and plans make room in your calendar. Find the thread without retracing every step."
+msgstr "Ideas become pages, pages support projects, and plans make room in your calendar. Find the thread without retracing every step."
+
+#. js-lingui-id: qttT28
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Illustrative answer. This preview does not send a request to an AI service."
+msgstr "Illustrative answer. This preview does not send a request to an AI service."
+
+#. js-lingui-id: z/zdF1
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Import at the top of Bureau or inside an existing page. Pages and supported attachments keep their structure. Notion permissions, comments, formulas and database views are not transferred."
+msgstr "Import at the top of Bureau or inside an existing page. Pages and supported attachments keep their structure. Notion permissions, comments, formulas and database views are not transferred."
+
+#. js-lingui-id: /LCAwL
+#: src/modules/public-site/preview/PreviewBureau.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "In progress"
+msgstr "In progress"
+
+#. js-lingui-id: XJy8Ka
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "In this document"
+msgstr "In this document"
+
+#. js-lingui-id: HdjVKr
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Individuals & students"
+msgstr "Individuals & students"
+
+#. js-lingui-id: yLx9zg
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Interactive example workspace"
+msgstr "Interactive example workspace"
+
+#. js-lingui-id: YdzNNm
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Invite your team and choose their access. Open the applications installed for your workspace and shape the navigation around your day."
+msgstr "Invite your team and choose their access. Open the applications installed for your workspace and shape the navigation around your day."
+
+#. js-lingui-id: 0gAffY
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Is my workspace public?"
+msgstr "Is my workspace public?"
+
+#. js-lingui-id: cR2/Ue
+#: src/modules/public-site/preview/PreviewCrm.tsx
+#: src/modules/public-site/preview/PreviewCrm.tsx
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Jonas Leroy"
+msgstr "Jonas Leroy"
+
+#. js-lingui-id: cFt0lD
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Keep people and companies in table views, then follow opportunities through a pipeline. Open a record to find its related activities and tasks."
+msgstr "Keep people and companies in table views, then follow opportunities through a pipeline. Open a record to find its related activities and tasks."
+
+#. js-lingui-id: Nrk00+
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Keep the context."
+msgstr "Keep the context."
+
+#. js-lingui-id: DhMk11
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Keep the structure simple: a welcome page, a project index and a place to record what we learn along the way."
+msgstr "Keep the structure simple: a welcome page, a project index and a place to record what we learn along the way."
+
+#. js-lingui-id: wJ+9Dl
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Keep the useful things close."
+msgstr "Keep the useful things close."
+
+#. js-lingui-id: 0FEiuC
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Knowledge structure and team onboarding. A draft stays editable until it is ready to send."
+msgstr "Knowledge structure and team onboarding. A draft stays editable until it is ready to send."
+
+#. js-lingui-id: AgC0PB
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Knowledge structure, project context and the next review."
+msgstr "Knowledge structure, project context and the next review."
+
+#. js-lingui-id: ajHjgm
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Knowledge, projects and financial documents in one workspace."
+msgstr "Knowledge, projects and financial documents in one workspace."
+
+#. js-lingui-id: 15eNG2
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "Legal information"
+msgstr "Legal information"
+
+#. js-lingui-id: 54UlqW
+#: src/modules/public-site/PublicSite.tsx
+msgid "Less switching. *More doing.*"
+msgstr "Less switching. *More doing.*"
+
+#. js-lingui-id: wsEGKe
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Live assistant availability depends on your instance's provider configuration and your access."
+msgstr "Live assistant availability depends on your instance's provider configuration and your access."
+
+#. js-lingui-id: bhoeTs
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Made for your day"
+msgstr "Made for your day"
+
+#. js-lingui-id: HRha/x
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Main navigation"
+msgstr "Main navigation"
+
+#. js-lingui-id: UsN0CM
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Make it yours"
+msgstr "Make it yours"
+
+#. js-lingui-id: TeWkIe
+#: src/modules/public-site/PublicSite.tsx
+msgid "Make room for *your kind of work.*"
+msgstr "Make room for *your kind of work.*"
+
+#. js-lingui-id: pKbjBN
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "Make room for what matters."
+msgstr "Make room for what matters."
+
+#. js-lingui-id: BD72+N
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Make the first day easier with a welcome page and links to the team's everyday tools."
+msgstr "Make the first day easier with a welcome page and links to the team's everyday tools."
+
+#. js-lingui-id: SbuvhW
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Mark incomplete"
+msgstr "Mark incomplete"
+
+#. js-lingui-id: Ca5MCe
+#: src/modules/public-site/preview/PreviewBureau.tsx
+#: src/modules/public-site/preview/PreviewCrm.tsx
+#: src/modules/public-site/preview/PreviewCrm.tsx
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Maya Laurent"
+msgstr "Maya Laurent"
+
+#. js-lingui-id: oE8Gmu
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Meeting"
+msgstr "Meeting"
+
+#. js-lingui-id: LRj17z
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Mobile navigation"
+msgstr "Mobile navigation"
+
+#. js-lingui-id: AujMGt
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Monthly project follow-up and documentation. Example paid invoice."
+msgstr "Monthly project follow-up and documentation. Example paid invoice."
+
+#. js-lingui-id: alUyFq
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "More possibilities, at your pace"
+msgstr "More possibilities, at your pace"
+
+#. js-lingui-id: y2qoN8
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "My accounts"
+msgstr "My accounts"
+
+#. js-lingui-id: HFBUVf
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Nested pages, favorites and reusable templates"
+msgstr "Nested pages, favorites and reusable templates"
+
+#. js-lingui-id: 6FXL2X
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "No example events in this range."
+msgstr "No example events in this range."
+
+#. js-lingui-id: CLfW85
+#: src/modules/public-site/preview/PreviewCrm.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "No example records match your search."
+msgstr "No example records match your search."
+
+#. js-lingui-id: f3QZ0h
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "No. Choose a starting workspace template or begin from scratch. Applications depend on what your administrator has made available and installed. CRM navigation is optional."
+msgstr "No. Choose a starting workspace template or begin from scratch. Applications depend on what your administrator has made available and installed. CRM navigation is optional."
+
+#. js-lingui-id: LFPqEU
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Nov 10"
+msgstr "Nov 10"
+
+#. js-lingui-id: 630lgf
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Nov 2"
+msgstr "Nov 2"
+
+#. js-lingui-id: qLvJeG
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Nov 4"
+msgstr "Nov 4"
+
+#. js-lingui-id: JfsBmV
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Nov 5"
+msgstr "Nov 5"
+
+#. js-lingui-id: rRqzNB
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Nov 6"
+msgstr "Nov 6"
+
+#. js-lingui-id: TBr3eO
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Nov 7"
+msgstr "Nov 7"
+
+#. js-lingui-id: Yiujiy
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Oct 20"
+msgstr "Oct 20"
+
+#. js-lingui-id: Ot0s7A
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Oct 24"
+msgstr "Oct 24"
+
+#. js-lingui-id: BrEExX
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Oct 26"
+msgstr "Oct 26"
+
+#. js-lingui-id: QYEymW
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Oct 27"
+msgstr "Oct 27"
+
+#. js-lingui-id: IC2LcY
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Oct 28"
+msgstr "Oct 28"
+
+#. js-lingui-id: xsPe0r
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Oct 29"
+msgstr "Oct 29"
+
+#. js-lingui-id: SHtiKL
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Oct 30"
+msgstr "Oct 30"
+
+#. js-lingui-id: EKWyWl
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "One place for the brief, the meeting notes and the next step. Everything stays connected."
+msgstr "One place for the brief, the meeting notes and the next step. Everything stays connected."
+
+#. js-lingui-id: edRe+r
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "One starting point. *Many ways to work.*"
+msgstr "One starting point. *Many ways to work.*"
+
+#. js-lingui-id: SEHNXj
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "One suite. Your way."
+msgstr "One suite. Your way."
+
+#. js-lingui-id: u/Pswa
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Ongoing support"
+msgstr "Ongoing support"
+
+#. js-lingui-id: OjSoNt
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Open Agenda to see your week. Create an event, choose its date and recurrence, and set a reminder. Task deadlines appear alongside your planning."
+msgstr "Open Agenda to see your week. Create an event, choose its date and recurrence, and set a reminder. Task deadlines appear alongside your planning."
+
+#. js-lingui-id: 3Oamux
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Open Archive, create a folder and upload your files. Browse the folder tree, preview supported files and check storage usage from the same place."
+msgstr "Open Archive, create a folder and upload your files. Browse the folder tree, preview supported files and check storage usage from the same place."
+
+#. js-lingui-id: t1ZvI+
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Open Syna, choose an available model and ask for help. Use its answers as a starting point, and review any suggested changes to your work."
+msgstr "Open Syna, choose an available model and ask for help. Use its answers as a starting point, and review any suggested changes to your work."
+
+#. js-lingui-id: SV/iis
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Opportunity"
+msgstr "Opportunity"
+
+#. js-lingui-id: D8+K15
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Optional integrations and AI providers have their own terms. Only connect services you are authorized to use. Review generated suggestions and financial documents before acting on them; an assistant response is not a substitute for professional judgment."
+msgstr "Optional integrations and AI providers have their own terms. Only connect services you are authorized to use. Review generated suggestions and financial documents before acting on them; an assistant response is not a substitute for professional judgment."
+
+#. js-lingui-id: +19oqL
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Optional navigation for client work"
+msgstr "Optional navigation for client work"
+
+#. js-lingui-id: f/JnuC
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Organizations & small businesses"
+msgstr "Organizations & small businesses"
+
+#. js-lingui-id: oMYufu
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Organize files in folders, find the right document and preview it without losing your place."
+msgstr "Organize files in folders, find the right document and preview it without losing your place."
+
+#. js-lingui-id: RD0KMr
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Our goal: create a useful team handbook. Start with onboarding, project context and a clear home for recurring meeting notes."
+msgstr "Our goal: create a useful team handbook. Start with onboarding, project context and a clear home for recurring meeting notes."
+
+#. js-lingui-id: /Bo5PT
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Our next chapter"
+msgstr "Our next chapter"
+
+#. js-lingui-id: v4nCHK
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Paid"
+msgstr "Paid"
+
+#. js-lingui-id: MZHPuB
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "Participants"
+msgstr "Participants"
+
+#. js-lingui-id: tlhIX6
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Pause animations"
+msgstr "Pause animations"
+
+#. js-lingui-id: svK01T
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "PDF only"
+msgstr "PDF only"
+
+#. js-lingui-id: w+na4K
+#: src/modules/public-site/PublicSite.tsx
+msgid "Personal knowledge, course notes, shared projects or an organization’s next chapter. Start with a space that fits the way you work."
+msgstr "Personal knowledge, course notes, shared projects or an organization’s next chapter. Start with a space that fits the way you work."
+
+#. js-lingui-id: Zp1cO9
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Plan the next review"
+msgstr "Plan the next review"
+
+#. js-lingui-id: Iqh0Uv
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Planned"
+msgstr "Planned"
+
+#. js-lingui-id: 8V0Ek5
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "Plans, meetings and task deadlines, with a clear view of the week."
+msgstr "Plans, meetings and task deadlines, with a clear view of the week."
+
+#. js-lingui-id: bP/O+D
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Prepare the review"
+msgstr "Prepare the review"
+
+#. js-lingui-id: sivplO
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Prepare the welcome page"
+msgstr "Prepare the welcome page"
+
+#. js-lingui-id: n0sg6Y
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Preview and import Notion exports"
+msgstr "Preview and import Notion exports"
+
+#. js-lingui-id: HMTaCc
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Previews and attachments"
+msgstr "Previews and attachments"
+
+#. js-lingui-id: K47k8R
+#: src/modules/public-site/PublicSitePages.ts
+msgid "Product"
+msgstr "Product"
+
+#. js-lingui-id: j3IoTI
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Product links"
+msgstr "Product links"
+
+#. js-lingui-id: ma6BDr
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Product overview"
+msgstr "Product overview"
+
+#. js-lingui-id: e0NrBM
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Project"
+msgstr "Project"
+
+#. js-lingui-id: IK1rrU
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Project documents"
+msgstr "Project documents"
+
+#. js-lingui-id: yohrDM
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Project follow-up"
+msgstr "Project follow-up"
+
+#. js-lingui-id: b98ysV
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Project overview"
+msgstr "Project overview"
+
+#. js-lingui-id: q2u3Tq
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Project planning and documentation for a growing team."
+msgstr "Project planning and documentation for a growing team."
+
+#. js-lingui-id: 7Bf7v8
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Project quote"
+msgstr "Project quote"
+
+#. js-lingui-id: vxe5JO
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "Project review"
+msgstr "Project review"
+
+#. js-lingui-id: PuEulq
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Project sketch.png"
+msgstr "Project sketch.png"
+
+#. js-lingui-id: OXtPVd
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Projects & tasks"
+msgstr "Projects & tasks"
+
+#. js-lingui-id: qcybNQ
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Proposal"
+msgstr "Proposal"
+
+#. js-lingui-id: 6g1gi0
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Proposals"
+msgstr "Proposals"
+
+#. js-lingui-id: HHx/fU
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Questions & answers"
+msgstr "Questions & answers"
+
+#. js-lingui-id: Jhj9tB
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Quotes and invoice drafts"
+msgstr "Quotes and invoice drafts"
+
+#. js-lingui-id: HwNuv8
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Quotes, invoices and payments, connected to your client work."
+msgstr "Quotes, invoices and payments, connected to your client work."
+
+#. js-lingui-id: N2C89m
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Reference"
+msgstr "Reference"
+
+#. js-lingui-id: 2O4zjB
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Related pages"
+msgstr "Related pages"
+
+#. js-lingui-id: SD9R57
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Remember the people behind the work."
+msgstr "Remember the people behind the work."
+
+#. js-lingui-id: 0tAq0u
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Reminders and task deadlines"
+msgstr "Reminders and task deadlines"
+
+#. js-lingui-id: zeuehs
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Request your agreement"
+msgstr "Request your agreement"
+
+#. js-lingui-id: rnLhad
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Requests, incidents and the end of service"
+msgstr "Requests, incidents and the end of service"
+
+#. js-lingui-id: s+MGs7
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Resources"
+msgstr "Resources"
+
+#. js-lingui-id: c/L3Ux
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Resume animations"
+msgstr "Resume animations"
+
+#. js-lingui-id: Tq7vGn
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Retention and your choices"
+msgstr "Retention and your choices"
+
+#. js-lingui-id: lKeYIy
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Retention depends on the workspace settings, the service operator's policy and any applicable agreement. Backups can have a separate retention period. Contact the association about access, correction, export, deletion, restriction or objection concerning your account information. For workspace content, contact the organisation responsible for that workspace. You can also raise a concern with the French data protection authority, CNIL."
+msgstr "Retention depends on the workspace settings, the service operator's policy and any applicable agreement. Backups can have a separate retention period. Contact the association about access, correction, export, deletion, restriction or objection concerning your account information. For workspace content, contact the organisation responsible for that workspace. You can also raise a concern with the French data protection authority, CNIL."
+
+#. js-lingui-id: OSRoEQ
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Reverse company order"
+msgstr "Reverse company order"
+
+#. js-lingui-id: NFbWR/
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Reverse record order"
+msgstr "Reverse record order"
+
+#. js-lingui-id: +LFJs/
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Review suggestions before applying changes"
+msgstr "Review suggestions before applying changes"
+
+#. js-lingui-id: pML4FC
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "Review the shared priorities and make room for focused work this week."
+msgstr "Review the shared priorities and make room for focused work this week."
+
+#. js-lingui-id: /T98kv
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "Review the team handbook, gather feedback and agree on the next steps."
+msgstr "Review the team handbook, gather feedback and agree on the next steps."
+
+#. js-lingui-id: LO3w5f
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Review what is complete, what is in progress and what needs help."
+msgstr "Review what is complete, what is in progress and what needs help."
+
+#. js-lingui-id: F9jcAz
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Revisit the goal and the decisions recorded in the brief."
+msgstr "Revisit the goal and the decisions recorded in the brief."
+
+#. js-lingui-id: VYvceg
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Rich text, tables, checklists and files"
+msgstr "Rich text, tables, checklists and files"
+
+#. js-lingui-id: ZSWA4X
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Room to focus."
+msgstr "Room to focus."
+
+#. js-lingui-id: 7ERC4i
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Sales documents"
+msgstr "Sales documents"
+
+#. js-lingui-id: z/iOsV
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Sample data · Changes stay in this preview"
+msgstr "Sample data · Changes stay in this preview"
+
+#. js-lingui-id: oXGQ8k
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Scope and instructions"
+msgstr "Scope and instructions"
+
+#. js-lingui-id: LTchm4
+#: src/modules/public-site/preview/PreviewPrimitives.tsx
+msgid "Search example records"
+msgstr "Search example records"
+
+#. js-lingui-id: TroxPn
+#: src/modules/public-site/preview/PreviewPrimitives.tsx
+msgid "Search records…"
+msgstr "Search records…"
+
+#. js-lingui-id: sdl89h
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Security and service providers"
+msgstr "Security and service providers"
+
+#. js-lingui-id: BmICy1
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "See events and task deadlines together. Plan the week with a calendar that belongs to your workspace."
+msgstr "See events and task deadlines together. Plan the week with a calendar that belongs to your workspace."
+
+#. js-lingui-id: lSyK5C
+#: src/modules/public-site/PublicSite.tsx
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "See how to begin"
+msgstr "See how to begin"
+
+#. js-lingui-id: b9Cjex
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "Service operator"
+msgstr "Service operator"
+
+#. js-lingui-id: JIjwGJ
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Share the team handbook"
+msgstr "Share the team handbook"
+
+#. js-lingui-id: sxQ89S
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Shared with A2E Studio"
+msgstr "Shared with A2E Studio"
+
+#. js-lingui-id: lhU8sA
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Sharing and connected providers"
+msgstr "Sharing and connected providers"
+
+#. js-lingui-id: 59ZB7S
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Simple beginnings. More possibilities."
+msgstr "Simple beginnings. More possibilities."
+
+#. js-lingui-id: L2CVk3
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Skip to content"
+msgstr "Skip to content"
+
+#. js-lingui-id: NH9Z1R
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Start here"
+msgstr "Start here"
+
+#. js-lingui-id: b7EXvv
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Start on the Bureau home, open a recent page or create a new one. Organize its subpages, use a saved template, or open Projects and Discussions from the workspace navigation."
+msgstr "Start on the Bureau home, open a recent page or create a new one. Organize its subpages, use a saved template, or open Projects and Discussions from the workspace navigation."
+
+#. js-lingui-id: Ql8LKc
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Start with a quote or invoice draft, organize your financial documents and review budgets and cash movements. Available screens depend on the installed Bilan application."
+msgstr "Start with a quote or invoice draft, organize your financial documents and review budgets and cash movements. Available screens depend on the installed Bilan application."
+
+#. js-lingui-id: Aaup8e
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Start with a small structure that is easy to keep useful."
+msgstr "Start with a small structure that is easy to keep useful."
+
+#. js-lingui-id: b2eTEU
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Start with a useful little space."
+msgstr "Start with a useful little space."
+
+#. js-lingui-id: 6A1KZp
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Start with a useful set of tools or an empty workspace. Add available applications later, and keep CRM navigation optional."
+msgstr "Start with a useful set of tools or an empty workspace. Add available applications later, and keep CRM navigation optional."
+
+#. js-lingui-id: CvYtDS
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Start with contacts, companies and opportunities for client work."
+msgstr "Start with contacts, companies and opportunities for client work."
+
+#. js-lingui-id: e2qLdJ
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Start with what you need."
+msgstr "Start with what you need."
+
+#. js-lingui-id: JHJ1oS
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Starting point preview"
+msgstr "Starting point preview"
+
+#. js-lingui-id: 0guQnR
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Storage usage at a glance"
+msgstr "Storage usage at a glance"
+
+#. js-lingui-id: 5H2zZk
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Structure a handbook"
+msgstr "Structure a handbook"
+
+#. js-lingui-id: 7Z3/pk
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Table and pipeline views"
+msgstr "Table and pipeline views"
+
+#. js-lingui-id: 2r7CY0
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Team calendar"
+msgstr "Team calendar"
+
+#. js-lingui-id: m59+RN
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "Team catch-up"
+msgstr "Team catch-up"
+
+#. js-lingui-id: mnXsqq
+#: src/modules/public-site/preview/PreviewBureau.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Team handbook"
+msgstr "Team handbook"
+
+#. js-lingui-id: n+JkZ4
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Team handbook.pdf"
+msgstr "Team handbook.pdf"
+
+#. js-lingui-id: M9ncAN
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Team knowledge"
+msgstr "Team knowledge"
+
+#. js-lingui-id: mqwxba
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Team onboarding and a clear place for recurring meeting notes."
+msgstr "Team onboarding and a clear place for recurring meeting notes."
+
+#. js-lingui-id: AKngk+
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Team workshop"
+msgstr "Team workshop"
+
+#. js-lingui-id: Q9wCfh
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Team workspace"
+msgstr "Team workspace"
+
+#. js-lingui-id: QIM/9s
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Teams & projects"
+msgstr "Teams & projects"
+
+#. js-lingui-id: S22jnw
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "The agreement should describe the service, the processing purposes and duration, the categories of information and people concerned, and the documented instructions of the responsible organisation. Optional applications and connected providers should be included where they process that information."
+msgstr "The agreement should describe the service, the processing purposes and duration, the categories of information and people concerned, and the documented instructions of the responsible organisation. Optional applications and connected providers should be included where they process that information."
+
+#. js-lingui-id: da8dAg
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "The applicable agreement should define assistance with personal information requests and incidents, the handling of service providers, audit information, and how information is returned or deleted when the service ends, including backup retention."
+msgstr "The applicable agreement should define assistance with personal information requests and incidents, the handling of service providers, audit information, and how information is returned or deleted when the service ends, including backup retention."
+
+#. js-lingui-id: 2eWYQr
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "The application uses authentication cookies and browser storage for sessions, preferences and workspace navigation. Clearing that storage can sign you out or reset preferences. Connected services may set their own cookies when you visit their websites."
+msgstr "The application uses authentication cookies and browser storage for sessions, preferences and workspace navigation. Clearing that storage can sign you out or reset preferences. Connected services may set their own cookies when you visit their websites."
+
+#. js-lingui-id: ULhu1A
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "The calendar is part of the workspace. Navigation and connected calendars depend on your setup."
+msgstr "The calendar is part of the workspace. Navigation and connected calendars depend on your setup."
+
+#. js-lingui-id: T9CIta
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "The context in your head"
+msgstr "The context in your head"
+
+#. js-lingui-id: 8grMNr
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "The files behind your projects, with their context close by."
+msgstr "The files behind your projects, with their context close by."
+
+#. js-lingui-id: BGYwns
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "The notes in one place"
+msgstr "The notes in one place"
+
+#. js-lingui-id: W34ibX
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "The parties to your agreement"
+msgstr "The parties to your agreement"
+
+#. js-lingui-id: usSDrC
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "The people, projects and conversations behind every relationship."
+msgstr "The people, projects and conversations behind every relationship."
+
+#. js-lingui-id: dWSy4p
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "The plan in another"
+msgstr "The plan in another"
+
+#. js-lingui-id: GLXSJw
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "The project brief, handbook and visual references, collected in one place."
+msgstr "The project brief, handbook and visual references, collected in one place."
+
+#. js-lingui-id: 44y4wc
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "the region documented for your deployment"
+msgstr "the region documented for your deployment"
+
+#. js-lingui-id: Lzwwsw
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "The right people, in the loop"
+msgstr "The right people, in the loop"
+
+#. js-lingui-id: kUWsPt
+#: src/modules/public-site/PublicSite.tsx
+msgid "The right tools. *In the right place.*"
+msgstr "The right tools. *In the right place.*"
+
+#. js-lingui-id: 9OhKWh
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "The service processes account details, workspace memberships, access permissions and the content you choose to add. Depending on enabled applications, that content can include documents, tasks, contacts, calendar entries, files and financial records."
+msgstr "The service processes account details, workspace memberships, access permissions and the content you choose to add. Depending on enabled applications, that content can include documents, tasks, contacts, calendar entries, files and financial records."
+
+#. js-lingui-id: ErRdgP
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "The suite"
+msgstr "The suite"
+
+#. js-lingui-id: kDYJEc
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "This is an illustration of setup. You review app availability and installation when creating your workspace. Archive and AI availability are configured separately."
+msgstr "This is an illustration of setup. You review app availability and installation when creating your workspace. Archive and AI availability are configured separately."
+
+#. js-lingui-id: rZ9HZq
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "To do"
+msgstr "To do"
+
+#. js-lingui-id: yoRBWV
+#: src/modules/public-site/PublicSiteLanguageSelector.tsx
+msgid "Translations could not be loaded. Please try again."
+msgstr "Translations could not be loaded. Please try again."
+
+#. js-lingui-id: 5kAKAc
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Try a view, open a record, or explore another application."
+msgstr "Try a view, open a record, or explore another application."
+
+#. js-lingui-id: FvET+4
+#: src/modules/public-site/PublicSitePages.ts
+msgid "Use cases"
+msgstr "Use cases"
+
+#. js-lingui-id: yrAY19
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Use dark preview"
+msgstr "Use dark preview"
+
+#. js-lingui-id: e9cK6T
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Use Get started to open the account page. Sign in or create an account, then create or join a workspace. Your instance administrator manages application availability and hosting."
+msgstr "Use Get started to open the account page. Sign in or create an account, then create or join a workspace. Your instance administrator manages application availability and hosting."
+
+#. js-lingui-id: sz3tQl
+#: src/modules/public-site/PublicWorkspacePreview.tsx
+msgid "Use light preview"
+msgstr "Use light preview"
+
+#. js-lingui-id: 1iP8wA
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "Use the project brief and the latest meeting notes to keep the review focused."
+msgstr "Use the project brief and the latest meeting notes to keep the review focused."
+
+#. js-lingui-id: KDFyth
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Useful details. *A familiar way to work.*"
+msgstr "Useful details. *A familiar way to work.*"
+
+#. js-lingui-id: ym/wWo
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Using A2E Suite and your workspace responsibly."
+msgstr "Using A2E Suite and your workspace responsibly."
+
+#. js-lingui-id: dgs13/
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Visual research for the next chapter. A sample file with its type, size and owner shown in context."
+msgstr "Visual research for the next chapter. A sample file with its type, size and owner shown in context."
+
+#. js-lingui-id: u4+OBO
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Ways to work"
+msgstr "Ways to work"
+
+#. js-lingui-id: 67vchT
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Website project"
+msgstr "Website project"
+
+#. js-lingui-id: sDwhnB
+#: src/modules/public-site/preview/PreviewCrm.tsx
+msgid "Website project and ongoing support. Keep the brief, proposal and follow-up attached to the company."
+msgstr "Website project and ongoing support. Keep the brief, proposal and follow-up attached to the company."
+
+#. js-lingui-id: b47efg
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "Weekly planning"
+msgstr "Weekly planning"
+
+#. js-lingui-id: CrDePn
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Weekly review"
+msgstr "Weekly review"
+
+#. js-lingui-id: 45LSj8
+#: src/modules/public-site/preview/PreviewBureau.tsx
+msgid "Weekly review · Design and planning"
+msgstr "Weekly review · Design and planning"
+
+#. js-lingui-id: Uhudoi
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Welcome · Our ways of working · Projects · Meeting notes"
+msgstr "Welcome · Our ways of working · Projects · Meeting notes"
+
+#. js-lingui-id: tIUlsn
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Welcome to A2E Studio. Our shared handbook brings the team's ways of working, project context and meeting notes together."
+msgstr "Welcome to A2E Studio. Our shared handbook brings the team's ways of working, project context and meeting notes together."
+
+#. js-lingui-id: K9sYtH
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "What is A2E Suite?"
+msgstr "What is A2E Suite?"
+
+#. js-lingui-id: GO9DAT
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "What should we cover in the next project review?"
+msgstr "What should we cover in the next project review?"
+
+#. js-lingui-id: 1ZF9KQ
+#: src/modules/public-site/preview/PreviewAgenda.tsx
+msgid "When"
+msgstr "When"
+
+#. js-lingui-id: axZCpk
+#: src/modules/public-site/PublicSitePages.ts
+#: src/modules/public-site/PublicSiteShell.tsx
+msgid "Why A2E"
+msgstr "Why A2E"
+
+#. js-lingui-id: SwmK8J
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Why information is processed"
+msgstr "Why information is processed"
+
+#. js-lingui-id: uvIqcj
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Workshop"
+msgstr "Workshop"
+
+#. js-lingui-id: qbmX9j
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Workshop notes: agree on the goal, collect the first ideas and plan a useful review."
+msgstr "Workshop notes: agree on the goal, collect the first ideas and plan a useful review."
+
+#. js-lingui-id: OGmM0e
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Workshop notes.md"
+msgstr "Workshop notes.md"
+
+#. js-lingui-id: gCrKuV
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Workshop preparation and facilitation. Example payment recorded against the invoice."
+msgstr "Workshop preparation and facilitation. Example payment recorded against the invoice."
+
+#. js-lingui-id: 2gzz0t
+#: src/modules/public-site/preview/PreviewRecords.tsx
+#: src/modules/public-site/PublicWorkspaceComposition.tsx
+msgid "Workspace setup"
+msgstr "Workspace setup"
+
+#. js-lingui-id: z8N/Cu
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Write rich pages, organize nested notes and keep project knowledge close. Bureau brings Pages, Projects and Discussions into the same workspace."
+msgstr "Write rich pages, organize nested notes and keep project knowledge close. Bureau brings Pages, Projects and Discussions into the same workspace."
+
+#. js-lingui-id: gN0PKh
+#: src/modules/public-site/preview/PreviewRecords.tsx
+msgid "Write the project brief"
+msgstr "Write the project brief"
+
+#. js-lingui-id: sZ7hpL
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Write your first page, preview a Notion export, or plan your next project. Organize your pages and keep useful templates close."
+msgstr "Write your first page, preview a Notion export, or plan your next project. Organize your pages and keep useful templates close."
+
+#. js-lingui-id: V7bgvp
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Yes. An account can belong to several workspaces. Switch between them from the workspace menu; membership and permissions apply separately in each workspace."
+msgstr "Yes. An account can belong to several workspaces. Switch between them from the workspace menu; membership and permissions apply separately in each workspace."
+
+#. js-lingui-id: hk4J6E
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Yes. In Bureau, choose Import, select Notion and drop an HTML or Markdown & CSV export ZIP. Preview the pages and hierarchy, then choose a destination. Include subpages and files in the export; HTML preserves more formatting. Permissions, comments, database formulas and Notion view settings are not recreated."
+msgstr "Yes. In Bureau, choose Import, select Notion and drop an HTML or Markdown & CSV export ZIP. Preview the pages and hierarchy, then choose a destination. Include subpages and files in the export; HTML preserves more formatting. Permissions, comments, database formulas and Notion view settings are not recreated."
+
+#. js-lingui-id: kWJmRL
+#: src/modules/public-site/preview/PreviewSyna.tsx
+msgid "You"
+msgstr "You"
+
+#. js-lingui-id: chB4kC
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "You remain responsible for the content you upload and for having permission to use and share it. Workspace administrators manage membership, permissions, application installation and retention settings. Check those permissions before sharing personal or confidential information."
+msgstr "You remain responsible for the content you upload and for having permission to use and share it. Workspace administrators manage membership, permissions, application installation and retention settings. Check those permissions before sharing personal or confidential information."
+
+#. js-lingui-id: ae0MJZ
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Your account and workspace"
+msgstr "Your account and workspace"
+
+#. js-lingui-id: qroZR5
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Your content"
+msgstr "Your content"
+
+#. js-lingui-id: 3n43kx
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Your everyday essentials. *One shared workspace.*"
+msgstr "Your everyday essentials. *One shared workspace.*"
+
+#. js-lingui-id: GJM+Q4
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Your notes deserve *a good new home.*"
+msgstr "Your notes deserve *a good new home.*"
+
+#. js-lingui-id: y7/07q
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Your plans beside your knowledge"
+msgstr "Your plans beside your knowledge"
+
+#. js-lingui-id: YzxtR7
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Your work is connected. *Your tools should be, too.*"
+msgstr "Your work is connected. *Your tools should be, too.*"
+
+#. js-lingui-id: CgQ1Dd
+#: src/modules/public-site/PublicLegalPages.ts
+msgid "Your workspace permissions determine who can access its records. Document sharing is a separate action. Email, calendar, file storage and AI integrations can process information through providers configured by the operator or your administrator. Review a provider and the information being shared before connecting or using it."
+msgstr "Your workspace permissions determine who can access its records. Document sharing is a separate action. Email, calendar, file storage and AI integrations can process information through providers configured by the operator or your administrator. Review a provider and the information being shared before connecting or using it."
+
+#. js-lingui-id: GWMTNW
+#: src/modules/public-site/PublicSiteContent.ts
+msgid "Your workspace requires an account and the appropriate access permissions. Sharing a document is a separate, explicit action. Invite only the people who need access and choose their role."
+msgstr "Your workspace requires an account and the appropriate access permissions. Sharing a document is a separate, explicit action. Invite only the people who need access and choose their role."
+
+#. js-lingui-id: i/Qrfm
+#: src/modules/public-site/PublicSiteSections.tsx
+msgid "Your workspace, taking shape"
+msgstr "Your workspace, taking shape"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "1. Parties and scope"
+msgstr "1. Parties and scope"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "This Data Processing Agreement applies between ASSOCIATION D'ENTRAIDE ETUDIANTE, Association déclarée, registered at 65 avenue Maréchal Lyautey, 21000 Dijon, France (the Processor), and the organisation accepting it for its A2E Suite workspace (the Controller). The Processor operates A2E Suite at a2esuite.com. The Controller determines the purposes and lawful basis of the personal data it places in the workspace. The Processor processes that data on the Controller’s documented instructions to provide the requested workspace service."
+msgstr "This Data Processing Agreement applies between ASSOCIATION D'ENTRAIDE ETUDIANTE, Association déclarée, registered at 65 avenue Maréchal Lyautey, 21000 Dijon, France (the Processor), and the organisation accepting it for its A2E Suite workspace (the Controller). The Processor operates A2E Suite at a2esuite.com. The Controller determines the purposes and lawful basis of the personal data it places in the workspace. The Processor processes that data on the Controller’s documented instructions to provide the requested workspace service."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "2. Processing description"
+msgstr "2. Processing description"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "Processing consists of collecting, storing, organising, retrieving, displaying, sharing, exporting and deleting workspace information through the enabled applications. Information may include names, business contact details, membership information, documents, tasks, calendar entries, attachments and financial records supplied by the Controller or its authorised users. Data subjects may include members, employees, students, customers, suppliers and other people whose information the Controller chooses to add. Processing lasts for the service relationship and any agreed return, deletion or backup-retention period."
+msgstr "Processing consists of collecting, storing, organising, retrieving, displaying, sharing, exporting and deleting workspace information through the enabled applications. Information may include names, business contact details, membership information, documents, tasks, calendar entries, attachments and financial records supplied by the Controller or its authorised users. Data subjects may include members, employees, students, customers, suppliers and other people whose information the Controller chooses to add. Processing lasts for the service relationship and any agreed return, deletion or backup-retention period."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "3. Controller instructions and responsibilities"
+msgstr "3. Controller instructions and responsibilities"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "The Controller is responsible for the lawfulness of its content and instructions, notices to data subjects, required consents or other legal bases, and permissions granted to its users. Workspace settings and authorised use of the service constitute documented instructions. The Processor will inform the Controller if, in its opinion, an instruction infringes applicable data protection law. Processing required by law will be communicated to the Controller unless the law prohibits that communication."
+msgstr "The Controller is responsible for the lawfulness of its content and instructions, notices to data subjects, required consents or other legal bases, and permissions granted to its users. Workspace settings and authorised use of the service constitute documented instructions. The Processor will inform the Controller if, in its opinion, an instruction infringes applicable data protection law. Processing required by law will be communicated to the Controller unless the law prohibits that communication."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "4. Confidentiality and security"
+msgstr "4. Confidentiality and security"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "The Processor will ensure that personnel authorised to process workspace personal data are bound by confidentiality obligations and have access appropriate to their responsibilities. The Processor will implement technical and organisational measures appropriate to the risks of processing. The measures and service configuration relevant to a deployment must be documented with the Controller; this agreement does not represent a certification or a guarantee of uninterrupted service."
+msgstr "The Processor will ensure that personnel authorised to process workspace personal data are bound by confidentiality obligations and have access appropriate to their responsibilities. The Processor will implement technical and organisational measures appropriate to the risks of processing. The measures and service configuration relevant to a deployment must be documented with the Controller; this agreement does not represent a certification or a guarantee of uninterrupted service."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "5. Service providers and optional integrations"
+msgstr "5. Service providers and optional integrations"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "The Processor will engage another processor only with the Controller’s prior specific or general written authorisation. Where general authorisation is used, the Processor will inform the Controller of intended additions or replacements and give a reasonable opportunity to object before the change takes effect. Each authorised sub-processor must be bound by data protection obligations equivalent to those applicable to its processing under this agreement. The Processor remains responsible for the performance of those obligations. The current provider inventory and processing locations are available from contact@association2e.org. Integrations selected directly by the Controller must be assessed according to their actual role and separate terms."
+msgstr "The Processor will engage another processor only with the Controller’s prior specific or general written authorisation. Where general authorisation is used, the Processor will inform the Controller of intended additions or replacements and give a reasonable opportunity to object before the change takes effect. Each authorised sub-processor must be bound by data protection obligations equivalent to those applicable to its processing under this agreement. The Processor remains responsible for the performance of those obligations. The current provider inventory and processing locations are available from contact@association2e.org. Integrations selected directly by the Controller must be assessed according to their actual role and separate terms."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "6. Processing location and international transfers"
+msgstr "6. Processing location and international transfers"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "The configured deployment region is {{HOSTING_REGION}}. The parties must confirm the actual hosting locations and authorised providers for their deployment. Personal data may be transferred outside the European Economic Area only on documented instructions and with an applicable lawful transfer mechanism. No standard contractual clauses, adequacy decision or framework certification are represented as already executed by this document. Where required, the parties must put the appropriate transfer terms in place before the transfer."
+msgstr "The configured deployment region is {hostingRegion}. The parties must confirm the actual hosting locations and authorised providers for their deployment. Personal data may be transferred outside the European Economic Area only on documented instructions and with an applicable lawful transfer mechanism. No standard contractual clauses, adequacy decision or framework certification are represented as already executed by this document. Where required, the parties must put the appropriate transfer terms in place before the transfer."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "7. Assistance and personal data requests"
+msgstr "7. Assistance and personal data requests"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "Taking into account the nature of processing and the information available to it, the Processor will assist the Controller with requests concerning data subject rights, security obligations, impact assessments and consultation with supervisory authorities. Requests received directly from a data subject concerning workspace content will be referred to the Controller unless otherwise required by law."
+msgstr "Taking into account the nature of processing and the information available to it, the Processor will assist the Controller with requests concerning data subject rights, security obligations, impact assessments and consultation with supervisory authorities. Requests received directly from a data subject concerning workspace content will be referred to the Controller unless otherwise required by law."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "8. Personal data breaches"
+msgstr "8. Personal data breaches"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "The Processor will notify the Controller without undue delay after becoming aware of a personal data breach affecting workspace personal data. It will provide available information about the nature and likely consequences of the breach, affected information, relevant contacts and measures taken or proposed, and provide further information as it becomes available. The Controller remains responsible for notifications it is required to make to authorities or individuals."
+msgstr "The Processor will notify the Controller without undue delay after becoming aware of a personal data breach affecting workspace personal data. It will provide available information about the nature and likely consequences of the breach, affected information, relevant contacts and measures taken or proposed, and provide further information as it becomes available. The Controller remains responsible for notifications it is required to make to authorities or individuals."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "9. Return and deletion"
+msgstr "9. Return and deletion"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "At the end of the processing service, the Processor will, at the Controller’s choice, return or delete the workspace personal data and delete existing copies unless retention is required by law. The parties must agree the export procedure, deletion timing and treatment of backups for the deployment. Until deletion, retained copies remain subject to confidentiality and security obligations and may be used only for the permitted retention purpose."
+msgstr "At the end of the processing service, the Processor will, at the Controller’s choice, return or delete the workspace personal data and delete existing copies unless retention is required by law. The parties must agree the export procedure, deletion timing and treatment of backups for the deployment. Until deletion, retained copies remain subject to confidentiality and security obligations and may be used only for the permitted retention purpose."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "10. Information and audits"
+msgstr "10. Information and audits"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "The Processor will make available information necessary to demonstrate compliance with its obligations under this agreement and allow and contribute to audits, including inspections, by the Controller or an auditor it mandates. Audit arrangements must protect other customers’ information, confidentiality and service security without preventing the exercise of statutory rights."
+msgstr "The Processor will make available information necessary to demonstrate compliance with its obligations under this agreement and allow and contribute to audits, including inspections, by the Controller or an auditor it mandates. Audit arrangements must protect other customers’ information, confidentiality and service security without preventing the exercise of statutory rights."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "11. Contact, acceptance and changes"
+msgstr "11. Contact, acceptance and changes"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "Questions and requests under this agreement should be addressed to contact@association2e.org. The Controller’s authorised representative may accept the published processing terms electronically; the service records the accepting account, time and template version. No handwritten or electronic signature of the association’s representative is created or represented by the generated document. Material changes to processing arrangements must be communicated and agreed as required by applicable law. The governing law is France, subject to mandatory applicable data protection law."
+msgstr "Questions and requests under this agreement should be addressed to contact@association2e.org. The Controller’s authorised representative may accept the published processing terms electronically; the service records the accepting account, time and template version. No handwritten or electronic signature of the association’s representative is created or represented by the generated document. Material changes to processing arrangements must be communicated and agreed as required by applicable law. The governing law is France, subject to mandatory applicable data protection law."
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "12. Operator identification"
+msgstr "12. Operator identification"
+
+#. js-lingui-explicit-id
+#: src/modules/public-site/PublicLegalPage.tsx
+msgid "SIREN 994 936 789. SIRET 994 936 789 00019. RNA W212015637. Address: 65 avenue Maréchal Lyautey, 21000 Dijon, France. Contact: contact@association2e.org."
+msgstr "SIREN 994 936 789. SIRET 994 936 789 00019. RNA W212015637. Address: 65 avenue Maréchal Lyautey, 21000 Dijon, France. Contact: contact@association2e.org."

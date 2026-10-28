@@ -6,7 +6,7 @@ import { Container } from '@/public-site/ui/Container';
 import { Helmet } from '@dr.pogodin/react-helmet';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Link } from 'react-router-dom';
+import { PublicSiteLink } from '@/public-site/ui/PublicSiteLink';
 
 type PublicLegalPageProps = {
   page: (typeof PUBLIC_LEGAL_PAGES)[number];
@@ -59,7 +59,6 @@ export const PublicLegalPage = ({ page }: PublicLegalPageProps) => {
       <Helmet>
         <title>{title}</title>
         <meta name="description" content={i18n._(page.description)} />
-        <link rel="canonical" href={`https://a2esuite.com${page.path}`} />
       </Helmet>
       <Container>
         <StyledArticle>
@@ -67,13 +66,13 @@ export const PublicLegalPage = ({ page }: PublicLegalPageProps) => {
           <p>{i18n._(page.description)}</p>
           <nav aria-label={t`Legal information`}>
             {PUBLIC_LEGAL_PAGES.map((entry) => (
-              <Link
+              <PublicSiteLink
                 key={entry.id}
                 to={entry.path}
                 aria-current={entry.id === page.id ? 'page' : undefined}
               >
                 {i18n._(entry.label)}
-              </Link>
+              </PublicSiteLink>
             ))}
           </nav>
           <section>
@@ -100,12 +99,9 @@ export const PublicLegalPage = ({ page }: PublicLegalPageProps) => {
                   <h2 key={block.text}>{i18n._(block.text)}</h2>
                 ) : (
                   <p key={block.text}>
-                    {i18n._(
-                      block.text.replace(
-                        '{{HOSTING_REGION}}',
-                        'the region documented for your deployment',
-                      ),
-                    )}
+                    {i18n._(block.text, {
+                      hostingRegion: t`the region documented for your deployment`,
+                    })}
                   </p>
                 ),
               )

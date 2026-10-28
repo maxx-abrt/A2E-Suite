@@ -2,11 +2,12 @@ import { NavigationDrawerOpenedSection } from '@/navigation-menu-item/display/se
 import { NavigationDrawerWorkspaceSectionSkeletonLoader } from '@/object-metadata/components/NavigationDrawerWorkspaceSectionSkeletonLoader';
 
 import { styled } from '@linaria/react';
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
+import { lazyWithPreload } from '~/utils/lazyWithPreload';
 
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const FavoritesSectionDispatcher = lazy(() =>
+const FavoritesSectionDispatcher = lazyWithPreload(() =>
   import('@/navigation-menu-item/display/sections/favorites/components/FavoritesSectionDispatcher').then(
     (module) => ({
       default: module.FavoritesSectionDispatcher,
@@ -14,13 +15,18 @@ const FavoritesSectionDispatcher = lazy(() =>
   ),
 );
 
-const WorkspaceSectionDispatcher = lazy(() =>
+const WorkspaceSectionDispatcher = lazyWithPreload(() =>
   import('@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionDispatcher').then(
     (module) => ({
       default: module.WorkspaceSectionDispatcher,
     }),
   ),
 );
+
+export const preloadNavigationDrawerSections = () => {
+  FavoritesSectionDispatcher.preload();
+  WorkspaceSectionDispatcher.preload();
+};
 
 const StyledScrollableItemsContainer = styled.div`
   display: flex;
@@ -34,6 +40,8 @@ export const MainNavigationDrawerScrollableItems = () => {
       <NavigationDrawerOpenedSection />
       <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
         <FavoritesSectionDispatcher />
+      </Suspense>
+      <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
         <WorkspaceSectionDispatcher />
       </Suspense>
     </StyledScrollableItemsContainer>

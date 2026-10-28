@@ -67,7 +67,6 @@ export const PublicSite = () => {
     <PublicSiteShell>
       <Helmet>
         <title>{pageTitle}</title>
-        <link rel="canonical" href={`https://a2esuite.com${pathname}`} />
         <meta name="description" content={description} />
         <meta property="og:site_name" content="A2E Suite" />
         <meta property="og:title" content={pageTitle} />

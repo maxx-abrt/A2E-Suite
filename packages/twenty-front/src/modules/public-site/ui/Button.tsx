@@ -1,7 +1,7 @@
 import { css } from '@linaria/core';
 import { type MouseEvent, type ReactNode } from 'react';
 
-import { Link } from 'react-router-dom';
+import { PublicSiteLink } from '@/public-site/ui/PublicSiteLink';
 import {
   EASING,
   color,
@@ -256,7 +256,7 @@ export function Button({
   }
 
   return (
-    <Link
+    <PublicSiteLink
       className={buttonClassName}
       data-size={size}
       data-variant={variant}
@@ -264,6 +264,6 @@ export function Button({
       onClick={onClick}
     >
       {inner}
-    </Link>
+    </PublicSiteLink>
   );
 }
