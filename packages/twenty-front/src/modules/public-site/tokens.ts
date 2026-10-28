@@ -25,11 +25,73 @@ export const typeRampDeclarations: typeof websiteTypeRampDeclarations = (
     (_, remValue: string) =>
       `calc(var(--font-base) * ${Number(remValue) / UNITS.fontBaseRem})`,
   );
-export { buildSchemeContext } from '../../../../twenty-website/src/tokens/build-scheme-context';
-export { buildSchemeDeclarations } from '../../../../twenty-website/src/tokens/build-scheme-declarations';
+
+import { buildSchemeDeclarations as buildWebsiteSchemeDeclarations } from '../../../../twenty-website/src/tokens/build-scheme-declarations';
+import { type Scheme } from '../../../../twenty-website/src/tokens/scheme';
 export { semanticColor } from '../../../../twenty-website/src/tokens/semantic-color';
 export { RHYTHM } from '../../../../twenty-website/src/tokens/rhythm';
 export { GRADIENT } from '../../../../twenty-website/src/tokens/gradient';
 export { HERO_COMPOSITION } from '../../../../twenty-website/src/tokens/hero-composition';
 export { type Scheme } from '../../../../twenty-website/src/tokens/scheme';
-export { buildCssVariableDeclarations } from '../../../../twenty-website/src/tokens/build-css-variable-declarations';
+import { buildCssVariableDeclarations as buildWebsiteCssVariableDeclarations } from '../../../../twenty-website/src/tokens/build-css-variable-declarations';
+import {
+  PALETTE,
+  type PaletteToken,
+} from '../../../../twenty-website/src/tokens/palette';
+import { ALPHA_SCALE } from '../../../../twenty-website/src/tokens/alpha-scale';
+import { A2E_BRAND_COLORS } from '../../../../twenty-ui/src/theme/constants/A2eBrandColors';
+
+const PUBLIC_BRAND_PALETTE: Record<PaletteToken, string> = {
+  white: A2E_BRAND_COLORS.cream,
+  black: A2E_BRAND_COLORS.charcoal,
+  'black-hover': A2E_BRAND_COLORS.charcoal,
+  'white-hover': A2E_BRAND_COLORS.peach,
+  graphite: A2E_BRAND_COLORS.charcoal,
+  silver: A2E_BRAND_COLORS.cream,
+  neutral: A2E_BRAND_COLORS.cream,
+  blue: A2E_BRAND_COLORS.lavender,
+  pink: A2E_BRAND_COLORS.peach,
+  green: A2E_BRAND_COLORS.olive,
+  yellow: A2E_BRAND_COLORS.amber,
+  error: A2E_BRAND_COLORS.red,
+  ash: A2E_BRAND_COLORS.rose,
+  fog: A2E_BRAND_COLORS.cream,
+  charcoal: A2E_BRAND_COLORS.charcoal,
+  stone: A2E_BRAND_COLORS.olive,
+  iron: A2E_BRAND_COLORS.orange,
+  chalk: A2E_BRAND_COLORS.cream,
+};
+
+export const buildCssVariableDeclarations = (): string => {
+  let declarations = buildWebsiteCssVariableDeclarations();
+
+  for (const token of Object.keys(PALETTE) as PaletteToken[]) {
+    declarations = declarations.replace(
+      `--color-${token}: ${PALETTE[token]};`,
+      `--color-${token}: ${PUBLIC_BRAND_PALETTE[token]};`,
+    );
+  }
+
+  for (const base of ALPHA_SCALE.colors) {
+    for (const [step, opacity] of Object.entries(ALPHA_SCALE.stepHex)) {
+      declarations = declarations.replace(
+        `--color-${base}-${step}: ${PALETTE[base]}${opacity};`,
+        `--color-${base}-${step}: ${PUBLIC_BRAND_PALETTE[base]}${opacity};`,
+      );
+    }
+  }
+
+  return readableSchemeInk(declarations);
+};
+
+// The supplied muted pigments need the stronger neutral ink for small copy.
+const readableSchemeInk = (declarations: string): string =>
+  declarations
+    .replaceAll('var(--color-black-60)', 'var(--color-black-70)')
+    .replaceAll('var(--color-white-60)', 'var(--color-white-80)');
+
+export const buildSchemeDeclarations = (scheme: Scheme): string =>
+  readableSchemeInk(buildWebsiteSchemeDeclarations(scheme));
+
+export const buildSchemeContext = (scheme: Scheme): string =>
+  `${buildSchemeDeclarations(scheme)}\ncolor: var(--ink);`;

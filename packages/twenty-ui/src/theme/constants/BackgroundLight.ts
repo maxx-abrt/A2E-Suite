@@ -1,4 +1,4 @@
-import * as RadixColors from '@radix-ui/colors';
+import { A2E_BRAND_COLORS } from './A2eBrandColors';
 
 import { COLOR_LIGHT } from '@ui/theme/constants/ColorsLight';
 import { GRAY_SCALE_LIGHT } from './GrayScaleLight';
@@ -14,8 +14,8 @@ export const BACKGROUND_LIGHT = {
   invertedSecondary: GRAY_SCALE_LIGHT.gray11,
   danger: COLOR_LIGHT.red3,
   transparent: {
-    primary: RadixColors.whiteP3A.whiteA7,
-    secondary: RadixColors.whiteP3A.whiteA6,
+    primary: `${A2E_BRAND_COLORS.cream}B3`,
+    secondary: `${A2E_BRAND_COLORS.cream}99`,
     strong: TRANSPARENT_COLORS_LIGHT.gray7,
     medium: TRANSPARENT_COLORS_LIGHT.gray5,
     light: TRANSPARENT_COLORS_LIGHT.gray2,

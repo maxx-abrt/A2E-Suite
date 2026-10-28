@@ -1,4 +1,4 @@
-import * as RadixColors from '@radix-ui/colors';
+import { A2E_BRAND_COLORS } from './A2eBrandColors';
 
 import { COLOR_DARK } from '@ui/theme/constants/ColorsDark';
 import { GRAY_SCALE_DARK } from './GrayScaleDark';
@@ -14,8 +14,8 @@ export const BACKGROUND_DARK = {
   invertedSecondary: GRAY_SCALE_DARK.gray11,
   danger: COLOR_DARK.red3,
   transparent: {
-    primary: RadixColors.blackP3A.blackA7,
-    secondary: RadixColors.blackP3A.blackA6,
+    primary: `${A2E_BRAND_COLORS.charcoal}B3`,
+    secondary: `${A2E_BRAND_COLORS.charcoal}99`,
     strong: TRANSPARENT_COLORS_DARK.gray7,
     medium: TRANSPARENT_COLORS_DARK.gray5,
     light: TRANSPARENT_COLORS_DARK.gray2,
@@ -25,9 +25,9 @@ export const BACKGROUND_DARK = {
     orange: TRANSPARENT_COLORS_DARK.orange4,
     success: TRANSPARENT_COLORS_DARK.green4,
   },
-  overlayPrimary: '#000000b8',
-  overlaySecondary: '#0000005c',
-  overlayTertiary: '#0000005c',
+  overlayPrimary: `${A2E_BRAND_COLORS.charcoal}B8`,
+  overlaySecondary: `${A2E_BRAND_COLORS.charcoal}5C`,
+  overlayTertiary: `${A2E_BRAND_COLORS.charcoal}5C`,
   radialGradient: `radial-gradient(50% 62.62% at 50% 0%, ${GRAY_SCALE_DARK.gray9} 0%, ${GRAY_SCALE_DARK.gray10} 100%)`,
   radialGradientHover: `radial-gradient(76.32% 95.59% at 50% 0%, ${GRAY_SCALE_DARK.gray10} 0%, ${GRAY_SCALE_DARK.gray11} 100%)`,
   primaryInverted: GRAY_SCALE_DARK.gray12,

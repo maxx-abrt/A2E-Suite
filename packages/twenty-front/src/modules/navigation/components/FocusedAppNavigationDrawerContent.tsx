@@ -21,9 +21,11 @@ export const FocusedAppNavigationDrawerContent = ({
 }: FocusedAppNavigationDrawerContentProps) => {
   const { t } = useLingui();
   const workspace = useContext(BureauWorkspaceContext);
-  const { pathname, search } = useLocation();
-  const locationKey = `${pathname}${search}`;
-  const [dismissedPath, setDismissedPath] = useState<string | null>(null);
+  const { pathname, search, key: locationKey } = useLocation();
+  // A new navigation entry can refocus even when it targets the same URL.
+  const [dismissedLocationKey, setDismissedLocationKey] = useState<
+    string | null
+  >(null);
   const { navigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
   const objectMetadataItems = useNavigationObjectMetadataItems();
   const views = useAtomStateValue(viewsSelector);
@@ -50,27 +52,19 @@ export const FocusedAppNavigationDrawerContent = ({
   const activeFolder = rankedFolders
     .sort((left, right) => right.score - left.score)
     .find(({ score }) => score > 0)?.folder;
-  if (isLayoutCustomizationModeEnabled || (!activeFolder && !workspace))
+  if (
+    isLayoutCustomizationModeEnabled ||
+    (!activeFolder && !workspace) ||
+    dismissedLocationKey === locationKey
+  )
     return children;
-
-  if (dismissedPath === locationKey)
-    return (
-      <>
-        <NavigationDrawerItem
-          label={t`Back to ${activeFolder?.folderName ?? 'Bureau'}`}
-          Icon={IconArrowLeft}
-          onClick={() => setDismissedPath(null)}
-        />
-        {children}
-      </>
-    );
 
   return (
     <>
       <NavigationDrawerItem
         label={t`All apps`}
         Icon={IconArrowLeft}
-        onClick={() => setDismissedPath(locationKey)}
+        onClick={() => setDismissedLocationKey(locationKey)}
       />
       {activeFolder && (
         <NavigationMenuItemFolderContent

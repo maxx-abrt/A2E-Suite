@@ -17,9 +17,9 @@ on direct entry and with native client navigation.
 ## Relationship to the local website
 
 The implementation uses the local `packages/twenty-website` base. Its authored
-palette, type scale, rhythm, spacing, schemes and breakpoints are imported directly
+type scale, rhythm, spacing, schemes and breakpoints are imported
 through the native [token adapter](../packages/twenty-front/src/modules/public-site/tokens.ts).
-Its Heading, Body, SectionShell, section stacks, corner markers, beveled buttons
+Its Heading, Body, SectionShell, section stacks, corner markers
 and notched card geometry are ported under
 [public-site/ui](../packages/twenty-front/src/modules/public-site/ui), with native
 React Router links and frontend naming conventions. The adapter scopes the
@@ -27,8 +27,7 @@ website's 16px typography to a page inside the application's 13px root.
 
 The native page retains the website's hero/preview, application strip, problem,
 three-card features, guided steps, application explanations, use cases, FAQ and
-notched footer structure. It uses the original bridge illustration and self-hosted
-fonts. The heavy Next.js/WebGL scene engine is not embedded in the application;
+notched footer structure. It uses precomputed geometric ASCII illustrations and self-hosted fonts. The heavy Next.js/WebGL scene engine is not embedded in the application;
 CSS transitions, interactive preview tabs and sticky sections provide native
 motion with a reduced-motion mode. `twenty-website` remains a separate, unchanged
 source package; this work does not publish that standalone site.
@@ -80,3 +79,68 @@ pre-signed executives and assumed AWS locations are not A2E commitments.
 
 In-app help and the default assistant help lookup use public A2E Suite routes.
 An explicitly configured documentation search provider remains supported.
+
+## Brand kit (2026-10-28)
+
+The native token adapter maps the website primitives to the nine supplied
+pigments in `twenty-ui/src/theme/constants/A2eBrandColors.ts`: cream `#FAF6F2`,
+charcoal `#31302E`, peach `#FFBDB2`, red `#E14B3D`, amber `#FBB04B`, orange
+`#EB773C`, olive `#8A8D56`, lavender `#8590C8` and rose `#B67585`. The peach
+value follows the SVG fill; its printed charcoal label was duplicated.
+Translucent washes and surface depth mix these pigments; no additional base
+palette is introduced. Existing semantic color names remain stable for saved
+field colors, charts and application preferences.
+
+Plus Jakarta Sans is self-hosted in normal and italic variable weights for the
+application, account entry and public site. The supplied Dream Kudos face is
+limited to the homepage hero's highlighted phrase. Subpages and the product use
+Plus Jakarta Sans; ASCII art retains its monospace font. Public controls use
+rounded shapes, restrained motion, visible keyboard focus and the existing
+reduced-motion/pause controls.
+
+The shared light theme uses cream surfaces and charcoal ink; the dark theme
+uses charcoal surfaces and cream ink. The desktop home retains its native
+widgets with a small brand-colour rule and quiet icon tiles. Small action labels
+use the neutral pair because the unmodified accent pigments do not meet AA
+text contrast. Accent borders, focus rings, tags and illustrations retain colour.
+The PWA and pre-React loading surface use the supplied foundations too.
+
+Focused checks cover normal/muted text, tag and button-pair contrast, all shared
+runtime CSS tokens matching their TypeScript definitions, and existing public
+navigation/home behavior. Isolated production previews verify the real public
+components and native control specimens; they do not certify authenticated
+workspace journeys or a deployed release. The separate `twenty-website` package
+retains its own original identity.
+
+## Detailed product preview (2026-10-28)
+
+The hero and application pages share the same interactive example workspace.
+Its sidebar follows the product grouping: Bureau contains Pages and Projects;
+Agenda, Bilan, Archive, CRM and Syna are the other application destinations.
+The homepage starts with the Bureau project table, while each application page
+selects its own example. Scoped light/dark switching uses the real ThemeProvider
+without changing the visitor's application preference.
+
+Tables share the native row-height constant, fonts, borders, spacing and colour
+tokens. The real calendar toolbar drives the sample day, week, month and agenda
+views. The authenticated record renderer depends on workspace metadata and is
+not mounted on a public route; small semantic tables illustrate the same visual
+contract without connecting a demo to workspace records.
+
+Working interactions include search, filters, sort direction, project completion,
+table/board views, company records and opportunity pipelines, invoice/quote views,
+file/folder details and calendar ranges. Record details use an adjacent panel;
+closing a task returns keyboard focus to its current row or board card. Changes
+remain local and survive switching preview applications. Syna offers prepared
+answers and a link back to the example Bureau pages; it never calls an AI provider.
+All companies, documents, amounts and events are labelled sample data.
+
+ASCII illustrations are sampled from orthographic 3D geometry: an open book for
+knowledge, layered pages for structured work, modular blocks for growth, and an
+arched bridge for connection. A large, subdued lavender bridge frames the hero;
+the section illustrations retain their legible silhouettes. Glyphs scale to their
+containers, and motion follows the existing pause, visibility and reduced-motion
+controls. Regenerate the static frames from the repository root with
+`node packages/twenty-front/scripts/generate-public-ascii.mjs`, then format
+`src/modules/public-site/art/PublicAsciiFrames.ts` in the frontend package.
+No renderer, animation loop or geometry calculation runs in the browser.

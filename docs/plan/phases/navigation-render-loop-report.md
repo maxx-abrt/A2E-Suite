@@ -1,0 +1,14 @@
+# Navigation render/remount incident
+
+## 2026-10-28 11:55 UTC — Codex [executor]
+
+**Task:** Pasted production incident brief · **Slice:** stable drawer icons and internal-route favicon guard · **Claim:** done-for-review; browser acceptance remains unverified.
+**Baseline:** Local `f54aecb9`, Node 24.20.0, existing dirty work preserved. The brief's production trace refers to `357bed56`; production revision was not rechecked in this session.
+**Changed:** `NavigationDrawerItem` accepts an `iconNode` element, forwarded by `NavigationDrawerSubItem`; link display, folder content and folder sub-items use it instead of inline component types. Custom icons retain their own tile/colors, avoiding a second tint wrapper around sub-items. Existing `Icon` callers keep their behavior.
+**Changed:** `getLinkFaviconUrl` rejects relative paths, query/hash references and dotless hosts before favicon lookup. External domains and paths still resolve to hostname-only favicon URLs.
+**Checks:** Focused Jest commands with the package `jest.config.mjs` and `--runInBand`: front `NavigationMenuItemIconReconciliation.test.tsx` + `NavigationMenuItemFolderContent.test.tsx` → 8/8 pass; shared `getLinkFaviconUrl.test.ts` + `getLogoUrlFromDomainName.test.ts` → 28/28 pass. Reconciliation tests preserve state/focus while fresh item data updates all three real drawer variants; the icon itself is a stateful test double. Jest emits existing styled-prop/router warnings.
+**Checks:** Direct `oxlint` (front with `--type-aware`) and `oxfmt --check` on all eight changed/new source/test files → 0 warnings/errors, formatting clean; shared `npx tsgo -p tsconfig.json --noEmit` → exit 0. Normal uncached shared build stalled in `generateBarrels` and was terminated; `npx nx run twenty-shared:build --excludeTaskDependencies --skip-nx-cache` → exit 0 (Vite + fresh declarations); no exports changed.
+**Blocked check:** Front `npx tsgo -p tsconfig.json --noEmit` → TS2724 at `src/modules/public-site/preview/PreviewRecords.tsx:7`: `twenty-ui/icon` has no exported member `IconFileInvoice`. This file was already in the untracked preview directory before this task and was left untouched.
+**Missing for tick:** Deploy/review this change and measure idle DOM churn, favicon traffic, CPU and absence of React #185 on authenticated `/objects/tasks` and `/objects/projects`; verify neighboring CRM navigation and folder expand/collapse. Tests establish removal of the remount defect, not proof that every production cascade has this origin.
+**Do not redo:** No tooltip observer redesign, sidebar edit-panel migration, schema change, translation regeneration, commit or deployment in this slice.
+**Next:** Resolve the unrelated preview icon export in its owning change, rerun the front typecheck, then perform browser acceptance against the deployed fix.

@@ -49,6 +49,8 @@ export type NavigationDrawerItemProps = {
   to?: string;
   onClick?: () => void;
   Icon?: IconComponent | ((props: TablerIconsProps) => JSX.Element);
+  // Custom elements already supply their own tile and colors.
+  iconNode?: ReactNode;
   iconColor?: string | null;
   withIconBackground?: boolean;
   active?: boolean;
@@ -252,6 +254,7 @@ export const NavigationDrawerItem = ({
   secondaryLabel,
   indentationLevel = DEFAULT_INDENTATION_LEVEL,
   Icon,
+  iconNode,
   iconColor,
   withIconBackground = false,
   to,
@@ -353,7 +356,10 @@ export const NavigationDrawerItem = ({
             </NavigationDrawerAnimatedCollapseWrapper>
           )}
 
-          {Icon &&
+          {isDefined(iconNode) ? (
+            <StyledIcon>{iconNode}</StyledIcon>
+          ) : (
+            Icon &&
             (isNonEmptyString(iconColor) ? (
               <StyledIcon>
                 <TintedIconTile Icon={Icon} color={iconColor} />
@@ -387,7 +393,8 @@ export const NavigationDrawerItem = ({
                   }
                 />
               </StyledIcon>
-            ))}
+            ))
+          )}
 
           <StyledLabelParent>
             <OverflowingTextWithTooltip

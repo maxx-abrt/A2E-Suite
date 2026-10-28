@@ -37,7 +37,7 @@ const headingClassName = css`
   }
 
   &[data-weight='light'] {
-    font-weight: ${FONT_WEIGHT.light};
+    font-weight: ${FONT_WEIGHT.medium};
   }
 
   &[data-weight='regular'] {
@@ -72,11 +72,34 @@ const headingClassName = css`
     letter-spacing: -0.04em;
   }
 
-  &[data-family='serif'] [data-accent] {
+  &[data-display-accent='true'] [data-accent] {
+    display: inline-block;
+    isolation: isolate;
+    position: relative;
+    font-size: 0.9em;
+    font-family: 'Dream Kudos', ${fontFamily('sans')};
+    font-weight: 400;
+    letter-spacing: 0;
+
+    &::before {
+      background: var(--color-pink);
+      border-radius: 999px;
+      bottom: 0.04em;
+      content: '';
+      height: 0.3em;
+      left: -0.04em;
+      position: absolute;
+      right: -0.04em;
+      transform: rotate(-2deg);
+      z-index: -1;
+    }
+  }
+
+  &[data-family='serif']:not([data-display-accent='true']) [data-accent] {
     font-family: ${fontFamily('sans')};
   }
 
-  &[data-family='sans'] [data-accent] {
+  &[data-family='sans']:not([data-display-accent='true']) [data-accent] {
     font-family: ${fontFamily('serif')};
     letter-spacing: -0.02em;
   }
@@ -93,6 +116,7 @@ export type HeadingProps = {
   children: string;
   className?: string;
   family?: HeadingFamily;
+  displayAccent?: boolean;
   size?: HeadingSize;
   tracking?: HeadingTracking;
   weight?: FontWeightToken;
@@ -103,7 +127,8 @@ export function Heading({
   as: Tag = 'h2',
   children,
   className,
-  family = 'serif',
+  family = 'sans',
+  displayAccent = false,
   size = 'md',
   tracking = 'tight',
   weight = 'regular',
@@ -127,6 +152,7 @@ export function Heading({
     <Tag
       className={[headingClassName, className].filter(Boolean).join(' ')}
       data-family={family}
+      data-display-accent={displayAccent || undefined}
       data-size={size}
       data-tracking={tracking}
       data-weight={weight}

@@ -2,7 +2,7 @@
 
 // GRAY_SCALE_LIGHT.gray1 from theme/constants/GrayScaleLight.ts — the legacy
 // Linaria styles read it from JS because it is theme-invariant.
-$gray-scale-light-gray1: color(display-p3 1 1 1);
+$gray-scale-light-gray1: #faf6f2;
 
 // The variant × accent × inverted × disabled × focus matrix below is ported
 // token-for-token from computeButtonDynamicStyles in the deprecated
@@ -121,40 +121,40 @@ $primary-accents: (
     active: var(--t-background-quaternary),
   ),
   'blue': (
-    bg: var(--t-color-blue),
-    bg-disabled: var(--t-accent-accent4060),
-    border: var(--t-background-transparent-light),
+    bg: var(--t-background-inverted-primary),
+    bg-disabled: var(--t-background-tertiary),
+    border: var(--t-color-blue),
     border-focus: var(--t-color-blue),
     focus-needs-enabled: false,
     shadow-focus: var(--t-accent-tertiary),
-    color: $gray-scale-light-gray1,
-    color-disabled: $gray-scale-light-gray1,
-    hover: var(--t-color-blue10),
-    active: var(--t-color-blue12),
+    color: var(--t-font-color-inverted),
+    color-disabled: var(--t-font-color-light),
+    hover: var(--t-background-inverted-secondary),
+    active: var(--t-background-inverted-primary),
   ),
   'danger': (
-    bg: var(--t-color-red),
-    bg-disabled: var(--t-color-red),
-    border: var(--t-background-transparent-light),
+    bg: var(--t-background-inverted-primary),
+    bg-disabled: var(--t-background-tertiary),
+    border: var(--t-color-red),
     border-focus: var(--t-color-red),
     focus-needs-enabled: false,
     shadow-focus: var(--t-color-red3),
-    color: var(--t-background-primary),
-    color-disabled: var(--t-background-primary),
-    hover: var(--t-color-red8),
-    active: var(--t-color-red10),
+    color: var(--t-font-color-inverted),
+    color-disabled: var(--t-font-color-light),
+    hover: var(--t-background-inverted-secondary),
+    active: var(--t-background-inverted-primary),
   ),
   'green': (
-    bg: var(--t-color-green9),
-    bg-disabled: var(--t-color-green3),
-    border: var(--t-background-transparent-light),
+    bg: var(--t-background-inverted-primary),
+    bg-disabled: var(--t-background-tertiary),
+    border: var(--t-color-green9),
     border-focus: var(--t-color-green9),
     focus-needs-enabled: false,
     shadow-focus: var(--t-color-green3),
-    color: $gray-scale-light-gray1,
-    color-disabled: var(--t-color-green9),
-    hover: var(--t-color-green10),
-    active: var(--t-color-green12),
+    color: var(--t-font-color-inverted),
+    color-disabled: var(--t-font-color-light),
+    hover: var(--t-background-inverted-secondary),
+    active: var(--t-background-inverted-primary),
   ),
 );
 
@@ -195,9 +195,9 @@ $primary-accents: (
 // color.
 $primary-inverted-colors: (
   'default': var(--t-font-color-secondary),
-  'blue': var(--t-color-blue),
-  'danger': var(--t-color-red),
-  'green': var(--t-color-green9),
+  'blue': var(--t-accent-accent11),
+  'danger': var(--t-font-color-danger),
+  'green': var(--t-color-green11),
 );
 
 .button[data-variant='primary'][data-inverted] {
@@ -244,7 +244,7 @@ $secondary-accents: (
     border-focus: var(--t-color-blue),
     focus-needs-enabled-secondary: false,
     shadow-focus: var(--t-accent-tertiary),
-    color: var(--t-color-blue),
+    color: var(--t-accent-accent11),
     color-disabled: var(--t-accent-accent4060),
     hover: var(--t-accent-tertiary),
     active: var(--t-accent-secondary),
@@ -264,7 +264,7 @@ $secondary-accents: (
     border-focus: var(--t-color-green9),
     focus-needs-enabled-secondary: false,
     shadow-focus: var(--t-color-green3),
-    color: var(--t-color-green9),
+    color: var(--t-color-green11),
     color-disabled: var(--t-color-green3),
     hover: var(--t-color-green3),
     active: var(--t-color-green4),

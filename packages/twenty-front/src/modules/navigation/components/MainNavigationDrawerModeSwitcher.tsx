@@ -55,7 +55,7 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
       : themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${({ isExpanded }) =>
-    isExpanded ? themeCssVariables.spacing['0.5'] : '0'};
+    isExpanded ? themeCssVariables.spacing['1.5'] : '0'};
   height: ${themeCssVariables.spacing[7]};
   justify-content: ${({ isExpanded }) =>
     isExpanded ? 'flex-start' : 'center'};
@@ -87,9 +87,9 @@ const StyledModeIcon = styled.span`
   align-items: center;
   display: flex;
   flex-shrink: 0;
-  height: ${themeCssVariables.spacing[4]};
+  height: ${themeCssVariables.spacing[5]};
   justify-content: center;
-  width: ${themeCssVariables.spacing[4]};
+  width: ${themeCssVariables.spacing[5]};
 `;
 
 const StyledModeLabelBase = styled.span`

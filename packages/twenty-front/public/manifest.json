@@ -3,8 +3,8 @@
   "name": "A2E Suite",
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#fcfcfc",
-  "background_color": "#fcfcfc",
+  "theme_color": "#FAF6F2",
+  "background_color": "#FAF6F2",
   "icons": [
     {
       "src": "/branding/icon-192.png",

@@ -5,7 +5,7 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { Link, MemoryRouter, useLocation } from 'react-router-dom';
 
 let mockIsLayoutCustomizationModeEnabled = false;
 const mockFolders = [
@@ -126,6 +126,11 @@ jest.mock('@/bureau/components/BureauNavigation', () => ({
   BureauNavigation: () => <div>Page tree</div>,
 }));
 
+const CurrentLocation = () => {
+  const { pathname, search } = useLocation();
+  return <output aria-label="Current page">{`${pathname}${search}`}</output>;
+};
+
 const renderDrawer = (path: string, withBureauWorkspace = false) =>
   render(
     <I18nProvider i18n={i18n}>
@@ -134,9 +139,14 @@ const renderDrawer = (path: string, withBureauWorkspace = false) =>
           value={withBureauWorkspace ? ({} as never) : null}
         >
           <FocusedAppNavigationDrawerContent>
-            <nav>All workspace apps</nav>
+            <nav>
+              All workspace apps
+              <Link to="/bureau">Bureau</Link>
+              <Link to="/objects/invoices">Bilan</Link>
+            </nav>
           </FocusedAppNavigationDrawerContent>
         </BureauWorkspaceContext.Provider>
+        <CurrentLocation />
       </MemoryRouter>
     </I18nProvider>,
   );
@@ -181,17 +191,47 @@ describe('native focused app navigation', () => {
     expect(screen.queryByTestId('shortcuts-group')).not.toBeInTheDocument();
   });
 
-  it('lets a user browse all apps and return to the focused app without leaving their page', async () => {
+  it.each(['/bureau/page-id', '/objects/invoices?viewId=another-view'])(
+    'removes back controls when returning to all apps from %s without leaving the page',
+    async (path) => {
+      const user = userEvent.setup();
+      renderDrawer(path);
+      await user.click(screen.getByRole('button', { name: 'All apps' }));
+
+      expect(screen.getByText('All workspace apps')).toBeInTheDocument();
+      expect(screen.queryByText('Page tree')).not.toBeInTheDocument();
+      expect(screen.queryByRole('button')).not.toBeInTheDocument();
+      expect(screen.getByLabelText('Current page')).toHaveTextContent(path);
+    },
+  );
+
+  it.each([
+    ['/bureau', 'Bureau'],
+    ['/objects/invoices', 'Bilan'],
+  ])(
+    'refocuses the app when selecting its current route %s again',
+    async (path, appName) => {
+      const user = userEvent.setup();
+      renderDrawer(path);
+      await user.click(screen.getByRole('button', { name: 'All apps' }));
+      await user.click(screen.getByRole('link', { name: appName }));
+
+      expect(
+        screen.getByRole('button', { name: 'All apps' }),
+      ).toBeInTheDocument();
+      expect(screen.queryByText('All workspace apps')).not.toBeInTheDocument();
+      expect(screen.getByLabelText('Current page')).toHaveTextContent(path);
+    },
+  );
+
+  it('hides back controls in the app list while the Bureau workspace remains open', async () => {
     const user = userEvent.setup();
-    renderDrawer('/bureau/page-id');
+    renderDrawer('/bureau/page-id', true);
     await user.click(screen.getByRole('button', { name: 'All apps' }));
+
     expect(screen.getByText('All workspace apps')).toBeInTheDocument();
     expect(screen.queryByText('Page tree')).not.toBeInTheDocument();
-    await user.click(
-      screen.getByRole('button', { name: 'Back to My writing' }),
-    );
-    expect(screen.getByText('Page tree')).toBeInTheDocument();
-    expect(screen.queryByText('All workspace apps')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
   it('uses the same focus behavior for another installed app', () => {
@@ -204,9 +244,28 @@ describe('native focused app navigation', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('opens another app submenu from the app list', async () => {
+    const user = userEvent.setup();
+    renderDrawer('/bureau/page-id');
+    await user.click(screen.getByRole('button', { name: 'All apps' }));
+    await user.click(screen.getByRole('link', { name: 'Bilan' }));
+
+    expect(
+      screen.getByRole('button', { name: 'All apps' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: '/objects/invoices' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: '/objects/projects' }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText('All workspace apps')).not.toBeInTheDocument();
+  });
+
   it('keeps the workspace view on unrelated CRM routes', () => {
     renderDrawer('/objects/companies');
     expect(screen.getByText('All workspace apps')).toBeInTheDocument();
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
   it('keeps Bilan focused when an invoice is opened as a full page', () => {

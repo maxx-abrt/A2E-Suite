@@ -24,14 +24,15 @@ const StyledPage = styled.div`
   ${buildCssVariableDeclarations()}
   --font-base: 4px;
   --font-mono: 'A2E Azeret Mono';
-  --font-sans: 'A2E Host Grotesk';
-  --font-serif: 'A2E Aleo';
+  --font-sans: 'Plus Jakarta Sans';
+  --font-serif: 'Plus Jakarta Sans';
   -webkit-font-smoothing: antialiased;
   background: ${semanticColor.surface};
   color: ${semanticColor.ink};
   font-family: ${fontFamily('sans')};
   font-size: 16px;
   height: calc(100dvh / var(--t-zoom, 1));
+  overflow-wrap: anywhere;
   overflow-x: hidden;
   overflow-y: auto;
   scroll-behavior: smooth;
@@ -100,14 +101,17 @@ const StyledHeaderRow = styled.div`
   }
   nav a {
     color: ${semanticColor.inkMuted};
-    font-family: ${fontFamily('mono')};
+    font-family: ${fontFamily('sans')};
     font-size: 11px;
     text-decoration: none;
-    text-transform: uppercase;
+    font-weight: 500;
   }
   nav a:hover,
   nav a[aria-current] {
-    color: ${color('blue')};
+    color: ${color('black')};
+    text-decoration: underline;
+    text-decoration-color: ${color('pink')};
+    text-underline-offset: 6px;
   }
   ${mediaUp('lg')} {
     > nav {
@@ -130,7 +134,7 @@ const StyledAccount = styled.div`
 `;
 const StyledMobileMenu = styled.details`
   border-top: 1px solid ${semanticColor.line};
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily('sans')};
   font-size: 12px;
   summary {
     cursor: pointer;
@@ -194,7 +198,10 @@ const StyledFooterGrid = styled.div`
     text-decoration: none;
   }
   a:hover {
-    color: ${color('blue')};
+    color: ${color('black')};
+    text-decoration: underline;
+    text-decoration-color: ${color('pink')};
+    text-underline-offset: 6px;
   }
   ${mediaUp('md')} {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -204,7 +211,7 @@ const StyledCopyright = styled.div`
   border-top: 1px solid ${color('black-10')};
   display: flex;
   flex-wrap: wrap;
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily('sans')};
   font-size: 11px;
   gap: 16px;
   justify-content: space-between;

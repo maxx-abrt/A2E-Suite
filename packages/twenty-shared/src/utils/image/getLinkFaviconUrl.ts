@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { getLogoUrlFromDomainName } from './getLogoUrlFromDomainName';
 
 // Resolves a favicon URL from an arbitrary link by extracting the hostname
@@ -9,7 +11,7 @@ export const getLinkFaviconUrl = (
 ): string | undefined => {
   const trimmed = (link ?? '').trim();
 
-  if (!trimmed) {
+  if (!isNonEmptyString(trimmed) || /^[/.?#]/.test(trimmed)) {
     return undefined;
   }
 
@@ -19,7 +21,14 @@ export const getLinkFaviconUrl = (
       : `https://${trimmed}`;
 
   try {
-    const hostname = new URL(normalized).hostname;
+    const { hostname, protocol } = new URL(normalized);
+
+    if (
+      (protocol !== 'http:' && protocol !== 'https:') ||
+      !hostname.includes('.')
+    ) {
+      return undefined;
+    }
 
     return getLogoUrlFromDomainName(hostname);
   } catch {
