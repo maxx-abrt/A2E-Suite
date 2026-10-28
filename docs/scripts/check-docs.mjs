@@ -4,12 +4,14 @@ import { fileURLToPath } from 'node:url';
 
 export const MAINTAINED_DOCUMENTS = [
   'README.md',
+  'COPYRIGHT.md',
   'AGENTS.md',
   'PROMPT.md',
   'FINAL_PROMPT_SWARM.md',
   'PLAN.md',
   'DEPLOY.md',
   'docs/README.md',
+  'docs/assets/readme/README.md',
   'docs/NOTION_WORKSPACE_PLAN.md',
   'docs/plan/notion-workspace/01-foundations.md',
   'docs/plan/notion-workspace/02-databases.md',
@@ -64,7 +66,9 @@ export const checkMarkdown = (content, filePath, targetExists = existsSync) => {
     if (fence) continue;
 
     const prose = line.replace(/`+[^`]*`+/g, '');
-    const links = prose.matchAll(/\[[^\]]*\]\((?:<([^>]+)>|([^\s)]+))(?:\s+"[^"]*")?\)/g);
+    const links = prose.matchAll(
+      /\[[^\]]*\]\((?:<([^>]+)>|([^\s)]+))(?:\s+"[^"]*")?\)/g,
+    );
 
     for (const match of links) {
       const target = match[1] ?? match[2];
@@ -75,8 +79,12 @@ export const checkMarkdown = (content, filePath, targetExists = existsSync) => {
       localLinks += 1;
 
       try {
-        if (!targetExists(resolve(dirname(filePath), decodeURIComponent(path)))) {
-          errors.push(`${filePath}:${index + 1}: missing local target ${target}`);
+        if (
+          !targetExists(resolve(dirname(filePath), decodeURIComponent(path)))
+        ) {
+          errors.push(
+            `${filePath}:${index + 1}: missing local target ${target}`,
+          );
         }
       } catch {
         errors.push(`${filePath}:${index + 1}: invalid local target ${target}`);
@@ -91,7 +99,10 @@ export const checkMarkdown = (content, filePath, targetExists = existsSync) => {
   return { errors, localLinks };
 };
 
-export const checkDocuments = (rootDirectory, documents = MAINTAINED_DOCUMENTS) => {
+export const checkDocuments = (
+  rootDirectory,
+  documents = MAINTAINED_DOCUMENTS,
+) => {
   const errors = [];
   let localLinks = 0;
 
@@ -117,6 +128,8 @@ if (process.argv[1] && resolve(process.argv[1]) === SCRIPT_PATH) {
     console.error(result.errors.join('\n'));
     process.exitCode = 1;
   } else {
-    console.log(`PASS: ${result.documents} maintained documents, ${result.localLinks} local inline links, balanced code fences`);
+    console.log(
+      `PASS: ${result.documents} maintained documents, ${result.localLinks} local inline links, balanced code fences`,
+    );
   }
 }
