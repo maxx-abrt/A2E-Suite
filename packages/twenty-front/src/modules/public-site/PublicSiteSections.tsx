@@ -23,7 +23,7 @@ import { SectionShell } from '@/public-site/ui/SectionShell';
 import { SectionStack } from '@/public-site/ui/SectionStack';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode } from 'react';
+import { type ReactNode, useId } from 'react';
 import { Link } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import {
@@ -170,23 +170,19 @@ const StyledCard = styled.article`
 `;
 const StyledIllustration = styled.div`
   align-items: center;
-  background: ${color('neutral')};
+  box-sizing: border-box;
   display: flex;
-  height: 210px;
+  height: 320px;
   justify-content: center;
-  overflow: hidden;
+  padding: 24px;
   position: relative;
-  &[data-tone='green'] {
-    background: ${color('green')};
-    color: ${color('white')};
-  }
-  &[data-tone='pink'] {
-    background: ${color('pink')};
-    color: ${color('black')};
-  }
-  &[data-tone='yellow'] {
-    background: ${color('yellow')};
-    color: ${color('black')};
+  > img {
+    display: block;
+    height: 272px;
+    max-width: 100%;
+    object-fit: contain;
+    user-select: none;
+    width: 320px;
   }
 `;
 const StyledSplit = styled.div`
@@ -589,6 +585,8 @@ export const PublicSiteApplications = ({
   compact = false,
 }: PublicSiteApplicationsProps = {}) => {
   const { t, i18n } = useLingui();
+  // Thin ASCII strokes need opacity compensation at card size.
+  const illustrationFilterId = useId();
   const selectedApplication = PUBLIC_SITE_APPLICATIONS.find(
     (application) => application.id === applicationId,
   );
@@ -610,30 +608,51 @@ export const PublicSiteApplications = ({
             muted
           >{t`Applications are available according to your instance configuration and workspace installation.`}</Body>
         </StyledCenteredIntro>
+        <svg
+          width={0}
+          height={0}
+          aria-hidden="true"
+          focusable="false"
+          style={{ position: 'absolute' }}
+        >
+          <filter id={illustrationFilterId} colorInterpolationFilters="sRGB">
+            <feComponentTransfer>
+              <feFuncA type="linear" slope={3} />
+            </feComponentTransfer>
+          </filter>
+        </svg>
         <StyledGrid data-detail={!!applicationId} data-compact={compact}>
           {PUBLIC_SITE_APPLICATIONS.filter(
             (application) => !applicationId || application.id === applicationId,
           ).map(
-            (
-              {
-                id,
-                name,
-                Icon,
-                heading,
-                body,
-                details,
-                availability,
-                workflow,
-              },
-              index,
-            ) => (
+            ({
+              id,
+              name,
+              Icon,
+              illustration,
+              heading,
+              body,
+              details,
+              availability,
+              workflow,
+            }) => (
               <StyledCard id={id} key={id}>
                 {!compact && (
-                  <StyledIllustration
-                    data-tone={['green', 'pink', 'yellow'][index % 3]}
-                    aria-hidden="true"
-                  >
-                    <Icon size={144} aria-hidden={true} />
+                  <StyledIllustration aria-hidden="true">
+                    {illustration ? (
+                      <img
+                        src={illustration}
+                        style={{ filter: `url(#${illustrationFilterId})` }}
+                        alt=""
+                        width={1483}
+                        height={1478}
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                      />
+                    ) : (
+                      <Icon size={144} aria-hidden={true} />
+                    )}
                   </StyledIllustration>
                 )}
                 <div>

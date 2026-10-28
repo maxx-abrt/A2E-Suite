@@ -13,7 +13,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledSetup = styled.section`
   align-items: center;
   border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.md};
+  border-radius: ${themeCssVariables.border.radius.lg};
   display: flex;
   flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[3]};

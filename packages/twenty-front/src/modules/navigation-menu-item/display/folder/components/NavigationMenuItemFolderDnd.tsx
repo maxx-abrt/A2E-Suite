@@ -1,4 +1,4 @@
-import { A2eAppLogo } from '@/a2e-workspace/components/A2eAppLogo';
+import { A2E_APP_LOGO_ICONS } from '@/a2e-workspace/components/A2eAppLogo';
 import { useA2eApplicationLogo } from '@/a2e-workspace/hooks/useA2eApplicationLogo';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -6,7 +6,6 @@ import React, { Fragment, useCallback, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type IconComponentProps,
   IconChevronDown,
   IconChevronRight,
   IconFolder,
@@ -168,6 +167,9 @@ export const NavigationMenuItemFolderDnd = ({
 
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
   const applicationLogo = useA2eApplicationLogo(applicationId);
+  const ApplicationIcon = applicationLogo
+    ? A2E_APP_LOGO_ICONS[applicationLogo]
+    : undefined;
   const iconColor = isDefined(folderColor)
     ? folderColor
     : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER;
@@ -234,18 +236,7 @@ export const NavigationMenuItemFolderDnd = ({
   const header = headerOverride ?? (
     <NavigationDrawerItem
       label={folderName}
-      Icon={
-        applicationLogo
-          ? ({ size, className, style }: IconComponentProps) => (
-              <A2eAppLogo
-                size={size}
-                className={className}
-                style={style}
-                src={applicationLogo}
-              />
-            )
-          : FolderIcon
-      }
+      Icon={ApplicationIcon ?? FolderIcon}
       iconColor={applicationLogo ? undefined : iconColor}
       active={
         (!isOpen && hasActiveChild) ||

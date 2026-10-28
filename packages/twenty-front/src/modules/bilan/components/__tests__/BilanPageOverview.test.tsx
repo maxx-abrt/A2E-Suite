@@ -22,6 +22,9 @@ const mockOpenTemplates = jest.fn();
 jest.mock('@/bilan/components/BilanProfileSetup', () => ({
   BilanProfileSetup: () => null,
 }));
+jest.mock('@/bilan/components/BilanPulse', () => ({
+  BilanPulse: () => <div>Financial pulse</div>,
+}));
 jest.mock('@/bilan/hooks/useBilanPageLayouts');
 jest.mock('@/object-metadata/hooks/useReadableObjectMetadataItems', () => ({
   useReadableObjectMetadataItems: jest.fn(),
@@ -95,6 +98,7 @@ it('opens the native index using workspace metadata, including customized object
     screen.getByRole('link', { name: /Organization profile/ }),
   ).toHaveAttribute('href', '/objects/myOrganizations');
   expect(screen.getByText('Pending finance items')).toBeInTheDocument();
+  expect(screen.getByText('Financial pulse')).toBeInTheDocument();
 });
 
 it('offers the existing finance template gallery', async () => {

@@ -1,5 +1,6 @@
 import {
   IconAgenda,
+  IconArchive,
   IconBilan,
   IconSyna,
 } from '@/a2e-workspace/components/A2eAppLogo';
@@ -7,7 +8,6 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { type TemplateDescriptorCategory } from 'twenty-shared/application';
 import {
-  IconArchive,
   IconBriefcase,
   IconFileText,
   IconSettingsAutomation,

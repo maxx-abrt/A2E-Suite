@@ -7,4 +7,5 @@ export const A2E_APPLICATION_LOGOS: Record<string, string> = {
   'e2dce399-87f1-4548-b307-5f368b4d5dd4': A2E_BRAND_LOGOS.bureau,
   'c31e0000-0000-4000-8000-000000000000': A2E_BRAND_LOGOS.syna,
   'b11a0000-0000-4000-8000-000000000001': A2E_BRAND_LOGOS.bilan,
+  'b11cd01f-75de-4acd-8e67-0e9c484fde02': A2E_BRAND_LOGOS.archive,
 };

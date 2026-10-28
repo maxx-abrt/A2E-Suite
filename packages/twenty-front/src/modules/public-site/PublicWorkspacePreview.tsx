@@ -1,6 +1,7 @@
 import {
   IconA2eSuite,
   IconAgenda,
+  IconArchive,
   IconBilan,
   IconBureau,
   IconSyna,
@@ -20,7 +21,6 @@ import {
   IconFileText,
   IconChevronDown,
   IconChevronRight,
-  IconFolder,
   IconMoon,
   IconSun,
   IconUsers,
@@ -266,7 +266,7 @@ export const PublicWorkspacePreview = ({
       Icon: IconAgenda,
     },
     { id: 'bilan', label: t`Bilan`, page: t`Sales documents`, Icon: IconBilan },
-    { id: 'archive', label: t`Archive`, page: t`All files`, Icon: IconFolder },
+    { id: 'archive', label: t`Archive`, page: t`All files`, Icon: IconArchive },
     { id: 'crm', label: t`CRM`, page: t`Client workspace`, Icon: IconUsers },
     {
       id: 'syna',

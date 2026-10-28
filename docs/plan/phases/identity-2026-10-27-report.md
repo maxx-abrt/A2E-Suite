@@ -53,3 +53,14 @@ alias steps directly. Shared runtime exports were verified before dependent chec
 Production release and live acceptance must be recorded separately from these
 local results. Coolify read-only inspection confirmed the existing application
 serves both apex and www domains and was healthy before release preparation.
+
+## 2026-10-28 14:17 UTC — Codex [executor]
+**Task:** User-pinned logo refresh · **Slice:** supplied ASCII card artwork and Archive identity · **Claim:** done-for-review
+**Base:** `069ebe80`; local macOS / Node 24.20.0; working tree clean at entry.
+**Changed:** Six transparent PNG assets, shared logo/ASCII constants, public cards/catalogue/preview, onboarding/template catalogue and both sidebar folder renderers; logo ownership and DOM-persistence tests; branding/public-site docs.
+**Decisions:** Preserve supplied PNG bytes/colors. Large cards contain the ASCII art without colored backplates; static alpha compensation keeps thin strokes visible at card scale. Small marks stay compact. Archive resolves by its universal application identifier; stable icon components prevent remounts on refreshed sidebar data, with no polling/query added. CRM retains its semantic icon because no CRM artwork was supplied.
+**Checks:** Frontend focused Jest (six explicit suites) → 56/56; direct `npx tsgo -p tsconfig.json --noEmit` → exit 0; typed oxlint and oxfmt on all 13 touched/new TS/TSX files → clean. Production public-site Vite preview build → exit 0; six asset byte-equality checks and ASCII alpha checks → pass. Docs checker/tests → 37 documents / 356 links and 6/6; whitespace review → clean.
+**Visual:** Local production preview at 1440px: all ten card images loaded, all six illustration panels transparent, complete silhouettes; 375px and 320px: no horizontal overflow. Archive detail: ASCII and compact marks loaded, no overflow; browser error log empty. Captures saved outside the repository.
+**Missing for tick:** Authenticated installed-app sidebar journey and production deployment remain unverified; no app stack was launched, database modified, PLAN.md edited or commit created.
+**Do not redo:** Shared Archive identity, cached workspace lookup and stable sidebar component mapping; retain semantic folder/file actions and third-party branding.
+**Next:** Maintainer review and normal release/authenticated sidebar acceptance.

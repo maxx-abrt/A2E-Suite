@@ -25,7 +25,7 @@ import { ViewKey, ViewType } from '~/generated-metadata/graphql';
 
 const StyledSection = styled.section`
   border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.md};
+  border-radius: ${themeCssVariables.border.radius.lg};
   min-width: 0;
   overflow: hidden;
 `;

@@ -55,7 +55,7 @@ Those require the normal running-app acceptance checks.
 
 ## Supplied identity and legal pages (2026-10-27)
 
-The Suite, Bureau, Bilan, Agenda and Syna artwork is served locally from
+The Suite, Bureau, Bilan, Agenda, Archive and Syna artwork is served locally from
 `twenty-front/public/branding`. First-party application marks resolve through
 stable universal identifiers, including Bureau's constituent applications;
 renaming a folder or translating its label does not change its logo. Personal
@@ -144,3 +144,17 @@ controls. Regenerate the static frames from the repository root with
 `node packages/twenty-front/scripts/generate-public-ascii.mjs`, then format
 `src/modules/public-site/art/PublicAsciiFrames.ts` in the frontend package.
 No renderer, animation loop or geometry calculation runs in the browser.
+
+## Application artwork (2026-10-28)
+
+Large application cards use the supplied transparent ASCII PNGs for Bureau,
+Agenda, Bilan, Archive and Syna, contained on the page surface without colored
+backplates. Small card marks, the application strip and navigation retain the
+compact transparent logos. CRM keeps its semantic people icon because no CRM
+artwork was supplied. Archive also uses its compact mark in onboarding, the
+application catalogue, the template gallery and the public workspace preview.
+
+Archive ownership resolves through the installed application's universal
+identifier, including renamed workspace installations. Sidebar folders use
+stable logo components with the existing cached workspace state; they do not
+poll or fetch application metadata to resolve a logo.

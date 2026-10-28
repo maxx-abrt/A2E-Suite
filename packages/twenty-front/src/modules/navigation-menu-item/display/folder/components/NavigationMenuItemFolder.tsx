@@ -1,13 +1,8 @@
-import { A2eAppLogo } from '@/a2e-workspace/components/A2eAppLogo';
+import { A2E_APP_LOGO_ICONS } from '@/a2e-workspace/components/A2eAppLogo';
 import { useA2eApplicationLogo } from '@/a2e-workspace/hooks/useA2eApplicationLogo';
 import { Suspense, lazy, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type IconComponentProps,
-  IconChevronDown,
-  IconChevronRight,
-  useIcons,
-} from 'twenty-ui/icon';
+import { IconChevronDown, IconChevronRight, useIcons } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -128,6 +123,9 @@ const NavigationMenuItemFolderReadOnlyContent = ({
   const { theme } = useContext(ThemeContext);
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
   const applicationLogo = useA2eApplicationLogo(applicationId);
+  const ApplicationIcon = applicationLogo
+    ? A2E_APP_LOGO_ICONS[applicationLogo]
+    : undefined;
 
   const { isOpen, handleToggle, hasActiveChild, activeChildIndex } =
     useNavigationMenuItemFolderOpenState({
@@ -140,18 +138,7 @@ const NavigationMenuItemFolderReadOnlyContent = ({
       header={
         <NavigationDrawerItem
           label={folderName}
-          Icon={
-            applicationLogo
-              ? ({ size, className, style }: IconComponentProps) => (
-                  <A2eAppLogo
-                    size={size}
-                    className={className}
-                    style={style}
-                    src={applicationLogo}
-                  />
-                )
-              : FolderIcon
-          }
+          Icon={ApplicationIcon ?? FolderIcon}
           iconColor={
             applicationLogo
               ? undefined

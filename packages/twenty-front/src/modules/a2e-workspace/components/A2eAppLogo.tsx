@@ -74,3 +74,22 @@ export const IconSyna: IconComponent = ({ size, className, style }) => (
     src={A2E_BRAND_LOGOS.syna}
   />
 );
+
+export const IconArchive: IconComponent = ({ size, className, style }) => (
+  <A2eAppLogo
+    size={size}
+    className={className}
+    style={style}
+    src={A2E_BRAND_LOGOS.archive}
+  />
+);
+
+// Stable component identities keep sidebar marks mounted when workspace data updates.
+export const A2E_APP_LOGO_ICONS: Partial<Record<string, IconComponent>> = {
+  [A2E_BRAND_LOGOS.suite]: IconA2eSuite,
+  [A2E_BRAND_LOGOS.bureau]: IconBureau,
+  [A2E_BRAND_LOGOS.bilan]: IconBilan,
+  [A2E_BRAND_LOGOS.agenda]: IconAgenda,
+  [A2E_BRAND_LOGOS.syna]: IconSyna,
+  [A2E_BRAND_LOGOS.archive]: IconArchive,
+};
