@@ -135,6 +135,7 @@ const BilanInvoiceUploadAction = ({
       title={isUploading ? t`Uploading invoice…` : t`Upload invoice`}
       ariaLabel={t`Upload invoice`}
       Icon={IconUpload}
+      size="small"
       disabled={isUploading}
       onClick={handleUpload}
     />

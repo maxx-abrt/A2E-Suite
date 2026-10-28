@@ -1,0 +1,82 @@
+/* oxlint-disable twenty/no-hardcoded-colors */
+// Bilan's chart accents stay richer than the neutral surface tokens: the
+// dashboard needs to be readable at a glance without turning into a pastel
+// wash. These hues are mixed into theme-neutral surfaces for tiles and kept
+// solid only on the two deliberately coloured hero cards.
+export const BILAN_PULSE_PALETTE = {
+  cashIncome: '#C8E06A',
+  cashExpense: '#FF9D7A',
+  onAccent: {
+    positive: '#D6E98A',
+    negative: '#FF9D7A',
+    warning: '#F0C56A',
+    neutral: 'rgba(248, 242, 231, 0.68)',
+  },
+  gauge: {
+    onTrack: '#C8E06A',
+    warning: '#F0C56A',
+    over: '#FF8A70',
+  },
+  invoice: {
+    collected: '#6F7D3A',
+    due: '#4F63B5',
+    overdue: '#C95A45',
+  },
+  funding: {
+    shortlisted: '#6B6B73',
+    preparing: '#4F63B5',
+    submitted: '#7A4E88',
+    granted: '#6F7D3A',
+  },
+  treemap: [
+    '#4F63B5',
+    '#6F7D3A',
+    '#B45D3A',
+    '#7A4E88',
+    '#8F6A1F',
+    '#3E7C74',
+    '#8A5A44',
+    '#4A4A52',
+  ],
+  ocean: {
+    from: '#16204A',
+    via: '#263B7A',
+    to: '#4F63B5',
+  },
+  ink: {
+    from: '#14161D',
+    via: '#1E2230',
+    to: '#2C3242',
+  },
+  cream: '#F8F2E7',
+  creamMedium: 'rgba(248, 242, 231, 0.86)',
+  creamMuted: 'rgba(248, 242, 231, 0.72)',
+  creamSoft: 'rgba(248, 242, 231, 0.55)',
+  creamFaint: 'rgba(248, 242, 231, 0.5)',
+  accentBorder: 'rgba(255, 255, 255, 0.14)',
+  accentBorderHover: 'rgba(255, 255, 255, 0.28)',
+  accentGlowStrong: 'rgba(200, 224, 106, 0.22)',
+  accentGlowSoft: 'rgba(200, 224, 106, 0.12)',
+  accentRimShadow:
+    'inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.05)',
+  glassSurface: 'rgba(255, 255, 255, 0.06)',
+  glassSurfaceSoft: 'rgba(255, 255, 255, 0.04)',
+  glassBorder: 'rgba(255, 255, 255, 0.14)',
+  glassBorderSoft: 'rgba(255, 255, 255, 0.12)',
+  waveGrid: 'rgba(248, 242, 231, 0.1)',
+  waveBaseline: 'rgba(248, 242, 231, 0.22)',
+  waveHover: 'rgba(248, 242, 231, 0.34)',
+  waveDotBorder: 'rgba(10, 16, 36, 0.94)',
+  tooltipInk: '#16204A',
+  tooltipInkMuted: 'rgba(22, 32, 74, 0.6)',
+  tooltipInkBorder: 'rgba(22, 32, 74, 0.14)',
+  tooltipShadow: '0 14px 32px -16px rgba(0, 0, 0, 0.65)',
+  tileShadow: '0 12px 24px -18px rgba(0, 0, 0, 0.8)',
+  tileBorder: 'rgba(255, 255, 255, 0.14)',
+  tileChip: 'rgba(0, 0, 0, 0.28)',
+  tileDotMixTarget: '#f8f2e7',
+  inkBlack: '#000000',
+  progressTrack: 'rgba(255, 255, 255, 0.12)',
+  gaugeInactive: 'rgba(255, 255, 255, 0.16)',
+  gaugeThreshold: 'rgba(248, 242, 231, 0.5)',
+} as const;

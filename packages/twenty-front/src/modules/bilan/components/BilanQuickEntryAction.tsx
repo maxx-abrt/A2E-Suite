@@ -43,6 +43,7 @@ export const BilanQuickEntryAction = ({
       title={t`Add transaction`}
       ariaLabel={t`Add transaction`}
       Icon={IconPlus}
+      size="small"
       onClick={() =>
         openFrontComponentInSidePanel({
           frontComponentId: frontComponent.id,
