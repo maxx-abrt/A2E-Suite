@@ -15,8 +15,14 @@ const StyledHeader = styled.header`
 `;
 
 const StyledHeaderIcon = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
+  align-items: center;
+  background: ${themeCssVariables.accent.quaternary};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
+  height: 28px;
+  justify-content: center;
+  width: 28px;
 `;
 
 const StyledTitle = styled.h2`

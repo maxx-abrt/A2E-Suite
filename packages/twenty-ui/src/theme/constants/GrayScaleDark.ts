@@ -1,14 +1,16 @@
+import { A2E_BRAND_COLORS } from './A2eBrandColors';
+
 export const GRAY_SCALE_DARK = {
-  gray1: 'color(display-p3 0.09 0.09 0.09)',
-  gray2: 'color(display-p3 0.106 0.106 0.106)',
-  gray3: 'color(display-p3 0.098 0.098 0.098)',
-  gray4: 'color(display-p3 0.114 0.114 0.114)',
-  gray5: 'color(display-p3 0.133 0.133 0.133)',
-  gray6: 'color(display-p3 0.282 0.282 0.282)',
-  gray7: 'color(display-p3 0.298 0.298 0.298)',
-  gray8: 'color(display-p3 0.4 0.4 0.4)',
-  gray9: 'color(display-p3 0.506 0.506 0.506)',
-  gray10: 'color(display-p3 0.482 0.482 0.482)',
-  gray11: 'color(display-p3 0.702 0.702 0.702)',
-  gray12: 'color(display-p3 0.922 0.922 0.922)',
+  gray1: A2E_BRAND_COLORS.charcoal,
+  gray2: `color-mix(in srgb, ${A2E_BRAND_COLORS.cream} 3%, ${A2E_BRAND_COLORS.charcoal})`,
+  gray3: `color-mix(in srgb, ${A2E_BRAND_COLORS.cream} 5%, ${A2E_BRAND_COLORS.charcoal})`,
+  gray4: `color-mix(in srgb, ${A2E_BRAND_COLORS.cream} 8%, ${A2E_BRAND_COLORS.charcoal})`,
+  gray5: `color-mix(in srgb, ${A2E_BRAND_COLORS.cream} 12%, ${A2E_BRAND_COLORS.charcoal})`,
+  gray6: `color-mix(in srgb, ${A2E_BRAND_COLORS.cream} 20%, ${A2E_BRAND_COLORS.charcoal})`,
+  gray7: `color-mix(in srgb, ${A2E_BRAND_COLORS.cream} 28%, ${A2E_BRAND_COLORS.charcoal})`,
+  gray8: `color-mix(in srgb, ${A2E_BRAND_COLORS.cream} 42%, ${A2E_BRAND_COLORS.charcoal})`,
+  gray9: `color-mix(in srgb, ${A2E_BRAND_COLORS.cream} 64%, ${A2E_BRAND_COLORS.charcoal})`,
+  gray10: `color-mix(in srgb, ${A2E_BRAND_COLORS.cream} 70%, ${A2E_BRAND_COLORS.charcoal})`,
+  gray11: `color-mix(in srgb, ${A2E_BRAND_COLORS.cream} 80%, ${A2E_BRAND_COLORS.charcoal})`,
+  gray12: A2E_BRAND_COLORS.cream,
 };

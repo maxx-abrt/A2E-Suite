@@ -8,17 +8,14 @@ import {
   FONT_WEIGHT,
   fontFamily,
   fontSize,
-  radius,
   spacing,
   DURATION,
   REDUCED_MOTION,
 } from '@/public-site/tokens';
 
-import { ButtonShape } from './ButtonShape';
-
 const BUTTON_HEIGHT_PX: Record<ButtonSize, number> = {
-  regular: 40,
-  small: 32,
+  regular: 46,
+  small: 36,
 };
 
 // Appearance is fully CSS-variable driven so a future surface scheme can
@@ -32,11 +29,13 @@ const buttonClassName = css`
   --button-stroke: transparent;
 
   align-items: center;
-  background: none;
-  border: none;
+  background: var(--button-fill);
+  border: 1px solid var(--button-stroke);
+  border-radius: 999px;
+  corner-shape: round;
   cursor: pointer;
   display: inline-flex;
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily('sans')};
   font-size: ${fontSize(3)};
   font-weight: ${FONT_WEIGHT.medium};
   height: ${BUTTON_HEIGHT_PX.regular}px;
@@ -45,7 +44,11 @@ const buttonClassName = css`
   padding: 0 ${spacing(5)};
   position: relative;
   text-decoration: none;
-  text-transform: uppercase;
+  transition: transform 180ms ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
 
   &[data-size='small'] {
     height: ${BUTTON_HEIGHT_PX.small}px;
@@ -54,14 +57,12 @@ const buttonClassName = css`
 
   &[data-variant='filled'] {
     --button-fill: ${color('black')};
-    --button-hover-fill: ${color('black-hover')};
+    --button-hover-fill: ${color('pink')};
     --button-label: ${color('white')};
-    --button-label-hover: ${color('white')};
+    --button-label-hover: ${color('black')};
   }
 
-  /* Dark surfaces restyle via context, never via props. Filled hovers
-     shift 10% toward the opposite pole;
-     the old site's full invert melted the button into the section. */
+  // Dark sections keep the same cream and charcoal pair.
   [data-scheme='dark'] &[data-variant='filled'] {
     --button-fill: ${color('white')};
     --button-hover-fill: ${color('white-hover')};
@@ -78,9 +79,9 @@ const buttonClassName = css`
 
   [data-scheme='dark'] [data-scheme='light'] &[data-variant='filled'] {
     --button-fill: ${color('black')};
-    --button-hover-fill: ${color('black-hover')};
+    --button-hover-fill: ${color('pink')};
     --button-label: ${color('white')};
-    --button-label-hover: ${color('white')};
+    --button-label-hover: ${color('black')};
   }
 
   [data-scheme='dark'] [data-scheme='light'] &[data-variant='outlined'] {
@@ -90,19 +91,10 @@ const buttonClassName = css`
     --button-stroke: ${color('black')};
   }
 
-  /* Outlined hovers are a 5% ink wash. The shape paints OPAQUE and the
-     layer carries the opacity, so the wash composites once — segment
-     overlaps can never double into seams, on any surface. */
   &[data-variant='outlined'] {
     --button-hover-fill: ${color('black')};
     --button-hover-opacity: 0.05;
     --button-stroke: ${color('black')};
-  }
-
-  /* The stroke stays visible through the hover fill: the base shape is
-     raised above the sliding layer (menu LOG IN, FAQ TALK TO US). */
-  &[data-variant='outlined'] > span[aria-hidden]:first-child {
-    z-index: 1;
   }
 
   &:focus-visible {
@@ -119,7 +111,7 @@ const buttonClassName = css`
     --button-fill: var(--button-hover-fill);
     --button-stroke: transparent;
 
-    border-radius: ${radius(1)};
+    border-radius: inherit;
 
     /* Clip the sliding fill to the button's corner radius so trailing
        corners stay rounded mid-transition. */
@@ -130,6 +122,7 @@ const buttonClassName = css`
     position: absolute;
 
     > span {
+      background: var(--button-fill);
       display: block;
       height: 100%;
       position: relative;
@@ -189,7 +182,6 @@ export function Button({
   variant = 'filled',
   onClick,
 }: ButtonProps) {
-  const heightPx = BUTTON_HEIGHT_PX[size];
   // mailto:/tel: open in place (mail client, dialer) — forcing target=_blank
   // would leave an orphan blank tab, so they render as a plain anchor.
   const isProtocolLink =
@@ -206,11 +198,8 @@ export function Button({
 
   const inner = (
     <>
-      <ButtonShape heightPx={heightPx} outlined={variant === 'outlined'} />
       <span data-slot="hover-layer">
-        <span>
-          <ButtonShape heightPx={heightPx} />
-        </span>
+        <span />
       </span>
       <span data-slot="content">
         {leadingIcon}

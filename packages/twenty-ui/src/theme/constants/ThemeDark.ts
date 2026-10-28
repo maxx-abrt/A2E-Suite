@@ -17,6 +17,7 @@ export const THEME_DARK: typeof THEME_LIGHT = {
   ...THEME_COMMON,
   ...{
     accent: ACCENT_DARK,
+    buttons: { secondaryTextColor: FONT_DARK.color.primary },
     background: BACKGROUND_DARK,
     blur: BLUR_DARK,
     border: BORDER_DARK,

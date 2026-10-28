@@ -41,12 +41,37 @@ const StyledContainer = styled.div`
   padding: ${themeCssVariables.spacing[8]} ${themeCssVariables.spacing[8]}
     ${themeCssVariables.spacing[10]};
   width: 100%;
+
+  @media (max-width: 600px) {
+    padding: ${themeCssVariables.spacing[5]};
+  }
 `;
 
 const StyledHeader = styled.header`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
+  padding-bottom: ${themeCssVariables.spacing[6]};
+  position: relative;
+
+  &::after {
+    background: linear-gradient(
+      90deg,
+      ${themeCssVariables.color.red} 0% 16.66%,
+      ${themeCssVariables.color.yellow} 16.66% 33.33%,
+      ${themeCssVariables.color.orange} 33.33% 50%,
+      ${themeCssVariables.color.green} 50% 66.66%,
+      ${themeCssVariables.color.blue} 66.66% 83.33%,
+      ${themeCssVariables.color.pink} 83.33% 100%
+    );
+    border-radius: ${themeCssVariables.border.radius.pill};
+    bottom: -2px;
+    content: '';
+    height: 3px;
+    left: 0;
+    width: 96px;
+  }
 `;
 
 const StyledToday = styled.span`
@@ -59,8 +84,10 @@ const StyledToday = styled.span`
 
 const StyledGreeting = styled.h1`
   color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.xl};
+  font-size: clamp(24px, 3vw, 32px);
   font-weight: ${themeCssVariables.font.weight.semiBold};
+  letter-spacing: -0.04em;
+  line-height: 1.3;
   margin: 0;
 `;
 
@@ -73,7 +100,7 @@ const StyledDate = styled.p`
 const StyledGrid = styled.div`
   display: grid;
   gap: ${themeCssVariables.spacing[4]};
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
 `;
 
 // Desktop Home: the widgets the removed right dock used to host (D-Shell),

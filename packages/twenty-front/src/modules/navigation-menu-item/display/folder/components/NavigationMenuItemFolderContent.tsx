@@ -107,9 +107,9 @@ export const NavigationMenuItemFolderContent = ({
           navigationMenuItemObjectNameSingular: objectNameSingular ?? '',
         })}
         label={label}
-        Icon={() => (
+        iconNode={
           <NavigationMenuItemIcon navigationMenuItem={navigationMenuItem} />
-        )}
+        }
         rightOptions={
           !hideBackButton ? (
             <LightIconButton

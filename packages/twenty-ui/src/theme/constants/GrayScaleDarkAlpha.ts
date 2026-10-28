@@ -1,14 +1,16 @@
+import { A2E_BRAND_COLORS } from './A2eBrandColors';
+
 export const GRAY_SCALE_DARK_ALPHA = {
-  gray1: 'color(display-p3 1 1 1 / 0.031)',
-  gray2: 'color(display-p3 1 1 1 / 0.059)',
-  gray3: 'color(display-p3 1 1 1 / 0.047)',
-  gray4: 'color(display-p3 1 1 1 / 0.071)',
-  gray5: 'color(display-p3 1 1 1 / 0.102)',
-  gray6: 'color(display-p3 1 1 1 / 0.114)',
-  gray7: 'color(display-p3 1 1 1 / 0.141)',
-  gray8: 'color(display-p3 1 1 1 / 0.22)',
-  gray9: 'color(display-p3 1 1 1 / 0.427)',
-  gray10: 'color(display-p3 1 1 1 / 0.478)',
-  gray11: 'color(display-p3 1 1 1 / 0.565)',
-  gray12: 'color(display-p3 1 1 1 / 0.91)',
+  gray1: `${A2E_BRAND_COLORS.cream}08`,
+  gray2: `${A2E_BRAND_COLORS.cream}0F`,
+  gray3: `${A2E_BRAND_COLORS.cream}0C`,
+  gray4: `${A2E_BRAND_COLORS.cream}12`,
+  gray5: `${A2E_BRAND_COLORS.cream}1A`,
+  gray6: `${A2E_BRAND_COLORS.cream}1D`,
+  gray7: `${A2E_BRAND_COLORS.cream}24`,
+  gray8: `${A2E_BRAND_COLORS.cream}38`,
+  gray9: `${A2E_BRAND_COLORS.cream}6D`,
+  gray10: `${A2E_BRAND_COLORS.cream}7A`,
+  gray11: `${A2E_BRAND_COLORS.cream}90`,
+  gray12: `${A2E_BRAND_COLORS.cream}E8`,
 };

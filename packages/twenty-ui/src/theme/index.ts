@@ -7,6 +7,7 @@
  *                              |___/
  */
 
+export { A2E_BRAND_COLORS } from './constants/A2eBrandColors';
 export { ACCENT_DARK } from './constants/AccentDark';
 export { ACCENT_LIGHT } from './constants/AccentLight';
 export type { AnimationDuration } from './constants/Animation';

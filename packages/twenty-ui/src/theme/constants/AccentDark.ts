@@ -1,4 +1,4 @@
-import * as RadixColors from '@radix-ui/colors';
+import { A2E_BRAND_COLORS } from './A2eBrandColors';
 import { COLOR_DARK } from '@ui/theme/constants/ColorsDark';
 
 export const ACCENT_DARK = {
@@ -8,16 +8,16 @@ export const ACCENT_DARK = {
   quaternary: COLOR_DARK.blue2,
   accent3570: COLOR_DARK.blue8,
   accent4060: COLOR_DARK.blue8,
-  accent1: RadixColors.indigoDarkP3.indigo1,
-  accent2: RadixColors.indigoDarkP3.indigo2,
-  accent3: RadixColors.indigoDarkP3.indigo3,
-  accent4: RadixColors.indigoDarkP3.indigo4,
-  accent5: RadixColors.indigoDarkP3.indigo5,
-  accent6: RadixColors.indigoDarkP3.indigo6,
-  accent7: RadixColors.indigoDarkP3.indigo7,
-  accent8: RadixColors.indigoDarkP3.indigo8,
-  accent9: RadixColors.indigoDarkP3.indigo9,
-  accent10: RadixColors.indigoDarkP3.indigo10,
-  accent11: RadixColors.indigoDarkP3.indigo11,
-  accent12: RadixColors.indigoDarkP3.indigo12,
+  accent1: `color-mix(in srgb, ${A2E_BRAND_COLORS.lavender} 2%, ${A2E_BRAND_COLORS.charcoal})`,
+  accent2: `color-mix(in srgb, ${A2E_BRAND_COLORS.lavender} 4%, ${A2E_BRAND_COLORS.charcoal})`,
+  accent3: `color-mix(in srgb, ${A2E_BRAND_COLORS.lavender} 8%, ${A2E_BRAND_COLORS.charcoal})`,
+  accent4: `color-mix(in srgb, ${A2E_BRAND_COLORS.lavender} 12%, ${A2E_BRAND_COLORS.charcoal})`,
+  accent5: `color-mix(in srgb, ${A2E_BRAND_COLORS.lavender} 18%, ${A2E_BRAND_COLORS.charcoal})`,
+  accent6: `color-mix(in srgb, ${A2E_BRAND_COLORS.lavender} 26%, ${A2E_BRAND_COLORS.charcoal})`,
+  accent7: `color-mix(in srgb, ${A2E_BRAND_COLORS.lavender} 38%, ${A2E_BRAND_COLORS.charcoal})`,
+  accent8: `color-mix(in srgb, ${A2E_BRAND_COLORS.lavender} 60%, ${A2E_BRAND_COLORS.charcoal})`,
+  accent9: A2E_BRAND_COLORS.lavender,
+  accent10: A2E_BRAND_COLORS.lavender,
+  accent11: A2E_BRAND_COLORS.cream,
+  accent12: A2E_BRAND_COLORS.cream,
 };

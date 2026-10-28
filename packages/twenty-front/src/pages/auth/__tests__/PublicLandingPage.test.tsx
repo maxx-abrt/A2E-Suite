@@ -39,6 +39,22 @@ const renderLanding = (path = '/') =>
   );
 
 describe('public account landing', () => {
+  const originalPointerEvent = window.PointerEvent;
+
+  beforeAll(() => {
+    Object.defineProperty(window, 'PointerEvent', {
+      configurable: true,
+      value: MouseEvent,
+    });
+  });
+
+  afterAll(() => {
+    Object.defineProperty(window, 'PointerEvent', {
+      configurable: true,
+      value: originalPointerEvent,
+    });
+  });
+
   beforeEach(() => {
     jest.mocked(useIsLogged).mockReturnValue(false);
     jest
@@ -90,10 +106,11 @@ describe('public account landing', () => {
   it('lets visitors explore the preview with pointer and keyboard', async () => {
     renderLanding();
     const user = userEvent.setup();
-    await user.click(screen.getByRole('tab', { name: 'Projects' }));
-    expect(
-      screen.getByRole('tabpanel', { name: 'Projects' }),
-    ).toHaveTextContent('Small steps. Real progress.');
+    await user.click(screen.getByRole('button', { name: 'Projects' }));
+    expect(screen.getByRole('tabpanel', { name: 'Bureau' })).toHaveTextContent(
+      'Team handbook',
+    );
+    await user.click(screen.getByRole('tab', { name: 'Bureau' }));
     await user.keyboard('{ArrowRight}');
     expect(screen.getByRole('tab', { name: 'Agenda' })).toHaveFocus();
     expect(screen.getByRole('tabpanel', { name: 'Agenda' })).toHaveTextContent(
@@ -111,6 +128,7 @@ describe('public account landing', () => {
   it('opens sample notes and returns to their parent without losing task choices', async () => {
     renderLanding();
     const user = userEvent.setup();
+    await user.click(screen.getByRole('button', { name: 'Pages' }));
     await user.click(screen.getByRole('button', { name: 'Project brief' }));
     expect(screen.getByRole('tabpanel', { name: 'Bureau' })).toHaveTextContent(
       'Our goal: create a useful team handbook.',
@@ -123,18 +141,18 @@ describe('public account landing', () => {
       screen.getByRole('button', { name: 'Back to parent page' }),
     );
     expect(screen.getByRole('button', { name: 'Project brief' })).toBeVisible();
-    await user.click(screen.getByRole('tab', { name: 'Projects' }));
+    await user.click(screen.getByRole('button', { name: 'Projects' }));
     const task = screen.getByRole('checkbox', {
       name: 'Gather the first ideas',
     });
     expect(task).not.toBeChecked();
     await user.click(task);
     expect(screen.getByRole('tabpanel')).toHaveTextContent(
-      '2 of 3 steps complete',
+      '2 of 5 steps complete',
     );
     await user.click(screen.getByRole('tab', { name: 'Archive' }));
     expect(screen.getByRole('tabpanel')).toHaveTextContent('Team handbook.pdf');
-    await user.click(screen.getByRole('tab', { name: 'Projects' }));
+    await user.click(screen.getByRole('button', { name: 'Projects' }));
     expect(
       screen.getByRole('checkbox', { name: 'Gather the first ideas' }),
     ).toBeChecked();
@@ -181,9 +199,10 @@ describe('public account landing', () => {
     'opens the %s detail page with its own example selected',
     (applicationId) => {
       renderLanding(`/apps/${applicationId}`);
-      expect(screen.getByRole('tab', { selected: true })).toHaveAttribute(
-        'id',
-        `preview-tab-${applicationId}`,
+      expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
+        applicationId === 'crm'
+          ? 'CRM'
+          : applicationId[0].toUpperCase() + applicationId.slice(1),
       );
       expect(
         within(
@@ -192,6 +211,24 @@ describe('public account landing', () => {
       ).toBeVisible();
     },
   );
+
+  it('selects the matching example when navigating between application pages', async () => {
+    renderLanding('/apps/bureau');
+    await userEvent
+      .setup()
+      .click(
+        screen.getByRole('link', { name: 'Applications', current: false }),
+      );
+    await userEvent
+      .setup()
+      .click(screen.getByRole('link', { name: 'Explore Bilan' }));
+    expect(
+      screen.getByRole('tab', { name: 'Bilan', selected: true }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole('table', { name: 'Sales documents' }),
+    ).toBeVisible();
+  });
 
   it.each(PUBLIC_SITE_ROUTES.map((page) => page.path))(
     'supports direct entry to %s without an account',

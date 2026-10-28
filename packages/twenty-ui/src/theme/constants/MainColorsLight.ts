@@ -1,35 +1,35 @@
-import * as RadixColors from '@radix-ui/colors';
+import { A2E_BRAND_COLORS } from './A2eBrandColors';
 import { GRAY_SCALE_LIGHT } from './GrayScaleLight';
 
 export const MAIN_COLORS_LIGHT = {
-  red: RadixColors.redP3.red9,
-  ruby: RadixColors.rubyP3.ruby9,
-  crimson: RadixColors.crimsonP3.crimson9,
-  tomato: RadixColors.tomatoP3.tomato9,
+  red: A2E_BRAND_COLORS.red,
+  ruby: A2E_BRAND_COLORS.red,
+  crimson: A2E_BRAND_COLORS.rose,
+  tomato: A2E_BRAND_COLORS.red,
 
-  orange: RadixColors.orangeP3.orange9,
-  amber: RadixColors.amberP3.amber9,
-  yellow: RadixColors.yellowP3.yellow9,
+  orange: A2E_BRAND_COLORS.orange,
+  amber: A2E_BRAND_COLORS.amber,
+  yellow: A2E_BRAND_COLORS.amber,
 
-  lime: RadixColors.limeP3.lime9,
-  grass: RadixColors.grassP3.grass9,
-  green: RadixColors.greenP3.green9,
-  jade: RadixColors.jadeP3.jade9,
-  mint: RadixColors.mintP3.mint9,
+  lime: A2E_BRAND_COLORS.olive,
+  grass: A2E_BRAND_COLORS.olive,
+  green: A2E_BRAND_COLORS.olive,
+  jade: A2E_BRAND_COLORS.olive,
+  mint: A2E_BRAND_COLORS.olive,
 
-  turquoise: RadixColors.tealP3.teal9,
-  cyan: RadixColors.cyanP3.cyan9,
-  sky: RadixColors.skyP3.sky9,
-  blue: RadixColors.indigoP3.indigo9,
+  turquoise: A2E_BRAND_COLORS.olive,
+  cyan: A2E_BRAND_COLORS.lavender,
+  sky: A2E_BRAND_COLORS.lavender,
+  blue: A2E_BRAND_COLORS.lavender,
 
-  iris: RadixColors.irisP3.iris9,
-  violet: RadixColors.violetP3.violet9,
-  purple: RadixColors.purpleP3.purple9,
-  plum: RadixColors.plumP3.plum9,
-  pink: RadixColors.pinkP3.pink9,
+  iris: A2E_BRAND_COLORS.lavender,
+  violet: A2E_BRAND_COLORS.lavender,
+  purple: A2E_BRAND_COLORS.lavender,
+  plum: A2E_BRAND_COLORS.rose,
+  pink: A2E_BRAND_COLORS.rose,
 
-  bronze: RadixColors.bronzeP3.bronze9,
-  gold: RadixColors.goldP3.gold9,
-  brown: RadixColors.brownP3.brown9,
+  bronze: A2E_BRAND_COLORS.orange,
+  gold: A2E_BRAND_COLORS.amber,
+  brown: A2E_BRAND_COLORS.rose,
   gray: GRAY_SCALE_LIGHT.gray9,
 };

@@ -53,7 +53,7 @@ export const NavigationMenuItemLinkDisplay = ({
           ? editModeProps?.onEditModeClick
           : undefined
       }
-      Icon={() => <NavigationMenuItemIcon navigationMenuItem={item} />}
+      iconNode={<NavigationMenuItemIcon navigationMenuItem={item} />}
       active={false}
       isSelectedInEditMode={editModeProps?.isSelectedInEditMode}
       isDragging={isDragging}

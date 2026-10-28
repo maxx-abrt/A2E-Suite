@@ -75,6 +75,7 @@ export const PublicSite = () => {
         <link rel="icon" type="image/png" href="/branding/favicon-32.png" />
       </Helmet>
       <PublicSiteHero
+        displayAccent={isHome}
         eyebrow={
           application
             ? i18n._(application.name)

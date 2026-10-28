@@ -1,22 +1,22 @@
 import { BACKGROUND_DARK } from '@ui/theme/constants/BackgroundDark';
 import { FONT_DARK } from '@ui/theme/constants/FontDark';
-import { MAIN_COLORS_DARK } from '@ui/theme/constants/MainColorsDark';
+import { COLOR_DARK } from '@ui/theme/constants/ColorsDark';
 
 export const SNACK_BAR_DARK = {
   success: {
-    color: MAIN_COLORS_DARK.turquoise,
+    color: COLOR_DARK.turquoise11,
     backgroundColor: BACKGROUND_DARK.transparent.success,
   },
   error: {
-    color: MAIN_COLORS_DARK.red,
+    color: COLOR_DARK.red11,
     backgroundColor: BACKGROUND_DARK.transparent.danger,
   },
   warning: {
-    color: MAIN_COLORS_DARK.orange,
+    color: COLOR_DARK.orange11,
     backgroundColor: BACKGROUND_DARK.transparent.orange,
   },
   info: {
-    color: MAIN_COLORS_DARK.blue,
+    color: COLOR_DARK.blue11,
     backgroundColor: BACKGROUND_DARK.transparent.blue,
   },
   default: {

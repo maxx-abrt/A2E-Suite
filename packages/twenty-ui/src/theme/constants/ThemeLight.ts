@@ -16,6 +16,7 @@ export const THEME_LIGHT = {
   ...THEME_COMMON,
   ...{
     accent: ACCENT_LIGHT,
+    buttons: { secondaryTextColor: FONT_LIGHT.color.primary },
     background: BACKGROUND_LIGHT,
     blur: BLUR_LIGHT,
     border: BORDER_LIGHT,

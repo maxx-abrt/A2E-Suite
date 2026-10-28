@@ -73,7 +73,7 @@ const StyledHeroVisual = styled.div`
 `;
 const StyledCaption = styled.p`
   color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('mono')};
+  font-family: ${fontFamily('sans')};
   font-size: 11px;
   line-height: 1.7;
   margin-top: 20px !important;
@@ -82,6 +82,7 @@ const StyledCaption = styled.p`
 const StyledStrip = styled.div`
   align-items: center;
   border: 1px solid ${semanticColor.line};
+  border-radius: 24px;
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -90,7 +91,7 @@ const StyledStrip = styled.div`
   position: relative;
   > span {
     color: ${semanticColor.inkMuted};
-    font-family: ${fontFamily('mono')};
+    font-family: ${fontFamily('sans')};
     font-size: 11px;
     text-transform: uppercase;
   }
@@ -103,7 +104,7 @@ const StyledStrip = styled.div`
     text-decoration: none;
   }
   a:hover {
-    color: ${color('blue')};
+    color: ${color('black')};
   }
 `;
 const StyledGrid = styled.div`
@@ -138,14 +139,14 @@ const StyledWorkflow = styled.div`
 
 const StyledCard = styled.article`
   border: 1px solid ${semanticColor.line};
-  border-radius: 8px;
+  border-radius: 24px;
   overflow: hidden;
   > div:last-child {
     padding: 28px;
   }
   > div:last-child > svg,
   > div:last-child > img {
-    color: ${color('blue')};
+    color: ${color('black')};
     margin-bottom: 20px;
   }
   h3 {
@@ -176,13 +177,16 @@ const StyledIllustration = styled.div`
   overflow: hidden;
   position: relative;
   &[data-tone='green'] {
-    background: ${color('neutral')};
+    background: ${color('green')};
+    color: ${color('white')};
   }
   &[data-tone='pink'] {
-    background: ${color('blue-5')};
+    background: ${color('pink')};
+    color: ${color('black')};
   }
   &[data-tone='yellow'] {
-    background: linear-gradient(145deg, ${color('white')}, ${color('neutral')});
+    background: ${color('yellow')};
+    color: ${color('black')};
   }
 `;
 const StyledSplit = styled.div`
@@ -197,9 +201,12 @@ const StyledSplit = styled.div`
   }
 `;
 const StyledProblem = styled.div`
+  > div {
+    height: 180px;
+  }
   background: ${color('neutral')};
   border: 1px solid ${semanticColor.line};
-  border-radius: 8px;
+  border-radius: 24px;
   display: grid;
   gap: 12px;
   padding: 40px 24px;
@@ -208,7 +215,7 @@ const StyledProblem = styled.div`
     border: 1px solid ${semanticColor.line};
     border-radius: 6px;
     color: ${semanticColor.inkMuted};
-    font-family: ${fontFamily('mono')};
+    font-family: ${fontFamily('sans')};
     font-size: 12px;
     padding: 20px;
     transform: rotate(-2deg);
@@ -217,7 +224,7 @@ const StyledProblem = styled.div`
     transform: translateX(8px) rotate(2deg);
   }
   > strong {
-    color: ${color('blue')};
+    color: ${color('black')};
     font-size: 20px;
     font-weight: 400;
     padding: 24px 0 4px;
@@ -245,21 +252,21 @@ const StyledSteps = styled.div`
   h3 {
     font-family: ${fontFamily('serif')};
     font-size: 30px;
-    font-weight: 300;
+    font-weight: 500;
     letter-spacing: -0.02em;
     line-height: 1.25;
     margin: 16px 0;
   }
   small {
-    color: ${color('blue')};
-    font-family: ${fontFamily('mono')};
+    color: ${color('black')};
+    font-family: ${fontFamily('sans')};
     font-size: 12px;
   }
 `;
 const StyledSticky = styled.div`
   background: ${color('white')};
   border: 1px solid ${semanticColor.lineStrong};
-  border-radius: 8px;
+  border-radius: 24px;
   padding: 28px;
   > div {
     align-items: center;
@@ -272,7 +279,7 @@ const StyledSticky = styled.div`
     border: 0;
   }
   svg {
-    color: ${color('blue')};
+    color: ${color('black')};
     flex-shrink: 0;
   }
   p {
@@ -303,7 +310,7 @@ const StyledFaqList = styled.div`
   }
   summary::after {
     content: '+';
-    font-family: ${fontFamily('mono')};
+    font-family: ${fontFamily('sans')};
     font-size: 24px;
   }
   details[open] summary::after {
@@ -325,7 +332,7 @@ const StyledUseCase = styled.article`
   h3 {
     font-family: ${fontFamily('serif')};
     font-size: 32px;
-    font-weight: 300;
+    font-weight: 500;
     letter-spacing: -0.03em;
   }
   ${mediaUp('md')} {
@@ -340,6 +347,7 @@ type PublicSiteHeroProps = {
   children?: ReactNode;
   secondaryHref?: string;
   secondaryLabel?: string;
+  displayAccent?: boolean;
 };
 
 export const PublicSiteHero = ({
@@ -349,6 +357,7 @@ export const PublicSiteHero = ({
   children,
   secondaryHref = '/product',
   secondaryLabel,
+  displayAccent = false,
 }: PublicSiteHeroProps) => {
   const { t } = useLingui();
   return (
@@ -357,7 +366,7 @@ export const PublicSiteHero = ({
       scheme="muted"
       background={
         <StyledHeroBackground>
-          <PublicAsciiArt variant="bridge" />
+          <PublicAsciiArt variant="bridge" subdued />
         </StyledHeroBackground>
       }
       fullBleedBackground
@@ -366,7 +375,12 @@ export const PublicSiteHero = ({
         <Eyebrow>{eyebrow}</Eyebrow>
         <HeadingPair>
           <StyledHeadingMeasure>
-            <Heading as="h1" size="lg" weight="light">
+            <Heading
+              as="h1"
+              size="lg"
+              weight="light"
+              displayAccent={displayAccent}
+            >
               {title}
             </Heading>
           </StyledHeadingMeasure>
@@ -414,6 +428,7 @@ export const PublicSiteProblem = () => {
     <SectionShell>
       <StyledSplit>
         <StyledProblem aria-hidden="true">
+          <PublicAsciiArt variant="bridge" />
           <span>{t`The notes in one place`}</span>
           <span>{t`The plan in another`}</span>
           <span>{t`The context in your head`}</span>
@@ -759,7 +774,10 @@ export const PublicSiteProductPreview = ({
   const { t } = useLingui();
   return (
     <>
-      <PublicWorkspacePreview initialTabId={initialTabId} />
+      <PublicWorkspacePreview
+        key={initialTabId ?? 'home'}
+        initialTabId={initialTabId}
+      />
       <StyledCaption>{t`An interactive example with sample data. Explore the tabs to look around.`}</StyledCaption>
     </>
   );

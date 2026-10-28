@@ -10,7 +10,7 @@ export const FONT_LIGHT = {
     light: GRAY_SCALE_LIGHT.gray8,
     extraLight: GRAY_SCALE_LIGHT.gray7,
     inverted: GRAY_SCALE_LIGHT.gray1,
-    danger: COLOR_LIGHT.red,
+    danger: COLOR_LIGHT.red11,
   },
   ...FONT_COMMON,
 };

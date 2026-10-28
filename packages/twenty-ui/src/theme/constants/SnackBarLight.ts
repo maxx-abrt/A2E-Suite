@@ -1,22 +1,22 @@
 import { BACKGROUND_LIGHT } from '@ui/theme/constants/BackgroundLight';
 import { FONT_LIGHT } from '@ui/theme/constants/FontLight';
-import { MAIN_COLORS_LIGHT } from '@ui/theme/constants/MainColorsLight';
+import { COLOR_LIGHT } from '@ui/theme/constants/ColorsLight';
 
 export const SNACK_BAR_LIGHT = {
   success: {
-    color: MAIN_COLORS_LIGHT.turquoise,
+    color: COLOR_LIGHT.turquoise11,
     backgroundColor: BACKGROUND_LIGHT.transparent.success,
   },
   error: {
-    color: MAIN_COLORS_LIGHT.red,
+    color: COLOR_LIGHT.red11,
     backgroundColor: BACKGROUND_LIGHT.transparent.danger,
   },
   warning: {
-    color: MAIN_COLORS_LIGHT.orange,
+    color: COLOR_LIGHT.orange11,
     backgroundColor: BACKGROUND_LIGHT.transparent.orange,
   },
   info: {
-    color: MAIN_COLORS_LIGHT.blue,
+    color: COLOR_LIGHT.blue11,
     backgroundColor: BACKGROUND_LIGHT.transparent.blue,
   },
   default: {

@@ -5,9 +5,9 @@
   font-display: swap;
 }
 @font-face {
-  font-family: 'A2E Aleo';
-  src: url('/website/fonts/aleo-latin-300.woff2') format('woff2');
-  font-weight: 300;
+  font-family: 'Dream Kudos';
+  src: url('/branding/fonts/dream-kudos.otf') format('opentype');
+  font-weight: 400;
   font-display: swap;
 }
 @font-face {
